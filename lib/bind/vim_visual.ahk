@@ -3,8 +3,7 @@
 v::Vim.State.SetMode("Vim_VisualFirst")
 ^v::
   if WinActive("ahk_class TElWind") {
-	ControlGetFocus, current_focus, ahk_class TElWind
-	if InStr(current_focus, "Internet Explorer_Server") {
+	if SMEditingHTML() {
 		send ^{down}^+{up}{left}^+{down}
 		Vim.State.SetMode("Vim_VisualBlockFirst")
 	} else {
@@ -35,8 +34,7 @@ Return
 		Vim.State.SetNormal()
 		Return
 	} else if WinActive("ahk_class TElWind") {
-		ControlGetFocus, current_focus, ahk_class TElWind
-		if InStr(current_focus, "Internet Explorer_Server") {
+		if SMEditingHTML() {
 			send ^{down}^+{up}{left}^+{down}
 			Vim.State.SetMode("Vim_VisualBlockFirst")
 		} else {

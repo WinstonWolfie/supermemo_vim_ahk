@@ -1,3 +1,4 @@
+#Include %A_LineFile%\..\bind\smvim_shortcut.ahk
 #Include %A_LineFile%\..\bind\vim_shortcut.ahk
 #Include %A_LineFile%\..\bind\smvim_grading.ahk
 #Include %A_LineFile%\..\bind\smvim_browsing.ahk

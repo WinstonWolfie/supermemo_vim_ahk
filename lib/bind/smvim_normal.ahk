@@ -44,28 +44,6 @@ Return
 	}
 Return
 
-n::  ; open hyperlink in current caret position (Open in *n*ew window)
-	ControlGetFocus, current_focus, ahk_class TElWind
-	if !InStr(current_focus, "Internet Explorer_Server") ; not editing html
-		return
-	clipSave := Clipboardall
-	Clipboard =
-	send +{right}^c{left}
-	ClipWait 1
-	sleep 100
-	If ClipboardGet_HTML( Data ){
-		RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", current_link)
-		if !current_link
-			VimToolTipFunc("No link found.")
-		else if InStr(current_link, "SuperMemoElementNo=(") { ; goes to a supermemo element
-			click, %A_CaretX% %A_CaretY%, right
-			send n
-		} else
-			run % current_link
-	}
-	Clipboard := clipSave
-return
-
 */:: ; better search
 	ctrl_state := GetKeyState("Ctrl") ; visual
 	shift_state := GetKeyState("RShift") ; caret on the right
@@ -74,17 +52,15 @@ return
 		MsgBox, Which one do you want??
 		Return
 	}
-	ControlGetFocus, current_focus, ahk_class TElWind
-	if InStr(current_focus, "TMemo") { ; editing plain text
+	if SMEditingPlainText() {
 		MsgBox, Sorry, SuperMemo doesn't support f3 search on text components.
 		Return
 	}
-	if !InStr(current_focus, "Internet Explorer_Server") { ; also not editing html; so no text component is focused
+	if !SMEditingHTML() { ; also not editing html; so no text component is focused
 		send ^t{esc}q ; focus to question field if no field is focused
 		sleep 100 ; make sure current_focus is updated
 	}
-	ControlGetFocus, current_focus, ahk_class TElWind
-	if InStr(current_focus, "TMemo") { ; question field is plain text
+	if SMEditingPlainText() { ; question field is plain text
 		MsgBox, Sorry, SuperMemo doesn't support f3 search on text components.
 		Return
 	}
@@ -138,3 +114,23 @@ return
 	if WinExist("ahk_class TMyFindDlg") ; clears search box window
 		WinClose
 Return
+
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && SMEditingHTML()
+n::  ; open hyperlink in current caret position (Open in *n*ew window)
+	clipSave := Clipboardall
+	Clipboard =
+	send +{right}^c{left}
+	ClipWait 1
+	sleep 100
+	If ClipboardGet_HTML( Data ){
+		RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", current_link)
+		if !current_link
+			VimToolTipFunc("No link found.")
+		else if InStr(current_link, "SuperMemoElementNo=(") { ; goes to a supermemo element
+			click, %A_CaretX% %A_CaretY%, right
+			send n
+		} else
+			run % current_link
+	}
+	Clipboard := clipSave
+return

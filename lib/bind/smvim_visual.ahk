@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
+﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind") && SMEditingHTML()
 ~^+i::Vim.State.SetMode("Vim_Normal") ; ignore
 
 .:: ; selected text becomes [...]
@@ -13,6 +13,12 @@ f:: ; parse html (*f*ormat)
 	Vim.State.SetMode("Vim_Normal")
 return
 
+m::  ; highlight: *m*ark
+	send !{f12}rh
+	Vim.State.SetMode("Vim_Normal")
+return
+
+#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 q:: ; extract (*q*uote)
 	send !x
 	Vim.State.SetMode("Vim_Normal")
@@ -25,13 +31,6 @@ return
 
 z::  ; clo*z*e
 	send !z
-	Vim.State.SetMode("Vim_Normal")
-return
-
-m::  ; highlight: *m*ark
-	ControlGetFocus, current_focus, ahk_class TElWind
-	if InStr(current_focus, "Internet Explorer_Server")
-		send !{f12}rh
 	Vim.State.SetMode("Vim_Normal")
 return
 

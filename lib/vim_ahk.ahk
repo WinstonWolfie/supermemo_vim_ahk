@@ -102,6 +102,8 @@ class VimAhk{
 	GroupAdd, Excluded, ahk_class TPriorityDlg ; priority dialogue
 	GroupAdd, Excluded, ahk_class TGetIntervalDlg ; interval dialogue
 	GroupAdd, Excluded, ahk_class TCommanderDlg ; commander
+	GroupAdd, Excluded, ahk_class TWebDlg ; import dialogue
+	GroupAdd, Excluded, ahk_class TElParamDlg ; element parameter
 
     ; Configuration values for Read/Write ini
     ; setting, default, val, description, info

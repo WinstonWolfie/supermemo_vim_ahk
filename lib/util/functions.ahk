@@ -33,3 +33,18 @@ VimToolTipFunc(text="", permanent="", period:=-2000) {
 RemoveToolTip:
 	ToolTip
 return
+
+SMEditingHTML() {
+	ControlGetFocus, current_focus, ahk_class TElWind
+	Return InStr(current_focus, "Internet Explorer_Server")
+}
+
+SMEditingPlainText() {
+	ControlGetFocus, current_focus, ahk_class TElWind
+	Return InStr(current_focus, "TMemo")
+}
+
+SMEditingText() {
+	ControlGetFocus, current_focus, ahk_class TElWind
+	Return InStr(current_focus, "Internet Explorer_Server") || InStr(current_focus, "TMemo")
+}

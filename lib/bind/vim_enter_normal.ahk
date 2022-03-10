@@ -4,13 +4,16 @@ Esc::Vim.State.HandleEsc()
 
 enter::
 	; in Plan window pressing enter simply goes to the next field; no need to go back to normal
-	if !WinActive("ahk_class TPlanDlg") && WinActive("ahk_class TElWind") { ; in element window pressing enter (learn) sets the mode normal
-		ControlGetFocus, current_focus, ahk_class TElWind
-		if !InStr(current_focus, "Internet Explorer_Server") && !InStr(current_focus, "TMemo") ; not editing text
-			Vim.State.SetNormal()
-	}
+	if !WinActive("ahk_class TPlanDlg") && WinActive("ahk_class TElWind") && !SMEditingText() ; in element window pressing enter to learn goes to normal
+		Vim.State.SetNormal()
 	send {enter}
 Return
+
+space:: ; space: for Learn button
+if WinActive("ahk_class TElWind") && !SMEditingText()
+	Vim.State.SetNormal()
+send {space}
+return
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Insert")) and (Vim.Conf["VimJJ"]["val"] == 1)
 ~j up:: ; jj: go to Normal mode.

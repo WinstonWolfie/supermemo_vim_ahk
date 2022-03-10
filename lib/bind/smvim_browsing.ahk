@@ -10,8 +10,7 @@ h::
 		MouseMove, %x_coord%, %y_coord%
 		send {WheelLeft}
 	}
-	; ControlGetFocus, current_focus, ahk_class TElWind
-	; if InStr(current_focus, "Internet Explorer_Server")
+	; if SMEditingHTML()
 		; send {left}
 	; else
 		; FindClick(A_ScriptDir . "\lib\bind\util\left_arrow.png")
@@ -195,4 +194,23 @@ s::
 		send {del}
 		Vim.State.SetMode("Insert")
 	}
+Return
+
+; YouTube template
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord)
+m::FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "o32")
+
+left::
+right::
+space::
+	x_coord += 110
+	y_coord -= 60
+	CoordMode, Mouse, Screen
+	click, %x_coord% %y_coord%
+	send {%A_ThisHotkey%}
+	if (A_ThisHotkey = "space") {
+		sleep 350
+		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_x.png", "o128")
+	}
+	send ^{t 2} ; focus to notes
 Return

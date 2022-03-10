@@ -224,42 +224,33 @@
     }else if(key == "^f"){
       Send, {PgDn}
     }else if(key == "g"){
-	  if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX {
-		ControlGetFocus, current_focus, ahk_class TElWind
-		if InStr(current_focus, "Internet Explorer_Server")
-			send {home}
-		else
-			send ^t^{home}{esc}
-	  } else
+	  if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+		send ^t^{home}{esc}
+	  else
 		Send, ^{Home}
     }else if(key == "+g"){
-	  if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX {
-		ControlGetFocus, current_focus, ahk_class TElWind
-		if InStr(current_focus, "Internet Explorer_Server")
-			send {end}
-		else
-			send ^t^{end}{esc}
-	  } else
+	  if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+		send ^t^{end}{esc}
+	  else
 	    if (this.shift == 1)
 			Send, ^+{End}+{Home}
 		else
 			Send, ^{End}{Home}
-	  ControlGetFocus, current_focus, ahk_class TElWind
-	  if InStr(current_focus, "Internet Explorer_Server") { ; editing html
-		send ^+{up} ; if there are references this would select (or deselect in visual mode) them all
-		if (this.shift == 1)
-			send +{down} ; go down one line, if there are references this would include the #SuperMemo Reference
-		if InStr(clip(), "#SuperMemo Reference:")
+		if SMEditingHTML() {
+			send ^+{up} ; if there are references this would select (or deselect in visual mode) them all
 			if (this.shift == 1)
-				send +{up 4} ; select until start of last line
+				send +{down} ; go down one line, if there are references this would include the #SuperMemo Reference
+			if InStr(clip(), "#SuperMemo Reference:")
+				if (this.shift == 1)
+					send +{up 4} ; select until start of last line
+				else
+					send {up 3} ; go to start of last line
 			else
-				send {up 3} ; go to start of last line
-		else
-			if (this.shift == 1)
-			  send ^+{end}+{home}
-			else
-			  send ^{end}{home}
-	  }
+				if (this.shift == 1)
+				  send ^+{end}+{home}
+				else
+				  send ^{end}{home}
+		}
     }else if(key == "{"){
       if(this.shift == 1){
 	    Send, +^{up}
