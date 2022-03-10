@@ -133,7 +133,7 @@ return
 		FindClick(A_ScriptDir . "\lib\bind\util\save_changes_to_existing_pdf.png", "o32")
 return
 
-#If WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
+#If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
 !a:: ; insert the accident activity
 	Vim.State.SetNormal()
 	InputBox, user_input, Accident activity, Please enter the name of the activity. Add ! at the beginning if you don't want to split the current activity.,, 256, 164

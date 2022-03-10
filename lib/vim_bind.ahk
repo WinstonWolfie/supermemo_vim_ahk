@@ -10,6 +10,7 @@
 #Include %A_LineFile%\..\bind\vim_replace.ahk
 #Include %A_LineFile%\..\bind\vim_move.ahk
 #Include %A_LineFile%\..\bind\vim_ydcxp.ahk
+#Include %A_LineFile%\..\bind\smvim_visual.ahk
 #Include %A_LineFile%\..\bind\vim_visual.ahk
 #Include %A_LineFile%\..\bind\vim_search.ahk
 #Include %A_LineFile%\..\bind\vim_command.ahk
