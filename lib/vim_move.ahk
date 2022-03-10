@@ -6,7 +6,7 @@
 
   MoveInitialize(key=""){
     this.shift := 0
-    if(this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc")){
+    if(this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")){
       this.shift := 1
       Send, {Shift Down}
     }
@@ -22,6 +22,22 @@
     if(this.Vim.State.IsCurrentVimMode("Vim_VisualLineFirst")) and (key == "j" or key == "^d" or key == "^f" or key == "+g"){
       this.vim.state.setmode("Vim_VisualLine")
     }
+
+    if(this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe")){
+      send {alt down}
+      this.vim.state.setmode("Vim_VisualBlock")
+    }
+
+    if(this.Vim.State.IsCurrentVimMode("Vim_VisualBlockFirst")) and (key == "k" or key == "^u" or key == "^b" or key == "g"){
+      Send, {Shift Up}{right}{left}{Shift Down}
+      this.Up()
+      this.vim.state.setmode("Vim_VisualBlock")
+    }
+
+    if(this.Vim.State.IsCurrentVimMode("Vim_VisualBlockFirst")) and (key == "j" or key == "^d" or key == "^f" or key == "+g"){
+      this.vim.state.setmode("Vim_VisualBlock")
+    }
+
 
     if(this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")) and (key == "k" or key == "^u" or key == "^b" or key == "g"){
       this.Vim.State.LineCopy := 1
@@ -59,6 +75,12 @@
       Send, ^x
       ClipWait, 1
       this.Vim.State.SetMode("Insert")
+    }else if(this.Vim.State.StrIsInCurrentVimMode("Extract")){
+      Send, !x
+      this.Vim.State.SetMode("Vim_Normal")
+    }else if(this.Vim.State.StrIsInCurrentVimMode("Cloze")){
+      Send, !z
+      this.Vim.State.SetMode("Vim_Normal")
     }
     this.Vim.State.SetMode("", 0, 0)
     if(ydc_y){
@@ -67,6 +89,8 @@
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
     send {Ctrl Up}
+	if !(this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe"))
+		send {alt up}
   }
 
   Home(){
@@ -78,7 +102,10 @@
 
   Up(n=1){
     Loop, %n% {
-      if WinActive("ahk_group VimCtrlUpDownGroup"){
+	  if this.Vim.State.StrIsInCurrentVimMode("Block") {
+		if WinActive("ahk_class TElWind")
+			Send, +^{up}{left}
+      } else if WinActive("ahk_group VimCtrlUpDownGroup"){
         Send ^{Up}
       } else {
         Send,{Up}
@@ -88,7 +115,10 @@
 
   Down(n=1){
     Loop, %n% {
-      if WinActive("ahk_group VimCtrlUpDownGroup"){
+	  if this.Vim.State.StrIsInCurrentVimMode("Block") {
+		if WinActive("ahk_class TElWind")
+			Send, ^{down}
+      } else if WinActive("ahk_group VimCtrlUpDownGroup"){
         Send ^{Down}
       } else {
         Send,{Down}
@@ -158,7 +188,15 @@
         }
       }else if(key == "e"){
         if(this.shift == 1){
-          Send, +^{Right}+^{Right}+{Left}
+		  if this.Vim.State.StrIsInCurrentVimMode("First") {
+			Send, +^{Right}+{Left}
+			previous_mode := this.Vim.State.Mode
+			if this.Vim.State.StrIsInCurrentVimMode("VisualFirst")
+				this.Vim.State.SetMode("Vim_VisualChar")
+			else
+				this.Vim.State.SetMode(StrReplace(previous_mode, "First"))
+		  } else
+			Send, +^{Right}+^{Right}+{Left}
         }else{
           Send, ^{Right}^{Right}{Left}
         }
@@ -186,9 +224,57 @@
     }else if(key == "^f"){
       Send, {PgDn}
     }else if(key == "g"){
-      Send, ^{Home}
+	  if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX {
+		ControlGetFocus, current_focus, ahk_class TElWind
+		if InStr(current_focus, "Internet Explorer_Server")
+			send {home}
+		else
+			send ^t^{home}{esc}
+	  } else
+		Send, ^{Home}
     }else if(key == "+g"){
-      Send, ^{End}{Home}
+	  if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX {
+		ControlGetFocus, current_focus, ahk_class TElWind
+		if InStr(current_focus, "Internet Explorer_Server")
+			send {end}
+		else
+			send ^t^{end}{esc}
+	  } else
+	    if (this.shift == 1)
+			Send, ^+{End}+{Home}
+		else
+			Send, ^{End}{Home}
+	  ControlGetFocus, current_focus, ahk_class TElWind
+	  if InStr(current_focus, "Internet Explorer_Server") { ; editing html
+		send ^+{up} ; if there are references this would select (or deselect in visual mode) them all
+		if (this.shift == 1)
+			send +{down} ; go down one line, if there are references this would include the #SuperMemo Reference
+		if InStr(clip(), "#SuperMemo Reference:")
+			if (this.shift == 1)
+				send +{up 4} ; select until start of last line
+			else
+				send {up 3} ; go to start of last line
+		else
+			if (this.shift == 1)
+			  send ^+{end}+{home}
+			else
+			  send ^{end}{home}
+	  }
+    }else if(key == "{"){
+      if(this.shift == 1){
+	    Send, +^{up}
+	  }else{
+	    if WinActive("ahk_class TElWind")
+			Send, +^{up}{left}
+		else
+			Send, ^{up}
+	  }
+    }else if(key == "}"){
+      if(this.shift == 1){
+	    Send, +^{down}
+	  }else{
+	    Send, ^{down}
+	  }
     }
 
     if(!repeat){
@@ -201,9 +287,15 @@
     if(this.Vim.State.n == 0){
       this.Vim.State.n := 1
     }
+	if (WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")) && (key = "j" || key = "k") && this.Vim.State.n > 1
+		FindClick(A_ScriptDir . "\lib\bind\util\element_window_sync.png",, sync_off)
     Loop, % this.Vim.State.n {
       this.Move(key, true)
     }
+	if sync_off {
+		FindClick(A_ScriptDir . "\lib\bind\util\element_window_sync.png")
+		sync_off =
+	}
     this.MoveFinalize()
   }
 

@@ -10,7 +10,10 @@
     , "Vim_ydc_y" , "Vim_ydc_yInner", "Vim_ydc_c", "Vim_ydc_cInner"
     , "Vim_ydc_d" , "Vim_ydc_dInner" , "Vim_VisualLine", "Vim_VisualFirst"
     , "Vim_VisualChar", "Vim_VisualLineFirst", "Vim_VisualCharInner"
-    , "Command" , "Command_w", "Command_q", "Z", "r_once", "r_repeat"]
+    , "Command" , "Command_w", "Command_q", "Z", "r_once", "r_repeat"
+	, "SMVim_Cloze", "SMVim_ClozeFirst", "SMVim_Extract", "SMVim_ExtractFirst"
+	, "Vim_VisualBlock", "Vim_VisualBlockFirst", "Vim_ydc_yFirst"
+	, "Vim_ydc_dFirst", "Vim_ydc_cFirst"]
 
     this.Mode := "Insert"
     this.g := 0
@@ -92,7 +95,7 @@
   }
 
   HandleEsc(){
-    global Vim, VimEscNormal, vimSendEscNormal, VimLongEscNormal
+    global Vim, VimEscNormal, SMVimSendEscInsert, vimSendEscNormal, VimLongEscNormal
     if (!VimEscNormal) {
       Send, {Esc}
       Return
@@ -104,10 +107,11 @@
     both := VimLongEscNormal && LongPress
     neither := !(VimLongEscNormal || LongPress)
     SetNormal :=  both or neither
-    if (!SetNormal or (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) {
+	; In SuperMemo you can use ESC to both escape and enter normal mode.
+    if (!SetNormal or (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert) {
       Send, {Esc}
     }
-    if (SetNormal) {
+    if (SetNormal) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert) {
       this.SetNormal()
     }
     if (LongPress){

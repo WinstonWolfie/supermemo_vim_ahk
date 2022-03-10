@@ -42,5 +42,7 @@ b::Vim.Move.Repeat("b")
 ^f::Vim.Move.Repeat("^f")
 ; G
 +g::Vim.Move.Move("+g")
-
+; Paragraph up/down
+{::Vim.Move.Move("{")
+}::Vim.Move.Move("}")
 #If

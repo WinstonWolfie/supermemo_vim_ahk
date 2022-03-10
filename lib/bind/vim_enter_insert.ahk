@@ -28,6 +28,39 @@ Return
   Vim.State.SetMode("Insert")
 Return
 
+s::
+	send {del}
+    Vim.State.SetMode("Insert")
+Return
+
++s::
+	send {end}+{home}{bs}
+    Vim.State.SetMode("Insert")
+Return
+
+; Keys that need insert mode
+~f2::
+	sleep 50
+	if A_CaretX
+		Vim.State.SetMode("Insert")
+Return
+
+~#r::
+	WinWaitActive, Run,, 0
+	if !ErrorLevel
+		Vim.State.SetMode("Insert")
+Return
+
+alt:: ; for access keys
+	; can't use KeyWait alt, any hotkeys that use modifier alt would trigger this script
+	send {alt} ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert
+	Vim.State.SetMode("Insert")
+return
+
+~AppsKey::
+	Vim.State.SetMode("Insert")
+Return
+
 ; Q-dir
 #If Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")
 ; Enter insert mode to quickly locate the file/folder by using the first letter

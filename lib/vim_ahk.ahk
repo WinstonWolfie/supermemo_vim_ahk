@@ -1,6 +1,9 @@
 ﻿; Utilities
 #Include %A_LineFile%\..\util\vim_ahk_setting.ahk
 #Include %A_LineFile%\..\util\vim_ime.ahk
+#Include %A_LineFile%\..\util\Clip.ahk
+#Include %A_LineFile%\..\util\FindClick.ahk
+#Include %A_LineFile%\..\util\functions.ahk
 
 ; Classes, Functions
 #Include %A_LineFile%\..\vim_about.ahk
@@ -79,6 +82,26 @@ class VimAhk{
     ; Q-Dir
     GroupAdd, VimQdir, ahk_exe Q-Dir_x64.exe ; q-dir
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe ; q-dir
+	
+	; SuperMemo
+	GroupAdd, SuperMemo, ahk_exe sm18.exe
+	GroupAdd, SuperMemo, ahk_exe sm17.exe
+	GroupAdd, SuperMemo, ahk_exe sm16.exe
+	GroupAdd, SuperMemo, ahk_exe sm15.exe
+	
+	; Excluded
+	; SuperMemo
+	GroupAdd, Excluded, ahk_class TMsgDialog ; yes or no window
+	GroupAdd, Excluded, ahk_class TChoicesDlg ; choices
+	GroupAdd, Excluded, ahk_class TChecksDlg ; checks
+	GroupAdd, Excluded, ahk_class TRegistryForm ; registries
+	GroupAdd, Excluded, ahk_class TTitleEdit ; edit title
+	GroupAdd, Excluded, ahk_class TInputDlg ; input dialogue
+	GroupAdd, Excluded, ahk_class TTargetDlg ; favourites
+	GroupAdd, Excluded, ahk_class TFileBrowser ; file browser
+	GroupAdd, Excluded, ahk_class TPriorityDlg ; priority dialogue
+	GroupAdd, Excluded, ahk_class TGetIntervalDlg ; interval dialogue
+	GroupAdd, Excluded, ahk_class TCommanderDlg ; commander
 
     ; Configuration values for Read/Write ini
     ; setting, default, val, description, info
@@ -86,13 +109,16 @@ class VimAhk{
     this.AddToConf("VimEscNormal", 1, 1
       , "ESC to enter the normal mode"
       , "Use ESC to enter the normal mode, long press ESC to send ESC.")
-    this.AddToConf("VimSendEscNormal", 0, 0
+    this.AddToConf("SMVimSendEscInsert", 1, 1
+      , "Send ESC and enter normal mode by ESC in SuperMemo"
+      , "If checked, press ESC also enters normal mode in SuperMemo.")
+    this.AddToConf("VimSendEscNormal", 1, 1
       , "Send ESC by ESC at the normal mode"
       , "If not checked, short press ESC does not send anything at the normal mode.`nEnable ESC to enter the normal mode first.")
-    this.AddToConf("VimLongEscNormal", 0, 0
+    this.AddToConf("VimLongEscNormal", 1, 1
       , "Long press ESC to enter the normal mode"
       , "Swap short press and long press behaviors for ESC.`nEnable ESC to enter Normal mode first.")
-    this.AddToConf("VimCtrlBracketToEsc", 1, 1
+    this.AddToConf("VimCtrlBracketToEsc", 0, 0
       , "Ctrl-[ to ESC"
       , "Send ESC by Ctrl-[.`nThis changes Ctrl-[ behavir even if Ctrl-[ to enter the normal mode is enabled.`nIf both Ctlr-[ to ESC and Ctlr-[ to enter the normal mode are enabled, long press Ctrl-[ sends ESC instead of Ctrl-[.")
     this.AddToConf("VimCtrlBracketNormal", 1, 1
@@ -107,7 +133,7 @@ class VimAhk{
     this.AddToConf("VimChangeCaretWidth", 0, 0
       , "Change to thick text caret when in normal mode"
       , "When entering normal mode, sets the text cursor/caret to a thick bar, then sets back to thin when exiting normal mode.`nDoesn't work with all windows, and causes the current window to briefly lose focus when changing mode.")
-    this.AddToConf("VimCheckChr", 0, 0
+    this.AddToConf("VimCheckChr", 1, 1
       , "Check the character before an action"
       , "Check the character under the cursor before an action.`nCurrently, this is used for: 'a' in the normal mode (check if the cursor is located the end of the line).")
     this.AddToConf("VimRestoreIME", 1, 1
@@ -116,10 +142,10 @@ class VimAhk{
     this.AddToConf("VimJJ", 0, 0
       , "JJ to enter the normal mode"
       , "Use JJ to enter the normal mode.")
-    this.AddToConf("VimTwoLetter", "", ""
+    this.AddToConf("VimTwoLetter", "jk", "jk"
       , "Two-letter to enter the normal mode"
       , "When these two letters are pressed together in insert mode, enters the normal mode.`n`nSet one per line, exactly two letters per line.`nThe two letters must be different.")
-    this.AddToConf("VimDisableUnused", 1, 1
+    this.AddToConf("VimDisableUnused", 2, 2
       , "Disable unused keys in the normal mode"
       , "1: Do not disable unused keys`n2: Disable alphabets (+shift) and symbols`n3: Disable all including keys with modifiers (e.g. Ctrl+Z)")
     this.AddToConf("VimSetTitleMatchMode", "2", "2"
@@ -141,7 +167,7 @@ class VimAhk{
       , "Application"
       , "Set one application per line.`n`nIt can be any of Window Title, Class or Process.`nYou can check these values by Window Spy (in the right click menu of tray icon).")
 
-    this.CheckBoxes := ["VimEscNormal", "VimSendEscNormal", "VimLongEscNormal", "VimCtrlBracketToEsc", "VimCtrlBracketNormal", "VimSendCtrlBracketNormal", "VimLongCtrlBracketNormal", "VimRestoreIME", "VimJJ", "VimChangeCaretWidth", "VimCheckChr"]
+    this.CheckBoxes := ["VimEscNormal", "SMVimSendEscInsert", "VimSendEscNormal", "VimLongEscNormal", "VimCtrlBracketToEsc", "VimCtrlBracketNormal", "VimSendCtrlBracketNormal", "VimLongCtrlBracketNormal", "VimRestoreIME", "VimJJ", "VimChangeCaretWidth", "VimCheckChr"]
 
     ; ToolTip Information
     this.Info := {}
@@ -252,7 +278,13 @@ class VimAhk{
                   , "ahk_exe WINWORD.exe"   ; Word
                   , "ahk_exe wordpad.exe"   ; WordPad
                   , "ahk_exe Q-Dir_x64.exe" ; Q-dir
-                  , "ahk_exe Q-Dir.exe"]    ; Q-dir
+                  , "ahk_exe Q-Dir.exe"     ; Q-dir
+                  , "ahk_exe notepad++.exe" ; Notepad++
+                  , "ahk_exe Obsidian.exe"  ; Obsidian
+                  , "ahk_exe sm18.exe"      ; SuperMemo 18
+                  , "ahk_exe sm17.exe"      ; SuperMemo 17
+                  , "ahk_exe sm16.exe"      ; SuperMemo 16
+                  , "ahk_exe sm15.exe"]     ; SuperMemo 15
 
     DefaultGroup := ""
     for i, v in DefaultList
@@ -270,9 +302,9 @@ class VimAhk{
     if(not this.Enabled){
       Return False
     }else if(this.Conf["VimAppList"]["val"] == "Allow List"){
-      Return WinActive("ahk_group " . this.GroupName)
+      Return WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")
     }else if(this.Conf["VimAppList"]["val"] == "Deny List"){
-      Return !WinActive("ahk_group " . this.GroupName)
+      Return !WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")
     }
     Return True
   }

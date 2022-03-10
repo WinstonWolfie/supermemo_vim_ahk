@@ -5,6 +5,7 @@ u::Send,^z
 
 ; Combine lines
 +j:: Send, {End}{Space}{Delete}
++k:: Send, {up}{End}{Space}{Delete}
 
 ; Change case
 ~::
