@@ -116,7 +116,10 @@ Return
   Vim.State.SetMode("Vim_Normal")
 Return
 
-p::send ^v
+p::
+	send ^v
+	Vim.State.SetMode("Vim_Normal")
+Return
 
 s:: ; *s*ubstitue
 	send {bs}

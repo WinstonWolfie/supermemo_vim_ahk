@@ -11,37 +11,21 @@ Return
 
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind")
 +h:: ; move to top of screen
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-	if x_coord {
-		CoordMode, Mouse, Screen
-		x_coord -= 10
-		y_coord -= 22
-		click, %x_coord% %y_coord%
+	if SMMouseMoveTop(true)
 		send {left}{home}
-	}
+	else
+		send ^{home}
 Return
 
 +m:: ; move to middle of screen
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_up, y_up)
-	FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_down, y_down)
-	if x_up {
-		CoordMode, Mouse, Screen
-		x_coord := x_up - 10
-		y_coord := (y_up + y_down) / 2
-		Click, %x_coord% %y_coord%
-		send {home}
-	}
+	SMMouseMoveMiddle(true)
+	send {home}
 Return
 
 +l:: ; move to bottom of screen
-	FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_coord, y_coord)
-	if x_coord {
-		CoordMode, Mouse, Screen
-		x_coord -= 10
-		y_coord += 21
-		click, %x_coord% %y_coord%
-		send {home}
-	}
+	if !SMMouseMoveBottom(true)
+		send ^{end}
+	send {home}
 Return
 
 */:: ; better search

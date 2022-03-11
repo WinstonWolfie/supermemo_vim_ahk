@@ -59,10 +59,7 @@ return
 	Vim.State.SetNormal()
 return
 
-#If Vim.IsVimGroup() && WinActive("ahk_class TElWind") and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
-\::send ^{f3}
-
-#If Vim.IsVimGroup() && WinActive("ahk_class TElWind") && IsSMEditingHTML()
+#If Vim.IsVimGroup() && IsSMEditingHTML()
 ^!k::
 	send ^k
 	WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2 ; a bit more delay since everybody knows how slow IE can be
@@ -71,53 +68,40 @@ return
 	Vim.State.SetNormal()
 return
 
+#If Vim.IsVimGroup() && WinActive("ahk_class TElWind") and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
+\::send ^{f3}
+
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
-!a:: ; insert the accident activity
+!a:: ; insert accident activity
 	Vim.State.SetNormal()
-	InputBox, user_input, Accident activity, Please enter the name of the activity. Add ! at the beginning if you don't want to split the current activity.,, 256, 164
-	if ErrorLevel
-		return
-	replacement := RegExReplace(user_input, "^!") ; remove the "!"
-	if (replacement != user_input) { ; you entered an "!"
-		split = 0
-		user_input := replacement
-	} else
-		split = 1
-	if (user_input = "b") ; shortcuts
-		user_input = Break
-	else if (user_input = "g")
-		user_input = Gaming
-	else if (user_input = "c")
-		user_input = Coding
-	else if (user_input = "s")
-		user_input = Sports
-	else if (user_input = "o")
-		user_input = Social
-	else if (user_input = "w")
-		user_input = Writing
-	else if (user_input = "f")
-		user_input = Family
-	else if (user_input = "p")
-		user_input = Passive
-	else if (user_input = "m")
-		user_input = Meal
-	else if (user_input = "r")
-		user_input = Rest
-	else if (user_input = "h")
-		user_input = School
-	else if (user_input = "l")
-		user_input = Planning
-	if (split = 1) {
+	Gui, Add, Text,, &Accident activity:
+	list = Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM
+	Gui, Add, Combobox, vActivity gAutoComplete, %list%
+	Gui, Add, CheckBox, vNoSplit, &Do not split current activity
+	Gui, Add, Button, default, Insert 
+	Gui, Show,, Insert accident activity
+Return
+
+GuiEscape:
+GuiClose:
+	Gui, Destroy
+return
+
+ButtonInsert:
+	Gui, Submit
+	Gui, Destroy
+	VimToolTipFunc("Inserting activity: " . activity)
+	if !NoSplit {
 		send ^t ; split
 		WinWaitActive, ahk_class TInputDlg,, 0
 		send {enter}
 		WinWaitActive, ahk_class TPlanDlg,, 0
 	}
 	send {down}{Insert} ; inserting one activity below the current selected activity and start editing
-	SendInput {raw}%user_input% ; SendInput is faster than clip() here
+	SendInput {raw}%activity% ; SendInput is faster than clip() here
 	send !b ; begin
-	sleep 400 ; wait for "Mark the slot with the drop to efficiency?"
-	if WinActive("ahk_class TMsgDialog")
+	WinWaitNotActive, ahk_class TPlanDlg,, 0.3 ; wait for "Mark the slot with the drop to efficiency?"
+	if !ErrorLevel
 		send y
 	WinWaitActive, ahk_class TPlanDlg,, 0
 	send ^s{esc} ; save and exits
@@ -127,4 +111,5 @@ return
 	send {enter} ; cancel alarm
 	WinWaitActive, ahk_class TElWind,, 0
 	send ^p ; open plan again
+	ToolTip
 return

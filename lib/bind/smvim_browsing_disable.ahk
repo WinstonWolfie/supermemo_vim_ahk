@@ -1,11 +1,13 @@
 ﻿; making sure grading works (in case VimDisableUnused > 2)
 #If Vim.IsVimGroup() && IsSMGrading()
-~0::
-~1::
-~2::
-~3::
-~4::
-~5::
+; cannot use ~ here to send the key itself
+0::
+1::
+2::
+3::
+4::
+5::
+	send % A_ThisHotkey
 Return
 
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and (Vim.Conf["VimDisableUnused"]["val"] == 2)
@@ -15,7 +17,7 @@ c::
 d::
 e::
 f::
-g::
+; g:: ; need g state
 h::
 i::
 j::

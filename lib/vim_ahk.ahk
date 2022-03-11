@@ -4,6 +4,7 @@
 #Include %A_LineFile%\..\util\Clip.ahk
 #Include %A_LineFile%\..\util\FindClick.ahk
 #Include %A_LineFile%\..\util\functions.ahk
+#Include %A_LineFile%\..\util\CbAutoComplete.ahk
 
 ; Classes, Functions
 #Include %A_LineFile%\..\vim_about.ahk

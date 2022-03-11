@@ -1,121 +1,7 @@
-﻿; Inspired by Vimium: https://github.com/philc/vimium
+﻿; Hotkeys in this file are inspired by Vimium: https://github.com/philc/vimium
 
-; In normal mode, focused on element window, no caret
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
-h::
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-	if x_coord {
-		CoordMode, Mouse, Screen
-		x_coord -= 10
-		MouseMove, %x_coord%, %y_coord%
-		send {WheelLeft}
-	}
-	; if IsSMEditingHTML()
-		; send {left}
-	; else
-		; FindClick(A_ScriptDir . "\lib\bind\util\left_arrow.png")
-Return
-	
-j::
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-	if x_coord {
-		CoordMode, Mouse, Screen
-		x_coord -= 10
-		MouseMove, %x_coord%, %y_coord%
-		send {WheelDown}
-	}
-Return
-
-k::
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-	if x_coord {
-		CoordMode, Mouse, Screen
-		x_coord -= 10
-		MouseMove, %x_coord%, %y_coord%
-		send {WheelUp}
-	}
-Return
-
-l::
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-	if x_coord {
-		CoordMode, Mouse, Screen
-		x_coord -= 10
-		MouseMove, %x_coord%, %y_coord%
-		send {WheelRight}
-	}
-Return
-
-d::
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-	if x_coord {
-		CoordMode, Mouse, Screen
-		x_coord -= 10
-		MouseMove, %x_coord%, %y_coord%
-		send {WheelDown 2}
-	}
-Return
-
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and !(Vim.State.g)
-u::
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-	if x_coord {
-		CoordMode, Mouse, Screen
-		x_coord -= 10
-		MouseMove, %x_coord%, %y_coord%
-		send {WheelUp 2}
-	}
-Return
-
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
-r::send !{home}!{left} ; reload
-
-f:: ; click on html component
-	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_up, y_up)
-	FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_down, y_down)
-	if x_up {
-		CoordMode, Mouse, Screen
-		x_coord := x_up - 10
-		y_coord := (y_up + y_down) / 2
-		Click, %x_coord% %y_coord%
-		send {home}
-	} else
-		send q{home}
-	; click 24 380
-	; sleep 30
-	; click 39 380
-Return
-
-; Open windows
-c::send !c ; open content window
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !A_CaretX and !(Vim.State.g)
-b::send ^{space} ; open browser
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and !(Vim.State.g)
-o::send ^o ; favourites
-
-; Navigation
-+h::send !{left} ; go back in history
-+l::send !{right} ; go forward in history
-+j::send !{pgdn} ; J, gt: go down one element
-+k::send !{pgup} ; K, gT: go up one element
-
-t::send !n ; create new element
-
-x::send ^+{del} ; delete current element
-+x::send ^+{enter} ; done!
-
-m::send ^{f7} ; save read point
-`::send !{f7} ; go to read point
-+m::send ^+{f7} ; clear read point
-
-; Orginal SM shortcuts
-~q:: ; focus to question field; smvim extract
-~a:: ; focus to answer field; vim append
-~e:: ; focus all fields; vim go forward
-~^d:: ; dismiss; vim page down
-~^j:: ; change interval; vim join lines
-Return
-
+; G state on top to have higher priority
+; putting those below would make gu stops working (u triggers scroll up)
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and (Vim.State.g)
 s:: ; gs: go to source link
 	send !{f10}fs
@@ -130,7 +16,8 @@ s:: ; gs: go to source link
 		RegExMatch(Clipboard, "Link: \K.*", link)
 		Clipboard := clipSave ; restore clipboard here in case Run doesn't work
 		run % link
-	}
+	} else
+		VimToolTipFunc("No link found.")
 	Clipboard := clipSave
 Return
 
@@ -162,6 +49,57 @@ Return
 +u:: ; gU: click source button
 	FindClick(A_ScriptDir . "\lib\bind\util\source_element_window.png")
 	Vim.State.SetMode()
+Return
+
+; In normal mode, focused on element window, no caret
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX && SMMouseMoveTop()
+h::send {WheelLeft}
+j::send {WheelDown}
+k::send {WheelUp}
+l::send {WheelRight}
+d::send {WheelDown 2}
+u::send {WheelUp 2}
+
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+r::send !{home}!{left} ; reload
+
+f:: ; click on html component
+	if !SMMouseMoveMiddle(true)
+		send q
+	send {home}
+	; click 24 380
+	; sleep 30
+	; click 39 380
+Return
+
+; Open windows
+c::send !c ; open content window
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !A_CaretX
+b::send ^{space} ; open browser
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+o::send ^o ; favourites
+
+; Navigation
++h::send !{left} ; go back in history
++l::send !{right} ; go forward in history
++j::send !{pgdn} ; J, gt: go down one element
++k::send !{pgup} ; K, gT: go up one element
+
+t::send !n ; create new element
+
+x::send ^+{del} ; delete current element
++x::send ^+{enter} ; done!
+
+m::send ^{f7} ; save read point
+`::send !{f7} ; go to read point
++m::send ^+{f7} ; clear read point
+
+; Orginal SM shortcuts
+~q:: ; focus to question field; smvim extract
+~a:: ; focus to answer field; vim append
+~e:: ; focus all fields; vim go forward
+~^d:: ; dismiss; vim page down
+~^j:: ; change interval; vim join lines
 Return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") && !A_CaretX and (Vim.State.IsCurrentVimMode("Vim_ydc_y"))
