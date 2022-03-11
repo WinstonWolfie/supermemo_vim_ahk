@@ -1,16 +1,16 @@
 ﻿; Inspired by Vimium: https://github.com/philc/vimium
 
 ; In normal mode, focused on element window, no caret
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and !(Vim.State.g)
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
 h::
 	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
 	if x_coord {
 		CoordMode, Mouse, Screen
-		x_coord -= 9
+		x_coord -= 10
 		MouseMove, %x_coord%, %y_coord%
 		send {WheelLeft}
 	}
-	; if SMEditingHTML()
+	; if IsSMEditingHTML()
 		; send {left}
 	; else
 		; FindClick(A_ScriptDir . "\lib\bind\util\left_arrow.png")
@@ -20,7 +20,7 @@ j::
 	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
 	if x_coord {
 		CoordMode, Mouse, Screen
-		x_coord -= 9
+		x_coord -= 10
 		MouseMove, %x_coord%, %y_coord%
 		send {WheelDown}
 	}
@@ -30,7 +30,7 @@ k::
 	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
 	if x_coord {
 		CoordMode, Mouse, Screen
-		x_coord -= 9
+		x_coord -= 10
 		MouseMove, %x_coord%, %y_coord%
 		send {WheelUp}
 	}
@@ -40,7 +40,7 @@ l::
 	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
 	if x_coord {
 		CoordMode, Mouse, Screen
-		x_coord -= 9
+		x_coord -= 10
 		MouseMove, %x_coord%, %y_coord%
 		send {WheelRight}
 	}
@@ -50,30 +50,32 @@ d::
 	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
 	if x_coord {
 		CoordMode, Mouse, Screen
-		x_coord -= 9
+		x_coord -= 10
 		MouseMove, %x_coord%, %y_coord%
 		send {WheelDown 2}
 	}
 Return
 
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and !(Vim.State.g)
 u::
 	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
 	if x_coord {
 		CoordMode, Mouse, Screen
-		x_coord -= 9
+		x_coord -= 10
 		MouseMove, %x_coord%, %y_coord%
 		send {WheelUp 2}
 	}
 Return
 
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
 r::send !{home}!{left} ; reload
 
-f:: ; focus to element window
+f:: ; click on html component
 	FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_up, y_up)
 	FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_down, y_down)
 	if x_up {
 		CoordMode, Mouse, Screen
-		x_coord := x_up - 9
+		x_coord := x_up - 10
 		y_coord := (y_up + y_down) / 2
 		Click, %x_coord% %y_coord%
 		send {home}

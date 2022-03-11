@@ -3,7 +3,7 @@
 v::Vim.State.SetMode("Vim_VisualFirst")
 ^v::
   if WinActive("ahk_class TElWind") {
-	if SMEditingHTML() {
+	if IsSMEditingHTML() {
 		send ^{down}^+{up}{left}^+{down}
 		Vim.State.SetMode("Vim_VisualBlockFirst")
 	} else {
@@ -34,7 +34,7 @@ Return
 		Vim.State.SetNormal()
 		Return
 	} else if WinActive("ahk_class TElWind") {
-		if SMEditingHTML() {
+		if IsSMEditingHTML() {
 			send ^{down}^+{up}{left}^+{down}
 			Vim.State.SetMode("Vim_VisualBlockFirst")
 		} else {

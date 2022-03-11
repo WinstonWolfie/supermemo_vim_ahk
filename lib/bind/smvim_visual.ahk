@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind") && SMEditingHTML()
+﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind") && IsSMEditingHTML()
 ~^+i::Vim.State.SetMode("Vim_Normal") ; ignore
 
 .:: ; selected text becomes [...]

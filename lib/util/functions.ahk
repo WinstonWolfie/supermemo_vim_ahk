@@ -34,17 +34,23 @@ RemoveToolTip:
 	ToolTip
 return
 
-SMEditingHTML() {
+IsSMEditingHTML() {
 	ControlGetFocus, current_focus, ahk_class TElWind
 	Return InStr(current_focus, "Internet Explorer_Server")
 }
 
-SMEditingPlainText() {
+IsSMEditingPlainText() {
 	ControlGetFocus, current_focus, ahk_class TElWind
 	Return InStr(current_focus, "TMemo")
 }
 
-SMEditingText() {
+IsSMEditingText() {
 	ControlGetFocus, current_focus, ahk_class TElWind
 	Return InStr(current_focus, "Internet Explorer_Server") || InStr(current_focus, "TMemo")
+}
+
+IsSMGrading() {
+	ControlGetFocus, current_focus, ahk_class TElWind
+	; if focused on either 5 of the grading buttons or the cancel button
+	return (current_focus = "TBitBtn4" || current_focus = "TBitBtn5" || current_focus = "TBitBtn6" || current_focus = "TBitBtn7" || current_focus = "TBitBtn8" || current_focus = "TBitBtn9")
 }

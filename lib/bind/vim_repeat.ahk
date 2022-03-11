@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_"))
+﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) && !IsSMGrading()
 1::
 2::
 3::
@@ -12,10 +12,18 @@
   Vim.State.SetMode("", 0, n_repeat)
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) and (Vim.State.n > 0)
+#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) and (Vim.State.n > 0) && !IsSMGrading()
 0:: ; 0 is used as {Home} for Vim.State.n=0
   n_repeat := Vim.State.n*10 + A_ThisHotkey
   Vim.State.SetMode("", 0, n_repeat)
 Return
 
-#If
+; making sure grading works (in case VimDisableUnused > 2)
+#If Vim.IsVimGroup() && IsSMGrading()
+~0::
+~1::
+~2::
+~3::
+~4::
+~5::
+Return

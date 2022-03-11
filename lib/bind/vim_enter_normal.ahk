@@ -4,13 +4,13 @@ Esc::Vim.State.HandleEsc()
 
 enter::
 	; in Plan window pressing enter simply goes to the next field; no need to go back to normal
-	if !WinActive("ahk_class TPlanDlg") && WinActive("ahk_class TElWind") && !SMEditingText() ; in element window pressing enter to learn goes to normal
+	if !WinActive("ahk_class TPlanDlg") && WinActive("ahk_class TElWind") && !IsSMEditingText() ; in element window pressing enter to learn goes to normal
 		Vim.State.SetNormal()
 	send {enter}
 Return
 
 space:: ; space: for Learn button
-if WinActive("ahk_class TElWind") && !SMEditingText()
+if WinActive("ahk_class TElWind") && !IsSMEditingText()
 	Vim.State.SetNormal()
 send {space}
 return

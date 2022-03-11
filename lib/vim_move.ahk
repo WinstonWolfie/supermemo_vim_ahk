@@ -236,7 +236,7 @@
 			Send, ^+{End}+{Home}
 		else
 			Send, ^{End}{Home}
-		if SMEditingHTML() {
+		if IsSMEditingHTML() {
 			send ^+{up} ; if there are references this would select (or deselect in visual mode) them all
 			if (this.shift == 1)
 				send +{down} ; go down one line, if there are references this would include the #SuperMemo Reference
