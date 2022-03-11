@@ -69,7 +69,11 @@ return
 return
 
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind") and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
-\::send ^{f3}
+\::
+	send ^{f3}
+	Vim.State.SetMode("Insert")
+	back_to_normal = 2
+Return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
 !a:: ; insert accident activity

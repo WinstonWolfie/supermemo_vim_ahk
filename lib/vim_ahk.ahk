@@ -85,26 +85,11 @@ class VimAhk{
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe ; q-dir
 	
 	; SuperMemo
-	GroupAdd, SuperMemo, ahk_exe sm18.exe
-	GroupAdd, SuperMemo, ahk_exe sm17.exe
-	GroupAdd, SuperMemo, ahk_exe sm16.exe
-	GroupAdd, SuperMemo, ahk_exe sm15.exe
-	
-	; Excluded
-	; SuperMemo
-	GroupAdd, Excluded, ahk_class TMsgDialog ; yes or no window
-	GroupAdd, Excluded, ahk_class TChoicesDlg ; choices
-	GroupAdd, Excluded, ahk_class TChecksDlg ; checks
-	GroupAdd, Excluded, ahk_class TRegistryForm ; registries
-	GroupAdd, Excluded, ahk_class TTitleEdit ; edit title
-	GroupAdd, Excluded, ahk_class TInputDlg ; input dialogue
-	GroupAdd, Excluded, ahk_class TTargetDlg ; favourites
-	GroupAdd, Excluded, ahk_class TFileBrowser ; file browser
-	GroupAdd, Excluded, ahk_class TPriorityDlg ; priority dialogue
-	GroupAdd, Excluded, ahk_class TGetIntervalDlg ; interval dialogue
-	GroupAdd, Excluded, ahk_class TCommanderDlg ; commander
-	GroupAdd, Excluded, ahk_class TWebDlg ; import dialogue
-	GroupAdd, Excluded, ahk_class TElParamDlg ; element parameter
+	GroupAdd, SuperMemo, ahk_class TElWind
+	GroupAdd, SuperMemo, ahk_class TContents
+	GroupAdd, SuperMemo, ahk_class TBrowser
+	GroupAdd, SuperMemo, ahk_class TPlanDlg
+	GroupAdd, SuperMemo, ahk_class TTaskManager
 
     ; Configuration values for Read/Write ini
     ; setting, default, val, description, info
@@ -238,11 +223,14 @@ class VimAhk{
   }
 
   TwoLetterNormalMapsEnabled(){
-    Return this.IsVimGroup() && (this.State.StrIsInCurrentVimMode("Insert")) && this.TwoLetterNormalIsSet
+    Return this.IsVimGroup() && (this.State.StrIsInCurrentVimMode("Insert") || (this.State.IsCurrentVimMode("Vim_Normal") && A_CaretX && WinActive("ahk_class TElWind"))) && this.TwoLetterNormalIsSet
   }
 
   TwoLetterEnterNormal(){
-    SendInput, {BackSpace 1}
+	if this.State.StrIsInCurrentVimMode("Insert")
+		SendInput, {BackSpace 1}
+	else
+		SendInput {up}{esc}
     this.State.SetNormal()
   }
 
@@ -284,11 +272,11 @@ class VimAhk{
                   , "ahk_exe Q-Dir.exe"     ; Q-dir
                   , "ahk_exe notepad++.exe" ; Notepad++
                   , "ahk_exe Obsidian.exe"  ; Obsidian
-                  , "ahk_exe sm18.exe"      ; SuperMemo 18
-                  , "ahk_exe sm17.exe"      ; SuperMemo 17
-                  , "ahk_exe sm16.exe"      ; SuperMemo 16
-                  , "ahk_exe sm15.exe"]     ; SuperMemo 15
-
+                  , "ahk_class TElWind"
+                  , "ahk_class TContents"
+                  , "ahk_class TBrowser"
+                  , "ahk_class TPlanDlg"
+                  , "ahk_class TTaskManager"]
     DefaultGroup := ""
     for i, v in DefaultList
     {

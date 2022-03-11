@@ -90,10 +90,6 @@ t::send !n ; create new element
 x::send ^+{del} ; delete current element
 +x::send ^+{enter} ; done!
 
-m::send ^{f7} ; save read point
-`::send !{f7} ; go to read point
-+m::send ^+{f7} ; clear read point
-
 ; Orginal SM shortcuts
 ~q:: ; focus to question field; smvim extract
 ~a:: ; focus to answer field; vim append

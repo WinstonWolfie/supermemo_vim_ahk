@@ -10,6 +10,21 @@ Return
 Return
 
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind")
+m::
+	send ^{f7} ; set read point
+	VimToolTipFunc("Read point set")
+Return
+
+`::
+	send !{f7} ; go to read point
+	VimToolTipFunc("Go to read point")
+Return
+
+!m::
+	send ^+{f7} ; clear read point
+	VimToolTipFunc("Read point cleared")
+Return
+
 +h:: ; move to top of screen
 	if SMMouseMoveTop(true)
 		send {left}{home}

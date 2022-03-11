@@ -1,5 +1,9 @@
 ﻿#If Vim.IsVimGroup()
-Esc::Vim.State.HandleEsc()
+Esc::
+	Vim.State.HandleEsc()
+	back_to_normal = 0
+Return
+
 ^[::Vim.State.HandleCtrlBracket()
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Insert")) and (Vim.Conf["VimJJ"]["val"] == 1)
@@ -9,4 +13,11 @@ Esc::Vim.State.HandleEsc()
     SendInput, {BackSpace 2}
     Vim.State.SetNormal()
   }
+Return
+
+#If back_to_normal
+~enter::
+	if back_to_normal = 1
+		Vim.State.SetNormal()
+	back_to_normal -= 1
 Return
