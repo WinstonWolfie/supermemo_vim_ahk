@@ -17,13 +17,3 @@ Return
   n_repeat := Vim.State.n*10 + A_ThisHotkey
   Vim.State.SetMode("", 0, n_repeat)
 Return
-
-; making sure grading works (in case VimDisableUnused > 2)
-#If Vim.IsVimGroup() && IsSMGrading()
-~0::
-~1::
-~2::
-~3::
-~4::
-~5::
-Return
