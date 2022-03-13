@@ -1,4 +1,5 @@
-﻿;=======================================================================================
+﻿; https://www.autohotkey.com/boards/viewtopic.php?t=15002
+;=======================================================================================
 ;
 ; Function:      CbAutoComplete
 ; Description:   Auto-completes typed values in a ComboBox.

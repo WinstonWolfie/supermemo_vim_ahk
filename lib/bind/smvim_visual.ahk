@@ -7,7 +7,7 @@
 	Vim.State.SetMode("Vim_Normal")
 return
 
-f:: ; parse html (*f*ormat)
+p:: ; p*a*rse html
 ^+1::
 	send ^+1
 	Vim.State.SetMode("Vim_Normal")
@@ -34,6 +34,11 @@ z::  ; clo*z*e
 	Vim.State.SetMode("Vim_Normal")
 return
 
+~!t::
+~!q::
+	Vim.State.SetMode("Vim_Normal")
+Return
+
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 *!+z::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
@@ -47,7 +52,7 @@ return
 	Vim.State.SetMode("Vim_Normal")
 	if !user_input
 		return
-	WinWaitActive, ahk_class TMsgDialog,, 0
+	WinWaitActive, ahk_class TMsgDialog,, 0 ; warning on trying to cloze on items
 	if !ErrorLevel
 		return
 	VimToolTipFunc("Cloze hinting...", true)
@@ -99,7 +104,7 @@ return
 		sleep 100
 		Vim.Move.Move("+g")
 		send {down}!\\
-		WinWaitActive ahk_class TMsgDialog,, 0
+		WinWaitNotActive, ahk_class TElWind,, 0
 		if !ErrorLevel
 			send {enter}
 		clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>[" . cloze . "</SPAN>"))

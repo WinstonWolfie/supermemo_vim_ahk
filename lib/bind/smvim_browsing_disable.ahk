@@ -1,4 +1,4 @@
-﻿; making sure grading works (in case VimDisableUnused > 2)
+﻿; making sure grading works (in case VimDisableUnused > 1)
 #If Vim.IsVimGroup() && IsSMGrading()
 ; cannot use ~ here to send the key itself
 0::
@@ -16,8 +16,8 @@ b::
 c::
 d::
 e::
-f::
-; g:: ; need g state
+; f:: ; find
+; g:: ; g state
 h::
 i::
 j::
@@ -63,16 +63,16 @@ z::
 +x::
 +y::
 +z::
-0::
-1::
-2::
-3::
-4::
-5::
-6::
-7::
-8::
-9::
+; 0:: ; repeat
+; 1::
+; 2::
+; 3::
+; 4::
+; 5::
+; 6::
+; 7::
+; 8::
+; 9::
 `::
 ~::
 !::
@@ -112,7 +112,7 @@ Return
 *c::
 *d::
 *e::
-*f::
+; *f::
 ; *g::
 *h::
 *i::
@@ -133,16 +133,16 @@ Return
 *x::
 *y::
 *z::
-0::
-1::
-2::
-3::
-4::
-5::
-6::
-7::
-8::
-9::
+; 0::
+; 1::
+; 2::
+; 3::
+; 4::
+; 5::
+; 6::
+; 7::
+; 8::
+; 9::
 `::
 ~::
 !::

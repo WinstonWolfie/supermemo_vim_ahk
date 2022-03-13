@@ -51,6 +51,12 @@ Return
 	Vim.State.SetMode()
 Return
 
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser") and (Vim.State.g)
++u:: ; gU: click source button
+	FindClick(A_ScriptDir . "\lib\bind\util\source_browser.png")
+	Vim.State.SetMode()
+Return
+
 ; In normal mode, focused on element window, no caret
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX && SMMouseMoveTop()
 h::send {WheelLeft}
@@ -96,7 +102,12 @@ x::send ^+{del} ; delete current element
 ~e:: ; focus all fields; vim go forward
 ~^d:: ; dismiss; vim page down
 ~^j:: ; change interval; vim join lines
+~^f:: ; find
+~^v:: ; paste image
 Return
+
+p::send ^{f10} ; replay auto-play
++p::send ^{t 2}{f9} ; play video in default system player / edit script component
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") && !A_CaretX and (Vim.State.IsCurrentVimMode("Vim_ydc_y"))
 y:: ; yy: copy current source url

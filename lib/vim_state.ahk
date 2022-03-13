@@ -13,7 +13,7 @@
     , "Command" , "Command_w", "Command_q", "Z", "r_once", "r_repeat"
 	, "SMVim_Cloze", "SMVim_ClozeFirst", "SMVim_Extract", "SMVim_ExtractFirst"
 	, "Vim_VisualBlock", "Vim_VisualBlockFirst", "Vim_ydc_yFirst"
-	, "Vim_ydc_dFirst", "Vim_ydc_cFirst"]
+	, "Vim_ydc_dFirst", "Vim_ydc_cFirst", "ft_f", "ft_t", "ft_fVisual", "ft_tVisual"]
 
     this.Mode := "Insert"
     this.g := 0
@@ -50,6 +50,7 @@
   }
 
   SetMode(Mode="", g=0, n=0, LineCopy=-1){
+	previous_mode := this.Mode
     this.CheckValidMode(Mode)
     if(Mode != ""){
       this.Mode := Mode
@@ -57,7 +58,8 @@
         VIM_IME_SET(this.LastIME)
       }
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
-      this.Vim.Caret.SetCaret(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
+	  if A_CaretX && previous_mode != Mode && !InStr(Mode, "Vim_ft") && !InStr(previous_mode, "Vim_ft") && !InStr(Mode, "Vim_ydc_y") && !InStr(previous_mode, "Vim_ydc_y") && !InStr(Mode, "Vim_ydc_d") && !InStr(previous_mode, "Vim_ydc_d")
+		this.Vim.Caret.SetCaret(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
     }
     if(g != -1){
       this.g := g

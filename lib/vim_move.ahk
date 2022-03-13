@@ -132,7 +132,7 @@
     }
 
     ; Left/Right
-    if(not this.Vim.State.StrIsInCurrentVimMode("Line")){
+    if(not this.Vim.State.StrIsInCurrentVimMode("Line")) && !this.Vim.State.StrIsInCurrentVimMode("Block") {
       ; For some cases, need '+' directly to continue to select
       ; especially for cases using shift as original keys
       ; For now, caret does not work even add + directly
@@ -187,7 +187,13 @@
           Send, ^{Right}
         }
       }else if(key == "e"){
-        if(this.shift == 1){
+		if this.Vim.State.g ; ge
+			if(this.shift == 1){
+			  Send, +^{Left}+{Left}
+			}else{
+			  Send, ^{Left}{left}
+			}
+        else if(this.shift == 1){
 		  if this.Vim.State.StrIsInCurrentVimMode("First") {
 			Send, +^{Right}+{Left}
 			previous_mode := this.Vim.State.Mode
@@ -224,14 +230,30 @@
     }else if(key == "^f"){
       Send, {PgDn}
     }else if(key == "g"){
-	  if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+	  if this.Vim.State.n > 0 {
+	    line := this.Vim.State.n - 1
+	    this.Vim.State.n := 0
+		if WinActive("ahk_class TElWind") && !A_CaretX ; browsing
+			send ^t
+		SendInput ^{home}{down %line%}
+	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
 		send ^t^{home}{esc}
 	  else
 		Send, ^{Home}
     }else if(key == "+g"){
-	  if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+	  if this.Vim.State.n > 0 {
+	    line := this.Vim.State.n - 1
+	    this.Vim.State.n := 0
+		if SMMouseMoveTop(true)
+			send {left}{home}
+		else if WinActive("ahk_class TElWind") && !A_CaretX ; browsing and no scrollbar
+			send ^t^{home}
+		else
+			send ^{home}
+		SendInput {down %line%}
+	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
 		send ^t^{end}{esc}
-	  else
+	  else {
 	    if (this.shift == 1)
 			Send, ^+{End}+{Home}
 		else
@@ -251,6 +273,7 @@
 				else
 				  send ^{end}{home}
 		}
+	  }
     }else if(key == "{"){
       if(this.shift == 1){
 	    Send, +^{up}

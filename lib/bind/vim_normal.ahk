@@ -39,7 +39,7 @@ Return
 Space::Send, {Right}
 
 ; period
-.::Send, +^{Right}{BS}^v
+; .::Send, +^{Right}{BS}^v
 
 ; Q-dir
 #If Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")

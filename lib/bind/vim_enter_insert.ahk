@@ -45,12 +45,6 @@ Return
 		Vim.State.SetMode("Insert")
 Return
 
-~#r::
-	WinWaitActive, Run,, 0
-	if !ErrorLevel
-		Vim.State.SetMode("Insert")
-Return
-
 alt:: ; for access keys
 	; can't use KeyWait alt, any hotkeys that use modifier alt would trigger this script
 	send {alt} ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert

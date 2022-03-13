@@ -45,27 +45,24 @@ Return
 
 */:: ; better search
 	ctrl_state := GetKeyState("Ctrl") ; visual
-	shift_state := GetKeyState("RShift") ; caret on the right
-	alt_state := GetKeyState("RAlt") ; followed by a cloze
+	shift_state := GetKeyState("Shift") ; caret on the right
+	alt_state := GetKeyState("alt") ; followed by a cloze
 	if (ctrl_state = 1 && shift_state = 1 && alt_state = 1) || (ctrl_state = 1 && alt_state = 1) { ; more than 1 modifier keys
 		MsgBox, Which one do you want??
 		Return
 	}
-	if IsSMEditingPlainText() {
-		MsgBox, Sorry, SuperMemo doesn't support f3 search on text components.
-		Return
-	}
-	if !IsSMEditingHTML() { ; also not editing html; so no text component is focused
+	if !IsSMEditingText() {
 		send ^t{esc}q ; focus to question field if no field is focused
-		sleep 100 ; make sure current_focus is updated
+		sleep 100 ; make sure current_focus is updated		
+		if !IsSMEditingText() { ; still found no text
+			MsgBox, Text not found.
+			Return
+		}
 	}
-	if IsSMEditingPlainText() { ; question field is plain text
-		MsgBox, Sorry, SuperMemo doesn't support f3 search on text components.
-		Return
-	}
-	if (ctrl_state = 1)
+	ControlGetFocus, current_focus, ahk_class TElWind
+	if ctrl_state = 1
 		InputBox, user_input, Search, Find text in current field. Enter nothing to repeat the last search (highlights will be automatically removed). Vim will go to visual mode after the search,, 256, 180
-	else if (alt_state = 1)
+	else if alt_state = 1
 		InputBox, user_input, Search, Find text in current field. Enter nothing to repeat the last search (highlights will be automatically removed). Your search result will be clozed,, 256, 180
 	else
 		InputBox, user_input, Search, Find text in current field. Enter nothing to repeat the last search (highlights will be automatically removed),, 256, 160
@@ -77,41 +74,63 @@ Return
 		last_search := user_input ; register user_input into last_search
 	if !user_input ; still empty
 		Return
-	send {esc}{f3} ; esc to exit field, so it can return to the same field later
-	WinWaitActive, ahk_class TMyFindDlg,, 0
-	if ErrorLevel
-		Return
-	clip(user_input)
-	send {enter}
-	WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
-	if ErrorLevel
-		Return
-	if (shift_state = 1)
-		send {right} ; put caret on right of searched text
-	else if (ctrl_state = 1)
-		Vim.State.SetMode("Vim_VisualChar")
-	else if (alt_state = "U") ; all modifier keys are not pressed
-		send {left} ; put caret on left of searched text
-	send ^{enter} ; to open commander; convienently, if a "not found" window pops up, this would close it
-	WinWaitActive, ahk_class TCommanderDlg,, 0
-	if ErrorLevel {
-		send {esc}
-		MsgBox, Not found.
-		Return
+	if InStr(current_focus, "TMemo") {
+		send ^a
+		pos := InStr(clip(), user_input)
+		if pos {
+			pos -= 1
+			SendInput {left}{right %pos%}
+			input_len := StrLen(user_input)
+			if shift_state = 1
+				SendInput {right %input_len%}
+			else if (ctrl_state = 1 || alt_state = 1) {
+				SendInput +{right %input_len%}
+				if ctrl_state = 1
+					Vim.State.SetMode("Vim_VisualChar")
+				else if alt_state = 1
+					send !z
+			}
+		} else {
+			MsgBox, Not found.
+			Return
+		}
+	} else {
+		send {esc}{f3} ; esc to exit field, so it can return to the same field later
+		WinWaitActive, ahk_class TMyFindDlg,, 0
+		if ErrorLevel
+			Return
+		clip(user_input)
+		send {enter}
+		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
+		if ErrorLevel
+			Return
+		if shift_state = 1
+			send {right} ; put caret on right of searched text
+		else if ctrl_state = 1
+			Vim.State.SetMode("Vim_VisualChar")
+		else if alt_state = 0 ; all modifier keys are not pressed
+			send {left} ; put caret on left of searched text
+		send ^{enter} ; to open commander; convienently, if a "not found" window pops up, this would close it
+		WinWaitActive, ahk_class TCommanderDlg,, 0
+		if ErrorLevel {
+			send {esc}
+			MsgBox, Not found.
+			Return
+		}
+		send h{enter}
+		if alt_state = 1
+			send !z ; cloze
+		else if ctrl_state = 0 ; alt is up and ctrl is up; shift can be up or down
+			send {esc}^t ; to return to the same field
+		else if (ctrl_state = 1) { ; sometimes SM doesn't focus to anything after the search
+			WinWaitActive, ahk_class TElWind,, 0
+			ControlGetFocus, current_focus_after, ahk_class TElWind
+			if !current_focus_after
+				ControlFocus, %current_focus%, ahk_class TElWind
+		}
+		if WinExist("ahk_class TMyFindDlg") ; clears search box window
+			WinClose
 	}
-	send h{enter}
-	if (alt_state = 1)
-		send !z ; cloze
-	else if (ctrl_state = 0) ; alt is up and ctrl is up; shift can be up or down
-		send {esc}^t ; to return to the same field
-	else if (ctrl_state = 1) { ; sometimes SM doesn't focus to anything after the search
-		WinWaitActive, ahk_class TElWind,, 0
-		ControlGetFocus, current_focus_after, ahk_class TElWind
-		if !current_focus_after
-			ControlFocus, %current_focus%, ahk_class TElWind
-	}
-	if WinExist("ahk_class TMyFindDlg") ; clears search box window
-		WinClose
 Return
 
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && IsSMEditingHTML()

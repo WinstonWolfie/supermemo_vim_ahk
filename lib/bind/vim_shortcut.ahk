@@ -25,7 +25,7 @@ return
 
 ^!+r::MsgBox, Caret position: %A_CaretX% %A_CaretY%
 
-#if WinActive("ahk_exe chrome.exe") ; not using ahk_class because it's the same with the discord app
+#If WinActive("ahk_exe chrome.exe") ; not using ahk_class because it's the same with the discord app
 ^!i:: ; open in *I*E
 	send ^l
 	sleep 100
@@ -59,7 +59,7 @@ return
 	Clipboard := StrReplace(Clipboard, "vulgar slang", "vulgar slang > ")
 return
 
-#if WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe")
+#If WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe")
 *!x:: ; pdf/epub extract to supermemo
 	ctrl_state := GetKeyState("ctrl")
 	clipSave := Clipboardall
@@ -109,22 +109,21 @@ return
 	sleep 1000
 	send {down}
 	send !\\
-	WinWaitActive ahk_class TMsgDialog,, 0
+	WinWaitNotActive, ahk_class TElWind,, 0
 	send {enter}
-	WinWaitActive ahk_class TElWind,, 0
+	WinWaitNotActive, ahk_class TMsgDialog,, 0
 	send {esc}
 	if (ctrl_state = 1)
 		send !{left}
-	else {
+	else
 		if (reader = "p")
 			WinActivate, ahk_class SUMATRA_PDF_FRAME
 		else if (reader = "e")
 			WinActivate, ahk_exe ebook-viewer.exe
-	}
 	Clipboard := clipSave
 return
 
-#if WinActive("ahk_class SUMATRA_PDF_FRAME")
+#If WinActive("ahk_class SUMATRA_PDF_FRAME")
 ^!q:: ; exit and save annotations
 	send q
 	WinWaitActive, Unsaved annotations,, 0

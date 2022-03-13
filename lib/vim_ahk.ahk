@@ -90,6 +90,9 @@ class VimAhk{
 	GroupAdd, SuperMemo, ahk_class TBrowser
 	GroupAdd, SuperMemo, ahk_class TPlanDlg
 	GroupAdd, SuperMemo, ahk_class TTaskManager
+	
+	; Excluded
+	GroupAdd, Excluded, ahk_class #32770 ; windows + r
 
     ; Configuration values for Read/Write ini
     ; setting, default, val, description, info

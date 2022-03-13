@@ -1,11 +1,12 @@
 #Include %A_LineFile%\..\bind\smvim_shortcut.ahk
 #Include %A_LineFile%\..\bind\smvim_grading.ahk
 #Include %A_LineFile%\..\bind\smvim_browsing.ahk
+#Include %A_LineFile%\..\bind\smvim_browsing_disable.ahk
+#Include %A_LineFile%\..\bind\vim_ft.ahk
 #Include %A_LineFile%\..\bind\smvim_enter_normal.ahk
 #Include %A_LineFile%\..\bind\smvim_enter_insert.ahk
 #Include %A_LineFile%\..\bind\smvim_normal.ahk
 #Include %A_LineFile%\..\bind\smvim_visual.ahk
-#Include %A_LineFile%\..\bind\smvim_browsing_disable.ahk
 #Include %A_LineFile%\..\bind\smvim_disable.ahk
 #Include %A_LineFile%\..\bind\vim_shortcut.ahk
 #Include %A_LineFile%\..\bind\vim_enter_normal.ahk

@@ -1,9 +1,10 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal")) && !WinActive("ahk_group SuperMemo")
+﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !WinActive("ahk_group SuperMemo")
 /::
   Send, ^f
   Vim.State.SetMode("Insert")
 Return
 
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal")) && !WinActive("ahk_group SuperMemo")
 *::
   bak := ClipboardAll
   Clipboard=

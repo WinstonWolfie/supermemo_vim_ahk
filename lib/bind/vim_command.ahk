@@ -1,6 +1,6 @@
 ﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
 :::Vim.State.SetMode("Command") ;(:)
-`;::Vim.State.SetMode("Command") ;(;)
+; `;::Vim.State.SetMode("Command") ;(;)
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command"))
 w::Vim.State.SetMode("Command_w")
 q::Vim.State.SetMode("Command_q")
@@ -40,7 +40,7 @@ return
 
 b:: ; remove all text *b*efore cursor
 	send !\\
-	WinWaitActive, ahk_class TMsgDialog,, 0
+	WinWaitNotActive, ahk_class TElWind,, 0
 	if !ErrorLevel
 		send {enter}
 	Vim.State.SetMode("Vim_Normal")
@@ -48,7 +48,7 @@ return
 
 a:: ; remove all text *a*fter cursor
 	send !.
-	WinWaitActive, ahk_class TMsgDialog,, 0
+	WinWaitNotActive, ahk_class TElWind,, 0
 	if !ErrorLevel
 		send {enter}
 	Vim.State.SetMode("Vim_Normal")
@@ -108,7 +108,6 @@ return
 
 i:: ; learn outstanding *i*tems only
 	Vim.State.SetMode("Vim_Normal")
-	WinActivate ahk_class TElWind
 	send !{home}
 	sleep 100
 	send {esc 4}{alt}vo
@@ -152,13 +151,14 @@ s:: ; turn active language item to passive (*s*witch)
 	Vim.State.SetMode("Vim_Normal")
 	send ^t{esc} ; de-select every component
 	ControlGetText, current_text, TBitBtn3
-	if (current_text != "Learn") ; if learning (on the stage of "next repitition")
+	if (current_text != "Learn") ; if learning (on "next repitition")
 		send {esc}
 	send ^+s
-	sleep 450 ; delay to make sure the switch works; also to update the title
+	sleep 450 ; delay to make sure the switch works and to update the title
 	send q
 	sleep 10
-	send en:{space}{tab}
+	SendInput {raw}en:
+	send {space}{tab}
 	sleep 150
 	send ^{del 2}{esc}
 return

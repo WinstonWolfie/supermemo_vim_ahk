@@ -8,7 +8,7 @@ w::Vim.Move.Inner("w")
 
 ; gg
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) and (not Vim.State.g)
-g::Vim.State.SetMode("", 1)
+g::Vim.State.SetMode("", 1, -1)
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) and (Vim.State.g)
 g::Vim.Move.Move("g")
 

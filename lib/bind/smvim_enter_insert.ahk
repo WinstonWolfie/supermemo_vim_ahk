@@ -2,6 +2,7 @@
 ; Keys that need insert mode
 ~!f10::
 ~!f12::
+~RButton::
 	Vim.State.SetMode("Insert")
 Return
 

@@ -16,37 +16,41 @@
 	Vim.State.SetMode("Insert")
 return
 
-^!c::FindClick(A_ScriptDir . "\lib\bind\util\concept_lightbulb.png") ; change default *c*oncept group
+^!c:: ; change default *c*oncept group
+	FindClick(A_ScriptDir . "\lib\bind\util\concept_lightbulb.png")
+	Vim.State.SetNormal()
+Return
 
->!>+bs:: ; for laptop
->^>+bs:: ; for processing pending queue Advanced English 2018: delete element and keep learning
+~^+f12::  ; bomb format with no confirmation
+	send {enter}
+	Vim.State.SetNormal()
+return
+
+!+bs:: ; for laptop
+^+bs:: ; for processing pending queue Advanced English 2018: delete element and keep learning
 	send ^+{del}
-	WinWaitActive, ahk_class TMsgDialog,, 0 ; wait for "Delete element?"
+	WinWaitNotActive, ahk_class TElWind,, 0 ; wait for "Delete element?"
 	send {enter}
-	WinWaitActive, ahk_class TElWind,, 0 ; wait for element window to become focused again
+	WinWaitNotActive, ahk_class TMsgDialog,, 0 ; wait for element window to become focused again
 	send {enter}
 	Vim.State.SetNormal()
 return
 
->!>+/:: ; for laptop
->^>+/:: ; done! and keep learning
+!+/:: ; for laptop
+^+/:: ; done! and keep learning
 	send ^+{enter}
-	WinWaitActive, ahk_class TMsgDialog,, 0 ; "Do you want to remove all element contents from the collection?"
+	WinWaitNotActive, ahk_class TElWind,, 0 ; "Do you want to remove all element contents from the collection?"
 	send {enter}
-	WinWaitActive, ahk_class TMsgDialog,, 0 ; wait for "Delete element?"
+	WinWaitNotActive, ahk_class TElWind,, 0 ; wait for "Delete element?"
 	send {enter}
-	WinWaitActive, ahk_class TElWind,, 0 ; wait for element window to become focused again
-	sleep 150
-	ControlGetText, currentText, TBitBtn3
-	if (currentText = "Learn")
-		send {enter}
+	WinWaitNotActive, ahk_class TMsgDialog,, 0 ; wait for element window to become focused again
+	send {enter}
 	Vim.State.SetNormal()
 return
 
->!.:: ; for laptop
->!,:: ; play video in default system player / edit script component
-send ^{t 2}{f9}
-Vim.State.SetNormal()
+^!+g::  ; change element's concept *g*roup
+	send ^+p!g
+	Vim.State.SetNormal()
 return
 
 ; more intuitive inter-element linking, inspired by obsidian
@@ -94,7 +98,6 @@ return
 ButtonInsert:
 	Gui, Submit
 	Gui, Destroy
-	VimToolTipFunc("Inserting activity: " . activity)
 	if !NoSplit {
 		send ^t ; split
 		WinWaitActive, ahk_class TInputDlg,, 0
@@ -117,3 +120,6 @@ ButtonInsert:
 	send ^p ; open plan again
 	ToolTip
 return
+
+#If WinActive("ahk_class TPriorityDlg")
+.::SendInput ^a0.
