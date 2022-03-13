@@ -70,12 +70,10 @@ u::send {WheelUp 2}
 r::send !{home}!{left} ; reload
 
 f:: ; click on html component
-	if !SMMouseMoveMiddle(true)
-		send q
-	send {home}
-	; click 24 380
-	; sleep 30
-	; click 39 380
+	if SMMouseMoveTop(true)
+		send {left}{home}
+	else
+		send q^{home}
 Return
 
 ; Open windows
