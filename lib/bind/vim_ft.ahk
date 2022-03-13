@@ -6,6 +6,10 @@ t::Vim.State.SetMode("ft_t",, -1)
 f::Vim.State.SetMode("ft_fVisual",, -1)
 t::Vim.State.SetMode("ft_tVisual",, -1)
 
+#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("SMVim_Extract")) && !Vim.State.StrIsInCurrentVimMode("ft_")
+f::Vim.State.SetMode("ft_fExtract",, -1)
+t::Vim.State.SetMode("ft_tExtract",, -1)
+
 ft:
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("ft_f") || Vim.State.StrIsInCurrentVimMode("ft_t"))
 a::
@@ -117,7 +121,7 @@ _::
 		if InStr(finding_char, "~")
 			finding_char := StrReplace(finding_char, "~")
 	}
-	if Vim.State.StrIsInCurrentVimMode("Visual") {
+	if Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("Extract") {
 		starting_pos := StrLen(clip()) + 1 ; +1 to make sure detection_str is what's selected after send +{end}+{left}
 		send +{end}+{left}
 		detection_str := SubStr(clip(), starting_pos)
@@ -132,7 +136,13 @@ _::
 		}
 		SendInput +{left %left%}
 		last_ft := Vim.State.Mode
-		Vim.State.SetMode("Vim_VisualChar")
+		if Vim.State.StrIsInCurrentVimMode("Visual")
+			Vim.State.SetMode("Vim_VisualChar")
+		else if Vim.State.StrIsInCurrentVimMode("Extract") {
+			if pos
+				send !x
+			Vim.State.SetNormal()
+		}
 	} else {
 		send {right}+{end}+{left} ; go right one char in case current char = finding char
 		pos := InStr(clip(), finding_char, true,, occurrence)

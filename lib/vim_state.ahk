@@ -13,7 +13,8 @@
     , "Command" , "Command_w", "Command_q", "Z", "r_once", "r_repeat"
 	, "SMVim_Cloze", "SMVim_ClozeFirst", "SMVim_Extract", "SMVim_ExtractFirst"
 	, "Vim_VisualBlock", "Vim_VisualBlockFirst", "Vim_ydc_yFirst"
-	, "Vim_ydc_dFirst", "Vim_ydc_cFirst", "ft_f", "ft_t", "ft_fVisual", "ft_tVisual"]
+	, "Vim_ydc_dFirst", "Vim_ydc_cFirst", "ft_f", "ft_t", "ft_fVisual", "ft_tVisual"
+	, "ft_fExtract", "ft_tExtract"]
 
     this.Mode := "Insert"
     this.g := 0
