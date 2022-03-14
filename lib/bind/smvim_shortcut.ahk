@@ -1,9 +1,7 @@
 ﻿#If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 ^!.:: ; find [...] and insert
-	if !IsSMEditingText() {
-		send ^t{esc}q
-		sleep 100
-	}
+	send ^t{esc}q
+	sleep 100
 	if IsSMEditingPlainText() {
 		send ^a
 		pos := InStr(clip(), "[...]")
