@@ -1,7 +1,7 @@
 ﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
-y::Vim.State.SetMode("Vim_ydc_yFirst", 0, -1, 0)
-d::Vim.State.SetMode("Vim_ydc_dFirst", 0, -1, 0)
-c::Vim.State.SetMode("Vim_ydc_cFirst", 0, -1, 0)
+y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
+d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0)
+c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0)
 +y::
   Vim.State.SetMode("Vim_ydc_y", 0, 0, 1)
   Sleep, 150 ; Need to wait (For variable change?)
@@ -109,5 +109,5 @@ Return
 Return
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal")) && WinActive("ahk_class TElWind")
-q::Vim.State.SetMode("SMVim_ExtractFirst", 0, -1, 0)
-z::Vim.State.SetMode("SMVim_ClozeFirst", 0, -1, 0)
+q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0)
+z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)

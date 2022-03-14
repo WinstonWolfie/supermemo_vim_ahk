@@ -23,7 +23,10 @@ LAlt & RAlt:: ; for laptop
 	Vim.State.SetMode("Insert")
 return
 
-^!+r::MsgBox, Caret position: %A_CaretX% %A_CaretY%
+^!+r::
+	; MsgBox, Caret position: %A_CaretX% %A_CaretY%
+	MouseMove, %A_CaretX%, %A_CaretY%
+Return
 
 #If WinActive("ahk_exe chrome.exe") ; not using ahk_class because it's the same with the discord app
 ^!i:: ; open in *I*E
@@ -37,15 +40,14 @@ Return
 	send ^l
 	sleep 100
 	Clipboard =
-	send ^c
+	send ^c{tab}
 	ClipWait 1
 	sleep 100
 	if InStr(Clipboard, "https://www.youtube.com")
 		if InStr(Clipboard, "v=") {
-			RegExMatch(Clipboard, "v=\K[\w\-]+", YT_link)
-			Clipboard = https://www.youtube.com/watch?v=%YT_link%
+			RegExMatch(Clipboard, "v=\K[\w\-]+", yt_link)
+			Clipboard = https://www.youtube.com/watch?v=%yt_link%
 		}
-	send {tab}
 return
 
 ^!d:: ; parse similar and opposite in google *d*efine

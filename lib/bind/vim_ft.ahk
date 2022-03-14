@@ -2,16 +2,16 @@
 f::Vim.State.SetMode("ft_f",, -1)
 t::Vim.State.SetMode("ft_t",, -1)
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.StrIsInCurrentVimMode("ft_")
-f::Vim.State.SetMode("ft_fVisual",, -1)
-t::Vim.State.SetMode("ft_tVisual",, -1)
+#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual"))
+f::Vim.State.SetMode("ft_visual_t",, -1)
+t::Vim.State.SetMode("ft_visual_f",, -1)
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("SMVim_Extract")) && !Vim.State.StrIsInCurrentVimMode("ft_")
-f::Vim.State.SetMode("ft_fExtract",, -1)
-t::Vim.State.SetMode("ft_tExtract",, -1)
+#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("SMVim_Extract"))
+f::Vim.State.SetMode("ft_extract_f",, -1)
+t::Vim.State.SetMode("ft_extract_t",, -1)
 
 ft:
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("ft_f") || Vim.State.StrIsInCurrentVimMode("ft_t"))
+#If Vim.IsVimGroup() and Vim.State.StrIsInCurrentVimMode("ft_")
 a::
 b::
 c::
@@ -77,6 +77,7 @@ z::
 `::
 ~::
 !::
+?::
 @::
 #::
 $::
@@ -121,8 +122,8 @@ _::
 		if InStr(finding_char, "~")
 			finding_char := StrReplace(finding_char, "~")
 	}
-	if Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("Extract") {
-		starting_pos := StrLen(clip()) + 1 ; +1 to make sure detection_str is what's selected after send +{end}+{left}
+	if Vim.State.StrIsInCurrentVimMode("ft_visual") || Vim.State.StrIsInCurrentVimMode("ft_extract") {
+		starting_pos := StrLen(clip()) + 1 ; +1 to make sure detection_str is what's selected after
 		send +{end}+{left}
 		detection_str := SubStr(clip(), starting_pos)
 		pos := InStr(detection_str, finding_char, true,, occurrence)
@@ -136,9 +137,9 @@ _::
 		}
 		SendInput +{left %left%}
 		last_ft := Vim.State.Mode
-		if Vim.State.StrIsInCurrentVimMode("Visual")
+		if Vim.State.StrIsInCurrentVimMode("ft_visual")
 			Vim.State.SetMode("Vim_VisualChar")
-		else if Vim.State.StrIsInCurrentVimMode("Extract") {
+		else if Vim.State.StrIsInCurrentVimMode("ft_extract") {
 			if pos
 				send !x
 			Vim.State.SetNormal()

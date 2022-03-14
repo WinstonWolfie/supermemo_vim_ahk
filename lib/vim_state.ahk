@@ -11,10 +11,8 @@
     , "Vim_ydc_d" , "Vim_ydc_dInner" , "Vim_VisualLine", "Vim_VisualFirst"
     , "Vim_VisualChar", "Vim_VisualLineFirst", "Vim_VisualCharInner"
     , "Command" , "Command_w", "Command_q", "Z", "r_once", "r_repeat"
-	, "SMVim_Cloze", "SMVim_ClozeFirst", "SMVim_Extract", "SMVim_ExtractFirst"
-	, "Vim_VisualBlock", "Vim_VisualBlockFirst", "Vim_ydc_yFirst"
-	, "Vim_ydc_dFirst", "Vim_ydc_cFirst", "ft_f", "ft_t", "ft_fVisual", "ft_tVisual"
-	, "ft_fExtract", "ft_tExtract"]
+	, "SMVim_Cloze", "SMVim_Extract", "Vim_VisualBlock", "Vim_VisualBlockFirst"
+	, "ft_f", "ft_t", "ft_visual_t", "ft_visual_f", "ft_extract_f", "ft_extract_t"]
 
     this.Mode := "Insert"
     this.g := 0
@@ -153,7 +151,7 @@
 
   StrIsInCurrentVimMode(mode){
     this.CheckValidMode(mode, false)
-    Return (inStr(this.Mode, mode))
+    Return (inStr(this.Mode, mode, true))
   }
 
   CheckValidMode(mode, fullMatch=true){

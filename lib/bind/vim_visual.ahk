@@ -23,7 +23,7 @@ Return
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual"))
 v::
-	if Vim.State.IsCurrentVimMode("Vim_VisualChar")
+	if Vim.State.IsCurrentVimMode("Vim_VisualChar") || Vim.State.IsCurrentVimMode("Vim_VisualFirst")
 		Vim.State.SetNormal()
 	else
 		Vim.State.SetMode("Vim_VisualChar")

@@ -7,7 +7,7 @@
 	Vim.State.SetMode("Vim_Normal")
 return
 
-p:: ; p*a*rse html
+a:: ; p*a*rse html
 ^+1::
 	send ^+1
 	Vim.State.SetMode("Vim_Normal")

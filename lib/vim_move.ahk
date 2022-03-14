@@ -6,9 +6,14 @@
 
   MoveInitialize(key=""){
     this.shift := 0
+	this.e := 0
     if(this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")){
       this.shift := 1
       Send, {Shift Down}
+    }
+
+    if(this.Vim.State.IsCurrentVimMode("Vim_VisualFirst")) && (key != "e") {
+      this.vim.state.setmode("Vim_VisualChar")
     }
 
     if(this.Vim.State.IsCurrentVimMode("Vim_VisualLineFirst")) and (key == "k" or key == "^u" or key == "^b" or key == "g"){
@@ -54,6 +59,9 @@
       Send, {Shift Down}
       this.Down()
     }
+	
+	if (key == "e") && !this.Vim.State.IsCurrentVimMode("Vim_VisualChar")
+		this.e := 1
   }
 
   MoveFinalize(){
@@ -91,6 +99,8 @@
     send {Ctrl Up}
 	if !(this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe"))
 		send {alt up}
+	if (key == "e") && this.Vim.State.IsCurrentVimMode("Vim_VisualFirst")
+		this.vim.state.setmode("Vim_VisualChar")
   }
 
   Home(){
@@ -194,13 +204,11 @@
 			  Send, ^{Left}{left}
 			}
         else if(this.shift == 1){
-		  if this.Vim.State.StrIsInCurrentVimMode("First") {
+		  if (this.e == 1) {
 			Send, +^{Right}+{Left}
-			previous_mode := this.Vim.State.Mode
+			this.e := 0
 			if this.Vim.State.StrIsInCurrentVimMode("VisualFirst")
 				this.Vim.State.SetMode("Vim_VisualChar")
-			else
-				this.Vim.State.SetMode(StrReplace(previous_mode, "First"))
 		  } else
 			Send, +^{Right}+^{Right}+{Left}
         }else{

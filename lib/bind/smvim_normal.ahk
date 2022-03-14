@@ -43,7 +43,10 @@ Return
 	send {home}
 Return
 
-*/:: ; better search
+^/::
+?::
+!/::
+/:: ; better search
 	ctrl_state := GetKeyState("Ctrl") ; visual
 	shift_state := GetKeyState("Shift") ; caret on the right
 	alt_state := GetKeyState("alt") ; followed by a cloze
