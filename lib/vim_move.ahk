@@ -9,7 +9,8 @@
 	this.e := 0
     if(this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")){
       this.shift := 1
-      Send, {Shift Down}
+	  if (key != ")")
+		Send, {Shift Down}
     }
 
     if(this.Vim.State.IsCurrentVimMode("Vim_VisualFirst")) && (key != "e") {
@@ -86,6 +87,8 @@
     }else if(this.Vim.State.StrIsInCurrentVimMode("Extract")){
       Send, !x
       this.Vim.State.SetMode("Vim_Normal")
+    }else if(this.Vim.State.StrIsInCurrentVimMode("ClozeHinter")){
+      Gosub cloze_hinter
     }else if(this.Vim.State.StrIsInCurrentVimMode("Cloze")){
       Send, !z
       this.Vim.State.SetMode("Vim_Normal")
@@ -219,6 +222,40 @@
           Send, +^{Left}
         }else{
           Send, ^{Left}
+        }
+      }else if(key == ")"){
+		occurrence := 1
+		if this.Vim.State.n
+			occurrence := this.Vim.State.n
+        if(this.shift == 1){
+          starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
+		  if IsSMEditingHTML()
+			send ^+{down}+{left}
+		  else
+			send +{end}
+		  send +{left}
+		  detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
+		  pos := InStr(detection_str, ".", true,, occurrence)
+		  left := StrLen(detection_str) - pos
+		  if pos {
+			left += 1
+			if (pos == 1) {
+				occurrence += 1
+				next_occurrence := InStr(detection_str, ".", true,, occurrence)
+				if next_occurrence
+					left := StrLen(detection_str) - next_occurrence + 1
+			}
+		  }
+		  SendInput +{left %left%}
+        }else{
+          send {right} ; go right one char in case current char = finding char
+		  if IsSMEditingHTML()
+			send ^+{down}
+		  else
+			send +{end}
+		  send +{left}
+		  pos := InStr(StrReplace(clip(), "`r"), ".", true,, occurrence)
+		  SendInput {left}{right %pos%}{left}
         }
       }
     }

@@ -43,6 +43,13 @@ b::Vim.Move.Repeat("b")
 ; G
 +g::Vim.Move.Move("+g")
 ; Paragraph up/down
-{::Vim.Move.Move("{")
-}::Vim.Move.Move("}")
+{::Vim.Move.Repeat("{")
+}::Vim.Move.Repeat("}")
+; Sentence
+)::
+	if IsSMEditingHTML()
+		KeyWait shift
+	Vim.Move.Move(")")
+Return
+
 #If

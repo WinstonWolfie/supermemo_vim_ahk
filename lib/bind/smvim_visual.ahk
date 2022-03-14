@@ -39,12 +39,17 @@ return
 	Vim.State.SetMode("Vim_Normal")
 Return
 
+cloze_hinter:
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 *!+z::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 *!+z::
-*+c:: ; cloze hinter
-	ctrl_state := GetKeyState("Ctrl")
+*+z:: ; cloze hinter
+	if cloze_hinter_ctrl_state && (A_ThisLabel == "cloze_hinter") { ; from cloze hinter label and ctrl is down
+		ctrl_state := 1
+		cloze_hinter_ctrl_state := 0
+	} else
+		ctrl_state := GetKeyState("Ctrl")
 	InputBox, user_input, Cloze hinter, Please enter your cloze hint.`nIf you enter "hint1/hint2"`, your cloze will be [hint1/hint2]`nIf you enter "hint1/hint2/"`, your cloze will be [...](hint1/hint2),, 256, 196
 	if ErrorLevel
 		return
@@ -103,14 +108,14 @@ Return
 		send q
 		sleep 100
 		Vim.Move.Move("+g")
-		send {down}!\\
+		send {end}{down}!\\
 		WinWaitNotActive, ahk_class TElWind,, 0
 		if !ErrorLevel
 			send {enter}
 		clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>[" . cloze . "</SPAN>"))
 		send ^+{home}^+1
 	}
-	if (ctrl_state = 0) ; only goes back to topic if ctrl is up
+	if !ctrl_state ; only goes back to topic if ctrl is up
 		send !{right} ; add a ctrl to keep editing the clozed item
 	else ; refresh if staying in the cloze item
 		send !{home}!{left}

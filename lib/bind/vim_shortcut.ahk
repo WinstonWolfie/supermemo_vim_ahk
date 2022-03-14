@@ -16,6 +16,8 @@ Return
   Vim.State.ToggleEnabled()
 Return
 
+^!r::Reload
+
 LAlt & RAlt:: ; for laptop
 	KeyWait LAlt
 	KeyWait RAlt
@@ -23,12 +25,13 @@ LAlt & RAlt:: ; for laptop
 	Vim.State.SetMode("Insert")
 return
 
+#If Vim.State.Vim.Enabled
 ^!+r::
 	; MsgBox, Caret position: %A_CaretX% %A_CaretY%
 	MouseMove, %A_CaretX%, %A_CaretY%
 Return
 
-#If WinActive("ahk_exe chrome.exe") ; not using ahk_class because it's the same with the discord app
+#If Vim.State.Vim.Enabled && WinActive("ahk_exe chrome.exe") ; not using ahk_class because it's the same with the discord app
 ^!i:: ; open in *I*E
 	send ^l
 	sleep 100
@@ -61,7 +64,7 @@ return
 	Clipboard := StrReplace(Clipboard, "vulgar slang", "vulgar slang > ")
 return
 
-#If WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe")
+#If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe")
 *!x:: ; pdf/epub extract to supermemo
 	ctrl_state := GetKeyState("ctrl")
 	clipSave := Clipboardall
@@ -125,7 +128,7 @@ return
 	Clipboard := clipSave
 return
 
-#If WinActive("ahk_class SUMATRA_PDF_FRAME")
+#If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME")
 ^!q:: ; exit and save annotations
 	send q
 	WinWaitActive, Unsaved annotations,, 0

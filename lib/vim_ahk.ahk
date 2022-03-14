@@ -90,6 +90,7 @@ class VimAhk{
 	GroupAdd, SuperMemo, ahk_class TBrowser
 	GroupAdd, SuperMemo, ahk_class TPlanDlg
 	GroupAdd, SuperMemo, ahk_class TTaskManager
+	GroupAdd, SuperMemo, ahk_class TImgDown
 	
 	; Excluded
 	GroupAdd, Excluded, ahk_class #32770 ; windows + r
@@ -279,7 +280,8 @@ class VimAhk{
                   , "ahk_class TContents"
                   , "ahk_class TBrowser"
                   , "ahk_class TPlanDlg"
-                  , "ahk_class TTaskManager"]
+                  , "ahk_class TTaskManager"
+                  , "ahk_class TImgDown"]
     DefaultGroup := ""
     for i, v in DefaultList
     {

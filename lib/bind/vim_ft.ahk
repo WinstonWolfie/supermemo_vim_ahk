@@ -3,8 +3,8 @@ f::Vim.State.SetMode("ft_f",, -1)
 t::Vim.State.SetMode("ft_t",, -1)
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual"))
-f::Vim.State.SetMode("ft_visual_t",, -1)
-t::Vim.State.SetMode("ft_visual_f",, -1)
+f::Vim.State.SetMode("ft_visual_f",, -1)
+t::Vim.State.SetMode("ft_visual_t",, -1)
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("SMVim_Extract"))
 f::Vim.State.SetMode("ft_extract_f",, -1)
@@ -123,16 +123,18 @@ _::
 			finding_char := StrReplace(finding_char, "~")
 	}
 	if Vim.State.StrIsInCurrentVimMode("ft_visual") || Vim.State.StrIsInCurrentVimMode("ft_extract") {
-		starting_pos := StrLen(clip()) + 1 ; +1 to make sure detection_str is what's selected after
+		starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
 		send +{end}+{left}
-		detection_str := SubStr(clip(), starting_pos)
+		detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
 		pos := InStr(detection_str, finding_char, true,, occurrence)
 		left := StrLen(detection_str) - pos
-		if Vim.State.StrIsInCurrentVimMode("ft_t") {
+		if Vim.State.StrIsInCurrentVimMode("_t") && pos {
 			left += 1
 			if (pos == 1) {
 				occurrence += 1
-				left := StrLen(detection_str) - InStr(detection_str, finding_char, true,, occurrence)
+				next_occurrence := InStr(detection_str, finding_char, true,, occurrence)
+				if next_occurrence
+					left := StrLen(detection_str) - next_occurrence + 1
 			}
 		}
 		SendInput +{left %left%}
@@ -146,9 +148,9 @@ _::
 		}
 	} else {
 		send {right}+{end}+{left} ; go right one char in case current char = finding char
-		pos := InStr(clip(), finding_char, true,, occurrence)
+		pos := InStr(StrReplace(clip(), "`r"), finding_char, true,, occurrence)
 		SendInput {left}{right %pos%}
-		if Vim.State.StrIsInCurrentVimMode("ft_t") || (Vim.State.StrIsInCurrentVimMode("ft_f") && !pos)
+		if Vim.State.StrIsInCurrentVimMode("_t") || (Vim.State.StrIsInCurrentVimMode("_f") && !pos)
 			send {left}
 		last_ft := Vim.State.Mode
 		Vim.State.SetNormal()

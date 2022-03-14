@@ -107,7 +107,3 @@ Return
   }
   KeyWait, p
 Return
-
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal")) && WinActive("ahk_class TElWind")
-q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0)
-z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)

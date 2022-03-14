@@ -36,8 +36,8 @@ return
 	Vim.State.SetNormal()
 return
 
-!+/:: ; for laptop
-^+/:: ; done! and keep learning
+!+\:: ; for laptop
+^+\:: ; done! and keep learning
 	send ^+{enter}
 	WinWaitNotActive, ahk_class TElWind,, 0 ; "Do you want to remove all element contents from the collection?"
 	send {enter}

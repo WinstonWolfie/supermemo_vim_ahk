@@ -7,8 +7,16 @@
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window
 ~^p:: ; open Plan window
 ~f4:: ; open tasklist
+~!x:: ; extract
+~!z:: ; cloze
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
 ~^s:: ; save
 ~^+a:: ; archive current plan
 	Vim.State.SetNormal()
 return
+
+#If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window
+^l:: ; learn
+	send !ll
+	Vim.State.SetNormal()
+Return
