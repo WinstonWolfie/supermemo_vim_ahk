@@ -12,7 +12,7 @@
 			MsgBox, Not found.
 			Return
 		}
-	} else {
+	} else if IsSMEditingHTML() {
 		send {f3}
 		WinWaitNotActive, ahk_class TELWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
 		WinWaitActive, ahk_class TMyFindDlg,, 0
