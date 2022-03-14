@@ -1,18 +1,34 @@
 ﻿#If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 ^!.:: ; find [...] and insert
-	send ^t{esc}q{f3}
-	WinWaitNotActive, ahk_class TELWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
-	WinWaitActive, ahk_class TMyFindDlg,, 0
-	SendInput {raw}[...]
-	send {enter}
-	WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
-	send {right}^{enter}
-	WinWaitActive, ahk_class TCommanderDlg,, 0
-	if ErrorLevel
-		return
-	send h{enter}q
-	if WinExist("ahk_class TMyFindDlg") ; clears search box window
-		WinClose
+	if !IsSMEditingText() {
+		send ^t{esc}q
+		sleep 100
+	}
+	if IsSMEditingPlainText() {
+		send ^a
+		pos := InStr(clip(), "[...]")
+		if pos {
+			pos += 4
+			SendInput {left}{right %pos%}
+		} else {
+			MsgBox, Not found.
+			Return
+		}
+	} else {
+		send {f3}
+		WinWaitNotActive, ahk_class TELWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
+		WinWaitActive, ahk_class TMyFindDlg,, 0
+		SendInput {raw}[...]
+		send {enter}
+		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
+		send {right}^{enter}
+		WinWaitActive, ahk_class TCommanderDlg,, 0
+		if ErrorLevel
+			return
+		send h{enter}q
+		if WinExist("ahk_class TMyFindDlg") ; clears search box window
+			WinClose
+	}
 	Vim.State.SetMode("Insert")
 return
 

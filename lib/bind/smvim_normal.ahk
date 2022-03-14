@@ -155,7 +155,10 @@ Return
 n::  ; open hyperlink in current caret position (Open in *n*ew window)
 	clipSave := Clipboardall
 	Clipboard =
-	send +{right}^c{left}
+	if Vim.CheckChr("`n") || Vim.CheckChr(" ")
+		send +{left}^c{right}
+	else
+		send +{right}^c{left}
 	ClipWait 1
 	sleep 100
 	If ClipboardGet_HTML( Data ){
