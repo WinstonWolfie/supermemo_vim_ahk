@@ -85,8 +85,13 @@ l::send {WheelRight}
 d::send {WheelDown 2}
 u::send {WheelUp 2}
 
+; "Browsing" mode
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 +g::Vim.Move.Move("+g")
+
+; OG Vim commands
+i::Vim.State.SetMode("Insert")
+:::Vim.State.SetMode("Command") ;(:)
 
 ; Browser-like actions
 r::send !{home}!{left} ; reload
