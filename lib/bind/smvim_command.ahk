@@ -25,7 +25,7 @@ f:: ; clean *f*ormat: using f6 (retaining tables)
 	WinWaitNotActive, ahk_class TElWind,, 0
 	Vim.State.SetMode("Vim_Normal")
 	if ErrorLevel
-		VimToolTipFunc("Not HTML.")
+		Vim.ToolTipFunc("Not HTML.")
 	else
 		send ^arbs{enter}
 return
@@ -38,7 +38,7 @@ return
 w:: ; prepare *w*ikipedia articles in languages other than English
 	Vim.State.SetMode("Vim_Normal")
 	send ^t{esc} ; de-select all components
-	clipSave := Clipboardall
+	clip_bak := Clipboardall
 	Clipboard =
 	send !{f10}fs ; show reference
 	WinWaitActive, ahk_class TMsgDialog,, 0
@@ -74,7 +74,7 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 		WinWaitActive, ahk_class TChoicesDlg,, 2
 		send 2{enter}{esc} ; makes selection title
 	}
-	Clipboard := clipSave
+	Clipboard := clip_bak
 return
 
 i:: ; learn outstanding *i*tems only

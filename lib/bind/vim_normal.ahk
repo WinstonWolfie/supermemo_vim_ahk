@@ -35,8 +35,8 @@ Return
   Vim.State.SetMode("Vim_Normal")
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
-Space::Send, {Right}
+; #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
+; Space::Send, {Right}
 
 ; period
 ; .::Send, +^{Right}{BS}^v

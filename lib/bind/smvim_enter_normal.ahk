@@ -1,8 +1,8 @@
-﻿#If Vim.IsVimGroup() && !WinActive("ahk_class TPlanDlg") && WinActive("ahk_class TElWind") && !IsSMEditingText()
+﻿#If Vim.IsVimGroup() && !WinActive("ahk_class TPlanDlg") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 ; in Plan window pressing enter simply goes to the next field; no need to go back to normal
 ; in element window pressing enter to learn goes to normal
 ~enter::
-#If Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !IsSMEditingText()
+#If Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 ~space:: ; for Learn button
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window
 ~^p:: ; open Plan window

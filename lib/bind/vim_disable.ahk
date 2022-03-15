@@ -166,7 +166,7 @@ _::
 <::
 .::
 >::
-Space::
+; Space::
 Return
 
 #If Vim.IsVimGroup() and Vim.State.StrIsInCurrentVimMode("Vim_") and (Vim.Conf["VimDisableUnused"]["val"] == 3)
@@ -238,7 +238,7 @@ _::
 <::
 .::
 >::
-Space::
+; Space::
 Return
 
 #If

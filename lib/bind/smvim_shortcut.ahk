@@ -2,7 +2,7 @@
 ^!.:: ; find [...] and insert
 	send ^t{esc}q
 	sleep 100
-	if IsSMEditingPlainText() {
+	if Vim.SM.IsEditingPlainText() {
 		send ^a
 		pos := InStr(clip(), "[...]")
 		if pos {
@@ -12,7 +12,7 @@
 			MsgBox, Not found.
 			Return
 		}
-	} else if IsSMEditingHTML() {
+	} else if Vim.SM.IsEditingHTML() {
 		send {f3}
 		WinWaitNotActive, ahk_class TELWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
 		WinWaitActive, ahk_class TMyFindDlg,, 0
@@ -77,7 +77,7 @@ return
 	Vim.State.SetNormal()
 return
 
-#If Vim.IsVimGroup() && IsSMEditingHTML()
+#If Vim.IsVimGroup() && Vim.SM.IsEditingHTML()
 ^!k::
 	send ^k
 	WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2 ; a bit more delay since everybody knows how slow IE can be
@@ -86,30 +86,23 @@ return
 	Vim.State.SetNormal()
 return
 
-#If Vim.IsVimGroup() && WinActive("ahk_class TElWind") and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
-\::
-	send ^{f3}
-	Vim.State.SetMode("Insert")
-	back_to_normal = 2
-Return
-
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
-!a:: ; insert accident activity
+!a:: ; insert activity
 	Vim.State.SetNormal()
-	Gui, Add, Text,, &Accident activity:
+	Gui, PlanInsert:Add, Text,, &Activity:
 	list = Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM
-	Gui, Add, Combobox, vActivity gAutoComplete, %list%
-	Gui, Add, CheckBox, vNoSplit, &Do not split current activity
-	Gui, Add, Button, default, Insert 
-	Gui, Show,, Insert accident activity
+	Gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, %list%
+	Gui, PlanInsert:Add, CheckBox, vNoSplit, &Do not split current activity
+	Gui, PlanInsert:Add, Button, default, &Insert
+	Gui, PlanInsert:Show,, Insert Activity
 Return
 
-GuiEscape:
-GuiClose:
+PlanInsertGuiEscape:
+PlanInsertGuiClose:
 	Gui, Destroy
 return
 
-ButtonInsert:
+PlanInsertButtonInsert:
 	Gui, Submit
 	Gui, Destroy
 	if !NoSplit {

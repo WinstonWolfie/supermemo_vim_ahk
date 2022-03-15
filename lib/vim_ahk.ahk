@@ -18,6 +18,7 @@
 #Include %A_LineFile%\..\vim_setting.ahk
 #Include %A_LineFile%\..\vim_state.ahk
 #Include %A_LineFile%\..\vim_tooltip.ahk
+#Include %A_LineFile%\..\vim_sm.ahk
 
 ; Key Bindings
 #Include %A_LineFile%\..\vim_bind.ahk
@@ -47,6 +48,7 @@ class VimAhk{
     this.Setting := new VimSetting(this)
     this.State := new VimState(this)
     this.VimToolTip := new VimToolTip(this)
+    this.SM := new VimSM(this)
 
     ; Group Settings
     this.GroupDel := ","
@@ -85,12 +87,10 @@ class VimAhk{
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe ; q-dir
 	
 	; SuperMemo
-	GroupAdd, SuperMemo, ahk_class TElWind
-	GroupAdd, SuperMemo, ahk_class TContents
-	GroupAdd, SuperMemo, ahk_class TBrowser
-	GroupAdd, SuperMemo, ahk_class TPlanDlg
-	GroupAdd, SuperMemo, ahk_class TTaskManager
-	GroupAdd, SuperMemo, ahk_class TImgDown
+	GroupAdd, SuperMemo, ahk_exe sm18.exe
+	GroupAdd, SuperMemo, ahk_exe sm17.exe
+	GroupAdd, SuperMemo, ahk_exe sm16.exe
+	GroupAdd, SuperMemo, ahk_exe sm15.exe
 	
 	; Excluded
 	GroupAdd, Excluded, ahk_class #32770 ; windows + r
@@ -227,7 +227,7 @@ class VimAhk{
   }
 
   TwoLetterNormalMapsEnabled(){
-    Return this.IsVimGroup() && (this.State.StrIsInCurrentVimMode("Insert") || (this.State.IsCurrentVimMode("Vim_Normal") && A_CaretX && WinActive("ahk_class TElWind"))) && this.TwoLetterNormalIsSet
+    Return this.IsVimGroup() && (this.State.StrIsInCurrentVimMode("Insert") || (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText())) && this.TwoLetterNormalIsSet
   }
 
   TwoLetterEnterNormal(){
@@ -276,12 +276,12 @@ class VimAhk{
                   , "ahk_exe Q-Dir.exe"     ; Q-dir
                   , "ahk_exe notepad++.exe" ; Notepad++
                   , "ahk_exe Obsidian.exe"  ; Obsidian
-                  , "ahk_class TElWind"
-                  , "ahk_class TContents"
-                  , "ahk_class TBrowser"
-                  , "ahk_class TPlanDlg"
-                  , "ahk_class TTaskManager"
-                  , "ahk_class TImgDown"]
+                  , "ahk_class TElWind"     ; SM element window
+                  , "ahk_class TContents"   ; SM content window
+                  , "ahk_class TBrowser"    ; SM browser
+                  , "ahk_class TPlanDlg"    ; SM Plan window
+                  , "ahk_class TTaskManager" ; SM tasklist window
+                  , "ahk_class TImgDown"]   ; SM download image window (ctrl+f8)
     DefaultGroup := ""
     for i, v in DefaultList
     {
@@ -298,11 +298,25 @@ class VimAhk{
     if(not this.Enabled){
       Return False
     }else if(this.Conf["VimAppList"]["val"] == "Allow List"){
-      Return WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")
+      Return (WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")) || this.IsExceptionWindow()
     }else if(this.Conf["VimAppList"]["val"] == "Deny List"){
-      Return !WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")
+      Return !WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded") && !this.IsExceptionWindow()
     }
     Return True
+  }
+  
+  IsExceptionWindow() {
+	if WinActive("Choices") {
+		ControlGetText, button1, TGroupButton1
+		ControlGetText, button2, TGroupButton2
+		ControlGetText, button3, TGroupButton3
+		ControlGetText, button4, TGroupButton4
+		; when you change the reference of an element that shares the reference with other elements
+		; no shortcuts there, so movement keys are used for up/down navigation
+		; if more windows are found without shortcuts in the future, they will be all added here
+		return (button1 = "Cancel (i.e. restore the old version of references)" || button2 = "Combine old and new references for this element" || button3 = "Change references in all elements produced from the original article" || button4 = "Change only the references of the currently displayed element")
+		; use movement keys
+	}
   }
 
   ; Ref: https://www.reddit.com/r/AutoHotkey/comments/4ma5b8/identifying_end_of_line_when_typing_with_ahk_and/
@@ -323,5 +337,16 @@ class VimAhk{
     clipboard := tempClip
     BlockInput, off
     Return ret
+  }
+
+  ToolTipFunc(text="", permanent="", period:=-2000) {
+	CoordMode, ToolTip, Screen
+	coord_x := A_ScreenWidth / 2
+	coord_y := A_ScreenHeight / 3 * 2
+	ToolTip, %text%, %coord_x%, %coord_y%
+	if permanent
+		SetTimer, RemoveToolTip, off
+	else
+		SetTimer, RemoveToolTip, %period%
   }
 }

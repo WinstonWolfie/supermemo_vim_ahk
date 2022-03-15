@@ -1,15 +1,27 @@
-﻿#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
-f:: ; gf: go to next component
-	send ^t
-	Vim.State.SetMode()
+﻿; YouTube template
+; Need "Start" button on sreen
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord)
+m::FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "o32")
+
+left::
+right::
+space::
+	x_coord += 110
+	y_coord -= 60
+	CoordMode, Mouse, Screen
+	click, %x_coord% %y_coord%
+	send {%A_ThisHotkey%}
+	if (A_ThisHotkey = "space") {
+		sleep 350
+		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_x.png", "o128")
+	}
+	send ^{t 2} ; focus to notes
 Return
 
-+f:: ; gF: go to previous component
-	send !{f12}fl
-	Vim.State.SetMode()
-Return
-
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind")
+; Editing text only
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.SM.IsEditingText()
+^q::Vim.State.SetMode("SMVim_ExtractStay", 0, -1, 0)
+^z::Vim.State.SetMode("SMVim_ClozeStay", 0, -1, 0)
 q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0)
 z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)
 +z::
@@ -18,37 +30,68 @@ z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)
 	cloze_hinter_ctrl_state := GetKeyState("Ctrl")
 Return
 
-m::
-	send ^{f7} ; set read point
-	VimToolTipFunc("Read point set")
-Return
-
-`::
-	send !{f7} ; go to read point
-	VimToolTipFunc("Go to read point")
-Return
-
-!m::
-	send ^+{f7} ; clear read point
-	VimToolTipFunc("Read point cleared")
-Return
-
 +h:: ; move to top of screen
-	if SMMouseMoveTop(true)
+	if Vim.SM.MouseMoveTop(true)
 		send {left}{home}
 	else
 		send ^{home}
 Return
 
 +m:: ; move to middle of screen
-	SMMouseMoveMiddle(true)
+	Vim.SM.MouseMoveMiddle(true)
 	send {home}
 Return
 
 +l:: ; move to bottom of screen
-	if !SMMouseMoveBottom(true)
+	if !Vim.SM.MouseMoveBottom(true)
 		send ^{end}
 	send {home}
+Return
+
+; Editing HTML
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.SM.IsEditingHTML()
+n::  ; open hyperlink in current caret position (Open in *n*ew window)
+	clip_bak := Clipboardall
+	Clipboard =
+	if Vim.CheckChr("`n") || Vim.CheckChr(" ")
+		send {left}
+	send +{right}^c{left}
+	ClipWait 1
+	sleep 100
+	If ClipboardGet_HTML( Data ){
+		RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", current_link)
+		if !current_link
+			Vim.ToolTipFunc("No link found.")
+		else if InStr(current_link, "SuperMemoElementNo=(") { ; goes to a supermemo element
+			click, %A_CaretX% %A_CaretY%, right
+			send n
+		} else
+			run % current_link
+	}
+	Clipboard := clip_bak
+return
+
+; Browsing/editing
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind")
+m::
+	send ^{f7} ; set read point
+	Vim.ToolTipFunc("Read point set")
+Return
+
+`::
+	send !{f7} ; go to read point
+	Vim.ToolTipFunc("Go to read point")
+Return
+
+!m::
+	send ^+{f7} ; clear read point
+	Vim.ToolTipFunc("Read point cleared")
+Return
+
+\::
+	send ^{f3}
+	Vim.State.SetMode("Insert")
+	back_to_normal = 2
 Return
 
 ^/:: ; visual
@@ -60,21 +103,21 @@ Return
 	ctrl_state := GetKeyState("Ctrl") ; visual
 	shift_state := GetKeyState("Shift") ; caret on the right
 	alt_state := GetKeyState("alt") ; followed by a cloze
-	if !IsSMEditingText() {
+	if !Vim.SM.IsEditingText() {
 		send ^t{esc}q ; focus to question field if no field is focused
 		sleep 100 ; make sure current_focus is updated		
-		if !IsSMEditingText() { ; still found no text
+		if !Vim.SM.IsEditingText() { ; still found no text
 			MsgBox, Text not found.
 			Return
 		}
 	}
 	ControlGetFocus, current_focus, ahk_class TElWind
 	if alt_state
-		InputBox, user_input, Search, Find text in current field. Enter nothing to repeat the last search (highlights will be automatically removed). Your search result will be clozed,, 256, 180
+		InputBox, user_input, Search, Find text:`n(enter nothing to repeat the last search)`n(your search result will be clozed),, 272, 160
 	else if ctrl_state
-		InputBox, user_input, Search, Find text in current field. Enter nothing to repeat the last search (highlights will be automatically removed). Vim will go to visual mode after the search,, 256, 180
+		InputBox, user_input, Search, Find text:`n(enter nothing to repeat the last search)`n(will go to visual mode after the search),, 272, 160
 	else
-		InputBox, user_input, Search, Find text in current field. Enter nothing to repeat the last search (highlights will be automatically removed),, 256, 160
+		InputBox, user_input, Search, Find text:`n(enter nothing to repeat the last search),, 272, 144
 	if ErrorLevel
 		Return
 	if !user_input ; entered nothing
@@ -150,26 +193,3 @@ Return
 		}
 	}
 Return
-
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && IsSMEditingHTML()
-n::  ; open hyperlink in current caret position (Open in *n*ew window)
-	clipSave := Clipboardall
-	Clipboard =
-	if Vim.CheckChr("`n") || Vim.CheckChr(" ")
-		send +{left}^c{right}
-	else
-		send +{right}^c{left}
-	ClipWait 1
-	sleep 100
-	If ClipboardGet_HTML( Data ){
-		RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", current_link)
-		if !current_link
-			VimToolTipFunc("No link found.")
-		else if InStr(current_link, "SuperMemoElementNo=(") { ; goes to a supermemo element
-			click, %A_CaretX% %A_CaretY%, right
-			send n
-		} else
-			run % current_link
-	}
-	Clipboard := clipSave
-return

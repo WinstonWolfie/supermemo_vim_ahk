@@ -1,5 +1,6 @@
 ﻿; Grading
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && IsSMGrading()
+; Inspired by MasterHowToLearn's SuperMemoVim
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsGrading()
 a::
     send 1
     sleep 40

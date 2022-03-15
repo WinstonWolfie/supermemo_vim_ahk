@@ -7,9 +7,23 @@
   MoveInitialize(key=""){
     this.shift := 0
 	this.e := 0
+	if (key == "f" || key == "t") {
+		this.occurrence := 1
+		if this.Vim.State.n
+			this.occurrence := this.Vim.State.n
+		this.ft_char := A_ThisHotkey
+		if InStr(this.ft_char, "+") {
+			this.ft_char := StrReplace(this.ft_char, "+")
+			ft_char := this.ft_char
+			StringUpper, ft_char, ft_char
+			this.ft_char := ft_char
+		}
+		if InStr(this.ft_char, "~")
+			this.ft_char := StrReplace(this.ft_char, "~")
+	}
     if(this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")){
       this.shift := 1
-	  if (key != ")")
+	  if (key != ")") && (key != "/") && (key != "f") && (key != "t")
 		Send, {Shift Down}
     }
 
@@ -84,9 +98,13 @@
       Send, ^x
       ClipWait, 1
       this.Vim.State.SetMode("Insert")
+    }else if(this.Vim.State.StrIsInCurrentVimMode("ExtractStay")){
+      Gosub extract_stay
     }else if(this.Vim.State.StrIsInCurrentVimMode("Extract")){
       Send, !x
       this.Vim.State.SetMode("Vim_Normal")
+    }else if(this.Vim.State.StrIsInCurrentVimMode("ClozeStay")){
+      Gosub cloze_stay
     }else if(this.Vim.State.StrIsInCurrentVimMode("ClozeHinter")){
       Gosub cloze_hinter
     }else if(this.Vim.State.StrIsInCurrentVimMode("Cloze")){
@@ -223,40 +241,116 @@
         }else{
           Send, ^{Left}
         }
+      }else if(key == "f"){
+		if(this.shift == 1){
+			starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
+			send +{end}+{left}
+			detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
+			pos := InStr(detection_str, this.ft_char, true,, this.occurrence)
+			left := StrLen(detection_str) - pos
+			SendInput +{left %left%}
+		}else{
+			send {right}+{end}+{left} ; go right one char in case current char = finding char
+			pos := InStr(StrReplace(clip(), "`r"), this.ft_char, true,, this.occurrence)
+			SendInput {left}{right %pos%}
+			if !pos
+				send {left}
+		}
+      }else if(key == "t"){
+		if(this.shift == 1){
+			starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
+			send +{end}+{left}
+			detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
+			pos := InStr(detection_str, this.ft_char, true,, this.occurrence)
+			left := StrLen(detection_str) - pos
+			if pos {
+				left += 1
+				if (pos == 1) {
+					this.occurrence += 1
+					next_occurrence := InStr(detection_str, this.ft_char, true,, this.occurrence)
+					if next_occurrence
+						left := StrLen(detection_str) - next_occurrence + 1
+				}
+			}
+			SendInput +{left %left%}
+		}else{
+			send {right}+{end}+{left} ; go right one char in case current char = finding char
+			pos := InStr(StrReplace(clip(), "`r"), this.ft_char, true,, this.occurrence)
+			SendInput {left}{right %pos%}{left}
+		}
       }else if(key == ")"){
-		occurrence := 1
+		this.occurrence := 1
 		if this.Vim.State.n
-			occurrence := this.Vim.State.n
+			this.occurrence := this.Vim.State.n
         if(this.shift == 1){
           starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
-		  if IsSMEditingHTML()
+		  if this.Vim.SM.IsEditingHTML()
 			send ^+{down}+{left}
 		  else
 			send +{end}
 		  send +{left}
 		  detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
-		  pos := InStr(detection_str, ".", true,, occurrence)
+		  pos := InStr(detection_str, ".", true,, this.occurrence)
 		  left := StrLen(detection_str) - pos
 		  if pos {
 			left += 1
 			if (pos == 1) {
-				occurrence += 1
-				next_occurrence := InStr(detection_str, ".", true,, occurrence)
-				if next_occurrence
-					left := StrLen(detection_str) - next_occurrence + 1
+				this.occurrence += 1
+				next_this.occurrence := InStr(detection_str, ".", true,, this.occurrence)
+				if next_this.occurrence
+					left := StrLen(detection_str) - next_this.occurrence + 1
 			}
 		  }
 		  SendInput +{left %left%}
         }else{
           send {right} ; go right one char in case current char = finding char
-		  if IsSMEditingHTML()
+		  if this.Vim.SM.IsEditingHTML()
 			send ^+{down}
 		  else
 			send +{end}
 		  send +{left}
-		  pos := InStr(StrReplace(clip(), "`r"), ".", true,, occurrence)
+		  pos := InStr(StrReplace(clip(), "`r"), ".", true,, this.occurrence)
 		  SendInput {left}{right %pos%}{left}
         }
+      }else if(key == "/"){
+	    if this.Vim.State.StrIsInCurrentVimMode("Visual")
+			InputBox, user_input, Visual Search, Select text until:`n(enter nothing to repeat the last search)`n(case sensitive),, 272, 160
+	    else if this.Vim.State.StrIsInCurrentVimMode("ydc_y")
+			InputBox, user_input, Visual Search, Copy text until:`n(enter nothing to repeat the last search)`n(case sensitive),, 272, 160
+	    else if this.Vim.State.StrIsInCurrentVimMode("ydc_d")
+			InputBox, user_input, Visual Search, Delete text until:`n(enter nothing to repeat the last search)`n(case sensitive),, 272, 160
+	    else if this.Vim.State.StrIsInCurrentVimMode("ydc_c")
+			InputBox, user_input, Visual Search, Delete text until:`n(enter nothing to repeat the last search)`n(case sensitive)`n(will enter insert mode),, 272, 176
+	    else if this.Vim.State.StrIsInCurrentVimMode("Extract")
+			InputBox, user_input, Visual Search, Extract text until:`n(enter nothing to repeat the last search)`n(case sensitive),, 272, 160
+	    else if this.Vim.State.StrIsInCurrentVimMode("Cloze")
+			InputBox, user_input, Visual Search, Cloze text until:`n(enter nothing to repeat the last search)`n(case sensitive),, 272, 160
+		if ErrorLevel
+			Return
+		if !user_input ; entered nothing
+			user_input := last_search ; repeat last search
+		else ; entered something
+			last_search := user_input ; register user_input into last_search
+		if !user_input ; still empty
+			Return
+		starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
+		if this.Vim.SM.IsEditingHTML()
+			send ^+{down}+{left}
+		else
+			send +{end}
+		send +{left}
+		detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
+		pos := InStr(detection_str, user_input, true)
+		left := StrLen(detection_str) - pos
+		if pos {
+			left += 1
+			if (pos == 1) {
+				next_this.occurrence := InStr(detection_str, user_input, true,, 2)
+				if next_this.occurrence
+					left := StrLen(detection_str) - next_this.occurrence + 1
+			}
+		}
+		SendInput +{left %left%}
       }
     }
     ; Up/Down 1 character
@@ -267,21 +361,21 @@
     ; Page Up/Down
     n := 10
     }else if(key == "^u"){
-      this.Up(10)
+	  this.Up(10)
     }else if(key == "^d"){
-      this.Down(10)
+	  this.Down(10)
     }else if(key == "^b"){
-      Send, {PgUp}
+	  Send, {PgUp}
     }else if(key == "^f"){
-      Send, {PgDn}
+	  Send, {PgDn}
     }else if(key == "g"){
 	  if this.Vim.State.n > 0 {
 	    line := this.Vim.State.n - 1
 	    this.Vim.State.n := 0
-		if WinActive("ahk_class TElWind") && !A_CaretX ; browsing
+		if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() ; browsing
 			send ^t
 		SendInput ^{home}{down %line%}
-	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()
 		send ^t^{home}{esc}
 	  else
 		Send, ^{Home}
@@ -289,9 +383,9 @@
 	  if this.Vim.State.n > 0 {
 	    line := this.Vim.State.n - 1
 	    this.Vim.State.n := 0
-		if SMMouseMoveTop(true)
+		if this.Vim.SM.MouseMoveTop(true)
 			send {left}{home}
-		else if WinActive("ahk_class TElWind") && !A_CaretX ; browsing and no scrollbar
+		else if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() ; browsing and no scrollbar
 			send ^t^{home}
 		else
 			send ^{home}
@@ -303,7 +397,7 @@
 			Send, ^+{End}+{Home}
 		else
 			Send, ^{End}{Home}
-		if IsSMEditingHTML() {
+		if this.Vim.SM.IsEditingHTML() {
 			send ^+{up} ; if there are references this would select (or deselect in visual mode) them all
 			if (this.shift == 1)
 				send +{down} ; go down one line, if there are references this would include the #SuperMemo Reference
@@ -381,3 +475,4 @@
     }
   }
 }
+			ft_char := this.ft_char

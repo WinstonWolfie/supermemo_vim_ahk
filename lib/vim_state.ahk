@@ -11,13 +11,16 @@
     , "Vim_ydc_d" , "Vim_ydc_dInner" , "Vim_VisualLine", "Vim_VisualFirst"
     , "Vim_VisualChar", "Vim_VisualLineFirst", "Vim_VisualCharInner"
     , "Command" , "Command_w", "Command_q", "Z", "r_once", "r_repeat"
-	, "SMVim_Cloze", "SMVim_ClozeHinter", "SMVim_Extract", "Vim_VisualBlock"
-	, "Vim_VisualBlockFirst", "ft_f", "ft_t", "ft_visual_t", "ft_visual_f"
-	, "ft_extract_f", "ft_extract_t"]
+	, "SMVim_Cloze", "SMVim_ClozeStay", "SMVim_ClozeHinter", "SMVim_Extract"
+	, "SMVim_ExtractStay", "Vim_VisualBlock", "Vim_VisualBlockFirst"]
 
     this.Mode := "Insert"
     this.g := 0
     this.n := 0
+    this.ft := ""
+	this.ft_char := ""
+	this.last_ft := ""
+	this.last_ft_char := ""
     this.LineCopy := 0
     this.LastIME := 0
     this.CurrControl := ""
@@ -26,16 +29,16 @@
     this.StatusCheckObj := ObjBindMethod(this, "StatusCheck")
   }
 
-  CheckMode(verbose=1, Mode="", g=0, n=0, LineCopy=-1, force=0){
+  CheckMode(verbose=1, Mode="", g=0, n=0, LineCopy=-1, ft="", force=0){
     if(force == 0) and ((verbose <= 1) or ((Mode == "") and (g == 0) and (n == 0) and (LineCopy == -1))){
       Return
     }else if(verbose == 2){
       this.SetTooltip(this.Mode, 1)
     }else if(verbose == 3){
-      this.SetTooltip(this.Mode "`r`ng=" this.g "`r`nn=" this.n "`r`nLineCopy=" this.LineCopy, 4)
+      this.SetTooltip(this.Mode "`r`ng=" this.g "`r`nn=" this.n "`r`nLineCopy=" this.LineCopy "`r`nft=" this.ft, 4)
     }
     if(verbose >= 4){
-      Msgbox, , Vim Ahk, % "Mode: " this.Mode "`nVim_g: " this.g "`nVim_n: " this.n "`nVimLineCopy: " this.LineCopy
+      Msgbox, , Vim Ahk, % "Mode: " this.Mode "`nVim_g: " this.g "`nVim_n: " this.n "`nVimLineCopy: " this.LineCopy "`r`nft:" this.ft
     }
   }
 
@@ -49,7 +52,7 @@
     this.CheckMode(4, , , , 1)
   }
 
-  SetMode(Mode="", g=0, n=0, LineCopy=-1){
+  SetMode(Mode="", g=0, n=0, LineCopy=-1, ft=""){
 	previous_mode := this.Mode
     this.CheckValidMode(Mode)
     if(Mode != ""){
@@ -58,7 +61,7 @@
         VIM_IME_SET(this.LastIME)
       }
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
-	  if A_CaretX && previous_mode != Mode && !InStr(Mode, "Vim_ft") && !InStr(previous_mode, "Vim_ft") && !InStr(Mode, "Vim_ydc_y") && !InStr(previous_mode, "Vim_ydc_y") && !InStr(Mode, "Vim_ydc_d") && !InStr(previous_mode, "Vim_ydc_d")
+	  if A_CaretX && previous_mode != Mode
 		this.Vim.Caret.SetCaret(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
     }
     if(g != -1){
@@ -70,7 +73,8 @@
     if(LineCopy!=-1){
       this.LineCopy := LineCopy
     }
-    this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy)
+    this.ft := ft
+    this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, ft)
   }
 
   SetNormal(){

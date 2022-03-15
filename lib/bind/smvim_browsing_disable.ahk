@@ -1,5 +1,5 @@
 ﻿; making sure grading works (in case VimDisableUnused > 1)
-#If Vim.IsVimGroup() && IsSMGrading()
+#If Vim.IsVimGroup() && Vim.SM.IsGrading()
 ; cannot use ~ here to send the key itself
 0::
 1::
@@ -10,14 +10,14 @@
 	send % A_ThisHotkey
 Return
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and (Vim.Conf["VimDisableUnused"]["val"] == 2)
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() and (Vim.Conf["VimDisableUnused"]["val"] == 2)
 a::
 b::
 c::
 d::
 e::
-; f:: ; find
-; g:: ; g state
+f::
+g::
 h::
 i::
 j::
@@ -43,7 +43,7 @@ z::
 +d::
 +e::
 +f::
-; +g::
++g::
 +h::
 +i::
 +j::
@@ -108,14 +108,14 @@ _::
 Space::
 Return
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and (Vim.Conf["VimDisableUnused"]["val"] == 3)
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() and (Vim.Conf["VimDisableUnused"]["val"] == 3)
 *a::
 *b::
 *c::
 *d::
 *e::
-; *f::
-; *g::
+*f::
+*g::
 *h::
 *i::
 *j::

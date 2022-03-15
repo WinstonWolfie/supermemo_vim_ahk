@@ -15,5 +15,6 @@ Return
 
 #If Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal")) && WinActive("ahk_class TElWind")
 ~!a::
+~!n::
 	Vim.State.SetMode("Insert")
 Return

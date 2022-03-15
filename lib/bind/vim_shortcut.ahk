@@ -16,6 +16,8 @@ Return
   Vim.State.ToggleEnabled()
 Return
 
+; Shortcuts for all windows
+#If Vim.State.Vim.Enabled
 ^!r::Reload
 
 LAlt & RAlt:: ; for laptop
@@ -25,17 +27,18 @@ LAlt & RAlt:: ; for laptop
 	Vim.State.SetMode("Insert")
 return
 
-#If Vim.State.Vim.Enabled
-^!+r::
+; ^!+r::
 	; MsgBox, Caret position: %A_CaretX% %A_CaretY%
-	MouseMove, %A_CaretX%, %A_CaretY%
-Return
+	; MouseMove, %A_CaretX%, %A_CaretY%
+; Return
 
+; Chrome
 #If Vim.State.Vim.Enabled && WinActive("ahk_exe chrome.exe") ; not using ahk_class because it's the same with the discord app
 ^!i:: ; open in *I*E
 	send ^l
 	sleep 100
 	link := RegExReplace(clip(), "#(.*)$")
+	send {tab}
 	Run, iexplore.exe %link%
 Return
 
@@ -64,16 +67,18 @@ return
 	Clipboard := StrReplace(Clipboard, "vulgar slang", "vulgar slang > ")
 return
 
-#If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe")
-*!x:: ; pdf/epub extract to supermemo
+; SumatraPDF/Calibre to SuperMemo
+#If Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe"))
+^!x::
+!x:: ; pdf/epub extract to supermemo
 	ctrl_state := GetKeyState("ctrl")
-	clipSave := Clipboardall
+	clip_bak := Clipboardall
 	Clipboard = 
 	send ^c
 	ClipWait 0.5
 	if !Clipboard {
 		MsgBox, Nothing is selected.
-		Clipboard := clipSave
+		Clipboard := clip_bak
 		return
 	} else {
 		if WinActive("ahk_class SUMATRA_PDF_FRAME") {
@@ -125,9 +130,10 @@ return
 			WinActivate, ahk_class SUMATRA_PDF_FRAME
 		else if (reader = "e")
 			WinActivate, ahk_exe ebook-viewer.exe
-	Clipboard := clipSave
+	Clipboard := clip_bak
 return
 
+; SumatraPDF
 #If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME")
 ^!q:: ; exit and save annotations
 	send q

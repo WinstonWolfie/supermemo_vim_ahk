@@ -1,32 +1,51 @@
 ﻿; Hotkeys in this file are inspired by Vimium: https://github.com/philc/vimium
 
-; G state on top to have higher priority
-; putting those below would make gu stops working (u triggers scroll up)
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX and (Vim.State.g)
+; g state on top to have higher priority
+; putting those below would make gu stops working (u also triggers scroll up)
+
+; Element window
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() and !(Vim.State.g)
+g::Vim.State.SetMode("", 1, -1)
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() and (Vim.State.g)
+g::Vim.Move.Move("g")
+
+f:: ; gf: go to next component
+	send ^t
+	Vim.State.SetMode()
+Return
+
++f:: ; gF: go to previous component
+	send !{f12}fl
+	Vim.State.SetMode()
+Return
+
 s:: ; gs: go to source link
 	send !{f10}fs
 	WinWaitActive, Information
 	if ErrorLevel
 		return
-	clipSave := Clipboardall
+	clip_bak := Clipboardall
 	send p{esc}
 	Vim.State.SetMode()
 	ClipWait 1
 	if InStr(Clipboard, "Link:") {
 		RegExMatch(Clipboard, "Link: \K.*", link)
-		Clipboard := clipSave ; restore clipboard here in case Run doesn't work
+		Clipboard := clip_bak ; restore clipboard here in case Run doesn't work
 		run % link
-	} else
-		VimToolTipFunc("No link found.")
-	Clipboard := clipSave
+	} else {
+		Vim.ToolTipFunc("No link found.")
+		Clipboard := clip_bak
+	}
 Return
 
-+t:: ; J, gt: go down one element
+; Element/content window
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !Vim.SM.IsEditingText() and (Vim.State.g)
++t:: ; K, gT: go up one element
 	send !{pgup}
 	Vim.State.SetMode()
 Return
 
-t:: ; K, gT: go up one element
+t:: ; J, gt: go down one element
 	send !{pgdn}
 	Vim.State.SetMode()
 Return
@@ -46,19 +65,19 @@ u:: ; gu: go up
 	Vim.State.SetMode()
 Return
 
+; Element window / browser
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TBrowser")) && !Vim.SM.IsEditingText() and (Vim.State.g)
 +u:: ; gU: click source button
-	FindClick(A_ScriptDir . "\lib\bind\util\source_element_window.png")
+	if WinActive("ahk_class TElWind")
+		FindClick(A_ScriptDir . "\lib\bind\util\source_element_window.png")
+	else
+		FindClick(A_ScriptDir . "\lib\bind\util\source_browser.png")
 	Vim.State.SetMode()
 Return
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser") and (Vim.State.g)
-+u:: ; gU: click source button
-	FindClick(A_ScriptDir . "\lib\bind\util\source_browser.png")
-	Vim.State.SetMode()
-Return
-
-; In normal mode, focused on element window, no caret
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX && SMMouseMoveTop()
+; Need scrolling bar present
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && Vim.SM.MouseMoveTop()
+; Scrolling
 h::send {WheelLeft}
 j::send {WheelDown}
 k::send {WheelUp}
@@ -66,33 +85,36 @@ l::send {WheelRight}
 d::send {WheelDown 2}
 u::send {WheelUp 2}
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
++g::Vim.Move.Move("+g")
+
+; Browser-like actions
 r::send !{home}!{left} ; reload
+t::send !n ; create new element
+x::send {del} ; delete element/component
++x::send ^+{enter} ; done!
+p::send ^{f10} ; replay auto-play
++p::send ^{t 2}{f9} ; play video in default system player / edit script component
 
-f:: ; click on html component
-	if SMMouseMoveTop(true)
-		send {left}{home}
-	else
-		send q^{home}
-Return
-
-; Open windows
-c::send !c ; open content window
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !A_CaretX
-b::send ^{space} ; open browser
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
-o::send ^o ; favourites
-
-; Navigation
+; Element navigation
 +h::send !{left} ; go back in history
 +l::send !{right} ; go forward in history
 +j::send !{pgdn} ; J, gt: go down one element
 +k::send !{pgup} ; K, gT: go up one element
 
-t::send !n ; create new element
+; Open windows
+c::send !c ; open content window
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !Vim.SM.IsEditingText()
+b::send ^{space} ; open browser
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
+o::send ^o ; favourites
 
-x::send ^+{del} ; delete current element
-+x::send ^+{enter} ; done!
+f:: ; click on html component
+	if Vim.SM.MouseMoveTop(true)
+		send {left}{home}
+	else
+		send q^{home}
+Return
 
 ; Orginal SM shortcuts
 ~q:: ; focus to question field; smvim extract
@@ -104,17 +126,17 @@ x::send ^+{del} ; delete current element
 ~^v:: ; paste image
 Return
 
-p::send ^{f10} ; replay auto-play
-+p::send ^{t 2}{f9} ; play video in default system player / edit script component
-
-#If Vim.IsVimGroup() and WinActive("ahk_class TElWind") && !A_CaretX and (Vim.State.IsCurrentVimMode("Vim_ydc_y"))
+; Copy mode
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
+y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_ydc_y")) && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 y:: ; yy: copy current source url
 	send !{f10}fs
 	WinWaitActive, Information
 	if ErrorLevel
 		return
 	send p{esc}
-	Vim.State.SetMode()
+	Vim.State.SetNormal()
 	ClipWait 1
 	if InStr(Clipboard, "Link:") {
 		RegExMatch(Clipboard, "Link: \K.*", link)
@@ -124,11 +146,12 @@ Return
 
 t:: ; yt: duplicate current element
 	send !d
-	Vim.State.SetMode()
+	Vim.State.SetNormal()
 Return
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TPlanDlg") || WinActive("ahk_class TTaskManager"))
-s::
+; Plan/tasklist window
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TPlanDlg") || WinActive("ahk_class TTaskManager")) && !A_CaretX
+s:: ; *s*witch
 	ControlGetFocus, current_focus_plan, ahk_class TPlanDlg
 	ControlGetFocus, current_focus_tasklist, ahk_class TTaskManager
 	if current_focus_plan = TStringGrid1
@@ -139,23 +162,4 @@ s::
 		send {del}
 		Vim.State.SetMode("Insert")
 	}
-Return
-
-; YouTube template
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord)
-m::FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "o32")
-
-left::
-right::
-space::
-	x_coord += 110
-	y_coord -= 60
-	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord%
-	send {%A_ThisHotkey%}
-	if (A_ThisHotkey = "space") {
-		sleep 350
-		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_x.png", "o128")
-	}
-	send ^{t 2} ; focus to notes
 Return
