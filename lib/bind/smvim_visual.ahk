@@ -16,7 +16,7 @@ return
 +a::
 	Vim.State.SetMode("Vim_Normal")
 	Gui, HTMLTag:Add, Text,, &HTML tag:
-	list = H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE
+	list = H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM
 	Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, %list%
 	Gui, HTMLTag:Add, Button, default, &Add
 	Gui, HTMLTag:Show,, Add HTML Tag

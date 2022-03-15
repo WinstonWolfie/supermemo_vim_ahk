@@ -8,18 +8,10 @@
     this.shift := 0
 	this.e := 0
 	if (key == "f" || key == "t") {
-		this.occurrence := 1
+		this.ft_occurrence := 1
 		if this.Vim.State.n
-			this.occurrence := this.Vim.State.n
-		this.ft_char := A_ThisHotkey
-		if InStr(this.ft_char, "+") {
-			this.ft_char := StrReplace(this.ft_char, "+")
-			ft_char := this.ft_char
-			StringUpper, ft_char, ft_char
-			this.ft_char := ft_char
-		}
-		if InStr(this.ft_char, "~")
-			this.ft_char := StrReplace(this.ft_char, "~")
+			this.ft_occurrence := this.Vim.State.n
+		this.ft_char := this.Vim.State.ft_char
 	}
     if(this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")){
       this.shift := 1
@@ -246,12 +238,12 @@
 			starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
 			send +{end}+{left}
 			detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
-			pos := InStr(detection_str, this.ft_char, true,, this.occurrence)
+			pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
 			left := StrLen(detection_str) - pos
 			SendInput +{left %left%}
 		}else{
 			send {right}+{end}+{left} ; go right one char in case current char = finding char
-			pos := InStr(StrReplace(clip(), "`r"), this.ft_char, true,, this.occurrence)
+			pos := InStr(StrReplace(clip(), "`r"), this.ft_char, true,, this.ft_occurrence)
 			SendInput {left}{right %pos%}
 			if !pos
 				send {left}
@@ -261,13 +253,13 @@
 			starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
 			send +{end}+{left}
 			detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
-			pos := InStr(detection_str, this.ft_char, true,, this.occurrence)
+			pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
 			left := StrLen(detection_str) - pos
 			if pos {
 				left += 1
 				if (pos == 1) {
-					this.occurrence += 1
-					next_occurrence := InStr(detection_str, this.ft_char, true,, this.occurrence)
+					this.ft_occurrence += 1
+					next_occurrence := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
 					if next_occurrence
 						left := StrLen(detection_str) - next_occurrence + 1
 				}
@@ -275,13 +267,13 @@
 			SendInput +{left %left%}
 		}else{
 			send {right}+{end}+{left} ; go right one char in case current char = finding char
-			pos := InStr(StrReplace(clip(), "`r"), this.ft_char, true,, this.occurrence)
+			pos := InStr(StrReplace(clip(), "`r"), this.ft_char, true,, this.ft_occurrence)
 			SendInput {left}{right %pos%}{left}
 		}
       }else if(key == ")"){
-		this.occurrence := 1
+		this.ft_occurrence := 1
 		if this.Vim.State.n
-			this.occurrence := this.Vim.State.n
+			this.ft_occurrence := this.Vim.State.n
         if(this.shift == 1){
           starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
 		  if this.Vim.SM.IsEditingHTML()
@@ -290,15 +282,15 @@
 			send +{end}
 		  send +{left}
 		  detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
-		  pos := InStr(detection_str, ".", true,, this.occurrence)
+		  pos := InStr(detection_str, ".", true,, this.ft_occurrence)
 		  left := StrLen(detection_str) - pos
 		  if pos {
 			left += 1
 			if (pos == 1) {
-				this.occurrence += 1
-				next_this.occurrence := InStr(detection_str, ".", true,, this.occurrence)
-				if next_this.occurrence
-					left := StrLen(detection_str) - next_this.occurrence + 1
+				this.ft_occurrence += 1
+				next_this.ft_occurrence := InStr(detection_str, ".", true,, this.ft_occurrence)
+				if next_this.ft_occurrence
+					left := StrLen(detection_str) - next_this.ft_occurrence + 1
 			}
 		  }
 		  SendInput +{left %left%}
@@ -309,7 +301,7 @@
 		  else
 			send +{end}
 		  send +{left}
-		  pos := InStr(StrReplace(clip(), "`r"), ".", true,, this.occurrence)
+		  pos := InStr(StrReplace(clip(), "`r"), ".", true,, this.ft_occurrence)
 		  SendInput {left}{right %pos%}{left}
         }
       }else if(key == "/"){
@@ -345,9 +337,9 @@
 		if pos {
 			left += 1
 			if (pos == 1) {
-				next_this.occurrence := InStr(detection_str, user_input, true,, 2)
-				if next_this.occurrence
-					left := StrLen(detection_str) - next_this.occurrence + 1
+				next_this.ft_occurrence := InStr(detection_str, user_input, true,, 2)
+				if next_this.ft_occurrence
+					left := StrLen(detection_str) - next_this.ft_occurrence + 1
 			}
 		}
 		SendInput +{left %left%}

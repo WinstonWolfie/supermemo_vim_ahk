@@ -156,14 +156,13 @@ Return
 		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
 		if ErrorLevel
 			Return
-		if !alt_state {
+		if !alt_state
 			if shift_state
 				send {right} ; put caret on right of searched text
 			else if ctrl_state
 				Vim.State.SetMode("Vim_VisualChar")
 			else ; all modifier keys are not pressed
 				send {left} ; put caret on left of searched text
-		}
 		send ^{enter} ; to open commander; convienently, if a "not found" window pops up, this would close it
 		WinWaitActive, ahk_class TCommanderDlg,, 0
 		if ErrorLevel {
