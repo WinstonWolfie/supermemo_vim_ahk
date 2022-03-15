@@ -35,6 +35,11 @@ l:: ; *l*ink concept
 	Vim.State.SetMode("Vim_Normal")
 return
 
++l:: ; list links
+	send !{f10}cs
+	Vim.State.SetMode("Vim_Normal")
+return
+
 w:: ; prepare *w*ikipedia articles in languages other than English
 	Vim.State.SetMode("Vim_Normal")
 	send ^t{esc} ; de-select all components
