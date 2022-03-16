@@ -46,8 +46,9 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 	clip_bak := Clipboardall
 	Clipboard =
 	send !{f10}fs ; show reference
-	WinWaitActive, ahk_class TMsgDialog,, 0
+	WinWaitActive, Information,, 0
 	send p{esc} ; copy reference
+	ClipWait 1
 	if !InStr(Clipboard, "wikipedia.org/wiki") {
 		MsgBox, Not wikipedia!
 		return

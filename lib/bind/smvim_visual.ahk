@@ -40,7 +40,7 @@ m::  ; highlight: *m*ark
 return
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
-\::
+'::
 	send ^{f3}
 	Vim.State.SetMode("Insert")
 	back_to_normal = 2
@@ -93,9 +93,11 @@ Return
 
 cloze_hinter:
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
-*!+z::
+^!+z::
+!+z::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
-*+z:: ; cloze hinter
+^+z:: ; cloze hinter
++z:: ; cloze hinter
 	if cloze_hinter_ctrl_state && (A_ThisLabel == "cloze_hinter") { ; from cloze hinter label and ctrl is down
 		ctrl_state := 1
 		cloze_hinter_ctrl_state := 0
@@ -120,16 +122,15 @@ cloze_hinter:
 	if InStr(user_input, "/") {
 		cloze := RegExReplace(user_input, "/$") ; removing the last /
 		if (cloze = user_input) ; no replacement
-			cloze = %cloze%]
+			cloze .= "]"
 		else
 			cloze = ...](%cloze%)
 	} else
 		cloze = ...](%user_input%)
-	ControlGetFocus, current_focus, ahk_class TElWind
-	if (current_focus = "TMemo2" || current_focus = "TMemo1") { ; editing plain text
+	if Vim.SM.IsEditingPlainText() { ; editing plain text
 		send ^a
-		clip(StrReplace(clip(), "[...]", "["cloze))
-	} else {
+		clip(StrReplace(clip(), "[...]", "[" . cloze))
+	} else if Vim.SM.IsEditingHTML() {
 		/* old method: using supermemo's f3
 		send {f3}
 		WinWaitNotActive, ahk_class TELWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)

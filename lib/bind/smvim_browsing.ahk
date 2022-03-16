@@ -9,24 +9,13 @@ g::Vim.State.SetMode("", 1, -1)
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() and (Vim.State.g)
 g::Vim.Move.Move("g")
 
-f:: ; gf: go to next component
-	send ^t
-	Vim.State.SetMode()
-Return
-
-+f:: ; gF: go to previous component
-	send !{f12}fl
-	Vim.State.SetMode()
-Return
-
 s:: ; gs: go to source link
-	send !{f10}fs
-	WinWaitActive, Information
-	if ErrorLevel
-		return
 	clip_bak := Clipboardall
-	send p{esc}
-	Vim.State.SetMode()
+	Clipboard =
+	send !{f10}fs ; show reference
+	WinWaitActive, Information,, 0
+	send p{esc} ; copy reference
+	Vim.State.SetNormal()
 	ClipWait 1
 	if InStr(Clipboard, "Link:") {
 		RegExMatch(Clipboard, "Link: \K.*", link)
@@ -40,12 +29,12 @@ Return
 
 ; Element/content window
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !Vim.SM.IsEditingText() and (Vim.State.g)
-+t:: ; K, gT: go up one element
++e:: ; K, gE: go up one *e*lement
 	send !{pgup}
 	Vim.State.SetMode()
 Return
 
-t:: ; J, gt: go down one element
+e:: ; J, ge: go down one *e*lement
 	send !{pgdn}
 	Vim.State.SetMode()
 Return
@@ -104,8 +93,8 @@ p::send ^{f10} ; replay auto-play
 ; Element navigation
 +h::send !{left} ; go back in history
 +l::send !{right} ; go forward in history
-+j::send !{pgdn} ; J, gt: go down one element
-+k::send !{pgup} ; K, gT: go up one element
++j::send !{pgdn} ; J, ge: go down one element
++k::send !{pgup} ; K, gE: go up one element
 
 ; Open windows
 c::send !c ; open content window
@@ -136,17 +125,18 @@ Return
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_ydc_y")) && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 y:: ; yy: copy current source url
-	send !{f10}fs
-	WinWaitActive, Information
-	if ErrorLevel
-		return
-	send p{esc}
+	clip_bak := Clipboardall
+	Clipboard =
+	send !{f10}fs ; show reference
+	WinWaitActive, Information,, 0
+	send p{esc} ; copy reference
 	Vim.State.SetNormal()
 	ClipWait 1
 	if InStr(Clipboard, "Link:") {
 		RegExMatch(Clipboard, "Link: \K.*", link)
 		Clipboard := link
 	}
+	Vim.ToolTipFunc("Copied " . link)
 Return
 
 t:: ; yt: duplicate current element
@@ -155,16 +145,7 @@ t:: ; yt: duplicate current element
 Return
 
 ; Plan/tasklist window
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TPlanDlg") || WinActive("ahk_class TTaskManager")) && !A_CaretX
-s:: ; *s*witch
-	ControlGetFocus, current_focus_plan, ahk_class TPlanDlg
-	ControlGetFocus, current_focus_tasklist, ahk_class TTaskManager
-	if current_focus_plan = TStringGrid1
-		ClickDPIAdjusted(253, 48) ; *s*witch plan
-	else if current_focus_tasklist = TStringGrid1
-		ClickDPIAdjusted(153, 52) ; *s*witch tasklist
-	else {
-		send {del}
-		Vim.State.SetMode("Insert")
-	}
-Return
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsPlanWindowEditingText()
+s::ClickDPIAdjusted(253, 48) ; *s*witch plan
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsTasklistWindowEditingText()
+s::ClickDPIAdjusted(153, 52) ; *s*witch tasklist

@@ -87,7 +87,7 @@
         VIM_IME_SET()
       }
     }
-    if(this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")){
+    if(this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
       Send, {Right}
       if WinActive("ahk_group VimCursorSameAfterSelect"){
         Send, {Left}

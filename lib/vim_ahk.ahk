@@ -227,12 +227,14 @@ class VimAhk{
   }
 
   TwoLetterNormalMapsEnabled(){
-    Return this.IsVimGroup() && (this.State.StrIsInCurrentVimMode("Insert") || (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText())) && this.TwoLetterNormalIsSet
+    Return this.IsVimGroup() && (this.State.StrIsInCurrentVimMode("Insert") || this.State.StrIsInCurrentVimMode("Visual") || (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText())) && this.TwoLetterNormalIsSet
   }
 
   TwoLetterEnterNormal(){
 	if this.State.StrIsInCurrentVimMode("Insert")
 		SendInput, {BackSpace 1}
+	else if this.State.StrIsInCurrentVimMode("Visual")
+		SendInput {up}{left}
 	else
 		SendInput {up}{esc}
     this.State.SetNormal()
@@ -314,7 +316,7 @@ class VimAhk{
 		; when you change the reference of an element that shares the reference with other elements
 		; no shortcuts there, so movement keys are used for up/down navigation
 		; if more windows are found without shortcuts in the future, they will be all added here
-		return (button1 = "Cancel (i.e. restore the old version of references)" || button2 = "Combine old and new references for this element" || button3 = "Change references in all elements produced from the original article" || button4 = "Change only the references of the currently displayed element")
+		return (button1 == "Cancel (i.e. restore the old version of references)" || button2 == "Combine old and new references for this element" || button3 == "Change references in all elements produced from the original article" || button4 == "Change only the references of the currently displayed element")
 		; use movement keys
 	}
   }
@@ -328,12 +330,13 @@ class VimAhk{
     tempClip := clipboard
     clipboard := ""
     SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
+	ClipWait 1
     Sleep 10
     ret := False
     If (clipboard ~= key){
       ret := True
     }
-    sleep 10
+    ; sleep 10
     clipboard := tempClip
     BlockInput, off
     Return ret

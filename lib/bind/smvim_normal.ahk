@@ -1,5 +1,5 @@
 ﻿; YouTube template
-; Need "Start" button on sreen
+; Need "Start" button on screen
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord)
 m::FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "o32")
 
@@ -16,6 +16,18 @@ space::
 		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_x.png", "o128")
 	}
 	send ^{t 2} ; focus to notes
+Return
+
+; g state
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
+c:: ; gc: go to next *c*omponent
+	send ^t
+	Vim.State.SetMode()
+Return
+
++c:: ; gC: go to previous *c*omponent
+	send !{f12}fl
+	Vim.State.SetMode()
 Return
 
 ; Editing text only
@@ -51,13 +63,18 @@ Return
 ; Editing HTML
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.SM.IsEditingHTML()
 n::  ; open hyperlink in current caret position (Open in *n*ew window)
-	clip_bak := Clipboardall
-	Clipboard =
-	if Vim.CheckChr("`n") || Vim.CheckChr(" ")
-		send {left}
-	send +{right}^c{left}
+	BlockInput, Send
+    tempClip := Clipboardall
+    clipboard := ""
+    SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
 	ClipWait 1
-	sleep 100
+	sleep 10 ; short sleep to make sure clipboard updates
+    If (clipboard ~= "`n" || clipboard ~= " "){
+      SendInput {Left}{Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
+	  ClipWait 1
+	  sleep 10
+    }
+    BlockInput, off
 	If ClipboardGet_HTML( Data ){
 		RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", current_link)
 		if !current_link
@@ -68,7 +85,7 @@ n::  ; open hyperlink in current caret position (Open in *n*ew window)
 		} else
 			run % current_link
 	}
-	Clipboard := clip_bak
+    clipboard := tempClip
 return
 
 ; Browsing/editing
@@ -88,7 +105,7 @@ Return
 	Vim.ToolTipFunc("Read point cleared")
 Return
 
-\::
+'::
 	send ^{f3}
 	Vim.State.SetMode("Insert")
 	back_to_normal = 2

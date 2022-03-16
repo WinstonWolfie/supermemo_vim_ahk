@@ -21,9 +21,7 @@ Return
 ^!r::Reload
 
 LAlt & RAlt:: ; for laptop
-	KeyWait LAlt
-	KeyWait RAlt
-	send {AppsKey}
+	send {blind}{LAlt up}{RAlt up}{AppsKey}
 	Vim.State.SetMode("Insert")
 return
 
