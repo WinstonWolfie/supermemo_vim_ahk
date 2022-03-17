@@ -342,7 +342,7 @@ class VimAhk{
     Return ret
   }
 
-  ToolTipFunc(text="", permanent="", period:=-2000) {
+  ToolTipFunc(text="", permanent="", period=-2000) {
 	CoordMode, ToolTip, Screen
 	coord_x := A_ScreenWidth / 2
 	coord_y := A_ScreenHeight / 3 * 2
@@ -353,3 +353,7 @@ class VimAhk{
 		SetTimer, RemoveToolTip, %period%
   }
 }
+
+RemoveToolTip:
+	ToolTip
+return

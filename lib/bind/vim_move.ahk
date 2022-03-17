@@ -46,11 +46,18 @@ b::Vim.Move.Repeat("b")
 {::Vim.Move.Repeat("{")
 }::Vim.Move.Repeat("}")
 ; Sentence
+(::
+	if Vim.SM.IsEditingHTML()
+		KeyWait shift
+	Vim.Move.Move("(")
+Return
+
 )::
 	if Vim.SM.IsEditingHTML()
 		KeyWait shift
 	Vim.Move.Move(")")
 Return
+
 ; Search
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) && !(Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
 /::Vim.Move.Move("/")

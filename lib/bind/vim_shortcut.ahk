@@ -44,14 +44,17 @@ Return
 	send ^l
 	sleep 100
 	Clipboard =
-	send ^c{tab}
+	send ^c ; cannot use clip() here because it will try to restore the clipboard
 	ClipWait 1
 	sleep 100
-	if InStr(Clipboard, "https://www.youtube.com")
-		if InStr(Clipboard, "v=") {
-			RegExMatch(Clipboard, "v=\K[\w\-]+", yt_link)
-			Clipboard = https://www.youtube.com/watch?v=%yt_link%
-		}
+	send {tab}
+	temp_clip := RegExReplace(Clipboard, "#(.*)$")
+	if InStr(temp_clip, "https://www.youtube.com") && InStr(temp_clip, "v=") {
+		RegExMatch(temp_clip, "v=\K[\w\-]+", yt_link)
+		temp_clip = https://www.youtube.com/watch?v=%yt_link%
+	}
+	Clipboard := temp_clip
+	Vim.ToolTipFunc("Copied " . temp_clip)
 return
 
 ^!d:: ; parse similar and opposite in google *d*efine
@@ -59,10 +62,12 @@ return
 	send ^c
 	ClipWait 1
 	sleep 300
-	Clipboard := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", "; ")
-	Clipboard := StrReplace(Clipboard, "`r`nSimilar", "`r`n`r`nSimilar")
-	Clipboard := StrReplace(Clipboard, "; Opposite:", "`r`n`r`nOpposite:")
-	Clipboard := StrReplace(Clipboard, "vulgar slang", "vulgar slang > ")
+	temp_clip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", "; ")
+	temp_clip := StrReplace(temp_clip, "`r`nSimilar", "`r`n`r`nSimilar")
+	temp_clip := StrReplace(temp_clip, "; Opposite", "`r`n`r`nOpposite")
+	temp_clip := StrReplace(temp_clip, "Opposite; ", "Opposite`r`n")
+	Clipboard := StrReplace(temp_clip, "vulgar slang", "vulgar slang > ")
+	Vim.ToolTipFunc("Copied:`n" . temp_clip)
 return
 
 ; SumatraPDF/Calibre to SuperMemo

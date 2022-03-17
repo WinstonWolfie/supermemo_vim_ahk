@@ -40,15 +40,15 @@ Return
 	Vim.State.SetNormal()
 return
 
-!+bs:: ; for laptop
-^+bs:: ; for processing pending queue Advanced English 2018: delete element and keep learning
-	send ^+{del}
-	WinWaitNotActive, ahk_class TElWind,, 0 ; wait for "Delete element?"
-	send {enter}
-	WinWaitNotActive, ahk_class TMsgDialog,, 0 ; wait for element window to become focused again
-	send {enter}
-	Vim.State.SetNormal()
-return
+; !+bs:: ; for laptop
+; ^+bs:: ; for processing pending queue Advanced English 2018: delete element and keep learning
+	; send ^+{del}
+	; WinWaitNotActive, ahk_class TElWind,, 0 ; wait for "Delete element?"
+	; send {enter}
+	; WinWaitNotActive, ahk_class TMsgDialog,, 0 ; wait for element window to become focused again
+	; send {enter}
+	; Vim.State.SetNormal()
+; return
 
 !+\:: ; for laptop
 ^+\:: ; done! and keep learning
@@ -130,3 +130,65 @@ return
 
 #If WinActive("ahk_class TPriorityDlg")
 .::SendInput ^a0.
+
+#If WinActive("ahk_class TElParamDlg")
+; Task value script, modified from Naess's priority script
+!0::
+!Numpad0::
+!NumpadIns::
+	Vim.SM.SetTaskValue(9024.74,9999)
+return
+
+!1::
+!Numpad1::
+!NumpadEnd::
+	Vim.SM.SetTaskValue(7055.79,9024.74)
+return
+
+!2::
+!Numpad2::
+!NumpadDown::
+	Vim.SM.SetTaskValue(5775.76,7055.78)
+return
+
+!3::
+!Numpad3::
+!NumpadPgdn::
+	Vim.SM.SetTaskValue(4625,5775.75)
+return
+
+!4::
+!Numpad4::
+!NumpadLeft::
+	Vim.SM.SetTaskValue(3721.04,4624)
+return
+
+!5::
+!Numpad5::
+!NumpadClear::
+	Vim.SM.SetTaskValue(2808.86,3721.03)
+return
+
+!6::
+!Numpad6::
+!NumpadRight::
+	Vim.SM.SetTaskValue(1849.18,2808.85)
+return
+
+!7::
+!Numpad7::
+!NumpadHome::
+	Vim.SM.SetTaskValue(841.32,1849.17)
+return
+
+!8::
+!Numpad8::
+!NumpadUp::
+	Vim.SM.SetTaskValue(360.77,841.31)
+return
+
+!9::
+!Numpad9::
+!NumpadPgup::
+	Vim.SM.SetTaskValue(0,360.76)
+return

@@ -19,6 +19,7 @@ ClickDPIAdjusted(coord_x="", coord_y="") {
 	}
 }
 
-RemoveToolTip:
-	ToolTip
-return
+StrReverse(String) { ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
+	String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
+    return String
+}

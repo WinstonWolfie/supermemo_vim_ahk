@@ -107,7 +107,9 @@ Return
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_"))
 f::Vim.State.SetMode("",, -1,, "f")
++f::Vim.State.SetMode("",, -1,, "+f")
 t::Vim.State.SetMode("",, -1,, "t")
++t::Vim.State.SetMode("",, -1,, "+t")
 `;::
 	Vim.State.ft_char := Vim.State.last_ft_char
 	Vim.Move.Move(Vim.State.last_ft)

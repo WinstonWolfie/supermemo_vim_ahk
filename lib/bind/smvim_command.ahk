@@ -200,3 +200,67 @@ d:: ; learn all elements with the comment "au*d*io"
 	send !{f10}u ; check autoplay
 	send ^{f10} ; play
 return
+
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command")) && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser"))
+; Priority script, made by Naess and modified by Guillem
+; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
+; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png
+!0::
+Numpad0::
+NumpadIns::
+	Vim.SM.SetPriority(0.00,3.6076)
+return
+
+!1::
+Numpad1::
+NumpadEnd::
+	Vim.SM.SetPriority(3.6077,8.4131)
+return
+
+!2::
+Numpad2::
+NumpadDown::
+	Vim.SM.SetPriority(8.4132,18.4917)
+return
+
+!3::
+Numpad3::
+NumpadPgdn::
+	Vim.SM.SetPriority(18.4918,28.0885)
+return
+
+!4::
+Numpad4::
+NumpadLeft::
+	Vim.SM.SetPriority(28.0886,37.2103)
+return
+
+!5::
+Numpad5::
+NumpadClear::
+	Vim.SM.SetPriority(37.2104,46.24)
+return
+
+!6::
+Numpad6::
+NumpadRight::
+	Vim.SM.SetPriority(46.25,57.7575)
+return
+
+!7::
+Numpad7::
+NumpadHome::
+	Vim.SM.SetPriority(57.7576,70.5578)
+return
+
+!8::
+Numpad8::
+NumpadUp::
+	Vim.SM.SetPriority(70.5579,90.2474)
+return
+
+!9::
+Numpad9::
+NumpadPgup::
+	Vim.SM.SetPriority(90.2474,99.99)
+return

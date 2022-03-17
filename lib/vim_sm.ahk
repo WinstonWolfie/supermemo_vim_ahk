@@ -82,4 +82,20 @@ class VimSM{
 		ControlGetFocus, current_focus, ahk_class TTaskManager
 		Return WinActive("ahk_class TTaskManager") && (current_focus == "TStringGrid1")
 	}
+	
+	SetPriority(min, max) {
+		send !p
+		Random, OutputVar, %min%, %max%
+		SendInput {raw}%OutputVar%
+		send {enter}
+		this.Vim.State.SetNormal()
+	}
+
+	SetTaskValue(min, max) {
+		send !v
+		Random, OutputVar, %min%, %max%
+		SendInput {raw}%OutputVar%
+		send {tab}
+		this.Vim.State.SetNormal()
+	}
 }

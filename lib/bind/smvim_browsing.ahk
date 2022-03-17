@@ -64,6 +64,18 @@ Return
 	Vim.State.SetMode()
 Return
 
+; g state, for both browsing and editing
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
+c:: ; gc: go to next *c*omponent
+	send ^t
+	Vim.State.SetMode()
+Return
+
++c:: ; gC: go to previous *c*omponent
+	send !{f12}fl
+	Vim.State.SetMode()
+Return
+
 ; Need scrolling bar present
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && Vim.SM.MouseMoveTop()
 ; Scrolling
@@ -114,10 +126,11 @@ Return
 ~q:: ; focus to question field; smvim extract
 ~a:: ; focus to answer field; vim append
 ~e:: ; focus all fields; vim go forward
-~^d:: ; dismiss; vim page down
+~^d:: ; dismiss; vim scroll down
 ~^j:: ; change interval; vim join lines
-~^f:: ; find
-~^v:: ; paste image
+~^f:: ; find; vim page down
+~^v:: ; paste image; vim visual block
+~^r:: ; replace; vim redo
 Return
 
 ; Copy mode

@@ -18,18 +18,6 @@ space::
 	send ^{t 2} ; focus to notes
 Return
 
-; g state
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
-c:: ; gc: go to next *c*omponent
-	send ^t
-	Vim.State.SetMode()
-Return
-
-+c:: ; gC: go to previous *c*omponent
-	send !{f12}fl
-	Vim.State.SetMode()
-Return
-
 ; Editing text only
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.SM.IsEditingText()
 ^q::Vim.State.SetMode("SMVim_ExtractStay", 0, -1, 0)

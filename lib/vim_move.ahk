@@ -7,7 +7,7 @@
   MoveInitialize(key=""){
     this.shift := 0
 	this.e := 0
-	if (key == "f" || key == "t") {
+	if (key == "f" || key == "+f" || key == "t" || key == "+t" || key == "(" || key == ")") {
 		this.ft_occurrence := 1
 		if this.Vim.State.n
 			this.ft_occurrence := this.Vim.State.n
@@ -15,7 +15,7 @@
 	}
     if(this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")){
       this.shift := 1
-	  if (key != ")") && (key != "/") && (key != "f") && (key != "t")
+	  if (key != "(" && key != ")" && key != "/" && key != "f" && key != "+f" && key != "t" && key != "+t")
 		Send, {Shift Down}
     }
 
@@ -235,65 +235,232 @@
         }
       }else if(key == "f"){
 		if(this.shift == 1){
-			starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
+			str_before := StrReplace(clip(), "`r")
 			send +{end}+{left}
-			detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
-			pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
-			left := StrLen(detection_str) - pos
-			SendInput +{left %left%}
+			str_after := StrReplace(clip(), "`r")
+			if StrLen(str_after) > StrLen(str_before) || !str_before {
+				starting_pos := StrLen(str_before) + 1 ; +1 to make sure detection_str is what's selected after
+				detection_str := SubStr(str_after, starting_pos)
+				pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+				left := StrLen(detection_str) - pos
+				SendInput +{left %left%}
+			} else if StrLen(str_after) < StrLen(str_before) {
+				length := StrLen(str_before) - StrLen(str_after) + 1 ; +1 to make sure detection_str is what's selected after
+				detection_str := SubStr(str_before, 1, length)
+				pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+				left := StrLen(detection_str) - pos - 1
+				SendInput +{left %left%}
+			}
 		}else{
-			send {right}+{end}+{left} ; go right one char in case current char = finding char
+			send +{end}+{left}
 			pos := InStr(StrReplace(clip(), "`r"), this.ft_char, true,, this.ft_occurrence)
 			SendInput {left}{right %pos%}
-			if !pos
-				send {left}
+		}
+      }else if(key == "+f"){
+		if(this.shift == 1){
+			str_before := StrReplace(clip(), "`r")
+			send +{home}
+			str_after := StrReplace(clip(), "`r")
+			if StrLen(str_after) > StrLen(str_before) || !str_before {
+				length := StrLen(str_after) - StrLen(str_before)
+				detection_str := StrReverse(SubStr(str_after, 1, length))
+				pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+				right := StrLen(detection_str) - pos
+				SendInput +{right %right%}
+			} else if StrLen(str_after) < StrLen(str_before) {
+				length := StrLen(str_before) - StrLen(str_after) + 1 ; +1 to make sure detection_str is what's selected after
+				detection_str := SubStr(StrReverse(str_before), 1, length)
+				pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+				right := StrLen(detection_str) - pos - 1
+				SendInput +{right %right%}
+			}
+		}else{
+			send +{home}
+			detection_str := StrReverse(StrReplace(clip(), "`r"))
+			pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+			SendInput {right}{left %pos%}
 		}
       }else if(key == "t"){
 		if(this.shift == 1){
-			starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
+			str_before := StrReplace(clip(), "`r")
 			send +{end}+{left}
-			detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
-			pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
-			left := StrLen(detection_str) - pos
-			if pos {
-				left += 1
-				if (pos == 1) {
-					this.ft_occurrence += 1
-					next_occurrence := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
-					if next_occurrence
-						left := StrLen(detection_str) - next_occurrence + 1
+			str_after := StrReplace(clip(), "`r")
+			if StrLen(str_after) > StrLen(str_before) || !str_before {
+				starting_pos := StrLen(str_before) + 1 ; +1 to make sure detection_str is what's selected after
+				detection_str := SubStr(str_before, starting_pos)
+				pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+				left := StrLen(detection_str) - pos
+				if pos {
+					left += 1
+					if (pos == 1) {
+						this.ft_occurrence += 1
+						next_occurrence := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+						if next_occurrence
+							left := StrLen(detection_str) - next_occurrence + 1
+					}
 				}
+				SendInput +{left %left%}
+			} else if StrLen(str_after) < StrLen(str_before) {
+				length := StrLen(str_before) - StrLen(str_after) + 1 ; +1 to make sure detection_str is what's selected after
+				detection_str := SubStr(str_before, 1, length)
+				pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+				left := StrLen(detection_str) - pos - 1
+				if pos {
+					left += 1
+					if (pos == 1) {
+						this.ft_occurrence += 1
+						next_occurrence := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+						if next_occurrence
+							left := StrLen(detection_str) - next_occurrence
+					}
+				}
+				SendInput +{left %left%}
 			}
-			SendInput +{left %left%}
 		}else{
 			send {right}+{end}+{left} ; go right one char in case current char = finding char
 			pos := InStr(StrReplace(clip(), "`r"), this.ft_char, true,, this.ft_occurrence)
 			SendInput {left}{right %pos%}{left}
 		}
-      }else if(key == ")"){
-		this.ft_occurrence := 1
-		if this.Vim.State.n
-			this.ft_occurrence := this.Vim.State.n
-        if(this.shift == 1){
-          starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
-		  if this.Vim.SM.IsEditingHTML()
-			send ^+{down}+{left}
-		  else
-			send +{end}
-		  send +{left}
-		  detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
-		  pos := InStr(detection_str, ".", true,, this.ft_occurrence)
-		  left := StrLen(detection_str) - pos
-		  if pos {
-			left += 1
-			if (pos == 1) {
-				this.ft_occurrence += 1
-				next_this.ft_occurrence := InStr(detection_str, ".", true,, this.ft_occurrence)
-				if next_this.ft_occurrence
-					left := StrLen(detection_str) - next_this.ft_occurrence + 1
+      }else if(key == "+t"){
+		if(this.shift == 1){
+			str_before := StrReplace(clip(), "`r")
+			send +{home}
+			str_after := StrReplace(clip(), "`r")
+			if StrLen(str_after) > StrLen(str_before) || !str_before {
+				length := StrLen(str_after) - StrLen(str_before)
+				detection_str := StrReverse(SubStr(str_after, 1, length))
+				pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+				right := StrLen(detection_str) - pos
+				if pos {
+					right += 1
+					if (pos == 1) {
+						this.ft_occurrence += 1
+						next_occurrence := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+						if next_occurrence
+							right := StrLen(detection_str) - next_occurrence + 1
+					}
+				}
+				SendInput +{right %right%}
+			} else if StrLen(str_after) < StrLen(str_before) {
+				length := StrLen(str_before) - StrLen(str_after) + 1 ; +1 to make sure detection_str is what's selected after
+				detection_str := SubStr(StrReverse(str_before), 1, length)
+				pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+				right := StrLen(detection_str) - pos - 1
+				if pos {
+					right += 1
+					if (pos == 1) {
+						this.ft_occurrence += 1
+						next_occurrence := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+						if next_occurrence
+							right := StrLen(detection_str) - next_occurrence
+					}
+				}
+				SendInput +{right %right%}
 			}
-		  }
-		  SendInput +{left %left%}
+		}else{
+			send {left}+{home}+{right} ; go left one char in case current char = finding char
+			detection_str := StrReverse(StrReplace(clip(), "`r"))
+			pos := InStr(detection_str, this.ft_char, true,, this.ft_occurrence)
+			SendInput {right}{left %pos%}{right}
+		}
+      }else if(key == "("){
+		if(this.shift == 1){
+			str_before := StrReplace(clip(), "`r")
+			send +{right}
+			str_after := StrReplace(clip(), "`r")
+			send +{left}
+			if StrLen(str_after) > StrLen(str_before) || !str_before {
+				detection_str := StrReverse(str_before)
+				pos := InStr(detection_str, " .", true,, this.ft_occurrence)
+				left := pos
+				if pos {
+					left += 1
+					if (pos == 1) {
+						this.ft_occurrence += 1
+						next_occurrence := InStr(detection_str, " .", true,, this.ft_occurrence)
+						if next_occurrence
+							right := StrLen(str_before) - next_occurrence
+					}
+				}
+				SendInput +{left %left%}
+			} else if StrLen(str_after) < StrLen(str_before) {
+				if this.Vim.SM.IsEditingHTML()
+					send ^+{up}
+				else
+					send +{home}
+				starting_pos := StrLen(str_before) + 1 ; +1 to make sure detection_str is what's selected after
+				detection_str := SubStr(StrReverse(StrReplace(clip(), "`r")), starting_pos)
+				pos := InStr(detection_str, " .", true,, this.ft_occurrence)
+				right := StrLen(detection_str) - pos
+				if pos {
+					right += 1
+					if (pos == 1) {
+						this.ft_occurrence += 1
+						next_occurrence := InStr(detection_str, " .", true,, this.ft_occurrence)
+						if next_occurrence
+							right := StrLen(detection_str) - next_occurrence + 1
+					}
+				}
+				SendInput +{right %right%}
+			}
+        }else{
+		  if this.Vim.SM.IsEditingHTML()
+			send ^+{up}
+		  else
+			send +{home}
+		  detection_str := StrReverse(StrReplace(clip(), "`r"))
+		  pos := InStr(detection_str, " .", true,, this.ft_occurrence)
+		  left := pos
+			if pos {
+				left -= 1
+				if (pos == 1) {
+					this.ft_occurrence += 1
+					next_occurrence := InStr(detection_str, " .", true,, this.ft_occurrence)
+					if next_occurrence
+						left := next_occurrence - 1
+				}
+			}
+		  SendInput {right}{left %left%}
+        }
+      }else if(key == ")"){
+		if(this.shift == 1){
+			str_before := StrReplace(clip(), "`r")
+			send +{right}
+			str_after := StrReplace(clip(), "`r")
+			send +{left}
+			if StrLen(str_after) > StrLen(str_before) || !str_before {
+				if this.Vim.SM.IsEditingHTML()
+					send ^+{down}
+				else
+					send +{end}
+				starting_pos := StrLen(str_before) + 1 ; +1 to make sure detection_str is what's selected after
+				detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
+				pos := InStr(detection_str, ".", true,, this.ft_occurrence)
+				left := StrLen(detection_str) - pos
+				if pos {
+					left += 1
+					if (pos == 1) {
+						this.ft_occurrence += 1
+						next_occurrence := InStr(detection_str, ".", true,, this.ft_occurrence)
+						if next_occurrence
+							left := StrLen(detection_str) - next_occurrence + 1
+					}
+				}
+				SendInput +{left %left%}
+			} else if StrLen(str_after) < StrLen(str_before) {
+				pos := InStr(str_before, ". ", true,, this.ft_occurrence)
+				right := pos
+				if pos {
+					right += 1
+					if (pos == 1) {
+						this.ft_occurrence += 1
+						next_occurrence := InStr(str_before, ". ", true,, this.ft_occurrence)
+						if next_occurrence
+							right := StrLen(str_before) - next_occurrence
+					}
+				}
+				SendInput +{right %right%}
+			}
         }else{
           send {right} ; go right one char in case current char = finding char
 		  if this.Vim.SM.IsEditingHTML()
@@ -320,29 +487,40 @@
 		if ErrorLevel
 			Return
 		if !user_input ; entered nothing
-			user_input := last_search ; repeat last search
+			user_input := this.last_search ; repeat last search
 		else ; entered something
-			last_search := user_input ; register user_input into last_search
+			this.last_search := user_input ; register user_input into last_search
 		if !user_input ; still empty
 			Return
-		starting_pos := StrLen(StrReplace(clip(), "`r")) + 1 ; +1 to make sure detection_str is what's selected after
-		if this.Vim.SM.IsEditingHTML()
-			send ^+{down}+{left}
-		else
-			send +{end}
+		str_before := StrReplace(clip(), "`r")
+		send +{right}
+		str_after := StrReplace(clip(), "`r")
 		send +{left}
-		detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
-		pos := InStr(detection_str, user_input, true)
-		left := StrLen(detection_str) - pos
-		if pos {
-			left += 1
-			if (pos == 1) {
-				next_this.ft_occurrence := InStr(detection_str, user_input, true,, 2)
-				if next_this.ft_occurrence
-					left := StrLen(detection_str) - next_this.ft_occurrence + 1
+		if StrLen(str_after) > StrLen(str_before) || !str_before {
+			if this.Vim.SM.IsEditingHTML()
+				send ^+{down}+{left}
+			else
+				send +{end}
+			send +{left}
+			starting_pos := StrLen(str_before) + 1 ; +1 to make sure detection_str is what's selected after
+			detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
+			pos := InStr(detection_str, user_input, true)
+			left := StrLen(detection_str) - pos
+			if pos {
+				left += 1
+				if (pos == 1) {
+					next_occurrence := InStr(detection_str, user_input, true,, 2)
+					if next_occurrence
+						left := StrLen(detection_str) - next_occurrence + 1
+				}
 			}
+			SendInput +{left %left%}
+		} else if StrLen(str_after) < StrLen(str_before) {
+			pos := InStr(str_before, user_input, true)
+			if pos
+				pos += StrLen(user_input) - 1
+			SendInput +{right %pos%}
 		}
-		SendInput +{left %left%}
       }
     }
     ; Up/Down 1 character
