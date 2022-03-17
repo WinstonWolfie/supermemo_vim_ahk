@@ -433,6 +433,7 @@
 					send ^+{down}
 				else
 					send +{end}
+				send +{left}
 				starting_pos := StrLen(str_before) + 1 ; +1 to make sure detection_str is what's selected after
 				detection_str := SubStr(StrReplace(clip(), "`r"), starting_pos)
 				pos := InStr(detection_str, ".", true,, this.ft_occurrence)
@@ -498,7 +499,7 @@
 		send +{left}
 		if StrLen(str_after) > StrLen(str_before) || !str_before {
 			if this.Vim.SM.IsEditingHTML()
-				send ^+{down}+{left}
+				send ^+{down}
 			else
 				send +{end}
 			send +{left}
