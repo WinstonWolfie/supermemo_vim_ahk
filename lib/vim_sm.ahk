@@ -3,7 +3,7 @@ class VimSM{
 		this.Vim := vim
 	}	
 
-	MouseMoveTop(clicking="") {
+	MouseMoveTop(clicking=false) {
 		if WinActive("ahk_class TElWind") {
 			FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
 			if x_coord {
@@ -19,7 +19,7 @@ class VimSM{
 		}
 	}
 
-	MouseMoveMiddle(clicking="") {
+	MouseMoveMiddle(clicking=false) {
 		if WinActive("ahk_class TElWind") {
 			FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_up, y_up)
 			FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_down, y_down)
@@ -36,7 +36,7 @@ class VimSM{
 		}
 	}
 
-	MouseMoveBottom(clicking="") {
+	MouseMoveBottom(clicking=false) {
 		if WinActive("ahk_class TElWind") {
 		FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_coord, y_coord)
 			if x_coord {

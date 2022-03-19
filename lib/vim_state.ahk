@@ -9,10 +9,13 @@
     this.PossibleVimModes := ["", "Vim_Normal", "Insert", "Replace"
     , "Vim_ydc_y" , "Vim_ydc_yInner", "Vim_ydc_c", "Vim_ydc_cInner"
     , "Vim_ydc_d" , "Vim_ydc_dInner" , "Vim_VisualLine", "Vim_VisualFirst"
-    , "Vim_VisualChar", "Vim_VisualLineFirst", "Vim_VisualCharInner"
-    , "Command" , "Command_w", "Command_q", "Z", "r_once", "r_repeat"
-	, "SMVim_Cloze", "SMVim_ClozeStay", "SMVim_ClozeHinter", "SMVim_Extract"
-	, "SMVim_ExtractStay", "Vim_VisualBlock", "Vim_VisualBlockFirst"]
+	, "Vim_VisualFirstInner", "Vim_VisualChar", "Vim_VisualLineFirst"
+	, "Vim_VisualCharInner", "Command" , "Command_w", "Command_q"
+	, "Z", "r_once", "r_repeat", "SMVim_Cloze", "SMVim_ClozeInner"
+	, "SMVim_ClozeStay", "SMVim_ClozeStayInner", "SMVim_ClozeHinter"
+	, "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
+	, "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
+	, "Vim_VisualBlockFirst"]
 
     this.Mode := "Insert"
     this.g := 0

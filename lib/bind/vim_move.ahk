@@ -1,10 +1,12 @@
 ﻿; Inner mode
-#If Vim.IsVimGroup() and ((Vim.State.StrIsInCurrentVimMode("Vim_ydc")) or (Vim.State.IsCurrentVimMode("Vim_VisualChar")))
+#If Vim.IsVimGroup() and ((Vim.State.StrIsInCurrentVimMode("Vim_ydc")) or (Vim.State.IsCurrentVimMode("Vim_VisualChar")) || Vim.State.IsCurrentVimMode("Vim_VisualFirst") || Vim.State.StrIsInCurrentVimMode("SMVim_"))
 i::Vim.State.SetInner()
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Inner"))
 w::Vim.Move.Inner("w")
 +w::Vim.Move.Inner("w")
+s::Vim.Move.Inner("s")
+p::Vim.Move.Inner("p")
 
 ; gg
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) and (not Vim.State.g)
@@ -47,19 +49,15 @@ b::Vim.Move.Repeat("b")
 }::Vim.Move.Repeat("}")
 ; Sentence
 (::
-	if Vim.SM.IsEditingHTML()
-		KeyWait shift
-	Vim.Move.Move("(")
-Return
-
 )::
 	if Vim.SM.IsEditingHTML()
 		KeyWait shift
-	Vim.Move.Move(")")
+	Vim.Move.Move(A_ThisHotkey)
 Return
 
 ; Search
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) && !(Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
 /::Vim.Move.Move("/")
+?::Vim.Move.Move("?")
 
 #If

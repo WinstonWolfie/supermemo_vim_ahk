@@ -278,6 +278,7 @@ class VimAhk{
                   , "ahk_exe Q-Dir.exe"     ; Q-dir
                   , "ahk_exe notepad++.exe" ; Notepad++
                   , "ahk_exe Obsidian.exe"  ; Obsidian
+                  , "ahk_exe iexplore.exe"  ; Internet Explorer
                   , "ahk_class TElWind"     ; SM element window
                   , "ahk_class TContents"   ; SM content window
                   , "ahk_class TBrowser"    ; SM browser
@@ -342,18 +343,35 @@ class VimAhk{
     Return ret
   }
 
-  ToolTipFunc(text="", permanent="", period=-2000) {
+  ToolTipFunc(text="", permanent=false, period=-2000) {
 	CoordMode, ToolTip, Screen
 	coord_x := A_ScreenWidth / 2
 	coord_y := A_ScreenHeight / 3 * 2
-	ToolTip, %text%, %coord_x%, %coord_y%
-	if permanent
-		SetTimer, RemoveToolTip, off
-	else
+	ToolTip, %text%, %coord_x%, %coord_y%, 20
+	if !permanent
 		SetTimer, RemoveToolTip, %period%
+  }
+  
+  ParseLineBreaks(String) {
+	if this.SM.IsEditingHTML() {
+		; removes the very last line break if there's a space before it
+		; not perfect because end of paragraph and end of a line inside a paragraph would appear the same in plain text
+		; also bullet point and end of a line inside a paragraph would appear the same in plain text
+		if (StrLen(String) != InStr(String, "`r`n") + 1) ; first matched `r`n not at the end
+			String := RegExReplace(String, "D)(?<=[ ])\r\n$")
+		String := RegExReplace(String, "(?<![ ])\r\n$") ; remove line breaks at end of line if there isn't a space before it
+		String := StrReplace(String, "`r`n`r`n", " ") ; turn all paragraph tags (<P>) to space
+		String := StrReplace(String, "`r`n", " ") ; turn all line breaks (<BR>) to space
+	} else
+		String := StrReplace(String, "`r")
+	Return String
+  }
+  
+  IsWhitespaceOnly(String) {
+	Return !RegExMatch(String, "[\S]")
   }
 }
 
 RemoveToolTip:
-	ToolTip
+	ToolTip,,,, 20
 return

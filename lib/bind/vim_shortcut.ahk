@@ -126,12 +126,12 @@ return
 	send {enter}
 	WinWaitNotActive, ahk_class TMsgDialog,, 0
 	send {esc}
-	if (ctrl_state = 1)
+	if ctrl_state
 		send !{left}
 	else
-		if (reader = "p")
+		if (reader == "p")
 			WinActivate, ahk_class SUMATRA_PDF_FRAME
-		else if (reader = "e")
+		else if (reader == "e")
 			WinActivate, ahk_exe ebook-viewer.exe
 	Clipboard := clip_bak
 return

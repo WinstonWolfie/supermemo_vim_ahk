@@ -171,5 +171,5 @@ cloze_hinter:
 		send !{right} ; add a ctrl to keep editing the clozed item
 	else ; refresh if staying in the cloze item
 		send !{home}!{left}
-	ToolTip
+	Gosub RemoveToolTip
 return

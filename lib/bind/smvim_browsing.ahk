@@ -152,7 +152,7 @@ y:: ; yy: copy current source url
 	Vim.ToolTipFunc("Copied " . link)
 Return
 
-t:: ; yt: duplicate current element
+e:: ; ye: duplicate current element
 	send !d
 	Vim.State.SetNormal()
 Return

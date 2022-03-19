@@ -126,15 +126,20 @@ s:: ; *s*ubstitue
 	Vim.State.SetMode("Insert")
 return
 
+#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) and !(Vim.State.StrIsInCurrentVimMode("VisualFirst"))
 o:: ; move to other end of marked area; not perfect with line breaks
-	selection_len := StrLen(StrReplace(clip(), "`r"))
+	selection := clip()
+	selection_len := StrLen(Vim.ParseLineBreaks(selection))
 	send +{right}
-	selection_right_len := StrLen(StrReplace(clip(), "`r"))
+	selection_right := clip()
+	selection_right_len := StrLen(Vim.ParseLineBreaks(selection_right))
 	send +{left}
-	if (selection_len < selection_right_len) { ; moving point of selection is on the right
+	if (selection_len < selection_right_len)
+	|| (selection_len == selection_right_len && StrLen(selection) < StrLen(selection_right)) { ; moving point of selection is on the right
 		send {right}
 		SendInput % "{shift down}{left " selection_len "}{shift up}"
-	} else {
+	} else if (selection_len > selection_right_len)
+	|| (selection_len == selection_right_len && StrLen(selection) > StrLen(selection_right)) {
 		send {left}
 		SendInput % "{shift down}{right " selection_len "}{shift up}"
 	}

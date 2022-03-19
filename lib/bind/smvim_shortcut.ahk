@@ -40,15 +40,15 @@ Return
 	Vim.State.SetNormal()
 return
 
-; !+bs:: ; for laptop
-; ^+bs:: ; for processing pending queue Advanced English 2018: delete element and keep learning
-	; send ^+{del}
-	; WinWaitNotActive, ahk_class TElWind,, 0 ; wait for "Delete element?"
-	; send {enter}
-	; WinWaitNotActive, ahk_class TMsgDialog,, 0 ; wait for element window to become focused again
-	; send {enter}
-	; Vim.State.SetNormal()
-; return
+!+bs:: ; for laptop
+^+bs:: ; for processing pending queue Advanced English 2018: delete element and keep learning
+	send ^+{del}
+	WinWaitNotActive, ahk_class TElWind,, 0 ; wait for "Delete element?"
+	send {enter}
+	WinWaitNotActive, ahk_class TMsgDialog,, 0 ; wait for element window to become focused again
+	send {enter}
+	Vim.State.SetNormal()
+return
 
 !+\:: ; for laptop
 ^+\:: ; done! and keep learning
@@ -125,11 +125,13 @@ PlanInsertButtonInsert:
 	send {enter} ; cancel alarm
 	WinWaitActive, ahk_class TElWind,, 0
 	send ^p ; open plan again
-	ToolTip
 return
 
 #If WinActive("ahk_class TPriorityDlg")
 .::SendInput ^a0.
+
+#If WinActive("ahk_class TWebDlg")
+!+d::FindClick(A_ScriptDir . "\lib\bind\util\web_import_duplicates.png")
 
 #If WinActive("ahk_class TElParamDlg")
 ; Task value script, modified from Naess's priority script

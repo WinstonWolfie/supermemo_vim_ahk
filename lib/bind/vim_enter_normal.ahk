@@ -17,7 +17,7 @@ Return
 
 #If back_to_normal
 ~enter::
-	if back_to_normal = 1
+	if (back_to_normal == 1)
 		Vim.State.SetNormal()
 	back_to_normal -= 1
 Return

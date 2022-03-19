@@ -72,7 +72,7 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 	WinWaitActive, ahk_class #32770,, 0 ; do you want to save changes?
 	if !ErrorLevel
 		send {enter}
-	if (wiki_link = "zh.wikipedia.org") {
+	if (wiki_link == "zh.wikipedia.org") {
 		WinWaitActive, ahk_class TElWind,, 0
 		send q
 		sleep 200
@@ -96,7 +96,7 @@ return
 
 r:: ; set *r*eference's link to what's in the clipboard
 	Vim.State.SetMode("Vim_Normal")
-	new_link = #Link: %Clipboard%
+	new_link := "#Link: " . Clipboard
 	send !{f10}fe
 	WinWaitActive, ahk_class TInputDlg,, 0
 	send ^a^c
@@ -163,20 +163,20 @@ return
 
 m:: ; co*m*ment current element "audio"
 Vim.State.SetMode("Vim_Normal")
-	ControlGetText, currentText, TBitBtn3
-	if (currentText = "Next repetition") {
-		continue_learning = 1
+	ControlGetText, current_text, TBitBtn3
+	if (current_text == "Next repetition") {
 		send !{f10}u
+		continue_learning = 1
 	} else
 		continue_learning = 0
 	send ^+p^a ; open element parameter and choose everything
 	SendInput {raw}audio
 	send {enter}
 	if (continue_learning = 1) {
-		continue_learning = 0
 		send {enter}
 		sleep 500
 		send !{f10}u
+		continue_learning = 0
 	}
 return
 

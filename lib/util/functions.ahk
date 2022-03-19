@@ -11,12 +11,10 @@
 Return dataL ? dataL : 0
 }
 
-ClickDPIAdjusted(coord_x="", coord_y="") {
-	if coord_x && coord_y {
-		coord_x := coord_x * A_ScreenDPI / 96
-		coord_y := coord_y * A_ScreenDPI / 96
-		click, %coord_x% %coord_y%
-	}
+ClickDPIAdjusted(coord_x, coord_y) {
+    coord_x *= A_ScreenDPI / 96
+    coord_y *= A_ScreenDPI / 96
+    click, %coord_x% %coord_y%
 }
 
 StrReverse(String) { ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
