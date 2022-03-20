@@ -13,7 +13,7 @@ class VimSM{
 				if clicking
 					click, %x_coord% %y_coord%
 				else
-					MouseMove, %x_coord%, %y_coord%
+					MouseMove, %x_coord%, %y_coord%, 1
 				Return true
 			}
 		}
@@ -30,7 +30,7 @@ class VimSM{
 				if clicking
 					click, %x_coord% %y_coord%
 				else
-					MouseMove, %x_coord%, %y_coord%
+					MouseMove, %x_coord%, %y_coord%, 1
 				Return true
 			}
 		}
@@ -46,7 +46,7 @@ class VimSM{
 				if clicking
 					click, %x_coord% %y_coord%
 				else
-					MouseMove, %x_coord%, %y_coord%
+					MouseMove, %x_coord%, %y_coord%, 1
 				Return true
 			}
 		}

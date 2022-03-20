@@ -103,7 +103,7 @@
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
     send {Ctrl Up}
-	if !(this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe"))
+	if !(this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe")) && !WinActive("ahk_exe iexplore.exe")
 		send {alt up}
 	if this.Vim.State.IsCurrentVimMode("Vim_VisualFirst")
 		this.vim.state.setmode("Vim_VisualChar")
@@ -142,6 +142,20 @@
     }
   }
   
+  ParagraphUp() {
+	if this.Vim.SM.IsEditingHTML()
+		send ^+{up}{left}
+	else
+		send {home}
+  }
+  
+  ParagraphDown() {
+	if this.Vim.SM.IsEditingHTML()
+		send ^{down}
+	else
+		send {end}
+  }
+  
   SelectParagraphUp() {
 	if this.Vim.SM.IsEditingHTML()
 		send ^+{up}
@@ -163,7 +177,7 @@
 	}
   }
 
-  Move(key="", repeat=false, NoInitialize=false, NoFinalize=false){
+  Move(key="", repeat=false, NoInitialize=false, NoFinalize=false, ForceNoShift=false){
     if(!repeat) && !NoInitialize {
       this.MoveInitialize(key)
     }
@@ -193,13 +207,13 @@
       }else if(key == "0"){
         this.Home()
       }else if(key == "$"){
-        if(this.shift == 1){
+        if(this.shift == 1) && !ForceNoShift {
           Send, +{End}
         }else{
           Send, {End}
         }
       }else if(key == "^"){
-        if(this.shift == 1){
+        if(this.shift == 1) && !ForceNoShift {
           if WinActive("ahk_group VimCaretMove"){
             this.Home()
             Send, ^{Right}
@@ -218,19 +232,19 @@
         }
       ; Words
       }else if(key == "w"){
-        if(this.shift == 1){
+        if(this.shift == 1) && !ForceNoShift {
           Send, +^{Right}
         }else{
           Send, ^{Right}
         }
       }else if(key == "e"){
 		if this.Vim.State.g ; ge
-			if(this.shift == 1){
+			if(this.shift == 1) && !ForceNoShift {
 			  Send, +^{Left}+{Left}
 			}else{
 			  Send, ^{Left}{left}
 			}
-        else if(this.shift == 1){
+        else if(this.shift == 1) && !ForceNoShift {
 		  if this.IsVisualFirst() {
 			Send, +^{Right}+{Left}
 		  } else
@@ -239,13 +253,13 @@
           Send, ^{Right}^{Right}{Left}
         }
       }else if(key == "b"){
-        if(this.shift == 1){
+        if(this.shift == 1) && !ForceNoShift {
           Send, +^{Left}
         }else{
           Send, ^{Left}
         }
       }else if(key == "f"){ ; find forward
-		if(this.shift == 1){
+		if(this.shift == 1) && !ForceNoShift {
 			str_before =
 			if !this.IsVisualFirst()
 				str_before := this.Vim.ParseLineBreaks(clip())
@@ -291,7 +305,7 @@
 			SendInput {left}{right %pos%}
 		}
       }else if(key == "t"){
-		if(this.shift == 1){
+		if(this.shift == 1) && !ForceNoShift {
 			str_before =
 			if !this.IsVisualFirst()
 				str_before := this.Vim.ParseLineBreaks(clip())
@@ -358,7 +372,7 @@
 			SendInput {left}{right %right%}
 		}
       }else if(key == "+f"){
-		if(this.shift == 1){
+		if(this.shift == 1) && !ForceNoShift {
 			str_before =
 			if !this.IsVisualFirst()
 				str_before := this.Vim.ParseLineBreaks(clip())
@@ -402,7 +416,7 @@
 			SendInput {right}{left %pos%}
 		}
       }else if(key == "+t"){
-		if(this.shift == 1){
+		if(this.shift == 1) && !ForceNoShift {
 			str_before =
 			if !this.IsVisualFirst()
 				str_before := this.Vim.ParseLineBreaks(clip())
@@ -472,7 +486,7 @@
 			SendInput {right}{left %left%}
 		}
       }else if(key == ")"){ ; like "f" but search for ". "
-		if(this.shift == 1){
+		if(this.shift == 1) && !ForceNoShift {
 			str_before =
 			if !this.IsVisualFirst() { ; determine caret position
 				str_before := this.Vim.ParseLineBreaks(clip())
@@ -525,7 +539,7 @@
 			SendInput {left}{right %right%}
         }
       }else if(key == "("){ ; like "+t"
-		if(this.shift == 1){
+		if(this.shift == 1) && !ForceNoShift {
 			str_before =
 			if !this.IsVisualFirst() { ; determine caret position
 				str_before := this.Vim.ParseLineBreaks(clip())
@@ -605,6 +619,7 @@
 				SendInput {right}{left %left%}
         }
       }else if(key == "/"){
+		WinGet, hwnd, ID, A
 	    if this.Vim.State.StrIsInCurrentVimMode("Visual")
 			InputBox, user_input, Visual Search, Select text until:`n(enter nothing to repeat the last search)`n(case sensitive),, 272, 160
 	    else if this.Vim.State.StrIsInCurrentVimMode("ydc_y")
@@ -633,6 +648,8 @@
 			send +{left}
 		}
 		if !str_before || (StrLen(str_after) > StrLen(str_before)) {
+			if !str_before
+				WinWaitActive, ahk_id %hwnd%
 			this.SelectParagraphDown()
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if (StrLen(str_after) == StrLen(str_before) + 1) { ; at end of paragraph
@@ -657,6 +674,7 @@
 			SendInput +{right %pos%}
 		}
       }else if(key == "?"){
+		WinGet, hwnd, ID, A
 	    if this.Vim.State.StrIsInCurrentVimMode("Visual")
 			InputBox, user_input, Visual Search, Select text until:`n(enter nothing to repeat the last search)`n(case sensitive),, 272, 160
 	    else if this.Vim.State.StrIsInCurrentVimMode("ydc_y")
@@ -689,6 +707,8 @@
 			pos += pos ? StrLen(user_input) - 2 : 0
 			SendInput +{left %pos%}
 		} else if (StrLen(str_after) < StrLen(str_before)) || !str_before {
+			if !str_before
+				WinWaitActive, ahk_id %hwnd%
 			this.SelectParagraphUp()
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if !str_after { ; start of line
@@ -765,7 +785,7 @@
 		}
 	  }
     }else if(key == "{"){
-      if(this.shift == 1){
+      if(this.shift == 1) && !ForceNoShift {
 	    Send, +^{up}
 	  }else{
 	    if WinActive("ahk_class TElWind")
@@ -774,7 +794,7 @@
 			Send, ^{up}
 	  }
     }else if(key == "}"){
-      if(this.shift == 1){
+      if(this.shift == 1) && !ForceNoShift {
 	    Send, +^{down}
 	  }else{
 	    Send, ^{down}
@@ -824,13 +844,21 @@
       this.Move("b", true)
       this.Move("e", false)
     } else if (key == "s") {
-		this.Move("(",,, true)
-		send {left}
+		this.Move("(",,, true, true)
 		sleep 900 ; has to be some delay otherwise detection won't work smoothly
 		this.Move(")",,, true)
-		this.Move("b")
-    } else if (key == "p")
-		send ^{down}^+{up}{left}^+{down}^+{left}
-		this.Move("b") ; to trigger the MoveFinalize function
+		this.Move("h",,, true)
+		this.Move("h")
+    } else if (key == "p") {
+		this.ParagraphDown()
+		this.ParagraphUp()
+		this.SelectParagraphDown()
+		detection_str := this.Vim.ParseLineBreaks(clip())
+		detection_str := StrReverse(detection_str)
+		pos := RegExMatch(detection_str, "\s+|[.]", match)
+		left := StrLen(match) - 1
+		send +{left %left%}
+		this.Move("h")
+	}
   }
 }

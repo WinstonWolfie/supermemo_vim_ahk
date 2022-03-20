@@ -9,6 +9,7 @@
 ~f4:: ; open tasklist
 ~!x:: ; extract
 ~!z:: ; cloze
+~^+a:: ; web import
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
 ~^s:: ; save
 ~^+a:: ; archive current plan

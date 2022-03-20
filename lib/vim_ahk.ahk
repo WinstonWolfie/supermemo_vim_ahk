@@ -357,10 +357,11 @@ class VimAhk{
 		; removes the very last line break if there's a space before it
 		; not perfect because end of paragraph and end of a line inside a paragraph would appear the same in plain text
 		; also bullet point and end of a line inside a paragraph would appear the same in plain text
-		if (StrLen(String) != InStr(String, "`r`n") + 1) ; first matched `r`n not at the end
+		if (StrLen(String) != InStr(String, "`r`n") + 1) { ; first matched `r`n not at the end
 			String := RegExReplace(String, "D)(?<=[ ])\r\n$")
-		String := RegExReplace(String, "(?<![ ])\r\n$") ; remove line breaks at end of line if there isn't a space before it
-		String := StrReplace(String, "`r`n`r`n", " ") ; turn all paragraph tags (<P>) to space
+			String := RegExReplace(String, "(?<![ ])\r\n$") ; remove line breaks at end of line if there isn't a space before it
+			String := StrReplace(String, "`r`n`r`n", " ") ; turn all paragraph tags (<P>) to space
+		}
 		String := StrReplace(String, "`r`n", " ") ; turn all line breaks (<BR>) to space
 	} else
 		String := StrReplace(String, "`r")
