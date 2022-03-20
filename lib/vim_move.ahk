@@ -861,8 +861,8 @@
 		; sleep 900 ; has to be some delay otherwise detection won't work smoothly
 		ClipWait 1 ; this would be much faster
 		this.Move(")",,, true)
-		this.Move("h",,, true)
-		this.Move("h")
+		this.Vim.State.SetMode("",, 2)
+		this.Repeat("h")
     } else if (key == "p") {
 		this.ParagraphDown()
 		this.ParagraphUp()
@@ -873,9 +873,8 @@
 		detection_str := StrReverse(detection_str)
 		pos := RegExMatch(detection_str, "^((\s+)[.]|[.]|(\s+))", match)
 		if StrLen(match) {
-			left := StrLen(match) - 1
-			send +{left %left%}
-			this.Move("h")
+			this.Vim.State.SetMode("",, StrLen(match))
+			this.Repeat("h")
 		} else
 			this.MoveFinalize()
 	}
