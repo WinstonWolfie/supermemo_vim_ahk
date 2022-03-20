@@ -126,6 +126,8 @@ s:: ; *s*ubstitue
 	Vim.State.SetMode("Insert")
 return
 
+; !d::MsgBox % Vim.ParseLineBreaks(clip()) ; debugging
+
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) and !(Vim.State.StrIsInCurrentVimMode("VisualFirst"))
 o:: ; move to other end of marked area; not perfect with line breaks
 	selection := clip()

@@ -264,9 +264,13 @@
 			if !this.IsVisualFirst()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{end}
+			if this.Vim.SM.IsEditingHTML()
+				send +{left}
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if (StrLen(str_after) == StrLen(str_before)) { ; caret at end of line
 				send +{right}+{end}
+				if this.Vim.SM.IsEditingHTML()
+					send +{left}
 				str_after := this.Vim.ParseLineBreaks(clip())
 			}
 			if !str_before || (StrLen(str_after) > StrLen(str_before)) { ; searching forward
@@ -310,9 +314,13 @@
 			if !this.IsVisualFirst()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{end}
+			if this.Vim.SM.IsEditingHTML()
+				send +{left}
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if (StrLen(str_after) == StrLen(str_before)) { ; caret at end of line
 				send +{right}+{end}
+				if this.Vim.SM.IsEditingHTML()
+					send +{left}
 				str_after := this.Vim.ParseLineBreaks(clip())
 			}
 			if !str_before || (StrLen(str_after) > StrLen(str_before)) { ; searching forward
@@ -496,10 +504,14 @@
 			}
 			if !str_before || (StrLen(str_after) > StrLen(str_before)) {
 				this.SelectParagraphDown()
+				if this.Vim.SM.IsEditingHTML()
+					send +{left}
 				str_after := this.Vim.ParseLineBreaks(clip())
 				if (StrLen(str_after) == StrLen(str_before) + 1) { ; at end of paragraph
 					send +{right}
 					this.SelectParagraphDown()
+					if this.Vim.SM.IsEditingHTML()
+						send +{left}
 					str_after := this.Vim.ParseLineBreaks(clip())
 				}
 				starting_pos := StrLen(str_before) + 1 ; + 1 to make sure detection_str is what's selected after
@@ -651,10 +663,14 @@
 			if !str_before
 				WinWaitActive, ahk_id %hwnd%
 			this.SelectParagraphDown()
+			if this.Vim.SM.IsEditingHTML()
+				send +{left}
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if (StrLen(str_after) == StrLen(str_before) + 1) { ; at end of paragraph
 				send +{right}
 				this.SelectParagraphDown()
+				if this.Vim.SM.IsEditingHTML()
+					send +{left}
 				str_after := this.Vim.ParseLineBreaks(clip())
 			}
 			starting_pos := StrLen(str_before) + 1 ; + 1 to make sure detection_str is what's selected after
@@ -786,18 +802,15 @@
 	  }
     }else if(key == "{"){
       if(this.shift == 1) && !ForceNoShift {
-	    Send, +^{up}
+	    this.SelectParagraphUp()
 	  }else{
-	    if WinActive("ahk_class TElWind")
-			Send, +^{up}{left}
-		else
-			Send, ^{up}
+	    this.ParagraphUp()
 	  }
     }else if(key == "}"){
       if(this.shift == 1) && !ForceNoShift {
-	    Send, +^{down}
+	    this.SelectParagraphDown()
 	  }else{
-	    Send, ^{down}
+	    this.ParagraphDown()
 	  }
     }
 
