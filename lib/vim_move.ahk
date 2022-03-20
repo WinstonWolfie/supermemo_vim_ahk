@@ -867,12 +867,17 @@
 		this.ParagraphDown()
 		this.ParagraphUp()
 		this.SelectParagraphDown()
+		if this.Vim.SM.IsEditingHTML()
+			send +{left}
 		detection_str := this.Vim.ParseLineBreaks(clip())
 		detection_str := StrReverse(detection_str)
-		pos := RegExMatch(detection_str, "\s+|[.]", match)
-		left := StrLen(match) - 1
-		send +{left %left%}
-		this.Move("h")
+		pos := RegExMatch(detection_str, "^((\s+)[.]|[.]|(\s+))", match)
+		if StrLen(match) {
+			left := StrLen(match) - 1
+			send +{left %left%}
+			this.Move("h")
+		} else
+			this.MoveFinalize()
 	}
   }
 }
