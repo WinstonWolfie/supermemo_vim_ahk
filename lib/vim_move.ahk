@@ -858,7 +858,8 @@
       this.Move("e", false)
     } else if (key == "s") {
 		this.Move("(",,, true, true)
-		sleep 900 ; has to be some delay otherwise detection won't work smoothly
+		; sleep 900 ; has to be some delay otherwise detection won't work smoothly
+		ClipWait 1 ; this would be much faster
 		this.Move(")",,, true)
 		this.Move("h",,, true)
 		this.Move("h")
