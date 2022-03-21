@@ -58,7 +58,7 @@ extract_stay:
 ^q:: ; extract (*q*uote)
 	send !x
 	Vim.State.SetMode("Vim_Normal")
-	sleep 900
+	sleep 700
 	send !{left}
 return
 
@@ -104,11 +104,11 @@ cloze_hinter:
 	} else
 		ctrl_state := GetKeyState("Ctrl")
 	InputBox, user_input, Cloze Hinter, Please enter your cloze hint.`nIf you enter "hint1/hint2"`, your cloze will be [hint1/hint2]`nIf you enter "hint1/hint2/"`, your cloze will be [...](hint1/hint2),, 256, 196
-	if ErrorLevel
+	if ErrorLevel ; pressed esc
 		return
 	send !z
 	Vim.State.SetMode("Vim_Normal")
-	if !user_input
+	if !user_input ; entered nothing
 		return
 	WinWaitActive, ahk_class TMsgDialog,, 0 ; warning on trying to cloze on items
 	if !ErrorLevel

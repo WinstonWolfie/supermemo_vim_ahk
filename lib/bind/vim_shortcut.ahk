@@ -46,7 +46,7 @@ Return
 	Clipboard =
 	send ^c ; cannot use clip() here because it will try to restore the clipboard
 	ClipWait 1
-	sleep 100
+	sleep 20
 	send {tab}
 	temp_clip := RegExReplace(Clipboard, "#(.*)$")
 	if InStr(temp_clip, "https://www.youtube.com") && InStr(temp_clip, "v=") {
@@ -61,7 +61,7 @@ return
 	Clipboard =
 	send ^c
 	ClipWait 1
-	sleep 300
+	sleep 20
 	temp_clip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", "; ")
 	temp_clip := StrReplace(temp_clip, "`r`nSimilar", "`r`n`r`nSimilar")
 	temp_clip := StrReplace(temp_clip, "; Opposite", "`r`n`r`nOpposite")
@@ -78,7 +78,8 @@ return
 	clip_bak := Clipboardall
 	Clipboard = 
 	send ^c
-	ClipWait 0.5
+	ClipWait 0.6
+	sleep 20
 	if !Clipboard {
 		MsgBox, Nothing is selected.
 		Clipboard := clip_bak
@@ -98,7 +99,6 @@ return
 			return
 		}
 	}
-	sleep 100
 	WinActivate, ahk_class TElWind ; focus to element window
 	send ^t{esc}q ; edit topic html component
 	sleep 100

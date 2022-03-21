@@ -1,61 +1,43 @@
 ﻿; Visual Char/Block/Line
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
-v::Vim.State.SetMode("Vim_VisualFirst")
-^v::
-  if WinActive("ahk_class TElWind") {
-	if Vim.SM.IsEditingHTML() {
-		send ^{down}^+{up}{left}^+{down}
-		Vim.State.SetMode("Vim_VisualBlockFirst")
-	} else {
-		Send, {Home}+{Down}
-		Vim.State.SetMode("Vim_VisualLineFirst")
-	}
-	Return
-  } else if !WinActive("ahk_exe notepad++.exe") ; notepad++ requires alt down
-	Send, ^b
-  Vim.State.SetMode("Vim_VisualBlockFirst")
-Return
-
-+v::
-  Vim.State.SetMode("Vim_VisualLineFirst")
-  Send, {Home}+{Down}
-Return
-
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual"))
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
 v::
-	if Vim.State.IsCurrentVimMode("Vim_VisualChar") || Vim.State.IsCurrentVimMode("Vim_VisualFirst")
+	if Vim.State.IsCurrentVimMode("Vim_Normal")
+		Vim.State.SetMode("Vim_VisualFirst")
+	else if Vim.State.IsCurrentVimMode("Vim_VisualChar") || Vim.State.IsCurrentVimMode("Vim_VisualFirst")
 		Vim.State.SetNormal()
 	else
 		Vim.State.SetMode("Vim_VisualChar")
 Return
 
-^v::
-	if Vim.State.StrIsInCurrentVimMode("VisualBlock") {
++v::
+	if Vim.State.StrIsInCurrentVimMode("VisualLine")
 		Vim.State.SetNormal()
-		Return
-	} else if WinActive("ahk_class TElWind") {
-		if Vim.SM.IsEditingHTML() {
-			send ^{down}^+{up}{left}^+{down}
-			Vim.State.SetMode("Vim_VisualBlockFirst")
-		} else {
+	else {
+		Send, {Home}+{Down}
+		Vim.State.SetMode("Vim_VisualLineFirst")
+	}
+Return
+
+^v::
+	if Vim.State.StrIsInCurrentVimMode("VisualBlock")
+		Vim.State.SetNormal()
+	else if Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")
+		if Vim.IsHTML() {
+			Vim.Move.ParagraphDown()
+			Vim.Move.ParagraphUp()
+			Vim.Move.SelectParagraphDown()
+			Vim.State.SetMode("Vim_VisualParagraphFirst")
+		} else if Vim.SM.IsEditingPlainText() {
 			Send, {Home}+{Down}
 			Vim.State.SetMode("Vim_VisualLineFirst")
+		} else {
+			if !WinActive("ahk_exe notepad++.exe") ; notepad++ requires alt down
+				Send, ^b
+			Vim.State.SetMode("Vim_VisualBlock")
 		}
-		Return
-	} else if !WinActive("ahk_exe notepad++.exe") ; notepad++ requires alt down
-		Send, ^b
-	Vim.State.SetMode("Vim_VisualBlockFirst")
 Return
 
-+v::
-  if Vim.State.StrIsInCurrentVimMode("VisualLine") {
-	Vim.State.SetNormal()
-	Return
-  }
-  Vim.State.SetMode("Vim_VisualLineFirst")
-  Send, {Home}+{Down}
-Return
-
+#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual"))
 ; ydc
 y::
   Clipboard :=
@@ -106,11 +88,15 @@ c::
 Return
 
 *::
+  KeyWait shift
   bak := ClipboardAll
   Clipboard :=
   Send, ^c
   ClipWait, 1
+  sleep 20
+  WinGet, hwnd, ID, A
   Send, ^f
+  WinWaitNotActive, ahk_id %hwnd%,, 0.25
   Send, ^v!f
   clipboard := bak
   Vim.State.SetMode("Vim_Normal")

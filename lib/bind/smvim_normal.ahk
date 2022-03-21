@@ -20,16 +20,6 @@ Return
 
 ; Editing text only
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.SM.IsEditingText()
-^q::Vim.State.SetMode("SMVim_ExtractStay", 0, -1, 0)
-^z::Vim.State.SetMode("SMVim_ClozeStay", 0, -1, 0)
-q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0)
-z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)
-+z::
-^+z::
-	Vim.State.SetMode("SMVim_ClozeHinter", 0, -1, 0)
-	cloze_hinter_ctrl_state := GetKeyState("Ctrl")
-Return
-
 +h:: ; move to top of screen
 	if Vim.SM.MouseMoveTop(true)
 		send {left}{home}
@@ -184,7 +174,7 @@ Return
 			else if shift_state {
 				if ctrl_state
 					cloze_hinter_ctrl_state := 1
-				WinWaitActive, ahk_class TElWind
+				WinWaitActive, ahk_class TElWind,, 0
 				gosub cloze_hinter
 			}
 		} else if !ctrl_state ; alt is up and ctrl is up; shift can be up or down

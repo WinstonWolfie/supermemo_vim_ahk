@@ -86,6 +86,9 @@ class VimAhk{
     GroupAdd, VimQdir, ahk_exe Q-Dir_x64.exe ; q-dir
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe ; q-dir
 	
+	; Can use ctrl+shift+up/down for selecting paragraphs
+	GroupAdd, CSParagraph, ahk_exe iexplore.exe ; Internet Explorer
+	
 	; SuperMemo
 	GroupAdd, SuperMemo, ahk_exe sm18.exe
 	GroupAdd, SuperMemo, ahk_exe sm17.exe
@@ -234,7 +237,7 @@ class VimAhk{
 	if this.State.StrIsInCurrentVimMode("Insert")
 		SendInput, {BackSpace 1}
 	else if this.State.StrIsInCurrentVimMode("Visual")
-		SendInput {up}{left}
+		SendInput {right}{up}{left}
 	else
 		SendInput {up}{esc}
     this.State.SetNormal()
@@ -342,15 +345,6 @@ class VimAhk{
     BlockInput, off
     Return ret
   }
-
-  ToolTipFunc(text="", permanent=false, period=-2000) {
-	CoordMode, ToolTip, Screen
-	coord_x := A_ScreenWidth / 2
-	coord_y := A_ScreenHeight / 3 * 2
-	ToolTip, %text%, %coord_x%, %coord_y%, 20
-	if !permanent
-		SetTimer, RemoveToolTip, %period%
-  }
   
   ParseLineBreaks(String) {
 	if this.SM.IsEditingHTML() {
@@ -371,6 +365,19 @@ class VimAhk{
   
   IsWhitespaceOnly(String) {
 	Return !RegExMatch(String, "[\S]")
+  }
+  
+  IsHTML() {
+	Return this.SM.IsEditingHTML() || WinActive("ahk_group CSParagraph")
+  }
+
+  ToolTipFunc(text="", permanent=false, period=-2000) {
+	CoordMode, ToolTip, Screen
+	coord_x := A_ScreenWidth / 2
+	coord_y := A_ScreenHeight / 3 * 2
+	ToolTip, %text%, %coord_x%, %coord_y%, 20
+	if !permanent
+		SetTimer, RemoveToolTip, %period%
   }
 }
 

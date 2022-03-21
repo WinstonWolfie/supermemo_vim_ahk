@@ -3,11 +3,19 @@
     this.Vim := vim
     this.shift := 0
   }
+  
+  ExisitingSelection() { ; only return true once in repeat
+	if !this.existing_selection && (this.Vim.State.StrIsInCurrentVimMode("VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_") || this.Vim.State.StrIsInCurrentVimMode("Inner")) {
+		this.existing_selection := true
+		Return true
+	}
+  }
 
   MoveInitialize(key=""){
     this.shift := 0
-	this.visual_first := false
+	this.existing_selection := false
 	
+	; Search keys
 	if (key == "f" || key == "t" || key == "+f" || key == "+t" || key == "(" || key == ")" || key == "/" || key == "?") {
 		this.search_occurrence := this.Vim.State.n ? this.Vim.State.n : 1
 		this.ft_char := this.Vim.State.ft_char
@@ -15,6 +23,7 @@
 	
     if(this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")){
       this.shift := 1
+	  ; Search keys
 	  if (key != "f" && key != "t" && key != "+f" && key != "+t" && key != "(" && key != ")" && key != "/" && key != "?")
 		Send, {Shift Down}
     }
@@ -31,19 +40,18 @@
       this.vim.state.setmode("Vim_VisualLine")
     }
 
-    if(this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe")){
-      send {alt down}
-      this.vim.state.setmode("Vim_VisualBlock")
-    }
-
-    if(this.Vim.State.IsCurrentVimMode("Vim_VisualBlockFirst")) and (key == "k" or key == "^u" or key == "^b" or key == "g"){
+    if(this.Vim.State.IsCurrentVimMode("Vim_VisualParagraphFirst")) and (key == "k" or key == "^u" or key == "^b" or key == "g"){
       Send, {Shift Up}{right}{left}{Shift Down}
       this.Up()
-      this.vim.state.setmode("Vim_VisualBlock")
+      this.vim.state.setmode("Vim_VisualParagraph")
     }
 
-    if(this.Vim.State.IsCurrentVimMode("Vim_VisualBlockFirst")) and (key == "j" or key == "^d" or key == "^f" or key == "+g"){
-      this.vim.state.setmode("Vim_VisualBlock")
+    if(this.Vim.State.IsCurrentVimMode("Vim_VisualParagraphFirst")) and (key == "j" or key == "^d" or key == "^f" or key == "+g"){
+      this.vim.state.setmode("Vim_VisualParagraph")
+    }
+	
+    if(this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe")){
+      send {alt down}
     }
 
     if(this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")) and (key == "k" or key == "^u" or key == "^b" or key == "g"){
@@ -103,7 +111,7 @@
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
     send {Ctrl Up}
-	if !(this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe")) && !WinActive("ahk_exe iexplore.exe")
+	if !WinActive("ahk_exe iexplore.exe")
 		send {alt up}
 	if this.Vim.State.IsCurrentVimMode("Vim_VisualFirst")
 		this.vim.state.setmode("Vim_VisualChar")
@@ -112,15 +120,18 @@
   Home(){
     if WinActive("ahk_group VimDoubleHomeGroup"){
       Send, {Home}
-    }
+    } else if WinActive("ahk_exe notepad++.exe")
+		send {end}
     Send, {Home}
   }
 
   Up(n=1){
     Loop, %n% {
-	  if this.Vim.State.StrIsInCurrentVimMode("Block") {
-		if WinActive("ahk_class TElWind")
-			Send, +^{up}{left}
+	  if this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML() {
+		if (shift == 1)
+			this.SelectParagraphUp()
+		else
+			this.ParagraphUp()
       } else if WinActive("ahk_group VimCtrlUpDownGroup"){
         Send ^{Up}
       } else {
@@ -131,9 +142,11 @@
 
   Down(n=1){
     Loop, %n% {
-	  if this.Vim.State.StrIsInCurrentVimMode("Block") {
-		if WinActive("ahk_class TElWind")
-			Send, ^{down}
+	  if this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML() {
+		if (shift == 1)
+			this.SelectParagraphDown()
+		else
+			this.ParagraphDown()
       } else if WinActive("ahk_group VimCtrlUpDownGroup"){
         Send ^{Down}
       } else {
@@ -143,38 +156,39 @@
   }
   
   ParagraphUp() {
-	if this.Vim.SM.IsEditingHTML()
-		send ^+{up}{left}
-	else
-		send {home}
+	if this.Vim.IsHTML()
+		if this.Vim.SM.IsEditingHTML()
+			send ^+{up}{left}
+		else
+			send ^{up}
+	else {
+		this.up()
+		send {end}
+		this.home()
+	}
   }
   
   ParagraphDown() {
-	if this.Vim.SM.IsEditingHTML()
+	if this.Vim.IsHTML()
 		send ^{down}
-	else
-		send {end}
+	else {
+		send {end}{right}
+		this.home()
+	}
   }
   
   SelectParagraphUp() {
-	if this.Vim.SM.IsEditingHTML()
+	if this.Vim.IsHTML()
 		send ^+{up}
 	else
 		send +{home}
   }
   
   SelectParagraphDown() {
-	if this.Vim.SM.IsEditingHTML()
+	if this.Vim.IsHTML()
 		send ^+{down}
 	else
 		send +{end}
-  }
-  
-  IsVisualFirst() { ; only return true once in repeat
-	if !this.visual_first && (this.Vim.State.StrIsInCurrentVimMode("VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_") || this.Vim.State.StrIsInCurrentVimMode("Inner")) {
-		this.visual_first := true
-		Return true
-	}
   }
 
   Move(key="", repeat=false, NoInitialize=false, NoFinalize=false, ForceNoShift=false){
@@ -183,7 +197,7 @@
     }
 
     ; Left/Right
-    if(not this.Vim.State.StrIsInCurrentVimMode("Line")) && !this.Vim.State.StrIsInCurrentVimMode("Block") {
+    if(not this.Vim.State.StrIsInCurrentVimMode("Line")) && !this.Vim.State.StrIsInCurrentVimMode("Paragraph") {
       ; For some cases, need '+' directly to continue to select
       ; especially for cases using shift as original keys
       ; For now, caret does not work even add + directly
@@ -215,19 +229,21 @@
       }else if(key == "^"){
         if(this.shift == 1) && !ForceNoShift {
           if WinActive("ahk_group VimCaretMove"){
-            this.Home()
-            Send, ^{Right}
-            Send, ^{Left}
-          }else{
-            this.Home()
-          }
-        }else{
-          if WinActive("ahk_group VimCaretMove"){
             Send, +{Home}
             Send, +^{Right}
             Send, +^{Left}
           }else{
             Send, +{Home}
+          }
+        }else{
+          if WinActive("ahk_group VimCaretMove"){
+            this.Home()
+            Send, ^{Right}
+            Send, ^{Left}
+          }else{
+            this.Home()
+			if WinActive("ahk_exe notepad++.exe")
+				send {home}
           }
         }
       ; Words
@@ -245,7 +261,7 @@
 			  Send, ^{Left}{left}
 			}
         else if(this.shift == 1) && !ForceNoShift {
-		  if this.IsVisualFirst() {
+		  if this.ExisitingSelection() {
 			Send, +^{Right}+{Left}
 		  } else
 			Send, +^{Right}+^{Right}+{Left}
@@ -261,7 +277,7 @@
       }else if(key == "f"){ ; find forward
 		if(this.shift == 1) && !ForceNoShift {
 			str_before =
-			if !this.IsVisualFirst()
+			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{end}
 			if this.Vim.SM.IsEditingHTML()
@@ -311,7 +327,7 @@
       }else if(key == "t"){
 		if(this.shift == 1) && !ForceNoShift {
 			str_before =
-			if !this.IsVisualFirst()
+			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{end}
 			if this.Vim.SM.IsEditingHTML()
@@ -382,7 +398,7 @@
       }else if(key == "+f"){
 		if(this.shift == 1) && !ForceNoShift {
 			str_before =
-			if !this.IsVisualFirst()
+			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{home}
 			str_after := this.Vim.ParseLineBreaks(clip())
@@ -426,7 +442,7 @@
       }else if(key == "+t"){
 		if(this.shift == 1) && !ForceNoShift {
 			str_before =
-			if !this.IsVisualFirst()
+			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{home}
 			str_after := this.Vim.ParseLineBreaks(clip())
@@ -496,7 +512,7 @@
       }else if(key == ")"){ ; like "f" but search for ". "
 		if(this.shift == 1) && !ForceNoShift {
 			str_before =
-			if !this.IsVisualFirst() { ; determine caret position
+			if !this.ExisitingSelection() { ; determine caret position
 				str_before := this.Vim.ParseLineBreaks(clip())
 				send +{right}
 				str_after := this.Vim.ParseLineBreaks(clip())
@@ -553,7 +569,7 @@
       }else if(key == "("){ ; like "+t"
 		if(this.shift == 1) && !ForceNoShift {
 			str_before =
-			if !this.IsVisualFirst() { ; determine caret position
+			if !this.ExisitingSelection() { ; determine caret position
 				str_before := this.Vim.ParseLineBreaks(clip())
 				send +{right}
 				str_after := this.Vim.ParseLineBreaks(clip())
@@ -653,7 +669,7 @@
 		if !user_input ; still empty
 			Return
 		str_before =
-		if !this.IsVisualFirst() { ; determine caret position
+		if !this.ExisitingSelection() { ; determine caret position
 			str_before := this.Vim.ParseLineBreaks(clip())
 			send +{right}
 			str_after := this.Vim.ParseLineBreaks(clip())
@@ -661,7 +677,7 @@
 		}
 		if !str_before || (StrLen(str_after) > StrLen(str_before)) {
 			if !str_before
-				WinWaitActive, ahk_id %hwnd%
+				WinWaitActive, ahk_id %hwnd%,, 0
 			this.SelectParagraphDown()
 			if this.Vim.SM.IsEditingHTML()
 				send +{left}
@@ -712,7 +728,7 @@
 		if !user_input ; still empty
 			Return
 		str_before =
-		if !this.IsVisualFirst() { ; determine caret position
+		if !this.ExisitingSelection() { ; determine caret position
 			str_before := this.Vim.ParseLineBreaks(clip())
 			send +{right}
 			str_after := this.Vim.ParseLineBreaks(clip())
@@ -724,7 +740,7 @@
 			SendInput +{left %pos%}
 		} else if (StrLen(str_after) < StrLen(str_before)) || !str_before {
 			if !str_before
-				WinWaitActive, ahk_id %hwnd%
+				WinWaitActive, ahk_id %hwnd%,, 0
 			this.SelectParagraphUp()
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if !str_after { ; start of line
@@ -845,6 +861,8 @@
     }
     this.Down(this.Vim.State.n - 1)
     Send, {End}
+	if this.Vim.State.StrIsInCurrentVimMode("SMVim_") && this.Vim.SM.IsEditingHTML()
+		send +{left}
     if not WinActive("ahk_group VimLBSelectGroup"){
       this.Move("l")
     }else{
@@ -858,8 +876,7 @@
       this.Move("e", false)
     } else if (key == "s") {
 		this.Move("(",,, true, true)
-		; sleep 900 ; has to be some delay otherwise detection won't work smoothly
-		ClipWait 1 ; this would be much faster
+		ClipWait 1 ; make sure detection in ")" works
 		this.Move(")",,, true)
 		this.Vim.State.SetMode("",, 2)
 		this.Repeat("h")

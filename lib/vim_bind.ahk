@@ -6,6 +6,7 @@
 #Include %A_LineFile%\..\bind\smvim_enter_normal.ahk
 #Include %A_LineFile%\..\bind\smvim_enter_insert.ahk
 #Include %A_LineFile%\..\bind\smvim_normal.ahk
+#Include %A_LineFile%\..\bind\smvim_qz.ahk
 #Include %A_LineFile%\..\bind\smvim_visual.ahk
 #Include %A_LineFile%\..\bind\smvim_command.ahk
 #Include %A_LineFile%\..\bind\smvim_disable.ahk

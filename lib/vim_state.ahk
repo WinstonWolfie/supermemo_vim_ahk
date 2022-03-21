@@ -15,7 +15,7 @@
 	, "SMVim_ClozeStay", "SMVim_ClozeStayInner", "SMVim_ClozeHinter"
 	, "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
 	, "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
-	, "Vim_VisualBlockFirst"]
+	, "Vim_VisualParagraph", "Vim_VisualParagraphFirst"]
 
     this.Mode := "Insert"
     this.g := 0

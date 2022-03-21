@@ -13,6 +13,7 @@ u::Send,^z
   Clipboard =
   Send, +{Right}^x
   ClipWait, 1
+  sleep 10
   if(Clipboard is lower){
     StringUpper, Clipboard, Clipboard
   }else if(Clipboard is upper){

@@ -49,6 +49,7 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 	WinWaitActive, Information,, 0
 	send p{esc} ; copy reference
 	ClipWait 1
+	sleep 20
 	if !InStr(Clipboard, "wikipedia.org/wiki") {
 		MsgBox, Not wikipedia!
 		return
@@ -101,7 +102,7 @@ r:: ; set *r*eference's link to what's in the clipboard
 	WinWaitActive, ahk_class TInputDlg,, 0
 	send ^a^c
 	ClipWait 1
-	sleep 100 ; making sure copy works
+	sleep 20 ; making sure copy works
 	if InStr(Clipboard, "#Link: ")
 		clip(RegExReplace(Clipboard, "(\n\K|^)#Link: .*", new_link))
 	else {

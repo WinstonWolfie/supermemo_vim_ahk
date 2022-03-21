@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup()
+﻿#If Vim.IsVimGroup() || back_to_normal
 Esc::
 	Vim.State.HandleEsc()
 	back_to_normal = 0

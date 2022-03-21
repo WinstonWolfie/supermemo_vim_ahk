@@ -17,6 +17,7 @@ s:: ; gs: go to source link
 	send p{esc} ; copy reference
 	Vim.State.SetNormal()
 	ClipWait 1
+	sleep 20
 	if InStr(Clipboard, "Link:") {
 		RegExMatch(Clipboard, "Link: \K.*", link)
 		Clipboard := clip_bak ; restore clipboard here in case Run doesn't work
@@ -107,6 +108,8 @@ p::send ^{f10} ; replay auto-play
 +l::send !{right} ; go forward in history
 +j::send !{pgdn} ; J, ge: go down one element
 +k::send !{pgup} ; K, gE: go up one element
+!+j::send !+{pgdn} ; go to next sibling
+!+k::send !+{pgup} ; go to previous sibling
 
 ; Open windows
 c::send !c ; open content window
@@ -131,6 +134,7 @@ Return
 ~^f:: ; find; vim page down
 ~^v:: ; paste image; vim visual block
 ~^r:: ; replace; vim redo
+~^+p:: ; element parameter; vim_ahk paste without format
 Return
 
 ; Copy mode
@@ -145,6 +149,7 @@ y:: ; yy: copy current source url
 	send p{esc} ; copy reference
 	Vim.State.SetNormal()
 	ClipWait 1
+	sleep 20
 	if InStr(Clipboard, "Link:") {
 		RegExMatch(Clipboard, "Link: \K.*", link)
 		Clipboard := link

@@ -98,7 +98,10 @@ p::
   KeyWait, p ; To avoid repeat, somehow it calls <C-p>, print...
 Return
 
+^+p::
 +p::
+  if GetKeyState("ctrl")
+	Clipboard := Clipboard
   if(Vim.State.LineCopy == 1){
     Send, {Up}{End}{Enter}^v{BS}{Home}
   }else{
