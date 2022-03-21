@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup() || back_to_normal
+﻿#If Vim.IsVimGroup() || (Vim.State.Vim.Enabled && back_to_normal)
 Esc::
 	Vim.State.HandleEsc()
 	back_to_normal = 0
@@ -15,7 +15,7 @@ Return
   }
 Return
 
-#If back_to_normal
+#If Vim.State.Vim.Enabled && back_to_normal
 ~enter::
 	if (back_to_normal == 1)
 		Vim.State.SetNormal()

@@ -36,7 +36,7 @@ return
 	send ^l
 	sleep 100
 	link := RegExReplace(clip(), "#(.*)$")
-	send {tab}
+	send {f6 2}
 	Run, iexplore.exe %link%
 Return
 
@@ -47,7 +47,7 @@ Return
 	send ^c ; cannot use clip() here because it will try to restore the clipboard
 	ClipWait 1
 	sleep 20
-	send {tab}
+	send {f6 2}
 	temp_clip := RegExReplace(Clipboard, "#(.*)$")
 	if InStr(temp_clip, "https://www.youtube.com") && InStr(temp_clip, "v=") {
 		RegExMatch(temp_clip, "v=\K[\w\-]+", yt_link)
@@ -115,7 +115,7 @@ return
 		return
 	}
 	send {left}
-	clip(extract)
+	clip(extract,, true)
 	send ^+{home} ; select everything
 	sleep 50
 	send !x ; extract

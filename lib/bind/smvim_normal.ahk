@@ -66,6 +66,13 @@ n::  ; open hyperlink in current caret position (Open in *n*ew window)
     clipboard := tempClip
 return
 
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
+'::
+	send ^{f3}
+	Vim.State.SetMode("Insert")
+	back_to_normal = 2
+Return
+
 ; Browsing/editing
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind")
 m::
@@ -81,12 +88,6 @@ Return
 !m::
 	send ^+{f7} ; clear read point
 	Vim.ToolTipFunc("Read point cleared")
-Return
-
-'::
-	send ^{f3}
-	Vim.State.SetMode("Insert")
-	back_to_normal = 2
 Return
 
 ^/:: ; visual

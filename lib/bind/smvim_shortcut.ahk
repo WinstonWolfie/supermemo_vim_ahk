@@ -127,13 +127,13 @@ PlanInsertButtonInsert:
 	send ^p ; open plan again
 return
 
-#If WinActive("ahk_class TPriorityDlg")
+#If Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg")
 .::SendInput ^a0.
 
-#If WinActive("ahk_class TWebDlg")
+#If Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg")
 !+d::FindClick(A_ScriptDir . "\lib\bind\util\web_import_duplicates.png")
 
-#If WinActive("ahk_class TElParamDlg")
+#If Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg")
 ; Task value script, modified from Naess's priority script
 !0::
 !Numpad0::

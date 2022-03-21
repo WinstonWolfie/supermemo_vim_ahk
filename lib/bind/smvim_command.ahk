@@ -65,9 +65,9 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 		return
 	send ^h ; replace
 	WinWaitActive, Replace,, 0
-	clip("en.wikipedia.org") ; supermemo for some reason replaces the links for English wikipedia ones
+	clip("en.wikipedia.org",, true) ; supermemo for some reason replaces the links for English wikipedia ones
 	send {tab}
-	clip(wiki_link) ; so this script replaces them back
+	clip(wiki_link,, true) ; so this script replaces them back
 	send !a ; replace all
 	send ^w ; close
 	WinWaitActive, ahk_class #32770,, 0 ; do you want to save changes?

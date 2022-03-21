@@ -1,7 +1,7 @@
 ; Clip() - Send and Retrieve Text Using the Clipboard
 ; by berban - updated February 18, 2019
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156
-Clip(Text="", Reselect="")
+Clip(Text="", Reselect="", NoRestore=false)
 {
 	Static BackUpClip, Stored, LastClip
 	If (A_ThisLabel = A_ThisFunc) {
@@ -23,7 +23,8 @@ Clip(Text="", Reselect="")
 			ClipWait, 10
 			SendInput, ^v
 		}
-		SetTimer, %A_ThisFunc%, -700
+		if !NoRestore ; for scripts that restore clipboard at the end
+			SetTimer, %A_ThisFunc%, -700
 		Sleep 20 ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
 		If (Text = "")
 			Return LastClip := Clipboard

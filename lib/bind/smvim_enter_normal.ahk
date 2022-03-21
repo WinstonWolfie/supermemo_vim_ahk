@@ -16,7 +16,7 @@
 	Vim.State.SetNormal()
 return
 
-#If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window
+#If Vim.IsVimGroup() and WinActive("ahk_class TElWind") && !Vim.State.StrIsInCurrentVimMode("Visual") ; SuperMemo element window
 ^l:: ; learn
 	send {blind}{ctrl up}{Alt}{l 2}
 	Vim.State.SetNormal()

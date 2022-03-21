@@ -39,13 +39,6 @@ m::  ; highlight: *m*ark
 	Vim.State.SetMode("Vim_Normal")
 return
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
-'::
-	send ^{f3}
-	Vim.State.SetMode("Insert")
-	back_to_normal = 2
-Return
-
 q:: ; extract (*q*uote)
 	send !x
 	Vim.State.SetMode("Vim_Normal")
@@ -58,7 +51,7 @@ extract_stay:
 ^q:: ; extract (*q*uote)
 	send !x
 	Vim.State.SetMode("Vim_Normal")
-	sleep 700
+	sleep 800
 	send !{left}
 return
 
@@ -149,23 +142,20 @@ cloze_hinter:
 			WinClose
 		*/
 		; new method: directly replace the [...] in text
-		send {esc}^+{f6}
-		WinWaitActive, ahk_class Notepad,, 2
-		if ErrorLevel
-			return
-		send ^a
-		html := clip()
-		send ^w
-		WinWaitActive, ahk_class TELWind,, 0
-		send q
-		sleep 100
+		clip_bak := Clipboardall
+		Clipboard =
+		send !{f12}fc ; copy file path
+		ClipWait 1
+		sleep 20
+		FileRead, html, %Clipboard%
 		Vim.Move.Move("+g")
 		send {end}{down}!\\
 		WinWaitNotActive, ahk_class TElWind,, 0
 		if !ErrorLevel
 			send {enter}
-		clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>[" . cloze . "</SPAN>"))
+		clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>[" . cloze . "</SPAN>"),, true)
 		send ^+{home}^+1
+		Clipboard := clip_bak
 	}
 	if !ctrl_state ; only goes back to topic if ctrl is up
 		send !{right} ; add a ctrl to keep editing the clozed item
@@ -173,3 +163,44 @@ cloze_hinter:
 		send !{home}!{left}
 	Gosub RemoveToolTip
 return
+
+#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && Vim.SM.IsEditingHTML()
+^l::
+	FormatTime, current_time,, yyyy-MM-dd-HH-mm-ss-%A_msec%
+	Vim.State.SetMode("Vim_Normal")
+	clip_bak := Clipboardall
+	Clipboard =
+	send ^x
+	ClipWait 1
+	sleep 20
+	WinGetText, visible_text, ahk_class TElWind
+	RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
+	RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
+	link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255CLARGE%2520%257B%255Ccolor%257BWhite%257D%2520" . Clipboard . "%257D&dl=1"
+	latex_foler_path := collection_path . collection_name . "\LaTex"
+	latex_path := latex_foler_path . "\" . current_time . ".png"
+	FileCreateDir % latex_foler_path
+	UrlDownloadToFile, %link%, %latex_path%
+	img_html = <img alt="%Clipboard%" src="%latex_path%">
+	clip(img_html, true, true)
+	send ^+1{esc}q
+	Clipboard =
+	send !{f12}fc ; copy file path
+	ClipWait 1
+	sleep 20
+	FileRead, html, %Clipboard%
+	Vim.Move.Move("+g")
+	send {end}{down}!\\
+	WinWaitNotActive, ahk_class TElWind,, 0
+	if !ErrorLevel
+		send {enter}
+	fuck_lexicon = <DIV style="POSITION: absolute; LEFT: -9999px; TOP: -9999px">%current_time%</DIV>
+	if InStr(html, "POSITION: absolute; LEFT: -9999px; TOP: -9999px")
+		new_html := RegExReplace(html, "<DIV style=""POSITION: absolute; LEFT: -9999px; TOP: -9999px"">(.*)<\/DIV>", fuck_lexicon)
+	else
+		new_html := fuck_lexicon . "`n" . html
+	clip(new_html,, true)
+	send {enter}^+{home}^+1
+	send !{home}!{left} ; refresh
+	Clipboard := clip_bak
+Return
