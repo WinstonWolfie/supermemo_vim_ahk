@@ -108,7 +108,8 @@ return
 			WinGetText, visible_text, ahk_class TElWind
 			RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
 			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
-			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255CLARGE%2520%257B%255Ccolor%257BWhite%257D%2520" . Clipboard . "%257D&dl=1"
+			latex_formula := Enc_Uri(Clipboard)
+			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255CLARGE%2520%257B%255Ccolor%257BWhite%257D%2520" . latex_formula . "%257D&dl=1"
 			latex_foler_path := collection_path . collection_name . "\LaTex"
 			latex_path := latex_foler_path . "\" . current_time_file_name . ".png"
 			FileCreateDir % latex_foler_path
@@ -129,6 +130,8 @@ return
 			fuck_lexicon = <P><SMALL>Last LaTex to image conversion: %current_time_display%
 			if InStr(html, "<P><SMALL>Last LaTex to image conversion: ")
 				new_html := RegExReplace(html, "<P><SMALL>Last LaTex to image conversion: (.*)", fuck_lexicon)
+			else if !html ; sometimes save html would empty it
+				new_html := img_html . "`n" . fuck_lexicon
 			else
 				new_html := html . "`n" . fuck_lexicon
 			clip(new_html,, true)

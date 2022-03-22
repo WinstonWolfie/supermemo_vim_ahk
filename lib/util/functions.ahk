@@ -11,6 +11,38 @@
 Return dataL ? dataL : 0
 }
 
+;#########################################################################################
+;uri encode/decode by Titan
+;Thread: http://www.autohotkey.com/forum/topic18876.html
+;About: http://en.wikipedia.org/wiki/Percent_encoding
+;two functions by titan: (slightly modified by infogulch)
+; https://www.autohotkey.com/board/topic/29866-encoding-and-decoding-functions-v11/
+
+Dec_Uri(str) 
+{
+   Loop
+      If RegExMatch(str, "i)(?<=%)[\da-f]{1,2}", hex)
+         StringReplace, str, str, `%%hex%, % Chr("0x" . hex), All
+      Else Break
+   Return, str
+}
+
+Enc_Uri(str) 
+{
+	f = %A_FormatInteger%
+	SetFormat, Integer, Hex
+	If RegExMatch(str, "^\w+:/{0,2}", pr)
+		StringTrimLeft, str, str, StrLen(pr)
+	StringReplace, str, str, `%, `%25, All
+	Loop
+		If RegExMatch(str, "i)[^\w\.~%/:]", char)
+			StringReplace, str, str, %char%, % "%" . SubStr(Asc(char),3), All
+		Else Break
+	SetFormat, Integer, %f%
+	Return, pr . str
+}
+;#########################################################################################
+
 ClickDPIAdjusted(coord_x, coord_y) {
     coord_x *= A_ScreenDPI / 96
     coord_y *= A_ScreenDPI / 96
