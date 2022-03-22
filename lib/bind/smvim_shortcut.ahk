@@ -111,9 +111,9 @@ return
 			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
 			latex_formula := Enc_Uri(Clipboard)
 			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257BWhite%257D%2520" . latex_formula . "%257D&dl=1"
-			latex_foler_path := collection_path . collection_name . "\LaTex"
-			latex_path := latex_foler_path . "\" . current_time_file_name . ".png"
-			FileCreateDir % latex_foler_path
+			latex_folder_path := collection_path . collection_name . "\LaTex"
+			latex_path := latex_folder_path . "\" . current_time_file_name . ".png"
+			FileCreateDir % latex_folder_path
 			img_html = <img alt="%Clipboard%" src="%latex_path%">
 			clip(img_html, true, true)
 			send ^+1
@@ -127,7 +127,12 @@ return
 			sleep 20
 			FileRead, html, %Clipboard%
 			Vim.SM.MoveAboveRef(true)
-			send ^+{home}{bs}{esc}^t ; empty the file
+			send ^+{home}{bs}{esc} ; delete everything and save
+			send ^+{f6}{enter} ; opens notepad
+			WinWaitNotActive, ahk_class TElWind,, 0
+			send ^w
+			WinWaitActive, ahk_class TElWind,, 0
+			send ^{home} ; put the caret on top
 			
 			/* recommended css setting for fuck_lexicon class:
 			.fuck_lexicon {
@@ -155,6 +160,10 @@ return
 		} else { ; image only
 			RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula)
 			RegExMatch(data, "src=""file:\/\/\/\K[^""]+", latex_path)
+			if InStr(latex_formula, "{\displaystyle ") {
+				latex_formula := StrReplace(latex_formula, "{\displaystyle ")
+				latex_formula := RegExReplace(latex_formula, "}$")
+			}
 			clip(latex_formula, true, true)
 			FileDelete %latex_path%
 		}

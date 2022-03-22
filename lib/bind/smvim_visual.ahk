@@ -152,7 +152,10 @@ cloze_hinter:
 		sleep 20
 		FileRead, html, %Clipboard%
 		Vim.SM.MoveAboveRef(true)
-		send ^+{home}{bs}{esc}^t ; empty the file
+		send !\\
+		WinWaitNotActive, ahk_class TElWind,, 0
+		if !ErrorLevel
+			send {enter}
 		clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>[" . cloze . "</SPAN>"),, true)
 		send ^+{home}^+1
 		Vim.SM.WaitHTMLSave()
