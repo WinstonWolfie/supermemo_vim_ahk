@@ -69,7 +69,7 @@ class VimSM{
 
 	IsGrading() {
 		ControlGetFocus, current_focus, ahk_class TElWind
-		; if focused on either 5 of the grading buttons or the cancel button
+		; If SM is focusing on either 5 of the grading buttons or the cancel button
 		return WinActive("ahk_class TElWind") && (current_focus == "TBitBtn4" || current_focus == "TBitBtn5" || current_focus == "TBitBtn6" || current_focus == "TBitBtn7" || current_focus == "TBitBtn8" || current_focus == "TBitBtn9")
 	}
 	

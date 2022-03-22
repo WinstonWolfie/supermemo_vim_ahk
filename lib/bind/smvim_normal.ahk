@@ -144,6 +144,7 @@ Return
 		}
 	} else {
 		send {esc}{f3} ; esc to exit field, so it can return to the same field later
+		; Normally here would be a WinWaitNotActive, ahk_class TELWind for double insurance, but clip() has some delay in itself, so more delay is not needed
 		WinWaitActive, ahk_class TMyFindDlg,, 0
 		if ErrorLevel
 			Return

@@ -84,7 +84,66 @@ return
 	clip("SuperMemoElementNo=(" . RegExReplace(Clipboard, "^#") . ")")
 	send {enter}
 	Vim.State.SetNormal()
+	Vim.Caret.SwitchToSameWindow() ; refresh caret
 return
+
+^!l::
+	KeyWait ctrl
+	KeyWait alt
+	FormatTime, current_time_display,, yyyy-MM-dd HH:mm:ss:%A_msec%
+	FormatTime, current_time_file_name,, yyyy-MM-dd-HH-mm-ss-%A_msec%
+	Vim.State.SetMode("Vim_Normal")
+	clip_bak := Clipboardall
+	Clipboard =
+	send ^c
+	ClipWait 1
+	sleep 20
+	If ClipboardGet_HTML( Data ){
+		; if RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)") { ; match end of first IMG tag until start of last EndFragment tag
+			; MsgBox Please select text or image only.
+			; Clipboard := clip_bak
+			; Return
+		; } else
+		if !InStr(data, "<IMG") { ; text only
+			WinGetText, visible_text, ahk_class TElWind
+			RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
+			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
+			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255CLARGE%2520%257B%255Ccolor%257BWhite%257D%2520" . Clipboard . "%257D&dl=1"
+			latex_foler_path := collection_path . collection_name . "\LaTex"
+			latex_path := latex_foler_path . "\" . current_time_file_name . ".png"
+			FileCreateDir % latex_foler_path
+			img_html = <img alt="%Clipboard%" src="%latex_path%">
+			clip(img_html, true, true)
+			send ^+1
+			send {esc}^t ; save html
+			Clipboard =
+			send !{f12}fc ; copy file path
+			ClipWait 1
+			sleep 20
+			FileRead, html, %Clipboard%
+			Vim.Move.Move("+g")
+			send {end}{down}!\\
+			WinWaitNotActive, ahk_class TElWind,, 0
+			if !ErrorLevel
+				send {enter}
+			fuck_lexicon = <P><SMALL>Last LaTex to image conversion: %current_time_display%
+			if InStr(html, "<P><SMALL>Last LaTex to image conversion: ")
+				new_html := RegExReplace(html, "<P><SMALL>Last LaTex to image conversion: (.*)", fuck_lexicon)
+			else
+				new_html := html . "`n" . fuck_lexicon
+			clip(new_html,, true)
+			send ^+{home}^+1
+			UrlDownloadToFile, %latex_link%, %latex_path%
+			send !{home}!{left} ; refresh
+		} else { ; image only
+			RegExMatch(data, "<IMG (alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula)
+			RegExMatch(data, "src=""file:\/\/\/\K[^""]+", latex_path)
+			clip(latex_formula,, true)
+			FileDelete %latex_path%
+		}
+	}
+	Clipboard := clip_bak
+Return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
 !a:: ; insert activity

@@ -793,7 +793,7 @@
 		else
 			send ^{home}
 		SendInput {down %line%}
-	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !A_CaretX
+	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()
 		send ^t^{end}{esc}
 	  else {
 	    if (this.shift == 1)
