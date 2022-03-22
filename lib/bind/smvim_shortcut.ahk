@@ -111,7 +111,7 @@ return
 			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
 			latex_formula := Enc_Uri(Clipboard)
 			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257BWhite%257D%2520" . latex_formula . "%257D&dl=1"
-			latex_folder_path := collection_path . collection_name . "\LaTex"
+			latex_folder_path := collection_path . collection_name . "\LaTeX"
 			latex_path := latex_folder_path . "\" . current_time_file_name . ".png"
 			FileCreateDir % latex_folder_path
 			img_html = <img alt="%Clipboard%" src="%latex_path%">
@@ -138,9 +138,9 @@ return
 			}
 			*/
 			
-			fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTex to image conversion: %current_time_display%</SPAN>
-			if InStr(html, "<SPAN class=fuck_lexicon>Last LaTex to image conversion: ") { ; converted before
-				new_html := RegExReplace(html, "<SPAN class=fuck_lexicon>Last LaTex to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
+			fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %current_time_display%</SPAN>
+			if InStr(html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ") { ; converted before
+				new_html := RegExReplace(html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
 				FileDelete % html_path
 				FileAppend, %new_html%, %html_path%
 			} else { ; first time conversion
