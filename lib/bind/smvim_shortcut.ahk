@@ -95,7 +95,7 @@ return
 	Vim.State.SetMode("Vim_Normal")
 	clip_bak := Clipboardall
 	Clipboard =
-	send ^x ; using ^c would make setting read point save the selection
+	send ^c
 	ClipWait 0.6
 	sleep 20
 	If ClipboardGet_HTML( Data ){
@@ -105,7 +105,7 @@ return
 			; Return
 		; } else
 		if !InStr(data, "<IMG") { ; text only
-			send ^{f7} ; set read point
+			send {bs}^{f7} ; clears selection, set read point
 			WinGetText, visible_text, ahk_class TElWind
 			RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
 			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
@@ -125,14 +125,10 @@ return
 			send !{f12}fc ; copy file path
 			ClipWait 0.2
 			sleep 20
-			FileRead, html, %Clipboard%
-			Vim.SM.MoveAboveRef(true)
-			send ^+{home}{bs}{esc} ; delete everything and save
-			send ^+{f6}{enter} ; opens notepad
-			WinWaitNotActive, ahk_class TElWind,, 0
-			send ^w
-			WinWaitActive, ahk_class TElWind,, 0
-			send ^{home} ; put the caret on top
+			html_path := Clipboard
+			FileRead, html, %html_path%
+			if !html
+				html := img_html ; in case the html is picture only and somehow not saved
 			
 			/* recommended css setting for fuck_lexicon class:
 			.fuck_lexicon {
@@ -142,18 +138,26 @@ return
 			}
 			*/
 			
-			fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTex to image conversion: %current_time_display%
-			if InStr(html, "<SPAN class=fuck_lexicon>Last LaTex to image conversion: ")
-				new_html := RegExReplace(html, "<SPAN class=fuck_lexicon>Last LaTex to image conversion: (.*)", fuck_lexicon)
-			else if !html ; sometimes save html would empty it
-				new_html := img_html . "`n" . fuck_lexicon
-			else
+			fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTex to image conversion: %current_time_display%</SPAN>
+			if InStr(html, "<SPAN class=fuck_lexicon>Last LaTex to image conversion: ") { ; converted before
+				new_html := RegExReplace(html, "<SPAN class=fuck_lexicon>Last LaTex to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
+				FileDelete % html_path
+				FileAppend, %new_html%, %html_path%
+			} else { ; first time conversion
 				new_html := html . "`n" . fuck_lexicon
-			clip(new_html,, true)
-			send ^+{home}^+1
-			Vim.SM.WaitHTMLSave()
-			if ErrorLevel
-				Return
+				Vim.SM.MoveAboveRef(true)
+				send ^+{home}{bs}{esc} ; delete everything and save
+				send ^+{f6}{enter} ; opens notepad
+				WinWaitNotActive, ahk_class TElWind,, 0
+				send ^w
+				WinWaitActive, ahk_class TElWind,, 0
+				send ^{home} ; put the caret on top
+				clip(new_html,, true)
+				send ^+{home}^+1
+				Vim.SM.WaitHTMLSave()
+				if ErrorLevel
+					Return
+			}
 			UrlDownloadToFile, %latex_link%, %latex_path%
 			send !{home}!{left} ; refresh
 			send !{f7} ; go to read point
@@ -165,7 +169,7 @@ return
 				latex_formula := RegExReplace(latex_formula, "}$")
 			}
 			clip(latex_formula, true, true)
-			FileDelete %latex_path%
+			FileDelete % latex_path
 		}
 	}
 	Clipboard := clip_bak
