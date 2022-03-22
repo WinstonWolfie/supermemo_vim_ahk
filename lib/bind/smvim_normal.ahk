@@ -45,11 +45,11 @@ n::  ; open hyperlink in current caret position (Open in *n*ew window)
     tempClip := Clipboardall
     clipboard := ""
     SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
-	ClipWait 1
+	ClipWait 0.1
 	sleep 10 ; short sleep to make sure clipboard updates
     If (clipboard ~= "`n" || clipboard ~= " "){
       SendInput {Left}{Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
-	  ClipWait 1
+	  ClipWait 0.1
 	  sleep 10
     }
     BlockInput, off

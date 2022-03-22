@@ -48,7 +48,7 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 	send !{f10}fs ; show reference
 	WinWaitActive, Information,, 0
 	send p{esc} ; copy reference
-	ClipWait 1
+	ClipWait 0.2
 	sleep 20
 	if !InStr(Clipboard, "wikipedia.org/wiki") {
 		MsgBox, Not wikipedia!
@@ -78,7 +78,7 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 		send q
 		sleep 200
 		send ^{home}{end}+{home}!t ; selecting first line
-		WinWaitActive, ahk_class TChoicesDlg,, 2
+		WinWaitActive, ahk_class TChoicesDlg,, 2 ; sometimes it could take a really long time for the choice dialogue to pop up
 		send 2{enter}{esc} ; makes selection title
 	}
 	Clipboard := clip_bak
@@ -101,7 +101,7 @@ r:: ; set *r*eference's link to what's in the clipboard
 	send !{f10}fe
 	WinWaitActive, ahk_class TInputDlg,, 0
 	send ^a^c
-	ClipWait 1
+	ClipWait 0.2
 	sleep 20 ; making sure copy works
 	if InStr(Clipboard, "#Link: ")
 		clip(RegExReplace(Clipboard, "(\n\K|^)#Link: .*", new_link))

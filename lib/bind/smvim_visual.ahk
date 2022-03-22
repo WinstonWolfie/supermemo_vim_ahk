@@ -16,7 +16,7 @@ return
 +a::
 	Vim.State.SetMode("Vim_Normal")
 	Gui, HTMLTag:Add, Text,, &HTML tag:
-	list = H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM
+	list = H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM|cloze|clozed|extract
 	Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, %list%
 	Gui, HTMLTag:Add, Button, default, &Add
 	Gui, HTMLTag:Show,, Add HTML Tag
@@ -30,7 +30,10 @@ return
 HTMLTagButtonAdd:
 	Gui, Submit
 	Gui, Destroy
-	clip("<" . tag . ">" . clip() . "</" . tag . ">", true)
+	if (tag == "cloze" || tag == "extract" || tag == "clozed")
+		clip("<SPAN class=" . tag . ">" . clip() . "</SPAN>", true)
+	else
+		clip("<" . tag . ">" . clip() . "</" . tag . ">", true)
 	send ^+1
 Return
 
@@ -145,16 +148,16 @@ cloze_hinter:
 		clip_bak := Clipboardall
 		Clipboard =
 		send !{f12}fc ; copy file path
-		ClipWait 1
+		ClipWait 0.2
 		sleep 20
 		FileRead, html, %Clipboard%
-		Vim.Move.Move("+g")
-		send {end}{down}!\\
-		WinWaitNotActive, ahk_class TElWind,, 0
-		if !ErrorLevel
-			send {enter}
+		Vim.SM.MoveAboveRef(true)
+		send ^+{home}{bs}{esc}^t ; empty the file
 		clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>[" . cloze . "</SPAN>"),, true)
 		send ^+{home}^+1
+		Vim.SM.WaitHTMLSave()
+		if ErrorLevel
+			Return
 		Clipboard := clip_bak
 	}
 	if !ctrl_state ; only goes back to topic if ctrl is up

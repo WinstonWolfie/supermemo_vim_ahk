@@ -1,9 +1,10 @@
 ﻿#If Vim.IsVimGroup() || (Vim.State.Vim.Enabled && back_to_normal)
 Esc::
 	Vim.State.HandleEsc()
-	back_to_normal = 0
+	back_to_normal =
 Return
 
+#If Vim.IsVimGroup()
 ^[::Vim.State.HandleCtrlBracket()
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Insert")) and (Vim.Conf["VimJJ"]["val"] == 1)

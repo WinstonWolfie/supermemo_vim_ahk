@@ -334,7 +334,7 @@ class VimAhk{
     tempClip := clipboard
     clipboard := ""
     SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
-	ClipWait 1
+	ClipWait 0.1
     Sleep 10
     ret := False
     If (clipboard ~= key){

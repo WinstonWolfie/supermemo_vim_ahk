@@ -93,6 +93,9 @@
       this.Vim.State.SetMode("Insert")
     }else if(this.Vim.State.StrIsInCurrentVimMode("ExtractStay")){
       Gosub extract_stay
+    }else if(this.Vim.State.StrIsInCurrentVimMode("ExtractPriority")){
+      send !+x
+      this.Vim.State.SetMode("Vim_Normal")
     }else if(this.Vim.State.StrIsInCurrentVimMode("Extract")){
       Send, !x
       this.Vim.State.SetMode("Vim_Normal")

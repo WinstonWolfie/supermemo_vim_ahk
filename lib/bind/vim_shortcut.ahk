@@ -25,13 +25,15 @@ LAlt & RAlt:: ; for laptop
 	Vim.State.SetMode("Insert")
 return
 
-; ^!+r::
+; ^!+r:: ; testing caret position
 	; MsgBox, Caret position: %A_CaretX% %A_CaretY%
 	; MouseMove, %A_CaretX%, %A_CaretY%
 ; Return
 
 ; Chrome
 #If Vim.State.Vim.Enabled && WinActive("ahk_exe chrome.exe") ; not using ahk_class because it's the same with the discord app
+^!w::send ^w!{tab} ; close tab and switch back
+
 ^!i:: ; open in *I*E
 	send ^l
 	sleep 100
@@ -45,7 +47,7 @@ Return
 	sleep 100
 	Clipboard =
 	send ^c ; cannot use clip() here because it will try to restore the clipboard
-	ClipWait 1
+	ClipWait 0.2
 	sleep 20
 	send {f6 2}
 	temp_clip := RegExReplace(Clipboard, "#(.*)$")
@@ -60,7 +62,7 @@ return
 ^!d:: ; parse similar and opposite in google *d*efine
 	Clipboard =
 	send ^c
-	ClipWait 1
+	ClipWait 0.6
 	sleep 20
 	temp_clip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", "; ")
 	temp_clip := StrReplace(temp_clip, "`r`nSimilar", "`r`n`r`nSimilar")

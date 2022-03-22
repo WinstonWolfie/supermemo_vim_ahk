@@ -12,7 +12,7 @@ u::Send,^z
   bak := ClipboardAll
   Clipboard =
   Send, +{Right}^x
-  ClipWait, 1
+  ClipWait, 0.1
   sleep 10
   if(Clipboard is lower){
     StringUpper, Clipboard, Clipboard

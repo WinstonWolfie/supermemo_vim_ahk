@@ -98,4 +98,28 @@ class VimSM{
 		send {tab}
 		this.Vim.State.SetNormal()
 	}
+	
+	MoveAboveRef(NoRestore:=false) {
+		Send, ^{End}^+{up} ; if there are references this would select (or deselect in visual mode) them all
+		if InStr(clip("",, NoRestore), "#SuperMemo Reference:")
+			send {up 2} ; go to start of last line
+		else
+			send ^{end}
+	}
+	
+	WaitHTMLSave() {
+		send {esc} ; save html
+		loop {
+			sleep 20
+			if !this.IsEditingHTML() {
+				Break
+				ErrorLevel := 0
+			}
+			if (A_Index > 500) { ; takes over 10s to save the file
+				this.Vim.ToolTipFunc("Timed out.")
+				Break
+				ErrorLevel := 1
+			}
+		}
+	}
 }

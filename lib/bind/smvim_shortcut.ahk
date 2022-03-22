@@ -95,8 +95,8 @@ return
 	Vim.State.SetMode("Vim_Normal")
 	clip_bak := Clipboardall
 	Clipboard =
-	send ^c
-	ClipWait 1
+	send ^x ; using ^c would make setting read point save the selection
+	ClipWait 0.6
 	sleep 20
 	If ClipboardGet_HTML( Data ){
 		; if RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)") { ; match end of first IMG tag until start of last EndFragment tag
@@ -105,36 +105,35 @@ return
 			; Return
 		; } else
 		if !InStr(data, "<IMG") { ; text only
+			send ^{f7} ; set read point
 			WinGetText, visible_text, ahk_class TElWind
 			RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
 			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
 			latex_formula := Enc_Uri(Clipboard)
-			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255CLARGE%2520%257B%255Ccolor%257BWhite%257D%2520" . latex_formula . "%257D&dl=1"
+			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257BWhite%257D%2520" . latex_formula . "%257D&dl=1"
 			latex_foler_path := collection_path . collection_name . "\LaTex"
 			latex_path := latex_foler_path . "\" . current_time_file_name . ".png"
 			FileCreateDir % latex_foler_path
 			img_html = <img alt="%Clipboard%" src="%latex_path%">
 			clip(img_html, true, true)
 			send ^+1
-			send {esc}^t ; save html
+			Vim.SM.WaitHTMLSave()
+			if ErrorLevel
+				Return
+			send ^t
 			Clipboard =
 			send !{f12}fc ; copy file path
-			ClipWait 1
+			ClipWait 0.2
 			sleep 20
 			FileRead, html, %Clipboard%
-			Vim.Move.Move("+g")
-			send {end}{down}!\\
-			WinWaitNotActive, ahk_class TElWind,, 0
-			if !ErrorLevel
-				send {enter}
+			Vim.SM.MoveAboveRef(true)
+			send ^+{home}{bs}{esc}^t ; empty the file
 			
-			; recommended css setting for fuck_lexicon class:
-			/*
+			/* recommended css setting for fuck_lexicon class:
 			.fuck_lexicon {
 				position: absolute;
 				left: -9999px;
 				top: -9999px;
-				display: block;
 			}
 			*/
 			
@@ -147,12 +146,16 @@ return
 				new_html := html . "`n" . fuck_lexicon
 			clip(new_html,, true)
 			send ^+{home}^+1
+			Vim.SM.WaitHTMLSave()
+			if ErrorLevel
+				Return
 			UrlDownloadToFile, %latex_link%, %latex_path%
 			send !{home}!{left} ; refresh
+			send !{f7} ; go to read point
 		} else { ; image only
-			RegExMatch(data, "<IMG (alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula)
+			RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula)
 			RegExMatch(data, "src=""file:\/\/\/\K[^""]+", latex_path)
-			clip(latex_formula,, true)
+			clip(latex_formula, true, true)
 			FileDelete %latex_path%
 		}
 	}

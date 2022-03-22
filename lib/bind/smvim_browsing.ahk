@@ -16,7 +16,7 @@ s:: ; gs: go to source link
 	WinWaitActive, Information,, 0
 	send p{esc} ; copy reference
 	Vim.State.SetNormal()
-	ClipWait 1
+	ClipWait 0.2
 	sleep 20
 	if InStr(Clipboard, "Link:") {
 		RegExMatch(Clipboard, "Link: \K.*", link)
@@ -118,6 +118,17 @@ b::send ^{space} ; open browser
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 o::send ^o ; favourites
 
++e::
+	clip_bak := Clipboardall
+	clipboard =
+	send ^t!{f12}fc
+	ClipWait 0.2
+	sleep 20
+	run, %A_StartMenu%\Programs\Visual Studio Code\Visual Studio Code.lnk %Clipboard%
+	clipboard := clip_bak
+Return
+	
+
 f:: ; click on html component
 	if Vim.SM.MouseMoveTop(true)
 		send {left}{home}
@@ -148,7 +159,7 @@ y:: ; yy: copy current source url
 	WinWaitActive, Information,, 0
 	send p{esc} ; copy reference
 	Vim.State.SetNormal()
-	ClipWait 1
+	ClipWait 0.2
 	sleep 20
 	if InStr(Clipboard, "Link:") {
 		RegExMatch(Clipboard, "Link: \K.*", link)

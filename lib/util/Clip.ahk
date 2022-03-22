@@ -1,7 +1,7 @@
 ; Clip() - Send and Retrieve Text Using the Clipboard
 ; by berban - updated February 18, 2019
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156
-Clip(Text="", Reselect="", NoRestore=false)
+Clip(Text="", Reselect="", NoRestore:=false)
 {
 	Static BackUpClip, Stored, LastClip
 	If (A_ThisLabel = A_ThisFunc) {

@@ -4,6 +4,7 @@
 ^z::Vim.State.SetMode("SMVim_ClozeStay", 0, -1, 0)
 q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0)
 z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)
++q::Vim.State.SetMode("SMVim_ExtractPriority", 0, -1, 0)
 +z::
 ^+z::
 	Vim.State.SetMode("SMVim_ClozeHinter", 0, -1, 0)

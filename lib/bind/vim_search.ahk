@@ -10,7 +10,7 @@ Return
   bak := ClipboardAll
   Clipboard=
   Send, ^{Left}+^{Right}^c
-  ClipWait, 1
+  ClipWait, 0.2
   sleep 20
   Send, ^f
   Send, ^v!f
