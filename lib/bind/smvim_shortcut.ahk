@@ -127,9 +127,20 @@ return
 			WinWaitNotActive, ahk_class TElWind,, 0
 			if !ErrorLevel
 				send {enter}
-			fuck_lexicon = <P><SMALL>Last LaTex to image conversion: %current_time_display%
-			if InStr(html, "<P><SMALL>Last LaTex to image conversion: ")
-				new_html := RegExReplace(html, "<P><SMALL>Last LaTex to image conversion: (.*)", fuck_lexicon)
+			
+			; recommended css setting for fuck_lexicon class:
+			/*
+			.fuck_lexicon {
+				position: absolute;
+				left: -9999px;
+				top: -9999px;
+				display: block;
+			}
+			*/
+			
+			fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTex to image conversion: %current_time_display%
+			if InStr(html, "<SPAN class=fuck_lexicon>Last LaTex to image conversion: ")
+				new_html := RegExReplace(html, "<SPAN class=fuck_lexicon>Last LaTex to image conversion: (.*)", fuck_lexicon)
 			else if !html ; sometimes save html would empty it
 				new_html := img_html . "`n" . fuck_lexicon
 			else
