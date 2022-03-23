@@ -37,7 +37,7 @@ Return
 ^`;::
 	Gui, VimCommander:Add, Text,, &Command:
 	; list names are the same as subroutine name, just replacing the space with _, and no final parentheses
-	list = SM Plan||Window spy|Regex101|Watch later (YT)
+	list = SM Plan||Window spy|Regex101|Watch later (YT)|Search
 	if Vim.State.IsCurrentVimMode("Vim_Normal") {
 		list .= 
 		mode_commander = n
@@ -87,8 +87,7 @@ sm_plan:
 			Return
 		sleep 1000
 	}
-	if Vim.SM.IsEditingText()
-		send {esc}
+	Vim.SM.ExitText()
 	send !kp ; open Plan window
 Return
 
@@ -102,4 +101,8 @@ Return
 
 watch_later_yt:
 	run https://www.youtube.com/playlist?list=WL
+Return
+
+search:
+	run % "https://www.google.com/search?q=" . clip()
 Return

@@ -18,8 +18,7 @@ return
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") && !Vim.State.StrIsInCurrentVimMode("Visual") ; SuperMemo element window
 ^l:: ; learn
 	send {blind}{LCtrl up}{RCtrl up}
-	if Vim.SM.IsEditingText()
-		send {esc}
+	Vim.SM.ExitText()
 	send !ll
 	Vim.State.SetNormal()
 Return
@@ -27,8 +26,7 @@ Return
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window
 ^p:: ; open Plan window
 	send {blind}{LCtrl up}{RCtrl up}
-	if Vim.SM.IsEditingText()
-		send {esc}
+	Vim.SM.ExitText()
 	send !kp
 	Vim.State.SetNormal()
 Return

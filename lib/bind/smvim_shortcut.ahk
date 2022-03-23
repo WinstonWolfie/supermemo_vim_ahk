@@ -141,9 +141,13 @@ return
 			
 			fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %current_time_display%</SPAN>
 			if InStr(html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ") { ; converted before
+				Vim.SM.WaitHTMLSave()
+				if ErrorLevel
+					Return
 				new_html := RegExReplace(html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
 				FileDelete % html_path
-				FileAppend, %new_html%, %html_path%
+				FileAppend, % new_html, % html_path
+				send !{home}!{left} ; refresh so the conversion time would display correctly
 			} else { ; first time conversion
 				new_html := html . "`n" . fuck_lexicon
 				Vim.SM.MoveAboveRef(true)
@@ -158,8 +162,8 @@ return
 				Vim.SM.WaitHTMLSave()
 				if ErrorLevel
 					Return
+				; no need for !home!left refreshing here
 			}
-			; no need for !home!left refreshing here
 			send !{f7} ; go to read point
 			sleep 250
 			send {right}
@@ -219,8 +223,7 @@ PlanInsertButtonInsert:
 	WinWaitNotActive, ahk_class TElWind,, 0
 	send {enter} ; cancel alarm
 	WinWaitActive, ahk_class TElWind,, 0
-	if Vim.SM.IsEditingText()
-		send {esc}
+	Vim.SM.ExitText()
 	send !kp ; open plan again
 return
 

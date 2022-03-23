@@ -161,4 +161,15 @@ class VimSM{
 			}
 		}
 	}
+	
+	ExitText() {
+		loop {
+			if this.IsEditingText() {
+				send {esc}
+				sleep 20
+			}
+			if !this.IsEditingText() || (A_Index > 250)
+				Break
+		}
+	}
 }
