@@ -105,7 +105,7 @@ return
 			; Return
 		; } else
 		if !InStr(data, "<IMG") { ; text only
-			send {bs}^{f7} ; clears selection, set read point
+			send {bs}^{f7} ; set read point
 			WinGetText, visible_text, ahk_class TElWind
 			RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
 			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
@@ -113,6 +113,7 @@ return
 			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257BWhite%257D%2520" . latex_formula . "%257D&dl=1"
 			latex_folder_path := collection_path . collection_name . "\LaTeX"
 			latex_path := latex_folder_path . "\" . current_time_file_name . ".png"
+			SetTimer, DownloadLaTeX, -1
 			FileCreateDir % latex_folder_path
 			img_html = <img alt="%Clipboard%" src="%latex_path%">
 			clip(img_html, true, true)
@@ -158,9 +159,10 @@ return
 				if ErrorLevel
 					Return
 			}
-			UrlDownloadToFile, %latex_link%, %latex_path%
 			send !{home}!{left} ; refresh
 			send !{f7} ; go to read point
+			sleep 250
+			send {right}
 		} else { ; image only
 			RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula)
 			RegExMatch(data, "src=""file:\/\/\/\K[^""]+", latex_path)
@@ -173,6 +175,10 @@ return
 		}
 	}
 	Clipboard := clip_bak
+Return
+
+DownloadLaTeX:
+	UrlDownloadToFile, %latex_link%, %latex_path%
 Return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window

@@ -178,3 +178,41 @@ Return
 s::ClickDPIAdjusted(253, 48) ; *s*witch plan
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsTasklistWindowEditingText()
 s::ClickDPIAdjusted(153, 52) ; *s*witch tasklist
+
+; YouTube template
+; Need "Start" button on screen
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
+m::
+	CoordMode, Mouse, Screen
+	click, %x_coord% %y_coord% ; click start
+Return
+
+`::
+	x_coord += 170
+	CoordMode, Mouse, Screen
+	click, %x_coord% %y_coord% ; click play
+Return
+
+!m::
+	x_coord += 195
+	CoordMode, Mouse, Screen
+	click, %x_coord% %y_coord% ; click reset
+Return
+
+left::
+right::
+space::
+v::
+	x_coord += 110
+	y_coord -= 60
+	CoordMode, Mouse, Screen
+	click, %x_coord% %y_coord%
+	if (A_ThisHotkey = "v")
+		Return
+	send {%A_ThisHotkey%}
+	if (A_ThisHotkey = "space") {
+		sleep 350
+		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "x-10 y-60")
+	}
+	send ^{t 2} ; focus to notes
+Return

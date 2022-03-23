@@ -1,24 +1,4 @@
-﻿; YouTube template
-; Need "Start" button on screen
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord)
-m::FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "o32")
-
-left::
-right::
-space::
-	x_coord += 110
-	y_coord -= 60
-	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord%
-	send {%A_ThisHotkey%}
-	if (A_ThisHotkey = "space") {
-		sleep 350
-		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_x.png", "o128")
-	}
-	send ^{t 2} ; focus to notes
-Return
-
-; Editing text only
+﻿; Editing text only
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.SM.IsEditingText()
 +h:: ; move to top of screen
 	if Vim.SM.MouseMoveTop(true)
