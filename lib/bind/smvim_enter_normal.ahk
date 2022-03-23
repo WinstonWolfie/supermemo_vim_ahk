@@ -5,7 +5,6 @@
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 ~space:: ; for Learn button
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window
-~^p:: ; open Plan window
 ~f4:: ; open tasklist
 ~!x:: ; extract
 ~!z:: ; cloze
@@ -20,5 +19,12 @@ return
 ^l:: ; learn
 	send {blind}{LCtrl up}{RCtrl up}
 	send {Alt}{l 2}
+	Vim.State.SetNormal()
+Return
+
+#If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window
+^p:: ; open Plan window
+	send {blind}{LCtrl up}{RCtrl up}
+	send {alt}kp
 	Vim.State.SetNormal()
 Return

@@ -181,6 +181,7 @@ DownloadLaTeX:
 	UrlDownloadToFile, %latex_link%, %latex_path%
 Return
 
+insert_activity_in_sm_plan:
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
 !a:: ; insert activity
 	Vim.State.SetNormal()
@@ -216,10 +217,10 @@ PlanInsertButtonInsert:
 	send ^s{esc} ; save and exits
 	WinWaitActive, ahk_class TElWind,, 0
 	send ^{enter} ; commander
-	WinWaitActive, ahk_class TCommanderDlg,, 0
+	WinWaitNotActive, ahk_class TElWind,, 0
 	send {enter} ; cancel alarm
 	WinWaitActive, ahk_class TElWind,, 0
-	send ^p ; open plan again
+	send {alt}kp ; open plan again
 return
 
 #If Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg")

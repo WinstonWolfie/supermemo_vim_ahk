@@ -1,5 +1,5 @@
 ﻿; Launch Settings
-#If
+#If Vim.State.Vim.Enabled
 ^!+v::
   Vim.Setting.ShowGui()
 Return
@@ -11,6 +11,7 @@ Return
 Return
 
 ; Suspend/restart
+; Every other shortcut is disabled when vim_ahk is disabled, save for this one
 #If
 ^!+s::
   Vim.State.ToggleEnabled()
@@ -30,8 +31,8 @@ return
 	; MouseMove, %A_CaretX%, %A_CaretY%
 ; Return
 
-; Chrome
-#If Vim.State.Vim.Enabled && WinActive("ahk_exe chrome.exe") ; not using ahk_class because it's the same with the discord app
+; Browsers
+#If Vim.State.Vim.Enabled && WinActive("ahk_group Browser")
 ^!w::send ^w!{tab} ; close tab and switch back
 
 ^!i:: ; open in *I*E

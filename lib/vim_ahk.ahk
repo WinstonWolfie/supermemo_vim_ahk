@@ -95,6 +95,11 @@ class VimAhk{
 	GroupAdd, SuperMemo, ahk_exe sm16.exe
 	GroupAdd, SuperMemo, ahk_exe sm15.exe
 	
+	; Browsers
+	GroupAdd, Browser, ahk_exe chrome.exe ; not using ahk_class because it's the same with the discord app
+	GroupAdd, Browser, ahk_exe firefox.exe
+	GroupAdd, Browser, ahk_exe msedge.exe ; Microsoft Edge
+	
 	; Excluded
 	GroupAdd, Excluded, ahk_class #32770 ; windows + r
 

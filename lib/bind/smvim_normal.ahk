@@ -55,16 +55,19 @@ Return
 
 ; Browsing/editing
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind")
+^f7::
 m::
 	send ^{f7} ; set read point
 	Vim.ToolTipFunc("Read point set")
 Return
 
+!f7::
 `::
 	send !{f7} ; go to read point
 	Vim.ToolTipFunc("Go to read point")
 Return
 
+^+f7::
 !m::
 	send ^+{f7} ; clear read point
 	Vim.ToolTipFunc("Read point cleared")
