@@ -108,7 +108,7 @@ class VimSM{
 	}
 	
 	WaitHTMLSave() {
-		send {esc} ; save html
+		send {esc} ; try to save html
 		loop {
 			sleep 20
 			if !this.IsEditingHTML() {
@@ -117,6 +117,43 @@ class VimSM{
 			}
 			if (A_Index > 500) { ; takes over 10s to save the file
 				this.Vim.ToolTipFunc("Timed out.")
+				Break
+				ErrorLevel := 1
+			}
+		}
+	}
+	
+	WaitTextFocus() {
+		loop {
+			sleep 20
+			if this.IsEditingText() {
+				Break
+				ErrorLevel := 0
+			}
+			if (A_Index > 250) { ; over 5s
+				Break
+				ErrorLevel := 1
+			}
+		}
+	}
+	
+	; Wait until cloze/extract is finished
+	WaitProcessing(interval:=250) { ; longer interval is generally more stable
+		loop_timeout := 5000 / interval
+		interval_sec := interval / 1000
+		if (interval_sec < 0.2)
+			interval_sec := 0.2 ; at least wait for 0.2s
+		sleep % interval
+		loop {
+			winActivate, ahk_class WorkerW ; go to desktop
+			WinWaitActive, ahk_class TElWind,, interval_sec
+			if ErrorLevel { ; not switched to SM, so finished processing
+				WinActivate, ahk_class TElWind
+				WinWaitActive, ahk_class TElWind,, 0
+				Break
+				ErrorLevel := 0
+			}
+			if (A_Index > loop_timeout) { ; over 5s
 				Break
 				ErrorLevel := 1
 			}

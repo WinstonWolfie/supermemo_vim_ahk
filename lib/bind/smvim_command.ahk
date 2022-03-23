@@ -113,7 +113,7 @@ r:: ; set *r*eference's link to what's in the clipboard
 	WinWaitActive, ahk_class TELWind,, 0
 	if !ErrorLevel {
 		send ^t{esc}q
-		sleep 100
+		Vim.SM.WaitTextFocus()
 		send ^{home}{esc} ; put caret in the start of question component and unfocus every component
 	}
 return
@@ -131,13 +131,14 @@ s:: ; turn active language item to passive (*s*witch)
 	ControlGetText, current_text, TBitBtn3
 	if (current_text != "Learn") ; if learning (on "next repitition")
 		send {esc}
+	WinGetTitle, original_title, A
 	send ^+s
-	sleep 450 ; delay to make sure the switch works and to update the title
+	Vim.WinWaitTitleChange(original_title, 1)
 	send q
-	sleep 10
+	Vim.SM.WaitTextFocus()
 	SendInput {raw}en:
-	send {space}{tab}
-	sleep 150
+	SendInput {space}{esc}a
+	Vim.SM.WaitTextFocus()
 	send ^{del 2}{esc}
 return
 

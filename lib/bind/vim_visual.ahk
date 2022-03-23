@@ -112,11 +112,46 @@ s:: ; *s*ubstitue
 	Vim.State.SetMode("Insert")
 return
 
+convert_to_lowercase:
+u::
+	selection := clip()
+	StringLower, selection, selection
+	clip(selection)
+	Vim.State.SetMode("Vim_Normal")
+Return
+
+convert_to_uppercase:
++u::
+	selection := clip()
+	StringUpper, selection, selection
+	clip(selection)
+	Vim.State.SetMode("Vim_Normal")
+Return
+
+; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
+invert_case:
+~::
+	selection := clip()
+	Lab_Invert_Char_Out:= ""
+	Loop % Strlen(selection) {
+		Lab_Invert_Char:= Substr(selection, A_Index, 1)
+		if Lab_Invert_Char is upper
+		   Lab_Invert_Char_Out:= Lab_Invert_Char_Out Chr(Asc(Lab_Invert_Char) + 32)
+		else if Lab_Invert_Char is lower
+		   Lab_Invert_Char_Out:= Lab_Invert_Char_Out Chr(Asc(Lab_Invert_Char) - 32)
+		else
+		   Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
+	}
+	clip(Lab_Invert_Char_Out)
+	Vim.State.SetMode("Vim_Normal")
+Return
+
 ; !d::MsgBox % Vim.ParseLineBreaks(clip()) ; debugging
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) and !(Vim.State.StrIsInCurrentVimMode("VisualFirst"))
 o:: ; move to other end of marked area; not perfect with line breaks
 	selection := clip()
+	if !clip()
+		Return
 	selection_len := StrLen(Vim.ParseLineBreaks(selection))
 	send +{right}
 	selection_right := clip()

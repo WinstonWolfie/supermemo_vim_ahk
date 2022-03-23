@@ -179,40 +179,42 @@ s::ClickDPIAdjusted(253, 48) ; *s*witch plan
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsTasklistWindowEditingText()
 s::ClickDPIAdjusted(153, 52) ; *s*witch tasklist
 
-; YouTube template
+; For incremental YouTube
 ; Need "Start" button on screen
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
 m::
 	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord% ; click start
+	click, %x_coord% %y_coord% ; click start (similar to mark read point)
 Return
 
 `::
 	x_coord += 170
 	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord% ; click play
+	click, %x_coord% %y_coord% ; click play (similar to go to read point)
 Return
 
 !m::
 	x_coord += 195
 	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord% ; click reset
+	click, %x_coord% %y_coord% ; click reset (similar to clear read point)
 Return
 
-left::
-right::
-space::
-v::
+left:: ; left 5s
+right:: ; right 5s
+space:: ; pause
+^y:: ; focus to youtube video
 	x_coord += 110
 	y_coord -= 60
 	CoordMode, Mouse, Screen
 	click, %x_coord% %y_coord%
-	if (A_ThisHotkey = "v")
+	if (A_ThisHotkey = "^y") {
+		Vim.State.SetMode("Insert") ; insert so youtube can read keys like j, l, etc
 		Return
+	}
 	send {%A_ThisHotkey%}
 	if (A_ThisHotkey = "space") {
 		sleep 350
-		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "x-10 y-60")
+		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o64 x-10 y-60")
 	}
 	send ^{t 2} ; focus to notes
 Return

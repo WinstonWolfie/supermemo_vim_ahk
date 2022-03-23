@@ -86,8 +86,7 @@ class VimAhk{
     GroupAdd, VimQdir, ahk_exe Q-Dir_x64.exe ; q-dir
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe ; q-dir
 	
-	; Can use ctrl+shift+up/down for selecting paragraphs
-	GroupAdd, CSParagraph, ahk_exe iexplore.exe ; Internet Explorer
+	GroupAdd, HTML, ahk_exe iexplore.exe ; Internet Explorer
 	
 	; SuperMemo
 	GroupAdd, SuperMemo, ahk_exe sm18.exe
@@ -241,10 +240,8 @@ class VimAhk{
   TwoLetterEnterNormal(){
 	if this.State.StrIsInCurrentVimMode("Insert")
 		SendInput, {BackSpace 1}
-	else if this.State.StrIsInCurrentVimMode("Visual")
-		SendInput {right}{up}{left}
-	else
-		SendInput {up}{esc}
+	else if !this.State.StrIsInCurrentVimMode("Visual")
+		SendInput {esc}
     this.State.SetNormal()
   }
 
@@ -373,10 +370,28 @@ class VimAhk{
   }
   
   IsHTML() {
-	Return this.SM.IsEditingHTML() || WinActive("ahk_group CSParagraph")
+	Return this.SM.IsEditingHTML() || WinActive("ahk_group HTML")
+  }
+  
+  WinWaitTitleChange(original_title:="", timeout:=5.0) {
+	if !original_title
+		WinGetTitle, original_title, A
+	loop_timeout := timeout * 1000 / 20
+	loop {
+		sleep 20
+		WinGetTitle, current_title, A
+		if (original_title != current_title) {
+			Break
+			ErrorLevel := 0
+		}
+		if (A_Index > loop_timeout) { ; default: over 5s
+			break
+			ErrorLevel := 1
+		}
+	}
   }
 
-  ToolTipFunc(text="", permanent=false, period=-2000) {
+  ToolTipFunc(text:="", permanent:=false, period:=-2000) {
 	CoordMode, ToolTip, Screen
 	coord_x := A_ScreenWidth / 2
 	coord_y := A_ScreenHeight / 3 * 2

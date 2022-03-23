@@ -54,7 +54,7 @@ extract_stay:
 ^q:: ; extract (*q*uote)
 	send !x
 	Vim.State.SetMode("Vim_Normal")
-	sleep 800
+	Vim.SM.WaitProcessing(200)
 	send !{left}
 return
 
@@ -78,7 +78,7 @@ cloze_stay:
 	WinWaitActive, ahk_class TMsgDialog,, 0 ; warning on trying to cloze on items
 	if !ErrorLevel
 		return
-	sleep 600
+	Vim.SM.WaitProcessing(200)
 	send !{left}
 Return
 
@@ -110,11 +110,17 @@ cloze_hinter:
 	if !ErrorLevel
 		return
 	Vim.ToolTipFunc("Cloze hinting...", true)
-	sleep 1700 ; tried several detection method here, like detecting when the focus control changes or when title changes
-	send !{left} ; none of them seems to be stable enough
-	sleep 300 ; so I had to resort to good old sleep
-	send q
-	sleep 100
+	Vim.SM.WaitProcessing()
+	send !{left}
+	Vim.SM.WaitProcessing(100)
+	loop {
+		send {esc}q
+		Vim.SM.WaitTextFocus()
+		if !ErrorLevel
+			Break
+		if (A_Index > 50) ; over 5s
+			Return
+	}
 	if InStr(user_input, "/") {
 		cloze := RegExReplace(user_input, "/$") ; removing the last /
 		if (cloze = user_input) ; no replacement

@@ -104,7 +104,7 @@ return
 	}
 	WinActivate, ahk_class TElWind ; focus to element window
 	send ^t{esc}q ; edit topic html component
-	sleep 100
+	Vim.SM.WaitTextFocus()
 	ControlGetFocus, current_focus, ahk_class TElWind
 	if (current_focus != "Internet Explorer_Server1") {
 		MsgBox, No html component is focused, please go to your desired topic and paste your text.

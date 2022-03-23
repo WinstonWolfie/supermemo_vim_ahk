@@ -1,7 +1,7 @@
 ﻿#If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 ^!.:: ; find [...] and insert
 	send ^t{esc}q
-	sleep 100
+	Vim.SM.WaitTextFocus()
 	if Vim.SM.IsEditingPlainText() {
 		send ^a
 		pos := InStr(clip(), "[...]")
@@ -148,7 +148,7 @@ return
 				new_html := html . "`n" . fuck_lexicon
 				Vim.SM.MoveAboveRef(true)
 				send ^+{home}{bs}{esc} ; delete everything and save
-				send ^+{f6}{enter} ; opens notepad
+				send ^+{f6} ; opens notepad
 				WinWaitNotActive, ahk_class TElWind,, 0
 				send ^w
 				WinWaitActive, ahk_class TElWind,, 0
@@ -159,7 +159,7 @@ return
 				if ErrorLevel
 					Return
 			}
-			send !{home}!{left} ; refresh
+			; no need for !home!left refreshing here
 			send !{f7} ; go to read point
 			sleep 250
 			send {right}

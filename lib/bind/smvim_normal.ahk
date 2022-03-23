@@ -84,7 +84,7 @@ Return
 	alt_state := GetKeyState("alt") ; followed by a cloze
 	if !Vim.SM.IsEditingText() {
 		send ^t{esc}q ; focus to question field if no field is focused
-		sleep 100 ; make sure current_focus is updated		
+		Vim.SM.WaitTextFocus() ; make sure current_focus is updated		
 		if !Vim.SM.IsEditingText() { ; still found no text
 			MsgBox, Text not found.
 			Return
