@@ -85,8 +85,11 @@ sm_plan:
 		WinWaitActive, ahk_class TElWind,, 5
 		if ErrorLevel
 			Return
+		sleep 1000
 	}
-	send {alt}kp ; open Plan window
+	if Vim.SM.IsEditingText()
+		send {esc}
+	send !kp ; open Plan window
 Return
 
 window_spy:

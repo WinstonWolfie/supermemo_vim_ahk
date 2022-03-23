@@ -1,6 +1,8 @@
 ﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command")) && WinActive("ahk_class TElWind")
 c:: ; add new concept
-	send {alt}er
+	if Vim.SM.IsEditingText()
+		send {esc}
+	send !er
 	Vim.State.SetMode("Vim_Normal")
 return
 
@@ -88,7 +90,7 @@ i:: ; learn outstanding *i*tems only
 	Vim.State.SetMode("Vim_Normal")
 	send !{home}
 	sleep 100
-	send {esc 4}{alt}vo
+	send {esc 4}!vo
 	sleep 1200
 	send {AppsKey}ci
 	sleep 1000
@@ -157,8 +159,8 @@ p:: ; hyperlink to scri*p*t component
 	sleep 20
 	send ^t{f9}{enter} ; opens script editor
 	sleep 20
-	send url{space} ; paste the link
-	send ^v
+	SendInput {raw}url
+	send {space}^v ; paste the link
 	send !o{esc} ; close script editor
 	send !{f10}u ; check
 return
@@ -188,7 +190,7 @@ d:: ; learn all elements with the comment "au*d*io"
 	sleep 100
 	send !{f10}u ; uncheck autoplay
 	send {esc 4} ; escape potential hidden window
-	send {alt}soc ; open comment registry
+	send !soc ; open comment registry
 	sleep 500
 	SendInput {raw}audio
 	send !b ; browse all elements

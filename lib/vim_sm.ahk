@@ -138,22 +138,26 @@ class VimSM{
 	}
 	
 	; Wait until cloze/extract is finished
-	WaitProcessing(interval:=250) { ; longer interval is generally more stable
-		loop_timeout := 5000 / interval
-		interval_sec := interval / 1000
-		if (interval_sec < 0.2)
-			interval_sec := 0.2 ; at least wait for 0.2s
-		sleep % interval
+	WaitProcessing(caret_x, caret_y, timeout:=5000) {
+		sleep_calculation := A_TickCount
+		loop_timeout := timeout / 20
 		loop {
-			winActivate, ahk_class WorkerW ; go to desktop
-			WinWaitActive, ahk_class TElWind,, interval_sec
-			if ErrorLevel { ; not switched to SM, so finished processing
-				WinActivate, ahk_class TElWind
-				WinWaitActive, ahk_class TElWind,, 0
+			if (A_Index > loop_timeout) ; over 10s
+				Break
+			sleep 20
+			if (A_CaretX != caret_x || A_CaretY != caret_y)
+				Break
+			this.Vim.Caret.SwitchToSameWindow() ; refresh caret
+		}
+		sleep % A_TickCount - sleep_calculation + 300
+		loop {
+			sleep 20
+			selection_len := StrLen(clip())
+			if (selection_len == 2 || selection_len == 1 || !selection_len) {
 				Break
 				ErrorLevel := 0
 			}
-			if (A_Index > loop_timeout) { ; over 5s
+			if (A_Index > 250) {
 				Break
 				ErrorLevel := 1
 			}
