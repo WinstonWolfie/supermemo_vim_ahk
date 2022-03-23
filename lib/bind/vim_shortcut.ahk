@@ -26,24 +26,9 @@ LAlt & RAlt:: ; for laptop
 	Vim.State.SetMode("Insert")
 return
 
-; Testing caret position
+; Testing caret
 ; ^!+r::MouseMove, %A_CaretX%, %A_CaretY%
 ; ^!+r::MsgBox, Caret position: %A_CaretX% %A_CaretY%
-
-; ~!z::
-~!x::
-	loop {
-		sleep 1
-		Vim.ToolTipFunc("Caret position: " . A_CaretX . " " . A_CaretY)
-	}
-Return
-
-~!z::
-	loop {
-		sleep 200
-		Vim.ToolTipFunc(StrLen(clip()))
-	}
-Return
 
 ; Browsers
 #If Vim.State.Vim.Enabled && WinActive("ahk_group Browser")

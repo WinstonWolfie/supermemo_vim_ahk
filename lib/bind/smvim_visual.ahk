@@ -52,11 +52,9 @@ extract_stay:
 ^!x::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^q:: ; extract (*q*uote)
-	caret_x := A_CaretX
-	caret_y := A_CaretY
 	send !x
 	Vim.State.SetMode("Vim_Normal")
-	Vim.SM.WaitProcessing(caret_x, caret_y)
+	Vim.SM.WaitProcessing()
 	send !{left}
 return
 
@@ -75,14 +73,12 @@ cloze_stay:
 ^!z::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^z::
-	caret_x := A_CaretX
-	caret_y := A_CaretY
 	send !z
 	Vim.State.SetMode("Vim_Normal")
 	WinWaitActive, ahk_class TMsgDialog,, 0 ; warning on trying to cloze on items
 	if !ErrorLevel
 		return
-	Vim.SM.WaitProcessing(caret_x, caret_y)
+	Vim.SM.WaitProcessing()
 	send !{left}
 Return
 
@@ -103,8 +99,6 @@ cloze_hinter:
 		cloze_hinter_ctrl_state := 0
 	} else
 		ctrl_state := GetKeyState("Ctrl")
-	caret_x := A_CaretX
-	caret_y := A_CaretY
 	InputBox, user_input, Cloze Hinter, Please enter your cloze hint.`nIf you enter "hint1/hint2"`, your cloze will be [hint1/hint2]`nIf you enter "hint1/hint2/"`, your cloze will be [...](hint1/hint2),, 256, 196
 	if ErrorLevel ; pressed esc
 		return
@@ -117,9 +111,9 @@ cloze_hinter:
 		return
 	Vim.ToolTipFunc("Cloze hinting...", true)
 	sleep_calculation := A_TickCount
-	Vim.SM.WaitProcessing(caret_x, caret_y)
+	Vim.SM.WaitProcessing()
 	send !{left}
-	sleep % A_TickCount - sleep_calculation
+	sleep % (A_TickCount - sleep_calculation) / 3 * 2
 	loop {
 		send {esc}q
 		Vim.SM.WaitTextFocus()

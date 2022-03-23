@@ -7,7 +7,8 @@
 #If Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal")) && WinActive("ahk_class TPlanDlg")
 ~Insert::
 ~NumpadIns::
-~!m::
+~!m:: ; menu
+~!h:: ; change hours
 #If Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal")) && WinActive("ahk_class TElWind")
 ~!a::
 ~!n::

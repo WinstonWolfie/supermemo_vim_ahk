@@ -138,26 +138,24 @@ class VimSM{
 	}
 	
 	; Wait until cloze/extract is finished
-	WaitProcessing(caret_x, caret_y, timeout:=5000) {
-		sleep_calculation := A_TickCount
+	WaitProcessing(timeout:=5000) {
 		loop_timeout := timeout / 20
 		loop {
-			if (A_Index > loop_timeout) ; over 10s
-				Break
 			sleep 20
-			if (A_CaretX != caret_x || A_CaretY != caret_y)
+			if !A_CaretX
+				break
+			if (A_Index > loop_timeout) {
 				Break
-			this.Vim.Caret.SwitchToSameWindow() ; refresh caret
+				ErrorLevel := 1
+			}
 		}
-		sleep % A_TickCount - sleep_calculation + 300
 		loop {
 			sleep 20
-			selection_len := StrLen(clip())
-			if (selection_len == 2 || selection_len == 1 || !selection_len) {
-				Break
+			if A_CaretX {
+				break
 				ErrorLevel := 0
 			}
-			if (A_Index > 250) {
+			if (A_Index > loop_timeout) {
 				Break
 				ErrorLevel := 1
 			}
