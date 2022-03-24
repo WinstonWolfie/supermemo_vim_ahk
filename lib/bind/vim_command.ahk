@@ -34,6 +34,7 @@ Return
 ; Commander, can be launched anywhere as long as vim_ahk is enabled
 #If Vim.State.Vim.Enabled && !Vim.State.IsCurrentVimMode("Command")
 ^`;::
+	WinGet, hwnd, ID, A
 	Gui, VimCommander:Add, Text,, &Command:
 	; list names are the same as subroutine name, just replacing the space with _, and no final parentheses
 	list = SM Plan||Window spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX
@@ -106,6 +107,7 @@ watch_later_yt:
 Return
 
 search:
+	WinWaitActive, ahk_id %hwnd%,, 0
 	search_term := clip()
 	if !search_term {
 		InputBox, search_term, Google search, Enter your search term.,, 192, 128
@@ -116,7 +118,12 @@ search:
 Return
 
 move_mouse_to_caret:
-	MouseMove, %A_CaretX%, %A_CaretY%
+	WinWaitActive, ahk_id %hwnd%,, 0
+	MouseMove, % A_CaretX, % A_CaretY
+	if A_CaretX
+		Vim.ToolTipFunc("Current caret position: " . A_CaretX . " " . A_CaretY)
+	else
+		Vim.ToolTipFunc("Caret not found.")
 Return
 
 latex:

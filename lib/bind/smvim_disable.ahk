@@ -2,6 +2,7 @@
 ; Disable
 ^+j::
 ^m::
+^k::
 Return
 
 ; Remap

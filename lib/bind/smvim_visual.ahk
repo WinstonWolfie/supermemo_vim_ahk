@@ -136,7 +136,7 @@ cloze_hinter:
 	} else if Vim.SM.IsEditingHTML() {
 		/* old method: using supermemo's f3
 		send {f3}
-		WinWaitNotActive, ahk_class TELWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
+		WinWaitNotActive, ahk_class TElWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
 		WinWaitActive, ahk_class TMyFindDlg,, 0
 		SendInput {raw}[...]
 		send {enter}

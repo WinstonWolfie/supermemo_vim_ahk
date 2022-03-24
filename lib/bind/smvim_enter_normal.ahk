@@ -2,6 +2,20 @@
 ; in Plan window pressing enter simply goes to the next field; no need to go back to normal
 ; in element window pressing enter to learn goes to normal
 ~enter::
+	WinGetText, visible_text, ahk_class TElWind
+	RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
+	if (collection_name = "passive") {
+		loop {
+			sleep 40
+			ControlGetText, current_text, TBitBtn3
+			if (current_text == "Next repetition") {
+				send ^{f10}
+				break
+			}
+			if (A_Index > 5)
+				Break
+		}
+	}
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 ~space:: ; for Learn button
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window

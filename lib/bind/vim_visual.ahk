@@ -131,6 +131,7 @@ Return
 ; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
 invert_case:
 ~::
+	Vim.ReleaseKey("shift")
 	selection := clip()
 	Lab_Invert_Char_Out:= ""
 	Loop % Strlen(selection) {

@@ -67,8 +67,9 @@ Return
 	Vim.ToolTipFunc("Go to read point")
 Return
 
-^+f7::
 !m::
+	KeyWait alt
+^+f7::
 	send ^+{f7} ; clear read point
 	Vim.ToolTipFunc("Read point cleared")
 Return
@@ -131,7 +132,7 @@ Return
 		}
 	} else {
 		send {esc}{f3} ; esc to exit field, so it can return to the same field later
-		; Normally here would be a WinWaitNotActive, ahk_class TELWind for double insurance, but clip() has some delay in itself, so more delay is not needed
+		; Normally here would be a WinWaitNotActive, ahk_class TElWind for double insurance, but clip() has some delay in itself, so more delay is not needed
 		WinWaitActive, ahk_class TMyFindDlg,, 0
 		if ErrorLevel
 			Return

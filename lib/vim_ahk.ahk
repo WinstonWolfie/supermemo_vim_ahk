@@ -289,7 +289,8 @@ class VimAhk{
                   , "ahk_class TBrowser"    ; SM browser
                   , "ahk_class TPlanDlg"    ; SM Plan window
                   , "ahk_class TTaskManager" ; SM tasklist window
-                  , "ahk_class TImgDown"]   ; SM download image window (ctrl+f8)
+                  , "ahk_class TImgDown"    ; SM download image window (ctrl+f8)
+                  , "ahk_class TChecksDlg"] ; SM check boxes (like f6)
     DefaultGroup := ""
     for i, v in DefaultList
     {
@@ -396,8 +397,11 @@ class VimAhk{
   }
   
   ReleaseKey(key) {
-	if GetKeyState(key)
+	if GetKeyState(key) {
 		send {blind}{l%key% up}{r%key% up}
+		ErrorLevel := 0
+	} else
+		ErrorLevel := 1
   }
 
   ToolTipFunc(text:="", permanent:=false, period:=-2000) {

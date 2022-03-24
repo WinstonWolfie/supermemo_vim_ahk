@@ -74,7 +74,7 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 	if (wiki_link == "zh.wikipedia.org") {
 		WinWaitActive, ahk_class TElWind,, 0
 		send q
-		sleep 200
+		Vim.SM.WaitTextFocus()
 		send ^{home}{end}+{home}!t ; selecting first line
 		WinWaitActive, ahk_class TChoicesDlg,, 2 ; sometimes it could take a really long time for the choice dialogue to pop up
 		send 2{enter}{esc} ; makes selection title
@@ -84,12 +84,17 @@ return
 
 i:: ; learn outstanding *i*tems only
 	Vim.State.SetMode("Vim_Normal")
-	send !{home}
-	sleep 100
-	send {esc 4}!vo
-	sleep 1200
+	send !{home}{esc 4} ; clear any hidden windows
+	send !vo
+	WinWaitActive, ahk_class TProgressBox,, 0
+	if !ErrorLevel
+		WinWaitNotActive, ahk_class TProgressBox,, 10
+	WinWaitActive, ahk_class TBrowser,, 0
 	send {AppsKey}ci
-	sleep 1000
+	WinWaitActive, ahk_class TProgressBox,, 0
+	if !ErrorLevel
+		WinWaitNotActive, ahk_class TProgressBox,, 10
+	WinWaitActive, ahk_class TBrowser,, 0
 	send ^l
 return
 
@@ -108,7 +113,7 @@ r:: ; set *r*eference's link to what's in the clipboard
 		clip(new_link)
 	}
 	send !{enter}
-	WinWaitActive, ahk_class TELWind,, 0
+	WinWaitActive, ahk_class TElWind,, 0
 	if !ErrorLevel {
 		send ^t{esc}q
 		Vim.SM.WaitTextFocus()
@@ -143,64 +148,71 @@ return
 
 p:: ; hyperlink to scri*p*t component
 	Vim.State.SetMode("Vim_Normal")
-	send !{home} ; go to root element
-	sleep 100
-	send !{f10}u ; uncheck autoplay
 	send !n ; new topic
-	; send ^+m ; disable if default topic template is script
-	; sleep 100
-	; SendInput {raw}script
-	; send {enter}
-	sleep 460 ; some delay to avoid autoplay
-	send {ctrl down}v{ctrl up} ; so the link is clickable
-	sleep 20
+	Vim.SM.WaitTextFocus()
+	send ^v ; so the link is clickable
 	send ^t{f9}{enter} ; opens script editor
-	sleep 20
+	WinWaitActive, ahk_class TScriptEditor,, 0
 	SendInput {raw}url
 	send {space}^v ; paste the link
 	send !o{esc} ; close script editor
-	send !{f10}u ; check
 return
 
 m:: ; co*m*ment current element "audio"
-Vim.State.SetMode("Vim_Normal")
+	Vim.State.SetMode("Vim_Normal")
 	ControlGetText, current_text, TBitBtn3
 	if (current_text == "Next repetition") {
-		send !{f10}u
-		continue_learning = 1
+		continue_learning := true
 	} else
-		continue_learning = 0
+		continue_learning := false
 	send ^+p^a ; open element parameter and choose everything
 	SendInput {raw}audio
 	send {enter}
-	if (continue_learning = 1) {
+	if continue_learning {
 		send {enter}
-		sleep 500
-		send !{f10}u
-		continue_learning = 0
+		continue_learning := false
 	}
 return
 
 d:: ; learn all elements with the comment "au*d*io"
 	Vim.State.SetMode("Vim_Normal")
-	send !{home}
-	sleep 100
-	send !{f10}u ; uncheck autoplay
-	send {esc 4} ; escape potential hidden window
+	send !{home}{esc 4} ; escape potential hidden window
 	send !soc ; open comment registry
-	sleep 500
+	WinWaitActive, ahk_class TRegistryForm,, 0
 	SendInput {raw}audio
 	send !b ; browse all elements
-	sleep 1000
+	WinWaitActive, ahk_class TProgressBox,, 0
+	if !ErrorLevel
+		WinWaitNotActive, ahk_class TProgressBox,, 10
+	WinWaitActive, ahk_class TBrowser,, 0
 	send {AppsKey}co ; outstanding
-	sleep 500
+	WinWaitActive, ahk_class TProgressBox,, 0
+	if !ErrorLevel
+		WinWaitNotActive, ahk_class TProgressBox,, 10
+	WinWaitActive, ahk_class TBrowser,, 0
 	send ^s ; sort
-	sleep 500
+	WinWaitActive, ahk_class TProgressBox,, 0
+	if !ErrorLevel
+		WinWaitNotActive, ahk_class TProgressBox,, 10
+	WinWaitActive, ahk_class TBrowser,, 0
 	send ^l ; learn
-	sleep 500
-	send !{f10}u ; check autoplay
-	send ^{f10} ; play
+	WinWaitActive, ahk_class TElWind,, 0
+	loop {
+		sleep 40
+		ControlGetText, current_text, TBitBtn3
+		if (current_text == "Next repetition") {
+			send ^{f10}
+			break
+		}
+		if (A_Index > 5)
+			Break
+	}
 return
+
++p::
+	send {alt}ep
+	Vim.State.SetMode("Vim_Normal")
+Return
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command")) && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser"))
 ; Priority script, made by Naess and modified by Guillem

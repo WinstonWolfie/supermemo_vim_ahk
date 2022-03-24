@@ -14,7 +14,7 @@
 		}
 	} else if Vim.SM.IsEditingHTML() {
 		send {f3}
-		WinWaitNotActive, ahk_class TELWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
+		WinWaitNotActive, ahk_class TElWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
 		WinWaitActive, ahk_class TMyFindDlg,, 0
 		SendInput {raw}[...]
 		send {enter}
@@ -77,7 +77,7 @@ return
 	Vim.State.SetNormal()
 return
 
-#If Vim.IsVimGroup() && Vim.SM.IsEditingHTML()
+#If Vim.IsVimGroup() && Vim.SM.IsEditingHTML() && clip()
 ^!k::
 	send ^k
 	WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2 ; a bit more delay since everybody knows how slow IE can be
@@ -87,9 +87,10 @@ return
 	Vim.Caret.SwitchToSameWindow() ; refresh caret
 return
 
+#If Vim.IsVimGroup() && Vim.SM.IsEditingHTML()
 ^!l::
 	Vim.ReleaseKey("ctrl")
-	Vim.ReleaseKey("alt")
+	KeyWait alt
 	FormatTime, current_time_display,, yyyy-MM-dd HH:mm:ss:%A_msec%
 	current_time_file_name := RegExReplace(current_time_display, " |:", "-")
 	Vim.State.SetMode("Vim_Normal")
@@ -110,7 +111,8 @@ return
 			WinGetText, visible_text, ahk_class TElWind
 			RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
 			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
-			latex_formula := Enc_Uri(Clipboard)
+			latex_formula := RegExReplace(Clipboard, "\\$", "\ ") ; just in case someone would leave a \ at the end
+			latex_formula := Enc_Uri(latex_formula)
 			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . latex_formula . "%257D&dl=1"
 			latex_folder_path := collection_path . collection_name . "\LaTeX"
 			latex_path := latex_folder_path . "\" . current_time_file_name . ".png"
@@ -171,7 +173,7 @@ return
 		} else { ; image only
 			RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula) ; getting formula from alt=""
 			RegExMatch(data, "src=""file:\/\/\/\K[^""]+", latex_path) ; getting path from src=""
-			if InStr(latex_formula, "{\displaystyle") { ; from wiki
+			if InStr(latex_formula, "{\displaystyle") { ; from wikipedia, wikibooks, etc
 				latex_formula := StrReplace(latex_formula, "{\displaystyle")
 				latex_formula := RegExReplace(latex_formula, "}$")
 			} else if InStr(latex_formula, "\displaystyle{") { ; from better explained
@@ -180,6 +182,7 @@ return
 			}
 			latex_formula := RegExReplace(latex_formula, "^\s+|\s+$") ; removing start and end whitespaces
 			latex_formula := RegExReplace(latex_formula, "^\\\[|\\\]$") ; removing start \[ and end ]\ (in better explained)
+			latex_formula := html_decode(latex_formula)
 			clip(latex_formula, true, true)
 			FileDelete % latex_path
 		}

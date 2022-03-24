@@ -43,6 +43,15 @@ Enc_Uri(str)
 }
 ;#########################################################################################
 
+html_decode(html) {	
+   ; original name: ComUnHTML() by 'Guest' from
+   ; https://autohotkey.com/board/topic/47356-unhtm-remove-html-formatting-from-a-string-updated/page-2 
+   html := RegExReplace(html, "\r?\n|\r", "<br>") ; added this because original strips line breaks
+   oHTML := ComObjCreate("HtmlFile") 
+   oHTML.write(html)
+   return % oHTML.documentElement.innerText 
+}
+
 ClickDPIAdjusted(coord_x, coord_y) {
     coord_x *= A_ScreenDPI / 96
     coord_y *= A_ScreenDPI / 96

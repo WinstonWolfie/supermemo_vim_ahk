@@ -206,10 +206,13 @@ right:: ; right 5s
 	y_coord -= 60
 	CoordMode, Mouse, Screen
 	click, %x_coord% %y_coord%
-	send {%A_ThisHotkey%}^{t 2} ; focus to notes
+	send {%A_ThisHotkey%}
+	ControlFocus, Internet Explorer_Server1, ahk_class TElWind
+	Vim.Caret.SwitchToSameWindow()
 Return
 
-!y:: ; focus to youtube video
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Insert")) && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
+^+!y:: ; focus to youtube video
 	x_coord += 110
 	y_coord -= 60
 	CoordMode, Mouse, Screen
@@ -217,12 +220,20 @@ Return
 	Vim.State.SetMode("Insert") ; insert so youtube can read keys like j, l, etc
 Return
 
-!k:: ; pause
-	x_coord += 110
+^+!k:: ; pause
 	y_coord -= 60
 	CoordMode, Mouse, Screen
 	click, %x_coord% %y_coord%
-	send k
-	sleep 350
-	FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o64 x-10 y-60")
+	ControlFocus, Internet Explorer_Server1, ahk_class TElWind
+	Vim.Caret.SwitchToSameWindow()
+	sleep 400
+	if FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o128 x-10 y-60") {
+		ControlFocus, Internet Explorer_Server1, ahk_class TElWind
+		Vim.Caret.SwitchToSameWindow()
+	}
+Return
+
+^+!n:: ; focus to notes
+	ControlFocus, Internet Explorer_Server1, ahk_class TElWind
+	Vim.Caret.SwitchToSameWindow()
 Return

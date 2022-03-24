@@ -9,6 +9,7 @@ u::Send,^z
 
 ; Change case
 ~::
+  Vim.ReleaseKey("shift")
   bak := ClipboardAll
   Clipboard =
   Send, +{Right}^x
