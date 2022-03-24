@@ -121,7 +121,8 @@ return
 o:: ; c*o*mpress images
 	send ^{enter}
 	WinWaitActive, ahk_class TCommanderDlg,, 0
-	send co{enter} ; Compress images
+	SendInput {raw}co
+	send {enter} ; Compress images
 	Vim.State.SetMode("Vim_Normal")
 return
 

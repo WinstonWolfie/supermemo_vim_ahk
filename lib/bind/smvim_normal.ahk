@@ -79,6 +79,7 @@ Return
 ^/:: ; visual
 ?:: ; caret on the right
 !/:: ; followed by a cloze
+^!/:: ; followed by a cloze and stays in clozed item
 +!/:: ; followed by a cloze hinter
 ^+!/:: ; also cloze hinter but stays in clozed item
 /:: ; better search
@@ -164,7 +165,8 @@ Return
 					cloze_hinter_ctrl_state := 1
 				WinWaitActive, ahk_class TElWind,, 0
 				gosub cloze_hinter
-			}
+			} else if ctrl_state
+				gosub cloze_stay
 		} else if !ctrl_state ; alt is up and ctrl is up; shift can be up or down
 			send {esc}^t ; to return to the same field
 		else if ctrl_state { ; sometimes SM doesn't focus to anything after the search

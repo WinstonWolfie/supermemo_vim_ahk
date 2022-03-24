@@ -537,6 +537,8 @@
 				detection_str := SubStr(str_after, starting_pos) ; what's selected after +end
 				pos := InStr(detection_str, ". ", true,, this.search_occurrence) ; find in what's selected after
 				left := StrLen(detection_str) - pos - 1 ; - 1 because ". "
+				if !pos && (InStr(detection_str, ".", true,, this.search_occurrence) == Strlen(detection_str)) ; try to search if there's a last dot
+					left := 0 ; if there is a last dot, don't move back
 				SendInput +{left %left%}
 			} else if StrLen(str_after) < StrLen(str_before) { ; search in selected text
 				pos := InStr(str_before, ". ", true,, this.search_occurrence)
