@@ -108,8 +108,6 @@ p::send ^{f10} ; replay auto-play
 +l::send !{right} ; go forward in history
 +j::send !{pgdn} ; J, ge: go down one element
 +k::send !{pgup} ; K, gE: go up one element
-!+j::send !+{pgdn} ; go to next sibling
-!+k::send !+{pgup} ; go to previous sibling
 
 ; Open windows
 c::send !c ; open content window
@@ -201,20 +199,27 @@ Return
 
 left:: ; left 5s
 right:: ; right 5s
-space:: ; pause
-^y:: ; focus to youtube video
 	x_coord += 110
 	y_coord -= 60
 	CoordMode, Mouse, Screen
 	click, %x_coord% %y_coord%
-	if (A_ThisHotkey = "^y") {
-		Vim.State.SetMode("Insert") ; insert so youtube can read keys like j, l, etc
-		Return
-	}
-	send {%A_ThisHotkey%}
-	if (A_ThisHotkey = "space") {
-		sleep 350
-		FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o64 x-10 y-60")
-	}
-	send ^{t 2} ; focus to notes
+	send {%A_ThisHotkey%}^{t 2} ; focus to notes
+Return
+
+!y:: ; focus to youtube video
+	x_coord += 110
+	y_coord -= 60
+	CoordMode, Mouse, Screen
+	click, %x_coord% %y_coord%
+	Vim.State.SetMode("Insert") ; insert so youtube can read keys like j, l, etc
+Return
+
+!k:: ; pause
+	x_coord += 110
+	y_coord -= 60
+	CoordMode, Mouse, Screen
+	click, %x_coord% %y_coord%
+	send k
+	sleep 350
+	FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o64 x-10 y-60")
 Return

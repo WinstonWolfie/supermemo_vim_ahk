@@ -223,8 +223,10 @@ PlanInsertButtonInsert:
 	WinWaitNotActive, ahk_class TElWind,, 0
 	send {enter} ; cancel alarm
 	WinWaitActive, ahk_class TElWind,, 0
-	Vim.SM.ExitText()
-	send !kp ; open plan again
+	send ^{enter} ; commander; seems to be a more reliable option than {alt}kp or ^p
+	WinWaitNotActive, ahk_class TElWind,, 0
+	SendInput {raw}pl ; open plan again
+	send {enter}
 return
 
 #If Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg")

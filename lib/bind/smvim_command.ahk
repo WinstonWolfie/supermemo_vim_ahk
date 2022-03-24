@@ -1,7 +1,6 @@
 ﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command")) && WinActive("ahk_class TElWind")
 c:: ; add new concept
-	Vim.SM.ExitText()
-	send !er
+	send {alt}er
 	Vim.State.SetMode("Vim_Normal")
 return
 

@@ -94,12 +94,14 @@ _::
 .::
 >::
 	ft_char := A_ThisHotkey
-	if InStr(ft_char, "+") {
-		ft_char := StrReplace(ft_char, "+")
-		StringUpper, ft_char, ft_char
+	if (StrLen(ft_char) > 1) {
+		if InStr(ft_char, "+") {
+			ft_char := StrReplace(ft_char, "+")
+			StringUpper, ft_char, ft_char
+		}
+		if InStr(ft_char, "~")
+			ft_char := StrReplace(ft_char, "~")
 	}
-	if InStr(ft_char, "~")
-		ft_char := StrReplace(ft_char, "~")
 	Vim.State.last_ft_char := Vim.State.ft_char := ft_char
 	Vim.State.last_ft := Vim.State.ft
 	Vim.Move.Move(Vim.State.ft)

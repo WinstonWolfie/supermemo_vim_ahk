@@ -276,7 +276,7 @@ class VimAhk{
                   , "ahk_exe texworks.exe"  ; TexWork
                   , "Write:"                ; Thunderbird, English
                   , "作成"                  ; Thunderbird, 日本語
-                  , "ahk_exe Code.exe"      ; Visual Studio Code
+                  ; , "ahk_exe Code.exe"      ; Visual Studio Code ; Why not use VSCodeVim???
                   , "ahk_exe WINWORD.exe"   ; Word
                   , "ahk_exe wordpad.exe"   ; WordPad
                   , "ahk_exe Q-Dir_x64.exe" ; Q-dir

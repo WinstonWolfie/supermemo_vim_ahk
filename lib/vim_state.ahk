@@ -96,7 +96,8 @@
       if WinActive("ahk_group VimCursorSameAfterSelect"){
         Send, {Left}
       }
-    }
+    } else if this.StrIsInCurrentVimMode("Insert")
+      send {left}
     this.SetMode("Vim_Normal")
   }
 

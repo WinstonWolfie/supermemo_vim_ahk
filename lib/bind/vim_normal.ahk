@@ -23,6 +23,22 @@ u::Send,^z
   Clipboard := bak
 Return
 
+^e::
+  if Vim.SM.IsEditingHTML()
+    Vim.SM.MouseMoveTop()
+  if GetKeyState("ctrl")
+    send {Blind}{CtrlUp}
+  send {WheelDown}{CtrlDown}
+return
+
+^y::
+  if Vim.SM.IsEditingHTML()
+    Vim.SM.MouseMoveTop()
+  if GetKeyState("ctrl")
+    send {Blind}{CtrlUp}
+  send {WheelUp}{CtrlDown}
+return
+
 +z::Vim.State.SetMode("Z")
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Z"))
 +z::

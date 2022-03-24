@@ -75,6 +75,7 @@ Return
 sm_plan:
 	if WinExist("ahk_class TPlanDlg") {
 		WinActivate
+		Vim.State.SetMode("Vim_Normal")
 		Return
 	}
 	if WinExist("ahk_group SuperMemo") {
@@ -85,10 +86,12 @@ sm_plan:
 		WinWaitActive, ahk_class TElWind,, 5
 		if ErrorLevel
 			Return
-		sleep 1000
 	}
-	Vim.SM.ExitText()
-	send !kp ; open Plan window
+	send ^{enter} ; commander; seems to be a more reliable option than {alt}kp or ^p
+	WinWaitNotActive, ahk_class TElWind,, 0
+	SendInput {raw}pl ; open plan
+	send {enter}
+	Vim.State.SetMode("Vim_Normal")
 Return
 
 window_spy:
@@ -104,5 +107,11 @@ watch_later_yt:
 Return
 
 search:
-	run % "https://www.google.com/search?q=" . clip()
+	search_term := clip()
+	if !search_term {
+		InputBox, search_term, Google search, Enter your search term.,, 192, 128
+		if !search_term || ErrorLevel
+			return
+	}
+	run https://www.google.com/search?q=%search_term%
 Return

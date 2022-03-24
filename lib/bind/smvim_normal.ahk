@@ -73,6 +73,9 @@ Return
 	Vim.ToolTipFunc("Read point cleared")
 Return
 
+!+j::send !+{pgdn} ; go to next sibling
+!+k::send !+{pgup} ; go to previous sibling
+
 ^/:: ; visual
 ?:: ; caret on the right
 !/:: ; followed by a cloze
