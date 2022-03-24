@@ -12,7 +12,7 @@
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
 ~^s:: ; save
 ~^+a:: ; archive current plan
-	Vim.State.SetMode("Vim_Normal")
+	Vim.State.SetMode("Vim_Normal") ; SetNormal() would move the caret in some instances
 return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") && !Vim.State.StrIsInCurrentVimMode("Visual") ; SuperMemo element window

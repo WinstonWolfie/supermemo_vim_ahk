@@ -91,7 +91,7 @@ return
 	Vim.ReleaseKey("ctrl")
 	Vim.ReleaseKey("alt")
 	FormatTime, current_time_display,, yyyy-MM-dd HH:mm:ss:%A_msec%
-	FormatTime, current_time_file_name,, yyyy-MM-dd-HH-mm-ss-%A_msec%
+	current_time_file_name := RegExReplace(current_time_display, " |:", "-")
 	Vim.State.SetMode("Vim_Normal")
 	clip_bak := Clipboardall
 	Clipboard =
@@ -99,6 +99,7 @@ return
 	ClipWait 0.6
 	sleep 20
 	If ClipboardGet_HTML( Data ){
+		; To do: detect selection contents
 		; if RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)") { ; match end of first IMG tag until start of last EndFragment tag
 			; MsgBox Please select text or image only.
 			; Clipboard := clip_bak
@@ -110,7 +111,7 @@ return
 			RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
 			RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
 			latex_formula := Enc_Uri(Clipboard)
-			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257BWhite%257D%2520" . latex_formula . "%257D&dl=1"
+			latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . latex_formula . "%257D&dl=1"
 			latex_folder_path := collection_path . collection_name . "\LaTeX"
 			latex_path := latex_folder_path . "\" . current_time_file_name . ".png"
 			SetTimer, DownloadLaTeX, -1
@@ -168,12 +169,17 @@ return
 			sleep 250
 			send {right}
 		} else { ; image only
-			RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula)
-			RegExMatch(data, "src=""file:\/\/\/\K[^""]+", latex_path)
-			if InStr(latex_formula, "{\displaystyle ") {
-				latex_formula := StrReplace(latex_formula, "{\displaystyle ")
+			RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula) ; getting formula from alt=""
+			RegExMatch(data, "src=""file:\/\/\/\K[^""]+", latex_path) ; getting path from src=""
+			if InStr(latex_formula, "{\displaystyle") { ; from wiki
+				latex_formula := StrReplace(latex_formula, "{\displaystyle")
+				latex_formula := RegExReplace(latex_formula, "}$")
+			} else if InStr(latex_formula, "\displaystyle{") { ; from better explained
+				latex_formula := StrReplace(latex_formula, "\displaystyle{")
 				latex_formula := RegExReplace(latex_formula, "}$")
 			}
+			latex_formula := RegExReplace(latex_formula, "^\s+|\s+$") ; removing start and end whitespaces
+			latex_formula := RegExReplace(latex_formula, "^\\\[|\\\]$") ; removing start \[ and end ]\ (in better explained)
 			clip(latex_formula, true, true)
 			FileDelete % latex_path
 		}
@@ -182,7 +188,7 @@ return
 Return
 
 DownloadLaTeX:
-	UrlDownloadToFile, %latex_link%, %latex_path%
+	UrlDownloadToFile, % latex_link, % latex_path
 Return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window

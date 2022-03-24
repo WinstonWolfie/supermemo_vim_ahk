@@ -16,19 +16,18 @@ Return::
 Return
 
 q::
-  Send, ^s
-  Send, !{F4}
+  Send, ^s^w
   Vim.State.SetMode("Insert")
 Return
 
-Space::
+Space:: ; save as
   Send, !fa
   Vim.State.SetMode("Insert")
 Return
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command_q"))
 Return::
-  Send, !{F4}
+  Send, ^w
   Vim.State.SetMode("Insert")
 Return
 
@@ -37,7 +36,7 @@ Return
 ^`;::
 	Gui, VimCommander:Add, Text,, &Command:
 	; list names are the same as subroutine name, just replacing the space with _, and no final parentheses
-	list = SM Plan||Window spy|Regex101|Watch later (YT)|Search|Move mouse to caret
+	list = SM Plan||Window spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX
 	if Vim.State.IsCurrentVimMode("Vim_Normal") {
 		list .= 
 		mode_commander = n
@@ -118,4 +117,8 @@ Return
 
 move_mouse_to_caret:
 	MouseMove, %A_CaretX%, %A_CaretY%
+Return
+
+latex:
+	run https://latex.vimsky.com/
 Return
