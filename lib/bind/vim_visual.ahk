@@ -88,7 +88,7 @@ c::
 Return
 
 *::
-  KeyWait shift
+  Vim.ReleaseKey("shift")
   bak := ClipboardAll
   Clipboard :=
   Send, ^c

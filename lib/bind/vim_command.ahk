@@ -37,7 +37,7 @@ Return
 ^`;::
 	Gui, VimCommander:Add, Text,, &Command:
 	; list names are the same as subroutine name, just replacing the space with _, and no final parentheses
-	list = SM Plan||Window spy|Regex101|Watch later (YT)|Search
+	list = SM Plan||Window spy|Regex101|Watch later (YT)|Search|Move mouse to caret
 	if Vim.State.IsCurrentVimMode("Vim_Normal") {
 		list .= 
 		mode_commander = n
@@ -114,4 +114,8 @@ search:
 			return
 	}
 	run https://www.google.com/search?q=%search_term%
+Return
+
+move_mouse_to_caret:
+	MouseMove, %A_CaretX%, %A_CaretY%
 Return

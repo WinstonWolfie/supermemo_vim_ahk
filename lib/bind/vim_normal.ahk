@@ -26,16 +26,14 @@ Return
 ^e::
   if Vim.SM.IsEditingHTML()
     Vim.SM.MouseMoveTop()
-  if GetKeyState("ctrl")
-    send {Blind}{CtrlUp}
+  Vim.ReleaseKey("ctrl")
   send {WheelDown}{CtrlDown}
 return
 
 ^y::
   if Vim.SM.IsEditingHTML()
     Vim.SM.MouseMoveTop()
-  if GetKeyState("ctrl")
-    send {Blind}{CtrlUp}
+  Vim.ReleaseKey("ctrl")
   send {WheelUp}{CtrlDown}
 return
 

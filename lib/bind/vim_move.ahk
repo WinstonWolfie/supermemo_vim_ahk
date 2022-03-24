@@ -52,9 +52,9 @@ b::Vim.Move.Repeat("b")
 ; Sentence
 (::
 )::
-	if Vim.SM.IsEditingHTML()
-		KeyWait shift
+	Vim.ReleaseKey("shift")
 	Vim.Move.Move(A_ThisHotkey)
+	send {shift down}
 Return
 
 ; Search

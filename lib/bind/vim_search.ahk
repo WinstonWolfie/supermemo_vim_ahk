@@ -6,7 +6,7 @@ Return
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
 *::
-  KeyWait Shift
+  Vim.ReleaseKey("shift")
   bak := ClipboardAll
   Clipboard=
   Send, ^{Left}+^{Right}^c

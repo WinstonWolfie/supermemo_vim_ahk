@@ -12,19 +12,19 @@
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg") ; SuperMemo Plan window
 ~^s:: ; save
 ~^+a:: ; archive current plan
-	Vim.State.SetNormal()
+	Vim.State.SetMode("Vim_Normal")
 return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") && !Vim.State.StrIsInCurrentVimMode("Visual") ; SuperMemo element window
 ^l:: ; learn
-	send {blind}{LCtrl up}{RCtrl up}
+	Vim.ReleaseKey("ctrl")
 	send {alt}ll
-	Vim.State.SetNormal()
+	Vim.State.SetMode("Vim_Normal")
 Return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind") ; SuperMemo element window
 ^p:: ; open Plan window
-	send {blind}{LCtrl up}{RCtrl up}
+	Vim.ReleaseKey("ctrl")
 	send {alt}kp
-	Vim.State.SetNormal()
+	Vim.State.SetMode("Vim_Normal")
 Return

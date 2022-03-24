@@ -158,40 +158,61 @@
     }
   }
   
-  ParagraphUp() {
-	if this.Vim.IsHTML()
-		if this.Vim.SM.IsEditingHTML()
-			send ^+{up}{left}
+  ParagraphUp(n:=1) {
+    Loop, %n% {
+		if this.Vim.IsHTML()
+			if this.Vim.SM.IsEditingHTML()
+				send ^+{up}{left}
+			else
+				send ^{up}
+		else {
+			this.up()
+			send {end}
+			this.home()
+		}
+	}
+  }
+  
+  ParagraphDown(n:=1) {
+    Loop, %n% {
+		if this.Vim.IsHTML()
+			send ^{down}
+		else {
+			send {end}{right}
+			this.home()
+		}
+	}
+  }
+  
+  SelectParagraphUp(n:=1) {
+    Loop, %n% {
+		if this.Vim.IsHTML()
+			send ^+{up}
 		else
-			send ^{up}
-	else {
-		this.up()
-		send {end}
-		this.home()
+			send +{left}+{home}
 	}
   }
   
-  ParagraphDown() {
-	if this.Vim.IsHTML()
-		send ^{down}
-	else {
-		send {end}{right}
-		this.home()
+  SelectParagraphDown(n:=1) {
+    Loop, %n% {
+		if this.Vim.IsHTML()
+			send ^+{down}
+		else
+			send +{right}+{end}
 	}
   }
   
-  SelectParagraphUp() {
-	if this.Vim.IsHTML()
-		send ^+{up}
-	else
-		send +{home}
-  }
-  
-  SelectParagraphDown() {
-	if this.Vim.IsHTML()
-		send ^+{down}
-	else
-		send +{end}
+  HandleHTMLSelection() {
+	if this.Vim.IsHTML() {
+		if this.Vim.SM.IsEditingHTML() {
+			selection := clip()
+			if InStr(selection, "--------------------------------------------------------------------------------") ; <hr> tag
+				send +{left}
+			if InStr(selection, "`r`n") ; do not include line break
+				send +{left}
+		} else
+			send +{left}
+	}
   }
 
   Move(key="", repeat=false, NoInitialize=false, NoFinalize=false, ForceNoShift=false){
@@ -283,13 +304,11 @@
 			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{end}
-			if this.Vim.SM.IsEditingHTML()
-				send +{left}
+			this.HandleHTMLSelection()
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if (StrLen(str_after) == StrLen(str_before)) { ; caret at end of line
 				send +{right}+{end}
-				if this.Vim.SM.IsEditingHTML()
-					send +{left}
+				this.HandleHTMLSelection()
 				str_after := this.Vim.ParseLineBreaks(clip())
 			}
 			if !str_before || (StrLen(str_after) > StrLen(str_before)) { ; searching forward
@@ -333,13 +352,11 @@
 			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{end}
-			if this.Vim.SM.IsEditingHTML()
-				send +{left}
+			this.HandleHTMLSelection()
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if (StrLen(str_after) == StrLen(str_before)) { ; caret at end of line
 				send +{right}+{end}
-				if this.Vim.SM.IsEditingHTML()
-					send +{left}
+				this.HandleHTMLSelection()
 				str_after := this.Vim.ParseLineBreaks(clip())
 			}
 			if !str_before || (StrLen(str_after) > StrLen(str_before)) { ; searching forward
@@ -523,14 +540,12 @@
 			}
 			if !str_before || (StrLen(str_after) > StrLen(str_before)) {
 				this.SelectParagraphDown()
-				if this.Vim.SM.IsEditingHTML()
-					send +{left}
+				this.HandleHTMLSelection()
 				str_after := this.Vim.ParseLineBreaks(clip())
 				if (StrLen(str_after) == StrLen(str_before) + 1) { ; at end of paragraph
 					send +{right}
 					this.SelectParagraphDown()
-					if this.Vim.SM.IsEditingHTML()
-						send +{left}
+					this.HandleHTMLSelection()
 					str_after := this.Vim.ParseLineBreaks(clip())
 				}
 				starting_pos := StrLen(str_before) + 1 ; + 1 to make sure detection_str is what's selected after
@@ -684,14 +699,12 @@
 			if !str_before
 				WinWaitActive, ahk_id %hwnd%,, 0
 			this.SelectParagraphDown()
-			if this.Vim.SM.IsEditingHTML()
-				send +{left}
+			this.HandleHTMLSelection()
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if (StrLen(str_after) == StrLen(str_before) + 1) { ; at end of paragraph
 				send +{right}
 				this.SelectParagraphDown()
-				if this.Vim.SM.IsEditingHTML()
-					send +{left}
+				this.HandleHTMLSelection()
 				str_after := this.Vim.ParseLineBreaks(clip())
 			}
 			starting_pos := StrLen(str_before) + 1 ; + 1 to make sure detection_str is what's selected after
@@ -777,7 +790,7 @@
     }else if(key == "^f"){
 	  Send, {PgDn}
     }else if(key == "g"){
-	  if this.Vim.State.n > 0 {
+	  if (this.Vim.State.n > 0) {
 	    line := this.Vim.State.n - 1
 	    this.Vim.State.n := 0
 		if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() ; browsing
@@ -788,7 +801,7 @@
 	  else
 		Send, ^{Home}
     }else if(key == "+g"){
-	  if this.Vim.State.n > 0 {
+	  if (this.Vim.State.n > 0) {
 	    line := this.Vim.State.n - 1
 	    this.Vim.State.n := 0
 		if this.Vim.SM.MouseMoveTop(true)
@@ -822,13 +835,26 @@
 		}
 	  }
     }else if(key == "{"){
-      if(this.shift == 1) && !ForceNoShift {
+	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing
+	    paragraph := this.Vim.State.n - 1
+	    this.Vim.State.n := 0
+		send ^t^{home}
+		this.ParagraphDown(paragraph)
+      } else if(this.shift == 1) && !ForceNoShift {
 	    this.SelectParagraphUp()
 	  }else{
 	    this.ParagraphUp()
 	  }
     }else if(key == "}"){
-      if(this.shift == 1) && !ForceNoShift {
+	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing
+	    paragraph := this.Vim.State.n - 1
+	    this.Vim.State.n := 0
+		if this.Vim.SM.MouseMoveTop(true)
+			send {left}{home}
+		else
+			send ^t^{home}
+		this.ParagraphDown(paragraph)
+      } else if(this.shift == 1) && !ForceNoShift {
 	    this.SelectParagraphDown()
 	  }else{
 	    this.ParagraphDown()
@@ -880,6 +906,7 @@
       this.Move("b", true)
       this.Move("e", false)
     } else if (key == "s") {
+		send {right} ; so if at start of a sentence, select this sentence
 		this.Move("(",,, true, true)
 		ClipWait 1 ; make sure detection in ")" works
 		this.Move(")",,, true)
@@ -889,8 +916,7 @@
 		this.ParagraphDown()
 		this.ParagraphUp()
 		this.SelectParagraphDown()
-		if this.Vim.SM.IsEditingHTML()
-			send +{left}
+		this.HandleHTMLSelection()
 		detection_str := this.Vim.ParseLineBreaks(clip())
 		detection_str := StrReverse(detection_str)
 		pos := RegExMatch(detection_str, "^((\s+)[.]|[.]|(\s+))", match)

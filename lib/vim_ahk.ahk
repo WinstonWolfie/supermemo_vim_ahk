@@ -390,6 +390,15 @@ class VimAhk{
 		}
 	}
   }
+  
+  IsNavigating() {
+	Return this.SM.IsNavigatingPlan() || this.SM.IsNavigatingTask()
+  }
+  
+  ReleaseKey(key) {
+	if GetKeyState(key)
+		send {blind}{l%key% up}{r%key% up}
+  }
 
   ToolTipFunc(text:="", permanent:=false, period:=-2000) {
 	CoordMode, ToolTip, Screen

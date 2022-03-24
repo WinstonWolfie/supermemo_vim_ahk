@@ -7,7 +7,7 @@
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() and !(Vim.State.g)
 g::Vim.State.SetMode("", 1, -1)
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() and (Vim.State.g)
-g::Vim.Move.Move("g")
+g::Vim.Move.Move("g") ; 3gg goes to the 3rd line of entire text
 
 s:: ; gs: go to source link
 	clip_bak := Clipboardall
@@ -89,7 +89,9 @@ u::send {WheelUp 2}
 
 ; "Browsing" mode
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
-+g::Vim.Move.Move("+g")
++g::Vim.Move.Move("+g") ; 3G goes to the 3rd line on screen
+{::Vim.Move.Move("{")
+}::Vim.Move.Move("}")
 
 ; OG Vim commands
 i::Vim.State.SetMode("Insert")
@@ -122,6 +124,7 @@ o::send ^o ; favourites
 	send ^t!{f12}fc
 	ClipWait 0.2
 	sleep 20
+	send {esc}
 	run, %A_StartMenu%\Programs\Visual Studio Code\Visual Studio Code.lnk %Clipboard%
 	clipboard := clip_bak
 Return
@@ -172,9 +175,9 @@ e:: ; ye: duplicate current element
 Return
 
 ; Plan/tasklist window
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsPlanWindowEditingText()
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan()
 s::ClickDPIAdjusted(253, 48) ; *s*witch plan
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsTasklistWindowEditingText()
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingTask()
 s::ClickDPIAdjusted(153, 52) ; *s*witch tasklist
 
 ; For incremental YouTube

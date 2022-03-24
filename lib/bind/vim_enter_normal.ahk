@@ -19,6 +19,6 @@ Return
 #If Vim.State.Vim.Enabled && back_to_normal
 ~enter::
 	if (back_to_normal == 1)
-		Vim.State.SetNormal()
+		Vim.State.SetMode("Vim_Normal")
 	back_to_normal -= 1
 Return

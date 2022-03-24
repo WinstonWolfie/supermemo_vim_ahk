@@ -88,8 +88,8 @@ return
 return
 
 ^!l::
-	KeyWait ctrl
-	KeyWait alt
+	Vim.ReleaseKey("ctrl")
+	Vim.ReleaseKey("alt")
 	FormatTime, current_time_display,, yyyy-MM-dd HH:mm:ss:%A_msec%
 	FormatTime, current_time_file_name,, yyyy-MM-dd-HH-mm-ss-%A_msec%
 	Vim.State.SetMode("Vim_Normal")

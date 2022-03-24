@@ -24,9 +24,7 @@ f:: ; clean *f*ormat: using f6 (retaining tables)
 	send {f6}
 	WinWaitNotActive, ahk_class TElWind,, 0
 	Vim.State.SetMode("Vim_Normal")
-	if ErrorLevel
-		Vim.ToolTipFunc("Not HTML.")
-	else
+	if !ErrorLevel
 		send ^arbs{enter}
 return
 

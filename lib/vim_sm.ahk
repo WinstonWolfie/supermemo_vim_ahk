@@ -73,12 +73,12 @@ class VimSM{
 		return WinActive("ahk_class TElWind") && (current_focus == "TBitBtn4" || current_focus == "TBitBtn5" || current_focus == "TBitBtn6" || current_focus == "TBitBtn7" || current_focus == "TBitBtn8" || current_focus == "TBitBtn9")
 	}
 	
-	IsPlanWindowEditingText() {
+	IsNavigatingPlan() {
 		ControlGetFocus, current_focus, ahk_class TPlanDlg
 		Return WinActive("ahk_class TPlanDlg") && (current_focus == "TStringGrid1")
 	}
 	
-	IsTasklistWindowEditingText() {
+	IsNavigatingTask() {
 		ControlGetFocus, current_focus, ahk_class TTaskManager
 		Return WinActive("ahk_class TTaskManager") && (current_focus == "TStringGrid1")
 	}

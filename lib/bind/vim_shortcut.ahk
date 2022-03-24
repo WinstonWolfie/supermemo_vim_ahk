@@ -22,7 +22,8 @@ Return
 ^!r::Reload
 
 LAlt & RAlt:: ; for laptop
-	send {blind}{LAlt up}{RAlt up}{AppsKey}
+	Vim.ReleaseKey("alt")
+	send {AppsKey}
 	Vim.State.SetMode("Insert")
 return
 
