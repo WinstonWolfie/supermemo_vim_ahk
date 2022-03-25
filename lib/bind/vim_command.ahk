@@ -37,7 +37,7 @@ Return
 	WinGet, hwnd, ID, A
 	Gui, VimCommander:Add, Text,, &Command:
 	; list names are the same as subroutine name, just replacing the space with _, and no final parentheses
-	list = SM Plan||Window spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX
+	list = SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine
 	if Vim.State.IsCurrentVimMode("Vim_Normal") {
 		list .= 
 		mode_commander = n
@@ -128,4 +128,15 @@ Return
 
 latex:
 	run https://latex.vimsky.com/
+Return
+
+wayback_machine:
+	WinWaitActive, ahk_id %hwnd%,, 0
+	url := clip()
+	if !url {
+		InputBox, url, Wayback machine, Enter your URL.,, 192, 128
+		if !url || ErrorLevel
+			return
+	}
+	run https://web.archive.org/web/*/%url%
 Return

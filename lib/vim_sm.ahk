@@ -102,7 +102,7 @@ class VimSM{
 	MoveAboveRef(NoRestore:=false) {
 		Send, ^{End}^+{up} ; if there are references this would select (or deselect in visual mode) them all
 		if InStr(clip("",, NoRestore), "#SuperMemo Reference:")
-			send {up 2} ; go to start of last line
+			send {up} ; go to left of <hr>
 		else
 			send ^{end}
 	}

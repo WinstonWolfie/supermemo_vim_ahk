@@ -166,9 +166,9 @@ cloze_hinter:
 		clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>[" . cloze . "</SPAN>"),, true)
 		send ^+{home}^+1
 		Vim.SM.WaitHTMLSave()
+		Clipboard := clip_bak
 		if ErrorLevel
 			Return
-		Clipboard := clip_bak
 	}
 	if !ctrl_state ; only goes back to topic if ctrl is up
 		send !{right} ; add a ctrl to keep editing the clozed item

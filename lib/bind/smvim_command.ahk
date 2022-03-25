@@ -21,12 +21,61 @@ a:: ; remove all text *a*fter cursor
 return
 
 f:: ; clean *f*ormat: using f6 (retaining tables)
+	Vim.State.SetMode("Vim_Normal")
 	send {f6}
 	WinWaitNotActive, ahk_class TElWind,, 0
-	Vim.State.SetMode("Vim_Normal")
 	if !ErrorLevel
 		send ^arbs{enter}
 return
+
+; Transcribed from this quicker script:
+; https://getquicker.net/Sharedaction?code=859bda04-fe78-4385-1b37-08d88a0dba1c
++f:: ; clean format directly in html source
+	Vim.State.SetMode("Vim_Normal")
+	if Vim.SM.IsEditingPlainText()
+		Return
+	if !Vim.SM.IsEditingHTML() {
+		send ^t
+		Vim.SM.WaitTextFocus()
+		if !Vim.SM.IsEditingHTML()
+			Return
+	} else {
+		Vim.SM.WaitHTMLSave()
+		send ^t
+		Vim.SM.WaitTextFocus()
+	}
+	clip_bak := Clipboardall
+	Clipboard =
+	send !{f12}fc
+	ClipWait 0.2
+	sleep 20
+	html_path := Clipboard
+	FileRead, html, % html_path
+	if !html {
+		Clipboard := clip_bak
+		Return
+	}
+	; zzz in case you used f6 to remove format before
+	; which would disable the tag by adding a zzz (like <FONT> -> <ZZZFONT>)
+	html := RegExReplace(html, "is)( zzz| )style=""((?!BACKGROUND-IMAGE: url).)*?""")
+	html := RegExReplace(html, "is)( zzz| )style='((?!BACKGROUND-IMAGE: url).)*?'")
+	html := RegExReplace(html, "ism)(zzz|)<\/{0,1}font.*?>")
+	html := RegExReplace(html, "is)<BR", "<P")
+	html := RegExReplace(html, "i)<H5 dir=ltr align=left>")
+	html := RegExReplace(html, "s)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
+	html := RegExReplace(html, "i)\/svg\/", "/png/")
+	Vim.SM.MoveAboveRef(true)
+	send !\\ ; using delete before cursor, so the content can be restored from temp folder if needed
+	WinWaitNotActive, ahk_class TElWind,, 0
+	if !ErrorLevel
+		send {enter}
+	clip(html,, true)
+	send ^+{home}^+1
+	Vim.SM.WaitHTMLSave()
+	Clipboard := clip_bak
+	if !ErrorLevel
+		send !{home}!{left}
+Return
 
 l:: ; *l*ink concept
 	send !{f10}cl
@@ -58,7 +107,7 @@ w:: ; prepare *w*ikipedia articles in languages other than English
 	}
 	RegExMatch(Clipboard, "(?<=Link: https:\/\/)(.*?)(?=\/wiki\/)", wiki_link)
 	send ^+{f6}
-	WinWaitActive, ahk_class Notepad,, 2
+	WinWaitActive, ahk_class Notepad,, 5
 	if ErrorLevel
 		return
 	send ^h ; replace
@@ -202,10 +251,10 @@ d:: ; learn all elements with the comment "au*d*io"
 		ControlGetText, current_text, TBitBtn3
 		if (current_text == "Next repetition") {
 			send ^{f10}
-			break
+			Return
 		}
 		if (A_Index > 5)
-			Break
+			Return
 	}
 return
 

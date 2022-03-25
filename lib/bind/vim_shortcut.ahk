@@ -149,3 +149,22 @@ return
 	if !ErrorLevel
 		FindClick(A_ScriptDir . "\lib\bind\util\save_changes_to_existing_pdf.png", "o32")
 return
+
+; IE
+#If Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe")
+^+c:: ; open in default browser (in my case, chrome); similar to default shortcut ^+e to open in ms edge
+	Vim.KeyRelease("ctrl")
+	Vim.KeyRelease("shift")
+	loop {
+		sleep 20
+		ControlGetFocus, current_focus, ahk_class IEFrame
+		if (current_focus == "Edit1") {
+			ControlGetText, current_text, Edit1
+			run % current_text
+			Return
+		} else
+			send ^l
+		if (A_Index > 10)
+			Return
+	}
+Return

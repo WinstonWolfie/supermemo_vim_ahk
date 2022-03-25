@@ -130,7 +130,7 @@ return
 			ClipWait 0.2
 			sleep 20
 			html_path := Clipboard
-			FileRead, html, %html_path%
+			FileRead, html, % html_path
 			if !html
 				html := img_html ; in case the html is picture only and somehow not saved
 			
@@ -163,8 +163,10 @@ return
 				clip(new_html,, true)
 				send ^+{home}^+1
 				Vim.SM.WaitHTMLSave()
-				if ErrorLevel
+				if ErrorLevel {
+					Clipboard := clip_bak
 					Return
+				}
 				; no need for !home!left refreshing here
 			}
 			send !{f7} ; go to read point
