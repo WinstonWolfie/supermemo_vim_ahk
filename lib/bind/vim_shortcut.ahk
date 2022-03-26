@@ -30,7 +30,17 @@ return
 
 ; Testing caret
 ; ^!+r::MouseMove, %A_CaretX%, %A_CaretY%
-; ^!+r::Vim.ToolTip("Caret position: " . A_CaretX . " " . A_CaretY)
+; ^!+r::Vim.ToolTip("Caret position: " . A_CaretX . " " . A_CaretY
+
+; ^!+t::
+	; if ClipboardGet_HTML(data) {
+	; 	RegExMatch(data, "s)(?<=<!--StartFragment-->).+(?=<HR SuperMemo>)", body)
+	; 	RegExMatch(data, "s)(?<=<HR SuperMemo>).+(?=<!--EndFragment-->)", ref)
+	; 	full := CleanHTML(body) . ref
+	; 	SetClipboardHTML(full)
+	; }
+	; SetClipboardHTML("")
+; Return
 
 ; Browsers
 #If Vim.State.Vim.Enabled && WinActive("ahk_group Browsers")
@@ -96,7 +106,7 @@ return
 		} else if WinActive("ahk_exe ebook-viewer.exe") {
 			reader := "e"
 			send h
-			sleep 5
+			sleep 10
 			send ^{enter}
 		}
 		if !WinExist("ahk_group SuperMemo") {

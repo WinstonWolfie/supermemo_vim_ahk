@@ -28,20 +28,25 @@
 ;; ========= CONDITION FUNCTIONS =====================================
 
 ActiveWindowTitle(){
+  global vim
   WinGetTitle, title, A ;; A for active window
   return Vim.State.IsCurrentVimMode("Insert_unicode") && title
 }
 EmacsCase(){ 
+  global vim
   return Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class Emacs")
 }
 GtkApplicationCase(){
+  global vim
   return Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class gdkWindowToplevel")
 }
 
 ExcludedProgramCase(){ 
+  global vim
   return Vim.State.IsCurrentVimMode("Insert_unicode") && 0
 }
 OtherCase(){
+  global vim
   return Vim.State.IsCurrentVimMode("Insert_unicode") && ( not EmacsCase() 
     and not GtkApplicationCase()
     and not ExcludedProgramCase() )
@@ -1093,8 +1098,8 @@ Suspend
 ;;  ‡   U2021   8225  \ddagger             DOUBLE DAGGER
 ;;  •   U2022   8226  \bullet              BULLET
 ;;  …   U2026   8230  \ldots               HORIZONTAL ELLIPSIS
-;;      U2028   8232  \newline             LINE SEPARATOR
-;;      U2029   8233  \par                 PARAGRAPH SEPARATOR
+;;     U2028   8232  \newline             LINE SEPARATOR
+;;     U2029   8233  \par                 PARAGRAPH SEPARATOR
 ;;      U202F   8239  \,                   NARROW NO-BREAK SPACE
 ;;  ‰   U2030   8240  \permil              PER MILLE SIGN
 ;;  ‱   U2031   8241  \textpertenthousand  PER TEN THOUSAND SIGN
@@ -20158,7 +20163,7 @@ SendInput {U+2026}
 return
 
 
-;; Glyph: ' ' Descr: LINE SEPARATOR
+;; Glyph: '' Descr: LINE SEPARATOR
 
 #If EmacsCase() && EmacsEnabled
 ::\newline::
@@ -20176,7 +20181,7 @@ SendInput {U+2028}
 return
 
 
-;; Glyph: ' ' Descr: PARAGRAPH SEPARATOR
+;; Glyph: '' Descr: PARAGRAPH SEPARATOR
 
 #If EmacsCase() && EmacsEnabled
 ::\par::

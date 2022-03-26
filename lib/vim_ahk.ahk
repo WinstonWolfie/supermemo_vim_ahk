@@ -285,7 +285,6 @@ class VimAhk{
                   , "ahk_exe Q-Dir_x64.exe" ; Q-dir
                   , "ahk_exe Q-Dir.exe"     ; Q-dir
                   , "ahk_exe notepad++.exe" ; Notepad++
-                  , "ahk_exe Obsidian.exe"  ; Obsidian
                   , "ahk_exe iexplore.exe"  ; Internet Explorer
                   , "ahk_class TElWind"     ; SM element window
                   , "ahk_class TContents"   ; SM content window

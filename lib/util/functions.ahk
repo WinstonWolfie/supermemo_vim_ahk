@@ -13,13 +13,14 @@ Return dataL ? dataL : 0
 
 ConvertHTML(str) {
 	clip_bak := Clipboardall
+	Clipboard := ""
 	Clipboard := str
 	ClipWait 10
 	if ClipboardGet_HTML( Data ) {
 		Clipboard := clip_bak
 		Return Data
-	}
-	Clipboard := clip_bak
+	} else
+		Clipboard := clip_bak
 }
 
 CleanHTML(str) {

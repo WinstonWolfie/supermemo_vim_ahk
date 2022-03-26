@@ -10,18 +10,13 @@ u::Send,^z
 ; Change case
 ~::
   Vim.ReleaseKey("shift")
-  bak := ClipboardAll
-  Clipboard := ""
-  Send, +{Right}^x
-  ClipWait, 0.1
-  sleep 10
-  if(Clipboard is lower){
-    StringUpper, Clipboard, Clipboard
-  }else if(Clipboard is upper){
-    StringLower, Clipboard, Clipboard
-  }
-  Send, ^v
-  Clipboard := bak
+  Send, +{Right}
+  Selection := Clip()
+  if Selection is lower
+    StringUpper, Selection, Selection
+  else if Selection is upper
+    StringLower, Selection, Selection
+  SendInput {raw}%Selection%
 Return
 
 ^e::

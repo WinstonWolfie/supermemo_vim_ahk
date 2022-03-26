@@ -4,6 +4,11 @@
 .:: ; selected text becomes [...]
 	Clip("<span class=""Cloze"">[...]</span>", true)
 	send ^+1
+	; ClipSave := ClipboardAll
+	; SetClipboardHTML("<span class=""Cloze"">[...]</span>")
+	; ClipWait 1
+	; send ^v 
+	; Clipboard := ClipSave
 	Vim.State.SetMode("Vim_Normal")
 return
 
