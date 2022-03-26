@@ -248,6 +248,13 @@ return
 	Vim.State.SetMode("Vim_Normal")
 Return
 
+t::
+	send ^+m
+	WinWaitActive, ahk_class TRegistryForm,, 0
+	SendInput {Raw}classic
+	send {Enter}
+Return
+
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command")) && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser"))
 ; Priority script, made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg

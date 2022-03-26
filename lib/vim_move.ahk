@@ -823,7 +823,9 @@
 	    if (this.shift == 1)
 			Send, ^+{End}+{Home}
 		else
-			Send, ^{End}{Home}
+			Send, ^{End}
+			if !WinActive("ahk_exe iexplore.exe")
+				send {Home}
 		if this.Vim.SM.IsEditingHTML() {
 			send ^+{up} ; if there are references this would select (or deselect in visual mode) them all
 			if (this.shift == 1)

@@ -78,12 +78,13 @@ Return
 Return
 
 ; Need scrolling bar present
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && Vim.SM.MouseMoveTop()
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.SM.IsEditingText() && Vim.SM.MouseMoveRight()
 ; Scrolling
 h::send {WheelLeft}
+l::send {WheelRight}
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.SM.IsEditingText() && Vim.SM.MouseMoveTop()
 j::send {WheelDown}
 k::send {WheelUp}
-l::send {WheelRight}
 d::send {WheelDown 2}
 u::send {WheelUp 2}
 
@@ -102,10 +103,11 @@ x::send {del} ; delete element/component
 +x::send ^+{enter} ; done!
 p::send ^{f10} ; replay auto-play
 +p::send ^{t 2}{f9} ; play video in default system player / edit script component
+^i::send ^{f8} ; download images
 
 ; Element navigation
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
-|| (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
+or (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
 +h::send !{left} ; go back in history
 +l::send !{right} ; go forward in history
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
@@ -117,7 +119,7 @@ c::send !c ; open content window
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()
 c::send {esc} ; close content window
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
-|| (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
+or (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
 b::send ^{space} ; open browser
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")
 b::send {esc} ; close browser

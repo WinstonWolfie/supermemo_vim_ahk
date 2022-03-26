@@ -4,51 +4,62 @@ class VimSM{
 	}	
 
 	MouseMoveTop(clicking:=false) {
-		if WinActive("ahk_class TElWind") {
-			FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-			if x_coord {
-				CoordMode, Mouse, Screen
-				x_coord -= 10
-				y_coord -= 21
-				if clicking
-					click, %x_coord% %y_coord%
-				else
-					MouseMove, % x_coord, % y_coord, 1
-				Return true
-			}
+		if !WinActive("ahk_class TElWind")
+			return false
+		FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
+		if x_coord {
+			CoordMode, Mouse, Screen
+			x_coord -= 10
+			y_coord -= 21
+			if clicking
+				click, %x_coord% %y_coord%
+			else
+				MouseMove, % x_coord, % y_coord, 1
+			Return true
 		}
 	}
 
 	MouseMoveMiddle(clicking:=false) {
-		if WinActive("ahk_class TElWind") {
-			FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_up, y_up)
-			FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_down, y_down)
-			if x_up {
-				CoordMode, Mouse, Screen
-				x_coord := x_up - 10
-				y_coord := (y_up + y_down) / 2
-				if clicking
-					click, %x_coord% %y_coord%
-				else
-					MouseMove, % x_coord, % y_coord, 1
-				Return true
-			}
+		if !WinActive("ahk_class TElWind")
+			return false
+		FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_up, y_up)
+		FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_down, y_down)
+		if x_up {
+			CoordMode, Mouse, Screen
+			x_coord := x_up - 10
+			y_coord := (y_up + y_down) / 2
+			if clicking
+				click, %x_coord% %y_coord%
+			else
+				MouseMove, % x_coord, % y_coord, 1
+			Return true
 		}
 	}
 
 	MouseMoveBottom(clicking:=false) {
-		if WinActive("ahk_class TElWind") {
+		if !WinActive("ahk_class TElWind")
+			return false
 		FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_coord, y_coord)
-			if x_coord {
-				CoordMode, Mouse, Screen
-				x_coord -= 10
-				y_coord += 21
-				if clicking
-					click, %x_coord% %y_coord%
-				else
-					MouseMove, % x_coord, % y_coord, 1
-				Return true
-			}
+		if x_coord {
+			CoordMode, Mouse, Screen
+			x_coord -= 10
+			y_coord += 21
+			if clicking
+				click, %x_coord% %y_coord%
+			else
+				MouseMove, % x_coord, % y_coord, 1
+			Return true
+		}
+	}
+
+	MouseMoveRight() {
+		if !WinActive("ahk_class TElWind")
+			return false
+		FindClick(A_ScriptDir . "\lib\bind\util\right_arrow.png", "n", x_coord, y_coord)
+		if x_coord {
+			CoordMode, Mouse, Screen
+			MouseMove, % x_coord, % y_coord, 1
+			Return true
 		}
 	}
 	

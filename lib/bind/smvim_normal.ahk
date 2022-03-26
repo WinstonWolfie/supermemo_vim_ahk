@@ -120,6 +120,7 @@ Return
 		InputBox, user_input, Search, Find text:`n(enter nothing to repeat the last search),, 272, 144
 	if ErrorLevel
 		Return
+	WinActivate, ahk_class TElWind
 	if !user_input ; entered nothing
 		user_input := last_search ; repeat last search
 	else ; entered something
