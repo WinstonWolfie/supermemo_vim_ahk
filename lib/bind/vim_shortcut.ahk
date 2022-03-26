@@ -30,10 +30,10 @@ return
 
 ; Testing caret
 ; ^!+r::MouseMove, %A_CaretX%, %A_CaretY%
-; ^!+r::MsgBox, Caret position: %A_CaretX% %A_CaretY%
+; ^!+r::Vim.ToolTip("Caret position: " . A_CaretX . " " . A_CaretY)
 
 ; Browsers
-#If Vim.State.Vim.Enabled && WinActive("ahk_group Browser")
+#If Vim.State.Vim.Enabled && WinActive("ahk_group Browsers")
 ^!w::send ^w!{tab} ; close tab and switch back
 
 ^!i:: ; open in *I*E
@@ -47,8 +47,8 @@ Return
 ^!l:: ; copy link and parse *l*ink if if's from YT
 	send ^l
 	sleep 100
-	Clipboard =
-	send ^c ; cannot use clip() here because it will try to restore the clipboard
+	Clipboard := ""
+	send ^c
 	ClipWait 0.2
 	sleep 20
 	send {f6 2}
@@ -58,11 +58,11 @@ Return
 		temp_clip = https://www.youtube.com/watch?v=%yt_link%
 	}
 	Clipboard := temp_clip
-	Vim.ToolTipFunc("Copied " . temp_clip)
+	Vim.ToolTip("Copied " . temp_clip)
 return
 
 ^!d:: ; parse similar and opposite in google *d*efine
-	Clipboard =
+	Clipboard := ""
 	send ^c
 	ClipWait 0.6
 	sleep 20
@@ -71,7 +71,7 @@ return
 	temp_clip := StrReplace(temp_clip, "; Opposite", "`r`n`r`nOpposite")
 	temp_clip := StrReplace(temp_clip, "Opposite; ", "Opposite`r`n")
 	Clipboard := StrReplace(temp_clip, "vulgar slang", "vulgar slang > ")
-	Vim.ToolTipFunc("Copied:`n" . temp_clip)
+	Vim.ToolTip("Copied:`n`n" . temp_clip)
 return
 
 ; SumatraPDF/Calibre to SuperMemo
@@ -79,51 +79,51 @@ return
 ^!x::
 !x:: ; pdf/epub extract to supermemo
 	ctrl_state := GetKeyState("ctrl")
+	KeyWait alt
 	clip_bak := Clipboardall
-	Clipboard = 
-	send ^c
+	Clipboard := ""
+	send ^c ; clip() doesn't keep format; nor Clipboardall can work with functions
 	ClipWait 0.6
 	sleep 20
-	if !Clipboard {
-		MsgBox, Nothing is selected.
-		Clipboard := clip_bak
+	extract := Clipboardall
+	if !extract {
+		Vim.ToolTip("Nothing is selected.")
 		return
 	} else {
 		if WinActive("ahk_class SUMATRA_PDF_FRAME") {
-			reader = p
+			reader := "p"
 			send a
 		} else if WinActive("ahk_exe ebook-viewer.exe") {
-			reader = e
+			reader := "e"
 			send h
-			sleep 100
+			sleep 5
 			send ^{enter}
 		}
 		if !WinExist("ahk_group SuperMemo") {
-			MsgBox, SuperMemo is not open, please open SuperMemo and paste your text.
+			Vim.ToolTip("SuperMemo is not open, please open SuperMemo and paste your text.")
 			return
 		}
 	}
 	WinActivate, ahk_class TElWind ; focus to element window
-	send ^t{esc}q ; edit topic html component
+	Vim.SM.DeselectAllComponents()
+	send q
 	Vim.SM.WaitTextFocus()
 	ControlGetFocus, current_focus, ahk_class TElWind
 	if (current_focus != "Internet Explorer_Server1") {
-		MsgBox, No html component is focused, please go to your desired topic and paste your text.
+		Vim.ToolTip("No html component is focused, please go to the topic you want and paste your text.")
 		return
 	}
 	send ^{home}^+{down} ; go to top and select first paragraph below
-	extract := Clipboardall
-	if RegExMatch(clip(), "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") { ; sometimes this messes with the clipboard, so extract is saved
+	if RegExMatch(clip(), "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") {
 		send {left}
-		MsgBox, Please make sure current element is an empty html topic. Your extract is now on your clipboard.
+		Vim.ToolTip("Please make sure current element is an empty html topic. Your extract is now on your clipboard.")
 		return
 	}
 	send {left}
 	clip(extract,, true)
 	send ^+{home} ; select everything
-	sleep 50
 	send !x ; extract
-	sleep 1000
+	Vim.SM.WaitProcessing()
 	send {down}
 	send !\\
 	WinWaitNotActive, ahk_class TElWind,, 0
@@ -141,13 +141,15 @@ return
 return
 
 ; SumatraPDF
-#If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME")
-^!q:: ; exit and save annotations
+#If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") and !(Vim.State.IsCurrentVimMode("Z"))
++z::Vim.State.SetMode("Z")
+#If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") and (Vim.State.IsCurrentVimMode("Z"))
++z:: ; exit and save annotations
 	send q
 	WinWaitActive, Unsaved annotations,, 0
-	sleep 50
 	if !ErrorLevel
-		FindClick(A_ScriptDir . "\lib\bind\util\save_changes_to_existing_pdf.png", "o32")
+		send {tab 2}{enter}
+	Vim.State.SetMode("Vim_Normal")
 return
 
 ; IE

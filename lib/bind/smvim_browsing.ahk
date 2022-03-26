@@ -11,7 +11,7 @@ g::Vim.Move.Move("g") ; 3gg goes to the 3rd line of entire text
 
 s:: ; gs: go to source link
 	clip_bak := Clipboardall
-	Clipboard =
+	Clipboard := ""
 	send !{f10}fs ; show reference
 	WinWaitActive, Information,, 0
 	send p{esc} ; copy reference
@@ -23,7 +23,7 @@ s:: ; gs: go to source link
 		Clipboard := clip_bak ; restore clipboard here in case Run doesn't work
 		run % link
 	} else {
-		Vim.ToolTipFunc("No link found.")
+		Vim.ToolTip("No link found.")
 		Clipboard := clip_bak
 	}
 Return
@@ -90,8 +90,6 @@ u::send {WheelUp 2}
 ; "Browsing" mode
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 +g::Vim.Move.Move("+g") ; 3G goes to the 3rd line on screen
-{::Vim.Move.Move("{")
-}::Vim.Move.Move("}")
 
 ; OG Vim commands
 i::Vim.State.SetMode("Insert")
@@ -106,35 +104,34 @@ p::send ^{f10} ; replay auto-play
 +p::send ^{t 2}{f9} ; play video in default system player / edit script component
 
 ; Element navigation
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+|| (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
 +h::send !{left} ; go back in history
 +l::send !{right} ; go forward in history
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 +j::send !{pgdn} ; J, ge: go down one element
 +k::send !{pgup} ; K, gE: go up one element
 
 ; Open windows
 c::send !c ; open content window
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !Vim.SM.IsEditingText()
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()
+c::send {esc} ; close content window
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+|| (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
 b::send ^{space} ; open browser
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")
+b::send {esc} ; close browser
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 o::send ^o ; favourites
-
-+e::
-	clip_bak := Clipboardall
-	clipboard =
-	send ^t!{f12}fc
-	ClipWait 0.2
-	sleep 20
-	send {esc}
-	run, %A_StartMenu%\Programs\Visual Studio Code\Visual Studio Code.lnk %Clipboard%
-	clipboard := clip_bak
-Return
-	
 
 f:: ; click on html component
 	if Vim.SM.MouseMoveTop(true)
 		send {left}{home}
-	else
-		send q^{home}
+	else {
+		send ^t
+		Vim.SM.WaitTextFocus()
+		send ^{home}
+	}
 Return
 
 ; Orginal SM shortcuts
@@ -155,7 +152,7 @@ y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_ydc_y")) && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 y:: ; yy: copy current source url
 	clip_bak := Clipboardall
-	Clipboard =
+	Clipboard := ""
 	send !{f10}fs ; show reference
 	WinWaitActive, Information,, 0
 	send p{esc} ; copy reference
@@ -166,7 +163,7 @@ y:: ; yy: copy current source url
 		RegExMatch(Clipboard, "Link: \K.*", link)
 		Clipboard := link
 	}
-	Vim.ToolTipFunc("Copied " . link)
+	Vim.ToolTip("Copied " . link)
 Return
 
 e:: ; ye: duplicate current element

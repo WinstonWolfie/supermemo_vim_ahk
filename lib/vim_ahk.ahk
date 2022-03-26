@@ -5,6 +5,7 @@
 #Include %A_LineFile%\..\util\FindClick.ahk
 #Include %A_LineFile%\..\util\functions.ahk
 #Include %A_LineFile%\..\util\CbAutoComplete.ahk
+#Include %A_LineFile%\..\util\unicode.ahk
 
 ; Classes, Functions
 #Include %A_LineFile%\..\vim_about.ahk
@@ -19,6 +20,7 @@
 #Include %A_LineFile%\..\vim_state.ahk
 #Include %A_LineFile%\..\vim_tooltip.ahk
 #Include %A_LineFile%\..\vim_sm.ahk
+#Include %A_LineFile%\..\vim_html.ahk
 
 ; Key Bindings
 #Include %A_LineFile%\..\vim_bind.ahk
@@ -49,6 +51,7 @@ class VimAhk{
     this.State := new VimState(this)
     this.VimToolTip := new VimToolTip(this)
     this.SM := new VimSM(this)
+    this.HTML := new VimHTML(this)
 
     ; Group Settings
     this.GroupDel := ","
@@ -95,9 +98,9 @@ class VimAhk{
 	GroupAdd, SuperMemo, ahk_exe sm15.exe
 	
 	; Browsers
-	GroupAdd, Browser, ahk_exe chrome.exe ; not using ahk_class because it's the same with the discord app
-	GroupAdd, Browser, ahk_exe firefox.exe
-	GroupAdd, Browser, ahk_exe msedge.exe ; Microsoft Edge
+	GroupAdd, Browsers, ahk_exe chrome.exe ; not using ahk_class because it's the same with the discord app
+	GroupAdd, Browsers, ahk_exe firefox.exe
+	GroupAdd, Browsers, ahk_exe msedge.exe ; Microsoft Edge
 	
 	; Excluded
 	GroupAdd, Excluded, ahk_class #32770 ; windows + r
@@ -263,8 +266,8 @@ class VimAhk{
 
   SetDefaultActiveWindows(){
     DefaultList := ["ahk_exe Evernote.exe"  ; Evernote
-                  , "ahk_exe explorer.exe"  ; Explorer
-                  , "ahk_exe Explorer.exe"  ; Explorer, Explorer became also upper case, but lower case works for this
+                  ; , "ahk_exe explorer.exe"  ; Explorer
+                  ; , "ahk_exe Explorer.exe"  ; Explorer, Explorer became also upper case, but lower case works for this
                   , "ahk_exe notepad.exe"   ; NotePad
                   , "ahk_exe Notepad.exe"   ; NotePad, Changed as upper case since ~2022/1 ??
                   , "OneNote"               ; OneNote at Windows 10
@@ -313,98 +316,100 @@ class VimAhk{
     }
     Return True
   }
-  
-  IsExceptionWindow() {
-	if WinActive("Choices") {
-		ControlGetText, button1, TGroupButton1
-		ControlGetText, button2, TGroupButton2
-		ControlGetText, button3, TGroupButton3
-		ControlGetText, button4, TGroupButton4
-		; when you change the reference of an element that shares the reference with other elements
-		; no shortcuts there, so movement keys are used for up/down navigation
-		; if more windows are found without shortcuts in the future, they will be all added here
-		return (button1 == "Cancel (i.e. restore the old version of references)" || button2 == "Combine old and new references for this element" || button3 == "Change references in all elements produced from the original article" || button4 == "Change only the references of the currently displayed element")
-		; use movement keys
-	}
-  }
 
-  ; Ref: https://www.reddit.com/r/AutoHotkey/comments/4ma5b8/identifying_end_of_line_when_typing_with_ahk_and/
-  CheckChr(key){
+  CheckChr(Chr){
     if(this.Conf["VimCheckChr"]["val"] == 0){
       Return False
     }
-    BlockInput, Send
-    tempClip := clipboard
-    clipboard := ""
-    SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
-	ClipWait 0.1
-    Sleep 10
-    ret := False
-    If (clipboard ~= key){
-      ret := True
-    }
-    ; sleep 10
-    clipboard := tempClip
-    BlockInput, off
-    Return ret
+    send +{right}
+	Selection := clip()
+	Return (Chr == Selection)
   }
   
-  ParseLineBreaks(String) {
-	if this.SM.IsEditingHTML() {
-		; removes the very last line break if there's a space before it
-		; not perfect because end of paragraph and end of a line inside a paragraph would appear the same in plain text
-		; also bullet point and end of a line inside a paragraph would appear the same in plain text
-		; also single line paragraphs
-		if (StrLen(String) != InStr(String, "`r`n") + 1) { ; first matched `r`n not at the end
-			String := RegExReplace(String, "D)(?<=[ ])\r\n$")
-			String := RegExReplace(String, "(?<![ ])\r\n$") ; remove line breaks at end of line if there isn't a space before it
-			String := StrReplace(String, "`r`n`r`n", " ") ; turn all paragraph tags (<P>) to space
+  ; https://www.autohotkey.com/boards/viewtopic.php?t=5484
+  ;This function wraps a loop that continuously uses ControlGetFocus to test if a particular 
+  ;control is active. For more info see ControlGetFocus in the docs.
+  ;An optional timeout can be included.
+  ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:="") {
+    StartTime := A_TickCount
+    Loop, {
+        ControlGetFocus, OutputVar, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+        if (OutputVar = Control) {
+			Break
+            ErrorLevel := 0    ;Success
+        } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+			Break
+            ErrorLevel := 1    ;Timed out
 		}
-		String := StrReplace(String, "`r`n", " ") ; turn all line breaks (<BR>) to space
-	} else
-		String := StrReplace(String, "`r")
-	Return String
+    }
   }
   
-  IsWhitespaceOnly(String) {
-	Return !RegExMatch(String, "[\S]")
+  IsExceptionWindow() {
+	if WinActive("ahk_group SuperMemo") && WinActive("Choices") {
+		ControlGetText, Button1, TGroupButton1
+		ControlGetText, Button2, TGroupButton2
+		ControlGetText, Button3, TGroupButton3
+		ControlGetText, Button4, TGroupButton4
+		; when you change the reference of an element that shares the reference with other elements
+		; no shortcuts there, so movement keys are used for up/down navigation
+		; if more windows are found without shortcuts in the future, they will be all added here
+		return (Button1 == "Cancel (i.e. restore the old version of references)"
+		or Button2 == "Combine old and new references for this element"
+		or Button3 == "Change references in all elements produced from the original article"
+		or Button4 == "Change only the references of the currently displayed element")
+	}
+  }
+  
+  ParseLineBreaks(Str) {
+	if this.SM.IsEditingHTML() { ; not perfect
+		if (StrLen(Str) != InStr(Str, "`r`n") + 1) { ; first matched `r`n not at the end
+			Str := RegExReplace(Str, "D)(?<=[ ])\r\n$") ; removing the very last line break if there's a space before it
+			Str := RegExReplace(Str, "(?<![ ])\r\n$") ; remove line breaks at end of line if there isn't a space before it
+			Str := StrReplace(Str, "`r`n`r`n", " ") ; turn all paragraph tags (<P>) to space
+		}
+		Str := StrReplace(Str, "`r`n", " ") ; turn all line breaks (<BR>) to space
+	} else
+		Str := StrReplace(Str, "`r")
+	Return Str
+  }
+  
+  IsWhitespaceOnly(Str) {
+	Return !RegExMatch(Str, "[\S]")
   }
   
   IsHTML() {
 	Return this.SM.IsEditingHTML() || WinActive("ahk_group HTML")
   }
   
-  WinWaitTitleChange(original_title:="", timeout:=5.0) {
-	if !original_title
-		WinGetTitle, original_title, A
-	loop_timeout := timeout * 1000 / 20
-	loop {
-		sleep 20
-		WinGetTitle, current_title, A
-		if (original_title != current_title) {
-			Break
+  WinWaitTitleChange(OriginalTitle:="", TimeOut:=500) {
+	if !OriginalTitle
+		WinGetTitle, OriginalTitle, A
+	StartTime := A_TickCount
+    Loop {
+        WinGetTitle, CurrentTitle, A
+        if (OriginalTitle != CurrentTitle) {
+            Break
 			ErrorLevel := 0
-		}
-		if (A_Index > loop_timeout) { ; default: over 5s
-			break
+        } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+            break
 			ErrorLevel := 1
 		}
-	}
+    }
   }
   
   IsNavigating() {
-	Return this.SM.IsNavigatingPlan() || this.SM.IsNavigatingTask()
+	Return this.SM.IsNavigatingPlan() || this.SM.IsNavigatingTask() || this.SM.IsNavigatingContentWindow()
   }
   
-  ReleaseKey(key) {
-	if GetKeyState(key) {
-		send {blind}{l%key% up}{r%key% up}
+  ReleaseKey(Key) {
+	if GetKeyState(Key) {
+		send {blind}{l%Key% up}{r%Key% up}
 		ErrorLevel := 0
 	} else
 		ErrorLevel := 1
   }
 
-  ToolTipFunc(text:="", permanent:=false, period:=-2000) {
+  ToolTip(text:="", permanent:=false, period:=-2000) {
 	CoordMode, ToolTip, Screen
 	coord_x := A_ScreenWidth / 2
 	coord_y := A_ScreenHeight / 3 * 2

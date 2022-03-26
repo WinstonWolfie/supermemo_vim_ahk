@@ -11,7 +11,7 @@ u::Send,^z
 ~::
   Vim.ReleaseKey("shift")
   bak := ClipboardAll
-  Clipboard =
+  Clipboard := ""
   Send, +{Right}^x
   ClipWait, 0.1
   sleep 10

@@ -1,6 +1,7 @@
 ﻿#If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 ^!.:: ; find [...] and insert
-	send ^t{esc}q
+	Vim.SM.DeselectAllComponents()
+	send q
 	Vim.SM.WaitTextFocus()
 	if Vim.SM.IsEditingPlainText() {
 		send ^a
@@ -9,20 +10,22 @@
 			pos += 4
 			SendInput {left}{right %pos%}
 		} else {
-			MsgBox, Not found.
+			Vim.ToolTip("Not found.")
 			Return
 		}
 	} else if Vim.SM.IsEditingHTML() {
 		send {f3}
-		WinWaitNotActive, ahk_class TElWind,, 0 ; double insurance to make sure the enter below does not trigger learn (which sometimes happens in slow computers)
-		WinWaitActive, ahk_class TMyFindDlg,, 0
+		WinWaitNotActive, ahk_class TElWind,, 0 ; faster than wait for element window to be active
 		SendInput {raw}[...]
 		send {enter}
 		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
 		send {right}^{enter}
-		WinWaitActive, ahk_class TCommanderDlg,, 0
-		if ErrorLevel
-			return
+		WinWaitActive, ahk_class TCommanderDlg,, 0.25
+		if ErrorLevel {
+			Vim.ToolTip("Not found.")
+			send {esc}^{enter}h{enter}{esc}
+			Return
+		}
 		send h{enter}q
 		if WinExist("ahk_class TMyFindDlg") ; clears search box window
 			WinClose
@@ -77,17 +80,19 @@ return
 	Vim.State.SetNormal()
 return
 
-#If Vim.IsVimGroup() && Vim.SM.IsEditingHTML() && clip()
+#If Vim.IsVimGroup() && Vim.SM.IsEditingHTML()
 ^!k::
+	element_number := RegExReplace(Clipboard, "^#")
+	if !clip() ; no selection
+		Return
 	send ^k
 	WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2 ; a bit more delay since everybody knows how slow IE can be
-	clip("SuperMemoElementNo=(" . RegExReplace(Clipboard, "^#") . ")")
+	clip("SuperMemoElementNo=(" . element_number . ")")
 	send {enter}
 	Vim.State.SetNormal()
 	Vim.Caret.SwitchToSameWindow() ; refresh caret
 return
 
-#If Vim.IsVimGroup() && Vim.SM.IsEditingHTML()
 ^!l::
 	Vim.ReleaseKey("ctrl")
 	KeyWait alt
@@ -95,14 +100,14 @@ return
 	current_time_file_name := RegExReplace(current_time_display, " |:", "-")
 	Vim.State.SetMode("Vim_Normal")
 	clip_bak := Clipboardall
-	Clipboard =
+	Clipboard := ""
 	send ^c
 	ClipWait 0.6
 	sleep 20
 	If ClipboardGet_HTML( Data ){
 		; To do: detect selection contents
 		; if RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)") { ; match end of first IMG tag until start of last EndFragment tag
-			; MsgBox Please select text or image only.
+			; Vim.ToolTip("Please select text or image only.")
 			; Clipboard := clip_bak
 			; Return
 		; } else
@@ -121,11 +126,12 @@ return
 			img_html = <img alt="%Clipboard%" src="%latex_path%">
 			clip(img_html, true, true)
 			send ^+1
-			Vim.SM.WaitHTMLSave()
+			Vim.SM.WaitTextSave()
 			if ErrorLevel
 				Return
 			send ^t
-			Clipboard =
+			Vim.SM.WaitTextFocus()
+			Clipboard := ""
 			send !{f12}fc ; copy file path
 			ClipWait 0.2
 			sleep 20
@@ -144,7 +150,7 @@ return
 			
 			fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %current_time_display%</SPAN>
 			if InStr(html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ") { ; converted before
-				Vim.SM.WaitHTMLSave()
+				Vim.SM.WaitTextSave()
 				if ErrorLevel
 					Return
 				new_html := RegExReplace(html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
@@ -162,7 +168,7 @@ return
 				send ^{home} ; put the caret on top
 				clip(new_html,, true)
 				send ^+{home}^+1
-				Vim.SM.WaitHTMLSave()
+				Vim.SM.WaitTextSave()
 				if ErrorLevel {
 					Clipboard := clip_bak
 					Return
@@ -215,6 +221,7 @@ return
 PlanInsertButtonInsert:
 	Gui, Submit
 	Gui, Destroy
+	WinActivate, ahk_class TPlanDlg
 	if !NoSplit {
 		send ^t ; split
 		WinWaitActive, ahk_class TInputDlg,, 0
@@ -229,14 +236,10 @@ PlanInsertButtonInsert:
 		send y
 	WinWaitActive, ahk_class TPlanDlg,, 0
 	send ^s{esc} ; save and exits
-	WinWaitActive, ahk_class TElWind,, 0
-	send ^{enter} ; commander
-	WinWaitNotActive, ahk_class TElWind,, 0
-	send {enter} ; cancel alarm
-	WinWaitActive, ahk_class TElWind,, 0
-	send ^{enter} ; commander; seems to be a more reliable option than {alt}kp or ^p
-	WinWaitNotActive, ahk_class TElWind,, 0
-	SendInput {raw}pl ; open plan again
+	WinWaitNotActive, ahk_class TPlanDlg,, 0
+	send ^{enter}{enter} ; cancel alarm
+	send ^{enter} ; use commander to open Plan; seems to be a more reliable option than {alt}kp or ^p
+	SendInput {raw}pl ; open Plan again
 	send {enter}
 return
 

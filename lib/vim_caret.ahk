@@ -17,7 +17,7 @@ class VimCaret{
       width := this.caretwidths["Normal"]
     }else if this.Vim.State.StrIsInCurrentVimMode("Visual"){
       width := this.caretwidths["Visual"]
-    }else if this.Vim.State.IsCurrentVimMode("Insert"){
+    }else if this.Vim.State.StrIsInCurrentVimMode("Insert"){
       width := this.caretwidths["Insert"]
     }else{
       width := this.caretwidths["Default"]

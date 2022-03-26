@@ -37,7 +37,7 @@ Return
 	WinGet, hwnd, ID, A
 	Gui, VimCommander:Add, Text,, &Command:
 	; list names are the same as subroutine name, just replacing the space with _, and no final parentheses
-	list = SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine
+	list = SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish
 	if Vim.State.IsCurrentVimMode("Vim_Normal") {
 		list .= 
 		mode_commander = n
@@ -69,6 +69,7 @@ VimCommanderButtonExecute:
 		run https://www.google.com/search?q=%command% ; this could be a shorthand for searching
 		Return
 	}
+	WinActivate, ahk_id %hwnd%
 	Gosub % command
 Return
 
@@ -88,7 +89,6 @@ sm_plan:
 			Return
 	}
 	send ^{enter} ; commander; seems to be a more reliable option than {alt}kp or ^p
-	WinWaitNotActive, ahk_class TElWind,, 0
 	SendInput {raw}pl ; open plan
 	send {enter}
 	Vim.State.SetMode("Vim_Normal")
@@ -107,10 +107,9 @@ watch_later_yt:
 Return
 
 search:
-	WinWaitActive, ahk_id %hwnd%,, 0
 	search_term := clip()
 	if !search_term {
-		InputBox, search_term, Google search, Enter your search term.,, 192, 128
+		InputBox, search_term, Google Search, Enter your search term.,, 192, 128
 		if !search_term || ErrorLevel
 			return
 	}
@@ -118,12 +117,11 @@ search:
 Return
 
 move_mouse_to_caret:
-	WinWaitActive, ahk_id %hwnd%,, 0
 	MouseMove, % A_CaretX, % A_CaretY
 	if A_CaretX
-		Vim.ToolTipFunc("Current caret position: " . A_CaretX . " " . A_CaretY)
+		Vim.ToolTip("Current caret position: " . A_CaretX . " " . A_CaretY)
 	else
-		Vim.ToolTipFunc("Caret not found.")
+		Vim.ToolTip("Caret not found.")
 Return
 
 latex:
@@ -131,12 +129,67 @@ latex:
 Return
 
 wayback_machine:
-	WinWaitActive, ahk_id %hwnd%,, 0
 	url := clip()
 	if !url {
-		InputBox, url, Wayback machine, Enter your URL.,, 192, 128
+		InputBox, url, Wayback Machine, Enter your URL.,, 192, 128
 		if !url || ErrorLevel
 			return
 	}
 	run https://web.archive.org/web/*/%url%
+Return
+
+deepl:
+	text := clip()
+	if !text {
+		InputBox, text, DeepL Translation, Enter your text.,, 192, 128
+		if !text || ErrorLevel
+			return
+	}
+	run https://www.deepl.com/en/translator#?/en/%text%
+Return
+
+youglish:
+	text := clip()
+	if !text {
+		InputBox, text, DeepL Translation, Enter your text.,, 192, 128
+		if !text || ErrorLevel
+			return
+	}
+	InputBox, lang_code, YouGlish, Enter a language code., , 256, 128
+	if ErrorLevel
+		return
+	if (lang_code = "en")
+		run https://youglish.com/pronounce/%text%/english?
+	else if (lang_code = "es")
+		run https://youglish.com/pronounce/%text%/spanish?
+	else if (lang_code = "fr")
+		run https://youglish.com/pronounce/%text%/french?
+	else if (lang_code = "it")
+		run https://youglish.com/pronounce/%text%/italian?
+	else if (lang_code = "ja")
+		run https://youglish.com/pronounce/%text%/japanese?
+	else if (lang_code = "de")
+		run https://youglish.com/pronounce/%text%/german?
+	else if (lang_code = "ru")
+		run https://youglish.com/pronounce/%text%/russian?
+	else if (lang_code = "el")
+		run https://youglish.com/pronounce/%text%/greek?
+	else if (lang_code = "he")
+		run https://youglish.com/pronounce/%text%/hebrew?
+	else if (lang_code = "ar")
+		run https://youglish.com/pronounce/%text%/arabic?
+	else if (lang_code = "pl")
+		run https://youglish.com/pronounce/%text%/polish?
+	else if (lang_code = "pt")
+		run https://youglish.com/pronounce/%text%/portuguese?
+	else if (lang_code = "ko")
+		run https://youglish.com/pronounce/%text%/korean?
+	else if (lang_code = "sv")
+		run https://youglish.com/pronounce/%text%/swedish?
+	else if (lang_code = "nl")
+		run https://youglish.com/pronounce/%text%/dutch?
+	else if (lang_code = "tr")
+		run https://youglish.com/pronounce/%text%/turkish?
+	else if (lang_code = "asl")
+		run https://youglish.com/pronounce/%text%/signlanguage?
 Return

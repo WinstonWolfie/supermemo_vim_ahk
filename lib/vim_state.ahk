@@ -16,7 +16,7 @@
 	, "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
 	, "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
 	, "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
-	, "SMVim_ExtractPriorityInner"]
+	, "SMVim_ExtractPriorityInner", "Insert_unicode"]
 
     this.Mode := "Insert"
     this.g := 0
@@ -91,13 +91,14 @@
         VIM_IME_SET()
       }
     }
-    if(this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
-      Send, {Right}
-      if WinActive("ahk_group VimCursorSameAfterSelect"){
-        Send, {Left}
-      }
-    } else if this.StrIsInCurrentVimMode("Insert") && A_CaretX && !this.Vim.IsNavigating()
-      send {left}
+	if A_CaretX && !this.Vim.IsNavigating()
+		if(this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
+		  Send, {Right}
+		  if WinActive("ahk_group VimCursorSameAfterSelect"){
+			Send, {Left}
+		  }
+		} else if this.StrIsInCurrentVimMode("Insert")
+		  send {left}
     this.SetMode("Vim_Normal")
   }
 

@@ -1,5 +1,5 @@
 ﻿; Editing text only
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.SM.IsEditingText()
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText()
 +h:: ; move to top of screen
 	if Vim.SM.MouseMoveTop(true)
 		send {left}{home}
@@ -19,7 +19,7 @@ Return
 Return
 
 ; Editing HTML
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.SM.IsEditingHTML()
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML()
 n::  ; open hyperlink in current caret position (Open in *n*ew window)
 	BlockInput, Send
     tempClip := Clipboardall
@@ -36,7 +36,7 @@ n::  ; open hyperlink in current caret position (Open in *n*ew window)
 	If ClipboardGet_HTML( Data ){
 		RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", current_link)
 		if !current_link
-			Vim.ToolTipFunc("No link found.")
+			Vim.ToolTip("No link found.")
 		else if InStr(current_link, "SuperMemoElementNo=(") { ; goes to a supermemo element
 			click, %A_CaretX% %A_CaretY%, right
 			send n
@@ -46,32 +46,48 @@ n::  ; open hyperlink in current caret position (Open in *n*ew window)
     clipboard := tempClip
 return
 
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() and (Vim.State.g)
+s::
+	clip_bak := Clipboardall
+	Clipboard := ""
+	send !{f12}fc
+	ClipWait 0.2
+	sleep 20
+	send {esc}
+	run, %A_StartMenu%\Programs\Visual Studio Code\Visual Studio Code.lnk %Clipboard%
+	clipboard := clip_bak
+Return
+
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
+{::Vim.Move.Move("{")
+}::Vim.Move.Move("}")
+
+; Browsing/editing
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 '::
 	send ^{f3}
 	Vim.State.SetMode("Insert")
-	back_to_normal = 2
+	back_to_normal := 2
 Return
 
-; Browsing/editing
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind")
 ^f7::
 m::
 	send ^{f7} ; set read point
-	Vim.ToolTipFunc("Read point set")
+	Vim.ToolTip("Read point set")
 Return
 
 !f7::
 `::
 	send !{f7} ; go to read point
-	Vim.ToolTipFunc("Go to read point")
+	Vim.ToolTip("Go to read point")
 Return
 
 !m::
 	KeyWait alt
 ^+f7::
 	send ^+{f7} ; clear read point
-	Vim.ToolTipFunc("Read point cleared")
+	Vim.ToolTip("Read point cleared")
 Return
 
 !+j::send !+{pgdn} ; go to next sibling
@@ -88,10 +104,10 @@ Return
 	shift_state := GetKeyState("Shift") ; caret on the right
 	alt_state := GetKeyState("alt") ; followed by a cloze
 	if !Vim.SM.IsEditingText() {
-		send ^t{esc}q ; focus to question field if no field is focused
+		send ^t
 		Vim.SM.WaitTextFocus() ; make sure current_focus is updated		
 		if !Vim.SM.IsEditingText() { ; still found no text
-			MsgBox, Text not found.
+			Vim.ToolTip("Text not found.")
 			Return
 		}
 	}
@@ -127,12 +143,11 @@ Return
 					send !z
 			}
 		} else {
-			MsgBox, Not found.
+			Vim.ToolTip("Not found.")
 			Return
 		}
 	} else {
 		send {esc}{f3} ; esc to exit field, so it can return to the same field later
-		; Normally here would be a WinWaitNotActive, ahk_class TElWind for double insurance, but clip() has some delay in itself, so more delay is not needed
 		WinWaitActive, ahk_class TMyFindDlg,, 0
 		if ErrorLevel
 			Return
@@ -149,10 +164,10 @@ Return
 			else ; all modifier keys are not pressed
 				send {left} ; put caret on left of searched text
 		send ^{enter} ; to open commander; convienently, if a "not found" window pops up, this would close it
-		WinWaitActive, ahk_class TCommanderDlg,, 0
+		WinWaitActive, ahk_class TCommanderDlg,, 0.25
 		if ErrorLevel {
-			send {esc}
-			MsgBox, Not found.
+			Vim.ToolTip("Not found.")
+			send {esc}^{enter}h{enter}{esc}
 			Return
 		}
 		send h{enter}

@@ -300,7 +300,7 @@
         }
       }else if(key == "f"){ ; find forward
 		if(this.shift == 1) && !ForceNoShift {
-			str_before =
+			str_before := ""
 			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{end}
@@ -348,7 +348,7 @@
 		}
       }else if(key == "t"){
 		if(this.shift == 1) && !ForceNoShift {
-			str_before =
+			str_before := ""
 			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{end}
@@ -417,7 +417,7 @@
 		}
       }else if(key == "+f"){
 		if(this.shift == 1) && !ForceNoShift {
-			str_before =
+			str_before := ""
 			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{home}
@@ -461,7 +461,7 @@
 		}
       }else if(key == "+t"){
 		if(this.shift == 1) && !ForceNoShift {
-			str_before =
+			str_before := ""
 			if !this.ExisitingSelection()
 				str_before := this.Vim.ParseLineBreaks(clip())
 			send +{home}
@@ -531,7 +531,7 @@
 		}
       }else if(key == ")"){ ; like "f" but search for ". "
 		if(this.shift == 1) && !ForceNoShift {
-			str_before =
+			str_before := ""
 			if !this.ExisitingSelection() { ; determine caret position
 				str_before := this.Vim.ParseLineBreaks(clip())
 				send +{right}
@@ -588,7 +588,7 @@
         }
       }else if(key == "("){ ; like "+t"
 		if(this.shift == 1) && !ForceNoShift {
-			str_before =
+			str_before := ""
 			if !this.ExisitingSelection() { ; determine caret position
 				str_before := this.Vim.ParseLineBreaks(clip())
 				send +{right}
@@ -688,7 +688,8 @@
 			this.last_search := user_input ; register user_input into last_search
 		if !user_input ; still empty
 			Return
-		str_before =
+		str_before := ""
+		WinActivate, ahk_id %hwnd%
 		if !this.ExisitingSelection() { ; determine caret position
 			str_before := this.Vim.ParseLineBreaks(clip())
 			send +{right}
@@ -696,8 +697,6 @@
 			send +{left}
 		}
 		if !str_before || (StrLen(str_after) > StrLen(str_before)) {
-			if !str_before
-				WinWaitActive, ahk_id %hwnd%,, 0
 			this.SelectParagraphDown()
 			this.HandleHTMLSelection()
 			str_after := this.Vim.ParseLineBreaks(clip())
@@ -745,7 +744,8 @@
 			this.last_search := user_input ; register user_input into last_search
 		if !user_input ; still empty
 			Return
-		str_before =
+		str_before := ""
+		WinActivate, ahk_id %hwnd%
 		if !this.ExisitingSelection() { ; determine caret position
 			str_before := this.Vim.ParseLineBreaks(clip())
 			send +{right}
@@ -757,8 +757,6 @@
 			pos += pos ? StrLen(user_input) - 2 : 0
 			SendInput +{left %pos%}
 		} else if (StrLen(str_after) < StrLen(str_before)) || !str_before {
-			if !str_before
-				WinWaitActive, ahk_id %hwnd%,, 0
 			this.SelectParagraphUp()
 			str_after := this.Vim.ParseLineBreaks(clip())
 			if !str_after { ; start of line
@@ -793,12 +791,16 @@
 	  if (this.Vim.State.n > 0) {
 	    line := this.Vim.State.n - 1
 	    this.Vim.State.n := 0
-		if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() ; browsing
+		if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing
 			send ^t
+			this.Vim.SM.WaitTextFocus()
+		}
 		SendInput ^{home}{down %line%}
-	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()
-		send ^t^{home}{esc}
-	  else
+	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() {
+		send ^t
+		this.Vim.SM.WaitTextFocus()
+		send ^{home}{esc}
+	  } else
 		Send, ^{Home}
     }else if(key == "+g"){
 	  if (this.Vim.State.n > 0) {
@@ -806,14 +808,18 @@
 	    this.Vim.State.n := 0
 		if this.Vim.SM.MouseMoveTop(true)
 			send {left}{home}
-		else if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() ; browsing and no scrollbar
-			send ^t^{home}
-		else
+		else if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing and no scrollbar
+			send ^t
+			this.Vim.SM.WaitTextFocus()
+			send ^{home}
+		} else
 			send ^{home}
 		SendInput {down %line%}
-	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()
-		send ^t^{end}{esc}
-	  else {
+	  } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() {
+		send ^t
+		this.Vim.SM.WaitTextFocus()
+		send ^{end}{esc}
+	  } else {
 	    if (this.shift == 1)
 			Send, ^+{End}+{Home}
 		else
@@ -835,10 +841,14 @@
 		}
 	  }
     }else if(key == "{"){
-	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing
+	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat {
 	    paragraph := this.Vim.State.n - 1
 	    this.Vim.State.n := 0
-		send ^t^{home}
+		if !this.Vim.SM.IsEditingText() {
+			send ^t
+			this.Vim.SM.WaitTextFocus()
+		}
+		send ^{home}
 		this.ParagraphDown(paragraph)
       } else if(this.shift == 1) && !ForceNoShift {
 	    this.SelectParagraphUp()
@@ -846,13 +856,18 @@
 	    this.ParagraphUp()
 	  }
     }else if(key == "}"){
-	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing
+	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat {
 	    paragraph := this.Vim.State.n - 1
 	    this.Vim.State.n := 0
 		if this.Vim.SM.MouseMoveTop(true)
 			send {left}{home}
-		else
-			send ^t^{home}
+		else {
+			if !this.Vim.SM.IsEditingText() {
+				send ^t
+				this.Vim.SM.WaitTextFocus()
+			}
+			send ^{home}
+		}
 		this.ParagraphDown(paragraph)
       } else if(this.shift == 1) && !ForceNoShift {
 	    this.SelectParagraphDown()

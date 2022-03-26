@@ -22,13 +22,10 @@ return
 
 f:: ; clean *f*ormat: using f6 (retaining tables)
 	Vim.State.SetMode("Vim_Normal")
-	send {f6}
-	WinWaitNotActive, ahk_class TElWind,, 0
-	if !ErrorLevel
-		send ^arbs{enter}
+	send {f6}^arbs{enter}
 return
 
-; Transcribed from this quicker script:
+; "Transcribed" from this quicker script:
 ; https://getquicker.net/Sharedaction?code=859bda04-fe78-4385-1b37-08d88a0dba1c
 +f:: ; clean format directly in html source
 	Vim.State.SetMode("Vim_Normal")
@@ -40,12 +37,11 @@ return
 		if !Vim.SM.IsEditingHTML()
 			Return
 	} else {
-		Vim.SM.WaitHTMLSave()
 		send ^t
 		Vim.SM.WaitTextFocus()
 	}
 	clip_bak := Clipboardall
-	Clipboard =
+	Clipboard := ""
 	send !{f12}fc
 	ClipWait 0.2
 	sleep 20
@@ -57,13 +53,7 @@ return
 	}
 	; zzz in case you used f6 to remove format before
 	; which would disable the tag by adding a zzz (like <FONT> -> <ZZZFONT>)
-	html := RegExReplace(html, "is)( zzz| )style=""((?!BACKGROUND-IMAGE: url).)*?""")
-	html := RegExReplace(html, "is)( zzz| )style='((?!BACKGROUND-IMAGE: url).)*?'")
-	html := RegExReplace(html, "ism)(zzz|)<\/{0,1}font.*?>")
-	html := RegExReplace(html, "is)<BR", "<P")
-	html := RegExReplace(html, "i)<H5 dir=ltr align=left>")
-	html := RegExReplace(html, "s)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
-	html := RegExReplace(html, "i)\/svg\/", "/png/")
+	html := CleanHTML(html)
 	Vim.SM.MoveAboveRef(true)
 	send !\\ ; using delete before cursor, so the content can be restored from temp folder if needed
 	WinWaitNotActive, ahk_class TElWind,, 0
@@ -71,7 +61,7 @@ return
 		send {enter}
 	clip(html,, true)
 	send ^+{home}^+1
-	Vim.SM.WaitHTMLSave()
+	Vim.SM.WaitTextSave()
 	Clipboard := clip_bak
 	if !ErrorLevel
 		send !{home}!{left}
@@ -89,20 +79,23 @@ return
 
 w:: ; prepare *w*ikipedia articles in languages other than English
 	Vim.State.SetMode("Vim_Normal")
-	send ^t{esc} ; de-select all components
+	send ^t
+	Vim.SM.WaitTextFocus()
+	send {esc} ; de-select all components
+	Vim.SM.WaitTextSave()
 	clip_bak := Clipboardall
-	Clipboard =
+	Clipboard := ""
 	send !{f10}fs ; show reference
 	WinWaitActive, Information,, 0
 	send p{esc} ; copy reference
 	ClipWait 0.2
 	sleep 20
 	if !InStr(Clipboard, "wikipedia.org/wiki") {
-		MsgBox, Not wikipedia!
+		Vim.ToolTip("Not wikipedia!")
 		return
 	}
 	if InStr(Clipboard, "en.wikipedia.org") {
-		MsgBox, English wikipedia doesn't need to be prepared!
+		Vim.ToolTip("English wikipedia doesn't need to be prepared!")
 		return
 	}
 	RegExMatch(Clipboard, "(?<=Link: https:\/\/)(.*?)(?=\/wiki\/)", wiki_link)
@@ -162,17 +155,10 @@ r:: ; set *r*eference's link to what's in the clipboard
 		clip(new_link)
 	}
 	send !{enter}
-	WinWaitActive, ahk_class TElWind,, 0
-	if !ErrorLevel {
-		send ^t{esc}q
-		Vim.SM.WaitTextFocus()
-		send ^{home}{esc} ; put caret in the start of question component and unfocus every component
-	}
 return
 
 o:: ; c*o*mpress images
 	send ^{enter}
-	WinWaitActive, ahk_class TCommanderDlg,, 0
 	SendInput {raw}co
 	send {enter} ; Compress images
 	Vim.State.SetMode("Vim_Normal")
@@ -180,7 +166,7 @@ return
 
 s:: ; turn active language item to passive (*s*witch)
 	Vim.State.SetMode("Vim_Normal")
-	send ^t{esc} ; de-select every component
+	Vim.SM.DeselectAllComponents(100)
 	ControlGetText, current_text, TBitBtn3
 	if (current_text != "Learn") ; if learning (on "next repitition")
 		send {esc}
@@ -201,7 +187,6 @@ p:: ; hyperlink to scri*p*t component
 	Vim.SM.WaitTextFocus()
 	send ^v ; so the link is clickable
 	send ^t{f9}{enter} ; opens script editor
-	WinWaitActive, ahk_class TScriptEditor,, 0
 	SendInput {raw}url
 	send {space}^v ; paste the link
 	send !o{esc} ; close script editor

@@ -3,7 +3,7 @@ class VimSM{
 		this.Vim := vim
 	}	
 
-	MouseMoveTop(clicking=false) {
+	MouseMoveTop(clicking:=false) {
 		if WinActive("ahk_class TElWind") {
 			FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
 			if x_coord {
@@ -13,13 +13,13 @@ class VimSM{
 				if clicking
 					click, %x_coord% %y_coord%
 				else
-					MouseMove, %x_coord%, %y_coord%, 1
+					MouseMove, % x_coord, % y_coord, 1
 				Return true
 			}
 		}
 	}
 
-	MouseMoveMiddle(clicking=false) {
+	MouseMoveMiddle(clicking:=false) {
 		if WinActive("ahk_class TElWind") {
 			FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_up, y_up)
 			FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_down, y_down)
@@ -30,13 +30,13 @@ class VimSM{
 				if clicking
 					click, %x_coord% %y_coord%
 				else
-					MouseMove, %x_coord%, %y_coord%, 1
+					MouseMove, % x_coord, % y_coord, 1
 				Return true
 			}
 		}
 	}
 
-	MouseMoveBottom(clicking=false) {
+	MouseMoveBottom(clicking:=false) {
 		if WinActive("ahk_class TElWind") {
 		FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_coord, y_coord)
 			if x_coord {
@@ -46,7 +46,7 @@ class VimSM{
 				if clicking
 					click, %x_coord% %y_coord%
 				else
-					MouseMove, %x_coord%, %y_coord%, 1
+					MouseMove, % x_coord, % y_coord, 1
 				Return true
 			}
 		}
@@ -83,6 +83,11 @@ class VimSM{
 		Return WinActive("ahk_class TTaskManager") && (current_focus == "TStringGrid1")
 	}
 	
+	IsNavigatingContentWindow() {
+		ControlGetFocus, current_focus, ahk_class TContents
+		Return WinActive("ahk_class TContents") && (current_focus == "TVirtualStringTree1")
+	}
+	
 	SetPriority(min, max) {
 		send !p
 		Random, OutputVar, %min%, %max%
@@ -102,35 +107,37 @@ class VimSM{
 	MoveAboveRef(NoRestore:=false) {
 		Send, ^{End}^+{up} ; if there are references this would select (or deselect in visual mode) them all
 		if InStr(clip("",, NoRestore), "#SuperMemo Reference:")
-			send {up} ; go to left of <hr>
+			send {up 2}
 		else
 			send ^{end}
 	}
 	
-	WaitHTMLSave() {
-		send {esc} ; try to save html
+	WaitTextSave(timeout:=2000) {
+		send {esc} ; exit the field
+		LoopTimeout := timeout / 20
 		loop {
 			sleep 20
-			if !this.IsEditingHTML() {
+			if !this.IsEditingText() {
 				Break
 				ErrorLevel := 0
 			}
-			if (A_Index > 500) { ; takes over 10s to save the file
-				this.Vim.ToolTipFunc("Timed out.")
+			if (A_Index > LoopTimeout) {
+				this.Vim.ToolTip("Timed out.")
 				Break
 				ErrorLevel := 1
 			}
 		}
 	}
 	
-	WaitTextFocus() {
+	WaitTextFocus(timeout:=2000) {
+		LoopTimeout := timeout / 20
 		loop {
 			sleep 20
 			if this.IsEditingText() {
 				Break
 				ErrorLevel := 0
 			}
-			if (A_Index > 250) { ; over 5s
+			if (A_Index > LoopTimeout) {
 				Break
 				ErrorLevel := 1
 			}
@@ -139,15 +146,19 @@ class VimSM{
 	
 	; Wait until cloze/extract is finished
 	WaitProcessing(timeout:=5000) {
-		loop_timeout := timeout / 20
+		LoopTimeout := timeout / 20
 		loop {
 			sleep 20
 			if !A_CaretX
 				break
-			if (A_Index > loop_timeout) {
+			if (A_Index > LoopTimeout) {
 				Break
 				ErrorLevel := 1
 			}
+		}
+		if WinActive("ahk_class TMsgDialog") { ; warning on trying to cloze on items
+			ErrorLevel := 1
+			Return
 		}
 		loop {
 			sleep 20
@@ -155,21 +166,26 @@ class VimSM{
 				break
 				ErrorLevel := 0
 			}
-			if (A_Index > loop_timeout) {
+			if (A_Index > LoopTimeout) {
 				Break
 				ErrorLevel := 1
 			}
 		}
 	}
 	
-	ExitText() {
-		loop {
-			if this.IsEditingText() {
-				send {esc}
+	DeselectAllComponents(timeout:=1000) {
+		LoopTimeout := timeout / 20
+		ControlGetFocus, current_focus, ahk_class TElWind
+		if !InStr(current_focus, "TBitBtn") {
+			send ^t{esc}
+			loop {
 				sleep 20
+				ControlGetFocus, current_focus, ahk_class TElWind
+				if InStr(current_focus, "TBitBtn")
+					Break
+				if (A_Index > LoopTimeout)
+					Break
 			}
-			if !this.IsEditingText() || (A_Index > 250)
-				Break
 		}
 	}
 }
