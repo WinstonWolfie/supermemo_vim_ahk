@@ -98,8 +98,7 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::send !{home}!{left} ; reload
-n::send !n ; create new topic
-a::send !a ; create new item
+t::send !n ; create new topic
 x::send {del} ; delete element/component
 +x::send ^+{enter} ; done!
 p::send ^{f10} ; replay auto-play
