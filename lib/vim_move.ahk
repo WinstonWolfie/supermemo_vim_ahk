@@ -128,77 +128,68 @@
     Send, {Home}
   }
 
-  Up(n=1){
-    Loop, %n% {
-	  if this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML() {
+  Up(n:=1) {
+	if this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML()
 		if (shift == 1)
-			this.SelectParagraphUp()
+			this.SelectParagraphUp(n)
 		else
-			this.ParagraphUp()
-      } else if WinActive("ahk_group VimCtrlUpDownGroup"){
-        Send ^{Up}
-      } else {
-        Send,{Up}
-      }
-    }
+			this.ParagraphUp(n)
+	else if WinActive("ahk_group VimCtrlUpDownGroup")
+		Send ^{Up %n%}
+	else
+		Send {Up %n%}
   }
 
-  Down(n=1){
-    Loop, %n% {
-	  if this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML() {
+  Down(n:=1) {
+	if this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML()
 		if (shift == 1)
-			this.SelectParagraphDown()
+			this.SelectParagraphDown(n)
 		else
-			this.ParagraphDown()
-      } else if WinActive("ahk_group VimCtrlUpDownGroup"){
-        Send ^{Down}
-      } else {
-        Send,{Down}
-      }
-    }
+			this.ParagraphDown(n)
+	else if WinActive("ahk_group VimCtrlUpDownGroup")
+		Send ^{Down %n%}
+	else
+		Send {Down %n%}
   }
-  
+
   ParagraphUp(n:=1) {
-    Loop, %n% {
-		if this.Vim.IsHTML()
-			if this.Vim.SM.IsEditingHTML()
-				send ^+{up}{left}
-			else
-				send ^{up}
-		else {
-			this.up()
-			send {end}
-			this.home()
-		}
+	if this.Vim.IsHTML()
+		if this.Vim.SM.IsEditingHTML()
+			send ^+{up %n%}{left}
+		else
+			send ^{up %n%}
+	else {
+		this.up(n)
+		send {end}
+		this.home()
 	}
   }
   
   ParagraphDown(n:=1) {
-    Loop, %n% {
-		if this.Vim.IsHTML()
-			send ^{down}
-		else {
-			send {end}{right}
-			this.home()
-		}
+	if this.Vim.IsHTML()
+		send ^{down %n%}
+	else {
+		this.down(n)
+		send {end}
+		this.home()
 	}
   }
   
   SelectParagraphUp(n:=1) {
-    Loop, %n% {
-		if this.Vim.IsHTML()
-			send ^+{up}
-		else
-			send +{left}+{home}
+	if this.Vim.IsHTML()
+		send ^+{up %n%}
+	else {
+		n -= 1
+		send +{up %n%}+{home}
 	}
   }
   
   SelectParagraphDown(n:=1) {
-    Loop, %n% {
-		if this.Vim.IsHTML()
-			send ^+{down}
-		else
-			send +{right}+{end}
+	if this.Vim.IsHTML()
+		send ^+{down %n%}
+	else {
+		n -= 1
+		send +{down %n%}+{end}
 	}
   }
   
@@ -845,7 +836,7 @@
 		}
 	  }
     }else if(key == "{"){
-	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat {
+	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat { ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
 		paragraph := this.Vim.State.n - 1
 		this.Vim.State.n := 0
 		if !this.Vim.SM.IsEditingText() {
@@ -860,12 +851,13 @@
 	    this.ParagraphUp()
 	  }
     }else if(key == "}"){
-	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat {
+	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat { ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
 		paragraph := this.Vim.State.n - 1
 		this.Vim.State.n := 0
-		if this.Vim.SM.MouseMoveTop(true)
+		if this.Vim.SM.MouseMoveTop(true) {
 			this.Vim.SM.WaitTextFocus()
-		else {
+			this.ParagraphUp()
+		} else {
 			if !this.Vim.SM.IsEditingText() {
 				send ^t
 				this.Vim.SM.WaitTextFocus()

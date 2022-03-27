@@ -19,20 +19,6 @@ u::Send,^z
   SendInput {raw}%Selection%
 Return
 
-^e::
-  if Vim.SM.IsEditingHTML()
-    Vim.SM.MouseMoveTop()
-  Vim.ReleaseKey("ctrl")
-  send {WheelDown}{CtrlDown}
-return
-
-^y::
-  if Vim.SM.IsEditingHTML()
-    Vim.SM.MouseMoveTop()
-  Vim.ReleaseKey("ctrl")
-  send {WheelUp}{CtrlDown}
-return
-
 +z::Vim.State.SetMode("Z")
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Z"))
 +z::
@@ -51,6 +37,21 @@ Return
 
 ; period
 ; .::Send, +^{Right}{BS}^v
+
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
+^e::
+  if Vim.SM.IsEditingHTML()
+    Vim.SM.MouseMoveTop()
+  Vim.ReleaseKey("ctrl")
+  send {WheelDown}{CtrlDown}
+return
+
+^y::
+  if Vim.SM.IsEditingHTML()
+    Vim.SM.MouseMoveTop()
+  Vim.ReleaseKey("ctrl")
+  send {WheelUp}{CtrlDown}
+return
 
 ; Q-dir
 #If Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")

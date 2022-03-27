@@ -37,7 +37,7 @@ Return
 	WinGet, hwnd, ID, A
 	Gui, VimCommander:Add, Text,, &Command:
 	; list names are the same as subroutine name, just replacing the space with _, and no final parentheses
-	list = SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish
+	list = SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE
 	if Vim.State.IsCurrentVimMode("Vim_Normal") {
 		list .= 
 		mode_commander = n
@@ -193,3 +193,8 @@ youglish:
 	else if (lang_code = "asl")
 		run https://youglish.com/pronounce/%text%/signlanguage?
 Return
+
+kill_ie:
+	while WinExist("ahk_exe iexplore.exe")
+		Process, Close, iexplore.exe
+return
