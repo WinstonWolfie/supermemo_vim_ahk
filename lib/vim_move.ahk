@@ -544,8 +544,9 @@
 				pos := InStr(detection_str, ". ", true,, this.search_occurrence) ; find in what's selected after
 				left := StrLen(detection_str) - pos - 1 ; - 1 because ". "
 				if !pos && (InStr(detection_str, ".", true,, this.search_occurrence) == Strlen(detection_str)) ; try to search if there's a last dot
-					left := 0 ; if there is a last dot, don't move back
-				SendInput +{left %left%}
+					send +{right} ; if there is a last dot, move to start of next paragraph
+				else
+					SendInput +{left %left%}
 			} else if StrLen(str_after) < StrLen(str_before) { ; search in selected text
 				pos := InStr(str_before, ". ", true,, this.search_occurrence)
 				right := pos
@@ -574,8 +575,11 @@
 				}
 			}
 			pos := InStr(detection_str, ". ", true,, this.search_occurrence)
-			right := pos ? pos + 1 : 0
-			SendInput {left}{right %right%}
+			if pos {
+				right := pos + 1
+				SendInput {left}{right %right%}
+			} else
+				send {right}
         }
       }else if(key == "("){ ; like "+t"
 		if(this.shift == 1) && !ForceNoShift {

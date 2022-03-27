@@ -20,28 +20,34 @@ Return
 
 ; Editing HTML
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML()
++n::
 n::  ; open hyperlink in current caret position (Open in *n*ew window)
+	Shift := GetKeyState("shift")
+	Vim.ReleaseKey("shift")
 	BlockInput, Send
-    tempClip := Clipboardall
-    clipboard := ""
-    SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
+	tempClip := Clipboardall
+	clipboard := ""
+	SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
 	ClipWait 0.1
 	sleep 10 ; short sleep to make sure clipboard updates
-    If (clipboard ~= "\s"){
-      SendInput {Left}{Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
-	  ClipWait 0.1
-	  sleep 10
-    }
-    BlockInput, off
+	If (clipboard ~= "\s") {
+		SendInput {Left}{Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
+		ClipWait 0.1
+		sleep 10
+	}
+	BlockInput, off
 	If ClipboardGet_HTML( Data ){
-		RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", current_link)
-		if !current_link
+		RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrentLink)
+		if !CurrentLink
 			Vim.ToolTip("No link found.")
-		else if InStr(current_link, "SuperMemoElementNo=(") { ; goes to a supermemo element
+		else if InStr(CurrentLink, "SuperMemoElementNo=(") { ; goes to a supermemo element
 			click, %A_CaretX% %A_CaretY%, right
 			send n
 		} else
-			run % current_link
+			if Shift
+				Run, iexplore.exe %CurrentLink%
+			else
+				run % CurrentLink
 	}
     clipboard := tempClip
 return

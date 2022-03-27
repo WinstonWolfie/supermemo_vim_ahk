@@ -90,6 +90,7 @@ class VimAhk{
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe ; q-dir
 	
 	GroupAdd, HTML, ahk_exe iexplore.exe ; Internet Explorer
+    GroupAdd, HTML, ahk_exe WINWORD.exe  ; Word
 	
 	; SuperMemo
 	GroupAdd, SuperMemo, ahk_exe sm18.exe
@@ -98,7 +99,7 @@ class VimAhk{
 	GroupAdd, SuperMemo, ahk_exe sm15.exe
 	
 	; Browsers
-	GroupAdd, Browsers, ahk_exe chrome.exe ; not using ahk_class because it's the same with the discord app
+	GroupAdd, Browsers, ahk_exe chrome.exe
 	GroupAdd, Browsers, ahk_exe firefox.exe
 	GroupAdd, Browsers, ahk_exe msedge.exe ; Microsoft Edge
 	

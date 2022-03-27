@@ -52,9 +52,8 @@ b::Vim.Move.Repeat("b")
 ; Sentence
 (::
 )::
-	Vim.ReleaseKey("shift")
+	KeyWait Shift ; cannot use Vim.KeyRelease("shift"), shift will still get stuck
 	Vim.Move.Move(A_ThisHotkey)
-	send {shift down}
 Return
 
 ; Search

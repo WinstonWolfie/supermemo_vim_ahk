@@ -102,7 +102,10 @@ Return
   Vim.State.SetMode("Vim_Normal")
 Return
 
+^p::
 p::
+	if GetKeyState("ctrl")
+		Clipboard := Clipboard
 	send ^v
 	Vim.State.SetMode("Vim_Normal")
 Return

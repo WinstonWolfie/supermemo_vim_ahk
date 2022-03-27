@@ -78,7 +78,7 @@ Return
 Return
 
 ; Need scrolling bar present
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.SM.IsEditingText() && Vim.SM.MouseMoveRight()
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.SM.IsEditingText() && (Vim.SM.MouseMoveTop() || Vim.SM.MouseMoveRight())
 ; Scrolling
 h::send {WheelLeft}
 l::send {WheelRight}
@@ -98,7 +98,8 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::send !{home}!{left} ; reload
-t::send !n ; create new element
+n::send !n ; create new topic
+a::send !a ; create new item
 x::send {del} ; delete element/component
 +x::send ^+{enter} ; done!
 p::send ^{f10} ; replay auto-play
@@ -137,19 +138,7 @@ f:: ; click on html component
 	}
 Return
 
-; Orginal SM shortcuts
-~q:: ; focus to question field; smvim extract
-~a:: ; focus to answer field; vim append
-~e:: ; focus all fields; vim go forward
-~^d:: ; dismiss; vim scroll down
-~^j:: ; change interval; vim join lines
-~^f:: ; find; vim page down
-~^v:: ; paste image; vim visual block
-~^r:: ; replace; vim redo
-~^+p:: ; element parameter; vim_ahk paste without format
-Return
-
-; Copy mode
+; Copy
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_ydc_y")) && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()

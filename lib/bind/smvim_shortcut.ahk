@@ -34,8 +34,9 @@
 return
 
 ^!c:: ; change default *c*oncept group
+	KeyWait alt
 	FindClick(A_ScriptDir . "\lib\bind\util\concept_lightbulb.png")
-	Vim.State.SetNormal()
+	Vim.State.SetMode("Vim_Normal")
 Return
 
 ~^+f12::  ; bomb format with no confirmation
@@ -48,7 +49,7 @@ return
 	send ^+{del}
 	WinWaitNotActive, ahk_class TElWind,, 0 ; wait for "Delete element?"
 	send {enter}
-	WinWaitNotActive, ahk_class TMsgDialog,, 0 ; wait for element window to become focused again
+	WinWaitActive, ahk_class TElWind,, 0 ; wait for element window to become focused again
 	send {enter}
 	Vim.State.SetNormal()
 return
@@ -60,7 +61,7 @@ return
 	send {enter}
 	WinWaitNotActive, ahk_class TElWind,, 0 ; wait for "Delete element?"
 	send {enter}
-	WinWaitNotActive, ahk_class TMsgDialog,, 0 ; wait for element window to become focused again
+	WinWaitActive, ahk_class TElWind,, 0 ; wait for element window to become focused again
 	send {enter}
 	Vim.State.SetNormal()
 return
@@ -74,9 +75,7 @@ return
 ; 1. go to the element you want to link to and press ctrl+alt+g
 ; 2. go to the element you want to have the hyperlink, select text and press ctrl+alt+k
 ^!g::
-	send ^g
-	WinWaitActive, ahk_class TInputDlg,, 0
-	send ^c{esc}
+	send ^g^c{esc}
 	Vim.State.SetNormal()
 return
 
@@ -89,8 +88,8 @@ return
 	WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2 ; a bit more delay since everybody knows how slow IE can be
 	clip("SuperMemoElementNo=(" . element_number . ")")
 	send {enter}
-	Vim.State.SetNormal()
 	Vim.Caret.SwitchToSameWindow() ; refresh caret
+	Vim.State.SetNormal()
 return
 
 ^!l::

@@ -55,6 +55,7 @@ x::Send, {Delete}
 
 ; Paste
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+^p::
 p::
   ;i:=0
   ;;Send, {p Up}
@@ -82,6 +83,8 @@ p::
   ;  i+=1
   ;  break
   ;}
+  if GetKeyState("ctrl")
+    Clipboard := Clipboard
   if(Vim.State.LineCopy == 1){
     if WinActive("ahk_group VimNoLBCopyGroup"){
       Send, {End}{Enter}^v{Home}
@@ -101,7 +104,7 @@ Return
 ^+p::
 +p::
   if GetKeyState("ctrl")
-	Clipboard := Clipboard
+    Clipboard := Clipboard
   if(Vim.State.LineCopy == 1){
     Send, {Up}{End}{Enter}^v{BS}{Home}
   }else{
