@@ -316,13 +316,25 @@ class VimAhk{
     Return True
   }
 
-  CheckChr(Chr){
+  ; Ref: https://www.reddit.com/r/AutoHotkey/comments/4ma5b8/identifying_end_of_line_when_typing_with_ahk_and/
+  CheckChr(key){
     if(this.Conf["VimCheckChr"]["val"] == 0){
       Return False
     }
-    send +{right}
-	Selection := clip()
-	Return (Chr == Selection)
+    BlockInput, Send
+    tempClip := clipboard
+    clipboard := ""
+    SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
+	ClipWait 0.1
+    Sleep 10
+    ret := False
+    If (clipboard ~= key){
+      ret := True
+    }
+    ; sleep 10
+    clipboard := tempClip
+    BlockInput, off
+    Return ret
   }
   
   ; https://www.autohotkey.com/boards/viewtopic.php?t=5484

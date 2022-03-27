@@ -789,8 +789,8 @@
 	  Send, {PgDn}
     }else if(key == "g"){
 	  if (this.Vim.State.n > 0) {
-	    line := this.Vim.State.n - 1
-	    this.Vim.State.n := 0
+		line := this.Vim.State.n - 1
+		this.Vim.State.n := 0
 		if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing
 			send ^t
 			this.Vim.SM.WaitTextFocus()
@@ -804,11 +804,12 @@
 		Send, ^{Home}
     }else if(key == "+g"){
 	  if (this.Vim.State.n > 0) {
-	    line := this.Vim.State.n - 1
-	    this.Vim.State.n := 0
-		if this.Vim.SM.MouseMoveTop(true)
+		line := this.Vim.State.n - 1
+		this.Vim.State.n := 0
+		if this.Vim.SM.MouseMoveTop(true) {
+			this.Vim.SM.WaitTextFocus()
 			send {left}{home}
-		else if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing and no scrollbar
+		} else if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() { ; browsing and no scrollbar
 			send ^t
 			this.Vim.SM.WaitTextFocus()
 			send ^{home}
@@ -845,8 +846,8 @@
 	  }
     }else if(key == "{"){
 	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat {
-	    paragraph := this.Vim.State.n - 1
-	    this.Vim.State.n := 0
+		paragraph := this.Vim.State.n - 1
+		this.Vim.State.n := 0
 		if !this.Vim.SM.IsEditingText() {
 			send ^t
 			this.Vim.SM.WaitTextFocus()
@@ -860,10 +861,10 @@
 	  }
     }else if(key == "}"){
 	  if (this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat {
-	    paragraph := this.Vim.State.n - 1
-	    this.Vim.State.n := 0
+		paragraph := this.Vim.State.n - 1
+		this.Vim.State.n := 0
 		if this.Vim.SM.MouseMoveTop(true)
-			send {left}{home}
+			this.Vim.SM.WaitTextFocus()
 		else {
 			if !this.Vim.SM.IsEditingText() {
 				send ^t

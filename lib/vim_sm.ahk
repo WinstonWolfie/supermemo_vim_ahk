@@ -143,11 +143,11 @@ class VimSM{
 	WaitTextFocus(timeout:=2000) {
 		LoopTimeout := timeout / 20
 		loop {
-			sleep 20
 			if this.IsEditingText() {
 				Break
 				ErrorLevel := 0
 			}
+			sleep 20
 			if (A_Index > LoopTimeout) {
 				Break
 				ErrorLevel := 1

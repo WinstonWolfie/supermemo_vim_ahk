@@ -127,9 +127,10 @@ b::send {esc} ; close browser
 o::send ^o ; favourites
 
 f:: ; click on html component
-	if Vim.SM.MouseMoveTop(true)
+	if Vim.SM.MouseMoveTop(true) {
+		Vim.SM.WaitTextFocus()
 		send {left}{home}
-	else {
+	} else {
 		send ^t
 		Vim.SM.WaitTextFocus()
 		send ^{home}
