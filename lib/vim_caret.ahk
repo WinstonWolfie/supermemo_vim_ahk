@@ -1,5 +1,5 @@
 class VimCaret{
-  __New(vim){
+  __New(vim) {
     global VimScriptPath
     this.Vim := vim
     this.caretwidths := {"Normal": 10
@@ -8,16 +8,16 @@ class VimCaret{
                  , "Default": 1}
   }
 
-  SetCaret(Mode=""){
-    if (this.Vim.Conf["VimChangeCaretWidth"]["val"] == 0){
+  SetCaret(Mode="") {
+    if (this.Vim.Conf["VimChangeCaretWidth"]["val"] == 0) {
       return
     }
     width :=
-    if this.Vim.State.IsCurrentVimMode("Vim_Normal"){
+    if this.Vim.State.IsCurrentVimMode("Vim_Normal") {
       width := this.caretwidths["Normal"]
-    }else if this.Vim.State.StrIsInCurrentVimMode("Visual"){
+    }else if this.Vim.State.StrIsInCurrentVimMode("Visual") {
       width := this.caretwidths["Visual"]
-    }else if this.Vim.State.StrIsInCurrentVimMode("Insert"){
+    }else if this.Vim.State.StrIsInCurrentVimMode("Insert") {
       width := this.caretwidths["Insert"]
     }else{
       width := this.caretwidths["Default"]
@@ -26,7 +26,7 @@ class VimCaret{
   }
 
   ; Expects argument "width" in hex
-  SetCaretWidth(width){
+  SetCaretWidth(width) {
       CARETWIDTH := width
       ; SPI = SystemParametersInfo
       SPI_SETCARETWIDTH := 0x2007
@@ -37,7 +37,7 @@ class VimCaret{
       this.SwitchToSameWindow()
   }
 
-  SwitchToSameWindow(){
+  SwitchToSameWindow() {
       ; Get ID of active window
       WinGet, hwnd, ID, A
       ; Activate desktop

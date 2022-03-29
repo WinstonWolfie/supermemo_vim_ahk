@@ -1,5 +1,5 @@
 class VimHTML{
-	__New(vim){
+	__New(vim) {
 		this.Vim := vim
 	}
 	

@@ -1,13 +1,13 @@
 class VimGui{
-  __New(vim, title){
+  __New(vim, title) {
     this.Vim := vim
     this.Hwnd := 0
     this.HwndAll := []
     this.Title := title
   }
 
-  ShowGui(){
-    if(this.hwnd == 0){
+  ShowGui() {
+    if (this.hwnd == 0) {
       Gui, New, +HwndGuiHwnd
       this.Hwnd := GuiHwnd
       this.HwndAll.Push(GuiHwnd)
@@ -21,42 +21,42 @@ class VimGui{
     Return
   }
 
-  MakeGui(){
+  MakeGui() {
     Gui, % this.Hwnd ":Add", Button, +HwndOK X200 W100 Default, &OK
     this.HwndAll.Push(OK)
     ok := ObjBindMethod(this, "OK")
     GuiControl, +G, % OK, % ok
   }
 
-  UpdateGui(){
+  UpdateGui() {
   }
 
-  Hide(){
+  Hide() {
     this.Vim.VimToolTip.RemoveToolTip()
     Gui, % this.Hwnd ":Hide"
   }
 
-  OK(){
+  OK() {
     this.Hide()
   }
 
-  IsThisWindow(hwnd){
+  IsThisWindow(hwnd) {
     for i, h in this.HwndAll {
-      if(hwnd == h){
+      if (hwnd == h) {
         Return True
       }
     }
     Return False
   }
 
-  OnClose(wp, lp, msg, hwnd){
-    if(wp == 0xF060 && hwnd == this.Hwnd){
+  OnClose(wp, lp, msg, hwnd) {
+    if (wp == 0xF060 && hwnd == this.Hwnd) {
       this.Hide()
     }
   }
 
-  OnEscape(wp, lp, msg, hwnd){
-    if(wp == 27 && this.IsThisWindow(hwnd)){
+  OnEscape(wp, lp, msg, hwnd) {
+    if (wp == 27 && this.IsThisWindow(hwnd)) {
       this.Hide()
     }
   }

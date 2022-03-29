@@ -19,7 +19,7 @@
 ;
 ; First sample line is actually blank. Tests no input/metatest.
 
-iAt start of first lin.{esc}ie{esc}IWord ; i,I
+iAt start of first lin.{esc}ie{esc}IWord  ; i,I
 ahe {esc}{esc}A Also this.; a, A, double esc
 w$^iBOLne; ^, no whitespace
 I    {esc}$^ialmostBOLne; ^, whitespace

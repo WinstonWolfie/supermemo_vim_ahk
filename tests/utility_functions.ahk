@@ -8,7 +8,7 @@ IsLastkey(key)
     return (A_Priorkey == key and A_TimeSincePriorkey < 800)
 }
 
-SaveClipboard(){
+SaveClipboard() {
     ; push clipboard to variable
     global ClipSaved := ClipboardAll
     ; Sleep to give time for saving
@@ -17,26 +17,26 @@ SaveClipboard(){
     Clipboard :=
 }
 
-Copy(){
+Copy() {
     SaveClipboard()
     send ^c
     ClipWait, 0.1
 }
 
-Cut(){
+Cut() {
     SaveClipboard()
     send ^x
     ClipWait, 0.1
 }
 
-Paste(){
+Paste() {
     Send %Clipboard%
     RestoreClipboard()
 }
 
-RestoreClipboard(){
+RestoreClipboard() {
     global ClipSaved
-    if (ClipSaved = ""){
+    if (ClipSaved = "") {
         return
     }
     ; empty clip so clipwait works
@@ -44,10 +44,10 @@ RestoreClipboard(){
     ;restore original clipboard
     Clipboard := ClipSaved
     ClipWait
-    ClipSaved := ; free memory
+    ClipSaved :=  ; free memory
 }
 
-GetSelectedText(){
+GetSelectedText() {
     Copy()
     Output := Clipboard
     RestoreClipboard()
@@ -57,18 +57,18 @@ GetSelectedText(){
 ; Alternate to WinWaitActive, designed to work with CI better.
 ; It doesn't.
 ;  regex f&r: s/WinWaitActive,([\w -]+)/WaitForWindowToActivate("$1")/g
-WaitForWindowToActivate(WindowTitle){
+WaitForWindowToActivate(WindowTitle) {
     WinWaitActive %WindowTitle%
     return
-    ; while not WinActive(WindowTitle){
+    ; while not WinActive(WindowTitle) {
     ;    sleep, 20
     ; }
     ; sleep, 100
     ; return True
 }
 
-HackWinActivate(WindowTitle){
-    while not WinActive(WindowTitle){
+HackWinActivate(WindowTitle) {
+    while not WinActive(WindowTitle) {
        send {alt down}{shift down}{tab}{shift up}{alt up}
     }
     sleep, 100

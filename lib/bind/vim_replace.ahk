@@ -101,7 +101,7 @@ r::Vim.State.SetMode("r_once")
   Vim.State.SetMode("Vim_Normal")
 Return
 
-::: ; ":" can't be used with "~"?
+:::  ; ":" can't be used with "~"?
   Send, {:}{Del}
   Vim.State.SetMode("Vim_Normal")
 Return

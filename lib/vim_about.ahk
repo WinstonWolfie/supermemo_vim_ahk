@@ -1,5 +1,5 @@
 ﻿class VimAbout Extends VimGui{
-  __New(vim){
+  __New(vim) {
     this.Vim := vim
 
     this.Version := ""
@@ -11,7 +11,7 @@
     base.__New(vim, "Vim Ahk")
   }
 
-  MakeGui(){
+  MakeGui() {
     global VimHomepage, VimAboutOK, VimScriptPath
     Gui, % this.Hwnd ":-MinimizeBox"
     Gui, % this.Hwnd ":-Resize"
@@ -32,7 +32,7 @@
     GuiControl, +G, VimAboutOK, % ok
   }
 
-  OpenHomepage(){
+  OpenHomepage() {
     this.Vim.VimToolTip.RemoveToolTip()
     Run % this.Homepage
   }

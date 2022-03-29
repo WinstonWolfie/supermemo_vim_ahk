@@ -7,8 +7,8 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #SingleInstance Force
-sendlevel, 5 ; So vim commands get triggered by this script
-SetTitleMatchMode 2 ; window title functions will match by containing the match text.
+sendlevel, 5  ; So vim commands get triggered by this script
+SetTitleMatchMode 2  ; window title functions will match by containing the match text.
 ; Only affects sendevent, used for sending the test one key at a time.
 ; Gives the vim script time to interpret it, also useful to increase when
 ; debugging failures.
@@ -23,12 +23,12 @@ DetectHiddenWindows, on
 ; 1 optional commandline argument, -quiet, stops ouput at the end of the tests.
 ; Used for CI testing.
 arg1 = %1%
-if (arg1 == "-quiet"){
+if (arg1 == "-quiet") {
     QuietMode := True
 }else{
     QuietMode := False
 }
-isQuiet(){
+isQuiet() {
     Global QuietMode
     return QuietMode
 }
@@ -48,7 +48,7 @@ BackupIni()
 run, %A_ScriptDir%/../vim.ahk --testing,,, AHKVimPID
 
 ; Set all our scripts and two testing programs to Above normal priority, for test reliability.
-Process, Priority, ,A ; This script
+Process, Priority, ,A  ; This script
 Process, Priority, NotepadPID,A
 Process, Priority, VimPID,A
 Process, Priority, AHKVimPID,A
@@ -71,15 +71,15 @@ And treats a wrapped line as separate lines (line 9)
 )
 
 ; Additional test cases should be added to testcases.txt
-ArrayOfTests := [""] ; Base case, ensures the sample is entered the same between the two.
+ArrayOfTests := [""]  ; Base case, ensures the sample is entered the same between the two.
 ReadFileWithComments(ArrayOfTests)
 
-ReadFileWithComments(OutputArray){
+ReadFileWithComments(OutputArray) {
     Loop, read, testcases.txt
     {
         Line := A_LoopReadLine
         output := StrSplit(Line, ";")
-        if(Output.Length() > 0 AND strlen(Output[1]) > 0)
+        if (Output.Length() > 0 AND strlen(Output[1]) > 0)
         {
             testString := output[1]
             ; escape special chars
@@ -89,10 +89,10 @@ ReadFileWithComments(OutputArray){
     }
 }
 
-RunTests() ; Lets get this show on the road
+RunTests()  ; Lets get this show on the road
 
 
-RunTests(){
+RunTests() {
     Global ArrayOfTests
     for index, test in ArrayOfTests
     {
@@ -102,7 +102,7 @@ RunTests(){
     EndTesting()
 }
 
-StartVim(){
+StartVim() {
     global VimPID, VimWinID
     SetWorkingDir %A_ScriptDir%\testLogs  ; Temp vim files are put out of the way.
     ; Using this sets VimPID to the cmd.exe PID, which isn't correct.
@@ -116,12 +116,12 @@ StartVim(){
     SetWorkingDir %A_ScriptDir%
     WinGet, VimWinID, ID, A
 
-    send :imap jj <esc>{return} ; Prepare vim
+    send :imap jj <esc>{return}  ; Prepare vim
     ; So newlines are handled correctly between both notepad and vim
     send :imap ^q`r^q`n ^q{return 2}
 }
 
-StartNotepad(){
+StartNotepad() {
     global NotepadPID, NotepadWinID
     Run, Notepad,,,NotepadPID
     sleep, 200
@@ -131,19 +131,19 @@ StartNotepad(){
     WinGet, NotepadWinID, ID, A
 }
 
-SwitchToVim(){
+SwitchToVim() {
     global VimPID, VimWinID
     WinActivate, ahk_class Vim ahk_id %VimWinID%
     WaitForWindowToActivate("ahk_class Vim")
 }
 
-SwitchToNotepad(){
+SwitchToNotepad() {
     global NotepadPID, NotepadWinID
     WinActivate, ahk_class Notepad ahk_id %NotepadWinID%
     WaitForWindowToActivate("ahk_class Notepad")
 }
 
-SendTestToNotepadAndReturnResult(test){
+SendTestToNotepadAndReturnResult(test) {
     Global SampleText
     SwitchToNotepad()
     ; Make sure at start of body of notepad, and it's empty.
@@ -158,7 +158,7 @@ SendTestToNotepadAndReturnResult(test){
     Clipboard :=""
     Clipboard := SampleText
     Clipwait
-    send ^v ; Paste
+    send ^v  ; Paste
     RestoreClipboard()
     sleep,50
     ; Make sure we are in normal mode to start with, at start of text.
@@ -177,7 +177,7 @@ SendTestToNotepadAndReturnResult(test){
     return output
 }
 
-SendTestToVimAndReturnResult(test){
+SendTestToVimAndReturnResult(test) {
     Global SampleText
     SwitchToVim()
     ; Ensure insert mode for the sample text.
@@ -188,7 +188,7 @@ SendTestToVimAndReturnResult(test){
     Clipboard :=""
     Clipboard := SampleText
     Clipwait
-    send "*p ; Paste
+    send "*p  ; Paste
     RestoreClipboard()
     sleep, 50
     ; Make sure we are in normal mode to start with, at start of text.
@@ -196,8 +196,8 @@ SendTestToVimAndReturnResult(test){
     send %test%
     sleep, 50
     SaveClipboard()
-    clipboard= ; Empty the clipboard for clipwait to work
-    send {esc}:`%d{+} ; select all text, cut to system clipboard
+    clipboard=  ; Empty the clipboard for clipwait to work
+    send {esc}:`%d{+}  ; select all text, cut to system clipboard
     send {return}
     ClipWait
     output := Clipboard
@@ -205,7 +205,7 @@ SendTestToVimAndReturnResult(test){
     return output
 }
 
-TestAndCompareOutput(test){
+TestAndCompareOutput(test) {
     NotepadOutput := SendTestToNotepadAndReturnResult(test)
     VimOutput := SendTestToVimAndReturnResult(test)
     CompareStrings(NotepadOutput, VimOutput, test)
@@ -213,7 +213,7 @@ TestAndCompareOutput(test){
 
 ; Replaces AHK special characters with their sanitised versions, so they can be
 ; sent literally.
-SanitiseTextForAhk(input){
+SanitiseTextForAhk(input) {
     input := StrReplace(input, "^", "{^}")
     input := StrReplace(input, "!", "{!}")
     input := StrReplace(input, "+", "{+}")
@@ -222,7 +222,7 @@ SanitiseTextForAhk(input){
 }
 
 ; Use a diff, then log the result in temp files
-CompareStrings(NotepadOutput, VIMOutput, CurrentTest){
+CompareStrings(NotepadOutput, VIMOutput, CurrentTest) {
     Global LogFileName
     Global TestsFailed
     ; Store files in separate dir.
@@ -244,7 +244,7 @@ CompareStrings(NotepadOutput, VIMOutput, CurrentTest){
         LogFile := FileOpen(LogFileName, "a")
         LogEntry := "Test = """
         LogEntry = Test = "%CurrentTest%"`n%DiffResult%`n`n
-        LogFile.Write(LogEntry) ; "Test = ""%CurrentTest%""`n%DiffResult%`n`n")
+        LogFile.Write(LogEntry)  ; "Test = ""%CurrentTest%""`n%DiffResult%`n`n")
         LogFile.Close()
     }
     FileDelete, NotepadOutput
@@ -253,7 +253,7 @@ CompareStrings(NotepadOutput, VIMOutput, CurrentTest){
 }
 
 ; Tidy up, close programs.
-EndTesting(){
+EndTesting() {
     Global TestsFailed
     Global LogFileName
     SwitchToNotepad()
@@ -261,7 +261,7 @@ EndTesting(){
     send n
     SwitchToVim()
     send :q{!}
-    send {return} ; Exit vim.
+    send {return}  ; Exit vim.
 
     if (TestsFailed == True)
     {
@@ -281,28 +281,28 @@ EndTesting(){
     }
 }
 
-BackupIni(){
+BackupIni() {
     global IniOriginal, IniBackup
     FileMove, %IniOriginal%, %IniBackup%
 }
 
-RestoreIni(){
+RestoreIni() {
     global IniOriginal, IniBackup
     FileMove, %IniBackup%, %IniOriginal%, True
 }
 
-EndScript(exitCode){
+EndScript(exitCode) {
     Global NotepadPID, AHKVimPID, VimPID
     RestoreIni()
     process, Close, %NotepadPID%
     process, Close, %VimPID%
     process, Close, %AHKVimPID%
     if exitCode = 1
-        ExitApp, 1 ; Failed exit
+        ExitApp, 1  ; Failed exit
     else
-        ExitApp, 0 ; Success.
+        ExitApp, 0  ; Success.
 }
 
 EndScript(1)
 
-LShift & esc::EndScript(1) ; Abort
+LShift & esc::EndScript(1)  ; Abort

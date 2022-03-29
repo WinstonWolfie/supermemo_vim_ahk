@@ -14,7 +14,7 @@ i::Vim.State.SetMode("Insert")
 Return
 
 a::
-  if(! Vim.CheckChr("`n")){
+  if (! Vim.CheckChr("`n")) {
     Send, {Right}
   }
   Vim.State.SetMode("Insert")
@@ -52,9 +52,9 @@ Return
 		Vim.State.SetMode("Insert")
 Return
 
-alt:: ; for access keys
+alt::  ; for access keys
 	; can't use KeyWait alt, any hotkeys that use modifier alt would trigger this script
-	send {alt} ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert
+	send {alt}  ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert
 	Vim.State.SetMode("Insert")
 return
 

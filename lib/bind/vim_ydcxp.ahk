@@ -4,12 +4,12 @@ d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0)
 c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0)
 +y::
   Vim.State.SetMode("Vim_ydc_y", 0, 0, 1)
-  Sleep, 150 ; Need to wait (For variable change?)
-  if WinActive("ahk_group VimDoubleHomeGroup"){
+  Sleep, 150  ; Need to wait (For variable change?)
+  if WinActive("ahk_group VimDoubleHomeGroup") {
     Send, {Home}
   }
   Send, {Home}+{End}
-  if not WinActive("ahk_group VimLBSelectGroup"){
+  if not WinActive("ahk_group VimLBSelectGroup") {
     Vim.Move.Move("l")
   }else{
     Vim.Move.Move("")
@@ -19,7 +19,7 @@ Return
 
 +d::
   Vim.State.SetMode("Vim_ydc_d", 0, 0, 0)
-  if not WinActive("ahk_group VimLBSelectGroup"){
+  if not WinActive("ahk_group VimLBSelectGroup") {
     Vim.Move.Move("$")
   }else{
     Send, {Shift Down}{End}{Left}
@@ -29,7 +29,7 @@ Return
 
 +c::
   Vim.State.SetMode("Vim_ydc_c",0,0,0)
-  if not WinActive("ahk_group VimLBSelectGroup"){
+  if not WinActive("ahk_group VimLBSelectGroup") {
     Vim.Move.Move("$")
   }else{
     Send, {Shift Down}{End}{Left}
@@ -60,10 +60,10 @@ p::
   ;i:=0
   ;;Send, {p Up}
   ;Loop {
-  ;  if !GetKeyState("p", "P"){
+  ;  if !GetKeyState("p", "P") {
   ;    break
   ;  }
-  ;  if(Vim.State.LineCopy == 1){
+  ;  if (Vim.State.LineCopy == 1) {
   ;    Send, {End}{Enter}^v{BS}{Home}
   ;  }else{
   ;    Send, {Right}
@@ -72,9 +72,9 @@ p::
   ;    Send, ^{Left}
   ;  }
   ;  ;TrayTip,i,%i%,
-  ;  if(i == 0){
+  ;  if (i == 0) {
   ;    Sleep, 500
-  ;  }else if(i > 100){
+  ;  }else if (i > 100) {
   ;    Msgbox, , Vim Ahk, Stop at 100!!!
   ;    break
   ;  }else{
@@ -85,8 +85,8 @@ p::
   ;}
   if GetKeyState("ctrl")
     Clipboard := Clipboard
-  if(Vim.State.LineCopy == 1){
-    if WinActive("ahk_group VimNoLBCopyGroup"){
+  if (Vim.State.LineCopy == 1) {
+    if WinActive("ahk_group VimNoLBCopyGroup") {
       Send, {End}{Enter}^v{Home}
     }else{
       Send, {End}{Enter}^v{BS}{Home}
@@ -98,14 +98,14 @@ p::
     Send, {Left}
     ;;Send, ^{Left}
   }
-  KeyWait, p ; To avoid repeat, somehow it calls <C-p>, print...
+  KeyWait, p  ; To avoid repeat, somehow it calls <C-p>, print...
 Return
 
 ^+p::
 +p::
   if GetKeyState("ctrl")
     Clipboard := Clipboard
-  if(Vim.State.LineCopy == 1){
+  if (Vim.State.LineCopy == 1) {
     Send, {Up}{End}{Enter}^v{BS}{Home}
   }else{
     Send, ^v

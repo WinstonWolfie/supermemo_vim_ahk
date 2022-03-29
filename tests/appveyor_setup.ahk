@@ -78,7 +78,7 @@ WaitForWindowToActivate("Office")
 send {return}
 sleep, 200
 WinActivate,OneNote
-WaitForWindowToActivate("OneNote ") ; Wait for onenote to start
+WaitForWindowToActivate("OneNote ")  ; Wait for onenote to start
 ; wait for notebook load
 sleep, 3500
 

@@ -1,9 +1,9 @@
 ﻿class VimMenu{
-  __New(vim){
+  __New(vim) {
     this.Vim := vim
   }
 
-  SetMenu(){
+  SetMenu() {
     MenuVimSetting := ObjBindMethod(this.Vim.Setting, "ShowGui")
     MenuVimCheck := ObjBindMethod(this.Vim.Check, "CheckMenu")
     MenuVimStatus := ObjBindMethod(this.Vim.State, "FullStatus")

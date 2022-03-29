@@ -26,7 +26,7 @@
 #Include %A_LineFile%\..\vim_bind.ahk
 
 class VimAhk{
-  __About(){
+  __About() {
     this.About.Version := "v0.11.3"
     this.About.Date := "14/Feb/2022"
     this.About.Author := "rcmdnk"
@@ -35,9 +35,8 @@ class VimAhk{
     this.Info["VimHomepage"] := this.About.Homepage
   }
 
-  __New(setup=true){
+  __New(setup=true) {
     this.Enabled := True
-
 
     ; Classes
     this.About := new VimAbout(this)
@@ -61,50 +60,47 @@ class VimAhk{
     DefaultGroup := this.SetDefaultActiveWindows()
 
     ; Following applications select the line break at Shift + End.
-    GroupAdd, VimLBSelectGroup, ahk_exe POWERPNT.exe ; PowerPoint
+    GroupAdd, VimLBSelectGroup, ahk_exe POWERPNT.exe  ; PowerPoint
     GroupAdd, VimLBSelectGroup, ahk_exe WINWORD.exe  ; Word
     GroupAdd, VimLBSelectGroup, ahk_exe wordpad.exe  ; WordPad
 
     ; Following applications do not copy the line break
-    GroupAdd, VimNoLBCopyGroup, ahk_exe Evernote.exe ; Evernote
+    GroupAdd, VimNoLBCopyGroup, ahk_exe Evernote.exe  ; Evernote
 
     ; Need Ctrl for Up/Down
-    GroupAdd, VimCtrlUpDownGroup, ahk_exe onenote.exe ; OneNote Desktop, before Windows 10
+    GroupAdd, VimCtrlUpDownGroup, ahk_exe onenote.exe  ; OneNote Desktop, before Windows 10
 
     ; Need Home twice
-    GroupAdd, VimDoubleHomeGroup, ahk_exe Code.exe ; Visual Studio Code
+    GroupAdd, VimDoubleHomeGroup, ahk_exe Code.exe  ; Visual Studio Code
 
     ; Followings can emulate ^. For others, ^ works as same as 0
-    GroupAdd, VimCaretMove, ahk_exe notepad.exe ; NotePad
-    GroupAdd, VimCaretMove, ahk_exe Notepad.exe ; NotePad
+    GroupAdd, VimCaretMove, ahk_exe notepad.exe  ; NotePad
+    GroupAdd, VimCaretMove, ahk_exe Notepad.exe  ; NotePad
 
     ; Followings start cursor from the same place after selection.
     ; Others start right/left (by cursor) point of the selection
-    GroupAdd, VimCursorSameAfterSelect, ahk_exe notepad.exe ; NotePad
-    GroupAdd, VimCursorSameAfterSelect, ahk_exe Notepad.exe ; NotePad
-    GroupAdd, VimCursorSameAfterSelect, ahk_exe explorer.exe ; Explorer
-    GroupAdd, VimCursorSameAfterSelect, ahk_exe Explorer.exe ; Explorer
+    GroupAdd, VimCursorSameAfterSelect, ahk_exe notepad.exe  ; NotePad
+    GroupAdd, VimCursorSameAfterSelect, ahk_exe Notepad.exe  ; NotePad
+    GroupAdd, VimCursorSameAfterSelect, ahk_exe explorer.exe  ; Explorer
+    GroupAdd, VimCursorSameAfterSelect, ahk_exe Explorer.exe  ; Explorer
 
     ; Q-Dir
-    GroupAdd, VimQdir, ahk_exe Q-Dir_x64.exe ; q-dir
-    GroupAdd, VimQdir, ahk_exe Q-Dir.exe ; q-dir
+    GroupAdd, VimQdir, ahk_exe Q-Dir_x64.exe  ; q-dir
+    GroupAdd, VimQdir, ahk_exe Q-Dir.exe  ; q-dir
 	
-	GroupAdd, HTML, ahk_exe iexplore.exe ; Internet Explorer
+    GroupAdd, HTML, ahk_exe iexplore.exe  ; Internet Explorer
     GroupAdd, HTML, ahk_exe WINWORD.exe  ; Word
 	
-	; SuperMemo
-	GroupAdd, SuperMemo, ahk_exe sm18.exe
-	GroupAdd, SuperMemo, ahk_exe sm17.exe
-	GroupAdd, SuperMemo, ahk_exe sm16.exe
-	GroupAdd, SuperMemo, ahk_exe sm15.exe
-	
-	; Browsers
-	GroupAdd, Browsers, ahk_exe chrome.exe
-	GroupAdd, Browsers, ahk_exe firefox.exe
-	GroupAdd, Browsers, ahk_exe msedge.exe ; Microsoft Edge
-	
-	; Excluded
-	GroupAdd, Excluded, ahk_class #32770 ; windows + r
+    GroupAdd, SuperMemo, ahk_exe sm18.exe
+    GroupAdd, SuperMemo, ahk_exe sm17.exe
+    GroupAdd, SuperMemo, ahk_exe sm16.exe
+    GroupAdd, SuperMemo, ahk_exe sm15.exe
+    
+    GroupAdd, Browsers, ahk_exe chrome.exe
+    GroupAdd, Browsers, ahk_exe firefox.exe
+    GroupAdd, Browsers, ahk_exe msedge.exe  ; Microsoft Edge
+    
+    GroupAdd, Excluded, ahk_class #32770  ; windows + r
 
     ; Configuration values for Read/Write ini
     ; setting, default, val, description, info
@@ -191,26 +187,26 @@ class VimAhk{
     this.Initialize()
   }
 
-  AddToConf(setting, default, val, description, info){
-    this.Conf[setting] :=  {"default": default, "val": val, "description": description, "info": info}
+  AddToConf(setting, default, val, description, info) {
+    this.Conf[setting] := {"default": default, "val": val, "description": description, "info": info}
   }
 
-  SetExistValue(){
+  SetExistValue() {
     for k, v in this.Conf {
       ; This ensures the variable exists, as a workaround since in AHK we cannot directly check whether it exists.
-      if(%k% != ""){
+      if (%k% != "") {
         this.Conf[k]["default"] := %k%
         this.Conf[k]["val"] := %k%
       }
     }
   }
 
-  SetGroup(){
+  SetGroup() {
     this.GroupN++
     this.GroupName := "VimGroup" this.GroupN
     Loop, Parse, % this.Conf["VimGroup"]["val"], % this.GroupDel
     {
-      if(A_LoopField != ""){
+      if (A_LoopField != "") {
         GroupAdd, % this.GroupName, %A_LoopField%
       }
     }
@@ -220,7 +216,7 @@ class VimAhk{
     this.TwoLetterNormalIsSet := False
     Loop, Parse, % this.Conf["VimTwoLetter"]["val"], % this.GroupDel
     {
-      if(A_LoopField != ""){
+      if (A_LoopField != "") {
         this.TwoLetterNormalIsSet := True
         key1 := SubStr(A_LoopField, 1, 1)
         key2 := SubStr(A_LoopField, 2, 1)
@@ -229,7 +225,7 @@ class VimAhk{
     }
   }
 
-  SetTwoLetterMap(key1, key2){
+  SetTwoLetterMap(key1, key2) {
     EnterNormal := ObjBindMethod(this, "TwoLetterEnterNormal")
     Enabled := ObjBindMethod(this, "TwoLetterNormalMapsEnabled")
     HotKey If, % Enabled
@@ -237,19 +233,22 @@ class VimAhk{
     HotKey, %key2% & %key1%, % EnterNormal
   }
 
-  TwoLetterNormalMapsEnabled(){
-    Return this.IsVimGroup() && (this.State.StrIsInCurrentVimMode("Insert") || this.State.StrIsInCurrentVimMode("Visual") || (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText())) && this.TwoLetterNormalIsSet
+  TwoLetterNormalMapsEnabled() {
+    Return this.IsVimGroup() &&
+           (this.State.StrIsInCurrentVimMode("Insert") || this.State.StrIsInCurrentVimMode("Visual") || (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText())) &&
+           this.TwoLetterNormalIsSet
   }
 
-  TwoLetterEnterNormal(){
-	if this.State.StrIsInCurrentVimMode("Insert")
-		SendInput, {BackSpace 1}
-	else if !this.State.StrIsInCurrentVimMode("Visual")
-		SendInput {esc}
+  TwoLetterEnterNormal() {
+    if (this.State.StrIsInCurrentVimMode("Insert")) {
+      SendInput, {BackSpace 1}
+    } else if (!this.State.StrIsInCurrentVimMode("Visual")) {
+      SendInput, {esc}
+    }
     this.State.SetNormal()
   }
 
-  Setup(){
+  Setup() {
     SetTitleMatchMode, % this.Conf["VimSetTitleMatchMode"]["val"]
     SetTitleMatchMode, % this.Conf["VimSetTitleMatchModeFS"]["val"]
     this.State.SetStatusCheck()
@@ -257,7 +256,7 @@ class VimAhk{
     this.LoadTwoLetterMaps()
   }
 
-  Initialize(){
+  Initialize() {
     this.__About()
     this.SetExistValue()
     this.Ini.ReadIni()
@@ -265,7 +264,7 @@ class VimAhk{
     this.Setup()
   }
 
-  SetDefaultActiveWindows(){
+  SetDefaultActiveWindows() {
     DefaultList := ["ahk_exe Evernote.exe"  ; Evernote
                   ; , "ahk_exe explorer.exe"  ; Explorer
                   ; , "ahk_exe Explorer.exe"  ; Explorer, Explorer became also upper case, but lower case works for this
@@ -273,31 +272,31 @@ class VimAhk{
                   , "ahk_exe Notepad.exe"   ; NotePad, Changed as upper case since ~2022/1 ??
                   , "OneNote"               ; OneNote at Windows 10
                   , "ahk_exe onenote.exe"   ; OneNote Desktop
-                  , "ahk_exe ApplicationFrameHost.exe" ; Some Windows applications use this, including OneNote at Windows 10
+                  , "ahk_exe ApplicationFrameHost.exe"  ; Some Windows applications use this, including OneNote at Windows 10
                   , "ahk_exe POWERPNT.exe"  ; PowerPoint
                   , "ahk_exe TeraPad.exe"   ; TeraPad
-                  , "ahk_exe texstudio.exe" ; TexStudio
+                  , "ahk_exe texstudio.exe"  ; TexStudio
                   , "ahk_exe texworks.exe"  ; TexWork
                   , "Write:"                ; Thunderbird, English
                   , "作成"                  ; Thunderbird, 日本語
-                  ; , "ahk_exe Code.exe"      ; Visual Studio Code ; Why not use VSCodeVim???
+                  ; , "ahk_exe Code.exe"      ; Visual Studio Code  ; Why not use VSCodeVim???
                   , "ahk_exe WINWORD.exe"   ; Word
                   , "ahk_exe wordpad.exe"   ; WordPad
-                  , "ahk_exe Q-Dir_x64.exe" ; Q-dir
+                  , "ahk_exe Q-Dir_x64.exe"  ; Q-dir
                   , "ahk_exe Q-Dir.exe"     ; Q-dir
-                  , "ahk_exe notepad++.exe" ; Notepad++
+                  , "ahk_exe notepad++.exe"  ; Notepad++
                   , "ahk_exe iexplore.exe"  ; Internet Explorer
                   , "ahk_class TElWind"     ; SM element window
                   , "ahk_class TContents"   ; SM content window
                   , "ahk_class TBrowser"    ; SM browser
                   , "ahk_class TPlanDlg"    ; SM Plan window
-                  , "ahk_class TTaskManager" ; SM tasklist window
+                  , "ahk_class TTaskManager"  ; SM tasklist window
                   , "ahk_class TImgDown"    ; SM download image window (ctrl+f8)
-                  , "ahk_class TChecksDlg"] ; SM check boxes (like f6)
+                  , "ahk_class TChecksDlg"]  ; SM check boxes (like f6)
     DefaultGroup := ""
     for i, v in DefaultList
     {
-      if(DefaultGroup == ""){
+      if (DefaultGroup == "") {
         DefaultGroup := v
       }else{
         DefaultGroup := DefaultGroup this.GroupDel v
@@ -306,20 +305,20 @@ class VimAhk{
     Return DefaultGroup
   }
 
-  IsVimGroup(){
-    if(not this.Enabled){
+  IsVimGroup() {
+    if (not this.Enabled) {
       Return False
-    }else if(this.Conf["VimAppList"]["val"] == "Allow List"){
+    }else if (this.Conf["VimAppList"]["val"] == "Allow List") {
       Return (WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")) || this.IsExceptionWindow()
-    }else if(this.Conf["VimAppList"]["val"] == "Deny List"){
+    }else if (this.Conf["VimAppList"]["val"] == "Deny List") {
       Return !WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded") && !this.IsExceptionWindow()
     }
     Return True
   }
 
   ; Ref: https://www.reddit.com/r/AutoHotkey/comments/4ma5b8/identifying_end_of_line_when_typing_with_ahk_and/
-  CheckChr(key){
-    if(this.Conf["VimCheckChr"]["val"] == 0){
+  CheckChr(key) {
+    if (this.Conf["VimCheckChr"]["val"] == 0) {
       Return False
     }
     BlockInput, Send
@@ -329,7 +328,7 @@ class VimAhk{
 	ClipWait 0.1
     Sleep 10
     ret := False
-    If (clipboard ~= key){
+    If (clipboard ~= key) {
       ret := True
     }
     ; sleep 10
@@ -373,13 +372,13 @@ class VimAhk{
   }
   
   ParseLineBreaks(Str) {
-	if this.SM.IsEditingHTML() { ; not perfect
-		if (StrLen(Str) != InStr(Str, "`r`n") + 1) { ; first matched `r`n not at the end
-			Str := RegExReplace(Str, "D)(?<=[ ])\r\n$") ; removing the very last line break if there's a space before it
-			Str := RegExReplace(Str, "(?<![ ])\r\n$") ; remove line breaks at end of line if there isn't a space before it
-			Str := StrReplace(Str, "`r`n`r`n", " ") ; turn all paragraph tags (<P>) to space
+	if this.SM.IsEditingHTML() {  ; not perfect
+		if (StrLen(Str) != InStr(Str, "`r`n") + 1) {  ; first matched `r`n not at the end
+			Str := RegExReplace(Str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
+			Str := RegExReplace(Str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
+			Str := StrReplace(Str, "`r`n`r`n", " ")  ; turn all paragraph tags (<P>) to space
 		}
-		Str := StrReplace(Str, "`r`n", " ") ; turn all line breaks (<BR>) to space
+		Str := StrReplace(Str, "`r`n", " ")  ; turn all line breaks (<BR>) to space
 	} else
 		Str := StrReplace(Str, "`r")
 	Return Str

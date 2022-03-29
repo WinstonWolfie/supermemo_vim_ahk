@@ -1,7 +1,7 @@
 ﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && Vim.SM.IsEditingHTML()
-~^+i::Vim.State.SetMode("Vim_Normal") ; ignore
+~^+i::Vim.State.SetMode("Vim_Normal")  ; ignore
 
-.:: ; selected text becomes [...]
+.::  ; selected text becomes [...]
 	Clip("<span class=""Cloze"">[...]</span>", true)
 	send ^+1
 	; ClipSave := ClipboardAll
@@ -12,7 +12,7 @@
 	Vim.State.SetMode("Vim_Normal")
 return
 
-a:: ; p*a*rse html
+a::  ; p*a*rse html
 ^+1::
 	send ^+1
 	Vim.State.SetMode("Vim_Normal")
@@ -48,7 +48,7 @@ m::  ; highlight: *m*ark
 	Vim.State.SetMode("Vim_Normal")
 return
 
-q:: ; extract (*q*uote)
+q::  ; extract (*q*uote)
 	send !x
 	Vim.State.SetMode("Vim_Normal")
 return
@@ -57,19 +57,19 @@ extract_stay:
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind")
 ^!x::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
-^q:: ; extract (*q*uote)
+^q::  ; extract (*q*uote)
 	send !x
 	Vim.State.SetMode("Vim_Normal")
 	Vim.SM.WaitProcessing()
 	send !{left}
 return
 
-+q:: ; extract with priority
++q::  ; extract with priority
 	send !+x
 	Vim.State.SetMode("Vim_Normal")
 return
 
-z:: ; clo*z*e
+z::  ; clo*z*e
 	send !z
 	Vim.State.SetMode("Vim_Normal")
 return
@@ -81,7 +81,7 @@ cloze_stay:
 ^z::
 	send !z
 	Vim.State.SetMode("Vim_Normal")
-	WinWaitActive, ahk_class TMsgDialog,, 0 ; warning on trying to cloze on items
+	WinWaitActive, ahk_class TMsgDialog,, 0  ; warning on trying to cloze on items
 	if !ErrorLevel
 		return
 	Vim.SM.WaitProcessing()
@@ -98,9 +98,9 @@ cloze_hinter:
 ^!+z::
 !+z::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
-^+z:: ; cloze hinter
-+z:: ; cloze hinter
-	if cloze_hinter_ctrl_state && (A_ThisLabel == "cloze_hinter") { ; from cloze hinter label and ctrl is down
+^+z::  ; cloze hinter
++z::  ; cloze hinter
+	if cloze_hinter_ctrl_state && (A_ThisLabel == "cloze_hinter") {  ; from cloze hinter label and ctrl is down
 		ctrl_state := 1
 		cloze_hinter_ctrl_state := 0
 	} else
@@ -123,7 +123,7 @@ ClozeHinterButtonCloze:
 	WinActivate, ahk_class TElWind
 	send !z
 	Vim.State.SetMode("Vim_Normal")
-	if !hint ; entered nothing
+	if !hint  ; entered nothing
 		return
 	Vim.ToolTip("Cloze hinting...", true)
 	sleep_calculation := A_TickCount
@@ -138,13 +138,13 @@ ClozeHinterButtonCloze:
 	else
 		cloze = [...](%hint%)
 	Vim.SM.WaitTextFocus()
-	if Vim.SM.IsEditingPlainText() { ; editing plain text
+	if Vim.SM.IsEditingPlainText() {  ; editing plain text
 		send ^a
 		clip(StrReplace(clip(), "[...]", cloze))
 	} else if Vim.SM.IsEditingHTML() {
-		clip_bak := Clipboardall
+		ClipSaved := ClipboardAll
 		Clipboard := ""
-		send !{f12}fc ; copy file path
+		send !{f12}fc  ; copy file path
 		ClipWait 0.2
 		sleep 20
 		FileRead, html, % Clipboard
@@ -156,13 +156,13 @@ ClozeHinterButtonCloze:
 		clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>" . cloze . "</SPAN>"),, true)
 		send ^+{home}^+1
 		Vim.SM.WaitTextSave()
-		Clipboard := clip_bak
+		Clipboard := ClipSaved
 		if ErrorLevel
 			Return
 	}
-	if !ctrl_state ; only goes back to topic if ctrl is up
-		send !{right} ; add a ctrl to keep editing the clozed item
-	else ; refresh if staying in the cloze item
+	if !ctrl_state  ; only goes back to topic if ctrl is up
+		send !{right}  ; add a ctrl to keep editing the clozed item
+	else  ; refresh if staying in the cloze item
 		send !{home}!{left}
 	Gosub RemoveToolTip
 return

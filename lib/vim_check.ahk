@@ -1,5 +1,5 @@
 ﻿class VimCheck{
-  __New(vim){
+  __New(vim) {
     this.Vim := vim
   }
 
@@ -11,7 +11,7 @@
     WinGet, name, ProcessName, ahk_pid %process%
     WinGetClass, class, ahk_pid %process%
     WinGetTitle, title, ahk_pid %process%
-    if(this.Vim.IsVimGroup()){
+    if (this.Vim.IsVimGroup()) {
       Msgbox, 0x40, Vim Ahk,
       (
         Supported

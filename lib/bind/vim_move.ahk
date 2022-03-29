@@ -29,16 +29,16 @@ l::Vim.Move.Repeat("l")
 ; Home/End
 0::Vim.Move.Move("0")
 $::Vim.Move.Move("$")
-; ^a::Vim.Move.Move("0") ; Emacs like
-; ^e::Vim.Move.Move("$") ; Emacs like
+; ^a::Vim.Move.Move("0")  ; Emacs like
+; ^e::Vim.Move.Move("$")  ; Emacs like
 ^::Vim.Move.Move("^")
 ; Words
 w::Vim.Move.Repeat("w")
-+w::Vim.Move.Repeat("w") ; +w = w
++w::Vim.Move.Repeat("w")  ; +w = w
 e::Vim.Move.Repeat("e")
-+e::Vim.Move.Repeat("e") ; +e = e
++e::Vim.Move.Repeat("e")  ; +e = e
 b::Vim.Move.Repeat("b")
-+b::Vim.Move.Repeat("b") ; +b = b
++b::Vim.Move.Repeat("b")  ; +b = b
 ; Page Up/Down
 ^u::Vim.Move.Repeat("^u")
 ^d::Vim.Move.Repeat("^d")
@@ -52,7 +52,7 @@ b::Vim.Move.Repeat("b")
 ; Sentence
 (::
 )::
-	KeyWait Shift ; cannot use Vim.KeyRelease("shift"), shift will still get stuck
+	KeyWait Shift  ; cannot use Vim.KeyRelease("shift"), shift will still get stuck
 	Vim.Move.Move(A_ThisHotkey)
 Return
 

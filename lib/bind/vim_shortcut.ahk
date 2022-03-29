@@ -21,7 +21,7 @@ Return
 #If Vim.State.Vim.Enabled
 ^!r::Reload
 
-LAlt & RAlt:: ; for laptop
+LAlt & RAlt::  ; for laptop
 	KeyWait LAlt
 	KeyWait RAlt
 	send {AppsKey}
@@ -44,9 +44,9 @@ return
 
 ; Browsers
 #If Vim.State.Vim.Enabled && WinActive("ahk_group Browsers")
-^!w::send ^w!{tab} ; close tab and switch back
+^!w::send ^w!{tab}  ; close tab and switch back
 
-^!i:: ; open in *I*E
+^!i::  ; open in *I*E
 	send ^l
 	sleep 100
 	link := RegExReplace(clip(), "#(.*)$")
@@ -54,7 +54,7 @@ return
 	Run, iexplore.exe %link%
 Return
 
-^!l:: ; copy link and parse *l*ink if if's from YT
+^!l::  ; copy link and parse *l*ink if if's from YT
 	send ^l
 	sleep 100
 	Clipboard := ""
@@ -71,7 +71,7 @@ Return
 	Vim.ToolTip("Copied " . temp_clip)
 return
 
-^!d:: ; parse similar and opposite in google *d*efine
+^!d::  ; parse similar and opposite in google *d*efine
 	Clipboard := ""
 	send ^c
 	ClipWait 0.6
@@ -87,12 +87,12 @@ return
 ; SumatraPDF/Calibre to SuperMemo
 #If Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe"))
 ^!x::
-!x:: ; pdf/epub extract to supermemo
+!x::  ; pdf/epub extract to supermemo
 	ctrl_state := GetKeyState("ctrl")
 	KeyWait alt
-	clip_bak := Clipboardall
+	ClipSaved := ClipboardAll
 	Clipboard := ""
-	send ^c ; clip() doesn't keep format; nor Clipboardall can work with functions
+	send ^c  ; clip() doesn't keep format; nor Clipboardall can work with functions
 	ClipWait 0.6
 	sleep 20
 	extract := Clipboardall
@@ -114,7 +114,7 @@ return
 			return
 		}
 	}
-	WinActivate, ahk_class TElWind ; focus to element window
+	WinActivate, ahk_class TElWind  ; focus to element window
 	Vim.SM.DeselectAllComponents()
 	send q
 	Vim.SM.WaitTextFocus()
@@ -123,7 +123,7 @@ return
 		Vim.ToolTip("No html component is focused, please go to the topic you want and paste your text.")
 		return
 	}
-	send ^{home}^+{down} ; go to top and select first paragraph below
+	send ^{home}^+{down}  ; go to top and select first paragraph below
 	if RegExMatch(clip(), "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") {
 		send {left}
 		Vim.ToolTip("Please make sure current element is an empty html topic. Your extract is now on your clipboard.")
@@ -131,8 +131,8 @@ return
 	}
 	send {left}
 	clip(extract,, true)
-	send ^+{home} ; select everything
-	send !x ; extract
+	send ^+{home}  ; select everything
+	send !x  ; extract
 	Vim.SM.WaitProcessing()
 	send {down}
 	send !\\
@@ -147,14 +147,14 @@ return
 			WinActivate, ahk_class SUMATRA_PDF_FRAME
 		else if (reader == "e")
 			WinActivate, ahk_exe ebook-viewer.exe
-	Clipboard := clip_bak
+	Clipboard := ClipSaved
 return
 
 ; SumatraPDF
 #If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") and !(Vim.State.IsCurrentVimMode("Z"))
 +z::Vim.State.SetMode("Z")
 #If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") and (Vim.State.IsCurrentVimMode("Z"))
-+z:: ; exit and save annotations
++z::  ; exit and save annotations
 	send q
 	WinWaitActive, Unsaved annotations,, 0
 	if !ErrorLevel
@@ -164,7 +164,7 @@ return
 
 ; IE
 #If Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe")
-^+c:: ; open in default browser (in my case, chrome); similar to default shortcut ^+e to open in ms edge
+^+c::  ; open in default browser (in my case, chrome); similar to default shortcut ^+e to open in ms edge
 	Vim.KeyRelease("ctrl")
 	Vim.KeyRelease("shift")
 	loop {

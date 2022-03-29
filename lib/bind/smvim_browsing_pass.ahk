@@ -99,12 +99,12 @@ Space::
 	send {%A_ThisHotkey%}
 Return
 
-~^d:: ; dismiss; vim scroll down
-~^j:: ; change interval; vim join lines
-~^f:: ; find; vim page down
-~^v:: ; paste image; vim visual block
-~^r:: ; replace; vim redo
-~^+p:: ; element parameter; vim_ahk paste without format
+~^d::  ; dismiss; vim scroll down
+~^j::  ; change interval; vim join lines
+~^f::  ; find; vim page down
+~^v::  ; paste image; vim visual block
+~^r::  ; replace; vim redo
+~^+p::  ; element parameter; vim_ahk paste without format
 Return
 
 #If

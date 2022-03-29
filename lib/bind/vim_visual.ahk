@@ -31,7 +31,7 @@ Return
 			Send, {Home}+{Down}
 			Vim.State.SetMode("Vim_VisualLineFirst")
 		} else {
-			if !WinActive("ahk_exe notepad++.exe") ; notepad++ requires alt down
+			if !WinActive("ahk_exe notepad++.exe")  ; notepad++ requires alt down
 				Send, ^b
 			Vim.State.SetMode("Vim_VisualBlock")
 		}
@@ -43,11 +43,11 @@ y::
   Clipboard :=
   Send, ^c
   Send, {Right}
-  if WinActive("ahk_group VimCursorSameAfterSelect"){
+  if WinActive("ahk_group VimCursorSameAfterSelect") {
     Send, {Left}
   }
   ClipWait, 1
-  if(Vim.State.StrIsInCurrentVimMode("Line")){
+  if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
   }else{
     Vim.State.SetMode("Vim_Normal", 0, 0, 0)
@@ -58,7 +58,7 @@ d::
   Clipboard :=
   Send, ^x
   ClipWait, 1
-  if(Vim.State.StrIsInCurrentVimMode("Line")){
+  if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
   }else{
     Vim.State.SetMode("Vim_Normal", 0, 0, 0)
@@ -69,7 +69,7 @@ x::
   Clipboard :=
   Send, ^x
   ClipWait, 1
-  if(Vim.State.StrIsInCurrentVimMode("Line")){
+  if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
   }else{
     Vim.State.SetMode("Vim_Normal", 0, 0, 0)
@@ -80,7 +80,7 @@ c::
   Clipboard :=
   Send, ^x
   ClipWait, 1
-  if(Vim.State.StrIsInCurrentVimMode("Line")){
+  if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Insert", 0, 0, 1)
   }else{
     Vim.State.SetMode("Insert", 0, 0, 0)
@@ -110,7 +110,7 @@ p::
 	Vim.State.SetMode("Vim_Normal")
 Return
 
-s:: ; *s*ubstitue
+s::  ; *s*ubstitue
 	send {bs}
 	Vim.State.SetMode("Insert")
 return
@@ -150,9 +150,9 @@ invert_case:
 	Vim.State.SetMode("Vim_Normal")
 Return
 
-; !d::MsgBox % Vim.ParseLineBreaks(clip()) ; debugging
+; !d::MsgBox % Vim.ParseLineBreaks(clip())  ; debugging
 
-o:: ; move to other end of marked area; not perfect with line breaks
+o::  ; move to other end of marked area; not perfect with line breaks
 	selection := clip()
 	if !clip()
 		Return
@@ -162,7 +162,7 @@ o:: ; move to other end of marked area; not perfect with line breaks
 	selection_right_len := StrLen(Vim.ParseLineBreaks(selection_right))
 	send +{left}
 	if (selection_len < selection_right_len)
-	|| (selection_len == selection_right_len && StrLen(selection) < StrLen(selection_right)) { ; moving point of selection is on the right
+	|| (selection_len == selection_right_len && StrLen(selection) < StrLen(selection_right)) {  ; moving point of selection is on the right
 		send {right}
 		SendInput % "{shift down}{left " selection_len "}{shift up}"
 	} else if (selection_len > selection_right_len)

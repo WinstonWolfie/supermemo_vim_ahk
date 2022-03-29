@@ -1,5 +1,5 @@
 ﻿class VimState{
-  __New(vim){
+  __New(vim) {
     this.Vim := vim
 
     ; CheckModeValue does not get set for compiled scripts.
@@ -33,58 +33,58 @@
     this.StatusCheckObj := ObjBindMethod(this, "StatusCheck")
   }
 
-  CheckMode(verbose=1, Mode="", g=0, n=0, LineCopy=-1, ft="", force=0){
-    if(force == 0) and ((verbose <= 1) or ((Mode == "") and (g == 0) and (n == 0) and (LineCopy == -1))){
+  CheckMode(verbose=1, Mode="", g=0, n=0, LineCopy=-1, ft="", force=0) {
+    if (force == 0) and ((verbose <= 1) or ((Mode == "") and (g == 0) and (n == 0) and (LineCopy == -1))) {
       Return
-    }else if(verbose == 2){
+    }else if (verbose == 2) {
       this.SetTooltip(this.Mode, 1)
-    }else if(verbose == 3){
+    }else if (verbose == 3) {
       this.SetTooltip(this.Mode "`r`ng=" this.g "`r`nn=" this.n "`r`nLineCopy=" this.LineCopy "`r`nft=" this.ft, 4)
     }
-    if(verbose >= 4){
+    if (verbose >= 4) {
       Msgbox, , Vim Ahk, % "Mode: " this.Mode "`nVim_g: " this.g "`nVim_n: " this.n "`nVimLineCopy: " this.LineCopy "`r`nft:" this.ft
     }
   }
 
-  SetTooltip(Title, lines=1){
+  SetTooltip(Title, lines=1) {
     WinGetPos, , , W, H, A
     ToolTip, %Title%, W - 110, H - 30 - (lines) * 20
     this.Vim.VimToolTip.SetRemoveToolTip(1000)
   }
 
-  FullStatus(){
+  FullStatus() {
     this.CheckMode(4, , , , 1)
   }
 
-  SetMode(Mode="", g=0, n=0, LineCopy=-1, ft=""){
+  SetMode(Mode="", g=0, n=0, LineCopy=-1, ft="") {
 	previous_mode := this.Mode
     this.CheckValidMode(Mode)
-    if(Mode != ""){
+    if (Mode != "") {
       this.Mode := Mode
-      If(this.IsCurrentVimMode("Insert")) and (this.Vim.Conf["VimRestoreIME"]["val"] == 1){
+      if (this.IsCurrentVimMode("Insert")) and (this.Vim.Conf["VimRestoreIME"]["val"] == 1) {
         VIM_IME_SET(this.LastIME)
       }
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
 	  if A_CaretX && previous_mode != Mode
 		this.Vim.Caret.SetCaret(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
     }
-    if(g != -1){
+    if (g != -1) {
       this.g := g
     }
-    if(n != -1){
+    if (n != -1) {
       this.n := n
     }
-    if(LineCopy!=-1){
+    if (LineCopy!=-1) {
       this.LineCopy := LineCopy
     }
     this.ft := ft
     this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, ft)
   }
 
-  SetNormal(){
+  SetNormal() {
     this.LastIME := VIM_IME_Get()
-    if(this.LastIME){
-      if(VIM_IME_GetConverting(A)){
+    if (this.LastIME) {
+      if (VIM_IME_GetConverting(A)) {
         Send, {Esc}
         Return
       }else{
@@ -92,9 +92,9 @@
       }
     }
 	if A_CaretX && !this.Vim.IsNavigating()
-		if(this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
+		if (this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
 		  Send, {Right}
-		  if WinActive("ahk_group VimCursorSameAfterSelect"){
+		  if WinActive("ahk_group VimCursorSameAfterSelect") {
 			Send, {Left}
 		  }
 		} else if this.StrIsInCurrentVimMode("Insert")
@@ -102,11 +102,11 @@
     this.SetMode("Vim_Normal")
   }
 
-  SetInner(){
+  SetInner() {
     this.SetMode(this.Mode "Inner")
   }
 
-  HandleEsc(){
+  HandleEsc() {
     global Vim, VimEscNormal, SMVimSendEscInsert, vimSendEscNormal, VimLongEscNormal
     if (!VimEscNormal) {
       Send, {Esc}
@@ -126,14 +126,14 @@
     if (SetNormal) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert) {
       this.SetNormal()
     }
-    if (LongPress){
+    if (LongPress) {
       ; Have to ensure the key has been released, otherwise this will get
       ; triggered again.
       KeyWait, Esc
     }
   }
 
-  HandleCtrlBracket(){
+  HandleCtrlBracket() {
     global Vim, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal
     if (!VimCtrlBracketNormal) {
       Send, ^[
@@ -150,28 +150,28 @@
     if (SetNormal) {
       this.SetNormal()
     }
-    if (LongPress){
+    if (LongPress) {
       KeyWait, [
     }
   }
 
-  IsCurrentVimMode(mode){
+  IsCurrentVimMode(mode) {
     this.CheckValidMode(mode)
     Return (mode == this.Mode)
   }
 
-  StrIsInCurrentVimMode(mode){
+  StrIsInCurrentVimMode(mode) {
     this.CheckValidMode(mode, false)
     Return (inStr(this.Mode, mode, true))
   }
 
-  CheckValidMode(mode, fullMatch=true){
-    if(this.CheckModeValue == false){
+  CheckValidMode(mode, fullMatch=true) {
+    if (this.CheckModeValue == false) {
       Return
     }
     try{
       InOrBlank:= (not fullMatch) ? "in " : ""
-      if not this.HasValue(this.PossibleVimModes, mode, fullMatch){
+      if not this.HasValue(this.PossibleVimModes, mode, fullMatch) {
         throw Exception("Invalid mode specified",-2,
         (Join
   "'" Mode "' is not " InOrBlank " a valid mode as defined by the VimPossibleVimModes
@@ -185,19 +185,19 @@
     }
   }
 
-  HasValue(haystack, needle, fullMatch=true){
-    if(!isObject(haystack)){
+  HasValue(haystack, needle, fullMatch=true) {
+    if (!isObject(haystack)) {
       return false
-    }else if(haystack.Length() == 0){
+    }else if (haystack.Length() == 0) {
       return false
     }
     for index, value in haystack{
       if fullMatch{
-        if (value == needle){
+        if (value == needle) {
           return true
         }
       }else{
-        if (inStr(value, needle)){
+        if (inStr(value, needle)) {
           return true
         }
       }
@@ -206,17 +206,17 @@
   }
 
   ; Update icon/mode indicator
-  StatusCheck(){
-    if(this.Vim.IsVimGroup()){
+  StatusCheck() {
+    if (this.Vim.IsVimGroup()) {
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
     }else{
       this.Vim.Icon.SetIcon("Disabled", this.Vim.Conf["VimIconCheckInterval"]["val"])
     }
   }
 
-  SetStatusCheck(){
+  SetStatusCheck() {
     check := this.StatusCheckObj
-    if(this.Vim.Conf["VimIconCheckInterval"]["val"] > 0){
+    if (this.Vim.Conf["VimIconCheckInterval"]["val"] > 0) {
       SetTimer, % check, % this.Vim.Conf["VimIconCheckInterval"]["val"]
     }else{
       this.Vim.Icon.SetIcon("", 0)
@@ -224,8 +224,8 @@
     }
   }
 
-  ToggleEnabled(){
-    if(this.Vim.Enabled){
+  ToggleEnabled() {
+    if (this.Vim.Enabled) {
       this.Vim.Enabled := False
     }else{
       this.Vim.Enabled := True

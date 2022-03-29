@@ -1,8 +1,8 @@
-﻿FindClick(ImageFile="", Options="", ByRef FoundX="", ByRef FoundY="") ; updated March 15, 2019 ... https://autohotkey.com/boards/viewtopic.php?f=6&t=18719
+﻿FindClick(ImageFile="", Options="", ByRef FoundX="", ByRef FoundY="")  ; updated March 15, 2019 ... https://autohotkey.com/boards/viewtopic.php?f=6&t=18719
 {
 	Static Cache
 	, Center, Silent, Delim, Count, CharX, CharY, CharN, Sleep, Stay, Func, dx, d, m, x, y, o, n, k, r, e, a, w, t, f
-	, ImageW, ImageH, LastX1, LastY1, ImageFilePath ; (xxx Does LastX/Y use the static ability?)
+	, ImageW, ImageH, LastX1, LastY1, ImageFilePath  ; (xxx Does LastX/Y use the static ability?)
  	, LastOptions, LastImageFile, MonitorInfo, DxInfo
 	, GuiHWND, GuiCommand, GuiTitle
 	, Error, Message, Buttons, # := "`t", $ := "`r", CoordModePixel, CoordModeMouse
@@ -159,7 +159,7 @@
 				If SpecialLaunch in 2,3
 					Return OptionInfo
 				DllCall("QueryPerformanceCounter", "Int64*", QPC)
-				, TempCommands := Commands, VarSetCapacity(DxInfo, 2500) ; xxx update size
+				, TempCommands := Commands, VarSetCapacity(DxInfo, 2500)  ; xxx update size
 				, DxInfo := A_TickCount A_Tab QPC "`r1:Initializing function" #
 				. "q:" QPC #
 				. "t:Function called at " A_Hour ":" A_Min ":" A_Sec "." A_MSec "`n`nThe following values were passed as parameters to the function:`n<table>ImageFile;%ImageFile%`nOptions;%Options%</table>`n`nThe following script settings were inherited from the current thread:`n<table>Thread Name;%A_ThisLabel%`nWorking Dir;%A_WorkingDir%`nBatch Lines;%A_BatchLines%`nTitle Match Mode;%A_TitleMatchMode%</table>" #
@@ -311,7 +311,7 @@
 							Message = Image file "%ImageFile%" appears to be of an unsupported filetype.
 							Buttons = &View File,&Debug,E&xit,&Help
 							If (%A_ThisFunc%(">Error<") = "View File")
-								MsgBox, 262160, %A_ScriptName%: Error, Function not yet supported, sorry! ; xxx
+								MsgBox, 262160, %A_ScriptName%: Error, Function not yet supported, sorry!  ; xxx
 							Return
 						}
 						If DxInfo
@@ -384,7 +384,7 @@
 					. "t:The ""k"" (keystrokes) option was given as ""%@%"" but has been corrected to ""%k%"" because ControlClick was indicated for the ""m"" (SendMode) option, and ControlClick has a different format than the Send command." #
 					. "c1:k:" k #
 			}
-		} Else { ; xxx fix this part
+		} Else {  ; xxx fix this part
 			If dx
 				Cache := ">3" Cache, OptionInfo := %A_ThisFunc%(A_Space), TempCommands := Commands, DxStartMS := A_TickCount, VarSetCapacity(DxInfo, 2500)
 				, DxInfo .= "1:Initializing function" #
@@ -418,7 +418,7 @@
 			If (Search1 = "") or (Search3 <= 0) or (Search4 <= 0) {
 				If (Search1 = "") {
 					Error = Window Not Found
-					Message = Window "%r%" was not found. ; xxx
+					Message = Window "%r%" was not found.  ; xxx
 				} Else {
 					Error = Window Invisible
 					Message = Window "%r%" reported a negative width and/or height to AutoHotkey, meaning that it is probably not visible on the screen.
@@ -487,7 +487,7 @@
 						Else If t Is Integer
 							LastX1 -= t, LastY1 -= + t, LastX2 += t, LastY2 += t
 						Else
-							MsgBox, 262160, %A_ScriptName%: Error, Incorrect value of t given ; xxx
+							MsgBox, 262160, %A_ScriptName%: Error, Incorrect value of t given  ; xxx
 						SubRegions := LastX1 "," LastY1 ";" LastX2 "," LastY2 ";P`n" . ( @ ? "" : (LastY1 > @2 ? @1 "," @2 ";" @3 "," LastY1 ";Q`n" : "") . (LastX1 > @1 ? @1 "," LastY1 ";" LastX1 "," LastY2 ";R`n" : "") . (@3 > LastX2 ? LastX2 "," LastY1 ";" @3 "," LastY2 ";S`n" : "") . (@4 > LastY2 ? @1 "," LastY2 ";" @3 "," @4 ";T`n" : "") . SubRegions )
 						Break
 					}
@@ -536,7 +536,7 @@
 					e2 := Floor(ImageH * e)
 				Else
 					e2 := 0
-			} Else If (MostX <> "") { ; triggers directional search ("d" option)
+			} Else If (MostX <> "") {  ; triggers directional search ("d" option)
 				FoundXOrig := MostX, FoundYOrig := MostY, SubRegions := "`n", ErrorLevel := False
 			} Else If (InStr(a, "m") = 1) and !Results {
 				MouseGetPos, Search1, Search2
@@ -553,8 +553,8 @@
 					. "g:Color,Red;Trans,200;Add,Picture,x10 y10 w30 h-1," A_WinDir "\Cursors\larrow.cur;Trans,150;Show,x" Search1 - 10 " y" Search2 - 10 " w37 h51 NA"
 				Search3 := Search1 + SubStr(a, 2), Search4 := Search2 + SubStr(a, 2), Search1 -= SubStr(a, 2), Search2 -= SubStr(a, 2), e1 := 0, e2 := 0
 			} Else
-				Break ; XXX
-			If (d = "") or (SubRegions <> "`n") { ; SubRegions = `n means d was selected and search is done, it's a dry run to click on the d-most option
+				Break  ; XXX
+			If (d = "") or (SubRegions <> "`n") {  ; SubRegions = `n means d was selected and search is done, it's a dry run to click on the d-most option
 				If DxInfo
 					@5 := (Search3 - Search1 < 80 or Search4 - Search2 < 80) * 100
 					, @ .= $ "3:Performing ImageSearch" #
@@ -575,7 +575,7 @@
 				Message = AutoHotkey was unable to use the image "%ImageFile%" for searching.
 				Buttons = &View File,&Debug,E&xit,&Help
 				If (%A_ThisFunc%(">Error<") = "View File")
-					MsgBox, 262160, %A_ScriptName%: Error, Function not yet supported, sorry! ; xxx
+					MsgBox, 262160, %A_ScriptName%: Error, Function not yet supported, sorry!  ; xxx
 				Return
 			} Else If !ErrorLevel {
 				If (w2 <> "")
@@ -696,18 +696,18 @@
 						. "t:Because the ""e"" or ""d"" option was indicated, " A_ThisFunc "() needs to continue searching the screen for other instances of the image.`nThe following regions remain to be searched:`n`n<table>Top Left;Bottom Right;Region Type`n" SubRegions "</table>`n`n(Each time an image is found, the remaining space must be split into up to 3 additional regions.)" #
 						. "l:" A_LineNumber - 7
 					If d
-						If (Asc(d) = 108) { ; l (Left)
+						If (Asc(d) = 108) {  ; l (Left)
 							If (MostX = "") or (FoundXOrig < MostX)
 								MostX := FoundXOrig, MostY := FoundYOrig
-						} Else If (Asc(d) = 114) { ; r (Right)
+						} Else If (Asc(d) = 114) {  ; r (Right)
 							If (MostX = "") or (FoundXOrig > MostX)
 								MostX := FoundXOrig, MostY := FoundYOrig
-						} Else If (Asc(d) = 98) or (Asc(d) = 100) { ; b (Bottom) / d (Down)
+						} Else If (Asc(d) = 98) or (Asc(d) = 100) {  ; b (Bottom) / d (Down)
 							If (MostX = "") or (FoundYOrig > MostY)
 								MostX := FoundXOrig, MostY := FoundYOrig
-						} Else { ; Distance from coords
+						} Else {  ; Distance from coords
 							If (Dist1 = "") {
-								If (Asc(d) = 109) ; m (MousePos)
+								If (Asc(d) = 109)  ; m (MousePos)
 									MouseGetPos, Dist1, Dist2
 								Else
 									StringSplit, Dist, d, |`,
@@ -726,7 +726,7 @@
 					. "g:Color,44AADD,0000FF;Trans,80;Add,Progress,x" @5 " y" @5 " w" Search3 - Search1 + 1 " h" Search4 - Search2 + 1 " cRed BackgroundRed,100;Show,NA x" Search1 - @5 " y" Search2 - @5 " w" Search3 - Search1 + e1 + @5 * 2 + 1 " h" Search4 - Search2 + e2 + @5 * 2 + 1 #
 					. "d:3" #
 					. "l:" A_LineNumber - 2
-				If !(((Results and e) or (d and MostX != "") or ((a = "") and (r = "") and (MonitorCount > 1))) and (Subregions != "")) ; added 2019-02-14
+				If !(((Results and e) or (d and MostX != "") or ((a = "") and (r = "") and (MonitorCount > 1))) and (Subregions != ""))  ; added 2019-02-14
 					Break
 			} Else If (w2 <> "") and (Results = "") {
 				If DxInfo
@@ -988,9 +988,9 @@
 		SkipSteps = %True%
 		StartAt = 1
 		SaveTo =
-		WrapText = %True% ; needs work
-		CompactView = %False% ; needs work
-		AutoClose = %False% ; needs work
+		WrapText = %True%  ; needs work
+		CompactView = %False%  ; needs work
+		AutoClose = %False%  ; needs work
 		;----------------------------------------- Gui Text Elements ----------------------------------------
 		; Edit the variables below to change the text of the buttons and other elements in the debugger GUI. This can be done to change the language of the interface, or to change the accelerator keys (using the "&" symbol).
 		ButtonPlay = &Play
@@ -1015,7 +1015,7 @@
 		MenuSettingsWrapText = &Wrap Text
 		MenuSettingsEdit = &Edit Debugger Settings
 		MenuSettingsSkipSteps = Skip Unimportant Steps
-		MenuSettingsAutoClose = Close When Finished ; needs work
+		MenuSettingsAutoClose = Close When Finished  ; needs work
 		MenuHelp = &Help
 		MenuHelpDocs = &%A_ThisFunc% Documentation
 		MenuHelpDebugger = &Debugger Help
@@ -1104,7 +1104,7 @@
 					}
 			}
 		@ := Items + 1, %@%_q := QPC_Final, PreviousStep := 0, PlaySpeed := PlaySpeed / 20
-		Gui, %GuiA%:Show, % "w" Width + Margins * 2 " h" TreeViewHeight + TextBoxHeight + ControlHeight + Margins * 4 ; move north
+		Gui, %GuiA%:Show, % "w" Width + Margins * 2 " h" TreeViewHeight + TextBoxHeight + ControlHeight + Margins * 4  ; move north
 		Hotkey, IfWinActive, ahk_id %GuiHWND%
 		Loop, Parse, Hotkeys, `,
 			If (Hotkey%A_LoopField% <> "")
@@ -1149,7 +1149,7 @@
 			} Else If (TempGuiCommand = MenuSettingsAlwaysOnTop)
 				WinSet, AlwaysOnTop, % AlwaysOnTop ? "On" : "Off", ahk_id %GuiHWND%
 			Else If (TempGuiCommand = MenuSettingsWrapText)
-				GuiControl, % GuiA ":" (WrapText ? "+Wrap" : "-Wrap"), Edit1 ; xxx doesn't work!!
+				GuiControl, % GuiA ":" (WrapText ? "+Wrap" : "-Wrap"), Edit1  ; xxx doesn't work!!
 			Else If (TempGuiCommand = MenuFileNext) or (TempGuiCommand = ButtonNext) or (TempGuiCommand = HotkeyNext) or ((TempGuiCommand = "") and Playing) {
 				While (CurrentStep < Items) {
 					CurrentStep += 1
@@ -1194,7 +1194,7 @@
 				Else If (A_ThisMenuItem = MenuHelpDocs)
 					Run, %ForumURL%
 				Else
-					MsgBox, 262160, %A_ScriptName%: Error, This menu item currently doesn't do anything. Sorry about that. ; xxx
+					MsgBox, 262160, %A_ScriptName%: Error, This menu item currently doesn't do anything. Sorry about that.  ; xxx
 			} Else {
 				If (TempGuiCommand = A_ThisFunc "MenuSettings") {
 					If (Settings = "")
@@ -1230,7 +1230,7 @@
 						MenuHelpItems .= A_LoopField ","
 					}
 				PreviousStep := CurrentStep, @ := 0, CurrentStepText := %CurrentStep%_t
-				Transform, CurrentStepText, Deref, % CurrentStepText := RegExReplace(CurrentStepText, "%([A-Za-z0-9_#@$?]+)%", "%$1_%") ; xxx
+				Transform, CurrentStepText, Deref, % CurrentStepText := RegExReplace(CurrentStepText, "%([A-Za-z0-9_#@$?]+)%", "%$1_%")  ; xxx
 				While InStr(CurrentStepText, "<table>")
 					CurrentStepText := %A_ThisFunc%(">Table<", CurrentStepText)
 				StringReplace, CurrentStepText, CurrentStepText, `n, `r`n, All
@@ -1251,7 +1251,7 @@
 					If (%@%_g <> "")
 						%A_ThisFunc%(">NewGui<", GuiB ";+ToolWindow -SysMenu -Caption +AlwaysOnTop +E0x20;" %@%_g)
 					Else
-						MsgBox, 262160, %A_ScriptName%: Error, Error with referenced graphics!!!! Fix me ben! ; xxx
+						MsgBox, 262160, %A_ScriptName%: Error, Error with referenced graphics!!!! Fix me ben!  ; xxx
 				}
 				TempGuiCommand := GuiCommand, TV_Modify(%CurrentStep%_ID)
 			}
@@ -1271,7 +1271,7 @@
 		CoordMode, Menu, Screen
 		;||||||||||||||||||||||||||||||||||| Screenshot Builder Settings ||||||||||||||||||||||||||||||||||||
 		;----------------------------------------- General Settings -----------------------------------------
-		TempFile = %A_Temp%\%A_ThisFunc%Temp.png ; Directory where a temporary imagefile will be created (ImageSearch only accepts an imagefile as input)
+		TempFile = %A_Temp%\%A_ThisFunc%Temp.png  ; Directory where a temporary imagefile will be created (ImageSearch only accepts an imagefile as input)
 		NewFilePlaceHolder = NewFile             ; The filename that will populate the field if none is provided. Omit the extension unless %DefaultExts% has also been omitted
 		PauseHotkey = ``                         ; Hotkey that pauses updating of the screen magnifier, allowing you to select a screenshot region and add options
 		SquareSize = 19                          ; Width and height of each magnifier color square, in pixels
@@ -1393,7 +1393,7 @@
 						}
 						If !WinExist("ahk_id " BoxHWND)
 							BoxHWND := %A_ThisFunc%(">NewGui<", GuiB . ";Color," CurRegionColor . ";+ToolWindow -SysMenu -Caption +AlwaysOnTop +E0x20" . ";Show,NA x-100 y-100 w" SquaresWide + CurRegionThickness * 2 " h" SquaresHigh + CurRegionThickness * 2 . ";Trans,200" . ";Region,0-0 " SquaresWide + CurRegionThickness * 2 "-0 " SquaresWide + CurRegionThickness * 2 "-" SquaresHigh + CurRegionThickness * 2 " 0-" SquaresHigh + CurRegionThickness * 2 " 0-0 " CurRegionThickness "-" CurRegionThickness " " CurRegionThickness + SquaresWide "-" CurRegionThickness " " CurRegionThickness + SquaresWide "-" CurRegionThickness + SquaresHigh " " CurRegionThickness "-" CurRegionThickness + SquaresHigh " " CurRegionThickness "-" CurRegionThickness)
-						If A_PtrSize ; Start GDI+
+						If A_PtrSize  ; Start GDI+
 							Ptr := "UPtr", PtrA := "UPtr*"
 						Else
 							Ptr := "UInt", PtrA := "UInt*"
@@ -1405,27 +1405,27 @@
 							MouseGetPos, MouseX, MouseY
 							MouseX -= OffsetX, MouseY -= OffsetY
 							Gui, %GuiB%:Show, % "NA x" MouseX - CenterX - CurRegionThickness " y" MouseY - CenterY - CurRegionThickness
-							chdc := DllCall("CreateCompatibleDC", Ptr, False), hdc2 := chdc ? chdc : DllCall("GetDC", Ptr, False), VarSetCapacity(bi, 40, 0), NumPut(SquaresWide, bi, 4, "uint"), NumPut(SquaresHigh, bi, 8, "uint"), NumPut(40, bi, 0, "uint"), NumPut(1, bi, 12, "ushort"), NumPut(0, bi, 16, "uInt"), NumPut(32, bi, 14, "ushort"), hbm := DllCall("CreateDIBSection", Ptr, hdc2, Ptr, &bi, "uint", 0, PtrA, False, Ptr, 0, "uint", 0, Ptr) ; Gdip_BitmapFromScreen
+							chdc := DllCall("CreateCompatibleDC", Ptr, False), hdc2 := chdc ? chdc : DllCall("GetDC", Ptr, False), VarSetCapacity(bi, 40, 0), NumPut(SquaresWide, bi, 4, "uint"), NumPut(SquaresHigh, bi, 8, "uint"), NumPut(40, bi, 0, "uint"), NumPut(1, bi, 12, "ushort"), NumPut(0, bi, 16, "uInt"), NumPut(32, bi, 14, "ushort"), hbm := DllCall("CreateDIBSection", Ptr, hdc2, Ptr, &bi, "uint", 0, PtrA, False, Ptr, 0, "uint", 0, Ptr)  ; Gdip_BitmapFromScreen
 							If !chdc
 								DllCall("ReleaseDC", Ptr, False, Ptr, hdc2)
 							obm := DllCall("SelectObject", Ptr, chdc, Ptr, hbm), hhdc := DllCall("GetDC", Ptr, False), DllCall("gdi32\BitBlt", Ptr, chdc, "int", 0, "int", 0, "int", SquaresWide, "int", SquaresHigh, Ptr, hhdc, "int", MouseX - CenterX, "int", MouseY - CenterY, "uint", 0x00CC0020), DllCall("ReleaseDC", Ptr, False, Ptr, hhdc), DllCall("gdiplus\GdipCreateBitmapFromHBITMAP", Ptr, hbm, Ptr, False, PtrA, pBitmap), DllCall("SelectObject", Ptr, chdc, Ptr, obm), DllCall("DeleteObject", Ptr, hbm), DllCall("DeleteDC", Ptr, hhdc), DllCall("DeleteDC", Ptr, chdc)
 							While (SquaresHigh >= @ := A_Index)
 								Loop %SquaresWide% {
 									SetFormat, Integer, Hex
-									DllCall("gdiplus\GdipBitmapGetPixel", Ptr, pBitmap, "int", CenterX + A_Index - Floor(SquaresWide / 2) - 1, "int", CenterY + @ - Floor(SquaresHigh / 2) - 1, "uint*", Color), Color := Color & 0x00ffffff ; Gdip_GetPixel
+									DllCall("gdiplus\GdipBitmapGetPixel", Ptr, pBitmap, "int", CenterX + A_Index - Floor(SquaresWide / 2) - 1, "int", CenterY + @ - Floor(SquaresHigh / 2) - 1, "uint*", Color), Color := Color & 0x00ffffff  ; Gdip_GetPixel
 									SetFormat, Integer, Decimal
 									GuiControl, % GuiA ":+c" SubStr(Color_%A_Index%_%@% := Color, 3), % "msctls_progress32" 1 + (@ - 1) * SquaresWide + A_Index
 								}
 							ControlSetText, Edit3, %MouseX% `, %MouseY%, ahk_id %GuiHWND%
-							DllCall("gdiplus\GdipDisposeImage", Ptr, pBitmap) ; Dispose Image
+							DllCall("gdiplus\GdipDisposeImage", Ptr, pBitmap)  ; Dispose Image
 						}
 						WinSet, AlwaysOnTop, Off, ahk_id %GuiHWND%
 						MouseGetPos, OffsetX, OffsetY
 						OffsetX -= MouseX, OffsetY -= MouseY
-						DllCall("gdiplus\GdiplusShutdown", Ptr, pToken) ; Shutdown
+						DllCall("gdiplus\GdiplusShutdown", Ptr, pToken)  ; Shutdown
 						If (hModule := DllCall("GetModuleHandle", "str", "gdiplus", Ptr))
 							DllCall("FreeLibrary", Ptr, hModule)
-					} ; End GDI+
+					}  ; End GDI+
 					Gui, %GuiA%:Show, % "h" Margins * 17 + 1 + ControlHeight * 5 + (SquareSize + SquareSpacing) * SquaresHigh - SquareSpacing
 					ControlSetText, Button2, %ButtonUnpause%, ahk_id %GuiHWND%
 					GuiCommand := GuiCommand = "Normal" ? "Normal" : !AbsolutePath and AutoJumpToFileName ? ButtonJumpToFileName : "ErrorLevel"
@@ -1552,7 +1552,7 @@
 					If (TempGuiCommand = ButtonSave) or (TempGuiCommand = ButtonTest) {
 						If (X1 = "")
 							X1 := 1, Y1 := 1, X2 := SquaresWide, Y2 := SquaresHigh
-						VarSetCapacity(Colors, (X2 - X1 + 1) * (Y2 - Y1 + 1) * 7) ; Width := X2 - X1 + 1, Height := Y2 - Y1 + 1
+						VarSetCapacity(Colors, (X2 - X1 + 1) * (Y2 - Y1 + 1) * 7)  ; Width := X2 - X1 + 1, Height := Y2 - Y1 + 1
 						While (Y2 >= IndexY := A_Index + Y1 - 1)
 							While (X2 >= IndexX := A_Index + X1 - 1)
 								Colors .= "|" SubStr(Color_%IndexX%_%IndexY%, 3)

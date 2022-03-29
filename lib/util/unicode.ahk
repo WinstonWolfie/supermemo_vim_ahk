@@ -27,25 +27,25 @@
 
 ;; ========= CONDITION FUNCTIONS =====================================
 
-ActiveWindowTitle(){
+ActiveWindowTitle() {
   global vim
   WinGetTitle, title, A ;; A for active window
   return Vim.State.IsCurrentVimMode("Insert_unicode") && title
 }
-EmacsCase(){ 
+EmacsCase() { 
   global vim
   return Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class Emacs")
 }
-GtkApplicationCase(){
+GtkApplicationCase() {
   global vim
   return Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class gdkWindowToplevel")
 }
 
-ExcludedProgramCase(){ 
+ExcludedProgramCase() { 
   global vim
   return Vim.State.IsCurrentVimMode("Insert_unicode") && 0
 }
-OtherCase(){
+OtherCase() {
   global vim
   return Vim.State.IsCurrentVimMode("Insert_unicode") && ( not EmacsCase() 
     and not GtkApplicationCase()
@@ -57,7 +57,7 @@ OtherCase(){
 #Hotstring C O ?
 #SingleInstance force
 
-EmacsEnabled = 0 ; For emacs there is (set-input-method "TeX") 
+EmacsEnabled = 0  ; For emacs there is (set-input-method "TeX") 
 Suspend
 
 #If Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Insert")

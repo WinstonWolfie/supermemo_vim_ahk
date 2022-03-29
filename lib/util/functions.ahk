@@ -1,4 +1,4 @@
-﻿ClipboardGet_HTML( byref Data ) { ; https://www.autohotkey.com/boards/viewtopic.php?t=13063
+﻿ClipboardGet_HTML( byref Data ) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=13063
  If CBID := DllCall( "RegisterClipboardFormat", Str,"HTML Format", UInt )
   If DllCall( "IsClipboardFormatAvailable", UInt,CBID ) <> 0
    If DllCall( "OpenClipboard", UInt,0 ) <> 0
@@ -12,18 +12,20 @@ Return dataL ? dataL : 0
 }
 
 ConvertHTML(str) {
-	clip_bak := Clipboardall
+	ClipSaved := ClipboardAll
 	Clipboard := ""
 	Clipboard := str
 	ClipWait 10
 	if ClipboardGet_HTML( Data ) {
-		Clipboard := clip_bak
+		Clipboard := ClipSaved
 		Return Data
 	} else
-		Clipboard := clip_bak
+		Clipboard := ClipSaved
 }
 
 CleanHTML(str) {
+	; zzz in case you used f6 to remove format before
+	; which would disable the tag by adding a zzz (like <FONT> -> <ZZZFONT>)
 	str := RegExReplace(str, "is)( zzz| )style=""((?!BACKGROUND-IMAGE: url).)*?""")
 	str := RegExReplace(str, "is)( zzz| )style='((?!BACKGROUND-IMAGE: url).)*?'")
 	str := RegExReplace(str, "ism)<\/{0,1}(zzz|)font.*?>")
@@ -119,7 +121,7 @@ Enc_Uri(str)
 html_decode(html) {	
    ; original name: ComUnHTML() by 'Guest' from
    ; https://autohotkey.com/board/topic/47356-unhtm-remove-html-formatting-from-a-string-updated/page-2 
-   html := RegExReplace(html, "\r?\n|\r", "<br>") ; added this because original strips line breaks
+   html := RegExReplace(html, "\r?\n|\r", "<br>")  ; added this because original strips line breaks
    oHTML := ComObjCreate("HtmlFile") 
    oHTML.write(html)
    return % oHTML.documentElement.innerText 
@@ -131,7 +133,7 @@ ClickDPIAdjusted(coord_x, coord_y) {
     click, %coord_x% %coord_y%
 }
 
-StrReverse(String) { ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
+StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
 	String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
     return String
 }
