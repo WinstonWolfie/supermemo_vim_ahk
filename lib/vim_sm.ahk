@@ -3,14 +3,6 @@ class VimSM{
     this.Vim := vim
   }
 
-  IsElementWindowActive() {
-    Return (WinActive("ahk_class TElWind"))
-  }
-
-  IsBrowsing() {
-    Return (this.IsElementWindowActive() && this.Vim.State.IsCurrentVimMode("Vim_Normal") && !this.IsEditingText())
-  }
-
   MouseMoveTop(clicking:=false) {
     if !WinActive("ahk_class TElWind")
       return false
