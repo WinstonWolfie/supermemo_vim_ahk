@@ -93,18 +93,18 @@ _::
 <::
 .::
 >::
-	ft_char := A_ThisHotkey
-	if (StrLen(ft_char) > 1) {
-		if InStr(ft_char, "+") {
-			ft_char := StrReplace(ft_char, "+")
-			StringUpper, ft_char, ft_char
-		}
-		if InStr(ft_char, "~")
-			ft_char := StrReplace(ft_char, "~")
-	}
-	Vim.State.last_ft_char := Vim.State.ft_char := ft_char
-	Vim.State.last_ft := Vim.State.ft
-	Vim.Move.Move(Vim.State.ft)
+  ft_char := A_ThisHotkey
+  if (StrLen(ft_char) > 1) {
+    if InStr(ft_char, "+") {
+      ft_char := StrReplace(ft_char, "+")
+      StringUpper, ft_char, ft_char
+    }
+    if InStr(ft_char, "~")
+      ft_char := StrReplace(ft_char, "~")
+  }
+  Vim.State.last_ft_char := Vim.State.ft_char := ft_char
+  Vim.State.last_ft := Vim.State.ft
+  Vim.Move.Move(Vim.State.ft)
 Return
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_"))
@@ -113,6 +113,6 @@ f::Vim.State.SetMode("",, -1,, "f")
 t::Vim.State.SetMode("",, -1,, "t")
 +t::Vim.State.SetMode("",, -1,, "+t")
 `;::
-	Vim.State.ft_char := Vim.State.last_ft_char
-	Vim.Move.Move(Vim.State.last_ft)
+  Vim.State.ft_char := Vim.State.last_ft_char
+  Vim.Move.Move(Vim.State.last_ft)
 Return

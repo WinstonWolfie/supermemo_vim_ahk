@@ -9,22 +9,22 @@
     this.PossibleVimModes := ["", "Vim_Normal", "Insert", "Replace"
     , "Vim_ydc_y" , "Vim_ydc_yInner", "Vim_ydc_c", "Vim_ydc_cInner"
     , "Vim_ydc_d" , "Vim_ydc_dInner" , "Vim_VisualLine", "Vim_VisualFirst"
-	, "Vim_VisualFirstInner", "Vim_VisualChar", "Vim_VisualLineFirst"
-	, "Vim_VisualCharInner", "Command" , "Command_w", "Command_q"
-	, "Z", "r_once", "r_repeat", "SMVim_Cloze", "SMVim_ClozeInner"
-	, "SMVim_ClozeStay", "SMVim_ClozeStayInner", "SMVim_ClozeHinter"
-	, "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
-	, "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
-	, "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
-	, "SMVim_ExtractPriorityInner", "Insert_unicode"]
+  , "Vim_VisualFirstInner", "Vim_VisualChar", "Vim_VisualLineFirst"
+  , "Vim_VisualCharInner", "Command" , "Command_w", "Command_q"
+  , "Z", "r_once", "r_repeat", "SMVim_Cloze", "SMVim_ClozeInner"
+  , "SMVim_ClozeStay", "SMVim_ClozeStayInner", "SMVim_ClozeHinter"
+  , "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
+  , "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
+  , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
+  , "SMVim_ExtractPriorityInner", "Insert_unicode"]
 
     this.Mode := "Insert"
     this.g := 0
     this.n := 0
     this.ft := ""
-	this.ft_char := ""
-	this.last_ft := ""
-	this.last_ft_char := ""
+  this.ft_char := ""
+  this.last_ft := ""
+  this.last_ft_char := ""
     this.LineCopy := 0
     this.LastIME := 0
     this.CurrControl := ""
@@ -57,7 +57,7 @@
   }
 
   SetMode(Mode="", g=0, n=0, LineCopy=-1, ft="") {
-	previous_mode := this.Mode
+  previous_mode := this.Mode
     this.CheckValidMode(Mode)
     if (Mode != "") {
       this.Mode := Mode
@@ -65,8 +65,8 @@
         VIM_IME_SET(this.LastIME)
       }
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
-	  if A_CaretX && previous_mode != Mode
-		this.Vim.Caret.SetCaret(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
+    if A_CaretX && previous_mode != Mode
+    this.Vim.Caret.SetCaret(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
     }
     if (g != -1) {
       this.g := g
@@ -91,14 +91,14 @@
         VIM_IME_SET()
       }
     }
-	if A_CaretX && !this.Vim.IsNavigating()
-		if (this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
-		  Send, {Right}
-		  if WinActive("ahk_group VimCursorSameAfterSelect") {
-			Send, {Left}
-		  }
-		} else if this.StrIsInCurrentVimMode("Insert")
-		  send {left}
+  if A_CaretX && !this.Vim.IsNavigating()
+    if (this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
+      Send, {Right}
+      if WinActive("ahk_group VimCursorSameAfterSelect") {
+      Send, {Left}
+      }
+    } else if this.StrIsInCurrentVimMode("Insert")
+      send {left}
     this.SetMode("Vim_Normal")
   }
 
@@ -119,7 +119,7 @@
     both := VimLongEscNormal && LongPress
     neither := !(VimLongEscNormal || LongPress)
     SetNormal :=  both or neither
-	; In SuperMemo you can use ESC to both escape and enter normal mode.
+  ; In SuperMemo you can use ESC to both escape and enter normal mode.
     if (!SetNormal or (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert) {
       Send, {Esc}
     }

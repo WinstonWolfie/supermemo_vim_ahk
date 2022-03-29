@@ -5,18 +5,18 @@ a::
     send 1
     sleep 40
     send {space}  ; next item
-return	
+return  
 
 s::
-	send 2
-	sleep 40
-	send {space}  ; next item
+  send 2
+  sleep 40
+  send {space}  ; next item
 return
 
 d::
-	send 3
-	sleep 40
-	send {space}  ; next item
+  send 3
+  sleep 40
+  send {space}  ; next item
 return
 
 f::

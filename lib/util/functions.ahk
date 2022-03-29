@@ -12,28 +12,28 @@ Return dataL ? dataL : 0
 }
 
 ConvertHTML(str) {
-	ClipSaved := ClipboardAll
-	Clipboard := ""
-	Clipboard := str
-	ClipWait 10
-	if ClipboardGet_HTML( Data ) {
-		Clipboard := ClipSaved
-		Return Data
-	} else
-		Clipboard := ClipSaved
+  ClipSaved := ClipboardAll
+  Clipboard := ""
+  Clipboard := str
+  ClipWait 10
+  if ClipboardGet_HTML( Data ) {
+    Clipboard := ClipSaved
+    Return Data
+  } else
+    Clipboard := ClipSaved
 }
 
 CleanHTML(str) {
-	; zzz in case you used f6 to remove format before
-	; which would disable the tag by adding a zzz (like <FONT> -> <ZZZFONT>)
-	str := RegExReplace(str, "is)( zzz| )style=""((?!BACKGROUND-IMAGE: url).)*?""")
-	str := RegExReplace(str, "is)( zzz| )style='((?!BACKGROUND-IMAGE: url).)*?'")
-	str := RegExReplace(str, "ism)<\/{0,1}(zzz|)font.*?>")
-	str := RegExReplace(str, "is)<BR", "<P")
-	str := RegExReplace(str, "i)<H5 dir=ltr align=left>")
-	str := RegExReplace(str, "s)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
-	str := RegExReplace(str, "i)\/svg\/", "/png/")
-	Return str
+  ; zzz in case you used f6 to remove format before
+  ; which would disable the tag by adding a zzz (like <FONT> -> <ZZZFONT>)
+  str := RegExReplace(str, "is)( zzz| )style=""((?!BACKGROUND-IMAGE: url).)*?""")
+  str := RegExReplace(str, "is)( zzz| )style='((?!BACKGROUND-IMAGE: url).)*?'")
+  str := RegExReplace(str, "ism)<\/{0,1}(zzz|)font.*?>")
+  str := RegExReplace(str, "is)<BR", "<P")
+  str := RegExReplace(str, "i)<H5 dir=ltr align=left>")
+  str := RegExReplace(str, "s)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
+  str := RegExReplace(str, "i)\/svg\/", "/png/")
+  Return str
 }
 
 ; https://www.autohotkey.com/boards/viewtopic.php?t=80706
@@ -104,21 +104,21 @@ Dec_Uri(str)
 
 Enc_Uri(str) 
 {
-	f = %A_FormatInteger%
-	SetFormat, Integer, Hex
-	If RegExMatch(str, "^\w+:/{0,2}", pr)
-		StringTrimLeft, str, str, StrLen(pr)
-	StringReplace, str, str, `%, `%25, All
-	Loop
-		If RegExMatch(str, "i)[^\w\.~%/:]", char)
-			StringReplace, str, str, %char%, % "%" . SubStr(Asc(char),3), All
-		Else Break
-	SetFormat, Integer, %f%
-	Return, pr . str
+  f = %A_FormatInteger%
+  SetFormat, Integer, Hex
+  If RegExMatch(str, "^\w+:/{0,2}", pr)
+    StringTrimLeft, str, str, StrLen(pr)
+  StringReplace, str, str, `%, `%25, All
+  Loop
+    If RegExMatch(str, "i)[^\w\.~%/:]", char)
+      StringReplace, str, str, %char%, % "%" . SubStr(Asc(char),3), All
+    Else Break
+  SetFormat, Integer, %f%
+  Return, pr . str
 }
 ;#########################################################################################
 
-html_decode(html) {	
+html_decode(html) {  
    ; original name: ComUnHTML() by 'Guest' from
    ; https://autohotkey.com/board/topic/47356-unhtm-remove-html-formatting-from-a-string-updated/page-2 
    html := RegExReplace(html, "\r?\n|\r", "<br>")  ; added this because original strips line breaks
@@ -134,6 +134,6 @@ ClickDPIAdjusted(coord_x, coord_y) {
 }
 
 StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
-	String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
+  String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
     return String
 }

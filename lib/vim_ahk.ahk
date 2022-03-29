@@ -87,10 +87,10 @@ class VimAhk{
     ; Q-Dir
     GroupAdd, VimQdir, ahk_exe Q-Dir_x64.exe  ; q-dir
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe  ; q-dir
-	
+  
     GroupAdd, HTML, ahk_exe iexplore.exe  ; Internet Explorer
     GroupAdd, HTML, ahk_exe WINWORD.exe  ; Word
-	
+  
     GroupAdd, SuperMemo, ahk_exe sm18.exe
     GroupAdd, SuperMemo, ahk_exe sm17.exe
     GroupAdd, SuperMemo, ahk_exe sm16.exe
@@ -325,7 +325,7 @@ class VimAhk{
     tempClip := clipboard
     clipboard := ""
     SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
-	ClipWait 0.1
+  ClipWait 0.1
     Sleep 10
     ret := False
     If (clipboard ~= key) {
@@ -346,90 +346,90 @@ class VimAhk{
     Loop, {
         ControlGetFocus, OutputVar, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
         if (OutputVar = Control) {
-			Break
+      Break
             ErrorLevel := 0    ;Success
         } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-			Break
+      Break
             ErrorLevel := 1    ;Timed out
-		}
+    }
     }
   }
   
   IsExceptionWindow() {
-	if WinActive("ahk_group SuperMemo") && WinActive("Choices") {
-		ControlGetText, Button1, TGroupButton1
-		ControlGetText, Button2, TGroupButton2
-		ControlGetText, Button3, TGroupButton3
-		ControlGetText, Button4, TGroupButton4
-		; when you change the reference of an element that shares the reference with other elements
-		; no shortcuts there, so movement keys are used for up/down navigation
-		; if more windows are found without shortcuts in the future, they will be all added here
-		return (Button1 == "Cancel (i.e. restore the old version of references)"
-		or Button2 == "Combine old and new references for this element"
-		or Button3 == "Change references in all elements produced from the original article"
-		or Button4 == "Change only the references of the currently displayed element")
-	}
+  if WinActive("ahk_group SuperMemo") && WinActive("Choices") {
+    ControlGetText, Button1, TGroupButton1
+    ControlGetText, Button2, TGroupButton2
+    ControlGetText, Button3, TGroupButton3
+    ControlGetText, Button4, TGroupButton4
+    ; when you change the reference of an element that shares the reference with other elements
+    ; no shortcuts there, so movement keys are used for up/down navigation
+    ; if more windows are found without shortcuts in the future, they will be all added here
+    return (Button1 == "Cancel (i.e. restore the old version of references)"
+    or Button2 == "Combine old and new references for this element"
+    or Button3 == "Change references in all elements produced from the original article"
+    or Button4 == "Change only the references of the currently displayed element")
+  }
   }
   
   ParseLineBreaks(Str) {
-	if this.SM.IsEditingHTML() {  ; not perfect
-		if (StrLen(Str) != InStr(Str, "`r`n") + 1) {  ; first matched `r`n not at the end
-			Str := RegExReplace(Str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
-			Str := RegExReplace(Str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
-			Str := StrReplace(Str, "`r`n`r`n", " ")  ; turn all paragraph tags (<P>) to space
-		}
-		Str := StrReplace(Str, "`r`n", " ")  ; turn all line breaks (<BR>) to space
-	} else
-		Str := StrReplace(Str, "`r")
-	Return Str
+  if this.SM.IsEditingHTML() {  ; not perfect
+    if (StrLen(Str) != InStr(Str, "`r`n") + 1) {  ; first matched `r`n not at the end
+      Str := RegExReplace(Str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
+      Str := RegExReplace(Str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
+      Str := StrReplace(Str, "`r`n`r`n", " ")  ; turn all paragraph tags (<P>) to space
+    }
+    Str := StrReplace(Str, "`r`n", " ")  ; turn all line breaks (<BR>) to space
+  } else
+    Str := StrReplace(Str, "`r")
+  Return Str
   }
   
   IsWhitespaceOnly(Str) {
-	Return !RegExMatch(Str, "[\S]")
+  Return !RegExMatch(Str, "[\S]")
   }
   
   IsHTML() {
-	Return this.SM.IsEditingHTML() || WinActive("ahk_group HTML")
+  Return this.SM.IsEditingHTML() || WinActive("ahk_group HTML")
   }
   
   WinWaitTitleChange(OriginalTitle:="", TimeOut:=500) {
-	if !OriginalTitle
-		WinGetTitle, OriginalTitle, A
-	StartTime := A_TickCount
+  if !OriginalTitle
+    WinGetTitle, OriginalTitle, A
+  StartTime := A_TickCount
     Loop {
         WinGetTitle, CurrentTitle, A
         if (OriginalTitle != CurrentTitle) {
             Break
-			ErrorLevel := 0
+      ErrorLevel := 0
         } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
             break
-			ErrorLevel := 1
-		}
+      ErrorLevel := 1
+    }
     }
   }
   
   IsNavigating() {
-	Return this.SM.IsNavigatingPlan() || this.SM.IsNavigatingTask() || this.SM.IsNavigatingContentWindow()
+  Return this.SM.IsNavigatingPlan() || this.SM.IsNavigatingTask() || this.SM.IsNavigatingContentWindow()
   }
   
   ReleaseKey(Key) {
-	if GetKeyState(Key) {
-		send {blind}{l%Key% up}{r%Key% up}
-		ErrorLevel := 0
-	} else
-		ErrorLevel := 1
+  if GetKeyState(Key) {
+    send {blind}{l%Key% up}{r%Key% up}
+    ErrorLevel := 0
+  } else
+    ErrorLevel := 1
   }
 
   ToolTip(text:="", permanent:=false, period:=-2000) {
-	CoordMode, ToolTip, Screen
-	coord_x := A_ScreenWidth / 2
-	coord_y := A_ScreenHeight / 3 * 2
-	ToolTip, %text%, %coord_x%, %coord_y%, 20
-	if !permanent
-		SetTimer, RemoveToolTip, %period%
+  CoordMode, ToolTip, Screen
+  coord_x := A_ScreenWidth / 2
+  coord_y := A_ScreenHeight / 3 * 2
+  ToolTip, %text%, %coord_x%, %coord_y%, 20
+  if !permanent
+    SetTimer, RemoveToolTip, %period%
   }
 }
 
 RemoveToolTip:
-	ToolTip,,,, 20
+  ToolTip,,,, 20
 return

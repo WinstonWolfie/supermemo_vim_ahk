@@ -36,30 +36,30 @@ Return
 Return
 
 s::
-	send {del}
+  send {del}
     Vim.State.SetMode("Insert")
 Return
 
 +s::
-	send {end}+{home}{bs}
+  send {end}+{home}{bs}
     Vim.State.SetMode("Insert")
 Return
 
 ; Keys that need insert mode
 ~f2::
-	sleep 50
-	if A_CaretX
-		Vim.State.SetMode("Insert")
+  sleep 50
+  if A_CaretX
+    Vim.State.SetMode("Insert")
 Return
 
 alt::  ; for access keys
-	; can't use KeyWait alt, any hotkeys that use modifier alt would trigger this script
-	send {alt}  ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert
-	Vim.State.SetMode("Insert")
+  ; can't use KeyWait alt, any hotkeys that use modifier alt would trigger this script
+  send {alt}  ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert
+  Vim.State.SetMode("Insert")
 return
 
 ~AppsKey::
-	Vim.State.SetMode("Insert")
+  Vim.State.SetMode("Insert")
 Return
 
 #If

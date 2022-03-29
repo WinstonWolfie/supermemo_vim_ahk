@@ -5,10 +5,10 @@ class VimSM{
 
   IsElementWindowActive() {
     Return (WinActive("ahk_class TElWind"))
-	}
+  }
 
   IsBrowsing() {
-  	Return this.IsElementWindowActive() &&
+    Return this.IsElementWindowActive() &&
            this.Vim.State.IsCurrentVimMode("Vim_Normal") &&
            !this.IsEditingText()
   }

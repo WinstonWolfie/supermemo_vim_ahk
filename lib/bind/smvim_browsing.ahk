@@ -11,75 +11,75 @@ g::Vim.Move.Move("g")  ; 3gg goes to the 3rd line of entire text
 
 +s::
 s::  ; gs: go to source link
-	Shift := GetKeyState("Shift")
-	ClipSaved := ClipboardAll
-	Clipboard := ""
-	send !{f10}fs  ; show reference
-	WinWaitActive, Information,, 0
-	send p{esc}  ; copy reference
-	Vim.State.SetNormal()
-	ClipWait 0.2
-	sleep 20
-	if InStr(Clipboard, "Link:") {
-		RegExMatch(Clipboard, "Link: \K.*", Link)
-		Clipboard := ClipSaved  ; restore clipboard here in case Run doesn't work
-		if Shift
-			Run, iexplore.exe %Link%
-		Else
-			Run % Link
-	} else {
-		Vim.ToolTip("No link found.")
-		Clipboard := ClipSaved
-	}
+  Shift := GetKeyState("Shift")
+  ClipSaved := ClipboardAll
+  Clipboard := ""
+  send !{f10}fs  ; show reference
+  WinWaitActive, Information,, 0
+  send p{esc}  ; copy reference
+  Vim.State.SetNormal()
+  ClipWait 0.2
+  sleep 20
+  if InStr(Clipboard, "Link:") {
+    RegExMatch(Clipboard, "Link: \K.*", Link)
+    Clipboard := ClipSaved  ; restore clipboard here in case Run doesn't work
+    if Shift
+      Run, iexplore.exe %Link%
+    Else
+      Run % Link
+  } else {
+    Vim.ToolTip("No link found.")
+    Clipboard := ClipSaved
+  }
 Return
 
 ; Element/content window
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !Vim.SM.IsEditingText() and (Vim.State.g)
 +e::  ; K, gE: go up one *e*lement
-	send !{pgup}
-	Vim.State.SetMode()
+  send !{pgup}
+  Vim.State.SetMode()
 Return
 
 e::  ; J, ge: go down one *e*lement
-	send !{pgdn}
-	Vim.State.SetMode()
+  send !{pgdn}
+  Vim.State.SetMode()
 Return
 
 0::  ; g0: go to root element
-	send !{home}
-	Vim.State.SetMode()
+  send !{home}
+  Vim.State.SetMode()
 Return
 
 $::  ; g$: go to last element
-	send !{end}
-	Vim.State.SetMode()
+  send !{end}
+  Vim.State.SetMode()
 Return
 
 u::  ; gu: go up
-	send ^{up}
-	Vim.State.SetMode()
+  send ^{up}
+  Vim.State.SetMode()
 Return
 
 ; Element window / browser
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TBrowser")) && !Vim.SM.IsEditingText() and (Vim.State.g)
 +u::  ; gU: click source button
-	if WinActive("ahk_class TElWind")
-		FindClick(A_ScriptDir . "\lib\bind\util\source_element_window.png")
-	else
-		FindClick(A_ScriptDir . "\lib\bind\util\source_browser.png")
-	Vim.State.SetMode()
+  if WinActive("ahk_class TElWind")
+    FindClick(A_ScriptDir . "\lib\bind\util\source_element_window.png")
+  else
+    FindClick(A_ScriptDir . "\lib\bind\util\source_browser.png")
+  Vim.State.SetMode()
 Return
 
 ; g state, for both browsing and editing
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
 c::  ; gc: go to next *c*omponent
-	send ^t
-	Vim.State.SetMode()
+  send ^t
+  Vim.State.SetMode()
 Return
 
 +c::  ; gC: go to previous *c*omponent
-	send !{f12}fl
-	Vim.State.SetMode()
+  send !{f12}fl
+  Vim.State.SetMode()
 Return
 
 ; Need scrolling bar present
@@ -132,14 +132,14 @@ b::send {esc}  ; close browser
 o::send ^o  ; favourites
 
 f::  ; click on html component
-	if Vim.SM.MouseMoveTop(true) {
-		Vim.SM.WaitTextFocus()
-		send {left}{home}
-	} else {
-		send ^t
-		Vim.SM.WaitTextFocus()
-		send ^{home}
-	}
+  if Vim.SM.MouseMoveTop(true) {
+    Vim.SM.WaitTextFocus()
+    send {left}{home}
+  } else {
+    send ^t
+    Vim.SM.WaitTextFocus()
+    send ^{home}
+  }
 Return
 
 ; Copy
@@ -147,24 +147,24 @@ Return
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_ydc_y")) && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 y::  ; yy: copy current source url
-	ClipSaved := ClipboardAll
-	Clipboard := ""
-	send !{f10}fs  ; show reference
-	WinWaitActive, Information,, 0
-	send p{esc}  ; copy reference
-	Vim.State.SetNormal()
-	ClipWait 0.2
-	sleep 20
-	if InStr(Clipboard, "Link:") {
-		RegExMatch(Clipboard, "Link: \K.*", link)
-		Clipboard := link
-	}
-	Vim.ToolTip("Copied " . link)
+  ClipSaved := ClipboardAll
+  Clipboard := ""
+  send !{f10}fs  ; show reference
+  WinWaitActive, Information,, 0
+  send p{esc}  ; copy reference
+  Vim.State.SetNormal()
+  ClipWait 0.2
+  sleep 20
+  if InStr(Clipboard, "Link:") {
+    RegExMatch(Clipboard, "Link: \K.*", link)
+    Clipboard := link
+  }
+  Vim.ToolTip("Copied " . link)
 Return
 
 e::  ; ye: duplicate current element
-	send !d
-	Vim.State.SetNormal()
+  send !d
+  Vim.State.SetNormal()
 Return
 
 ; Plan/tasklist window
@@ -177,56 +177,56 @@ s::ClickDPIAdjusted(153, 52)  ; *s*witch tasklist
 ; Need "Start" button on screen
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
 m::
-	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord%  ; click start (similar to mark read point)
+  CoordMode, Mouse, Screen
+  click, %x_coord% %y_coord%  ; click start (similar to mark read point)
 Return
 
 `::
-	x_coord += 170
-	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord%  ; click play (similar to go to read point)
+  x_coord += 170
+  CoordMode, Mouse, Screen
+  click, %x_coord% %y_coord%  ; click play (similar to go to read point)
 Return
 
 !m::
-	x_coord += 195
-	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord%  ; click reset (similar to clear read point)
+  x_coord += 195
+  CoordMode, Mouse, Screen
+  click, %x_coord% %y_coord%  ; click reset (similar to clear read point)
 Return
 
 left::  ; left 5s
 right::  ; right 5s
-	x_coord += 110
-	y_coord -= 60
-	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord%
-	send {%A_ThisHotkey%}
-	ControlFocus, Internet Explorer_Server1, ahk_class TElWind
-	Vim.Caret.SwitchToSameWindow()
+  x_coord += 110
+  y_coord -= 60
+  CoordMode, Mouse, Screen
+  click, %x_coord% %y_coord%
+  send {%A_ThisHotkey%}
+  ControlFocus, Internet Explorer_Server1, ahk_class TElWind
+  Vim.Caret.SwitchToSameWindow()
 Return
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Insert")) && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
 ^+!y::  ; focus to youtube video
-	x_coord += 110
-	y_coord -= 60
-	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord%
-	Vim.State.SetMode("Insert")  ; insert so youtube can read keys like j, l, etc
+  x_coord += 110
+  y_coord -= 60
+  CoordMode, Mouse, Screen
+  click, %x_coord% %y_coord%
+  Vim.State.SetMode("Insert")  ; insert so youtube can read keys like j, l, etc
 Return
 
 ^+!k::  ; pause
-	y_coord -= 60
-	CoordMode, Mouse, Screen
-	click, %x_coord% %y_coord%
-	ControlFocus, Internet Explorer_Server1, ahk_class TElWind
-	Vim.Caret.SwitchToSameWindow()
-	sleep 400
-	if FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o128 x-10 y-60") {
-		ControlFocus, Internet Explorer_Server1, ahk_class TElWind
-		Vim.Caret.SwitchToSameWindow()
-	}
+  y_coord -= 60
+  CoordMode, Mouse, Screen
+  click, %x_coord% %y_coord%
+  ControlFocus, Internet Explorer_Server1, ahk_class TElWind
+  Vim.Caret.SwitchToSameWindow()
+  sleep 400
+  if FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o128 x-10 y-60") {
+    ControlFocus, Internet Explorer_Server1, ahk_class TElWind
+    Vim.Caret.SwitchToSameWindow()
+  }
 Return
 
 ^+!n::  ; focus to notes
-	ControlFocus, Internet Explorer_Server1, ahk_class TElWind
-	Vim.Caret.SwitchToSameWindow()
+  ControlFocus, Internet Explorer_Server1, ahk_class TElWind
+  Vim.Caret.SwitchToSameWindow()
 Return

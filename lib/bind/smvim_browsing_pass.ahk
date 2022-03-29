@@ -7,7 +7,7 @@
 3::
 4::
 5::
-	send % A_ThisHotkey
+  send % A_ThisHotkey
 Return
 
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
@@ -96,7 +96,7 @@ _::
 .::
 >::
 Space::
-	send {%A_ThisHotkey%}
+  send {%A_ThisHotkey%}
 Return
 
 ~^d::  ; dismiss; vim scroll down

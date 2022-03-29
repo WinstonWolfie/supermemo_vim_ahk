@@ -13,5 +13,5 @@
 ~!a::  ; new item
 ~!n::  ; new topic
 ~^+f6::  ; open source in notepad
-	Vim.State.SetMode("Insert")
+  Vim.State.SetMode("Insert")
 Return
