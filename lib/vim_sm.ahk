@@ -8,9 +8,7 @@ class VimSM{
   }
 
   IsBrowsing() {
-    Return this.IsElementWindowActive() &&
-           this.Vim.State.IsCurrentVimMode("Vim_Normal") &&
-           !this.IsEditingText()
+    Return (this.IsElementWindowActive() && this.Vim.State.IsCurrentVimMode("Vim_Normal") && !this.IsEditingText())
   }
 
   MouseMoveTop(clicking:=false) {

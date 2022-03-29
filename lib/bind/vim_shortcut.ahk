@@ -48,7 +48,7 @@ return
 
 ^!i::  ; open in *I*E
   send ^l
-  sleep 100
+  sleep 125
   link := RegExReplace(clip(), "#(.*)$")
   send {f6 2}
   Run, iexplore.exe %link%
@@ -56,7 +56,7 @@ Return
 
 ^!l::  ; copy link and parse *l*ink if if's from YT
   send ^l
-  sleep 100
+  sleep 125
   Clipboard := ""
   send ^c
   ClipWait 0.2
