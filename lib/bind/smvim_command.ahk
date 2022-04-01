@@ -48,7 +48,7 @@ return
     Clipboard := ClipSaved
     Return
   }
-  new_html := CleanHTML(html)
+  new_html := Vim.HTML.Clean(html)
   FileDelete % html_path
   FileAppend, % new_html, % html_path
   send !{home}!{left}  ; refresh
@@ -160,7 +160,7 @@ s::  ; turn active language item to passive (*s*witch)
     send {esc}
   WinGetTitle, original_title, A
   send ^+s
-  Vim.WinWaitTitleChange(original_title, 1)
+  Vim.WinWaitTitleChange(original_title, 1000)
   send q
   Vim.SM.WaitTextFocus()
   SendInput {raw}en:

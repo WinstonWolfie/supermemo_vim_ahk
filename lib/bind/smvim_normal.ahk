@@ -36,7 +36,7 @@ n::  ; open hyperlink in current caret position (Open in *n*ew window)
     sleep 10
   }
   BlockInput, off
-  If ClipboardGet_HTML( Data ) {
+  If Vim.HTML.ClipboardGet_HTML( Data ) {
     RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrentLink)
     if !CurrentLink
       Vim.ToolTip("No link found.")
@@ -60,7 +60,7 @@ s::
   ClipWait 0.2
   sleep 20
   send {esc}
-  run, %A_StartMenu%\Programs\Visual Studio Code\Visual Studio Code.lnk %Clipboard%
+  Run, % "C:\Program Files (x86)\Vim\vim82\vim.exe " . Clipboard
   Clipboard := ClipSaved
 Return
 

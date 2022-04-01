@@ -103,9 +103,10 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::send !{home}!{left}  ; reload
-t::send !n  ; create new topic
+n::send !n  ; create new topic
++n::send !a  ; create new item
 x::send {del}  ; delete element/component
-+x::send ^+{enter}  ; done!
++x::send ^+{enter}  ; Done!
 p::send ^{f10}  ; replay auto-play
 +p::send ^{t 2}{f9}  ; play video in default system player / edit script component
 ^i::send ^{f8}  ; download images

@@ -1,6 +1,6 @@
 class VimSM{
-  __New(vim) {
-    this.Vim := vim
+  __New(Vim) {
+    this.Vim := Vim
   }
 
   MouseMoveTop(clicking:=false) {
@@ -114,7 +114,7 @@ class VimSM{
     send {tab}
     this.Vim.State.SetNormal()
   }
-  
+
   MoveAboveRef(NoRestore:=false) {
     Send, ^{End}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
     if InStr(clip("",, NoRestore), "#SuperMemo Reference:")
@@ -122,8 +122,9 @@ class VimSM{
     else
       send ^{end}
   }
-  
+
   WaitTextSave(timeout:=2000) {
+    global
     send {esc}  ; exit the field
     LoopTimeout := timeout / 20
     loop {
@@ -139,8 +140,9 @@ class VimSM{
       }
     }
   }
-  
+
   WaitTextFocus(timeout:=2000) {
+    global
     LoopTimeout := timeout / 20
     loop {
       if this.IsEditingText() {
@@ -154,9 +156,10 @@ class VimSM{
       }
     }
   }
-  
+
   ; Wait until cloze/extract is finished
   WaitProcessing(timeout:=5000) {
+    global
     LoopTimeout := timeout / 20
     loop {
       sleep 20
@@ -183,7 +186,7 @@ class VimSM{
       }
     }
   }
-  
+ 
   DeselectAllComponents(timeout:=1000) {
     LoopTimeout := timeout / 20
     ControlGetFocus, current_focus, ahk_class TElWind

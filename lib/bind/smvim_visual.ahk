@@ -98,13 +98,14 @@ cloze_hinter:
 ^!+z::
 !+z::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
-^+z::  ; cloze hinter
+^+z::
 +z::  ; cloze hinter
-  if cloze_hinter_ctrl_state && (A_ThisLabel == "cloze_hinter") {  ; from cloze hinter label and ctrl is down
+  if (cloze_hinter_ctrl_state && A_ThisLabel == "cloze_hinter") {  ; from cloze hinter label and ctrl is down
     ctrl_state := 1
     cloze_hinter_ctrl_state := 0
-  } else
+  } else {
     ctrl_state := GetKeyState("Ctrl")
+  }
   Gui, ClozeHinter:Add, Text,, &Hint:
   Gui, ClozeHinter:Add, Edit, vHint
   Gui, ClozeHinter:Add, CheckBox, vInside, &Inside square brackets
@@ -134,31 +135,28 @@ ClozeHinterButtonCloze:
   sleep % (A_TickCount - sleep_calculation) / 3 * 2
   send q
   if Inside
-    cloze = [%hint%]
+    cloze := hint . "]"
   else
-    cloze = [...](%hint%)
+    cloze := "...](" . hint . ")"
   Vim.SM.WaitTextFocus()
   if Vim.SM.IsEditingPlainText() {  ; editing plain text
     send ^a
-    clip(StrReplace(clip(), "[...]", cloze))
+    clip(StrReplace(clip(), "[...]", "[" . cloze))
   } else if Vim.SM.IsEditingHTML() {
-    ClipSaved := ClipboardAll
-    Clipboard := ""
-    send !{f12}fc  ; copy file path
-    ClipWait 0.2
-    sleep 20
-    FileRead, html, % Clipboard
-    Vim.SM.MoveAboveRef(true)
-    send !\\
-    WinWaitNotActive, ahk_class TElWind,, 0
-    if !ErrorLevel
-      send {enter}
-    clip(StrReplace(html, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>" . cloze . "</SPAN>"),, true)
-    send ^+{home}^+1
-    Vim.SM.WaitTextSave()
-    Clipboard := ClipSaved
-    if ErrorLevel
-      Return
+    send {f3}
+		WinWaitActive, ahk_class TMyFindDlg,, 0
+		SendInput {raw}[...]
+		send {enter}
+		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
+		send ^{enter}
+		WinWaitActive, ahk_class TCommanderDlg,, 0
+		if ErrorLevel
+			return
+		send h{enter}q{left}{right} ; put the caret after the [ of [...]
+		clip(cloze)
+		SendInput {del 4} ; delete ...] ; somehow, here send wouldn't be working well in slow computers
+		if WinExist("ahk_class TMyFindDlg") ; clears search box window
+			WinClose
   }
   if !ctrl_state  ; only goes back to topic if ctrl is up
     send !{right}  ; add a ctrl to keep editing the clozed item

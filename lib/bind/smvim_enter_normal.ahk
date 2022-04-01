@@ -3,7 +3,7 @@
 ; in element window pressing enter to learn goes to normal
 ~enter::
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
-~space::  ; for Learn button
+~space up::  ; for Learn button
   WinGetText, visible_text, ahk_class TElWind
   RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
   if (collection_name = "passive") {

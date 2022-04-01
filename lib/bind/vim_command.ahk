@@ -85,13 +85,16 @@ SMPlan:
   if WinExist("ahk_group SuperMemo") {
     WinActivate, ahk_class TElWind
     WinWaitActive, ahk_class TElWind,, 0
+		send ^{enter}  ; commander; seems to be a more reliable option than {alt}kp or ^p
   } else {
     run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\SuperMemo\SuperMemo.lnk
     WinWaitActive, ahk_class TElWind,, 5
     if ErrorLevel
       Return
+		sleep 100
+		send ^{enter}  ; commander; seems to be a more reliable option than {alt}kp or ^p
+		WinWaitActive, ahk_class TCommanderDlg,, 1.5
   }
-  send ^{enter}  ; commander; seems to be a more reliable option than {alt}kp or ^p
   SendInput {raw}pl  ; open plan
   send {enter}
   Vim.State.SetMode("Vim_Normal")
@@ -154,7 +157,7 @@ Return
 YouGlish:
   text := clip()
   if !text {
-    InputBox, text, DeepL Translation, Enter your text.,, 192, 128
+    InputBox, text, YouGlish, Enter your text.,, 192, 128
     if !text || ErrorLevel
       return
   }

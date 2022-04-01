@@ -44,25 +44,35 @@ Return
   Vim.State.SetNormal()
 return
 
-!+bs::  ; for laptop
-^+bs::  ; for processing pending queue Advanced English 2018: delete element and keep learning
+>!>+bs::  ; for laptop
+>^>+bs::  ; for processing pending queue Advanced English 2018: delete element and keep learning
+  Vim.ReleaseKey("Ctrl")
+  Vim.ReleaseKey("Shift")
+  WinGetTitle, current_title, A
   send ^+{del}
   WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
-  send {enter}
+  Vim.WinWaitTitleChange(current_title)
+  if WinActive("ahk_class TElWind")
+    send {enter}
   Vim.State.SetNormal()
 return
 
-!+\::  ; for laptop
-^+\::  ; Done! and keep learning
+>!>+\::  ; for laptop
+>^>+\::  ; Done! and keep learning
+  Vim.ReleaseKey("Ctrl")
+  Vim.ReleaseKey("Shift")
+  WinGetTitle, current_title, A
   send ^+{enter}
   WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the collection?"
   send {enter}
   WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
-  send {enter}
+  Vim.WinWaitTitleChange(current_title)
+  if WinActive("ahk_class TElWind")
+    send {enter}
   Vim.State.SetNormal()
 return
 
@@ -103,7 +113,7 @@ return
   send ^c
   ClipWait 0.6
   sleep 20
-  If ClipboardGet_HTML( Data ) {
+  If Vim.HTML.ClipboardGet_HTML( Data ) {
     ; To do: detect selection contents
     ; if RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)") {  ; match end of first IMG tag until start of last EndFragment tag
       ; Vim.ToolTip("Please select text or image only.")
@@ -241,9 +251,6 @@ PlanInsertButtonInsert:
   SendInput {raw}pl  ; open Plan again
   send {enter}
 return
-
-#If Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg")
-.::SendInput ^a0.
 
 #If Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg")
 !+d::FindClick(A_ScriptDir . "\lib\bind\util\web_import_duplicates.png")

@@ -6,6 +6,8 @@
 #Include %A_LineFile%\..\util\functions.ahk
 #Include %A_LineFile%\..\util\CbAutoComplete.ahk
 #Include %A_LineFile%\..\util\unicode.ahk
+#Include %A_LineFile%\..\util\WinClipAPI.ahk
+#Include %A_LineFile%\..\util\WinClip.ahk
 
 ; Classes, Functions
 #Include %A_LineFile%\..\vim_about.ahk
@@ -323,7 +325,7 @@ class VimAhk{
     tempClip := clipboard
     clipboard := ""
     SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
-  ClipWait 0.1
+    ClipWait 0.1
     Sleep 10
     ret := False
     If (clipboard ~= key) {
@@ -334,25 +336,7 @@ class VimAhk{
     BlockInput, off
     Return ret
   }
-  
-  ; https://www.autohotkey.com/boards/viewtopic.php?t=5484
-  ;This function wraps a loop that continuously uses ControlGetFocus to test if a particular 
-  ;control is active. For more info see ControlGetFocus in the docs.
-  ;An optional timeout can be included.
-  ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:="") {
-    StartTime := A_TickCount
-    Loop, {
-        ControlGetFocus, OutputVar, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
-        if (OutputVar = Control) {
-      Break
-            ErrorLevel := 0    ;Success
-        } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-      Break
-            ErrorLevel := 1    ;Timed out
-    }
-    }
-  }
-  
+
   IsExceptionWindow() {
   if WinActive("ahk_group SuperMemo") && WinActive("Choices") {
     ControlGetText, Button1, TGroupButton1
@@ -383,26 +367,26 @@ class VimAhk{
   }
   
   IsWhitespaceOnly(Str) {
-  Return !RegExMatch(Str, "[\S]")
+    Return !RegExMatch(Str, "[\S]")
   }
   
   IsHTML() {
-  Return this.SM.IsEditingHTML() || WinActive("ahk_group HTML")
+    Return this.SM.IsEditingHTML() || WinActive("ahk_group HTML")
   }
   
   WinWaitTitleChange(OriginalTitle:="", TimeOut:=500) {
-  if !OriginalTitle
-    WinGetTitle, OriginalTitle, A
-  StartTime := A_TickCount
+    if !OriginalTitle
+      WinGetTitle, OriginalTitle, A
+    StartTime := A_TickCount
     Loop {
-        WinGetTitle, CurrentTitle, A
-        if (OriginalTitle != CurrentTitle) {
-            Break
-      ErrorLevel := 0
-        } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-            break
-      ErrorLevel := 1
-    }
+      WinGetTitle, CurrentTitle, A
+      if (OriginalTitle != CurrentTitle) {
+        Break
+        ErrorLevel := 0
+      } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+        break
+        ErrorLevel := 1
+      }
     }
   }
   

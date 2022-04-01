@@ -17,7 +17,13 @@ Return
   Vim.State.ToggleEnabled()
 Return
 
-; Shortcuts for all windows
+; Testing
+; ^!+t::
+;   ControlGetFocus, control, A
+;   SendMessage, 0x0115, 1, 0, %control%, A
+; Return
+
+; Shortcuts
 #If Vim.State.Vim.Enabled
 ^!r::Reload
 
@@ -28,39 +34,33 @@ LAlt & RAlt::  ; for laptop
   Vim.State.SetMode("Insert")
 return
 
-; Testing caret
-; ^!+r::MouseMove, %A_CaretX%, %A_CaretY%
-; ^!+r::Vim.ToolTip("Caret position: " . A_CaretX . " " . A_CaretY
-
-; ^!+t::
-  ; if ClipboardGet_HTML(data) {
-  ;   RegExMatch(data, "s)(?<=<!--StartFragment-->).+(?=<HR SuperMemo>)", body)
-  ;   RegExMatch(data, "s)(?<=<HR SuperMemo>).+(?=<!--EndFragment-->)", ref)
-  ;   full := CleanHTML(body) . ref
-  ;   SetClipboardHTML(full)
-  ; }
-  ; SetClipboardHTML("")
-; Return
+#f::run % "C:\Program Files\Everything 1.5a\Everything64.exe"
 
 ; Browsers
 #If Vim.State.Vim.Enabled && WinActive("ahk_group Browsers")
 ^!w::send ^w!{tab}  ; close tab and switch back
 
 ^!i::  ; open in *I*E
-  send ^l
-  sleep 125
-  link := RegExReplace(clip(), "#(.*)$")
+	Vim.ReleaseKey("ctrl")
+  clip_saved := ClipboardAll
+  Clipboard := ""
+  While, !Clipboard {
+    send ^l^c
+    ClipWait, 0.2
+  }
   send {f6 2}
-  Run, iexplore.exe %link%
+  link := RegExReplace(Clipboard, "#(.*)$")
+  Run, % "iexplore.exe " . link
+  Clipboard := clip_saved
 Return
 
 ^!l::  ; copy link and parse *l*ink if if's from YT
-  send ^l
-  sleep 125
+	Vim.ReleaseKey("ctrl")
   Clipboard := ""
-  send ^c
-  ClipWait 0.2
-  sleep 20
+  While, !Clipboard {
+    send ^l^c
+    ClipWait, 0.2
+  }
   send {f6 2}
   temp_clip := RegExReplace(Clipboard, "#(.*)$")
   if InStr(temp_clip, "https://www.youtube.com") && InStr(temp_clip, "v=") {
