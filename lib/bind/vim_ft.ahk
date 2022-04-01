@@ -116,3 +116,13 @@ t::Vim.State.SetMode("",, -1,, "t")
   Vim.State.ft_char := Vim.State.last_ft_char
   Vim.Move.Move(Vim.State.last_ft)
 Return
+
+,::
+  Vim.State.ft_char := Vim.State.last_ft_char
+  if InStr(Vim.State.last_ft, "+") {
+    ft_reversed := StrReplace(Vim.State.last_ft, "+")
+  } else {
+    ft_reversed := "+" . Vim.State.last_ft
+  }
+  Vim.Move.Move(ft_reversed)
+Return

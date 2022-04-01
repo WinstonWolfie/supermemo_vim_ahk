@@ -266,8 +266,8 @@ class VimAhk{
 
   SetDefaultActiveWindows() {
     DefaultList := ["ahk_exe Evernote.exe"  ; Evernote
-                  ; , "ahk_exe explorer.exe"  ; Explorer
-                  ; , "ahk_exe Explorer.exe"  ; Explorer, Explorer became also upper case, but lower case works for this
+                  , "ahk_exe explorer.exe"  ; Explorer
+                  , "ahk_exe Explorer.exe"  ; Explorer, Explorer became also upper case, but lower case works for this
                   , "ahk_exe notepad.exe"   ; NotePad
                   , "ahk_exe Notepad.exe"   ; NotePad, Changed as upper case since ~2022/1 ??
                   , "OneNote"               ; OneNote at Windows 10

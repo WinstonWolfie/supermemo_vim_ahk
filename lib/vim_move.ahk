@@ -257,9 +257,15 @@
             Send, ^{Left}
           }else{
             this.Home()
-      if WinActive("ahk_exe notepad++.exe")
-        send {home}
+            if WinActive("ahk_exe notepad++.exe")
+              send {home}
           }
+        }
+      } else if (key == "+") {
+        if (this.shift == 1) && !ForceNoShift {
+          send +{down}+{end}+{home}
+        }else{
+          send {down}{end}{home}
         }
       ; Words
       }else if (key == "w") {

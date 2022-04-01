@@ -6,7 +6,11 @@
 ~F2::Vim.State.SetMode("Insert")
 
 #If Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal"))
-i::Vim.State.SetMode("Insert")
+i::
+  if (Vim.State.g)
+    Vim.Move.Move("g")
+  Vim.State.SetMode("Insert")
+Return
 
 +i::
   Send, {Home}

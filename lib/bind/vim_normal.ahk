@@ -40,17 +40,13 @@ Return
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
 ^e::
-  if Vim.SM.IsEditingHTML()
-    Vim.SM.MouseMoveTop()
-  Vim.ReleaseKey("ctrl")
-  send {WheelDown}{CtrlDown}
+  ControlGetFocus, control, A
+  SendMessage, 0x0115, 1, 0, %control%, A
 return
 
 ^y::
-  if Vim.SM.IsEditingHTML()
-    Vim.SM.MouseMoveTop()
-  Vim.ReleaseKey("ctrl")
-  send {WheelUp}{CtrlDown}
+  ControlGetFocus, control, A
+  SendMessage, 0x0115, 0, 0, %control%, A
 return
 
 ; Q-dir
