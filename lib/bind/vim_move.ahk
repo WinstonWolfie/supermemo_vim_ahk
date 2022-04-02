@@ -31,6 +31,7 @@ l::Vim.Move.Repeat("l")
 $::Vim.Move.Move("$")
 ^::Vim.Move.Move("^")
 +::Vim.Move.Move("+")
+-::Vim.Move.Move("-")
 ; Words
 w::Vim.Move.Repeat("w")
 +w::Vim.Move.Repeat("w")  ; +w = w

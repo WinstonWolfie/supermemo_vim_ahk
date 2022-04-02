@@ -267,6 +267,12 @@
         }else{
           send {down}{end}{home}
         }
+      } else if (key == "-") {
+        if (this.shift == 1) && !ForceNoShift {
+          send +{up}+{end}+{home}
+        }else{
+          send {up}{end}{home}
+        }
       ; Words
       }else if (key == "w") {
         if (this.shift == 1) && !ForceNoShift {
