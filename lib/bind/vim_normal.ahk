@@ -41,12 +41,22 @@ Return
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
 ^e::
   ControlGetFocus, control, A
-  SendMessage, 0x0115, 1, 0, %control%, A
+  if WinActive("ahk_exe WINWORD.exe") {
+    Vim.ReleaseKey("ctrl")
+    send {WheelDown}{CtrlDown}
+  } else {
+    SendMessage, 0x0115, 1, 0, %control%, A
+  }
 return
 
 ^y::
   ControlGetFocus, control, A
-  SendMessage, 0x0115, 0, 0, %control%, A
+  if WinActive("ahk_exe WINWORD.exe") {
+    Vim.ReleaseKey("ctrl")
+    send {WheelUp}{CtrlDown}
+  } else {
+    SendMessage, 0x0115, 0, 0, %control%, A
+  }
 return
 
 ; Q-dir

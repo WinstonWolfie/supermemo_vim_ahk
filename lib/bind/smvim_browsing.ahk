@@ -83,15 +83,20 @@ Return
 Return
 
 ; Need scrolling bar present
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.SM.IsEditingText() && (Vim.SM.MouseMoveTop() || Vim.SM.MouseMoveRight())
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.SM.IsEditingText()
 ; Scrolling
-h::send {WheelLeft}
-l::send {WheelRight}
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.SM.IsEditingText() && Vim.SM.MouseMoveTop()
-j::send {WheelDown}
-k::send {WheelUp}
-d::send {WheelDown 2}
-u::send {WheelUp 2}
+h::SendMessage, 0x114, 0, 0, Internet Explorer_Server1, A ; scroll left
+l::SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A ; scroll right
+j::SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A ; scroll down
+k::SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A ; scroll up
+d::
+  SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A
+  SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A
+Return
+u::
+  SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A
+  SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A
+Return
 
 ; "Browsing" mode
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
@@ -201,12 +206,16 @@ right::  ; right 5s
   CoordMode, Mouse, Screen
   click, %x_coord% %y_coord%
   send {%A_ThisHotkey%}
-  ControlFocus, Internet Explorer_Server1, ahk_class TElWind
-  Vim.Caret.SwitchToSameWindow()
+  send ^t
+  sleep 10
+  send ^t
 Return
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Insert")) && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
 ^+!y::  ; focus to youtube video
+  Vim.ReleaseKey("ctrl")
+  Vim.ReleaseKey("shift")
+  KeyWait alt
   x_coord += 110
   y_coord -= 60
   CoordMode, Mouse, Screen
@@ -215,19 +224,32 @@ Return
 Return
 
 ^+!k::  ; pause
-  y_coord -= 60
+  Vim.ReleaseKey("ctrl")
+  Vim.ReleaseKey("shift")
+  KeyWait alt
   CoordMode, Mouse, Screen
+  y_coord -= 60
   click, %x_coord% %y_coord%
-  ControlFocus, Internet Explorer_Server1, ahk_class TElWind
-  Vim.Caret.SwitchToSameWindow()
+  send ^t
+  sleep 10
+  send ^t
   sleep 400
-  if FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o128 x-10 y-60") {
-    ControlFocus, Internet Explorer_Server1, ahk_class TElWind
-    Vim.Caret.SwitchToSameWindow()
+  if FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o96", x_coord, y_coord) {
+    x_coord -= 10
+    y_coord -= 65
+    click % x_coord . " " . y_coord
+    send ^t
+    sleep 10
+    send ^t
   }
 Return
 
 ^+!n::  ; focus to notes
-  ControlFocus, Internet Explorer_Server1, ahk_class TElWind
-  Vim.Caret.SwitchToSameWindow()
+  Vim.ReleaseKey("ctrl")
+  Vim.ReleaseKey("shift")
+  KeyWait alt
+  send ^t
+  sleep 10
+  send ^t
+  Vim.State.SetNormal()
 Return

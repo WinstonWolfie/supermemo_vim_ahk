@@ -114,10 +114,10 @@
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
     send {Ctrl Up}
-  if !WinActive("ahk_exe iexplore.exe")
-    send {alt up}
-  if this.Vim.State.IsCurrentVimMode("Vim_VisualFirst")
-    this.vim.state.setmode("Vim_VisualChar")
+    if !WinActive("ahk_exe iexplore.exe")
+      send {alt up}
+    if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner"))
+      this.vim.state.setmode("Vim_VisualChar")
   }
 
   Home() {
@@ -948,25 +948,26 @@
       this.Move("b", true)
       this.Move("e", false)
     } else if (key == "s") {
-    send {right}  ; so if at start of a sentence, select this sentence
-    this.Move("(",,, true, true)
-    ClipWait 1  ; make sure detection in ")" works
-    this.Move(")",,, true)
-    this.Vim.State.SetMode("",, 2)
-    this.Repeat("h")
-    } else if (key == "p") {
-    this.ParagraphDown()
-    this.ParagraphUp()
-    this.SelectParagraphDown()
-    this.HandleHTMLSelection()
-    detection_str := this.Vim.ParseLineBreaks(clip())
-    detection_str := StrReverse(detection_str)
-    pos := RegExMatch(detection_str, "^((\s+)[.]|[.]|(\s+))", match)
-    if StrLen(match) {
-      this.Vim.State.SetMode("",, StrLen(match))
+      send {right}  ; so if at start of a sentence, select this sentence
+      this.Move("(",,, true, true)
+      ClipWait 1  ; make sure detection in ")" works
+      this.Move(")",,, true)
+      this.Vim.State.SetMode("",, 2)
       this.Repeat("h")
-    } else
-      this.MoveFinalize()
-  }
+    } else if (key == "p") {
+      this.ParagraphDown()
+      this.ParagraphUp()
+      this.SelectParagraphDown()
+      this.HandleHTMLSelection()
+      detection_str := this.Vim.ParseLineBreaks(clip())
+      detection_str := StrReverse(detection_str)
+      pos := RegExMatch(detection_str, "^((\s+)[.]|[.]|(\s+))", match)
+      if StrLen(match) {
+        this.Vim.State.SetMode("",, StrLen(match))
+        this.Repeat("h")
+      } else {
+        this.MoveFinalize()
+      }
+    }
   }
 }

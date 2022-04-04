@@ -5,11 +5,11 @@
       return WinClip_base[ aTarget ].( this, aParams* )
     throw Exception( "Unknown function '" aTarget "' requested from object '" this.__Class "'", -1 )
   }
-  
+
   Err( msg ) {
     throw Exception( this.__Class " : " msg ( A_LastError != 0 ? "`n" this.ErrorFormat( A_LastError ) : "" ), -2 )
   }
-  
+
   ErrorFormat( error_id ) {
     VarSetCapacity(msg,1000,0)
     if !len := DllCall("FormatMessageW"

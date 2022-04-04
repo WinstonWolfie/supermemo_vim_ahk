@@ -34,10 +34,11 @@ Return
 ; Commander, can be launched anywhere as long as vim_ahk is enabled
 #If Vim.State.Vim.Enabled && !Vim.State.IsCurrentVimMode("Command")
 ^`;::
+  Vim.ReleaseKey("ctrl")
   WinGet, hwnd, ID, A
   Gui, VimCommander:Add, Text,, &Command:
   ; list names are the same as subroutine name, just no space and no final parentheses
-  list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE|Google define"
+  list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE|Google define|YT History In IE"
   if Vim.State.IsCurrentVimMode("Vim_Normal") {
     list .= 
     CommanderMode = n
@@ -91,7 +92,7 @@ SMPlan:
     WinWaitActive, ahk_class TElWind,, 5
     if ErrorLevel
       Return
-		sleep 100
+		sleep 500
 		send ^{enter}  ; commander; seems to be a more reliable option than {alt}kp or ^p
 		WinWaitActive, ahk_class TCommanderDlg,, 1.5
   }
@@ -229,4 +230,8 @@ ClozeAndDone:
     send {enter}
     Vim.State.SetNormal()
   }
+Return
+
+YTHistoryInIE:
+  run iexplore.exe https://www.youtube.com/feed/history
 Return

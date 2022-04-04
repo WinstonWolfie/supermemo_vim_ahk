@@ -107,7 +107,7 @@ Return
 ^+!/::  ; also cloze hinter but stays in clozed item
 /::  ; better search
   ctrl_state := GetKeyState("Ctrl")  ; visual
-  shift_state := GetKeyState("Shift")  ; caret on the right
+  shift_state := GetKeyState("RShift")  ; caret on the right
   alt_state := GetKeyState("alt")  ; followed by a cloze
   if !Vim.SM.IsEditingText() {
     send ^t
@@ -117,6 +117,8 @@ Return
       Return
     }
   }
+  if (GetKeyState("LShift"))
+    send ^{Home}
   ControlGetFocus, current_focus, ahk_class TElWind
   if alt_state
     InputBox, UserInput, Search, Find text:`n(your search result will be clozed),, 272, 144,,,,, % Vim.Move.LastSearch

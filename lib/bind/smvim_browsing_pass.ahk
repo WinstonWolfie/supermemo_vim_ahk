@@ -107,4 +107,8 @@ Return
 ~^+p::  ; element parameter; vim_ahk paste without format
 Return
 
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")
+~^l::
+Return
+
 #If

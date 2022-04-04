@@ -91,15 +91,23 @@
         VIM_IME_SET()
       }
     }
-  if A_CaretX && !this.Vim.IsNavigating()
-    if (this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
-      Send, {Right}
-      if WinActive("ahk_group VimCursorSameAfterSelect") {
-      Send, {Left}
+    if A_CaretX && !this.Vim.IsNavigating() {
+      if (this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
+        Send, {Right}
+        if WinActive("ahk_group VimCursorSameAfterSelect") {
+          Send, {Left}
+        }
+      } else if this.StrIsInCurrentVimMode("Insert") {
+        send {left}
+        find_click := true
       }
-    } else if this.StrIsInCurrentVimMode("Insert")
-      send {left}
+    }
     this.SetMode("Vim_Normal")
+    if (find_click) {
+      if (ControlGetFocus() == "Internet Explorer_Server2" && FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord))
+        send {right}
+      find_click := false
+    }
   }
 
   SetInner() {
