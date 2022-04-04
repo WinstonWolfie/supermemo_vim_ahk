@@ -83,7 +83,7 @@ Return
 Return
 
 ; Need scrolling bar present
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.SM.IsEditingText()
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 ; Scrolling
 h::SendMessage, 0x114, 0, 0, Internet Explorer_Server1, A ; scroll left
 l::SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A ; scroll right

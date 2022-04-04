@@ -29,6 +29,7 @@ return
 ; https://getquicker.net/Sharedaction?code=859bda04-fe78-4385-1b37-08d88a0dba1c
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
+	send ^{f7}
   if Vim.SM.IsEditingPlainText()
     Return
   if !Vim.SM.IsEditingHTML() {
