@@ -19,8 +19,8 @@ Return
 
 ; Testing
 ; ^!+t::
-;   ControlGetFocus, control, A
-;   SendMessage, 0x0115, 1, 0, %control%, A
+;   ControlGetFocus, current_focus, A
+;   Control, Check,, current_focus, A
 ; Return
 
 ; Shortcuts

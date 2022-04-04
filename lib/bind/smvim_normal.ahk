@@ -156,7 +156,7 @@ Return
     if ErrorLevel
       Return
     clip(UserInput)
-    send {enter}
+    send !c{enter}
     WinWaitNotActive, ahk_class TMyFindDlg,, 0  ; faster than wait for element window to be active
     if ErrorLevel
       Return
