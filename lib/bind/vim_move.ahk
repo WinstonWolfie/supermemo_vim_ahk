@@ -1,12 +1,14 @@
 ﻿; Inner mode
-#If Vim.IsVimGroup() and !Vim.State.StrIsInCurrentVimMode("Inner")
-&& ((Vim.State.StrIsInCurrentVimMode("Vim_ydc")) or (Vim.State.IsCurrentVimMode("Vim_VisualChar"))
-|| Vim.State.IsCurrentVimMode("Vim_VisualFirst") || Vim.State.StrIsInCurrentVimMode("SMVim_"))
+#If (Vim.IsVimGroup()
+     && !Vim.State.StrIsInCurrentVimMode("Inner")
+     && (Vim.State.StrIsInCurrentVimMode("Vim_ydc")
+         || Vim.State.IsCurrentVimMode("Vim_VisualChar")
+         || Vim.State.IsCurrentVimMode("Vim_VisualFirst")
+         || Vim.State.StrIsInCurrentVimMode("SMVim_")))
 i::Vim.State.SetInner()
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Inner"))
 w::Vim.Move.Inner("w")
-+w::Vim.Move.Inner("w")
 s::Vim.Move.Inner("s")
 p::Vim.Move.Inner("p")
 
@@ -22,10 +24,6 @@ h::Vim.Move.Repeat("h")
 j::Vim.Move.Repeat("j")
 k::Vim.Move.Repeat("k")
 l::Vim.Move.Repeat("l")
-^h::Vim.Move.Repeat("h")
-^j::Vim.Move.Repeat("j")
-^k::Vim.Move.Repeat("k")
-^l::Vim.Move.Repeat("l")
 ; Home/End
 0::Vim.Move.Move("0")
 $::Vim.Move.Move("$")
@@ -34,11 +32,8 @@ $::Vim.Move.Move("$")
 -::Vim.Move.Move("-")
 ; Words
 w::Vim.Move.Repeat("w")
-+w::Vim.Move.Repeat("w")  ; +w = w
 e::Vim.Move.Repeat("e")
-+e::Vim.Move.Repeat("e")  ; +e = e
 b::Vim.Move.Repeat("b")
-+b::Vim.Move.Repeat("b")  ; +b = b
 ; Page Up/Down
 ^u::Vim.Move.Repeat("^u")
 ^d::Vim.Move.Repeat("^d")

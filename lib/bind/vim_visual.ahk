@@ -38,6 +38,14 @@ Return
 Return
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual"))
+; Visual to insert
++i::
+  send {left}
+  Vim.State.SetMode("Insert")
+Return
+
+^i::Vim.State.SetMode("Insert")
+
 ; ydc
 y::
   Clipboard :=

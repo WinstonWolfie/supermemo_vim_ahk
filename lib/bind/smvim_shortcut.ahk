@@ -214,6 +214,7 @@ Return
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg")  ; SuperMemo Plan window
 !a::  ; insert activity
   Vim.State.SetNormal()
+  KeyWait Alt
   Gui, PlanInsert:Add, Text,, &Activity:
   list = Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM
   Gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, %list%

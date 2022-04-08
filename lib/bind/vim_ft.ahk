@@ -93,7 +93,10 @@ _::
 <::
 .::
 >::
+space::
   ft_char := A_ThisHotkey
+  if (ft_char = "space")
+    ft_char := " "
   if (StrLen(ft_char) > 1) {
     if InStr(ft_char, "+") {
       ft_char := StrReplace(ft_char, "+")

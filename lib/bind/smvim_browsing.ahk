@@ -87,7 +87,9 @@ Return
 ; Scrolling
 h::SendMessage, 0x114, 0, 0, Internet Explorer_Server1, A ; scroll left
 l::SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A ; scroll right
+^e::
 j::SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A ; scroll down
+^y::
 k::SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A ; scroll up
 d::
   SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A

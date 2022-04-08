@@ -60,7 +60,7 @@ s::
   ClipWait 0.2
   sleep 20
   send {esc}
-  Run, % "C:\Program Files (x86)\Vim\vim82\vim.exe " . Clipboard
+  Run, % "C:\Program Files (x86)\Vim\vim82\gVim.exe " . Clipboard
   Clipboard := ClipSaved
 Return
 
