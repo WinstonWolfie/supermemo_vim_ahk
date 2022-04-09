@@ -19,7 +19,6 @@ s::  ; gs: go to source link
   send p{esc}  ; copy reference
   Vim.State.SetNormal()
   ClipWait 0.2
-  sleep 20
   if InStr(Clipboard, "Link:") {
     RegExMatch(Clipboard, "Link: \K.*", Link)
     Clipboard := ClipSaved  ; restore clipboard here in case Run doesn't work
@@ -162,7 +161,6 @@ y::  ; yy: copy current source url
   send p{esc}  ; copy reference
   Vim.State.SetNormal()
   ClipWait 0.2
-  sleep 20
   if InStr(Clipboard, "Link:") {
     RegExMatch(Clipboard, "Link: \K.*", link)
     Clipboard := link

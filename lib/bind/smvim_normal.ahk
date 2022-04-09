@@ -29,11 +29,9 @@ n::  ; open hyperlink in current caret position (Open in *n*ew window)
   clipboard := ""
   SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
   ClipWait 0.1
-  sleep 10  ; short sleep to make sure clipboard updates
   If (clipboard ~= "\s") {
     SendInput {Left}{Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
     ClipWait 0.1
-    sleep 10
   }
   BlockInput, off
   If Vim.HTML.ClipboardGet_HTML( Data ) {
@@ -58,7 +56,6 @@ s::
   Clipboard := ""
   send !{f12}fc
   ClipWait 0.2
-  sleep 20
   send {esc}
   Run, % "C:\Program Files (x86)\Vim\vim82\gVim.exe " . Clipboard
   Clipboard := ClipSaved
@@ -107,7 +104,9 @@ Return
 ^+!/::  ; also cloze hinter but stays in clozed item
 /::  ; better search
   ctrl_state := GetKeyState("Ctrl")  ; visual
-  shift_state := GetKeyState("RShift")  ; caret on the right
+  shift_state := GetKeyState("shift")  ; caret on the right
+  r_shift_state := GetKeyState("RShift")  ; caret on the right
+  l_shift_state := GetKeyState("LShift")  ; start from top
   alt_state := GetKeyState("alt")  ; followed by a cloze
   if !Vim.SM.IsEditingText() {
     send ^t
@@ -117,7 +116,7 @@ Return
       Return
     }
   }
-  if (GetKeyState("LShift"))
+  if (l_shift_state)
     send ^{Home}
   ControlGetFocus, current_focus, ahk_class TElWind
   if alt_state
@@ -137,7 +136,7 @@ Return
       pos -= 1
       SendInput {left}{right %pos%}
       input_len := StrLen(UserInput)
-      if shift_state
+      if r_shift_state
         SendInput {right %input_len%}
       else if ctrl_state || alt_state {
         SendInput +{right %input_len%}
@@ -161,7 +160,7 @@ Return
     if ErrorLevel
       Return
     if !alt_state
-      if shift_state
+      if r_shift_state
         send {right}  ; put caret on right of searched text
       else if ctrl_state
         Vim.State.SetMode("Vim_VisualChar")

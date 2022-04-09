@@ -11,7 +11,6 @@ Return
   Clipboard=
   Send, ^{Left}+^{Right}^c
   ClipWait, 0.2
-  sleep 20
   Send, ^f
   Send, ^v!f
   clipboard := bak

@@ -112,7 +112,6 @@ return
   Clipboard := ""
   send ^c
   ClipWait 0.6
-  sleep 20
   If Vim.HTML.ClipboardGet_HTML( Data ) {
     ; To do: detect selection contents
     ; if RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)") {  ; match end of first IMG tag until start of last EndFragment tag
@@ -143,7 +142,6 @@ return
       Clipboard := ""
       send !{f12}fc  ; copy file path
       ClipWait 0.2
-      sleep 20
       html_path := Clipboard
       FileRead, html, % html_path
       if !html

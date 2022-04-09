@@ -44,7 +44,7 @@ Return
   Vim.State.SetMode("Insert")
 Return
 
-^i::Vim.State.SetMode("Insert")
+^g::Vim.State.SetMode("Insert")  ; select mode
 
 ; ydc
 y::
@@ -101,7 +101,6 @@ Return
   Clipboard :=
   Send, ^c
   ClipWait, 1
-  sleep 20
   WinGet, hwnd, ID, A
   Send, ^f
   WinWaitNotActive, ahk_id %hwnd%,, 0.25

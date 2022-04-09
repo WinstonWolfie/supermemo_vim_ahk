@@ -19,8 +19,12 @@ Return
 
 ; Testing
 ; ^!+t::
-;   ControlGetFocus, current_focus, A
-;   Control, Check,, current_focus, A
+;   clip_saved := ClipboardAll
+;   LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+;   SendInput, ^c
+;   ClipWait, LongCopy ? 0.6 : 0.2, True
+;   MsgBox % Clipboard
+;   Clipboard := clip_saved
 ; Return
 
 ; Shortcuts
@@ -75,7 +79,6 @@ return
   Clipboard := ""
   send ^c
   ClipWait 0.6
-  sleep 20
   temp_clip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", "; ")
   temp_clip := StrReplace(temp_clip, "`r`nSimilar", "`r`n`r`nSimilar")
   temp_clip := StrReplace(temp_clip, "; Opposite", "`r`n`r`nOpposite")
@@ -94,7 +97,6 @@ return
   Clipboard := ""
   send ^c  ; clip() doesn't keep format; nor Clipboardall can work with functions
   ClipWait 0.6
-  sleep 20
   extract := Clipboardall
   if !extract {
     Vim.ToolTip("Nothing is selected.")
