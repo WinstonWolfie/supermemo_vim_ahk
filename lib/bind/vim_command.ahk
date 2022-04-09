@@ -84,6 +84,9 @@ SMPlan:
     Return
   }
   if WinExist("ahk_group SuperMemo") {
+		; turn those on if you have the habit of minimising sm to tray
+		; DetectHiddenWindows On
+		; WinShow, ahk_class TElWind
     WinActivate, ahk_class TElWind
     WinWaitActive, ahk_class TElWind,, 0
 		send ^{enter}  ; commander; seems to be a more reliable option than {alt}kp or ^p

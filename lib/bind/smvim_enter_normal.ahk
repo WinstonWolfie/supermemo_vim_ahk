@@ -6,7 +6,7 @@
 ~space up::  ; for Learn button
   WinGetText, visible_text, ahk_class TElWind
   RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
-  if (collection_name = "passive") {
+  if (collection_name = "passive" || collection_name = "music") {
     loop {
       sleep 40
       ControlGetText, current_text, TBitBtn3
