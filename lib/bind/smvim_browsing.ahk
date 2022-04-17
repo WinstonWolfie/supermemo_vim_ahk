@@ -132,20 +132,26 @@ c::send !c  ; open content window
 c::send {esc}  ; close content window
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
 or (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
-b::send ^{space}  ; open browser
+b::
+  if WinExist("ahk_class TBrowser") {
+    WinActivate
+  } else {
+    send ^{space}  ; open browser
+  }
+Return
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")
 b::send {esc}  ; close browser
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 o::send ^o  ; favourites
 
 f::  ; click on html component
-  if Vim.SM.MouseMoveTop(true) {
-    Vim.SM.WaitTextFocus()
+  if (Vim.SM.MouseMoveMiddle(true)) {
+    Vim.SM.WaitTextFocus(200)
     send {left}{home}
   } else {
     send ^t
-    Vim.SM.WaitTextFocus()
-    send ^{home}
+    Vim.SM.WaitTextFocus(200)
+    send {home}
   }
 Return
 

@@ -39,11 +39,6 @@ Return
   Vim.State.SetMode("Insert")
 Return
 
-s::
-  send {del}
-    Vim.State.SetMode("Insert")
-Return
-
 +s::
   send {end}+{home}{bs}
     Vim.State.SetMode("Insert")

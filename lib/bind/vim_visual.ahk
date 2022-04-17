@@ -117,11 +117,6 @@ p::
   Vim.State.SetMode("Vim_Normal")
 Return
 
-s::  ; *s*ubstitue
-  send {bs}
-  Vim.State.SetMode("Insert")
-return
-
 convert_to_lowercase:
 u::
   selection := clip()

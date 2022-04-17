@@ -1,4 +1,6 @@
 ﻿#If Vim.IsVimGroup() || (Vim.State.Vim.Enabled && back_to_normal)
+CapsLock::
+  send {esc}
 Esc::
   Vim.State.HandleEsc()
   back_to_normal := 0

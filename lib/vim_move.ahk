@@ -15,17 +15,17 @@
     this.shift := 0
     this.existing_selection := false
   
-  ; Search keys
-  if (key == "f" || key == "t" || key == "+f" || key == "+t" || key == "(" || key == ")" || key == "/" || key == "?") {
-    this.search_occurrence := this.Vim.State.n ? this.Vim.State.n : 1
-    this.ft_char := this.Vim.State.ft_char
-  }
-  
+    ; Search keys
+    if (key == "f" || key == "t" || key == "+f" || key == "+t" || key == "(" || key == ")" || key == "s" || key == "+s" || key == "/" || key == "?") {
+      this.search_occurrence := this.Vim.State.n ? this.Vim.State.n : 1
+      this.fts_char := this.Vim.State.fts_char
+    }
+    
     if (this.Vim.State.StrIsInCurrentVimMode("Visual") or this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")) {
       this.shift := 1
-    ; Search keys
-    if (key != "f" && key != "t" && key != "+f" && key != "+t" && key != "(" && key != ")" && key != "/" && key != "?")
-    Send, {Shift Down}
+      ; Search keys
+      if (key != "f" && key != "t" && key != "+f" && key != "+t" && key != "(" && key != ")" && key != "s" && key != "+s" && key != "/" && key != "?")
+        Send, {Shift Down}
     }
 
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualLineFirst")) and (key == "k" or key == "^u" or key == "^b" or key == "g") {
@@ -75,6 +75,7 @@
   MoveFinalize() {
     Send,{Shift Up}
     ydc_y := false
+    this.Vim.State.fts_char := ""
     if (this.Vim.State.StrIsInCurrentVimMode("ydc_y")) {
       Clipboard :=
       Send, ^c
@@ -302,496 +303,618 @@
           Send, ^{Left}
         }
       }else if (key == "f") {  ; find forward
-    if (this.shift == 1) && !ForceNoShift {
-      str_before := ""
-      if (!this.NoSelection()) {  ; determine caret position
-        str_before := this.Vim.ParseLineBreaks(clip())
-        send +{right}
-        str_after := this.Vim.ParseLineBreaks(clip())
-        send +{left}
-      }
-      if !str_before || (StrLen(str_after) > StrLen(str_before)) {  ; searching forward
-        send +{end}
-        this.HandleHTMLSelection()
-        str_after := this.Vim.ParseLineBreaks(clip())
-        if (StrLen(str_after) == StrLen(str_before)) {  ; caret at end of line
-          send +{right}+{end}
-          this.HandleHTMLSelection()
-          str_after := this.Vim.ParseLineBreaks(clip())
-        }
-        starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
-        detection_str := SubStr(str_after, starting_pos)  ; what's selected after +end
-        pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)  ; find in what's selected after
-        left := StrLen(detection_str) - pos  ; goes back
-        this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-        SendInput +{left %left%}
-      } else if (StrLen(str_after) < StrLen(str_before)) {
-        detection_str := str_before
-        pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)  ; find in what's selected after
-        if pos {
-          right := pos - 1
-          if (pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-            if next_occurrence
-              right := next_occurrence - 1
+        if (this.shift == 1) && !ForceNoShift {
+          str_before := ""
+          if (!this.NoSelection()) {  ; determine caret position
+            str_before := this.Vim.ParseLineBreaks(clip())
+            send +{right}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            send +{left}
           }
-          this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-          SendInput +{right %right%}
-        }
-      }
-    }else{
-      send +{end}
-      detection_str := this.Vim.ParseLineBreaks(clip())
-      if !detection_str {  ; end of line
-        send {right}+{end}  ; to the next line
-        detection_str := this.Vim.ParseLineBreaks(clip())
-      } else if this.Vim.IsWhitespaceOnly(detection_str) {
-        send {right 2}+{end}  ; to the next line
-        detection_str := this.Vim.ParseLineBreaks(clip())
-      }
-      pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-      SendInput {left}{right %pos%}
-    }
-      }else if (key == "t") {
-    if (this.shift == 1) && !ForceNoShift {
-      str_before := ""
-      if (!this.NoSelection()) {  ; determine caret position
-        str_before := this.Vim.ParseLineBreaks(clip())
-        send +{right}
-        str_after := this.Vim.ParseLineBreaks(clip())
-        send +{left}
-      }
-      if !str_before || (StrLen(str_after) > StrLen(str_before)) {  ; searching forward
-        send +{end}
-        this.HandleHTMLSelection()
-        str_after := this.Vim.ParseLineBreaks(clip())
-        if (StrLen(str_after) == StrLen(str_before)) {  ; caret at end of line
-          send +{right}+{end}
-          this.HandleHTMLSelection()
-          str_after := this.Vim.ParseLineBreaks(clip())
-        }
-        starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
-        detection_str := SubStr(str_after, starting_pos)  ; what's selected after +end
-        pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)  ; find in what's selected after
-        left := StrLen(detection_str) - pos
-        if pos {
-          left += 1
-          if (pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-            if next_occurrence
-              left := StrLen(detection_str) - next_occurrence + 1
-          }
-        }
-        this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-        SendInput +{left %left%}
-      } else if (StrLen(str_after) < StrLen(str_before)) {
-        detection_str := str_before
-        pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-        if pos {
-          right := pos - 2
-          if (pos == 2 || pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-            if (next_occurrence > 1)
-              right := next_occurrence - 2
-            else
-              right := 0
-          }
-          this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-          SendInput +{right %right%}
-        }
-      }
-    }else{
-      send +{end}
-      detection_str := this.Vim.ParseLineBreaks(clip())
-      if !detection_str {  ; end of line
-        send {right}+{end}  ; to the next line
-        detection_str := this.Vim.ParseLineBreaks(clip())
-      } else if this.Vim.IsWhitespaceOnly(detection_str) {
-        send {right 2}+{end}  ; to the next line
-        detection_str := this.Vim.ParseLineBreaks(clip())
-      }
-      pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-      if pos {
-        right := pos - 1
-        if (pos == 1) {
-          this.search_occurrence += 1
-          next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-          if next_occurrence
-            right := next_occurrence - 1
-        }
-      } else
-        right := 0
-      SendInput {left}{right %right%}
-    }
-      }else if (key == "+f") {
-    if (this.shift == 1) && !ForceNoShift {
-      str_before := ""
-      if (!this.NoSelection()) {  ; determine caret position
-        str_before := this.Vim.ParseLineBreaks(clip())
-        send +{left}
-        str_after := this.Vim.ParseLineBreaks(clip())
-        send +{right}
-      }
-      if !str_before || StrLen(str_after) > StrLen(str_before) {
-        send +{home}
-        str_after := this.Vim.ParseLineBreaks(clip())
-        if (StrLen(str_after) == StrLen(str_before)) {  ; caret at start of line
-          send +{left}+{home}
-          str_after := this.Vim.ParseLineBreaks(clip())
-        }
-        length := StrLen(str_after) - StrLen(str_before)
-        detection_str := StrReverse(SubStr(str_after, 1, length))
-        pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-        right := StrLen(detection_str) - pos
-        this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-        SendInput +{right %right%}
-      } else if StrLen(str_after) < StrLen(str_before) {
-        detection_str := StrReverse(str_before)
-        pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-        if pos {
-          left := pos - 1
-          if (pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-            if next_occurrence
-              left := next_occurrence - 1
-          }
-          this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-          SendInput +{left %left%}
-        }
-      }
-    }else{
-      send +{home}
-      detection_str := this.Vim.ParseLineBreaks(clip())
-      if !detection_str {  ; start of line
-        send {left}+{home}
-        detection_str := this.Vim.ParseLineBreaks(clip())
-      }
-      detection_str := StrReverse(detection_str)
-      pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-      SendInput {right}{left %pos%}
-    }
-      }else if (key == "+t") {
-    if (this.shift == 1) && !ForceNoShift {
-      str_before := ""
-      if (!this.NoSelection()) {  ; determine caret position
-        str_before := this.Vim.ParseLineBreaks(clip())
-        send +{left}
-        str_after := this.Vim.ParseLineBreaks(clip())
-        send +{right}
-      }
-      if !str_before || (StrLen(str_after) > StrLen(str_before)) {
-        send +{home}
-        str_after := this.Vim.ParseLineBreaks(clip())
-        if (StrLen(str_after) == StrLen(str_before)) {  ; caret at start of line
-          send +{left}+{home}
-          str_after := this.Vim.ParseLineBreaks(clip())
-        }
-        length := StrLen(str_after) - StrLen(str_before)
-        detection_str := StrReverse(SubStr(str_after, 1, length))
-        pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-        right := StrLen(detection_str) - pos
-        if pos {
-          right += 1
-          if (pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-            if next_occurrence
-              right := StrLen(detection_str) - next_occurrence + 1
-          }
-        }
-        this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-        SendInput +{right %right%}
-      } else if StrLen(str_after) < StrLen(str_before) {
-        detection_str := StrReverse(str_before)
-        pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-        if pos {
-          left := pos - 2
-          if (pos == 2 || pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-            if (pos == 1 && next_occurrence == 2) {  ; in instance like "see"
-              this.search_occurrence += 1
-              next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-              if next_occurrence
-                left := next_occurrence - 2
-            } else if (next_occurrence > 1) {
-              left := next_occurrence - 2
-            } else {
-              left := 0
+          if !str_before || (StrLen(str_after) > StrLen(str_before)) {  ; searching forward
+            send +{end}
+            this.HandleHTMLSelection()
+            str_after := this.Vim.ParseLineBreaks(clip())
+            if (StrLen(str_after) == StrLen(str_before)) {  ; caret at end of line
+              send +{right}+{end}
+              this.HandleHTMLSelection()
+              str_after := this.Vim.ParseLineBreaks(clip())
+            }
+            starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
+            detection_str := SubStr(str_after, starting_pos)  ; what's selected after +end
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)  ; find in what's selected after
+            left := StrLen(detection_str) - pos  ; goes back
+            this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+            SendInput +{left %left%}
+          } else if (StrLen(str_after) < StrLen(str_before)) {
+            detection_str := str_before
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)  ; find in what's selected after
+            if pos {
+              right := pos - 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if next_occurrence
+                  right := next_occurrence - 1
+              }
+              this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+              SendInput +{right %right%}
             }
           }
-          this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-          SendInput +{left %left%}
+        }else{
+          send +{end}
+          detection_str := this.Vim.ParseLineBreaks(clip())
+          if !detection_str {  ; end of line
+            send {right}+{end}  ; to the next line
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          } else if this.Vim.IsWhitespaceOnly(detection_str) {
+            send {right 2}+{end}  ; to the next line
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          }
+          pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+          SendInput {left}{right %pos%}
         }
-      }
-    }else{
-      send +{home}
-      detection_str := this.Vim.ParseLineBreaks(clip())
-      if !detection_str {  ; start of line
-        send {left}+{home}
-        detection_str := this.Vim.ParseLineBreaks(clip())
-      }
-      detection_str := StrReverse(detection_str)
-      pos := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-      if pos {
-        left := pos - 1
-        if (pos == 1) {
-          this.search_occurrence += 1
-          next_occurrence := InStr(detection_str, this.ft_char, true,, this.search_occurrence)
-          if next_occurrence
-            left := next_occurrence - 1
+      }else if (key == "t") {
+        if (this.shift == 1) && !ForceNoShift {
+          str_before := ""
+          if (!this.NoSelection()) {  ; determine caret position
+            str_before := this.Vim.ParseLineBreaks(clip())
+            send +{right}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            send +{left}
+          }
+          if !str_before || (StrLen(str_after) > StrLen(str_before)) {  ; searching forward
+            send +{end}
+            this.HandleHTMLSelection()
+            str_after := this.Vim.ParseLineBreaks(clip())
+            if (StrLen(str_after) == StrLen(str_before)) {  ; caret at end of line
+              send +{right}+{end}
+              this.HandleHTMLSelection()
+              str_after := this.Vim.ParseLineBreaks(clip())
+            }
+            starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
+            detection_str := SubStr(str_after, starting_pos)  ; what's selected after +end
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)  ; find in what's selected after
+            left := StrLen(detection_str) - pos
+            if pos {
+              left += 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if next_occurrence
+                  left := StrLen(detection_str) - next_occurrence + 1
+              }
+            }
+            this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+            SendInput +{left %left%}
+          } else if (StrLen(str_after) < StrLen(str_before)) {
+            detection_str := str_before
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+            if pos {
+              right := pos - 2
+              if (pos == 2 || pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if (next_occurrence > 1)
+                  right := next_occurrence - 2
+                else
+                  right := 0
+              }
+              this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+              SendInput +{right %right%}
+            }
+          }
+        }else{
+          send +{end}
+          detection_str := this.Vim.ParseLineBreaks(clip())
+          if !detection_str {  ; end of line
+            send {right}+{end}  ; to the next line
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          } else if this.Vim.IsWhitespaceOnly(detection_str) {
+            send {right 2}+{end}  ; to the next line
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          }
+          pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+          if pos {
+            right := pos - 1
+            if (pos == 1) {
+              this.search_occurrence += 1
+              next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+              if next_occurrence
+                right := next_occurrence - 1
+            }
+          } else
+            right := 0
+          SendInput {left}{right %right%}
         }
-      } else
-        left := 0
-      SendInput {right}{left %left%}
-    }
+      }else if (key == "+f") {
+        if (this.shift == 1) && !ForceNoShift {
+          str_before := ""
+          if (!this.NoSelection()) {  ; determine caret position
+            str_before := this.Vim.ParseLineBreaks(clip())
+            send +{left}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            send +{right}
+          }
+          if !str_before || StrLen(str_after) > StrLen(str_before) {
+            send +{home}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            if (StrLen(str_after) == StrLen(str_before)) {  ; caret at start of line
+              send +{left}+{home}
+              str_after := this.Vim.ParseLineBreaks(clip())
+            }
+            length := StrLen(str_after) - StrLen(str_before)
+            detection_str := StrReverse(SubStr(str_after, 1, length))
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+            right := StrLen(detection_str) - pos
+            this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+            SendInput +{right %right%}
+          } else if StrLen(str_after) < StrLen(str_before) {
+            detection_str := StrReverse(str_before)
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+            if pos {
+              left := pos - 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if next_occurrence
+                  left := next_occurrence - 1
+              }
+              this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+              SendInput +{left %left%}
+            }
+          }
+        }else{
+          send +{home}
+          detection_str := this.Vim.ParseLineBreaks(clip())
+          if !detection_str {  ; start of line
+            send {left}+{home}
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          }
+          detection_str := StrReverse(detection_str)
+          pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+          SendInput {right}{left %pos%}
+        }
+      }else if (key == "+t") {
+        if (this.shift == 1) && !ForceNoShift {
+          str_before := ""
+          if (!this.NoSelection()) {  ; determine caret position
+            str_before := this.Vim.ParseLineBreaks(clip())
+            send +{left}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            send +{right}
+          }
+          if !str_before || (StrLen(str_after) > StrLen(str_before)) {
+            send +{home}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            if (StrLen(str_after) == StrLen(str_before)) {  ; caret at start of line
+              send +{left}+{home}
+              str_after := this.Vim.ParseLineBreaks(clip())
+            }
+            length := StrLen(str_after) - StrLen(str_before)
+            detection_str := StrReverse(SubStr(str_after, 1, length))
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+            right := StrLen(detection_str) - pos
+            if pos {
+              right += 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if next_occurrence
+                  right := StrLen(detection_str) - next_occurrence + 1
+              }
+            }
+            this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+            SendInput +{right %right%}
+          } else if StrLen(str_after) < StrLen(str_before) {
+            detection_str := StrReverse(str_before)
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+            if pos {
+              left := pos - 2
+              if (pos == 2 || pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if (pos == 1 && next_occurrence == 2) {  ; in instance like "see"
+                  this.search_occurrence += 1
+                  next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                  if next_occurrence
+                    left := next_occurrence - 2
+                } else if (next_occurrence > 1) {
+                  left := next_occurrence - 2
+                } else {
+                  left := 0
+                }
+              }
+              this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+              SendInput +{left %left%}
+            }
+          }
+        }else{
+          send +{home}
+          detection_str := this.Vim.ParseLineBreaks(clip())
+          if !detection_str {  ; start of line
+            send {left}+{home}
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          }
+          detection_str := StrReverse(detection_str)
+          pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+          if pos {
+            left := pos - 1
+            if (pos == 1) {
+              this.search_occurrence += 1
+              next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+              if next_occurrence
+                left := next_occurrence - 1
+            }
+          } else
+            left := 0
+          SendInput {right}{left %left%}
+        }
       }else if (key == ")") {  ; like "f" but search for ". "
-    if (this.shift == 1) && !ForceNoShift {
-      str_before := ""
-      if !this.NoSelection() {  ; determine caret position
-        str_before := this.Vim.ParseLineBreaks(clip())
-        send +{right}
-        str_after := this.Vim.ParseLineBreaks(clip())
-        send +{left}
-      }
-      if !str_before || (StrLen(str_after) > StrLen(str_before)) {
-        this.SelectParagraphDown()
-        this.HandleHTMLSelection()
-        str_after := this.Vim.ParseLineBreaks(clip())
-        if (StrLen(str_after) == StrLen(str_before) + 1) {  ; at end of paragraph
+        if (this.shift == 1) && !ForceNoShift {
+          str_before := ""
+          if !this.NoSelection() {  ; determine caret position
+            str_before := this.Vim.ParseLineBreaks(clip())
+            send +{right}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            send +{left}
+          }
+          if !str_before || (StrLen(str_after) > StrLen(str_before)) {
+            this.SelectParagraphDown()
+            this.HandleHTMLSelection()
+            str_after := this.Vim.ParseLineBreaks(clip())
+            if (StrLen(str_after) == StrLen(str_before) + 1) {  ; at end of paragraph
+              send +{right}
+              this.SelectParagraphDown()
+              this.HandleHTMLSelection()
+              str_after := this.Vim.ParseLineBreaks(clip())
+            }
+            starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
+            detection_str := SubStr(str_after, starting_pos)  ; what's selected after +end
+            pos := InStr(detection_str, ". ", true,, this.search_occurrence)  ; find in what's selected after
+            left := StrLen(detection_str) - pos - 1  ; - 1 because ". "
+            if !pos && (InStr(detection_str, ".", true,, this.search_occurrence) == Strlen(detection_str))  ; try to search if there's a last dot
+              send +{right}  ; if there is a last dot, move to start of next paragraph
+            else
+              SendInput +{left %left%}
+          } else if StrLen(str_after) < StrLen(str_before) {  ; search in selected text
+            pos := InStr(str_before, ". ", true,, this.search_occurrence)
+            right := pos
+            if pos {
+              right += 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(str_before, ". ", true,, this.search_occurrence)
+                if next_occurrence
+                  right := pos + 1
+              }
+            }
+            SendInput +{right %right%}
+          }
+            }else{
+          this.SelectParagraphDown()
+          detection_str := this.Vim.ParseLineBreaks(clip())
+          if !detection_str || this.Vim.IsWhitespaceOnly(detection_str) {  ; end of paragraph
+            send {right}
+            this.SelectParagraphDown()  ; to the next line
+            detection_str := this.Vim.ParseLineBreaks(clip())
+            if !detection_str {  ; still end of paragraph
+              send {right}
+              this.SelectParagraphDown()  ; to the next line
+              detection_str := this.Vim.ParseLineBreaks(clip())
+            }
+          }
+          pos := InStr(detection_str, ". ", true,, this.search_occurrence)
+          if pos {
+            right := pos + 1
+            SendInput {left}{right %right%}
+          } else
+            send {right}
+        }
+      }else if (key == "(") {  ; like "+t"
+        if (this.shift == 1) && !ForceNoShift {
+          str_before := ""
+          if !this.NoSelection() {  ; determine caret position
+            str_before := this.Vim.ParseLineBreaks(clip())
+            send +{right}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            send +{left}
+          }
+          if (StrLen(str_after) > StrLen(str_before)) {  ; search in selected text
+            detection_str := StrReverse(str_before)
+            pos := InStr(detection_str, " .", true,, this.search_occurrence)
+            left := pos - 2
+            if pos {
+              left += 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, " .", true,, this.search_occurrence)
+                if next_occurrence
+                  left := next_occurrence - 1
+              }
+            }
+            SendInput +{left %left%}
+          } else if (StrLen(str_after) < StrLen(str_before)) || !str_before {
+            this.SelectParagraphUp()
+            str_after := this.Vim.ParseLineBreaks(clip())
+            if !str_after {  ; start of line
+              send {left}
+              this.SelectParagraphUp()
+              str_after := this.Vim.ParseLineBreaks(clip())
+            }
+            length := StrLen(str_after) - StrLen(str_before)
+            detection_str := StrReverse(SubStr(str_after, 1, length))
+            pos := InStr(detection_str, " .", true,, this.search_occurrence)
+            right := StrLen(detection_str) - pos
+            if pos {
+              right += 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, " .", true,, this.search_occurrence)
+                if next_occurrence
+                  right := StrLen(detection_str) - next_occurrence + 1
+                else
+                  ret := true
+              }
+            } else
+              ret := true
+            if ret
+              ret := false
+            else
+              SendInput +{right %right%}
+          }
+            }else{
+          this.SelectParagraphUp()
+          detection_str := this.Vim.ParseLineBreaks(clip())
+          if !detection_str {  ; start of line
+            send {left}
+            this.SelectParagraphUp()
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          }
+          detection_str := StrReverse(detection_str)
+          pos := InStr(detection_str, " .", true,, this.search_occurrence)
+          if pos {
+            left := pos - 1
+            if (pos == 1) {
+              this.search_occurrence += 1
+              next_occurrence := InStr(detection_str, " .", true,, this.search_occurrence)
+              if next_occurrence
+                left := next_occurrence - 1
+              else
+                ret := true
+            }
+          } else
+            ret := true
+          if ret {
+            send {left}
+            ret := false
+          } else
+            SendInput {right}{left %left%}
+        }
+      }else if (key == "s") {
+        if (this.shift == 1) && !ForceNoShift {
+          str_before := ""
+          if (!this.NoSelection()) {  ; determine caret position
+            str_before := this.Vim.ParseLineBreaks(clip())
+            send +{right}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            send +{left}
+          }
+          if !str_before || (StrLen(str_after) > StrLen(str_before)) {  ; searching forward
+            send +{end}
+            this.HandleHTMLSelection()
+            str_after := this.Vim.ParseLineBreaks(clip())
+            if (StrLen(str_after) == StrLen(str_before)) {  ; caret at end of line
+              send +{right}+{end}
+              this.HandleHTMLSelection()
+              str_after := this.Vim.ParseLineBreaks(clip())
+            }
+            starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
+            detection_str := SubStr(str_after, starting_pos)  ; what's selected after +end
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)  ; find in what's selected after
+            left := StrLen(detection_str) - pos
+            if pos {
+              left += 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if next_occurrence
+                  left := StrLen(detection_str) - next_occurrence + 1
+              }
+            }
+            this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+            SendInput +{left %left%}
+          } else if (StrLen(str_after) < StrLen(str_before)) {
+            detection_str := str_before
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+            if pos {
+              right := pos - 2
+              if (pos == 2 || pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if (next_occurrence > 1)
+                  right := next_occurrence - 2
+                else
+                  right := 0
+              }
+              this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+              SendInput +{right %right%}
+            }
+          }
+        }else{
+          send +{end}
+          detection_str := this.Vim.ParseLineBreaks(clip())
+          if !detection_str {  ; end of line
+            send {right}+{end}  ; to the next line
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          } else if this.Vim.IsWhitespaceOnly(detection_str) {
+            send {right 2}+{end}  ; to the next line
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          }
+          pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+          if pos {
+            right := pos - 1
+            if (pos == 1) {
+              this.search_occurrence += 1
+              next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+              if next_occurrence
+                right := next_occurrence - 1
+            }
+          } else
+            right := 0
+          SendInput {left}{right %right%}
+        }
+      }else if (key == "+s") {
+        this.fts_char := StrReverse(this.fts_char)
+        if (this.shift == 1) && !ForceNoShift {
+          str_before := ""
+          if (!this.NoSelection()) {  ; determine caret position
+            str_before := this.Vim.ParseLineBreaks(clip())
+            send +{left}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            send +{right}
+          }
+          if !str_before || StrLen(str_after) > StrLen(str_before) {
+            send +{home}
+            str_after := this.Vim.ParseLineBreaks(clip())
+            if (StrLen(str_after) == StrLen(str_before)) {  ; caret at start of line
+              send +{left}+{home}
+              str_after := this.Vim.ParseLineBreaks(clip())
+            }
+            length := StrLen(str_after) - StrLen(str_before)
+            detection_str := StrReverse(SubStr(str_after, 1, length))
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+            right := StrLen(detection_str) - pos
+            this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+            SendInput +{right %right%}
+          } else if StrLen(str_after) < StrLen(str_before) {
+            detection_str := StrReverse(str_before)
+            pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+            if pos {
+              left := pos - 1
+              if (pos == 1) {
+                this.search_occurrence += 1
+                next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+                if next_occurrence
+                  left := next_occurrence - 1
+              }
+              this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
+              SendInput +{left %left%}
+            }
+          }
+        }else{
+          send +{home}
+          detection_str := this.Vim.ParseLineBreaks(clip())
+          if !detection_str {  ; start of line
+            send {left}+{home}
+            detection_str := this.Vim.ParseLineBreaks(clip())
+          }
+          detection_str := StrReverse(detection_str)
+          pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence) + 1
+          SendInput {right}{left %pos%}
+        }
+      }else if (key == "/") {
+        WinGet, hwnd, ID, A
+        InputBoxPrompt := " text until:`n(case sensitive)"
+        InputBoxHeight := 144
+          if this.Vim.State.StrIsInCurrentVimMode("Visual")
+          InputBoxPrompt := "Select" . InputBoxPrompt
+          else if this.Vim.State.StrIsInCurrentVimMode("ydc_y")
+          InputBoxPrompt := "Copy" . InputBoxPrompt
+          else if this.Vim.State.StrIsInCurrentVimMode("ydc_d")
+          InputBoxPrompt := "Delete" . InputBoxPrompt
+          else if this.Vim.State.StrIsInCurrentVimMode("ydc_c") {
+          InputBoxPrompt := "Delete" . InputBoxPrompt . "`n(will enter insert mode)"
+          InputBoxHeight := 160
+        } else if this.Vim.State.StrIsInCurrentVimMode("Extract")
+          InputBoxPrompt := "Extract" . InputBoxPrompt
+          else if this.Vim.State.StrIsInCurrentVimMode("Cloze")
+          InputBoxPrompt := "Cloze" . InputBoxPrompt
+        InputBox, UserInput, Visual Search, % InputBoxPrompt,, 272, % InputBoxHeight,,,,, % this.LastSearch
+        if ErrorLevel || !UserInput
+          Return
+        this.LastSearch := UserInput  ; register UserInput into LastSearch
+        str_before := ""
+        WinActivate, ahk_id %hwnd%
+        if !this.NoSelection() {  ; determine caret position
+          str_before := this.Vim.ParseLineBreaks(clip())
           send +{right}
+          str_after := this.Vim.ParseLineBreaks(clip())
+          send +{left}
+        }
+        if !str_before || (StrLen(str_after) > StrLen(str_before)) {
           this.SelectParagraphDown()
           this.HandleHTMLSelection()
           str_after := this.Vim.ParseLineBreaks(clip())
-        }
-        starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
-        detection_str := SubStr(str_after, starting_pos)  ; what's selected after +end
-        pos := InStr(detection_str, ". ", true,, this.search_occurrence)  ; find in what's selected after
-        left := StrLen(detection_str) - pos - 1  ; - 1 because ". "
-        if !pos && (InStr(detection_str, ".", true,, this.search_occurrence) == Strlen(detection_str))  ; try to search if there's a last dot
-          send +{right}  ; if there is a last dot, move to start of next paragraph
-        else
+          if (StrLen(str_after) == StrLen(str_before) + 1) {  ; at end of paragraph
+            send +{right}
+            this.SelectParagraphDown()
+            this.HandleHTMLSelection()
+            str_after := this.Vim.ParseLineBreaks(clip())
+          }
+          starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
+          detection_str := SubStr(str_after, starting_pos)
+          pos := InStr(detection_str, UserInput, true,, this.search_occurrence)
+          left := StrLen(detection_str) - pos + 1
+          if (pos == 1) {
+            this.search_occurrence += 1
+            next_occurrence := InStr(detection_str, UserInput, true,, this.search_occurrence)
+            if next_occurrence
+              left := StrLen(detection_str) - next_occurrence + 1
+          }
           SendInput +{left %left%}
-      } else if StrLen(str_after) < StrLen(str_before) {  ; search in selected text
-        pos := InStr(str_before, ". ", true,, this.search_occurrence)
-        right := pos
-        if pos {
-          right += 1
-          if (pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(str_before, ". ", true,, this.search_occurrence)
-            if next_occurrence
-              right := pos + 1
-          }
+        } else if (StrLen(str_after) < StrLen(str_before)) {
+          pos := InStr(str_before, UserInput, true)
+          pos -= pos ? 1 : 0
+          SendInput +{right %pos%}
         }
-        SendInput +{right %right%}
-      }
-        }else{
-      this.SelectParagraphDown()
-      detection_str := this.Vim.ParseLineBreaks(clip())
-      if !detection_str || this.Vim.IsWhitespaceOnly(detection_str) {  ; end of paragraph
-        send {right}
-        this.SelectParagraphDown()  ; to the next line
-        detection_str := this.Vim.ParseLineBreaks(clip())
-        if !detection_str {  ; still end of paragraph
-          send {right}
-          this.SelectParagraphDown()  ; to the next line
-          detection_str := this.Vim.ParseLineBreaks(clip())
+      }else if (key == "?") {
+        WinGet, hwnd, ID, A
+        InputBoxPrompt := " text until:`n(case sensitive)"
+        InputBoxHeight := 144
+          if this.Vim.State.StrIsInCurrentVimMode("Visual")
+          InputBoxPrompt := "Select" . InputBoxPrompt
+          else if this.Vim.State.StrIsInCurrentVimMode("ydc_y")
+          InputBoxPrompt := "Copy" . InputBoxPrompt
+          else if this.Vim.State.StrIsInCurrentVimMode("ydc_d")
+          InputBoxPrompt := "Delete" . InputBoxPrompt
+          else if this.Vim.State.StrIsInCurrentVimMode("ydc_c") {
+          InputBoxPrompt := "Delete" . InputBoxPrompt . "`n(will enter insert mode)"
+          InputBoxHeight := 160
+        } else if this.Vim.State.StrIsInCurrentVimMode("Extract")
+          InputBoxPrompt := "Extract" . InputBoxPrompt
+          else if this.Vim.State.StrIsInCurrentVimMode("Cloze")
+          InputBoxPrompt := "Cloze" . InputBoxPrompt
+        InputBox, UserInput, Visual Search, % InputBoxPrompt,, 272, % InputBoxHeight,,,,, % this.LastSearch
+        if ErrorLevel || !UserInput
+          Return
+        this.LastSearch := UserInput  ; register UserInput into LastSearch
+        str_before := ""
+        WinActivate, ahk_id %hwnd%
+        if !this.NoSelection() {  ; determine caret position
+          str_before := this.Vim.ParseLineBreaks(clip())
+          send +{right}
+          str_after := this.Vim.ParseLineBreaks(clip())
+          send +{left}
         }
-      }
-      pos := InStr(detection_str, ". ", true,, this.search_occurrence)
-      if pos {
-        right := pos + 1
-        SendInput {left}{right %right%}
-      } else
-        send {right}
-        }
-      }else if (key == "(") {  ; like "+t"
-    if (this.shift == 1) && !ForceNoShift {
-      str_before := ""
-      if !this.NoSelection() {  ; determine caret position
-        str_before := this.Vim.ParseLineBreaks(clip())
-        send +{right}
-        str_after := this.Vim.ParseLineBreaks(clip())
-        send +{left}
-      }
-      if (StrLen(str_after) > StrLen(str_before)) {  ; search in selected text
-        detection_str := StrReverse(str_before)
-        pos := InStr(detection_str, " .", true,, this.search_occurrence)
-        left := pos - 2
-        if pos {
-          left += 1
-          if (pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(detection_str, " .", true,, this.search_occurrence)
-            if next_occurrence
-              left := next_occurrence - 1
-          }
-        }
-        SendInput +{left %left%}
-      } else if (StrLen(str_after) < StrLen(str_before)) || !str_before {
-        this.SelectParagraphUp()
-        str_after := this.Vim.ParseLineBreaks(clip())
-        if !str_after {  ; start of line
-          send {left}
+        if (StrLen(str_after) > StrLen(str_before)) {
+          pos := InStr(StrReverse(str_before), StrReverse(UserInput), true)
+          pos += pos ? StrLen(UserInput) - 2 : 0
+          SendInput +{left %pos%}
+        } else if (StrLen(str_after) < StrLen(str_before)) || !str_before {
           this.SelectParagraphUp()
           str_after := this.Vim.ParseLineBreaks(clip())
-        }
-        length := StrLen(str_after) - StrLen(str_before)
-        detection_str := StrReverse(SubStr(str_after, 1, length))
-        pos := InStr(detection_str, " .", true,, this.search_occurrence)
-        right := StrLen(detection_str) - pos
-        if pos {
-          right += 1
-          if (pos == 1) {
-            this.search_occurrence += 1
-            next_occurrence := InStr(detection_str, " .", true,, this.search_occurrence)
-            if next_occurrence
-              right := StrLen(detection_str) - next_occurrence + 1
-            else
-              ret := true
+          if !str_after {  ; start of line
+            send {left}
+            this.SelectParagraphUp()
+            str_after := this.Vim.ParseLineBreaks(clip())
           }
-        } else
-          ret := true
-        if ret
-          ret := false
-        else
+          starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
+          detection_str := SubStr(StrReverse(str_after), starting_pos)
+          pos := InStr(detection_str, StrReverse(UserInput), true,, this.search_occurrence)
+          right := StrLen(detection_str) - pos - StrLen(UserInput) + 1
           SendInput +{right %right%}
-      }
-        }else{
-      this.SelectParagraphUp()
-      detection_str := this.Vim.ParseLineBreaks(clip())
-      if !detection_str {  ; start of line
-        send {left}
-        this.SelectParagraphUp()
-        detection_str := this.Vim.ParseLineBreaks(clip())
-      }
-      detection_str := StrReverse(detection_str)
-      pos := InStr(detection_str, " .", true,, this.search_occurrence)
-      if pos {
-        left := pos - 1
-        if (pos == 1) {
-          this.search_occurrence += 1
-          next_occurrence := InStr(detection_str, " .", true,, this.search_occurrence)
-          if next_occurrence
-            left := next_occurrence - 1
-          else
-            ret := true
         }
-      } else
-        ret := true
-      if ret {
-        send {left}
-        ret := false
-      } else
-        SendInput {right}{left %left%}
-        }
-      }else if (key == "/") {
-    WinGet, hwnd, ID, A
-    InputBoxPrompt := " text until:`n(case sensitive)"
-    InputBoxHeight := 144
-      if this.Vim.State.StrIsInCurrentVimMode("Visual")
-       InputBoxPrompt := "Select" . InputBoxPrompt
-      else if this.Vim.State.StrIsInCurrentVimMode("ydc_y")
-       InputBoxPrompt := "Copy" . InputBoxPrompt
-      else if this.Vim.State.StrIsInCurrentVimMode("ydc_d")
-       InputBoxPrompt := "Delete" . InputBoxPrompt
-      else if this.Vim.State.StrIsInCurrentVimMode("ydc_c") {
-       InputBoxPrompt := "Delete" . InputBoxPrompt . "`n(will enter insert mode)"
-      InputBoxHeight := 160
-    } else if this.Vim.State.StrIsInCurrentVimMode("Extract")
-       InputBoxPrompt := "Extract" . InputBoxPrompt
-      else if this.Vim.State.StrIsInCurrentVimMode("Cloze")
-       InputBoxPrompt := "Cloze" . InputBoxPrompt
-    InputBox, UserInput, Visual Search, % InputBoxPrompt,, 272, % InputBoxHeight,,,,, % this.LastSearch
-    if ErrorLevel || !UserInput
-      Return
-    this.LastSearch := UserInput  ; register UserInput into LastSearch
-    str_before := ""
-    WinActivate, ahk_id %hwnd%
-    if !this.NoSelection() {  ; determine caret position
-      str_before := this.Vim.ParseLineBreaks(clip())
-      send +{right}
-      str_after := this.Vim.ParseLineBreaks(clip())
-      send +{left}
-    }
-    if !str_before || (StrLen(str_after) > StrLen(str_before)) {
-      this.SelectParagraphDown()
-      this.HandleHTMLSelection()
-      str_after := this.Vim.ParseLineBreaks(clip())
-      if (StrLen(str_after) == StrLen(str_before) + 1) {  ; at end of paragraph
-        send +{right}
-        this.SelectParagraphDown()
-        this.HandleHTMLSelection()
-        str_after := this.Vim.ParseLineBreaks(clip())
-      }
-      starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
-      detection_str := SubStr(str_after, starting_pos)
-      pos := InStr(detection_str, UserInput, true,, this.search_occurrence)
-      left := StrLen(detection_str) - pos
-      if (pos == 1) {
-        this.search_occurrence += 1
-        next_occurrence := InStr(detection_str, UserInput, true,, this.search_occurrence)
-        if next_occurrence
-          left := StrLen(detection_str) - next_occurrence
-      }
-      SendInput +{left %left%}
-    } else if (StrLen(str_after) < StrLen(str_before)) {
-      pos := InStr(str_before, UserInput, true)
-      pos -= pos ? 1 : 0
-      SendInput +{right %pos%}
-    }
-      }else if (key == "?") {
-    WinGet, hwnd, ID, A
-    InputBoxPrompt := " text until:`n(case sensitive)"
-    InputBoxHeight := 144
-      if this.Vim.State.StrIsInCurrentVimMode("Visual")
-       InputBoxPrompt := "Select" . InputBoxPrompt
-      else if this.Vim.State.StrIsInCurrentVimMode("ydc_y")
-       InputBoxPrompt := "Copy" . InputBoxPrompt
-      else if this.Vim.State.StrIsInCurrentVimMode("ydc_d")
-       InputBoxPrompt := "Delete" . InputBoxPrompt
-      else if this.Vim.State.StrIsInCurrentVimMode("ydc_c") {
-       InputBoxPrompt := "Delete" . InputBoxPrompt . "`n(will enter insert mode)"
-      InputBoxHeight := 160
-    } else if this.Vim.State.StrIsInCurrentVimMode("Extract")
-       InputBoxPrompt := "Extract" . InputBoxPrompt
-      else if this.Vim.State.StrIsInCurrentVimMode("Cloze")
-       InputBoxPrompt := "Cloze" . InputBoxPrompt
-    InputBox, UserInput, Visual Search, % InputBoxPrompt,, 272, % InputBoxHeight,,,,, % this.LastSearch
-    if ErrorLevel || !UserInput
-      Return
-    this.LastSearch := UserInput  ; register UserInput into LastSearch
-    str_before := ""
-    WinActivate, ahk_id %hwnd%
-    if !this.NoSelection() {  ; determine caret position
-      str_before := this.Vim.ParseLineBreaks(clip())
-      send +{right}
-      str_after := this.Vim.ParseLineBreaks(clip())
-      send +{left}
-    }
-    if (StrLen(str_after) > StrLen(str_before)) {
-      pos := InStr(StrReverse(str_before), StrReverse(UserInput), true)
-      pos += pos ? StrLen(UserInput) - 2 : 0
-      SendInput +{left %pos%}
-    } else if (StrLen(str_after) < StrLen(str_before)) || !str_before {
-      this.SelectParagraphUp()
-      str_after := this.Vim.ParseLineBreaks(clip())
-      if !str_after {  ; start of line
-        send {left}
-        this.SelectParagraphUp()
-        str_after := this.Vim.ParseLineBreaks(clip())
-      }
-      starting_pos := StrLen(str_before) + 1  ; + 1 to make sure detection_str is what's selected after
-      detection_str := SubStr(StrReverse(str_after), starting_pos)
-      pos := InStr(detection_str, StrReverse(UserInput), true,, this.search_occurrence)
-      right := StrLen(detection_str) - pos - StrLen(UserInput) + 1
-      SendInput +{right %right%}
-    }
       }
     }
     ; Up/Down 1 character
@@ -945,8 +1068,9 @@
 
   Inner(key="") {
     if (key == "w") {
+      this.Move("w", true)
       this.Move("b", true)
-      this.Move("e", false)
+      this.Move("e")
     } else if (key == "s") {
       send {right}  ; so if at start of a sentence, select this sentence
       this.Move("(",,, true, true)

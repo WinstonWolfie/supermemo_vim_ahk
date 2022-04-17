@@ -28,10 +28,11 @@ class VimSM{
       CoordMode, Mouse, Screen
       x_coord := x_up - 10
       y_coord := (y_up + y_down) / 2
-      if clicking
+      if (clicking) {
         click, %x_coord% %y_coord%
-      else
+      } else {
         MouseMove, % x_coord, % y_coord, 1
+      }
       Return true
     }
   }
@@ -177,6 +178,7 @@ class VimSM{
     loop {
       sleep 20
       if A_CaretX {
+        sleep 100
         break
         ErrorLevel := 0
       }
@@ -186,7 +188,7 @@ class VimSM{
       }
     }
   }
- 
+
   DeselectAllComponents(timeout:=1000) {
     LoopTimeout := timeout / 20
     ControlGetFocus, current_focus, ahk_class TElWind

@@ -27,6 +27,7 @@ return
 
 ; "Transcribed" from this quicker script:
 ; https://getquicker.net/Sharedaction?code=859bda04-fe78-4385-1b37-08d88a0dba1c
+SMCleanHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
 	send ^{f7}
@@ -156,14 +157,12 @@ s::  ; turn active language item to passive (*s*witch)
   ControlGetText, current_text, TBitBtn3
   if (current_text != "Learn")  ; if learning (on "next repitition")
     send {esc}
-  WinGetTitle, original_title, A
   send ^+s
-  Vim.WinWaitTitleChange(original_title, 1000)
+  sleep 450
   send q
-  Vim.SM.WaitTextFocus()
-  SendInput {raw}en:
-  SendInput {space}{esc}a
-  Vim.SM.WaitTextFocus()
+  sleep 10
+  send en:{space}{tab}
+  sleep 150
   send ^{del 2}{esc}
 return
 

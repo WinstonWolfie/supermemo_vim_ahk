@@ -9,22 +9,22 @@
     this.PossibleVimModes := ["", "Vim_Normal", "Insert", "Replace"
     , "Vim_ydc_y" , "Vim_ydc_yInner", "Vim_ydc_c", "Vim_ydc_cInner"
     , "Vim_ydc_d" , "Vim_ydc_dInner" , "Vim_VisualLine", "Vim_VisualFirst"
-  , "Vim_VisualFirstInner", "Vim_VisualChar", "Vim_VisualLineFirst"
-  , "Vim_VisualCharInner", "Command" , "Command_w", "Command_q"
-  , "Z", "r_once", "r_repeat", "SMVim_Cloze", "SMVim_ClozeInner"
-  , "SMVim_ClozeStay", "SMVim_ClozeStayInner", "SMVim_ClozeHinter"
-  , "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
-  , "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
-  , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
-  , "SMVim_ExtractPriorityInner", "Insert_unicode"]
+    , "Vim_VisualFirstInner", "Vim_VisualChar", "Vim_VisualLineFirst"
+    , "Vim_VisualCharInner", "Command" , "Command_w", "Command_q"
+    , "Z", "r_once", "r_repeat", "SMVim_Cloze", "SMVim_ClozeInner"
+    , "SMVim_ClozeStay", "SMVim_ClozeStayInner", "SMVim_ClozeHinter"
+    , "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
+    , "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
+    , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
+    , "SMVim_ExtractPriorityInner", "Insert_unicode"]
 
     this.Mode := "Insert"
     this.g := 0
     this.n := 0
-    this.ft := ""
-  this.ft_char := ""
-  this.last_ft := ""
-  this.last_ft_char := ""
+    this.fts := ""
+    this.fts_char := ""
+    this.last_fts := ""
+    this.last_fts_char := ""
     this.LineCopy := 0
     this.LastIME := 0
     this.CurrControl := ""
@@ -33,16 +33,16 @@
     this.StatusCheckObj := ObjBindMethod(this, "StatusCheck")
   }
 
-  CheckMode(verbose=1, Mode="", g=0, n=0, LineCopy=-1, ft="", force=0) {
+  CheckMode(verbose=1, Mode="", g=0, n=0, LineCopy=-1, fts="", force=0) {
     if (force == 0) and ((verbose <= 1) or ((Mode == "") and (g == 0) and (n == 0) and (LineCopy == -1))) {
       Return
     }else if (verbose == 2) {
       this.SetTooltip(this.Mode, 1)
     }else if (verbose == 3) {
-      this.SetTooltip(this.Mode "`r`ng=" this.g "`r`nn=" this.n "`r`nLineCopy=" this.LineCopy "`r`nft=" this.ft, 4)
+      this.SetTooltip(this.Mode "`r`ng=" this.g "`r`nn=" this.n "`r`nLineCopy=" this.LineCopy "`r`nft=" this.fts, 4)
     }
     if (verbose >= 4) {
-      Msgbox, , Vim Ahk, % "Mode: " this.Mode "`nVim_g: " this.g "`nVim_n: " this.n "`nVimLineCopy: " this.LineCopy "`r`nft:" this.ft
+      Msgbox, , Vim Ahk, % "Mode: " this.Mode "`nVim_g: " this.g "`nVim_n: " this.n "`nVimLineCopy: " this.LineCopy "`r`nfts:" this.fts
     }
   }
 
@@ -56,8 +56,8 @@
     this.CheckMode(4, , , , 1)
   }
 
-  SetMode(Mode="", g=0, n=0, LineCopy=-1, ft="") {
-  previous_mode := this.Mode
+  SetMode(Mode="", g=0, n=0, LineCopy=-1, fts="") {
+    previous_mode := this.Mode
     this.CheckValidMode(Mode)
     if (Mode != "") {
       this.Mode := Mode
@@ -77,8 +77,8 @@
     if (LineCopy!=-1) {
       this.LineCopy := LineCopy
     }
-    this.ft := ft
-    this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, ft)
+    this.fts := fts
+    this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, fts)
   }
 
   SetNormal() {

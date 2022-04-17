@@ -9,7 +9,7 @@ Return
 
 +m::  ; move to middle of screen
   Vim.SM.MouseMoveMiddle(true)
-  send {home}
+  send {left}{home}
 Return
 
 +l::  ; move to bottom of screen

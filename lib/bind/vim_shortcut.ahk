@@ -18,7 +18,7 @@ Return
 Return
 
 ; Testing
-; ^!+t::
+; ^!+t::WinMinimize, ahk_exe sm18.exe
 ;   clip_saved := ClipboardAll
 ;   LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
 ;   SendInput, ^c
@@ -41,7 +41,7 @@ return
 #f::run % "C:\Program Files\Everything 1.5a\Everything64.exe"
 
 ; Browsers
-#If Vim.State.Vim.Enabled && WinActive("ahk_group Browsers")
+#If (Vim.State.Vim.Enabled && WinActive("ahk_group Browsers"))
 ^!w::send ^w!{tab}  ; close tab and switch back
 
 ^!i::  ; open in *I*E
@@ -88,7 +88,7 @@ return
 return
 
 ; SumatraPDF/Calibre to SuperMemo
-#If Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe"))
+#If Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browsers"))
 ^!x::
 !x::  ; pdf/epub extract to supermemo
   ctrl_state := GetKeyState("ctrl")
@@ -102,14 +102,15 @@ return
     Vim.ToolTip("Nothing is selected.")
     return
   } else {
+    WinGet, hwnd, ID, A
     if WinActive("ahk_class SUMATRA_PDF_FRAME") {
-      reader := "p"
       send a
     } else if WinActive("ahk_exe ebook-viewer.exe") {
-      reader := "e"
       send h
       sleep 10
       send ^{enter}
+    } else if WinActive("ahk_group Browsers") {
+      send !h
     }
     if !WinExist("ahk_group SuperMemo") {
       Vim.ToolTip("SuperMemo is not open, please open SuperMemo and paste your text.")
@@ -142,13 +143,11 @@ return
   send {enter}
   WinWaitNotActive, ahk_class TMsgDialog,, 0
   send {esc}
-  if ctrl_state
+  if ctrl_state {
     send !{left}
-  else
-    if (reader == "p")
-      WinActivate, ahk_class SUMATRA_PDF_FRAME
-    else if (reader == "e")
-      WinActivate, ahk_exe ebook-viewer.exe
+  } else {
+    WinActivate, ahk_id %hwnd%
+  }
   Clipboard := ClipSaved
 return
 
