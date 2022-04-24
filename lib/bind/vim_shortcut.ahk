@@ -107,7 +107,7 @@ return
       send a
     } else if WinActive("ahk_exe ebook-viewer.exe") {
       send h
-      sleep 10
+      sleep 20
       send ^{enter}
     } else if WinActive("ahk_group Browsers") {
       send !h

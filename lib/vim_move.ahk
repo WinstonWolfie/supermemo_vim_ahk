@@ -787,7 +787,7 @@
             right := StrLen(detection_str) - pos
             this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
             SendInput +{right %right%}
-          } else if StrLen(str_after) < StrLen(str_before) {
+          } else if (StrLen(str_after) < StrLen(str_before)) {
             detection_str := StrReverse(str_before)
             pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
             if pos {
@@ -810,7 +810,8 @@
             detection_str := this.Vim.ParseLineBreaks(clip())
           }
           detection_str := StrReverse(detection_str)
-          pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence) + 1
+          pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
+          pos := pos ? pos + 1 : 0
           SendInput {right}{left %pos%}
         }
       }else if (key == "/") {

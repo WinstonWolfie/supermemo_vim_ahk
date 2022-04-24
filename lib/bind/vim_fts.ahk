@@ -119,7 +119,7 @@ space::
   Vim.Move.Move(Vim.State.fts)
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_"))
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.g)
 f::Vim.State.SetMode("",, -1,, "f")
 +f::Vim.State.SetMode("",, -1,, "+f")
 t::Vim.State.SetMode("",, -1,, "t")
@@ -136,7 +136,7 @@ Return
   if InStr(Vim.State.last_fts, "+") {
     fts_reversed := StrReplace(Vim.State.last_fts, "+")
   } else {
-    fts_reversed := "+" . Vim.State.last_ft
+    fts_reversed := "+" . Vim.State.last_fts
   }
   Vim.Move.Move(fts_reversed)
 Return

@@ -1,5 +1,6 @@
 ﻿#If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 ^!.::  ; find [...] and insert
+  Vim.ReleaseKey("ctrl")
   Vim.SM.DeselectAllComponents()
   send q
   Vim.SM.WaitTextFocus()
@@ -71,8 +72,9 @@ return
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
   Vim.WinWaitTitleChange(current_title)
+  sleep 100
   if WinActive("ahk_class TElWind")
-    send {enter}
+    send {alt}ll
   Vim.State.SetNormal()
 return
 

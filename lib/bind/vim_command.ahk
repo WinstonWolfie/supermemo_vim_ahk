@@ -38,7 +38,7 @@ Return
   WinGet, hwnd, ID, A
   Gui, VimCommander:Add, Text,, &Command:
   ; list names are the same as subroutine name, just no space and no final parentheses
-  list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE|Google define|YT History In IE"
+  list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE|Define (google)|YT History In IE"
   if Vim.State.IsCurrentVimMode("Vim_Normal") {
     list .= 
     CommanderMode = n
@@ -66,6 +66,8 @@ VimCommanderButtonExecute:
     command := "WatchLaterYT"
   else if (command == "Cloze and Done!")
     command := "ClozeAndDone"
+  else if (command == "Define (google)")
+    command := "DefineGoogle"
   else if InStr("|" . list . "|", "|" . command . "|") {
     command := RegExReplace(command, " \(.*")  ; removing parentheses
     command := StrReplace(command, " ")
@@ -209,7 +211,7 @@ KillIE:
     Process, Close, iexplore.exe
 return
 
-GoogleDefine:
+DefineGoogle:
   term := clip()
   if !term {
     InputBox, term, Google Define, Enter your search term.,, 192, 128

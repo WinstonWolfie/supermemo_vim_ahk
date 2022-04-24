@@ -39,8 +39,10 @@ SMCleanHTML:
     if !Vim.SM.IsEditingHTML()
       Return
   }
+  send {esc}
   ClipSaved := ClipboardAll
   Clipboard := ""
+  Vim.SM.WaitTextSave()
   send !{f12}fc
   ClipWait 0.2
   html_path := Clipboard

@@ -7,18 +7,18 @@
          || Vim.State.StrIsInCurrentVimMode("SMVim_")))
 i::Vim.State.SetInner()
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Inner"))
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Inner"))
 w::Vim.Move.Inner("w")
 s::Vim.Move.Inner("s")
 p::Vim.Move.Inner("p")
 
 ; gg
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) and (not Vim.State.g)
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.g)
 g::Vim.State.SetMode("", 1, -1)
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) and (Vim.State.g)
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
 g::Vim.Move.Move("g")
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_"))
+#If (Vim.IsVimGroup() and Vim.State.StrIsInCurrentVimMode("Vim_"))
 ; 1 character
 h::Vim.Move.Repeat("h")
 j::Vim.Move.Repeat("j")

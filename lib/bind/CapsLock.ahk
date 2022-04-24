@@ -290,8 +290,21 @@ CapsLock & c:: Send, ^c                                              ;|
 CapsLock & v:: Send, ^v                                              ;|
 CapsLock & a:: Send, ^a                                              ;|
 CapsLock & y:: Send, ^y                                              ;|
-CapsLock & w:: Send, ^{Right}                                        ;|
-CapsLock & b:: Send, ^{Left}                                         ;|
+
+CapsLock & w::
+	if GetKeyState("alt")
+		Send, ^+{Right}                                        ;|
+	else
+		send ^{right}
+return
+
+CapsLock & b::
+	if GetKeyState("alt")
+		send ^+{left}
+	else
+		Send, ^{Left}                                         ;|
+return
+
 ;---------------------------------------------------------------------o
 
 
