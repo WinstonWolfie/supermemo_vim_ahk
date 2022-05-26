@@ -94,6 +94,7 @@ _::
 .::
 >::
 space::
+  Vim.ReleaseKey("shift")
   CurrentHotkey := A_ThisHotkey
   if (CurrentHotkey = "space")
     CurrentHotkey := " "
@@ -119,7 +120,7 @@ space::
   Vim.Move.Move(Vim.State.fts)
 Return
 
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.g)
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.g && !Vim.State.StrIsInCurrentVimMode("Inner"))
 f::Vim.State.SetMode("",, -1,, "f")
 +f::Vim.State.SetMode("",, -1,, "+f")
 t::Vim.State.SetMode("",, -1,, "t")

@@ -38,7 +38,7 @@ Return
   WinGet, hwnd, ID, A
   Gui, VimCommander:Add, Text,, &Command:
   ; list names are the same as subroutine name, just no space and no final parentheses
-  list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE|Define (google)|YT History In IE"
+  list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE|Define (google)|YT History In IE|Wiktionary|Discord go live"
   if Vim.State.IsCurrentVimMode("Vim_Normal") {
     list .= 
     CommanderMode = n
@@ -80,8 +80,10 @@ VimCommanderButtonExecute:
 Return
 
 SMPlan:
-  if WinExist("ahk_class TPlanDlg") {
-    WinActivate
+  if (WinExist("ahk_class TPlanDlg")) {
+    if (WinExist("ahk_class TMsgDialog"))
+      WinKill
+    WinActivate, ahk_class TPlanDlg
     Vim.State.SetMode("Vim_Normal")
     Return
   }
@@ -97,7 +99,7 @@ SMPlan:
     WinWaitActive, ahk_class TElWind,, 5
     if ErrorLevel
       Return
-		sleep 500
+		sleep 1000
 		send ^{enter}  ; commander; seems to be a more reliable option than {alt}kp or ^p
 		WinWaitActive, ahk_class TCommanderDlg,, 1.5
   }
@@ -240,3 +242,24 @@ Return
 YTHistoryInIE:
   run iexplore.exe https://www.youtube.com/feed/history
 Return
+
+Wiktionary:
+  term := clip()
+  if (!term) {
+    InputBox, term, Wiktionary, Enter your search term.,, 192, 128
+    if (!term || ErrorLevel)
+      return
+  }
+  run https://www.google.com/search?hl=en&q=wiktionary+%term%
+return
+
+DiscordGoLive:
+  if (FindClick(A_ScriptDir . "\lib\bind\util\discord_screen_share.png")) {
+    sleep 1000
+    send {tab 2}{enter}
+    sleep 500
+    send {tab}{enter}
+    sleep 500
+    send +{tab 2}{enter}
+  }
+return

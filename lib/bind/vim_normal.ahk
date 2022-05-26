@@ -10,13 +10,14 @@ u::Send,^z
 ; Change case
 ~::
   Vim.ReleaseKey("shift")
-  Send, +{Right}
+  Send +{Right}
   Selection := Clip()
   if Selection is lower
     StringUpper, Selection, Selection
   else if Selection is upper
     StringLower, Selection, Selection
-  SendInput {raw}%Selection%
+  Send % Selection
+  send {left}
 Return
 
 +z::Vim.State.SetMode("Z")

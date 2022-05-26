@@ -187,7 +187,7 @@ s::ClickDPIAdjusted(153, 52)  ; *s*witch tasklist
 
 ; For incremental YouTube
 ; Need "Start" button on screen
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
 m::
   CoordMode, Mouse, Screen
   click, %x_coord% %y_coord%  ; click start (similar to mark read point)
@@ -205,13 +205,25 @@ Return
   click, %x_coord% %y_coord%  ; click reset (similar to clear read point)
 Return
 
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Insert")) && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
+^+!left::
+^+!right::
+^+!numpadleft::
+^+!numpadright::
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
+NumpadLeft::
 left::  ; left 5s
+NumpadRight::
 right::  ; right 5s
   x_coord += 110
   y_coord -= 60
   CoordMode, Mouse, Screen
   click, %x_coord% %y_coord%
-  send {%A_ThisHotkey%}
+  if (InStr(A_ThisHotkey, "left")) {
+    send {left}
+  } else if (InStr(A_ThisHotkey, "right")) {
+    send {right}
+  }
   send ^t
   sleep 10
   send ^t
@@ -265,16 +277,18 @@ Return
 {::Vim.Move.Move("{")
 }::Vim.Move.Move("}")
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
+#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind")
 '::
   send ^{f3}
   Vim.State.SetMode("Insert")
   back_to_normal := 2
 Return
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind")
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind")
 ^f7::
 m::
+  ; if (Vim.SM.IsEditingHTML() && Vim.SM.MouseMoveMiddle(true))
+  ;   send {home}
   send ^{f7}  ; set read point
   Vim.ToolTip("Read point set")
 Return
@@ -312,6 +326,7 @@ Return
     Vim.SM.WaitTextFocus()  ; make sure current_focus is updated    
     if !Vim.SM.IsEditingText() {  ; still found no text
       Vim.ToolTip("Text not found.")
+      Vim.State.SetNormal()
       Return
     }
   }
@@ -331,21 +346,23 @@ Return
   if InStr(current_focus, "TMemo") {
     send ^a
     pos := InStr(clip(), UserInput)
-    if pos {
+    if (pos) {
       pos -= 1
       SendInput {left}{right %pos%}
       input_len := StrLen(UserInput)
-      if r_shift_state
+      if (r_shift_state) {
         SendInput {right %input_len%}
-      else if ctrl_state || alt_state {
+      } else if (ctrl_state || alt_state) {
         SendInput +{right %input_len%}
-        if ctrl_state
-          Vim.State.SetMode("Vim_VisualChar")
-        else if alt_state
+        if (ctrl_state) {
+          Vim.State.SetMode("Vim_VisualFirst")
+        } else if (alt_state) {
           send !z
+        }
       }
     } else {
       Vim.ToolTip("Not found.")
+      Vim.State.SetNormal()
       Return
     }
   } else {
@@ -362,13 +379,14 @@ Return
       if r_shift_state
         send {right}  ; put caret on right of searched text
       else if ctrl_state
-        Vim.State.SetMode("Vim_VisualChar")
+        Vim.State.SetMode("Vim_VisualFirst")
       else  ; all modifier keys are not pressed
         send {left}  ; put caret on left of searched text
     send ^{enter}  ; to open commander; convienently, if a "not found" window pops up, this would close it
     WinWaitActive, ahk_class TCommanderDlg,, 0.25
     if ErrorLevel {
       Vim.ToolTip("Not found.")
+      Vim.State.SetNormal()
       send {esc}^{enter}h{enter}{esc}
       Return
     }

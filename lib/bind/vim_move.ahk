@@ -18,7 +18,7 @@ g::Vim.State.SetMode("", 1, -1)
 #If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
 g::Vim.Move.Move("g")
 
-#If (Vim.IsVimGroup() and Vim.State.StrIsInCurrentVimMode("Vim_"))
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_"))
 ; 1 character
 h::Vim.Move.Repeat("h")
 j::Vim.Move.Repeat("j")
@@ -52,7 +52,7 @@ b::Vim.Move.Repeat("b")
 Return
 
 ; Search
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) && !(Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+#If Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("Vim_")) && !(Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
 /::Vim.Move.Move("/")
 ?::Vim.Move.Move("?")
 

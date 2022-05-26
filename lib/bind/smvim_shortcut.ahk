@@ -12,6 +12,7 @@
       SendInput {left}{right %pos%}
     } else {
       Vim.ToolTip("Not found.")
+      Vim.State.SetNormal()
       Return
     }
   } else if Vim.SM.IsEditingHTML() {
@@ -24,6 +25,7 @@
     WinWaitActive, ahk_class TCommanderDlg,, 0.25
     if ErrorLevel {
       Vim.ToolTip("Not found.")
+      Vim.State.SetNormal()
       send {esc}^{enter}h{enter}{esc}
       Return
     }
@@ -55,9 +57,10 @@ return
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
   Vim.WinWaitTitleChange(current_title)
-  if WinActive("ahk_class TElWind")
+  if (WinActive("ahk_class TElWind"))
     send {enter}
   Vim.State.SetNormal()
+  Vim.SM.EnterInsertIfSpelling()
 return
 
 >!>+\::  ; for laptop
@@ -73,9 +76,10 @@ return
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
   Vim.WinWaitTitleChange(current_title)
   sleep 100
-  if WinActive("ahk_class TElWind")
+  if (WinActive("ahk_class TElWind"))
     send {alt}ll
   Vim.State.SetNormal()
+  Vim.SM.EnterInsertIfSpelling()
 return
 
 ^!+g::  ; change element's concept *g*roup
@@ -137,7 +141,7 @@ return
       clip(img_html, true, true)
       send ^+1
       Vim.SM.WaitTextSave()
-      if ErrorLevel
+      if (ErrorLevel)
         Return
       send ^t
       Vim.SM.WaitTextFocus()
@@ -149,12 +153,13 @@ return
       if !html
         html := img_html  ; in case the html is picture only and somehow not saved
       
-      /* recommended css setting for fuck_lexicon class:
-      .fuck_lexicon {
-        position: absolute;
-        left: -9999px;
-        top: -9999px;
-      }
+      /*
+        recommended css setting for fuck_lexicon class:
+        .fuck_lexicon {
+          position: absolute;
+          left: -9999px;
+          top: -9999px;
+        }
       */
       
       fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %current_time_display%</SPAN>
@@ -178,7 +183,7 @@ return
         clip(new_html,, true)
         send ^+{home}^+1
         Vim.SM.WaitTextSave()
-        if ErrorLevel {
+        if (ErrorLevel) {
           Clipboard := ClipSaved
           Return
         }
@@ -193,12 +198,12 @@ return
       if InStr(latex_formula, "{\displaystyle") {  ; from wikipedia, wikibooks, etc
         latex_formula := StrReplace(latex_formula, "{\displaystyle")
         latex_formula := RegExReplace(latex_formula, "}$")
-      } else if InStr(latex_formula, "\displaystyle{") {  ; from better explained
+      } else if InStr(latex_formula, "\displaystyle{") {  ; from Better Explained
         latex_formula := StrReplace(latex_formula, "\displaystyle{")
         latex_formula := RegExReplace(latex_formula, "}$")
       }
       latex_formula := RegExReplace(latex_formula, "^\s+|\s+$")  ; removing start and end whitespaces
-      latex_formula := RegExReplace(latex_formula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in better explained)
+      latex_formula := RegExReplace(latex_formula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in Better Explained)
       latex_formula := html_decode(latex_formula)
       clip(latex_formula, true, true)
       FileDelete % latex_path
@@ -216,8 +221,8 @@ Return
   Vim.State.SetNormal()
   KeyWait Alt
   Gui, PlanInsert:Add, Text,, &Activity:
-  list = Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM
-  Gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, %list%
+  list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM|Piano|Meditation"
+  Gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, % list
   Gui, PlanInsert:Add, CheckBox, vNoSplit, &Do not split current activity
   Gui, PlanInsert:Add, Button, default, &Insert
   Gui, PlanInsert:Show,, Insert Activity
@@ -242,7 +247,7 @@ PlanInsertButtonInsert:
   SendInput {raw}%activity%  ; SendInput is faster than clip() here
   send !b  ; begin
   WinWaitNotActive, ahk_class TPlanDlg,, 0.3  ; wait for "Mark the slot with the drop to efficiency?"
-  if !ErrorLevel
+  if (!ErrorLevel)
     send y
   WinWaitActive, ahk_class TPlanDlg,, 0
   send ^s{esc}  ; save and exits
@@ -251,6 +256,8 @@ PlanInsertButtonInsert:
   send ^{enter}  ; use commander to open Plan; seems to be a more reliable option than {alt}kp or ^p
   SendInput {raw}pl  ; open Plan again
   send {enter}
+  if (Activity == "Break" || Activity == "Sports" || Activity == "Piano")
+    run b  ; my personal backup script
 return
 
 #If Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg")

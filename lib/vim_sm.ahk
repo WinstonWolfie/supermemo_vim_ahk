@@ -204,4 +204,20 @@ class VimSM{
       }
     }
   }
+
+  EnterInsertIfSpelling() {
+    loop {
+      sleep 100
+      if (InStr(ControlGetFocus(), "TMemo")) {
+        this.Vim.State.SetMode("Insert")
+        break
+      }
+      if (A_Index > 5)
+        break
+    }
+  }
+
+  IsNextRepetition() {
+    return (ControlGetText("TBitBtn3") == "Next repetition")
+  }
 }

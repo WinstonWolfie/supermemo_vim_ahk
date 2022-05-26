@@ -58,12 +58,37 @@ return
   Clipboard := clip_saved
 Return
 
+^!d::  ; copy title
+	Vim.ReleaseKey("ctrl")
+  WinGetActiveTitle, CurrentTitle
+  send ^d
+  WinWaitNotActive, % CurrentTitle,, 1
+  Clipboard := ""
+  while !Clipboard {
+    send ^c
+    ClipWait 0.2
+  }
+  Clipboard := StrReplace(Clipboard, " - YouTube")
+  send +{tab 2}{enter}
+  Vim.ToolTip("Copied " . Clipboard)
+return
+
 ^!l::  ; copy link and parse *l*ink if if's from YT
 	Vim.ReleaseKey("ctrl")
+  WinGetActiveTitle, CurrentTitle
+  send ^d
+  WinWaitNotActive, % CurrentTitle,, 1
   Clipboard := ""
-  While, !Clipboard {
+  while !Clipboard {
+    send ^c
+    ClipWait 0.2
+  }
+  send +{tab 2}{enter}
+  BrowserTitle := StrReplace(Clipboard, " - YouTube")
+  Clipboard := ""
+  While !Clipboard {
     send ^l^c
-    ClipWait, 0.2
+    ClipWait 0.2
   }
   send {f6 2}
   temp_clip := RegExReplace(Clipboard, "#(.*)$")
@@ -71,11 +96,11 @@ Return
     RegExMatch(temp_clip, "v=\K[\w\-]+", yt_link)
     temp_clip = https://www.youtube.com/watch?v=%yt_link%
   }
+  Vim.ToolTip("Copied " . temp_clip . "`nTitle: " . BrowserTitle)
   Clipboard := temp_clip
-  Vim.ToolTip("Copied " . temp_clip)
 return
 
-^!d::  ; parse similar and opposite in google *d*efine
+^!+d::  ; parse similar and opposite in google *d*efine
   Clipboard := ""
   send ^c
   ClipWait 0.6
@@ -107,7 +132,7 @@ return
       send a
     } else if WinActive("ahk_exe ebook-viewer.exe") {
       send h
-      sleep 20
+      sleep 70
       send ^{enter}
     } else if WinActive("ahk_group Browsers") {
       send !h

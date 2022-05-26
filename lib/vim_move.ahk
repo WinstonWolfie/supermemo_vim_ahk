@@ -784,19 +784,19 @@
             length := StrLen(str_after) - StrLen(str_before)
             detection_str := StrReverse(SubStr(str_after, 1, length))
             pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
-            right := StrLen(detection_str) - pos
+            right := StrLen(detection_str) - pos - 1
             this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
             SendInput +{right %right%}
           } else if (StrLen(str_after) < StrLen(str_before)) {
             detection_str := StrReverse(str_before)
             pos := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
             if pos {
-              left := pos - 1
+              left := pos + 1
               if (pos == 1) {
                 this.search_occurrence += 1
                 next_occurrence := InStr(detection_str, this.fts_char, true,, this.search_occurrence)
                 if next_occurrence
-                  left := next_occurrence - 1
+                  left := next_occurrence + 1
               }
               this.Vim.ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
               SendInput +{left %left%}
@@ -940,8 +940,14 @@
     if WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() {  ; browsing
       send ^t
       this.Vim.SM.WaitTextFocus()
+    } else if (WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")) {
+      FindClick(A_ScriptDir . "\lib\bind\util\element_window_sync.png",, sync_off)
     }
     SendInput ^{home}{down %line%}
+    if (sync_off) {
+      FindClick(A_ScriptDir . "\lib\bind\util\element_window_sync.png")
+      sync_off := ""
+    }
     } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() {
     send ^t
     this.Vim.SM.WaitTextFocus()
@@ -952,6 +958,8 @@
     if (this.Vim.State.n > 0) {
     line := this.Vim.State.n - 1
     this.Vim.State.n := 0
+    if (WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser"))
+      FindClick(A_ScriptDir . "\lib\bind\util\element_window_sync.png",, sync_off)
     if this.Vim.SM.MouseMoveTop(true) {
       this.Vim.SM.WaitTextFocus()
       send {left}{home}
@@ -959,9 +967,14 @@
       send ^t
       this.Vim.SM.WaitTextFocus()
       send ^{home}
-    } else
+    } else {
       send ^{home}
+    }
     SendInput {down %line%}
+    if (sync_off) {
+      FindClick(A_ScriptDir . "\lib\bind\util\element_window_sync.png")
+      sync_off := ""
+    }
     } else if this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText() {
     send ^t
     this.Vim.SM.WaitTextFocus()

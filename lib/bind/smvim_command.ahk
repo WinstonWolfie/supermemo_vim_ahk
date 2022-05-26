@@ -103,7 +103,7 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   WinWaitActive, ahk_class #32770,, 0  ; do you want to save changes?
   if !ErrorLevel
     send {enter}
-  if (wiki_link == "zh.wikipedia.org") {
+  if (wiki_link == "zh.wikipedia.org") || (wiki_link == "fr.wikipedia.org") {
     WinWaitActive, ahk_class TElWind,, 0
     send q
     Vim.SM.WaitTextFocus()
@@ -168,6 +168,30 @@ s::  ; turn active language item to passive (*s*witch)
   send ^{del 2}{esc}
 return
 
++s::
+  Vim.State.SetMode("Vim_Normal")
+  Vim.SM.DeselectAllComponents()
+  ControlGetText, current_text, TBitBtn3
+  if (current_text != "Learn")  ; if learning (on "next repitition")
+    send {esc}
+  send q
+  sleep 10
+  ClipSaved := ClipboardAll
+  Clipboard := ""
+  if (Vim.SM.IsEditingHTML()) {
+    send ^+{right 2}^x{esc}
+  } else if (Vim.SM.IsEditingPlainText()) {
+    send ^+{right}^x{esc}
+  }
+  sleep 10
+  send ^+s
+  sleep 450
+  send q
+  sleep 10
+  send ^v{left 2}{esc}
+  Clipboard := ClipSaved
+return
+
 p::  ; hyperlink to scri*p*t component
   Vim.State.SetMode("Vim_Normal")
   send !n  ; new topic
@@ -177,6 +201,21 @@ p::  ; hyperlink to scri*p*t component
   SendInput {raw}url
   send {space}^v  ; paste the link
   send !o{esc}  ; close script editor
+  if (BrowserTitle) {
+    send !t
+    GroupAdd, SMAltT, ahk_class TChoicesDlg
+    GroupAdd, SMAltT, ahk_class TTitleEdit
+    WinWaitActive, ahk_group SMAltT,, 0
+    if (WinActive("ahk_class TChoicesDlg")) {
+      send {enter}
+      WinWaitActive, ahk_class TTitleEdit,, 0
+    }
+    if (WinActive("ahk_class TTitleEdit")) {
+      sleep 70
+      Clip(BrowserTitle)
+      send {enter}
+    }
+  }
 return
 
 m::  ; co*m*ment current element "audio"
@@ -239,9 +278,15 @@ t::
   send ^+m
   SendInput {Raw}classic
   send {Enter}
+  Vim.State.SetMode("Vim_Normal")
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command")) && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser"))
+#If ((Vim.IsVimGroup()
+      && Vim.State.IsCurrentVimMode("Command")
+      && (WinActive("ahk_class TElWind")
+          || WinActive("ahk_class TContents")
+          || WinActive("ahk_class TBrowser")))
+     || Vim.SM.IsNextRepetition())  ; so you can just press numpads when you finished grading
 ; Priority script, made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
 ; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png

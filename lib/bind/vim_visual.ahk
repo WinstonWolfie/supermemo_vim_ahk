@@ -110,14 +110,15 @@ Return
 Return
 
 ^p::
++p::
 p::
-  if GetKeyState("ctrl")
+  if (GetKeyState("ctrl"))
     Clipboard := Clipboard
   send ^v
   Vim.State.SetMode("Vim_Normal")
 Return
 
-convert_to_lowercase:
+ConvertToLowercase:
 u::
   selection := clip()
   StringLower, selection, selection
@@ -125,7 +126,7 @@ u::
   Vim.State.SetMode("Vim_Normal")
 Return
 
-convert_to_uppercase:
+ConvertToUppercase:
 +u::
   selection := clip()
   StringUpper, selection, selection
@@ -134,7 +135,7 @@ convert_to_uppercase:
 Return
 
 ; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
-invert_case:
+InvertCase:
 ~::
   Vim.ReleaseKey("shift")
   selection := clip()
