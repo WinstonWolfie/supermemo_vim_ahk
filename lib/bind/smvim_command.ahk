@@ -7,7 +7,7 @@ return
 b::  ; remove all text *b*efore cursor
   send !\\
   WinWaitNotActive, ahk_class TElWind,, 0
-  if !ErrorLevel
+  if (!ErrorLevel)
     send {enter}
   Vim.State.SetMode("Vim_Normal")
 return
@@ -30,13 +30,13 @@ return
 SMCleanHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
-	send ^{f7}
-  if Vim.SM.IsEditingPlainText()
+	send !g^{f7}  ; !g in case it's learning
+  if (Vim.SM.IsEditingPlainText())
     Return
-  if !Vim.SM.IsEditingHTML() {
+  if (!Vim.SM.IsEditingHTML()) {
     send ^t
     Vim.SM.WaitTextFocus()
-    if !Vim.SM.IsEditingHTML()
+    if (!Vim.SM.IsEditingHTML())
       Return
   }
   send {esc}
@@ -45,15 +45,15 @@ SMCleanHTML:
   Vim.SM.WaitTextSave()
   send !{f12}fc
   ClipWait 0.2
-  html_path := Clipboard
-  FileRead, html, % html_path
-  if !html {
+  HtmlPath := Clipboard
+  FileRead, Html, % HtmlPath
+  if (!Html) {
     Clipboard := ClipSaved
     Return
   }
-  new_html := Vim.HTML.Clean(html)
-  FileDelete % html_path
-  FileAppend, % new_html, % html_path
+  NewHtml := Vim.HTML.Clean(Html)
+  FileDelete % HtmlPath
+  FileAppend, % NewHtml, % HtmlPath
   send !{home}!{left}  ; refresh
   Clipboard := ClipSaved
 Return
@@ -103,7 +103,7 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   WinWaitActive, ahk_class #32770,, 0  ; do you want to save changes?
   if !ErrorLevel
     send {enter}
-  if (wiki_link == "zh.wikipedia.org") || (wiki_link == "fr.wikipedia.org") {
+  if (wiki_link == "zh.wikipedia.org" || wiki_link == "fr.wikipedia.org" || wiki_link == "la.wikipedia.org") {
     WinWaitActive, ahk_class TElWind,, 0
     send q
     Vim.SM.WaitTextFocus()
@@ -119,12 +119,36 @@ i::  ; learn outstanding *i*tems only
   send !{home}{esc 4}  ; clear any hidden windows
   send !vo
   WinWaitActive, ahk_class TProgressBox,, 0
-  if !ErrorLevel
+  if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
   WinWaitActive, ahk_class TBrowser,, 0
   send {AppsKey}ci
   WinWaitActive, ahk_class TProgressBox,, 0
-  if !ErrorLevel
+  if (!ErrorLevel)
+    WinWaitNotActive, ahk_class TProgressBox,, 10
+  WinWaitActive, ahk_class TBrowser,, 0
+  send ^l
+return
+
++i::  ; learn current element's outstanding child item
+  send ^{space}
+  WinWaitActive, ahk_class TProgressBox,, 0
+  if (!ErrorLevel)
+    WinWaitNotActive, ahk_class TProgressBox,, 10
+  WinWaitActive, ahk_class TBrowser,, 0
+  send {AppsKey}ci
+  WinWaitActive, ahk_class TProgressBox,, 0
+  if (!ErrorLevel)
+    WinWaitNotActive, ahk_class TProgressBox,, 10
+  WinWaitActive, ahk_class TBrowser,, 0
+  send {AppsKey}co
+  WinWaitActive, ahk_class TProgressBox,, 0
+  if (!ErrorLevel)
+    WinWaitNotActive, ahk_class TProgressBox,, 10
+  WinWaitActive, ahk_class TBrowser,, 0
+  send ^s
+  WinWaitActive, ahk_class TProgressBox,, 0
+  if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
   WinWaitActive, ahk_class TBrowser,, 0
   send ^l
@@ -132,18 +156,33 @@ return
 
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
-  new_link := "#Link: " . Clipboard
+  NewLink := "#Link: " . Clipboard
+  if (BrowserSource)
+    NewSource := "#Source: " . BrowserSource
   send !{f10}fe
   WinWaitActive, ahk_class TInputDlg,, 0
   send ^a^c
   ClipWait 0.2
-  if InStr(Clipboard, "#Link: ")
-    clip(RegExReplace(Clipboard, "(\n\K|^)#Link: .*", new_link))
-  else {
+  if (InStr(Clipboard, "#Link: ") || InStr(Clipboard, "#Source: ")) {
+    NewRef := RegExReplace(Clipboard, "(\n\K|^)#Link: .*", NewLink)
+    if (BrowserSource) {
+      NewRef := RegExReplace(NewRef, "(\n\K|^)#Source: .*", NewSource)
+      BrowserSource := ""
+    }
+    clip(NewRef)
+  } else {
     send ^{end}{enter}
-    clip(new_link)
+    clip(NewLink . "`n" . NewSource)
   }
   send !{enter}
+  if (BrowserTitle) {
+    send ^t
+    Vim.SM.WaitTextFocus()
+    send ^{end}{enter}
+    clip(BrowserTitle)
+    send +{home}!t
+    BrowserTitle := ""
+  }
 return
 
 o::  ; c*o*mpress images
@@ -207,12 +246,14 @@ p::  ; hyperlink to scri*p*t component
     GroupAdd, SMAltT, ahk_class TTitleEdit
     WinWaitActive, ahk_group SMAltT,, 0
     if (WinActive("ahk_class TChoicesDlg")) {
-      send {enter}
+      WinActivate, ahk_class TChoicesDlg  ; sometimes the enter is not send??
+      ControlSend, TGroupButton3, {enter}, ahk_class TChoicesDlg
       WinWaitActive, ahk_class TTitleEdit,, 0
     }
     if (WinActive("ahk_class TTitleEdit")) {
-      sleep 70
+      ControlFocusWait("TMemo1")
       Clip(BrowserTitle)
+      BrowserTitle := ""
       send {enter}
     }
   }
@@ -280,6 +321,25 @@ t::
   send {Enter}
   Vim.State.SetMode("Vim_Normal")
 Return
+
++c::  ; learn child
+  send ^{space}
+  WinWaitActive, ahk_class TProgressBox,, 0
+  if (!ErrorLevel)
+    WinWaitNotActive, ahk_class TProgressBox,, 10
+  WinWaitActive, ahk_class TBrowser,, 0
+  send {AppsKey}co
+  WinWaitActive, ahk_class TProgressBox,, 0
+  if (!ErrorLevel)
+    WinWaitNotActive, ahk_class TProgressBox,, 10
+  WinWaitActive, ahk_class TBrowser,, 0
+  send ^s
+  WinWaitActive, ahk_class TProgressBox,, 0
+  if (!ErrorLevel)
+    WinWaitNotActive, ahk_class TProgressBox,, 10
+  WinWaitActive, ahk_class TBrowser,, 0
+  send ^l
+return
 
 #If ((Vim.IsVimGroup()
       && Vim.State.IsCurrentVimMode("Command")

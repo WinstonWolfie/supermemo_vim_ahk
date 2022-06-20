@@ -4,8 +4,8 @@ u::Send,^z
 ^r::Send,^y
 
 ; Combine lines
-+j:: Send, {End}{Space}{Delete}
-+k:: Send, {up}{End}{Space}{Delete}
++j:: send {End}{Space}{Delete}
++k:: send {up}{End}{Space}{Delete}
 
 ; Change case
 ~::
@@ -23,21 +23,21 @@ Return
 +z::Vim.State.SetMode("Z")
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Z"))
 +z::
-  Send, ^s
-  Send, !{F4}
+  send ^s
+  send !{F4}
   Vim.State.SetMode("Vim_Normal")
 Return
 
 +q::
-  Send, !{F4}
+  send !{F4}
   Vim.State.SetMode("Vim_Normal")
 Return
 
 ; #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
-; Space::Send, {Right}
+; Space::send {Right}
 
 ; period
-; .::Send, +^{Right}{BS}^v
+; .::send +^{Right}{BS}^v
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
 ^e::
@@ -65,12 +65,12 @@ return
 ; For Q-dir, ^X mapping does not work, use !X instead.
 ; ^X does not work to be sent, too, use Down/Up
 ; switch to left top (1), right top (2), left bottom (3), right bottom (4)
-!u::Send, {LControl Down}{1 Down}{1 Up}{LControl Up}
-!i::Send, {LControl Down}{2 Down}{2 Up}{LControl Up}
-!j::Send, {LControl Down}{3 Down}{3 Up}{LControl Up}
-!k::Send, {LControl Down}{4 Down}{4 Up}{LControl Up}
+!u::send {LControl Down}{1 Down}{1 Up}{LControl Up}
+!i::send {LControl Down}{2 Down}{2 Up}{LControl Up}
+!j::send {LControl Down}{3 Down}{3 Up}{LControl Up}
+!k::send {LControl Down}{4 Down}{4 Up}{LControl Up}
 ; Ctrl+q, menu Quick-links
-'::Send, {LControl Down}{q Down}{q Up}{LControl Up}
+'::send {LControl Down}{q Down}{q Up}{LControl Up}
 ; Keep the e key in Normal mode, use the right button and then press the refresh (e) function, do nothing, return to the e key directly
 ~e::
 Return

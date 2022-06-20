@@ -105,6 +105,7 @@ Return
 ~^v::  ; paste image; vim visual block
 ~^r::  ; replace; vim redo
 ~^+p::  ; element parameter; vim_ahk paste without format
+~^p::  ; open Plan; vim_ahk go right and paste without format
 Return
 
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")

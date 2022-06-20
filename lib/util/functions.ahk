@@ -256,47 +256,48 @@ SetClipboardHTML(HtmlBody, HtmlHead:="", AltText:="") {       ; v0.67 by SKAN on
 Local  F, Html, pMem, Bytes, hMemHTM:=0, hMemTXT:=0, Res1:=1, Res2:=1   ; @ tiny.cc/t80706
 Static CF_UNICODETEXT:=13,   CFID:=DllCall("RegisterClipboardFormat", "Str","HTML Format")
 
-  If ! DllCall("OpenClipboard", "Ptr",A_ScriptHwnd)
-    Return 0
-  Else DllCall("EmptyClipboard")
+If ! DllCall("OpenClipboard", "Ptr",A_ScriptHwnd)
+	Return 0
+Else DllCall("EmptyClipboard")
 
-  If (HtmlBody!="")
-  {
-      Html     := "Version:0.9`r`nStartHTML:00000000`r`nEndHTML:00000000`r`nStartFragment"
-               . ":00000000`r`nEndFragment:00000000`r`n<!DOCTYPE>`r`n<html>`r`n<head>`r`n"
-                         . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->`r`n"
-                              . HtmlBody . "`r`n<!--EndFragment -->`r`n</body>`r`n</html>"
+If (HtmlBody!="")
+{
+	Html     := "Version:0.9`r`nStartHTML:00000000`r`nEndHTML:00000000`r`nStartFragment"
+			. ":00000000`r`nEndFragment:00000000`r`n<!DOCTYPE>`r`n<html>`r`n<head>`r`n"
+						; . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->`r`n"
+						. HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->"
+							. HtmlBody . "`r`n<!--EndFragment -->`r`n</body>`r`n</html>"
 
-      Bytes    := StrPut(Html, "utf-8")
-      hMemHTM  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",Bytes+4, "Ptr")
-      pMem     := DllCall("GlobalLock", "Ptr",hMemHTM, "Ptr")
-      StrPut(Html, pMem, Bytes, "utf-8")
+	Bytes    := StrPut(Html, "utf-8")
+	hMemHTM  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",Bytes+4, "Ptr")
+	pMem     := DllCall("GlobalLock", "Ptr",hMemHTM, "Ptr")
+	StrPut(Html, pMem, Bytes, "utf-8")
 
-      F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<html>", "Ptr") - pMem
-      StrPut(Format("{:08}", F), pMem+23, 8, "utf-8")
-      F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","</html>", "Ptr") - pMem
-      StrPut(Format("{:08}", F), pMem+41, 8, "utf-8")
-      F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--StartFra", "Ptr") - pMem
-      StrPut(Format("{:08}", F), pMem+65, 8, "utf-8")
-      F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--EndFragm", "Ptr") - pMem
-      StrPut(Format("{:08}", F), pMem+87, 8, "utf-8")
+	F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<html>", "Ptr") - pMem
+	StrPut(Format("{:08}", F), pMem+23, 8, "utf-8")
+	F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","</html>", "Ptr") - pMem
+	StrPut(Format("{:08}", F), pMem+41, 8, "utf-8")
+	F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--StartFra", "Ptr") - pMem
+	StrPut(Format("{:08}", F), pMem+65, 8, "utf-8")
+	F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--EndFragm", "Ptr") - pMem
+	StrPut(Format("{:08}", F), pMem+87, 8, "utf-8")
 
-      DllCall("GlobalUnlock", "Ptr",hMemHTM)
-      Res1  := DllCall("SetClipboardData", "Int",CFID, "Ptr",hMemHTM)
-  }
+	DllCall("GlobalUnlock", "Ptr",hMemHTM)
+	Res1  := DllCall("SetClipboardData", "Int",CFID, "Ptr",hMemHTM)
+}
 
-  If (AltText!="")
-  {
-      Bytes    := StrPut(AltText, "utf-16")
-      hMemTXT  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",(Bytes*2)+8, "Ptr")
-      pMem     := DllCall("GlobalLock", "Ptr",hMemTXT, "Ptr")
-      StrPut(AltText, pMem, Bytes, "utf-16")
-      DllCall("GlobalUnlock", "Ptr",hMemTXT)
-      Res2  := DllCall("SetClipboardData", "Int",CF_UNICODETEXT, "Ptr",hMemTXT)
-  }
+If (AltText!="")
+{
+	Bytes    := StrPut(AltText, "utf-16")
+	hMemTXT  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",(Bytes*2)+8, "Ptr")
+	pMem     := DllCall("GlobalLock", "Ptr",hMemTXT, "Ptr")
+	StrPut(AltText, pMem, Bytes, "utf-16")
+	DllCall("GlobalUnlock", "Ptr",hMemTXT)
+	Res2  := DllCall("SetClipboardData", "Int",CF_UNICODETEXT, "Ptr",hMemTXT)
+}
 
-  DllCall("CloseClipboard")
-  hMemHTM := hMemHTM ? DllCall("GlobalFree", "Ptr",hMemHTM) : 0
+DllCall("CloseClipboard")
+hMemHTM := hMemHTM ? DllCall("GlobalFree", "Ptr",hMemHTM) : 0
 
 Return (Res1 & Res2)
 }
@@ -350,5 +351,43 @@ ClickDPIAdjusted(coord_x, coord_y) {
 
 StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
   String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
-    return String
+	return String
+}
+
+GetBrowserInfo(ByRef BrowserTitle, ByRef BrowserUrl, ByRef BrowserSource) {
+	global ModernBrowsers, LegacyBrowsers
+	ModernBrowsers := "ApplicationFrameWindow,Chrome_WidgetWin_0,Chrome_WidgetWin_1,Maxthon3Cls_MainFrm,MozillaWindowClass,Slimjet_WidgetWin_1"
+  LegacyBrowsers := "IEFrame,OperaWindowClass"
+	sURL := GetActiveBrowserURL()
+	WinGetClass, sClass, A
+	If (sURL != "") {
+    BrowserUrl := RegExReplace(sURL, "#(.*)$")
+    if (InStr(BrowserUrl, "https://www.youtube.com") && InStr(BrowserUrl, "v=")) {
+      RegExMatch(BrowserUrl, "v=\K[\w\-]+", YTLink)
+      BrowserUrl := "https://www.youtube.com/watch?v=" . YTLink
+    }
+    WinGetActiveTitle, BrowserTitle
+    BrowserTitle := RegExReplace(BrowserTitle, " - Google Chrome$")
+    BrowserTitle := RegExReplace(BrowserTitle, " — Mozilla Firefox$")
+    BrowserTitle := RegExReplace(BrowserTitle, " - .* - Microsoft​ Edge$")
+    ReversedTitle := StrReverse(BrowserTitle)
+    if (InStr(ReversedTitle, " | ")
+        && (InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - ")
+            || !InStr(ReversedTitle, " - "))) {  ; used to find source
+      separator := " | "
+    } else if (InStr(ReversedTitle, " - ")) {
+      separator := " - "
+    } else {
+      separator := ""
+    }
+		occurence := (InStr(ReversedTitle, separator,,, 2) > InStr(ReversedTitle, separator)) ? 2 : 1
+    pos := separator ? InStr(StrReverse(BrowserTitle), separator,,, occurence) : 0
+    if (pos) {
+      BrowserSource := SubStr(BrowserTitle, StrLen(BrowserTitle) - pos - 1, StrLen(BrowserTitle))
+      if (InStr(BrowserSource, separator))
+        BrowserSource := StrReplace(BrowserSource, separator,,, 1)
+      BrowserTitle := SubStr(BrowserTitle, 1, StrLen(BrowserTitle) - pos - 2)
+    }
+	}
+	Return
 }

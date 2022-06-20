@@ -15,14 +15,20 @@
       Vim.State.SetNormal()
       Return
     }
-  } else if Vim.SM.IsEditingHTML() {
+  } else if Vim.SM.IsEditingHtml() {
     send {f3}
-    WinWaitNotActive, ahk_class TElWind,, 0  ; faster than wait for element window to be active
+    WinWaitActive, ahk_class TMyFindDlg,, 0
+    if (ErrorLevel) {
+      send {esc}^{enter}h{enter}{f3}
+      WinWaitActive, ahk_class TMyFindDlg,, 0
+      if (ErrorLevel)
+        Return
+    }
     SendInput {raw}[...]
     send {enter}
     WinWaitNotActive, ahk_class TMyFindDlg,, 0  ; faster than wait for element window to be active
     send {right}^{enter}
-    WinWaitActive, ahk_class TCommanderDlg,, 0.25
+    WinWaitActive, ahk_class TCommanderDlg,, 0
     if ErrorLevel {
       Vim.ToolTip("Not found.")
       Vim.State.SetNormal()
@@ -95,7 +101,22 @@ return
   Vim.State.SetNormal()
 return
 
-#If Vim.IsVimGroup() && Vim.SM.IsEditingHTML()
+^!t::
+  send !t
+  GroupAdd, SMAltT, ahk_class TChoicesDlg
+  GroupAdd, SMAltT, ahk_class TTitleEdit
+  WinWaitActive, ahk_group SMAltT,, 0
+  if (WinActive("ahk_class TChoicesDlg")) {
+    send {enter}
+    WinWaitActive, ahk_class TTitleEdit,, 0
+  }
+  if (WinActive("ahk_class TTitleEdit")) {
+    ControlFocusWait("TMemo1")
+    send ^v{enter}
+  }
+Return
+
+#If (Vim.IsVimGroup() && Vim.SM.IsEditingHtml())
 ^!k::
   element_number := RegExReplace(Clipboard, "^#")
   if !clip()  ; no selection
@@ -111,47 +132,60 @@ return
 ^!l::
   Vim.ReleaseKey("ctrl")
   KeyWait alt
-  FormatTime, current_time_display,, yyyy-MM-dd HH:mm:ss:%A_msec%
-  current_time_file_name := RegExReplace(current_time_display, " |:", "-")
+  FormatTime, CurrentTimeDisplay,, yyyy-MM-dd HH:mm:ss:%A_msec%
+  CurrentTimeFileName := RegExReplace(CurrentTimeDisplay, " |:", "-")
   Vim.State.SetMode("Vim_Normal")
   ClipSaved := ClipboardAll
   Clipboard := ""
   send ^c
   ClipWait 0.6
-  If Vim.HTML.ClipboardGet_HTML( Data ) {
+  If (Vim.Html.ClipboardGet_Html(Data)) {
     ; To do: detect selection contents
-    ; if RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)") {  ; match end of first IMG tag until start of last EndFragment tag
+    ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
       ; Vim.ToolTip("Please select text or image only.")
       ; Clipboard := ClipSaved
       ; Return
     ; } else
-    if !InStr(data, "<IMG") {  ; text only
+    if (!InStr(data, "<IMG")) {  ; text only
       send {bs}^{f7}  ; set read point
-      WinGetText, visible_text, ahk_class TElWind
-      RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
-      RegExMatch(visible_text, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", collection_path)
-      latex_formula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
-      latex_formula := Enc_Uri(latex_formula)
-      latex_link := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . latex_formula . "%257D&dl=1"
-      latex_folder_path := collection_path . collection_name . "\LaTeX"
-      latex_path := latex_folder_path . "\" . current_time_file_name . ".png"
-      SetTimer, DownloadLaTeX, -1
-      FileCreateDir % latex_folder_path
-      img_html = <img alt="%Clipboard%" src="%latex_path%">
-      clip(img_html, true, true)
-      send ^+1
-      Vim.SM.WaitTextSave()
-      if (ErrorLevel)
-        Return
-      send ^t
-      Vim.SM.WaitTextFocus()
+      WinGetText, VisibleText, ahk_class TElWind
+      RegExMatch(VisibleText, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", CollectionName)
+      RegExMatch(VisibleText, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", CollectionPath)
+      LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
+      LatexFormula := Enc_Uri(LatexFormula)
+      LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
+      LatexFolderPath := CollectionPath . CollectionName . "\LaTeX"
+      LatexPath := LatexFolderPath . "\" . CurrentTimeFileName . ".png"
+      SetTimer, DownloadLatex, -1
+      FileCreateDir % LatexFolderPath
+      ImgHtml = <img alt="%Clipboard%" src="%LatexPath%">
+      ; SetClipboardHTML(ImgHtml)
+      ; send ^v{esc}
+      clip(ImgHtml, true, true)
+      send ^+1{esc}
+      send ^+{f6}  ; opens notepad
+      WinWaitNotActive, ahk_class TElWind,, 5
+      WinKill, ahk_class Notepad
+      WinActivate, ahk_class TElWind
+      ; Vim.SM.WaitTextSave()
+      ; send ^t
+      ; Vim.SM.WaitTextFocus()
       Clipboard := ""
-      send !{f12}fc  ; copy file path
+      ; send !{f12}fc  ; copy file path
+      DetectHiddenWindows, On
+      WinGet, vWinList, List, ahk_class TPUtilWindow
+      Loop, %vWinList%
+      {
+        hWnd := vWinList%A_Index%
+        WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
+        if (vWinProcess = "sm18.exe")
+          SendMessage,0x111,987,0,,ahk_id %hWnd%  ; copy file path
+      }
       ClipWait 0.2
-      html_path := Clipboard
-      FileRead, html, % html_path
-      if !html
-        html := img_html  ; in case the html is picture only and somehow not saved
+      HtmlPath := Clipboard
+      FileRead, Html, % HtmlPath
+      if (!Html)
+        Html := ImgHtml  ; in case the Html is picture only and somehow not saved
       
       /*
         recommended css setting for fuck_lexicon class:
@@ -162,66 +196,66 @@ return
         }
       */
       
-      fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %current_time_display%</SPAN>
-      if InStr(html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ") {  ; converted before
-        Vim.SM.WaitTextSave()
-        if ErrorLevel
-          Return
-        new_html := RegExReplace(html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
-        FileDelete % html_path
-        FileAppend, % new_html, % html_path
-        send !{home}!{left}  ; refresh so the conversion time would display correctly
+      fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %CurrentTimeDisplay%</SPAN>
+      if (InStr(Html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ")) {  ; converted before
+        Vim.SM.WaitTextSave(5000)
+        NewHtml := RegExReplace(Html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
+        FileDelete % HtmlPath
+        FileAppend, % NewHtml, % HtmlPath
+        ; send !{home}!{left}  ; refresh so the conversion time would display correctly
       } else {  ; first time conversion
-        new_html := html . "`n" . fuck_lexicon
+        NewHtml := Html . "`n" . fuck_lexicon
         Vim.SM.MoveAboveRef(true)
+        ; this way read point is kept
         send ^+{home}{bs}{esc}  ; delete everything and save
         send ^+{f6}  ; opens notepad
-        WinWaitNotActive, ahk_class TElWind,, 0
-        send ^w
-        WinWaitActive, ahk_class TElWind,, 0
+        WinWaitNotActive, ahk_class TElWind,, 5
+        WinKill, ahk_class Notepad
+        WinActivate, ahk_class TElWind
         send ^{home}  ; put the caret on top
-        clip(new_html,, true)
+        ; send !\\
+        ; WinWaitNotActive, ahk_class TElWind,, 0
+        ; if (!ErrorLevel)
+        ;   send {enter}
+        ; SetClipboardHTML(NewHtml)
+        ; send ^v
+        clip(NewHtml,, true)
         send ^+{home}^+1
-        Vim.SM.WaitTextSave()
-        if (ErrorLevel) {
-          Clipboard := ClipSaved
-          Return
-        }
+        ; Vim.SM.WaitTextSave(5000)
         ; no need for !home!left refreshing here
       }
       send !{f7}  ; go to read point
       sleep 250
       send {right}
     } else {  ; image only
-      RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", latex_formula)  ; getting formula from alt=""
-      RegExMatch(data, "src=""file:\/\/\/\K[^""]+", latex_path)  ; getting path from src=""
-      if InStr(latex_formula, "{\displaystyle") {  ; from wikipedia, wikibooks, etc
-        latex_formula := StrReplace(latex_formula, "{\displaystyle")
-        latex_formula := RegExReplace(latex_formula, "}$")
-      } else if InStr(latex_formula, "\displaystyle{") {  ; from Better Explained
-        latex_formula := StrReplace(latex_formula, "\displaystyle{")
-        latex_formula := RegExReplace(latex_formula, "}$")
+      RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", LatexFormula)  ; getting formula from alt=""
+      RegExMatch(data, "src=""file:\/\/\/\K[^""]+", LatexPath)  ; getting path from src=""
+      if (InStr(LatexFormula, "{\displaystyle")) {  ; from wikipedia, wikibooks, etc
+        LatexFormula := StrReplace(LatexFormula, "{\displaystyle")
+        LatexFormula := RegExReplace(LatexFormula, "}$")
+      } else if (InStr(LatexFormula, "\displaystyle{")) {  ; from Better Explained
+        LatexFormula := StrReplace(LatexFormula, "\displaystyle{")
+        LatexFormula := RegExReplace(LatexFormula, "}$")
       }
-      latex_formula := RegExReplace(latex_formula, "^\s+|\s+$")  ; removing start and end whitespaces
-      latex_formula := RegExReplace(latex_formula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in Better Explained)
-      latex_formula := html_decode(latex_formula)
-      clip(latex_formula, true, true)
-      FileDelete % latex_path
+      LatexFormula := RegExReplace(LatexFormula, "^\s+|\s+$")  ; removing start and end whitespaces
+      LatexFormula := RegExReplace(LatexFormula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in Better Explained)
+      LatexFormula := Html_decode(LatexFormula)
+      clip(LatexFormula, true, true)
+      FileDelete % LatexPath
     }
   }
   Clipboard := ClipSaved
 Return
 
-DownloadLaTeX:
-  UrlDownloadToFile, % latex_link, % latex_path
+DownloadLatex:
+  UrlDownloadToFile, % LatexLink, % LatexPath
 Return
 
 #If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg")  ; SuperMemo Plan window
 !a::  ; insert activity
-  Vim.State.SetNormal()
   KeyWait Alt
   Gui, PlanInsert:Add, Text,, &Activity:
-  list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM|Piano|Meditation"
+  list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM|Piano|Meditation|Translation|Novel"
   Gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, % list
   Gui, PlanInsert:Add, CheckBox, vNoSplit, &Do not split current activity
   Gui, PlanInsert:Add, Button, default, &Insert
@@ -237,7 +271,7 @@ PlanInsertButtonInsert:
   Gui, Submit
   Gui, Destroy
   WinActivate, ahk_class TPlanDlg
-  if !NoSplit {
+  if (!NoSplit) {
     send ^t  ; split
     WinWaitActive, ahk_class TInputDlg,, 0
     send {enter}
@@ -253,11 +287,11 @@ PlanInsertButtonInsert:
   send ^s{esc}  ; save and exits
   WinWaitNotActive, ahk_class TPlanDlg,, 0
   send ^{enter}{enter}  ; cancel alarm
-  send ^{enter}  ; use commander to open Plan; seems to be a more reliable option than {alt}kp or ^p
-  SendInput {raw}pl  ; open Plan again
-  send {enter}
+  WinWaitActive, ahk_class TElWind,, 0
+  send {alt}kp  ; open Plan again
   if (Activity == "Break" || Activity == "Sports" || Activity == "Piano")
     run b  ; my personal backup script
+  Vim.State.SetNormal(true)
 return
 
 #If Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg")

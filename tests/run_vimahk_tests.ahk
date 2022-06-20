@@ -25,7 +25,7 @@ DetectHiddenWindows, on
 arg1 = %1%
 if (arg1 == "-quiet") {
     QuietMode := True
-}else{
+} else {
     QuietMode := False
 }
 isQuiet() {
@@ -273,7 +273,7 @@ EndTesting() {
             }
         }
         EndScript(1)
-    }else{
+    } else {
         if not isQuiet() {
             msgbox, All tests pass!
         }

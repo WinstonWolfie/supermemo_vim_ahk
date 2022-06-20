@@ -17,7 +17,7 @@ class VimHTML{
    DllCall( "CloseClipboard" )
    Return dataL ? dataL : 0
   }
- 
+
   Clean(Str) {
     ; zzz in case you used f6 to remove format before,
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
@@ -28,7 +28,8 @@ class VimHTML{
     Str := RegExReplace(Str, "i)<H5 dir=ltr align=left>")
     Str := RegExReplace(Str, "s)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
     Str := RegExReplace(Str, "i)\/svg\/", "/png/")
-    Str := RegExReplace(Str, "i)\n<P>&nbsp;<\/P>")
+    Str := RegExReplace(Str, "i)\n<P.*>&nbsp;<\/P>")
+    Str := RegExReplace(Str, "i)\n<DIV.*>&nbsp;<\/DIV>")
     Return Str
   }
 }

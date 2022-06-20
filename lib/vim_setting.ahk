@@ -15,12 +15,12 @@ class VimSetting Extends VimGui{
     for i, k in this.Vim.Checkboxes {
       if (created == 0) {
         y := "YM"
-      }else{
+      } else {
         y := "Y+10"
       }
       if (inStr(k, "Long") or inStr(k, "Send")) {
         x := "30"
-      }else{
+      } else {
         x := "10"
       }
       Gui, % this.Hwnd ":Add", Checkbox, % "+HwndHwnd" k " XM+" x " " y " v" k, % this.Vim.Conf[k]["description"]
@@ -37,14 +37,14 @@ class VimSetting Extends VimGui{
     Gui, % this.Hwnd ":Add", Text, % "XM+10 Y+15 g" this.__Class ".SetTitleMatchModeText vVimSetTitleMatchModeText", % this.Vim.Conf["VimSetTitleMatchMode"]["description"]
     if (VimSetTitleMatchMode == "RegEx") {
       matchmode := 4
-    }else{
+    } else {
       matchmode := VimSetTitleMatchMode
     }
     Gui, % this.Hwnd ":Add", DropDownList, % "+HwndHwndSetTitleMachMode X+5 Y+-16 W60 vVimSetTitleMatchMode Choose" matchmode, 1|2|3|RegEx
     this.HwndAll.Push(HwndSetTitleMachMode)
     if (VimSetTitleMatchModeFS == "Fast") {
       matchmodefs := 1
-    }else{
+    } else {
       matchmodefs := 2
     }
     Gui, % this.Hwnd ":Add", DropDownList, % "+HwndHwndSetTitleMachModeFS X+5 Y+-20 W50 vVimSetTitleMatchModeFS Choose" matchmodefs, Fast|Slow
@@ -102,13 +102,13 @@ class VimSetting Extends VimGui{
     GuiControl, % this.Hwnd ":", VimIconCheckInterval, % VimIconCheckInterval
     if (VimSetTitleMatchMode == "RegEx") {
       matchmode := 4
-    }else{
+    } else {
       matchmode := VimSetTitleMatchMode
     }
     GuiControl, % this.Hwnd ":Choose", VimSetTitleMatchMode, % matchmode
     if (VimSetTitleMatchModeFS == "Fast") {
       matchmodefs := 1
-    }else{
+    } else {
       matchmodefs := 2
     }
     GuiControl, % this.Hwnd ":Choose", VimSetTitleMatchModeFS, % matchmodefs
@@ -158,7 +158,7 @@ class VimSetting Extends VimGui{
         tmpArray.push(A_LoopField)
         if (result == "") {
           result := A_LoopField
-        }else{
+        } else {
           result := result this.Vim.GroupDel A_LoopField
         }
       }

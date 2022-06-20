@@ -13,19 +13,19 @@ i::
 Return
 
 +i::
-  Send, {Home}
+  send {Home}
   Vim.State.SetMode("Insert")
 Return
 
 a::
   if (! Vim.CheckChr("`n")) {
-    Send, {Right}
+    send {Right}
   }
   Vim.State.SetMode("Insert")
 Return
 
 +a::
-  Send, {End}
+  send {End}
   Vim.State.SetMode("Insert")
 Return
 
@@ -35,7 +35,7 @@ o::
 Return
 
 +o::
-  Send, {Home}{Enter}{Left}
+  send {Home}{Enter}{Left}
   Vim.State.SetMode("Insert")
 Return
 

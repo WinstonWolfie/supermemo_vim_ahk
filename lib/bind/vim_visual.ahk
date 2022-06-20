@@ -13,7 +13,7 @@ Return
   if Vim.State.StrIsInCurrentVimMode("VisualLine")
     Vim.State.SetNormal()
   else {
-    Send, {Home}+{Down}
+    send {Home}+{Down}
     Vim.State.SetMode("Vim_VisualLineFirst")
   }
 Return
@@ -28,11 +28,11 @@ Return
       Vim.Move.SelectParagraphDown()
       Vim.State.SetMode("Vim_VisualParagraphFirst")
     } else if Vim.SM.IsEditingPlainText() {
-      Send, {Home}+{Down}
+      send {Home}+{Down}
       Vim.State.SetMode("Vim_VisualLineFirst")
     } else {
       if !WinActive("ahk_exe notepad++.exe")  ; notepad++ requires alt down
-        Send, ^b
+        send ^b
       Vim.State.SetMode("Vim_VisualBlock")
     }
 Return
@@ -49,48 +49,48 @@ Return
 ; ydc
 y::
   Clipboard :=
-  Send, ^c
-  Send, {Right}
+  send ^c
+  send {Right}
   if WinActive("ahk_group VimCursorSameAfterSelect") {
-    Send, {Left}
+    send {Left}
   }
   ClipWait, 1
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
-  }else{
+  } else {
     Vim.State.SetMode("Vim_Normal", 0, 0, 0)
   }
 Return
 
 d::
   Clipboard :=
-  Send, ^x
+  send ^x
   ClipWait, 1
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
-  }else{
+  } else {
     Vim.State.SetMode("Vim_Normal", 0, 0, 0)
   }
 Return
 
 x::
   Clipboard :=
-  Send, ^x
+  send ^x
   ClipWait, 1
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
-  }else{
+  } else {
     Vim.State.SetMode("Vim_Normal", 0, 0, 0)
   }
 Return
 
 c::
   Clipboard :=
-  Send, ^x
+  send ^x
   ClipWait, 1
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Insert", 0, 0, 1)
-  }else{
+  } else {
     Vim.State.SetMode("Insert", 0, 0, 0)
   }
 Return
@@ -99,12 +99,12 @@ Return
   Vim.ReleaseKey("shift")
   bak := ClipboardAll
   Clipboard :=
-  Send, ^c
+  send ^c
   ClipWait, 1
   WinGet, hwnd, ID, A
-  Send, ^f
+  send ^f
   WinWaitNotActive, ahk_id %hwnd%,, 0.25
-  Send, ^v!f
+  send ^v!f
   clipboard := bak
   Vim.State.SetMode("Vim_Normal")
 Return

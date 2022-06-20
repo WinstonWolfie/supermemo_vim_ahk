@@ -6,23 +6,23 @@ c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0)
   Vim.State.SetMode("Vim_ydc_y", 0, 0, 1)
   Sleep, 150  ; Need to wait (For variable change?)
   if WinActive("ahk_group VimDoubleHomeGroup") {
-    Send, {Home}
+    send {Home}
   }
-  Send, {Home}+{End}
+  send {Home}+{End}
   if not WinActive("ahk_group VimLBSelectGroup") {
     Vim.Move.Move("l")
-  }else{
+  } else {
     Vim.Move.Move("")
   }
-  Send, {Left}{Home}
+  send {Left}{Home}
 Return
 
 +d::
   Vim.State.SetMode("Vim_ydc_d", 0, 0, 0)
   if not WinActive("ahk_group VimLBSelectGroup") {
     Vim.Move.Move("$")
-  }else{
-    Send, {Shift Down}{End}{Left}
+  } else {
+    send {Shift Down}{End}{Left}
     Vim.Move.Move("")
   }
 Return
@@ -31,8 +31,8 @@ Return
   Vim.State.SetMode("Vim_ydc_c",0,0,0)
   if not WinActive("ahk_group VimLBSelectGroup") {
     Vim.Move.Move("$")
-  }else{
-    Send, {Shift Down}{End}{Left}
+  } else {
+    send {Shift Down}{End}{Left}
     Vim.Move.Move("")
   }
 Return
@@ -40,7 +40,7 @@ Return
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_ydc_y"))
 y::
   Vim.Move.YDCMove()
-  Send, {Left}{Home}
+  send {Left}{Home}
 Return
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
@@ -50,34 +50,34 @@ d::Vim.Move.YDCMove()
 c::Vim.Move.YDCMove()
 
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
-x::Send, {Delete}
-+x::Send, {BS}
+x::send {Delete}
++x::send {BS}
 
 ; Paste
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
 ^p::
 p::
   ;i:=0
-  ;;Send, {p Up}
+  ;;send {p Up}
   ;Loop {
   ;  if !GetKeyState("p", "P") {
   ;    break
   ;  }
   ;  if (Vim.State.LineCopy == 1) {
-  ;    Send, {End}{Enter}^v{BS}{Home}
-  ;  }else{
-  ;    Send, {Right}
-  ;    Send, ^v
+  ;    send {End}{Enter}^v{BS}{Home}
+  ;  } else {
+  ;    send {Right}
+  ;    send ^v
   ;    ;Sleep, 1000
-  ;    Send, ^{Left}
+  ;    send ^{Left}
   ;  }
   ;  ;TrayTip,i,%i%,
   ;  if (i == 0) {
   ;    Sleep, 500
-  ;  }else if (i > 100) {
+  ;  } else if (i > 100) {
   ;    Msgbox, , Vim Ahk, Stop at 100!!!
   ;    break
-  ;  }else{
+  ;  } else {
   ;    Sleep, 0
   ;  }
   ;  i+=1
@@ -86,29 +86,31 @@ p::
   if GetKeyState("ctrl")
     Clipboard := Clipboard
   if (Vim.State.LineCopy == 1) {
-    if WinActive("ahk_group VimNoLBCopyGroup") {
-      Send, {End}{Enter}^v{Home}
-    }else{
-      Send, {End}{Enter}^v{BS}{Home}
-    }
-  }else{
-    Send, {Right}
-    Send, ^v
+    ; if WinActive("ahk_group VimNoLBCopyGroup") {
+    ;   send {End}{Enter}^v{Home}
+    ; } else {
+    ;   send {End}{Enter}^v{BS}{Home}
+      send {End}{Enter}^v{Home}
+    ; }
+  } else {
+    send {Right}
+    send ^v
     ;Sleep, 1000
-    Send, {Left}
-    ;;Send, ^{Left}
+    send {Left}
+    ;;send ^{Left}
   }
   KeyWait, p  ; To avoid repeat, somehow it calls <C-p>, print...
 Return
 
 ^+p::
 +p::
-  if GetKeyState("ctrl")
+  if (GetKeyState("ctrl"))
     Clipboard := Clipboard
   if (Vim.State.LineCopy == 1) {
-    Send, {Up}{End}{Enter}^v{BS}{Home}
-  }else{
-    Send, ^v
+    ; send {Up}{End}{Enter}^v{BS}{Home}
+    send {Up}{End}{Enter}^v{Home}
+  } else {
+    send ^v
     ;Send,^{Left}
   }
   KeyWait, p

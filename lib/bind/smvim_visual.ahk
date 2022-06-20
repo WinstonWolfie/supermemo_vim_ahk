@@ -21,7 +21,7 @@ return
 +a::
   Vim.State.SetMode("Vim_Normal")
   Gui, HTMLTag:Add, Text,, &HTML tag:
-  list = H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM|cloze|clozed|extract
+  list := "H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM|cloze|clozed|extract|SUB|SUP"
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, %list%
   Gui, HTMLTag:Add, Button, default, &Add
   Gui, HTMLTag:Show,, Add HTML Tag
@@ -44,7 +44,15 @@ HTMLTagButtonAdd:
 Return
 
 m::  ; highlight: *m*ark
-  send !{f12}rh
+  DetectHiddenWindows, On
+  WinGet, vWinList, List, ahk_class TPUtilWindow
+  Loop, %vWinList%
+  {
+    hWnd := vWinList%A_Index%
+    WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
+    if (vWinProcess = "sm18.exe")
+      SendMessage,0x111,815,0,,ahk_id %hWnd%
+  }
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -106,8 +114,9 @@ cloze_hinter:
   } else {
     ctrl_state := GetKeyState("Ctrl")
   }
+  InitialText := Clip()
   Gui, ClozeHinter:Add, Text,, &Hint:
-  Gui, ClozeHinter:Add, Edit, vHint
+  Gui, ClozeHinter:Add, Edit, vHint w196, % InitialText
   Gui, ClozeHinter:Add, CheckBox, vInside, &Inside square brackets
   Gui, ClozeHinter:Add, Button, default, Clo&ze
   Gui, ClozeHinter:Show,, Cloze Hinter
@@ -116,6 +125,7 @@ Return
 ClozeHinterGuiEscape:
 ClozeHinterGuiClose:
   Gui, Destroy
+  Vim.State.SetMode("Vim_Normal")
 return
 
 ClozeHinterButtonCloze:
@@ -124,27 +134,32 @@ ClozeHinterButtonCloze:
   WinActivate, ahk_class TElWind
   send !z
   Vim.State.SetMode("Vim_Normal")
-  if !hint  ; entered nothing
+  if (!hint)  ; entered nothing
     return
   Vim.ToolTip("Cloze hinting...", true)
   sleep_calculation := A_TickCount
   Vim.SM.WaitProcessing()
-  if ErrorLevel
-    Return
   send !{left}
   sleep % (A_TickCount - sleep_calculation) / 3 * 2
   send q
-  if Inside
+  if (Inside) {
     cloze := hint . "]"
-  else
+  } else {
     cloze := "...](" . hint . ")"
+  }
   Vim.SM.WaitTextFocus()
-  if Vim.SM.IsEditingPlainText() {  ; editing plain text
+  if (Vim.SM.IsEditingPlainText()) {  ; editing plain text
     send ^a
     clip(StrReplace(clip(), "[...]", "[" . cloze))
-  } else if Vim.SM.IsEditingHTML() {
+  } else if (Vim.SM.IsEditingHTML()) {
     send {f3}
-		WinWaitActive, ahk_class TMyFindDlg,, 0
+    WinWaitActive, ahk_class TMyFindDlg,, 0
+    if (ErrorLevel) {
+      send {esc}^{enter}h{enter}{f3}
+      WinWaitActive, ahk_class TMyFindDlg,, 0
+      if (ErrorLevel)
+        Return
+    }
 		SendInput {raw}[...]
 		send {enter}
 		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active

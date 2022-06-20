@@ -665,7 +665,7 @@
                 . (A_Index & 1 ? "g:-Performing Clicks" # : "")
                 . "d:4" #
                 . "l:" A_LineNumber - 14 #
-                . "c1:Code:" %A_ThisFunc%(">Escape<", !(A_Index & 1) ? "Sleep, " Sleep : SubStr(m, 1, 1) = "i" ? "SendInput, " k : SubStr(m, 1, 1) = "c" ? "ControlClick, x" FoundX - ClickX " y" FoundY - ClickY ", ahk_id " Window ", , " k ", , NA" : SubStr(m, 1, 1) = "p" ? "SendPlay, " k : SubStr(m, 1, 1) = "e" ? "SendEvent, " k : "Send, " k)
+                . "c1:Code:" %A_ThisFunc%(">Escape<", !(A_Index & 1) ? "Sleep, " Sleep : SubStr(m, 1, 1) = "i" ? "SendInput, " k : SubStr(m, 1, 1) = "c" ? "ControlClick, x" FoundX - ClickX " y" FoundY - ClickY ", ahk_id " Window ", , " k ", , NA" : SubStr(m, 1, 1) = "p" ? "SendPlay, " k : SubStr(m, 1, 1) = "e" ? "SendEvent, " k : "send " k)
               If !(A_Index & 1)
                 Sleep %Sleep%
               Else If (SubStr(m, 1, 1) = "i")

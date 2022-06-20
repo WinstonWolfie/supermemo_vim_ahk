@@ -27,7 +27,7 @@
       current := v["val"]
       if (current != "") {
         IniRead, val, % this.Ini, % this.Section, % k, % current
-      }else{
+      } else {
         IniRead, val, % this.Ini, % this.Section, % k, % A_Space
       }
       %k% := val
@@ -50,7 +50,7 @@
     if (val == 1) {
       if (this.Vim.Conf["VimTwoLetter"]["val"] == "") {
         this.Vim.Conf["VimTwoLetter"]["val"] := l1 l2
-      }else{
+      } else {
         this.Vim.Conf["VimTwoLetter"]["val"] := this.Vim.Conf["VimTwoLetter"]["val"] this.Vim.GroupDel l1 l2
       }
     }

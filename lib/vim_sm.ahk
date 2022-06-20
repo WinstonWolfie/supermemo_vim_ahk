@@ -75,8 +75,8 @@ class VimSM{
   }
 
   IsEditingText() {
-    ControlGetFocus, current_focus, ahk_class TElWind
-    return WinActive("ahk_class TElWind") && (InStr(current_focus, "Internet Explorer_Server") || InStr(current_focus, "TMemo"))
+    ControlGetFocus, CurrentFocus, ahk_class TElWind
+    return (WinActive("ahk_class TElWind") && (InStr(CurrentFocus, "Internet Explorer_Server") || InStr(CurrentFocus, "TMemo")))
   }
 
   IsGrading() {
@@ -117,44 +117,35 @@ class VimSM{
   }
 
   MoveAboveRef(NoRestore:=false) {
-    Send, ^{End}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-    if InStr(clip("",, NoRestore), "#SuperMemo Reference:")
+    Send ^{End}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
+    if (InStr(clip("",, NoRestore), "#SuperMemo Reference:")) {
       send {up 2}
-    else
+    } else {
       send ^{end}
+    }
   }
 
-  WaitTextSave(timeout:=2000) {
-    global
+  WaitTextSave(Timeout:=2000) {
     send {esc}  ; exit the field
-    LoopTimeout := timeout / 20
+    LoopTimeout := Timeout / 20
     loop {
-      sleep 20
-      if !this.IsEditingText() {
+      if (!this.IsEditingText())
         Break
-        ErrorLevel := 0
-      }
       if (A_Index > LoopTimeout) {
         this.Vim.ToolTip("Timed out.")
         Break
-        ErrorLevel := 1
       }
     }
   }
 
-  WaitTextFocus(timeout:=2000) {
-    global
-    LoopTimeout := timeout / 20
+  WaitTextFocus(Timeout:=2000) {
+    LoopTimeout := Timeout / 20
     loop {
-      if this.IsEditingText() {
+      if (this.IsEditingText())
         Break
-        ErrorLevel := 0
-      }
       sleep 20
-      if (A_Index > LoopTimeout) {
+      if (A_Index > LoopTimeout)
         Break
-        ErrorLevel := 1
-      }
     }
   }
 

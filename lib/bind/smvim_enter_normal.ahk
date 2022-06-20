@@ -34,24 +34,14 @@ Return
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would move the caret in some instances
 return
 
-#If (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.StrIsInCurrentVimMode("Command"))  ; SuperMemo element window
+#If (Vim.IsVimGroup() && Vim.SM.IsEditingHTML() && !Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.StrIsInCurrentVimMode("Command"))  ; SuperMemo element window
 ^l::  ; learn
-  if (Vim.SM.IsEditingHTML()) {
-    Vim.ReleaseKey("ctrl")
-    send {alt}ll
-  } else {
-    send ^l
-  }
+  Controlsend, TBitBtn2, {ctrl down}l{ctrl up}, ahk_class TElWind
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.EnterInsertIfSpelling()
 Return
 
 ^p::  ; open Plan window
-  if (Vim.SM.IsEditingHTML()) {
-    Vim.ReleaseKey("ctrl")
-    send {alt}kp
-  } else {
-    send ^p
-  }
+  Controlsend, TBitBtn2, {ctrl down}p{ctrl up}, ahk_class TElWind
   Vim.State.SetMode("Vim_Normal")
 Return

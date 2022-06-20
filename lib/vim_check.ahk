@@ -19,7 +19,7 @@
         Class       : %class%
         Title       : %title%
       )
-    }else{
+    } else {
       Msgbox, 0x10, Vim Ahk,
       (
         Not supported

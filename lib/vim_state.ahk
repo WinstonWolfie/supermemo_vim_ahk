@@ -16,9 +16,9 @@
     , "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
     , "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
     , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
-    , "SMVim_ExtractPriorityInner", "Insert_unicode"]
+    , "SMVim_ExtractPriorityInner", "Insert_unicode", "SMVim_AltT", "SMVim_AltQ"]
 
-    this.Mode := "Insert"
+    this.Mode := "Insert"  ; the default mode when vim_ahk opens
     this.g := 0
     this.n := 0
     this.fts := ""
@@ -56,53 +56,55 @@
     this.CheckMode(4, , , , 1)
   }
 
-  SetMode(Mode="", g=0, n=0, LineCopy=-1, fts="") {
-    previous_mode := this.Mode
+  SetMode(Mode="", g=0, n=0, LineCopy=-1, fts="", NoRefresh:=false) {
+    PreviousMode := this.Mode
     this.CheckValidMode(Mode)
     if (Mode != "") {
       this.Mode := Mode
-      if (this.IsCurrentVimMode("Insert")) and (this.Vim.Conf["VimRestoreIME"]["val"] == 1) {
+      if (this.IsCurrentVimMode("Insert")) && (this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
-      }
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
-    if A_CaretX && previous_mode != Mode
-    this.Vim.Caret.SetCaret(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
+      if (!NoRefresh) {
+        NoRefresh := ((InStr(PreviousMode, "Vim_") && InStr(Mode, "Vim_"))
+                      || (InStr(PreviousMode, "Command") || InStr(Mode, "Command")))
+      }
+      if (A_CaretX && PreviousMode != Mode && !this.Vim.IsNavigating() && !NoRefresh) {
+        this.Vim.Caret.SetCaret(this.Mode)
+      } else if (!A_CaretX || this.Vim.IsNavigating() || NoRefresh) {
+        this.Vim.Caret.SetCaret(this.Mode, true)
+      }
     }
-    if (g != -1) {
+    if (g != -1)
       this.g := g
-    }
-    if (n != -1) {
+    if (n != -1)
       this.n := n
-    }
-    if (LineCopy!=-1) {
+    if (LineCopy != -1)
       this.LineCopy := LineCopy
-    }
     this.fts := fts
     this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, fts)
   }
 
-  SetNormal() {
+  SetNormal(NoRefresh:=false) {
     this.LastIME := VIM_IME_Get()
     if (this.LastIME) {
       if (VIM_IME_GetConverting(A)) {
-        Send, {Esc}
+        send {Esc}
         Return
-      }else{
+      } else {
         VIM_IME_SET()
       }
     }
-    if A_CaretX && !this.Vim.IsNavigating() {
-      if (this.StrIsInCurrentVimMode("Visual") or this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst") {
-        Send, {Right}
-        if WinActive("ahk_group VimCursorSameAfterSelect") {
-          Send, {Left}
-        }
-      } else if this.StrIsInCurrentVimMode("Insert") {
+    if (A_CaretX && !this.Vim.IsNavigating()) {
+      if ((this.StrIsInCurrentVimMode("Visual") || this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst")) {
+        send {Right}
+        if (WinActive("ahk_group VimCursorSameAfterSelect"))
+          send {Left}
+      } else if (this.StrIsInCurrentVimMode("Insert")) {
         send {left}
         find_click := true
       }
     }
-    this.SetMode("Vim_Normal")
+    this.SetMode("Vim_Normal",,,,, NoRefresh)
     if (find_click) {
       if (ControlGetFocus() == "Internet Explorer_Server2" && FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord))
         send {right}
@@ -117,7 +119,7 @@
   HandleEsc() {
     global Vim, VimEscNormal, SMVimSendEscInsert, vimSendEscNormal, VimLongEscNormal
     if (!VimEscNormal) {
-      Send, {Esc}
+      send {Esc}
       Return
     }
     ; The keywait waits for esc to be released. If it doesn't detect a release
@@ -127,11 +129,11 @@
     both := VimLongEscNormal && LongPress
     neither := !(VimLongEscNormal || LongPress)
     SetNormal :=  both or neither
-  ; In SuperMemo you can use ESC to both escape and enter normal mode.
-    if (!SetNormal or (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert) {
-      Send, {Esc}
+    ; In SuperMemo you can use ESC to both escape and enter normal mode.
+    if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
+      send {Esc}
     }
-    if (SetNormal) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert) {
+    if (SetNormal || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
       this.SetNormal()
     }
     if (LongPress) {
@@ -144,7 +146,7 @@
   HandleCtrlBracket() {
     global Vim, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal
     if (!VimCtrlBracketNormal) {
-      Send, ^[
+      send ^[
       Return
     }
     KeyWait, [, T0.5
@@ -153,7 +155,7 @@
     neither := !(VimLongCtrlBracketNormal || LongPress)
     SetNormal :=  both or neither
     if (!SetNormal or (VimSendCtrlBracketNormal && this.IsCurrentVimMode("Vim_Normal"))) {
-      Send, ^[
+      send ^[
     }
     if (SetNormal) {
       this.SetNormal()
@@ -204,7 +206,7 @@
         if (value == needle) {
           return true
         }
-      }else{
+      } else {
         if (inStr(value, needle)) {
           return true
         }
@@ -217,7 +219,7 @@
   StatusCheck() {
     if (this.Vim.IsVimGroup()) {
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
-    }else{
+    } else {
       this.Vim.Icon.SetIcon("Disabled", this.Vim.Conf["VimIconCheckInterval"]["val"])
     }
   }
@@ -226,7 +228,7 @@
     check := this.StatusCheckObj
     if (this.Vim.Conf["VimIconCheckInterval"]["val"] > 0) {
       SetTimer, % check, % this.Vim.Conf["VimIconCheckInterval"]["val"]
-    }else{
+    } else {
       this.Vim.Icon.SetIcon("", 0)
       SetTimer, % check, Off
     }
@@ -235,7 +237,7 @@
   ToggleEnabled() {
     if (this.Vim.Enabled) {
       this.Vim.Enabled := False
-    }else{
+    } else {
       this.Vim.Enabled := True
     }
   }

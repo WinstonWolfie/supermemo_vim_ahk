@@ -75,29 +75,9 @@ return
 
 ^!l::  ; copy link and parse *l*ink if if's from YT
 	Vim.ReleaseKey("ctrl")
-  WinGetActiveTitle, CurrentTitle
-  send ^d
-  WinWaitNotActive, % CurrentTitle,, 1
-  Clipboard := ""
-  while !Clipboard {
-    send ^c
-    ClipWait 0.2
-  }
-  send +{tab 2}{enter}
-  BrowserTitle := StrReplace(Clipboard, " - YouTube")
-  Clipboard := ""
-  While !Clipboard {
-    send ^l^c
-    ClipWait 0.2
-  }
-  send {f6 2}
-  temp_clip := RegExReplace(Clipboard, "#(.*)$")
-  if InStr(temp_clip, "https://www.youtube.com") && InStr(temp_clip, "v=") {
-    RegExMatch(temp_clip, "v=\K[\w\-]+", yt_link)
-    temp_clip = https://www.youtube.com/watch?v=%yt_link%
-  }
-  Vim.ToolTip("Copied " . temp_clip . "`nTitle: " . BrowserTitle)
-  Clipboard := temp_clip
+  GetBrowserInfo(BrowserTitle, BrowserUrl, BrowserSource)
+  Vim.ToolTip("Copied " . BrowserUrl . "`nTitle: " . BrowserTitle . "`nSource: " . BrowserSource)
+  Clipboard := BrowserUrl
 return
 
 ^!+d::  ; parse similar and opposite in google *d*efine
@@ -107,10 +87,66 @@ return
   temp_clip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", "; ")
   temp_clip := StrReplace(temp_clip, "`r`nSimilar", "`r`n`r`nSimilar")
   temp_clip := StrReplace(temp_clip, "; Opposite", "`r`n`r`nOpposite")
+  temp_clip := StrReplace(temp_clip, "; Opuesta", "`r`n`r`nOpuesta")
   temp_clip := StrReplace(temp_clip, "Opposite; ", "Opposite`r`n")
+  temp_clip := StrReplace(temp_clip, "Opuesta; ", "Opuesta`r`n")
   Clipboard := StrReplace(temp_clip, "vulgar slang", "vulgar slang > ")
   Vim.ToolTip("Copied:`n`n" . temp_clip)
 return
+
+^+!a::  ; import to supermemo
+	Vim.ReleaseKey("ctrl")
+	Vim.ReleaseKey("shift")
+  KeyWait alt
+  FormatTime, CurrentTime,, yyyy-MM-dd HH:mm:ss:%A_msec%
+  ClipSaved := ClipboardAll
+  clipboard := ""
+  send ^c
+  ClipWait 0.6
+  if (ErrorLevel) {
+    send ^a^c
+    clipwait 0.6
+    if (ErrorLevel)
+      Return
+  }
+  GetBrowserInfo(BrowserTitle, BrowserUrl, BrowserSource)
+  if (Vim.HTML.ClipboardGet_Html(Data)) {
+    Html := Vim.HTML.Clean(data)
+    RegExMatch(Html, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", Html)
+    ; SetClipboardHTML(Html)
+    if (BrowserSource) {
+      clipboard := Html . "<br>#SuperMemo Reference:"
+                  . "<br>#Date: Imported on " . CurrentTime
+                  . "<br>#Source: " . BrowserSource
+                  . "<br>#Link: " . BrowserUrl
+                  . "<br>#Title: " . BrowserTitle
+    } else {
+      clipboard := Html . "<br>#SuperMemo Reference:"
+                  . "<br>#Date: Imported on " . CurrentTime
+                  . "<br>#Link: " . BrowserUrl
+                  . "<br>#Title: " . BrowserTitle
+    }
+    ClipWait
+    WinActivate, ahk_class TElWind
+    send ^n
+		WinWaitNotActive, ahk_class TElWind,, 1.5  ; could appear a loading bar
+		if (!ErrorLevel)
+			WinWaitActive, ahk_class TElWind,, 5
+		send ^a^+1
+		WinWaitNotActive, ahk_class TElWind,, 1.5  ; could appear a loading bar
+		if (!ErrorLevel)
+			WinWaitActive, ahk_class TElWind,, 5
+    send +{home}!t  ; set title
+    send {esc}^+{f6}
+    ; WinWaitActive, ahk_class Notepad,, 5
+    WinWaitNotActive, ahk_class TElWind,, 5
+    WinKill, ahk_class Notepad
+  }
+  BrowserUrl := BrowserTitle := BrowserSource := ""
+  Vim.State.SetMode("Vim_Normal")
+  sleep 700
+  clipboard := ClipSaved
+Return
 
 ; SumatraPDF/Calibre to SuperMemo
 #If Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browsers"))
@@ -131,9 +167,7 @@ return
     if WinActive("ahk_class SUMATRA_PDF_FRAME") {
       send a
     } else if WinActive("ahk_exe ebook-viewer.exe") {
-      send h
-      sleep 70
-      send ^{enter}
+      send q  ; needs to enable this shortcut in settings
     } else if WinActive("ahk_group Browsers") {
       send !h
     }
@@ -177,14 +211,16 @@ return
 return
 
 ; SumatraPDF
-#If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") and !(Vim.State.IsCurrentVimMode("Z"))
+#If (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && !Vim.State.IsCurrentVimMode("Z"))
 +z::Vim.State.SetMode("Z")
-#If Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") and (Vim.State.IsCurrentVimMode("Z"))
+#If (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z"))
 +z::  ; exit and save annotations
   send q
-  WinWaitActive, Unsaved annotations,, 0
-  if !ErrorLevel
+  WinWaitActive, Unsaved annotations,, 1
+  if (!ErrorLevel)
     send {tab 2}{enter}
+  if (WinExist("ahk_class TElWind"))
+    WinActivate
   Vim.State.SetMode("Vim_Normal")
 return
 

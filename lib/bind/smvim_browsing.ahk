@@ -11,21 +11,32 @@ g::Vim.Move.Move("g")  ; 3gg goes to the 3rd line of entire text
 
 +s::
 s::  ; gs: go to source link
-  Shift := GetKeyState("Shift")
+  Shift := InStr(A_ThisHotkey, "+")
   ClipSaved := ClipboardAll
   Clipboard := ""
-  send !{f10}fs  ; show reference
-  WinWaitActive, Information,, 0
-  send p{esc}  ; copy reference
+  ; send !{f10}fs  ; show reference
+  ; WinWaitActive, Information,, 0
+  ; send p{esc}  ; copy reference
+  DetectHiddenWindows, On
+  WinGet, vWinList, List, ahk_class TPUtilWindow
+  Loop, %vWinList%
+  {
+    hWnd := vWinList%A_Index%
+    WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
+    if (vWinProcess = "sm18.exe")
+      SendMessage,0x111,693,0,,ahk_id %hWnd%  ; copy template
+  }
   Vim.State.SetNormal()
   ClipWait 0.2
-  if InStr(Clipboard, "Link:") {
-    RegExMatch(Clipboard, "Link: \K.*", Link)
+  if (InStr(Clipboard, "Link:")) {
+    ; RegExMatch(Clipboard, "Link: \K.*", Link)
+    RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)
     Clipboard := ClipSaved  ; restore clipboard here in case Run doesn't work
-    if Shift
+    if (Shift) {
       Run, iexplore.exe %Link%
-    Else
+    } Else {
       Run % Link
+    }
   } else {
     Vim.ToolTip("No link found.")
     Clipboard := ClipSaved
@@ -62,10 +73,11 @@ Return
 ; Element window / browser
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TBrowser")) && !Vim.SM.IsEditingText() and (Vim.State.g)
 +u::  ; gU: click source button
-  if WinActive("ahk_class TElWind")
+  if (WinActive("ahk_class TElWind")) {
     FindClick(A_ScriptDir . "\lib\bind\util\source_element_window.png")
-  else
+   } else {
     FindClick(A_ScriptDir . "\lib\bind\util\source_browser.png")
+   }
   Vim.State.SetMode()
 Return
 
@@ -77,7 +89,16 @@ c::  ; gc: go to next *c*omponent
 Return
 
 +c::  ; gC: go to previous *c*omponent
-  send !{f12}fl
+  ; send !{f12}fl
+  DetectHiddenWindows, On
+  WinGet, vWinList, List, ahk_class TPUtilWindow
+  Loop, %vWinList%
+  {
+    hWnd := vWinList%A_Index%
+    WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
+    if (vWinProcess = "sm18.exe")
+      SendMessage,0x111,761,0,,ahk_id %hWnd%  ; previous component
+  }
   Vim.State.SetMode()
 Return
 
@@ -100,7 +121,7 @@ u::
 Return
 
 ; "Browsing" mode
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
 +g::Vim.Move.Move("+g")  ; 3G goes to the 3rd line on screen
 
 ; OG Vim commands
@@ -113,7 +134,14 @@ n::send !n  ; create new topic
 +n::send !a  ; create new item
 x::send {del}  ; delete element/component
 +x::send ^+{enter}  ; Done!
-p::send ^{f10}  ; replay auto-play
+
+p::
+  send ^{f10}  ; replay auto-play
+  WinWaitActive, ahk_class TMsgDialog,, 0
+  if (!ErrorLevel)
+    send y 
+return
+
 +p::send ^{t 2}{f9}  ; play video in default system player / edit script component
 ^i::send ^{f8}  ; download images
 
@@ -160,18 +188,23 @@ Return
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_ydc_y")) && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 y::  ; yy: copy current source url
-  ClipSaved := ClipboardAll
   Clipboard := ""
-  send !{f10}fs  ; show reference
-  WinWaitActive, Information,, 0
-  send p{esc}  ; copy reference
+  DetectHiddenWindows, On
+  WinGet, vWinList, List, ahk_class TPUtilWindow
+  Loop, %vWinList%
+  {
+    hWnd := vWinList%A_Index%
+    WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
+    if (vWinProcess = "sm18.exe")
+      SendMessage,0x111,693,0,,ahk_id %hWnd%  ; copy template
+  }
   Vim.State.SetNormal()
   ClipWait 0.2
-  if InStr(Clipboard, "Link:") {
-    RegExMatch(Clipboard, "Link: \K.*", link)
+  if (InStr(Clipboard, "Link:")) {
+    RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)  ; regexmatch cannot store into clipboard
     Clipboard := link
   }
-  Vim.ToolTip("Copied " . link)
+  Vim.ToolTip("Copied " . clipboard)
 Return
 
 e::  ; ye: duplicate current element
@@ -284,7 +317,7 @@ Return
   back_to_normal := 2
 Return
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind")
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ^f7::
 m::
   ; if (Vim.SM.IsEditingHTML() && Vim.SM.MouseMoveMiddle(true))
@@ -309,7 +342,9 @@ Return
 !+j::send !+{pgdn}  ; go to next sibling
 !+k::send !+{pgup}  ; go to previous sibling
 
+#If (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ^/::  ; visual
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ?::  ; caret on the right
 !/::  ; followed by a cloze
 ^!/::  ; followed by a cloze and stays in clozed item
@@ -321,14 +356,18 @@ Return
   r_shift_state := GetKeyState("RShift")  ; caret on the right
   l_shift_state := GetKeyState("LShift")  ; start from top
   alt_state := GetKeyState("alt")  ; followed by a cloze
-  if !Vim.SM.IsEditingText() {
+  if (!Vim.SM.IsEditingText()) {
     send ^t
     Vim.SM.WaitTextFocus()  ; make sure current_focus is updated    
-    if !Vim.SM.IsEditingText() {  ; still found no text
+    if (!Vim.SM.IsEditingText()) {  ; still found no text
       Vim.ToolTip("Text not found.")
       Vim.State.SetNormal()
       Return
     }
+  } 
+  if (Vim.State.StrIsInCurrentVimMode("Visual")) {
+    send {right}
+    Vim.State.SetNormal()
   }
   if (l_shift_state)
     send ^{Home}
@@ -345,7 +384,13 @@ Return
   WinActivate, ahk_class TElWind
   if InStr(current_focus, "TMemo") {
     send ^a
-    pos := InStr(clip(), UserInput)
+    if (Vim.State.n) {
+      n := Vim.State.n
+      Vim.State.n := 0
+    } else {
+      n := 1
+    }
+    pos := InStr(clip(), UserInput, true,, n)
     if (pos) {
       pos -= 1
       SendInput {left}{right %pos%}
@@ -368,23 +413,33 @@ Return
   } else {
     send {esc}{f3}  ; esc to exit field, so it can return to the same field later
     WinWaitActive, ahk_class TMyFindDlg,, 0
-    if ErrorLevel
-      Return
+    if (ErrorLevel) {
+      send {esc}^{enter}h{enter}{f3}
+      WinWaitActive, ahk_class TMyFindDlg,, 0
+      if (ErrorLevel)
+        Return
+    }
     clip(UserInput)
     send !c{enter}
+    if (Vim.State.n) {
+      send % "{f3 " . Vim.State.n - 1 . "}"
+      Vim.State.n := 0
+    }
     WinWaitNotActive, ahk_class TMyFindDlg,, 0  ; faster than wait for element window to be active
-    if ErrorLevel
+    if (ErrorLevel)
       Return
-    if !alt_state
-      if r_shift_state
+    if (!alt_state) {
+      if (r_shift_state) {
         send {right}  ; put caret on right of searched text
-      else if ctrl_state
+      } else if (ctrl_state) {
         Vim.State.SetMode("Vim_VisualFirst")
-      else  ; all modifier keys are not pressed
+      } else {  ; all modifier keys are not pressed
         send {left}  ; put caret on left of searched text
+      }
+    }
     send ^{enter}  ; to open commander; convienently, if a "not found" window pops up, this would close it
-    WinWaitActive, ahk_class TCommanderDlg,, 0.25
-    if ErrorLevel {
+    WinWaitActive, ahk_class TCommanderDlg,, 1
+    if (ErrorLevel) {
       Vim.ToolTip("Not found.")
       Vim.State.SetNormal()
       send {esc}^{enter}h{enter}{esc}

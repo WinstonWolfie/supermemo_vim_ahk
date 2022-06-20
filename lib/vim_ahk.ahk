@@ -8,6 +8,9 @@
 #Include %A_LineFile%\..\util\unicode.ahk
 #Include %A_LineFile%\..\util\WinClipAPI.ahk
 #Include %A_LineFile%\..\util\WinClip.ahk
+#Include %A_LineFile%\..\util\Get the URL of the current (active) browser tab.ahk
+
+wc := new WinClip
 
 ; Classes, Functions
 #Include %A_LineFile%\..\vim_about.ahk
@@ -254,6 +257,7 @@ class VimAhk{
     this.State.SetStatusCheck()
     this.SetGroup()
     this.LoadTwoLetterMaps()
+    this.Caret.SetCaret()
   }
 
   Initialize() {
@@ -298,7 +302,7 @@ class VimAhk{
     {
       if (DefaultGroup == "") {
         DefaultGroup := v
-      }else{
+      } else {
         DefaultGroup := DefaultGroup this.GroupDel v
       }
     }
@@ -308,9 +312,9 @@ class VimAhk{
   IsVimGroup() {
     if (not this.Enabled) {
       Return False
-    }else if (this.Conf["VimAppList"]["val"] == "Allow List") {
+    } else if (this.Conf["VimAppList"]["val"] == "Allow List") {
       Return (WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")) || this.IsExceptionWindow()
-    }else if (this.Conf["VimAppList"]["val"] == "Deny List") {
+    } else if (this.Conf["VimAppList"]["val"] == "Deny List") {
       Return !WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded") && !this.IsExceptionWindow()
     }
     Return True
@@ -389,26 +393,21 @@ class VimAhk{
   }
   
   IsNavigating() {
-  Return this.SM.IsNavigatingPlan() || this.SM.IsNavigatingTask() || this.SM.IsNavigatingContentWindow()
+    Return (this.SM.IsNavigatingPlan() || this.SM.IsNavigatingTask() || this.SM.IsNavigatingContentWindow())
   }
   
   ReleaseKey(Key) {
-  if GetKeyState(Key) {
+  if (GetKeyState(Key))
     send {blind}{l%Key% up}{r%Key% up}
-    ErrorLevel := 0
-  } else
-    ErrorLevel := 1
   }
 
-  ToolTip(text:="", permanent:=false, period:=-2000) {
-  CoordMode, ToolTip, Screen
-  coord_x := A_ScreenWidth / 2
-  coord_y := A_ScreenHeight / 3 * 2
-  ToolTip, %text%, %coord_x%, %coord_y%, 20
-  if !permanent
-    SetTimer, RemoveToolTip, %period%
+  ToolTip(Text:="", Permanent:=false, Period:=-2000) {
+    CoordMode, ToolTip, Screen
+    ToolTip, % Text, % A_ScreenWidth / 2, % A_ScreenHeight / 3 * 2, 20
+    if (!Permanent)
+      SetTimer, RemoveToolTip, % Period
+    }
   }
-}
 
 RemoveToolTip:
   ToolTip,,,, 20
