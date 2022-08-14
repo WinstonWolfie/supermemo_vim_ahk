@@ -12,28 +12,16 @@ g::Vim.Move.Move("g")  ; 3gg goes to the 3rd line of entire text
 +s::
 s::  ; gs: go to source link
   Shift := InStr(A_ThisHotkey, "+")
-  ClipSaved := ClipboardAll
+  WinClip.Snap(ClipData)
   Clipboard := ""
-  ; send !{f10}fs  ; show reference
-  ; WinWaitActive, Information,, 0
-  ; send p{esc}  ; copy reference
-  DetectHiddenWindows, On
-  WinGet, vWinList, List, ahk_class TPUtilWindow
-  Loop, %vWinList%
-  {
-    hWnd := vWinList%A_Index%
-    WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
-    if (vWinProcess = "sm18.exe")
-      SendMessage,0x111,693,0,,ahk_id %hWnd%  ; copy template
-  }
+  send !{f10}tc  ; copy template
   Vim.State.SetNormal()
   ClipWait 0.2
   if (InStr(Clipboard, "Link:")) {
-    ; RegExMatch(Clipboard, "Link: \K.*", Link)
     RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)
     Clipboard := ClipSaved  ; restore clipboard here in case Run doesn't work
     if (Shift) {
-      Run, iexplore.exe %Link%
+      Run % "iexplore.exe " . Link
     } Else {
       Run % Link
     }
@@ -73,11 +61,12 @@ Return
 ; Element window / browser
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TBrowser")) && !Vim.SM.IsEditingText() and (Vim.State.g)
 +u::  ; gU: click source button
+	ReleaseKey("shift")
   if (WinActive("ahk_class TElWind")) {
-    FindClick(A_ScriptDir . "\lib\bind\util\source_element_window.png")
-   } else {
-    FindClick(A_ScriptDir . "\lib\bind\util\source_browser.png")
-   }
+    ControlClickWinCoord(555, 66)
+  } else if (WinActive("ahk_class TBrowser")) {
+    ControlClickWinCoord(294, 45)
+  }
   Vim.State.SetMode()
 Return
 
@@ -89,35 +78,21 @@ c::  ; gc: go to next *c*omponent
 Return
 
 +c::  ; gC: go to previous *c*omponent
-  ; send !{f12}fl
-  DetectHiddenWindows, On
-  WinGet, vWinList, List, ahk_class TPUtilWindow
-  Loop, %vWinList%
-  {
-    hWnd := vWinList%A_Index%
-    WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
-    if (vWinProcess = "sm18.exe")
-      SendMessage,0x111,761,0,,ahk_id %hWnd%  ; previous component
-  }
+  send !{f12}fl  ; previous component
   Vim.State.SetMode()
 Return
 
 ; Need scrolling bar present
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 ; Scrolling
-h::SendMessage, 0x114, 0, 0, Internet Explorer_Server1, A ; scroll left
-l::SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A ; scroll right
+h::Vim.Move.Repeat("h")
+l::Vim.Move.Repeat("l")
 ^e::
-j::SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A ; scroll down
+j::Vim.Move.Repeat("j")
 ^y::
-k::SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A ; scroll up
-d::
-  SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A
-  SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A
-Return
-u::
-  SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A
-  SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A
+k::Vim.Move.Repeat("k")
+d::Vim.Move.Repeat("^d")
+u::Vim.Move.Repeat("^u")
 Return
 
 ; "Browsing" mode
@@ -129,12 +104,39 @@ i::Vim.State.SetMode("Insert")
 :::Vim.State.SetMode("Command") ;(:)
 
 ; Browser-like actions
-r::send !{home}!{left}  ; reload
+r::  ; reload
+  if (Vim.SM.IsGrading()) {
+    ContinueGrading := true
+  } else if (Vim.SM.IsLearning()) {
+    ContinueLearning := true
+  } else {
+    ContinueGrading := false
+    ContinueLearning := false
+  }
+  send !{home}
+  if (ContinueLearning) {
+    ControlSend, TBitBtn2, {enter}
+  } else if (ContinueGrading) {
+    ControlSend, TBitBtn2, {enter}
+    ControlTextWait("TBitBtn3", "Show answer")
+    ControlSend, TBitBtn3, {enter}
+  } else {
+    sleep 100
+    send !{left}
+  }
+return
+
 n::send !n  ; create new topic
 +n::send !a  ; create new item
 x::send {del}  ; delete element/component
+#If (Vim.IsVimGroup()
+     && Vim.State.IsCurrentVimMode("Vim_Normal")
+     && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+         || WinActive("ahk_class TContents")
+         || WinActive("ahk_class TBrowser")))
 +x::send ^+{enter}  ; Done!
 
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
 p::
   send ^{f10}  ; replay auto-play
   WinWaitActive, ahk_class TMsgDialog,, 0
@@ -146,8 +148,10 @@ return
 ^i::send ^{f8}  ; download images
 
 ; Element navigation
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
-or (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
+#If (Vim.IsVimGroup()
+     && Vim.State.IsCurrentVimMode("Vim_Normal")
+     && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+         || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 +h::send !{left}  ; go back in history
 +l::send !{right}  ; go forward in history
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
@@ -157,54 +161,51 @@ or (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
 ; Open windows
 c::send !c  ; open content window
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()
-c::send {esc}  ; close content window
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
-or (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow()))
+c::send !c
+#If (Vim.IsVimGroup()
+     && Vim.State.IsCurrentVimMode("Vim_Normal")
+     && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+         || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 b::
-  if WinExist("ahk_class TBrowser") {
+  if (WinExist("ahk_class TBrowser")) {
     WinActivate
   } else {
+    ; Sometimes a bug makes that you can't use ^space to open browser in content window
+    ; After a while, I found out it's due to my Chinese input method
+    SetDefaultKeyboard(0x0409)  ; english-US	
     send ^{space}  ; open browser
   }
 Return
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")
-b::send {esc}  ; close browser
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
-o::send ^o  ; favourites
 
-f::  ; click on html component
-  if (Vim.SM.MouseMoveMiddle(true)) {
-    Vim.SM.WaitTextFocus(200)
-    send {left}{home}
-  } else {
-    send ^t
-    Vim.SM.WaitTextFocus(200)
-    send {home}
-  }
-Return
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")
+b::WinActivate, ahk_class TBrowser  ; why not
+#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
+o::
+  Vim.State.SetMode("Insert")
+  send ^o  ; favourites
+  BackToNormal := 1
+return
+
+f::Vim.SM.ClickMid()  ; click on html component
 
 ; Copy
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_ydc_y")) && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 y::  ; yy: copy current source url
-  Clipboard := ""
-  DetectHiddenWindows, On
-  WinGet, vWinList, List, ahk_class TPUtilWindow
-  Loop, %vWinList%
-  {
-    hWnd := vWinList%A_Index%
-    WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
-    if (vWinProcess = "sm18.exe")
-      SendMessage,0x111,693,0,,ahk_id %hWnd%  ; copy template
-  }
-  Vim.State.SetNormal()
-  ClipWait 0.2
+  WinClip.Snap(ClipData)
+  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  send !{f10}tc  ; copy template
+  ClipWait, LongCopy ? 0.6 : 0.2, True
   if (InStr(Clipboard, "Link:")) {
     RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)  ; regexmatch cannot store into clipboard
     Clipboard := link
+    Vim.ToolTip("Copied " . clipboard)
+  } else {
+    Vim.ToolTip("Link not found.")
+    Clipboard := ClipSaved
   }
-  Vim.ToolTip("Copied " . clipboard)
+  Vim.State.SetNormal()
 Return
 
 e::  ; ye: duplicate current element
@@ -214,40 +215,35 @@ Return
 
 ; Plan/tasklist window
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan()
-s::ClickDPIAdjusted(253, 48)  ; *s*witch plan
+s::ControlClickWinCoord(253, 48)  ; *s*witch plan
+b::send !b  ; begin
 #If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingTask()
-s::ClickDPIAdjusted(153, 52)  ; *s*witch tasklist
+s::ControlClickWinCoord(153, 52)  ; *s*witch tasklist
 
 ; For incremental YouTube
 ; Need "Start" button on screen
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
-m::
+#If Vim.IsVimGroup() && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o64", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o64", x_coord, y_coord))
+^+!s::
   CoordMode, Mouse, Screen
   click, %x_coord% %y_coord%  ; click start (similar to mark read point)
 Return
 
-`::
+^+!`::
   x_coord += 170
   CoordMode, Mouse, Screen
   click, %x_coord% %y_coord%  ; click play (similar to go to read point)
 Return
 
-!m::
+^+!r::
   x_coord += 195
   CoordMode, Mouse, Screen
   click, %x_coord% %y_coord%  ; click reset (similar to clear read point)
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Insert")) && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
 ^+!left::
 ^+!right::
 ^+!numpadleft::
 ^+!numpadright::
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
-NumpadLeft::
-left::  ; left 5s
-NumpadRight::
-right::  ; right 5s
   x_coord += 110
   y_coord -= 60
   CoordMode, Mouse, Screen
@@ -262,7 +258,6 @@ right::  ; right 5s
   send ^t
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Insert")) && WinActive("ahk_class TElWind") && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord) || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o32", x_coord, y_coord))
 ^+!y::  ; focus to youtube video
   Vim.ReleaseKey("ctrl")
   Vim.ReleaseKey("shift")
@@ -314,14 +309,14 @@ Return
 '::
   send ^{f3}
   Vim.State.SetMode("Insert")
-  back_to_normal := 2
+  BackToNormal := 2
 Return
 
 #If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ^f7::
 m::
-  ; if (Vim.SM.IsEditingHTML() && Vim.SM.MouseMoveMiddle(true))
-  ;   send {home}
+  if (Vim.SM.IsEditingHTML())
+    Vim.SM.ClickMid()
   send ^{f7}  ; set read point
   Vim.ToolTip("Read point set")
 Return
@@ -333,7 +328,6 @@ Return
 Return
 
 !m::
-  KeyWait alt
 ^+f7::
   send ^+{f7}  ; clear read point
   Vim.ToolTip("Read point cleared")
@@ -344,6 +338,7 @@ Return
 
 #If (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ^/::  ; visual
+^+/::  ; visual and start from the beginning
 #If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ?::  ; caret on the right
 !/::  ; followed by a cloze
@@ -351,14 +346,14 @@ Return
 +!/::  ; followed by a cloze hinter
 ^+!/::  ; also cloze hinter but stays in clozed item
 /::  ; better search
-  ctrl_state := GetKeyState("Ctrl")  ; visual
-  shift_state := GetKeyState("shift")  ; caret on the right
-  r_shift_state := GetKeyState("RShift")  ; caret on the right
-  l_shift_state := GetKeyState("LShift")  ; start from top
-  alt_state := GetKeyState("alt")  ; followed by a cloze
+  CtrlState := InStr(A_ThisHotkey, "^")  ; visual
+  ShiftState := InStr(A_ThisHotkey, "+")  ; caret on the right
+  RShiftState := GetKeyState("RShift")  ; caret on the right
+  LShiftState := GetKeyState("LShift")  ; start from top
+  AltState := InStr(A_ThisHotkey, "!")  ; followed by a cloze
   if (!Vim.SM.IsEditingText()) {
     send ^t
-    Vim.SM.WaitTextFocus()  ; make sure current_focus is updated    
+    Vim.SM.WaitTextFocus()  ; make sure CurrentFocus is updated    
     if (!Vim.SM.IsEditingText()) {  ; still found no text
       Vim.ToolTip("Text not found.")
       Vim.State.SetNormal()
@@ -369,20 +364,37 @@ Return
     send {right}
     Vim.State.SetNormal()
   }
-  if (l_shift_state)
+  if (LShiftState)
     send ^{Home}
-  ControlGetFocus, current_focus, ahk_class TElWind
-  if alt_state
-    InputBox, UserInput, Search, Find text:`n(your search result will be clozed),, 272, 144,,,,, % Vim.Move.LastSearch
-  else if ctrl_state
-    InputBox, UserInput, Search, Find text:`n(will go to visual mode after the search),, 272, 144,,,,, % Vim.Move.LastSearch
-  else
-    InputBox, UserInput, Search, Find text:,, 272, 128,,,,, % Vim.Move.LastSearch
-  if ErrorLevel || !UserInput
+  ControlGetFocus, CurrentFocus, ahk_class TElWind
+  if (AltState) {
+    Gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
+  } else if (CtrlState) {
+    Gui, Search:Add, Text,, &Find text:`n(will go to visual mode after the search)
+  } else {
+    Gui, Search:Add, Text,, &Find text:
+  }
+  Gui, Search:Add, Edit, vUserInput w196, % VimLastSearch
+  Gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
+  Gui, Search:Add, Button, default, &Search
+  Gui, Search:Show,, Search
+return
+
+SearchGuiEscape:
+SearchGuiClose:
+  Gui, Destroy
+return
+
+SearchButtonSearch:
+  Gui, Submit
+  Gui, Destroy
+  if (!UserInput)
     Return
-  Vim.Move.LastSearch := UserInput  ; register UserInput into LastSearch
+  VimLastSearch := UserInput  ; register UserInput into VimLastSearch
+  ; Previously, UserInput is stored in Vim.Move.LastSearch, but it turned out this would add 000... in floating numbers
+  ; i.e. 3.8 would become 3.80000
   WinActivate, ahk_class TElWind
-  if InStr(current_focus, "TMemo") {
+  if (InStr(CurrentFocus, "TMemo")) {
     send ^a
     if (Vim.State.n) {
       n := Vim.State.n
@@ -395,13 +407,13 @@ Return
       pos -= 1
       SendInput {left}{right %pos%}
       input_len := StrLen(UserInput)
-      if (r_shift_state) {
+      if (RShiftState) {
         SendInput {right %input_len%}
-      } else if (ctrl_state || alt_state) {
+      } else if (CtrlState || AltState) {
         SendInput +{right %input_len%}
-        if (ctrl_state) {
+        if (CtrlState) {
           Vim.State.SetMode("Vim_VisualFirst")
-        } else if (alt_state) {
+        } else if (AltState) {
           send !z
         }
       }
@@ -411,7 +423,9 @@ Return
       Return
     }
   } else {
-    send {esc}{f3}  ; esc to exit field, so it can return to the same field later
+    send {esc}  ; esc to exit field, so it can return to the same field later
+    Vim.SM.WaitTextExit(2000)
+    send {f3}
     WinWaitActive, ahk_class TMyFindDlg,, 0
     if (ErrorLevel) {
       send {esc}^{enter}h{enter}{f3}
@@ -420,7 +434,10 @@ Return
         Return
     }
     clip(UserInput)
-    send !c{enter}
+    if (WholeWord)
+      send !w  ; match whole word
+    send !c  ; match case
+    send {enter}
     if (Vim.State.n) {
       send % "{f3 " . Vim.State.n - 1 . "}"
       Vim.State.n := 0
@@ -428,10 +445,10 @@ Return
     WinWaitNotActive, ahk_class TMyFindDlg,, 0  ; faster than wait for element window to be active
     if (ErrorLevel)
       Return
-    if (!alt_state) {
-      if (r_shift_state) {
+    if (!AltState) {
+      if (RShiftState) {
         send {right}  ; put caret on right of searched text
-      } else if (ctrl_state) {
+      } else if (CtrlState) {
         Vim.State.SetMode("Vim_VisualFirst")
       } else {  ; all modifier keys are not pressed
         send {left}  ; put caret on left of searched text
@@ -448,23 +465,23 @@ Return
     send h{enter}
     if WinExist("ahk_class TMyFindDlg")  ; clears search box window
       WinClose
-    if alt_state {
-      if !ctrl_state && !shift_state
+    if AltState {
+      if !CtrlState && !ShiftState
         send !z
-      else if shift_state {
-        if ctrl_state
-          cloze_hinter_ctrl_state := 1
+      else if ShiftState {
+        if CtrlState
+          ClozeHinterCtrlState := 1
         WinWaitActive, ahk_class TElWind,, 0
-        gosub cloze_hinter
-      } else if ctrl_state
-        gosub cloze_stay
-    } else if !ctrl_state  ; alt is up and ctrl is up; shift can be up or down
+        gosub ClozeHinter
+      } else if CtrlState
+        gosub ClozeStay
+    } else if !CtrlState  ; alt is up and ctrl is up; shift can be up or down
       send {esc}^t  ; to return to the same field
-    else if ctrl_state {  ; sometimes SM doesn't focus to anything after the search
+    else if CtrlState {  ; sometimes SM doesn't focus to anything after the search
       WinWaitActive, ahk_class TElWind,, 0
-      ControlGetFocus, current_focus_after, ahk_class TElWind
-      if !current_focus_after
-        ControlFocus, %current_focus%, ahk_class TElWind
+      ControlGetFocus, CurrentFocusAfter, ahk_class TElWind
+      if !CurrentFocusAfter
+        ControlFocus, %CurrentFocus%, ahk_class TElWind
     }
   }
 Return

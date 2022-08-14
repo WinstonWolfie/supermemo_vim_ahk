@@ -284,13 +284,13 @@
     WinClipAPI.CloseClipboard()
     return 1
   }
-  
+ 
   iClear()
   {
     this._IsInstance( A_ThisFunc )
     ObjSetCapacity( this, "allData", 0 )
   }
-  
+
   Copy( timeout = 1, method = 1 )
   {
     this.Snap( data )
@@ -304,7 +304,7 @@
       this.Restore( data )
     return !ret
   }
-  
+
   iCopy( timeout = 1, method = 1 )
   {
     this._IsInstance( A_ThisFunc )
@@ -324,7 +324,7 @@
     this.Restore( data )
     return bytesCopied
   }
-  
+
   Paste( plainText = "", method = 1 )
   {
     ret := 0
@@ -347,7 +347,7 @@
       ret := !this._isClipEmpty()
     return ret
   }
-  
+
   iPaste( method = 1 )
   {
     this._IsInstance( A_ThisFunc )
@@ -396,7 +396,7 @@
       return 0
     return this._setClipData( clipData, clipSize )
   }
-  
+
   SetText( textData )
   {
     if ( textData = "" )

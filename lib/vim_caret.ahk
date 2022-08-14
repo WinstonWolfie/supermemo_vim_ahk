@@ -46,7 +46,7 @@ class VimCaret{
       WinGet, hwnd, ID, A
       ; Activate desktop
       winActivate, ahk_class WorkerW
-      WinActivate, ahk_id %hwnd%
+      WinActivate % "ahk_id " . hwnd
   }
 }
 

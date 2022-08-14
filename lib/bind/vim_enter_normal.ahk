@@ -1,8 +1,8 @@
-﻿#If Vim.IsVimGroup() || (Vim.State.Vim.Enabled && back_to_normal)
+﻿#If Vim.IsVimGroup() || (Vim.State.Vim.Enabled && BackToNormal)
 CapsLock::
 Esc::
   Vim.State.HandleEsc()
-  back_to_normal := 0
+  BackToNormal := 0
 Return
 
 #If Vim.IsVimGroup()
@@ -17,9 +17,9 @@ Return
   }
 Return
 
-#If Vim.State.Vim.Enabled && back_to_normal
+#If Vim.State.Vim.Enabled && BackToNormal
 ~enter::
-  if (back_to_normal == 1)
+  if (BackToNormal == 1)
     Vim.State.SetMode("Vim_Normal")
-  back_to_normal -= 1
+  BackToNormal -= 1
 Return

@@ -1,9 +1,10 @@
-﻿#If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
+﻿#If (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
-  Vim.ReleaseKey("ctrl")
+  ReleaseKey("ctrl")
   Vim.SM.DeselectAllComponents()
   send q
   Vim.SM.WaitTextFocus()
+  ; this is to make sure this finds in the question field
   if Vim.SM.IsEditingPlainText() {
     send ^a
     pos := InStr(clip(), "[...]")
@@ -15,7 +16,7 @@
       Vim.State.SetNormal()
       Return
     }
-  } else if Vim.SM.IsEditingHtml() {
+  } else if Vim.SM.IsEditingHTML() {
     send {f3}
     WinWaitActive, ahk_class TMyFindDlg,, 0
     if (ErrorLevel) {
@@ -24,6 +25,7 @@
       if (ErrorLevel)
         Return
     }
+		SetDefaultKeyboard(0x0409)  ; english-US	
     SendInput {raw}[...]
     send {enter}
     WinWaitNotActive, ahk_class TMyFindDlg,, 0  ; faster than wait for element window to be active
@@ -43,8 +45,8 @@
 return
 
 ^!c::  ; change default *c*oncept group
-  KeyWait alt
-  FindClick(A_ScriptDir . "\lib\bind\util\concept_lightbulb.png")
+	ReleaseKey("ctrl")
+  ControlClickWinCoord(723, 67)
   Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -55,49 +57,42 @@ return
 
 >!>+bs::  ; for laptop
 >^>+bs::  ; for processing pending queue Advanced English 2018: delete element and keep learning
-  Vim.ReleaseKey("Ctrl")
-  Vim.ReleaseKey("Shift")
-  WinGetTitle, current_title, A
+  ReleaseKey("Ctrl")
+  ReleaseKey("Shift")
+  WinGetTitle, CurrentTitle, A
   send ^+{del}
   WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
-  Vim.WinWaitTitleChange(current_title)
+  WinWaitTitleChange(CurrentTitle, 500)
+  ; no need for sleep here
   if (WinActive("ahk_class TElWind"))
-    send {enter}
+    ControlSend, TBitBtn2, {enter}, ahk_class TElWind
   Vim.State.SetNormal()
   Vim.SM.EnterInsertIfSpelling()
 return
 
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
-  Vim.ReleaseKey("Ctrl")
-  Vim.ReleaseKey("Shift")
-  WinGetTitle, current_title, A
+  ReleaseKey("Ctrl")
+  ReleaseKey("Shift")
+  WinGetTitle, CurrentTitle, A
   send ^+{enter}
   WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the collection?"
   send {enter}
   WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
-  Vim.WinWaitTitleChange(current_title)
-  sleep 100
+  WinWaitTitleChange(CurrentTitle, 500)
+  sleep 50
   if (WinActive("ahk_class TElWind"))
-    send {alt}ll
+    ControlSend, TBitBtn2, {enter}, ahk_class TElWind
   Vim.State.SetNormal()
   Vim.SM.EnterInsertIfSpelling()
 return
 
 ^!+g::  ; change element's concept *g*roup
   send ^+p!g
-  Vim.State.SetNormal()
-return
-
-; more intuitive inter-element linking, inspired by obsidian
-; 1. go to the element you want to link to and press ctrl+alt+g
-; 2. go to the element you want to have the hyperlink, select text and press ctrl+alt+k
-^!g::
-  send ^g^c{esc}
   Vim.State.SetNormal()
 return
 
@@ -116,30 +111,63 @@ return
   }
 Return
 
-#If (Vim.IsVimGroup() && Vim.SM.IsEditingHtml())
+^!f::  ; use IE's search
+  if (Vim.SM.IsEditingHTML()) {
+    send {right}{left}{ctrl down}cf{ctrl up}  ; discovered by Harvey from the SuperMemo.wiki Discord server
+  } else if (!Vim.SM.IsEditingText()) {
+    send ^t
+    Vim.SM.WaitTextFocus()
+    if (Vim.SM.IsEditingHTML())
+      send {right}{left}{ctrl down}cf{ctrl up}
+  }
+return
+
+~^enter::SetDefaultKeyboard(0x0409)  ; english-US	
+
+#If (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+; more intuitive inter-element linking, inspired by obsidian
+; 1. go to the element you want to link to and press ctrl+alt+g
+; 2. go to the element you want to have the hyperlink, select text and press ctrl+alt+k
+^!g::
+  WinClip.Snap(ClipDataElemLink)
+  send ^g^c{esc}
+  Vim.State.SetNormal()
+return
+
+#If (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())
 ^!k::
-  element_number := RegExReplace(Clipboard, "^#")
-  if !clip()  ; no selection
+  if (RegExMatch(Clipboard, "^https?:\/\/") || RegExMatch(Clipboard, "^file:\/\/\/")) {
+    link := Clipboard
+  } else if (RegExMatch(Clipboard, "^#")) {
+    link := "SuperMemoElementNo=(" . RegExReplace(Clipboard, "^#") . ")"
+  } else {
+    link := ""
+  }
+  if (!clip() || !link)  ; no selection
     Return
   send ^k
   WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2  ; a bit more delay since everybody knows how slow IE can be
-  clip("SuperMemoElementNo=(" . element_number . ")")
+  clip(link)
   send {enter}
   Vim.Caret.SwitchToSameWindow()  ; refresh caret
+  if (ClipDataElemLink) {
+    WinClip.Restore(ClipDataElemLink)
+    ClipDataElemLink := ""
+  }
   Vim.State.SetNormal()
 return
 
 ^!l::
-  Vim.ReleaseKey("ctrl")
+  ReleaseKey("ctrl")
   KeyWait alt
-  FormatTime, CurrentTimeDisplay,, yyyy-MM-dd HH:mm:ss:%A_msec%
+  FormatTime, CurrentTimeDisplay,, % "yyyy-MM-dd HH:mm:ss:" . A_msec
   CurrentTimeFileName := RegExReplace(CurrentTimeDisplay, " |:", "-")
   Vim.State.SetMode("Vim_Normal")
-  ClipSaved := ClipboardAll
-  Clipboard := ""
+  WinClip.Snap(ClipData)
+  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
-  ClipWait 0.6
-  If (Vim.Html.ClipboardGet_Html(Data)) {
+  ClipWait, LongCopy ? 0.6 : 0.2, True
+  If (Vim.HTML.ClipboardGet_HTML(Data)) {
     ; To do: detect selection contents
     ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
       ; Vim.ToolTip("Please select text or image only.")
@@ -158,34 +186,17 @@ return
       LatexPath := LatexFolderPath . "\" . CurrentTimeFileName . ".png"
       SetTimer, DownloadLatex, -1
       FileCreateDir % LatexFolderPath
-      ImgHtml = <img alt="%Clipboard%" src="%LatexPath%">
-      ; SetClipboardHTML(ImgHtml)
-      ; send ^v{esc}
-      clip(ImgHtml, true, true)
-      send ^+1{esc}
-      send ^+{f6}  ; opens notepad
-      WinWaitNotActive, ahk_class TElWind,, 5
-      WinKill, ahk_class Notepad
-      WinActivate, ahk_class TElWind
-      ; Vim.SM.WaitTextSave()
-      ; send ^t
-      ; Vim.SM.WaitTextFocus()
+      ImgHTML = <img alt="%Clipboard%" src="%LatexPath%">
+      clip(ImgHTML, true, true)
+      send ^+1
+      Vim.SM.SaveHTML()
       Clipboard := ""
-      ; send !{f12}fc  ; copy file path
-      DetectHiddenWindows, On
-      WinGet, vWinList, List, ahk_class TPUtilWindow
-      Loop, %vWinList%
-      {
-        hWnd := vWinList%A_Index%
-        WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
-        if (vWinProcess = "sm18.exe")
-          SendMessage,0x111,987,0,,ahk_id %hWnd%  ; copy file path
-      }
-      ClipWait 0.2
-      HtmlPath := Clipboard
-      FileRead, Html, % HtmlPath
-      if (!Html)
-        Html := ImgHtml  ; in case the Html is picture only and somehow not saved
+      send !{f12}fc  ; copy file path
+      ClipWait 2
+      HTMLPath := Clipboard
+      FileRead, HTML, % HTMLPath
+      if (!HTML)
+        HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
       
       /*
         recommended css setting for fuck_lexicon class:
@@ -197,34 +208,27 @@ return
       */
       
       fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %CurrentTimeDisplay%</SPAN>
-      if (InStr(Html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ")) {  ; converted before
-        Vim.SM.WaitTextSave(5000)
-        NewHtml := RegExReplace(Html, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
-        FileDelete % HtmlPath
-        FileAppend, % NewHtml, % HtmlPath
-        ; send !{home}!{left}  ; refresh so the conversion time would display correctly
+      if (InStr(HTML, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ")) {  ; converted before
+        send {esc}
+        Vim.SM.WaitTextExit(5000)
+        NewHTML := RegExReplace(HTML, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
+        FileDelete % HTMLPath
+        FileAppend, % NewHTML, % HTMLPath
+        send !{home}
+        sleep 100
+        send !{left}
       } else {  ; first time conversion
-        NewHtml := Html . "`n" . fuck_lexicon
+        NewHTML := HTML . "`n" . fuck_lexicon
         Vim.SM.MoveAboveRef(true)
-        ; this way read point is kept
-        send ^+{home}{bs}{esc}  ; delete everything and save
-        send ^+{f6}  ; opens notepad
-        WinWaitNotActive, ahk_class TElWind,, 5
-        WinKill, ahk_class Notepad
-        WinActivate, ahk_class TElWind
+        send ^+{home}{bs}  ; this way read point is kept
+        send +{down 2}{bs}  ; and makes sure all formats are deleted
+        Vim.SM.SaveHTML()
         send ^{home}  ; put the caret on top
-        ; send !\\
-        ; WinWaitNotActive, ahk_class TElWind,, 0
-        ; if (!ErrorLevel)
-        ;   send {enter}
-        ; SetClipboardHTML(NewHtml)
-        ; send ^v
-        clip(NewHtml,, true)
+        clip(NewHTML,, true)
         send ^+{home}^+1
-        ; Vim.SM.WaitTextSave(5000)
         ; no need for !home!left refreshing here
+        send !{f7}  ; go to read point
       }
-      send !{f7}  ; go to read point
       sleep 250
       send {right}
     } else {  ; image only
@@ -239,27 +243,29 @@ return
       }
       LatexFormula := RegExReplace(LatexFormula, "^\s+|\s+$")  ; removing start and end whitespaces
       LatexFormula := RegExReplace(LatexFormula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in Better Explained)
-      LatexFormula := Html_decode(LatexFormula)
+      LatexFormula := HTML_decode(LatexFormula)
       clip(LatexFormula, true, true)
       FileDelete % LatexPath
+      Vim.State.SetMode("Vim_Visual")
     }
   }
-  Clipboard := ClipSaved
+  WinClip.Restore(ClipData)
 Return
 
 DownloadLatex:
   UrlDownloadToFile, % LatexLink, % LatexPath
 Return
 
-#If Vim.IsVimGroup() and WinActive("ahk_class TPlanDlg")  ; SuperMemo Plan window
+#If (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
 !a::  ; insert activity
-  KeyWait Alt
   Gui, PlanInsert:Add, Text,, &Activity:
-  list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM|Piano|Meditation|Translation|Novel"
+  list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM|Piano|Meditation|Translation|Job"
   Gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, % list
   Gui, PlanInsert:Add, CheckBox, vNoSplit, &Do not split current activity
   Gui, PlanInsert:Add, Button, default, &Insert
+  KeyWait Alt
   Gui, PlanInsert:Show,, Insert Activity
+  SetDefaultKeyboard(0x0409)  ; english-US	
 Return
 
 PlanInsertGuiEscape:
@@ -268,34 +274,32 @@ PlanInsertGuiClose:
 return
 
 PlanInsertButtonInsert:
+  KeyWait alt
   Gui, Submit
   Gui, Destroy
+  FormatTime, CurrentTime,, HH:mm
   WinActivate, ahk_class TPlanDlg
   if (!NoSplit) {
     send ^t  ; split
     WinWaitActive, ahk_class TInputDlg,, 0
     send {enter}
-    WinWaitActive, ahk_class TPlanDlg,, 0
+    ; WinWaitActive, ahk_class TPlanDlg,, 0
   }
-  send {down}{Insert}  ; inserting one activity below the current selected activity and start editing
+  ControlSend, TStringGrid1, {down}{ins}, ahk_class TPlanDlg  ; inserting one activity below the current selected activity and start editing
+  WinActivate, ahk_class TPlanDlg  ; just in case
+  ; cannot use ControlSendRaw, uppercase will become lowercase
   SendInput {raw}%activity%  ; SendInput is faster than clip() here
-  send !b  ; begin
-  WinWaitNotActive, ahk_class TPlanDlg,, 0.3  ; wait for "Mark the slot with the drop to efficiency?"
-  if (!ErrorLevel)
-    send y
-  WinWaitActive, ahk_class TPlanDlg,, 0
-  send ^s{esc}  ; save and exits
-  WinWaitNotActive, ahk_class TPlanDlg,, 0
-  send ^{enter}{enter}  ; cancel alarm
-  WinWaitActive, ahk_class TElWind,, 0
-  send {alt}kp  ; open Plan again
+  send +{tab}
+  SendInput {raw}%CurrentTime%
+  send {enter}^s
   if (Activity == "Break" || Activity == "Sports" || Activity == "Piano")
     run b  ; my personal backup script
   Vim.State.SetNormal(true)
 return
 
-#If Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg")
-!+d::FindClick(A_ScriptDir . "\lib\bind\util\web_import_duplicates.png")
+#If (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
+!+d::ControlClickWinCoord(250, 66)
+!+s::ControlClickWinCoord(173, 67)
 
 #If Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg")
 ; Task value script, modified from Naess's priority script

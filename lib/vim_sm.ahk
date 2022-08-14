@@ -1,103 +1,110 @@
-class VimSM{
+class VimSM {
   __New(Vim) {
     this.Vim := Vim
   }
 
-  MouseMoveTop(clicking:=false) {
-    if !WinActive("ahk_class TElWind")
-      return false
-    FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_coord, y_coord)
-    if x_coord {
-      CoordMode, Mouse, Screen
-      x_coord -= 10
-      y_coord -= 21
-      if clicking
-        click, %x_coord% %y_coord%
-      else
-        MouseMove, % x_coord, % y_coord, 1
-      Return true
-    }
-  }
-
-  MouseMoveMiddle(clicking:=false) {
-    if !WinActive("ahk_class TElWind")
-      return false
-    FindClick(A_ScriptDir . "\lib\bind\util\up_arrow.png", "n", x_up, y_up)
-    FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_down, y_down)
-    if x_up {
-      CoordMode, Mouse, Screen
-      x_coord := x_up - 10
-      y_coord := (y_up + y_down) / 2
-      if (clicking) {
-        click, %x_coord% %y_coord%
-      } else {
-        MouseMove, % x_coord, % y_coord, 1
+  ClickTop() {
+    if (this.IsEditingText()) {
+      ControlClick, % ControlGetFocus(), ahk_class TElWind,,,, NA x1 y1
+    } else {
+      ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server2, ahk_class TElWind  ; server2 because question field of items are server2
+      if (XCoord) {  ; item
+        ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, NA x1 y1
+      } else {  ; topic
+        ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server1, ahk_class TElWind  ; article field in topics is server1
+        if (XCoord) {  ; topic found
+          ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
+        } else {  ; no html field found
+          ControlGetPos, XCoord, YCoord, Width, Height, TMemo1, ahk_class TElWind
+          if (XCoord) {  ; question field of plain text item
+            ControlClick, TMemo1, ahk_class TElWind,,,, NA x1 y1
+          } else {  ; no text
+            return false
+          }
+        }
       }
-      Return true
     }
   }
 
-  MouseMoveBottom(clicking:=false) {
-    if !WinActive("ahk_class TElWind")
-      return false
-    FindClick(A_ScriptDir . "\lib\bind\util\down_arrow.png", "n", x_coord, y_coord)
-    if x_coord {
-      CoordMode, Mouse, Screen
-      x_coord -= 10
-      y_coord += 21
-      if clicking
-        click, %x_coord% %y_coord%
-      else
-        MouseMove, % x_coord, % y_coord, 1
-      Return true
+  ClickMid() {
+    if (this.IsEditingText()) {
+      ControlGetFocus, CurrentFocus, ahk_class TElWind
+      ControlGetPos,,,, Height, % CurrentFocus, ahk_class TElWind
+      ControlClick, % CurrentFocus, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
+    } else {
+      ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server2, ahk_class TElWind  ; server2 because question field of items are server2
+      if (XCoord) {  ; item
+        ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
+      } else {  ; topic
+        ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server1, ahk_class TElWind  ; article field in topics is server1
+        if (XCoord) {  ; topic found
+          ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
+        } else {  ; no html field found
+          ControlGetPos, XCoord, YCoord, Width, Height, TMemo1, ahk_class TElWind
+          if (XCoord) {  ; question field of plain text item
+            ControlClick, TMemo1, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
+          } else {  ; no text
+            return false
+          }
+        }
+      }
     }
   }
 
-  MouseMoveRight() {
-    if !WinActive("ahk_class TElWind")
-      return false
-    FindClick(A_ScriptDir . "\lib\bind\util\right_arrow.png", "n", x_coord, y_coord)
-    if x_coord {
-      CoordMode, Mouse, Screen
-      MouseMove, % x_coord, % y_coord, 1
-      Return true
+  ClickButtom() {
+    if (this.IsEditingText()) {
+      ControlGetFocus, CurrentFocus, ahk_class TElWind
+      ControlGetPos,,,, Height, % CurrentFocus, ahk_class TElWind
+      ControlClick, % CurrentFocus, ahk_class TElWind,,,, % "NA x1 y" . Height - 1
+    } else {
+      ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server2, ahk_class TElWind  ; server2 because question field of items are server2
+      if (XCoord) {  ; item
+        ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, % "NA x1 y" . Height - 1
+      } else {  ; topic
+        ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server1, ahk_class TElWind  ; article field in topics is server1
+        if (XCoord) {  ; topic found
+          ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height - 1
+        } else {  ; no html field found
+          ControlGetPos, XCoord, YCoord, Width, Height, TMemo1, ahk_class TElWind
+          if (XCoord) {  ; question field of plain text item
+            ControlClick, TMemo1, ahk_class TElWind,,,, % "NA x1 y" . Height - 1
+          } else {  ; no text
+            return false
+          }
+        }
+      }
     }
   }
-  
+
   IsEditingHTML() {
-    ControlGetFocus, current_focus, ahk_class TElWind
-    return WinActive("ahk_class TElWind") && InStr(current_focus, "Internet Explorer_Server")
+    return (WinActive("ahk_class TElWind") && InStr(ControlGetFocus(), "Internet Explorer_Server"))
   }
 
   IsEditingPlainText() {
-    ControlGetFocus, current_focus, ahk_class TElWind
-    return WinActive("ahk_class TElWind") && InStr(current_focus, "TMemo")
+    return (WinActive("ahk_class TElWind") && InStr(ControlGetFocus(), "TMemo"))
   }
 
   IsEditingText() {
-    ControlGetFocus, CurrentFocus, ahk_class TElWind
+    ControlGetFocus, CurrentFocus
     return (WinActive("ahk_class TElWind") && (InStr(CurrentFocus, "Internet Explorer_Server") || InStr(CurrentFocus, "TMemo")))
   }
 
   IsGrading() {
-    ControlGetFocus, current_focus, ahk_class TElWind
+    ControlGetFocus, CurrentFocus
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
-    return WinActive("ahk_class TElWind") && (current_focus == "TBitBtn4" || current_focus == "TBitBtn5" || current_focus == "TBitBtn6" || current_focus == "TBitBtn7" || current_focus == "TBitBtn8" || current_focus == "TBitBtn9")
+    return (WinActive("ahk_class TElWind") && (CurrentFocus == "TBitBtn4" || CurrentFocus == "TBitBtn5" || CurrentFocus == "TBitBtn6" || CurrentFocus == "TBitBtn7" || CurrentFocus == "TBitBtn8" || CurrentFocus == "TBitBtn9"))
   }
   
   IsNavigatingPlan() {
-    ControlGetFocus, current_focus, ahk_class TPlanDlg
-    Return WinActive("ahk_class TPlanDlg") && (current_focus == "TStringGrid1")
+    Return (WinActive("ahk_class TPlanDlg") && ControlGetFocus() == "TStringGrid1")
   }
   
   IsNavigatingTask() {
-    ControlGetFocus, current_focus, ahk_class TTaskManager
-    Return WinActive("ahk_class TTaskManager") && (current_focus == "TStringGrid1")
+    Return (WinActive("ahk_class TTaskManager") && ControlGetFocus() == "TStringGrid1")
   }
   
   IsNavigatingContentWindow() {
-    ControlGetFocus, current_focus, ahk_class TContents
-    Return WinActive("ahk_class TContents") && (current_focus == "TVirtualStringTree1")
+    Return (WinActive("ahk_class TContents") && ControlGetFocus() == "TVirtualStringTree1")
   }
   
   SetPriority(min, max) {
@@ -125,73 +132,65 @@ class VimSM{
     }
   }
 
-  WaitTextSave(Timeout:=2000) {
-    send {esc}  ; exit the field
-    LoopTimeout := Timeout / 20
-    loop {
-      if (!this.IsEditingText())
-        Break
-      if (A_Index > LoopTimeout) {
-        this.Vim.ToolTip("Timed out.")
-        Break
+  WaitTextExit(Timeout:=2000) {
+    StartTime := A_TickCount
+    Loop {
+      if (WinActive("ahk_class TProgressBox")) {
+        continue
+      } else if (WinActive("ahk_class TElWind") && !this.IsEditingText()) {
+        Return True
+      } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+        Return False
       }
     }
   }
 
   WaitTextFocus(Timeout:=2000) {
-    LoopTimeout := Timeout / 20
-    loop {
-      if (this.IsEditingText())
-        Break
-      sleep 20
-      if (A_Index > LoopTimeout)
-        Break
+    StartTime := A_TickCount
+    Loop {
+      if (this.IsEditingText()) {
+        Return True
+      } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+        Return False
+      }
     }
   }
 
   ; Wait until cloze/extract is finished
+  ; sometimes it doesn't work, because the A_CaretX was never gone
   WaitProcessing(timeout:=5000) {
-    global
-    LoopTimeout := timeout / 20
-    loop {
+    StartTime := A_TickCount
+    Loop {
       sleep 20
-      if !A_CaretX
+      if (!A_CaretX) {
         break
-      if (A_Index > LoopTimeout) {
-        Break
-        ErrorLevel := 1
+      } else if (TimeOut && A_TickCount - StartTime > TimeOut / 2) {
+        Return False
       }
     }
-    if WinActive("ahk_class TMsgDialog") {  ; warning on trying to cloze on items
-      ErrorLevel := 1
-      Return
-    }
-    loop {
+    if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items
+      Return false
+    Loop {
       sleep 20
-      if A_CaretX {
-        sleep 100
-        break
-        ErrorLevel := 0
-      }
-      if (A_Index > LoopTimeout) {
-        Break
-        ErrorLevel := 1
+      if (A_CaretX) {
+        sleep 20  ; short sleep to improve robustness
+        return true
+      } else if (TimeOut && A_TickCount - StartTime > TimeOut / 2) {
+        Return False
       }
     }
   }
 
   DeselectAllComponents(timeout:=1000) {
-    LoopTimeout := timeout / 20
-    ControlGetFocus, current_focus, ahk_class TElWind
-    if !InStr(current_focus, "TBitBtn") {
+    StartTime := A_TickCount
+    if (!InStr(ControlGetFocus("ahk_class TElWind"), "TBitBtn")) {
       send ^t{esc}
-      loop {
-        sleep 20
-        ControlGetFocus, current_focus, ahk_class TElWind
-        if InStr(current_focus, "TBitBtn")
-          Break
-        if (A_Index > LoopTimeout)
-          Break
+      Loop {
+        if (InStr(ControlGetFocus("ahk_class TElWind"), "TBitBtn")) {
+          return true
+        } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+          Return False
+        }
       }
     }
   }
@@ -202,13 +201,38 @@ class VimSM{
       if (InStr(ControlGetFocus(), "TMemo")) {
         this.Vim.State.SetMode("Insert")
         break
-      }
-      if (A_Index > 5)
+      } else if (A_Index > 5) {  ; timeout after 0.5s
         break
+      }
     }
   }
 
-  IsNextRepetition() {
-    return (ControlGetText("TBitBtn3") == "Next repetition")
+  IsLearning() {
+    ControlGetText, CurrentText, TBitBtn3
+    return (WinActive("ahk_class TElWind") && (CurrentText == "Next repetition" || CurrentText == "Show answer"))
+  }
+
+  PlayIfCertainCollection() {
+    RegExMatch(WinGetText(), "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", CollectionName)
+    if (CollectionName = "passive" || CollectionName = "music") {
+      StartTime := A_TickCount
+      Loop {
+        if (ControlGetText("TBitBtn3") == "Next repetition") {
+          send ^{f10}
+          break
+        } else if (A_TickCount - StartTime > 100) {  ; timeout after 100ms
+          return false
+        }
+      }
+    }
+  }
+
+  SaveHTML() {
+    if (this.IsEditingHTML())
+      send {esc}
+    send ^+{f6}  ; opens notepad
+    WinWaitNotActive, ahk_class TElWind,, 5
+    WinClose, ahk_class Notepad
+    WinActivate, ahk_class TElWind
   }
 }

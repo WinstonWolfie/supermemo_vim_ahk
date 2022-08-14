@@ -96,16 +96,16 @@ c::
 Return
 
 *::
-  Vim.ReleaseKey("shift")
-  bak := ClipboardAll
-  Clipboard :=
+  ReleaseKey("shift")
+  WinClip.Snap(ClipData)
+  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
-  ClipWait, 1
+  ClipWait, LongCopy ? 0.6 : 0.2, True
   WinGet, hwnd, ID, A
   send ^f
-  WinWaitNotActive, ahk_id %hwnd%,, 0.25
+  WinWaitNotActive, % "ahk_id " . hwnd,, 0.25
   send ^v!f
-  clipboard := bak
+  WinClip.Restore(ClipData)
   Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -137,7 +137,7 @@ Return
 ; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
 InvertCase:
 ~::
-  Vim.ReleaseKey("shift")
+  ReleaseKey("shift")
   selection := clip()
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(selection) {
@@ -153,24 +153,24 @@ InvertCase:
   Vim.State.SetMode("Vim_Normal")
 Return
 
-; !d::MsgBox % Vim.ParseLineBreaks(clip())  ; debugging
-
 o::  ; move to other end of marked area; not perfect with line breaks
-  selection := clip()
-  if !clip()
+  WinClip.Snap(ClipData)
+  selection := clip("",, true)
+  if (!selection)
     Return
-  selection_len := StrLen(Vim.ParseLineBreaks(selection))
+  SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
-  selection_right := clip()
-  selection_right_len := StrLen(Vim.ParseLineBreaks(selection_right))
+  SelectionRight := clip("",, true)
+  SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
   send +{left}
-  if (selection_len < selection_right_len)
-  || (selection_len == selection_right_len && StrLen(selection) < StrLen(selection_right)) {  ; moving point of selection is on the right
+  if (SelectionLen < SelectionRightLen)
+      || (SelectionLen == SelectionRightLen && StrLen(selection) < StrLen(SelectionRight)) {  ; moving point of selection is on the right
     send {right}
-    SendInput % "{shift down}{left " selection_len "}{shift up}"
-  } else if (selection_len > selection_right_len)
-  || (selection_len == selection_right_len && StrLen(selection) > StrLen(selection_right)) {
+    SendInput % "{shift down}{left " SelectionLen "}{shift up}"
+  } else if (SelectionLen > SelectionRightLen)
+             || (SelectionLen == SelectionRightLen && StrLen(selection) > StrLen(SelectionRight)) {
     send {left}
-    SendInput % "{shift down}{right " selection_len "}{shift up}"
+    SendInput % "{shift down}{right " SelectionLen "}{shift up}"
   }
+  WinClip.Restore(ClipData)
 return

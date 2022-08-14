@@ -4,7 +4,7 @@
 
     ; CheckModeValue does not get set for compiled scripts.
     ;@Ahk2Exe-IgnoreBegin
-    this.CheckModeValue := true
+    this.CheckModeValue := false
     ;@Ahk2Exe-IgnoreEnd
     this.PossibleVimModes := ["", "Vim_Normal", "Insert", "Replace"
     , "Vim_ydc_y" , "Vim_ydc_yInner", "Vim_ydc_c", "Vim_ydc_cInner"
@@ -22,9 +22,9 @@
     this.g := 0
     this.n := 0
     this.fts := ""
-    this.fts_char := ""
-    this.last_fts := ""
-    this.last_fts_char := ""
+    this.FtsChar := ""
+    this.LastFts := ""
+    this.LastFtsChar := ""
     this.LineCopy := 0
     this.LastIME := 0
     this.CurrControl := ""
@@ -36,9 +36,9 @@
   CheckMode(verbose=1, Mode="", g=0, n=0, LineCopy=-1, fts="", force=0) {
     if (force == 0) and ((verbose <= 1) or ((Mode == "") and (g == 0) and (n == 0) and (LineCopy == -1))) {
       Return
-    }else if (verbose == 2) {
+    } else if (verbose == 2) {
       this.SetTooltip(this.Mode, 1)
-    }else if (verbose == 3) {
+    } else if (verbose == 3) {
       this.SetTooltip(this.Mode "`r`ng=" this.g "`r`nn=" this.n "`r`nLineCopy=" this.LineCopy "`r`nft=" this.fts, 4)
     }
     if (verbose >= 4) {
@@ -61,7 +61,7 @@
     this.CheckValidMode(Mode)
     if (Mode != "") {
       this.Mode := Mode
-      if (this.IsCurrentVimMode("Insert")) && (this.Vim.Conf["VimRestoreIME"]["val"] == 1)
+      if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
       if (!NoRefresh) {
@@ -101,15 +101,9 @@
           send {Left}
       } else if (this.StrIsInCurrentVimMode("Insert")) {
         send {left}
-        find_click := true
       }
     }
     this.SetMode("Vim_Normal",,,,, NoRefresh)
-    if (find_click) {
-      if (ControlGetFocus() == "Internet Explorer_Server2" && FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o32", x_coord, y_coord))
-        send {right}
-      find_click := false
-    }
   }
 
   SetInner() {
@@ -118,6 +112,8 @@
 
   HandleEsc() {
     global Vim, VimEscNormal, SMVimSendEscInsert, vimSendEscNormal, VimLongEscNormal
+    if (this.Vim.SM.IsEditingText())
+      this.Vim.SM.ClickMid()
     if (!VimEscNormal) {
       send {Esc}
       Return
@@ -179,7 +175,7 @@
     if (this.CheckModeValue == false) {
       Return
     }
-    try{
+    try {
       InOrBlank:= (not fullMatch) ? "in " : ""
       if not this.HasValue(this.PossibleVimModes, mode, fullMatch) {
         throw Exception("Invalid mode specified",-2,
@@ -190,7 +186,7 @@
    or adding your mode to the array.")
         )
       }
-    }catch e{
+    } catch e {
       MsgBox % "Warning: " e.Message "`n" e.Extra "`n`n Called in " e.What " at line " e.Line
     }
   }
@@ -198,7 +194,7 @@
   HasValue(haystack, needle, fullMatch=true) {
     if (!isObject(haystack)) {
       return false
-    }else if (haystack.Length() == 0) {
+    } else if (haystack.Length() == 0) {
       return false
     }
     for index, value in haystack{

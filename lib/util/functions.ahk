@@ -44,15 +44,15 @@ IfIsNot(ByRef var, type) {
 		Return, true
 }
 
-ControlGet(Cmd, Value = "", Control = "", WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+ControlGet(Cmd, Value = "", Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	ControlGet, v, %Cmd%, %Value%, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
-ControlGetFocus(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+ControlGetFocus(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	ControlGetFocus, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
-ControlGetText(Control = "", WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+ControlGetText(Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	ControlGetText, v, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
@@ -160,7 +160,7 @@ SoundGetWaveVolume(DeviceNumber = "") {
 	SoundGetWaveVolume, v, %DeviceNumber%
 	Return, v
 }
-StatusBarGetText(Part = "", WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+StatusBarGetText(Part = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	StatusBarGetText, v, %Part%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
@@ -215,7 +215,7 @@ Transform(Cmd, Value1, Value2 = "") {
 	Transform, v, %Cmd%, %Value1%, %Value2%
 	Return, v
 }
-WinGet(Cmd = "", WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+WinGet(Cmd = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	WinGet, v, %Cmd%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
@@ -223,15 +223,15 @@ WinGetActiveTitle() {
 	WinGetActiveTitle, v
 	Return, v
 }
-WinGetClass(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+WinGetClass(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	WinGetClass, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
-WinGetText(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+WinGetText(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	WinGetText, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
-WinGetTitle(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+WinGetTitle(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	WinGetTitle, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
@@ -251,55 +251,26 @@ ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeT
   }
 }
 
-; https://www.autohotkey.com/boards/viewtopic.php?t=80706
-SetClipboardHTML(HtmlBody, HtmlHead:="", AltText:="") {       ; v0.67 by SKAN on D393/D42B
-Local  F, Html, pMem, Bytes, hMemHTM:=0, hMemTXT:=0, Res1:=1, Res2:=1   ; @ tiny.cc/t80706
-Static CF_UNICODETEXT:=13,   CFID:=DllCall("RegisterClipboardFormat", "Str","HTML Format")
-
-If ! DllCall("OpenClipboard", "Ptr",A_ScriptHwnd)
-	Return 0
-Else DllCall("EmptyClipboard")
-
-If (HtmlBody!="")
-{
-	Html     := "Version:0.9`r`nStartHTML:00000000`r`nEndHTML:00000000`r`nStartFragment"
-			. ":00000000`r`nEndFragment:00000000`r`n<!DOCTYPE>`r`n<html>`r`n<head>`r`n"
-						; . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->`r`n"
-						. HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->"
-							. HtmlBody . "`r`n<!--EndFragment -->`r`n</body>`r`n</html>"
-
-	Bytes    := StrPut(Html, "utf-8")
-	hMemHTM  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",Bytes+4, "Ptr")
-	pMem     := DllCall("GlobalLock", "Ptr",hMemHTM, "Ptr")
-	StrPut(Html, pMem, Bytes, "utf-8")
-
-	F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<html>", "Ptr") - pMem
-	StrPut(Format("{:08}", F), pMem+23, 8, "utf-8")
-	F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","</html>", "Ptr") - pMem
-	StrPut(Format("{:08}", F), pMem+41, 8, "utf-8")
-	F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--StartFra", "Ptr") - pMem
-	StrPut(Format("{:08}", F), pMem+65, 8, "utf-8")
-	F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--EndFragm", "Ptr") - pMem
-	StrPut(Format("{:08}", F), pMem+87, 8, "utf-8")
-
-	DllCall("GlobalUnlock", "Ptr",hMemHTM)
-	Res1  := DllCall("SetClipboardData", "Int",CFID, "Ptr",hMemHTM)
+ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+  StartTime := A_TickCount
+  Loop {
+    if (ControlGetFocus(%WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%) != Control) {
+      Return True
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      Return False
+    }
+  }
 }
 
-If (AltText!="")
-{
-	Bytes    := StrPut(AltText, "utf-16")
-	hMemTXT  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",(Bytes*2)+8, "Ptr")
-	pMem     := DllCall("GlobalLock", "Ptr",hMemTXT, "Ptr")
-	StrPut(AltText, pMem, Bytes, "utf-16")
-	DllCall("GlobalUnlock", "Ptr",hMemTXT)
-	Res2  := DllCall("SetClipboardData", "Int",CF_UNICODETEXT, "Ptr",hMemTXT)
-}
-
-DllCall("CloseClipboard")
-hMemHTM := hMemHTM ? DllCall("GlobalFree", "Ptr",hMemHTM) : 0
-
-Return (Res1 & Res2)
+ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+  StartTime := A_TickCount
+  Loop {
+    if (ControlGetText(%Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%) == text) {
+      Return True
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      Return False
+    }
+  }
 }
 
 ;#########################################################################################
@@ -343,51 +314,172 @@ html_decode(html) {
    return % oHTML.documentElement.innerText 
 }
 
-ClickDPIAdjusted(coord_x, coord_y) {
-    coord_x *= A_ScreenDPI / 96
-    coord_y *= A_ScreenDPI / 96
-    click, %coord_x% %coord_y%
-}
-
 StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
   String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
 	return String
 }
 
-GetBrowserInfo(ByRef BrowserTitle, ByRef BrowserUrl, ByRef BrowserSource) {
-	global ModernBrowsers, LegacyBrowsers
-	ModernBrowsers := "ApplicationFrameWindow,Chrome_WidgetWin_0,Chrome_WidgetWin_1,Maxthon3Cls_MainFrm,MozillaWindowClass,Slimjet_WidgetWin_1"
-  LegacyBrowsers := "IEFrame,OperaWindowClass"
-	sURL := GetActiveBrowserURL()
-	WinGetClass, sClass, A
-	If (sURL != "") {
-    BrowserUrl := RegExReplace(sURL, "#(.*)$")
-    if (InStr(BrowserUrl, "https://www.youtube.com") && InStr(BrowserUrl, "v=")) {
-      RegExMatch(BrowserUrl, "v=\K[\w\-]+", YTLink)
-      BrowserUrl := "https://www.youtube.com/watch?v=" . YTLink
-    }
-    WinGetActiveTitle, BrowserTitle
-    BrowserTitle := RegExReplace(BrowserTitle, " - Google Chrome$")
-    BrowserTitle := RegExReplace(BrowserTitle, " — Mozilla Firefox$")
-    BrowserTitle := RegExReplace(BrowserTitle, " - .* - Microsoft​ Edge$")
-    ReversedTitle := StrReverse(BrowserTitle)
-    if (InStr(ReversedTitle, " | ")
-        && (InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - ")
-            || !InStr(ReversedTitle, " - "))) {  ; used to find source
-      separator := " | "
-    } else if (InStr(ReversedTitle, " - ")) {
-      separator := " - "
-    } else {
-      separator := ""
-    }
-		occurence := (InStr(ReversedTitle, separator,,, 2) > InStr(ReversedTitle, separator)) ? 2 : 1
-    pos := separator ? InStr(StrReverse(BrowserTitle), separator,,, occurence) : 0
-    if (pos) {
-      BrowserSource := SubStr(BrowserTitle, StrLen(BrowserTitle) - pos - 1, StrLen(BrowserTitle))
-      if (InStr(BrowserSource, separator))
-        BrowserSource := StrReplace(BrowserSource, separator,,, 1)
-      BrowserTitle := SubStr(BrowserTitle, 1, StrLen(BrowserTitle) - pos - 2)
-    }
+GetBrowserInfo(ByRef BrowserTitle, ByRef BrowserUrl, ByRef BrowserSource, ByRef BrowserDate) {
+	BrowserTitle := BrowserUrl := BrowserSource := BrowserDate := ""
+	global WinClip
+  WinClip.Snap(ClipData)
+	Clipboard := ""
+	CurrentTick := A_TickCount
+	send {f6}^l  ; for moronic websites that use ctrl+L as a shortcut (I'm looking at you, paratranz)
+	while (!Clipboard) {
+		send ^l^c
+		if (A_TickCount := CurrentTick + 500)
+			Break
 	}
-	Return
+	If (Clipboard) {
+    BrowserUrl := ParseUrl(Clipboard)
+    GetBrowserTitleSourceDate(BrowserUrl, BrowserTitle, BrowserSource, BrowserDate)
+	}
+	if (WinActive("ahk_exe msedge.exe")) {
+		send ^l{f6}
+	} else {
+		send ^l+{f6}
+	}
+  WinClip.Restore(ClipData)
 }
+
+ParseUrl(url) {
+	url := RegExReplace(url, "#(.*)$")
+	if (InStr(url, "youtube.com") && InStr(url, "v=")) {
+		RegExMatch(url, "v=\K[\w\-]+", YTLink)
+		url := "https://www.youtube.com/watch?v=" . YTLink
+	} else if (InStr(url, "bilibili.com/video")) {
+		url := RegExReplace(url, "(\/\?|&)vd_source=.*")
+	} else if (InStr(url, "netflix.com/watch")) {
+		url := RegExReplace(url, "\?trackId=.*")
+	}
+	return url
+}
+
+GetBrowserTitleSourceDate(BrowserUrl, ByRef BrowserTitle, ByRef BrowserSource, ByRef BrowserDate) {
+	WinGetActiveTitle BrowserTitle
+	BrowserTitle := RegExReplace(BrowserTitle, "( - Google Chrome| — Mozilla Firefox|( and [0-9]+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
+	; Sites that need special attention
+	if (InStr(BrowserTitle, "很帅的日报")) {
+		BrowserDate := StrReplace(BrowserTitle, "很帅的日报 ")
+		BrowserTitle := "很帅的日报"
+	} else if (InStr(BrowserTitle, "_百度百科")) {
+		BrowserSource := "百度百科"
+		BrowserTitle := StrReplace(BrowserTitle, "_百度百科")
+	} else if (InStr(BrowserTitle, "_百度知道")) {
+		BrowserSource := "百度知道"
+		BrowserTitle := StrReplace(BrowserTitle, "_百度知道")
+	} else if (InStr(BrowserUrl, "reddit.com")) {
+		RegExMatch(BrowserUrl, "reddit\.com\/\Kr\/[^\/]+", BrowserSource)
+		BrowserTitle := StrReplace(BrowserTitle, " : " . StrReplace(BrowserSource, "r/"))
+	; Sites that don't include source in the title
+	} else if (InStr(BrowserUrl, "dailystoic.com")) {
+		BrowserSource := "Daily Stoic"
+	} else if (InStr(BrowserUrl, "healthline.com")) {
+		BrowserSource := "Healthline"
+	} else if (InStr(BrowserUrl, "medicalnewstoday.com")) {
+		BrowserSource := "Medical News Today"
+	} else if (InStr(BrowserUrl, "investopedia.com")) {
+		BrowserSource := "Investopedia"
+	; Sites that should be skipped
+	} else if (InStr(BrowserUrl, "mp.weixin.qq.com")) {
+		return
+	} else if (InStr(BrowserUrl, "universityhealthnews.com")) {
+		return
+	; Try to use - or | to find source
+	} else {
+		ReversedTitle := StrReverse(BrowserTitle)
+		if (InStr(ReversedTitle, " | ") && (!InStr(ReversedTitle, " - ") || InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - "))) {  ; used to find source
+			separator := " | "
+		} else if (InStr(ReversedTitle, " - ")) {
+			separator := " - "
+		} else if (InStr(ReversedTitle, " – ")) {
+			separator := " – "  ; websites like BetterExplained
+		} else {
+			separator := ""
+		}
+		pos := separator ? InStr(StrReverse(BrowserTitle), separator) : 0
+		if (pos) {
+			BrowserSource := SubStr(BrowserTitle, StrLen(BrowserTitle) - pos - 1, StrLen(BrowserTitle))
+			if (InStr(BrowserSource, separator))
+				BrowserSource := StrReplace(BrowserSource, separator,,, 1)
+			BrowserTitle := SubStr(BrowserTitle, 1, StrLen(BrowserTitle) - pos - 2)
+		}
+	}
+}
+
+WinWaitTitleChange(OriginalTitle:="", TimeOut:=5000) {
+	if (!OriginalTitle)
+		WinGetTitle, OriginalTitle, A
+	StartTime := A_TickCount
+	Loop {
+		if (WinGetTitle() != OriginalTitle) {
+			return true
+		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+			return false
+		}
+	}
+}
+
+Click(XCoord, YCoord, WhichButton:="") {
+	MouseDelay := A_MouseDelay
+	MouseGetPos, XSaved, YSaved
+	SetMouseDelay -1
+	Click % XCoord . " " . YCoord . " " . WhichButton
+	MouseMove, XSaved, YSaved, 0
+	SetMouseDelay % MouseDelay
+}
+
+ClickDPIAdjusted(XCoord, YCoord) {
+	MouseDelay := A_MouseDelay
+	MouseGetPos, XSaved, YSaved
+	SetMouseDelay -1
+	Click % XCoord * A_ScreenDPI / 96 . " " . YCoord * A_ScreenDPI / 96
+	MouseMove, XSaved, YSaved, 0
+	SetMouseDelay % MouseDelay
+}
+
+ControlClickWinCoord(XCoord, YCoord) {
+  WinGet, hwnd, ID, A
+  ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % "ahk_id " hwnd,,,, NA
+}
+
+WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=5000) {
+	if (!OriginalX)
+		MouseGetPos, OriginalX
+	if (!OriginalY)
+		MouseGetPos,, OriginalY
+	StartTime := A_TickCount
+	loop {
+		if (A_CaretX != OriginalX || A_CaretY != OriginalY) {
+			return true
+		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+			return false
+		}
+	}
+}
+
+ReleaseKey(Key) {
+	if (GetKeyState(Key)) {
+		if (key = "ctrl" || key = "shift") {
+			send {blind}{l%Key% up}{r%Key% up}
+		} else {
+			send {blind}{%key% up}
+		}
+	}
+}
+
+SetDefaultKeyboard(LocaleID) {  ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=18519
+	Global
+	SPI_SETDEFAULTINPUTLANG := 0x005A
+	SPIF_SENDWININICHANGE := 2
+	Lan := DllCall("LoadKeyboardLayout", "Str", Format("{:08x}", LocaleID), "Int", 0)
+	VarSetCapacity(Lan%LocaleID%, 4, 0)
+	NumPut(LocaleID, Lan%LocaleID%)
+	DllCall("SystemParametersInfo", "UInt", SPI_SETDEFAULTINPUTLANG, "UInt", 0, "UPtr", &Lan%LocaleID%, "UInt", SPIF_SENDWININICHANGE)
+	WinGet, windows, List
+	Loop %windows% {
+		PostMessage 0x50, 0, %Lan%, , % "ahk_id " windows%A_Index%
+	}
+}
+return

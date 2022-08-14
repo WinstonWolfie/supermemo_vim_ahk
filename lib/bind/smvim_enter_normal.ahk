@@ -4,20 +4,7 @@
 ~enter::
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 ~space up::  ; for Learn button
-  WinGetText, visible_text, ahk_class TElWind
-  RegExMatch(visible_text, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", collection_name)
-  if (collection_name = "passive" || collection_name = "music") {
-    loop {
-      sleep 40
-      ControlGetText, current_text, TBitBtn3
-      if (current_text == "Next repetition") {
-        send ^{f10}
-        break
-      }
-      if (A_Index > 5)
-        Break
-    }
-  }
+  Vim.SM.PlayIfCertainCollection()
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would add a {left}
   Vim.SM.EnterInsertIfSpelling()
 Return
@@ -41,7 +28,7 @@ return
   Vim.SM.EnterInsertIfSpelling()
 Return
 
-^p::  ; open Plan window
-  Controlsend, TBitBtn2, {ctrl down}p{ctrl up}, ahk_class TElWind
-  Vim.State.SetMode("Vim_Normal")
-Return
+; ^p::  ; open Plan window
+;   Controlsend, TBitBtn2, {ctrl down}p{ctrl up}, ahk_class TElWind
+;   Vim.State.SetMode("Vim_Normal")
+; Return

@@ -1,23 +1,22 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !WinActive("ahk_group SuperMemo")
+﻿#If (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))
 /::
   send ^f
   Vim.State.SetMode("Insert")
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 *::
-  Vim.ReleaseKey("shift")
-  bak := ClipboardAll
-  Clipboard=
+  ReleaseKey("shift")
+  WinClip.Snap(ClipData)
+  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^{Left}+^{Right}^c
-  ClipWait, 0.2
+  ClipWait, LongCopy ? 0.6 : 0.2, True
   send ^f
   send ^v!f
-  clipboard := bak
+  WinClip.Restore(ClipData)
   Vim.State.SetMode("Insert")
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal")) && !WinActive("ahk_group SuperMemo")
 n::send {F3}
 +n::send +{F3}
 

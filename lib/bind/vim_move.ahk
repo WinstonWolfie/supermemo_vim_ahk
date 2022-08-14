@@ -32,7 +32,7 @@ $::Vim.Move.Move("$")
 -::Vim.Move.Move("-")
 ; Words
 w::Vim.Move.Repeat("w")
-e::Vim.Move.Repeat("e")
+e::Vim.Move.Move("e")
 b::Vim.Move.Repeat("b")
 ; Page Up/Down
 ^u::Vim.Move.Repeat("^u")
@@ -47,7 +47,7 @@ b::Vim.Move.Repeat("b")
 ; Sentence
 (::
 )::
-  KeyWait Shift  ; cannot use Vim.KeyRelease("shift"), shift will still get stuck
+  KeyWait Shift  ; cannot use ReleaseKey("shift"), shift will still get stuck
   Vim.Move.Move(A_ThisHotkey)
 Return
 

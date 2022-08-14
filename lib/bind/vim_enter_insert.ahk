@@ -5,7 +5,7 @@
 ; Enter insert mode at rename
 ~F2::Vim.State.SetMode("Insert")
 
-#If Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal"))
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 i::
   if (Vim.State.g)
     Vim.Move.Move("g")
@@ -60,5 +60,8 @@ return
 ~AppsKey::
   Vim.State.SetMode("Insert")
 Return
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual"))
+~#a::Vim.State.SetMode("Insert")  ; text editor everywhere shortcut
 
 #If

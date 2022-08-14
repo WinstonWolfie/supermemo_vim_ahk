@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
+﻿#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
 ; Undo/Redo
 u::Send,^z
 ^r::Send,^y
@@ -9,7 +9,7 @@ u::Send,^z
 
 ; Change case
 ~::
-  Vim.ReleaseKey("shift")
+  ReleaseKey("shift")
   Send +{Right}
   Selection := Clip()
   if Selection is lower
@@ -17,11 +17,10 @@ u::Send,^z
   else if Selection is upper
     StringLower, Selection, Selection
   Send % Selection
-  send {left}
 Return
 
 +z::Vim.State.SetMode("Z")
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Z"))
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::
   send ^s
   send !{F4}
@@ -40,25 +39,8 @@ Return
 ; .::send +^{Right}{BS}^v
 
 #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
-^e::
-  ControlGetFocus, control, A
-  if WinActive("ahk_exe WINWORD.exe") {
-    Vim.ReleaseKey("ctrl")
-    send {WheelDown}{CtrlDown}
-  } else {
-    SendMessage, 0x0115, 1, 0, %control%, A
-  }
-return
-
-^y::
-  ControlGetFocus, control, A
-  if WinActive("ahk_exe WINWORD.exe") {
-    Vim.ReleaseKey("ctrl")
-    send {WheelUp}{CtrlDown}
-  } else {
-    SendMessage, 0x0115, 0, 0, %control%, A
-  }
-return
+^e::Vim.Move.Repeat("^e")
+^y::Vim.Move.Repeat("^y")
 
 ; Q-dir
 #If Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")

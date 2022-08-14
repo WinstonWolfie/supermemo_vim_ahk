@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_")) && Vim.State.fts
+﻿#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.fts)
 a::
 b::
 c::
@@ -94,7 +94,7 @@ _::
 .::
 >::
 space::
-  Vim.ReleaseKey("shift")
+  ReleaseKey("shift")
   CurrentHotkey := A_ThisHotkey
   if (CurrentHotkey = "space")
     CurrentHotkey := " "
@@ -107,16 +107,16 @@ space::
       CurrentHotkey := StrReplace(CurrentHotkey, "~")
   }
   if (InStr(Vim.State.fts, "s")) {
-    if (!Vim.State.fts_char) {
-      Vim.State.fts_char := CurrentHotkey
+    if (!Vim.State.FtsChar) {
+      Vim.State.FtsChar := CurrentHotkey
       Return
     } else {
-      Vim.State.last_fts_char := Vim.State.fts_char .= CurrentHotkey
+      Vim.State.LastFtsChar := Vim.State.FtsChar .= CurrentHotkey
     }
   } else {
-    Vim.State.last_fts_char := Vim.State.fts_char := CurrentHotkey
+    Vim.State.LastFtsChar := Vim.State.FtsChar := CurrentHotkey
   }
-  Vim.State.last_fts := Vim.State.fts
+  Vim.State.LastFts := Vim.State.fts
   Vim.Move.Move(Vim.State.fts)
 Return
 
@@ -128,16 +128,16 @@ t::Vim.State.SetMode("",, -1,, "t")
 s::Vim.State.SetMode("",, -1,, "s")
 +s::Vim.State.SetMode("",, -1,, "+s")
 `;::
-  Vim.State.fts_char := Vim.State.last_fts_char
-  Vim.Move.Move(Vim.State.last_fts)
+  Vim.State.FtsChar := Vim.State.LastFtsChar
+  Vim.Move.Move(Vim.State.LastFts)
 Return
 
 ,::
-  Vim.State.fts_char := Vim.State.last_fts_char
-  if InStr(Vim.State.last_fts, "+") {
-    fts_reversed := StrReplace(Vim.State.last_fts, "+")
+  Vim.State.FtsChar := Vim.State.LastFtsChar
+  if InStr(Vim.State.LastFts, "+") {
+    fts_reversed := StrReplace(Vim.State.LastFts, "+")
   } else {
-    fts_reversed := "+" . Vim.State.last_fts
+    fts_reversed := "+" . Vim.State.LastFts
   }
   Vim.Move.Move(fts_reversed)
 Return

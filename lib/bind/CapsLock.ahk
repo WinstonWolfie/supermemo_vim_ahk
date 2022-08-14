@@ -265,10 +265,10 @@ return                                                               ;|
 ;                     CapsLock + ,  |  BackSpace                     ;|
 ;                     CapsLock + .  |  Ctrl + BackSpace              ;|
 ;-----------------------------------o---------------------------------o
-CapsLock & ,:: send {Del}                                           ;|
-CapsLock & .:: send ^{Del}                                          ;|
-CapsLock & m:: send {BS}                                            ;|
-CapsLock & n:: send ^{BS}                                           ;|
+CapsLock & ,::send {Del}                                           ;|
+CapsLock & .::send ^+{right}{bs}
+CapsLock & m::send {BS}                                            ;|
+CapsLock & n::send ^+{left}{bs}
 ;---------------------------------------------------------------------o
 
 
@@ -336,20 +336,26 @@ CapsLock & F6:: send {Media_Stop}                                   ;|
 ;               Alt + CapsLock + q  |  Ctrl + Tab (Close Windows)    ;|
 ;                     CapsLock + g  |  AppsKey    (Menu Key)         ;|
 ;-----------------------------------o---------------------------------o
-CapsLock & s::send ^{Tab}                                           ;|
+; CapsLock & s::send ^{Tab}                                           ;|
+CapsLock & s::
+    send {ins}
+    if (Vim.IsVimGroup())
+        Vim.State.SetMode("Insert")
+return
 ;-----------------------------------o                                ;|
-CapsLock & q::                                                       ;|
-if GetKeyState("alt") = 0                                            ;|
-{                                                                    ;|
-    send ^w                                                         ;|
-}                                                                    ;|
-else {                                                               ;|
-    send !{F4}                                                      ;|
-    return                                                           ;|
-}                                                                    ;|
-return                                                               ;|
-;-----------------------------------o                                ;|
-CapsLock & g:: send {AppsKey}                                       ;|
+CapsLock & q::send !{f4}                                                       ;|
+; CapsLock & q::                                                       ;|
+; if GetKeyState("alt") = 0                                            ;|
+; {                                                                    ;|
+;     send ^w                                                         ;|
+; }                                                                    ;|
+; else {                                                               ;|
+;     send !{F4}                                                      ;|
+;     return                                                           ;|
+; }                                                                    ;|
+; return                                                               ;|
+; ;-----------------------------------o                                ;|
+; CapsLock & g:: send {AppsKey}                                       ;|
 ;---------------------------------------------------------------------o
 
 
@@ -405,15 +411,15 @@ send ^e                                                             ;|
 send u                                                              ;|
 return                                                               ;|
 ;-----------------------------------o                                ;|
-CapsLock & 1:: Send,^{F5}                                            ;|
-CapsLock & 2:: Send,{F5}                                             ;|
-CapsLock & 3:: Send,{F10}                                            ;|
-CapsLock & 4:: Send,{F11}                                            ;|
-CapsLock & 5:: Send,+{F5}                                            ;|
+CapsLock & 1:: Send ^{F5}                                            ;|
+CapsLock & 2:: Send {F5}                                             ;|
+CapsLock & 3:: Send {F10}                                            ;|
+CapsLock & 4:: Send {F11}                                            ;|
+CapsLock & 5:: Send +{F5}                                            ;|
 ;-----------------------------------o                                ;|
-CapsLock & 6:: Send,+6                                               ;|
-CapsLock & 7:: Send,+7                                               ;|
-CapsLock & 8:: Send,+8                                               ;|
-CapsLock & 9:: Send,+9                                               ;|
-CapsLock & 0:: Send,+0                                               ;|
+CapsLock & 6:: Send +6                                               ;|
+CapsLock & 7:: Send +7                                               ;|
+CapsLock & 8:: Send +8                                               ;|
+CapsLock & 9:: Send +9                                               ;|
+CapsLock & 0:: Send +0                                               ;|
 ;---------------------------------------------------------------------o

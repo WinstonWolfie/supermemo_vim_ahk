@@ -3,7 +3,7 @@ class VimHTML{
     this.Vim := Vim
   }
 
-  ClipboardGet_HTML( byref Data ) { ; www.autohotkey.com/forum/viewtopic.php?p=392624#392624
+  ClipboardGet_HTML( byref Data ) {  ; www.autohotkey.com/forum/viewtopic.php?p=392624#392624
    If CBID := DllCall( "RegisterClipboardFormat", Str,"HTML Format", UInt )
     If DllCall( "IsClipboardFormatAvailable", UInt,CBID ) <> 0
      If DllCall( "OpenClipboard", UInt,0 ) <> 0
@@ -19,17 +19,70 @@ class VimHTML{
   }
 
   Clean(Str) {
-    ; zzz in case you used f6 to remove format before,
+    ; zzz in case you used f6 in SuperMemo to remove format before,
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
-    Str := RegExReplace(Str, "is)( zzz| )style=""((?!BACKGROUND-IMAGE: url).)*?""")
-    Str := RegExReplace(Str, "is)( zzz| )style='((?!BACKGROUND-IMAGE: url).)*?'")
+    ; Str := RegExReplace(Str, "is)( zzz| )style=(""|')BACKGROUND-IMAGE: url.*?(""|')")
+    Str := RegExReplace(Str, "( zzz| )style=(""|').*?(""|')")
     Str := RegExReplace(Str, "ism)<\/{0,1}(zzz|)font.*?>")
-    Str := RegExReplace(Str, "is)<BR", "<P")
+    Str := RegExReplace(Str, "i)<P[^>]?+>(<BR>)+<\/P>")
+    ; Str := RegExReplace(Str, "is)<BR", "<P")
     Str := RegExReplace(Str, "i)<H5 dir=ltr align=left>")
     Str := RegExReplace(Str, "s)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
     Str := RegExReplace(Str, "i)\/svg\/", "/png/")
-    Str := RegExReplace(Str, "i)\n<P.*>&nbsp;<\/P>")
-    Str := RegExReplace(Str, "i)\n<DIV.*>&nbsp;<\/DIV>")
+    Str := RegExReplace(Str, "i)<P[^>]?+>&nbsp;<\/P>")
+    Str := RegExReplace(Str, "i)<DIV[^>]+>&nbsp;<\/DIV>")
     Return Str
   }
+
+  ; https://www.autohotkey.com/boards/viewtopic.php?t=80706
+  SetClipboardHTML(HtmlBody, HtmlHead:="", AltText:="") {       ; v0.67 by SKAN on D393/D42B
+  Local  F, Html, pMem, Bytes, hMemHTM:=0, hMemTXT:=0, Res1:=1, Res2:=1   ; @ tiny.cc/t80706
+  Static CF_UNICODETEXT:=13,   CFID:=DllCall("RegisterClipboardFormat", "Str","HTML Format")
+
+  If ! DllCall("OpenClipboard", "Ptr",A_ScriptHwnd)
+    Return 0
+  Else DllCall("EmptyClipboard")
+
+  If (HtmlBody!="")
+  {
+    Html     := "Version:0.9`r`nStartHTML:00000000`r`nEndHTML:00000000`r`nStartFragment"
+        . ":00000000`r`nEndFragment:00000000`r`n<!DOCTYPE>`r`n<html>`r`n<head>`r`n"
+              ; . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->`r`n"
+              . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->"
+                . HtmlBody . "`r`n<!--EndFragment -->`r`n</body>`r`n</html>"
+
+    Bytes    := StrPut(Html, "utf-8")
+    hMemHTM  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",Bytes+4, "Ptr")
+    pMem     := DllCall("GlobalLock", "Ptr",hMemHTM, "Ptr")
+    StrPut(Html, pMem, Bytes, "utf-8")
+
+    F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<html>", "Ptr") - pMem
+    StrPut(Format("{:08}", F), pMem+23, 8, "utf-8")
+    F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","</html>", "Ptr") - pMem
+    StrPut(Format("{:08}", F), pMem+41, 8, "utf-8")
+    F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--StartFra", "Ptr") - pMem
+    StrPut(Format("{:08}", F), pMem+65, 8, "utf-8")
+    F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--EndFragm", "Ptr") - pMem
+    StrPut(Format("{:08}", F), pMem+87, 8, "utf-8")
+
+    DllCall("GlobalUnlock", "Ptr",hMemHTM)
+    Res1  := DllCall("SetClipboardData", "Int",CFID, "Ptr",hMemHTM)
+  }
+
+  If (AltText!="")
+  {
+    Bytes    := StrPut(AltText, "utf-16")
+    hMemTXT  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",(Bytes*2)+8, "Ptr")
+    pMem     := DllCall("GlobalLock", "Ptr",hMemTXT, "Ptr")
+    StrPut(AltText, pMem, Bytes, "utf-16")
+    DllCall("GlobalUnlock", "Ptr",hMemTXT)
+    Res2  := DllCall("SetClipboardData", "Int",CF_UNICODETEXT, "Ptr",hMemTXT)
+  }
+
+  DllCall("CloseClipboard")
+  hMemHTM := hMemHTM ? DllCall("GlobalFree", "Ptr",hMemHTM) : 0
+
+  Return (Res1 & Res2)
+  }
+
 }

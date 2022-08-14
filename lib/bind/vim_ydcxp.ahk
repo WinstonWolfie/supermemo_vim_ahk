@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
+﻿#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0)
 c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0)
@@ -37,24 +37,50 @@ Return
   }
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_ydc_y"))
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_y"))
 y::
   Vim.Move.YDCMove()
   send {Left}{Home}
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
 d::Vim.Move.YDCMove()
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_ydc_c"))
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c"))
 c::Vim.Move.YDCMove()
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
-x::send {Delete}
-+x::send {BS}
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && Vim.IsNavigating())
+x::
+  if (!Vim.State.n)
+    Vim.State.n := 1
+  send % "{del " . Vim.State.n . "}"
+  Vim.State.SetMode()
+return
+
++x::
+  if (!Vim.State.n)
+    Vim.State.n := 1
+  send % "{bs " . Vim.State.n . "}"
+  Vim.State.SetMode()
+return
+
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+x::
+  if (!Vim.State.n)
+    Vim.State.n := 1
+  send % "+{right " . Vim.State.n . "}^x"
+  Vim.State.SetMode()
+return
+
++x::
+  if (!Vim.State.n)
+    Vim.State.n := 1
+  send % "+{left " . Vim.State.n . "}^x"
+  Vim.State.SetMode()
+return
 
 ; Paste
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
 ^p::
 p::
   ;i:=0
@@ -83,9 +109,9 @@ p::
   ;  i+=1
   ;  break
   ;}
-  if GetKeyState("ctrl")
+  if (GetKeyState("ctrl"))
     Clipboard := Clipboard
-  if (Vim.State.LineCopy == 1) {
+  if (Vim.State.LineCopy == 1 && Vim.Move.YdcClipSaved == Clipboard) {
     ; if WinActive("ahk_group VimNoLBCopyGroup") {
     ;   send {End}{Enter}^v{Home}
     ; } else {
@@ -106,7 +132,7 @@ Return
 +p::
   if (GetKeyState("ctrl"))
     Clipboard := Clipboard
-  if (Vim.State.LineCopy == 1) {
+  if (Vim.State.LineCopy == 1 && Vim.Move.YdcClipSaved == Clipboard) {
     ; send {Up}{End}{Enter}^v{BS}{Home}
     send {Up}{End}{Enter}^v{Home}
   } else {
@@ -115,3 +141,18 @@ Return
   }
   KeyWait, p
 Return
+
+#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
+u::Vim.State.SetMode("Vim_ydc_gu", 0, -1, 0)
++u::Vim.State.SetMode("Vim_ydc_g+u", 0, -1, 0)
+~::Vim.State.SetMode("Vim_ydc_g~", 0, -1, 0)
+
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_gu"))
+u::Vim.Move.YDCMove()
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g+u"))
++u::
+#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g~"))
+~::
+  KeyWait Shift  ; cannot use ReleaseKey("shift"), shift will still get stuck
+  Vim.Move.YDCMove()
+return

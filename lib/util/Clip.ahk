@@ -1,37 +1,28 @@
 ; Clip() - Send and Retrieve Text Using the Clipboard
-; by berban - updated February 18, 2019
+; Originally by berban - updated February 18, 2019 - modified by Winston
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156
 Clip(Text="", Reselect="", NoRestore:=false)
 {
-  Static BackUpClip, Stored, LastClip
-  If (A_ThisLabel = A_ThisFunc) {
-    If (Clipboard == LastClip)
-      Clipboard := BackUpClip
-    BackUpClip := LastClip := Stored := ""
-  } Else {
-    If !Stored {
-      Stored := True
-      BackUpClip := ClipboardAll  ; ClipboardAll must be on its own line
-    } Else
-      SetTimer, %A_ThisFunc%, Off
-    LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
-    If (Text = "") {
-      SendInput, ^c
-      ClipWait, LongCopy ? 0.6 : 0.2, True
-    } Else {
-      Clipboard := LastClip := Text
-      ClipWait, 10
-      SendInput, ^v
-    }
-    if !NoRestore  ; for scripts that restore clipboard at the end
-      SetTimer, %A_ThisFunc%, -700
-    Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
-    If (Text = "")
-      Return LastClip := Clipboard
-    Else If ReSelect and ((ReSelect = True) or (StrLen(Text) < 3000))
-      SendInput, % "{Shift Down}{Left " StrLen(StrReplace(Text, "`r")) "}{Shift Up}"
+  if (!NoRestore) {
+    global WinClip
+    WinClip.Snap(ClipData)
   }
-  Return
-  Clip:
-  Return Clip()
+  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  If (Text = "") {
+    SendInput, ^c
+    ClipWait, LongCopy ? 0.6 : 0.2, True
+    Clipped := Clipboard
+  } Else {
+    Clipboard := Text
+    ClipWait, 10
+    SendInput, ^v
+    Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
+  }
+  If (Text && ReSelect) {
+    SendInput, % "{Shift Down}{Left " StrLen(StrReplace(Text, "`r")) "}{Shift Up}"
+  }
+  if (!NoRestore)  ; for scripts that restore clipboard at the end
+    WinClip.Restore(ClipData)
+  If (Text = "")
+    Return Clipped
 }

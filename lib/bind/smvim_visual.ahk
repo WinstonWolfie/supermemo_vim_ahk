@@ -4,11 +4,6 @@
 .::  ; selected text becomes [...]
   Clip("<span class=""Cloze"">[...]</span>", true)
   send ^+1
-  ; ClipSave := ClipboardAll
-  ; SetClipboardHTML("<span class=""Cloze"">[...]</span>")
-  ; ClipWait 1
-  ; send ^v 
-  ; Clipboard := ClipSave
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -18,11 +13,12 @@ a::  ; p*a*rse html
   Vim.State.SetMode("Vim_Normal")
 return
 
-+a::
+!a::  ; parse ht*m*l
+  KeyWait alt
   Vim.State.SetMode("Vim_Normal")
   Gui, HTMLTag:Add, Text,, &HTML tag:
-  list := "H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM|cloze|clozed|extract|SUB|SUP"
-  Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, %list%
+  list := "H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM|cloze|clozed|extract|SUB|SUP|BLOCKQUOTE"
+  Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, Button, default, &Add
   Gui, HTMLTag:Show,, Add HTML Tag
 Return
@@ -35,24 +31,23 @@ return
 HTMLTagButtonAdd:
   Gui, Submit
   Gui, Destroy
+  WinClip.Snap(ClipData)
   WinActivate, ahk_class TElWind
-  if (tag == "cloze" || tag == "extract" || tag == "clozed")
-    clip("<SPAN class=" . tag . ">" . clip() . "</SPAN>", true)
-  else
-    clip("<" . tag . ">" . clip() . "</" . tag . ">", true)
+  if (tag == "cloze" || tag == "extract" || tag == "clozed") {
+    StartingTag := "<SPAN class=" . tag
+    EndingTag := "</SPAN>"
+    tag := ""
+  } else {
+    StartingTag := "<" 
+    EndingTag := ">" 
+  }
+  clip(StartingTag . tag . ">" . clip("",, true) . "</" . tag . EndingTag, true, true)
   send ^+1
+  WinClip.Restore(ClipData)
 Return
 
 m::  ; highlight: *m*ark
-  DetectHiddenWindows, On
-  WinGet, vWinList, List, ahk_class TPUtilWindow
-  Loop, %vWinList%
-  {
-    hWnd := vWinList%A_Index%
-    WinGet, vWinProcess, ProcessName, ahk_id %hWnd%
-    if (vWinProcess = "sm18.exe")
-      SendMessage,0x111,815,0,,ahk_id %hWnd%
-  }
+  send {AppsKey}rh  ; highlight
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -61,11 +56,30 @@ q::  ; extract (*q*uote)
   Vim.State.SetMode("Vim_Normal")
 return
 
-extract_stay:
++h::  ; move to top of screen
+  send {shift down}
+  Vim.SM.ClickTop()
+  send {shift up}
+Return
+
++m::  ; move to middle of screen
+  send {shift down}
+  Vim.SM.ClickMid()
+  send {shift up}
+Return
+
++l::  ; move to bottom of screen
+  send {shift down}
+  Vim.SM.ClickButtom()
+  send {shift up}
+Return
+
+ExtractStay:
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind")
 ^!x::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^q::  ; extract (*q*uote)
+  ReleaseKey("ctrl")
   send !x
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.WaitProcessing()
@@ -82,17 +96,17 @@ z::  ; clo*z*e
   Vim.State.SetMode("Vim_Normal")
 return
 
-cloze_stay:
+ClozeStay:
 #If Vim.IsVimGroup() and WinActive("ahk_class TElWind")
 ^!z::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^z::
+  ReleaseKey("ctrl")
   send !z
   Vim.State.SetMode("Vim_Normal")
-  WinWaitActive, ahk_class TMsgDialog,, 0  ; warning on trying to cloze on items
-  if !ErrorLevel
-    return
   Vim.SM.WaitProcessing()
+  if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items
+    Return
   send !{left}
 Return
 
@@ -101,19 +115,21 @@ Return
   Vim.State.SetMode("Vim_Normal")
 Return
 
-cloze_hinter:
+ClozeHinter:
 #If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 ^!+z::
 !+z::
 #If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^+z::
 +z::  ; cloze hinter
-  if (cloze_hinter_ctrl_state && A_ThisLabel == "cloze_hinter") {  ; from cloze hinter label and ctrl is down
-    ctrl_state := 1
-    cloze_hinter_ctrl_state := 0
+  if (ClozeHinterCtrlState && A_ThisLabel == "ClozeHinter") {  ; from cloze hinter label and ctrl is down
+    CtrlState := 1
+    ClozeHinterCtrlState := 0
   } else {
-    ctrl_state := GetKeyState("Ctrl")
+    CtrlState := InStr(A_ThisHotkey, "^")
   }
+  ReleaseKey("ctrl")
+  ReleaseKey("shift")
   InitialText := Clip()
   Gui, ClozeHinter:Add, Text,, &Hint:
   Gui, ClozeHinter:Add, Edit, vHint w196, % InitialText
@@ -139,6 +155,8 @@ ClozeHinterButtonCloze:
   Vim.ToolTip("Cloze hinting...", true)
   sleep_calculation := A_TickCount
   Vim.SM.WaitProcessing()
+  if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items
+    Return
   send !{left}
   sleep % (A_TickCount - sleep_calculation) / 3 * 2
   send q
@@ -160,6 +178,7 @@ ClozeHinterButtonCloze:
       if (ErrorLevel)
         Return
     }
+		SetDefaultKeyboard(0x0409)  ; english-US	
 		SendInput {raw}[...]
 		send {enter}
 		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
@@ -173,9 +192,12 @@ ClozeHinterButtonCloze:
 		if WinExist("ahk_class TMyFindDlg") ; clears search box window
 			WinClose
   }
-  if !ctrl_state  ; only goes back to topic if ctrl is up
+  if (!CtrlState) {  ; only goes back to topic if ctrl is up
     send !{right}  ; add a ctrl to keep editing the clozed item
-  else  ; refresh if staying in the cloze item
-    send !{home}!{left}
+  } else {  ; refresh if staying in the cloze item
+    send !{home}
+    sleep 100
+    send !{left}
+  }
   Gosub RemoveToolTip
 return
