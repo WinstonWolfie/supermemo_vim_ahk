@@ -430,7 +430,7 @@ TreeView:
 	if g_skipTvEvent
 		return
 
-	Gui, Submit, NoHide
+	gui submit, NoHide
 	if (A_GuiEvent = "S") {
 		ToggleThreadDpiAwareness( AccWindowFromObject(TVobj[A_EventInfo].obj) )
 		UpdateAccInfo(TVobj[A_EventInfo].obj, TVobj[A_EventInfo].childid, TVobj[A_EventInfo].obj_path)
@@ -1045,11 +1045,11 @@ RestoreCursors() {
 
 
 ; ====================================================================
-#If WinActive("ahk_id " Win.Acc) || WinActive("ahk_id " Win.Main)
+#if WinActive("ahk_id " Win.Acc) || WinActive("ahk_id " Win.Main)
 	^g::gotoPath()
 ; 	^BackSpace::gotoParentAcc()
 ; 	^Home::gotoRootAcc()
-#If
+#if
 
 _InputBox(Title:="", oParam := "")
 {

@@ -51,23 +51,23 @@ class VimSM {
     }
   }
 
-  ClickButtom() {
+  ClickBottom() {
     if (this.IsEditingText()) {
       ControlGetFocus, CurrentFocus, ahk_class TElWind
       ControlGetPos,,,, Height, % CurrentFocus, ahk_class TElWind
-      ControlClick, % CurrentFocus, ahk_class TElWind,,,, % "NA x1 y" . Height - 1
+      ControlClick, % CurrentFocus, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
     } else {
       ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server2, ahk_class TElWind  ; server2 because question field of items are server2
       if (XCoord) {  ; item
-        ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, % "NA x1 y" . Height - 1
+        ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
       } else {  ; topic
         ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server1, ahk_class TElWind  ; article field in topics is server1
         if (XCoord) {  ; topic found
-          ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height - 1
+          ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
         } else {  ; no html field found
           ControlGetPos, XCoord, YCoord, Width, Height, TMemo1, ahk_class TElWind
           if (XCoord) {  ; question field of plain text item
-            ControlClick, TMemo1, ahk_class TElWind,,,, % "NA x1 y" . Height - 1
+            ControlClick, TMemo1, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
           } else {  ; no text
             return false
           }
@@ -92,39 +92,45 @@ class VimSM {
   IsGrading() {
     ControlGetFocus, CurrentFocus
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
-    return (WinActive("ahk_class TElWind") && (CurrentFocus == "TBitBtn4" || CurrentFocus == "TBitBtn5" || CurrentFocus == "TBitBtn6" || CurrentFocus == "TBitBtn7" || CurrentFocus == "TBitBtn8" || CurrentFocus == "TBitBtn9"))
+    return (WinActive("ahk_class TElWind")
+         && (CurrentFocus == "TBitBtn4"
+          || CurrentFocus == "TBitBtn5"
+          || CurrentFocus == "TBitBtn6"
+          || CurrentFocus == "TBitBtn7"
+          || CurrentFocus == "TBitBtn8"
+          || CurrentFocus == "TBitBtn9"))
   }
   
   IsNavigatingPlan() {
-    Return (WinActive("ahk_class TPlanDlg") && ControlGetFocus() == "TStringGrid1")
+    return (WinActive("ahk_class TPlanDlg") && ControlGetFocus() == "TStringGrid1")
   }
   
   IsNavigatingTask() {
-    Return (WinActive("ahk_class TTaskManager") && ControlGetFocus() == "TStringGrid1")
+    return (WinActive("ahk_class TTaskManager") && ControlGetFocus() == "TStringGrid1")
   }
-  
+
   IsNavigatingContentWindow() {
-    Return (WinActive("ahk_class TContents") && ControlGetFocus() == "TVirtualStringTree1")
+    return (WinActive("ahk_class TContents") && ControlGetFocus() == "TVirtualStringTree1")
   }
-  
+
+  IsNavigatingBrowser() {
+    return (WinActive("ahk_class TBrowser") && ControlGetFocus() == "TStringGrid1")
+  }
+
   SetPriority(min, max) {
-    send !p
-    Random, OutputVar, %min%, %max%
-    SendInput {raw}%OutputVar%
-    send {enter}
+    send !p  ; open priority window
+    send % random(min, max) . "{enter}"
     this.Vim.State.SetNormal()
   }
 
   SetTaskValue(min, max) {
-    send !v
-    Random, OutputVar, %min%, %max%
-    SendInput {raw}%OutputVar%
-    send {tab}
+    send !v  ; focus to task value
+    send % random(min, max) . "{tab}"
     this.Vim.State.SetNormal()
   }
 
   MoveAboveRef(NoRestore:=false) {
-    Send ^{End}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
+    send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
     if (InStr(clip("",, NoRestore), "#SuperMemo Reference:")) {
       send {up 2}
     } else {
@@ -138,20 +144,20 @@ class VimSM {
       if (WinActive("ahk_class TProgressBox")) {
         continue
       } else if (WinActive("ahk_class TElWind") && !this.IsEditingText()) {
-        Return True
+        return True
       } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-        Return False
+        return False
       }
     }
   }
 
   WaitTextFocus(Timeout:=2000) {
     StartTime := A_TickCount
-    Loop {
+    loop {
       if (this.IsEditingText()) {
-        Return True
+        return True
       } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-        Return False
+        return False
       }
     }
   }
@@ -209,11 +215,12 @@ class VimSM {
 
   IsLearning() {
     ControlGetText, CurrentText, TBitBtn3
-    return (WinActive("ahk_class TElWind") && (CurrentText == "Next repetition" || CurrentText == "Show answer"))
+    return (WinActive("ahk_class TElWind")
+         && (CurrentText == "Next repetition" || CurrentText == "Show answer"))
   }
 
   PlayIfCertainCollection() {
-    RegExMatch(WinGetText(), "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", CollectionName)
+    CollectionName := this.GetCollectionName()
     if (CollectionName = "passive" || CollectionName = "music") {
       StartTime := A_TickCount
       Loop {
@@ -224,6 +231,11 @@ class VimSM {
           return false
         }
       }
+    } else if (CollectionName = "gaming") {
+      ControlTextWait("TBitBtn3", "Next repetition")
+      link := this.GetLinkFromElement()
+      if (link)
+        run % "msedge.exe " . link
     }
   }
 
@@ -234,5 +246,48 @@ class VimSM {
     WinWaitNotActive, ahk_class TElWind,, 5
     WinClose, ahk_class Notepad
     WinActivate, ahk_class TElWind
+  }
+
+  GetCollectionName() {
+    RegExMatch(WinGetText(), "(?<=\r\n)(.*?)(?= \(SuperMemo)", CollectionName)
+    return CollectionName
+  }
+
+  GetLinkFromElement() {
+    this.WinClip.Snap(ClipData)
+    LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+    send !{f10}tc  ; copy template
+    ClipWait, LongCopy ? 0.6 : 0.2, True
+    if (InStr(Clipboard, "Link:")) {
+      RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", link)
+      return link
+    }
+    this.WinClip.Restore(ClipData)
+  }
+
+  SetTitle(title, method:="!c") {
+    if (method == "!c") {
+      send !c
+      WinWaitActive, ahk_class TContents,, 2
+      ControlFocusWait("TVirtualStringTree1",,,,,1000)
+      send {f2}
+      ControlFocusWait("TVTEdit1",,,,, 1000)
+      clip(title)
+      send {esc}
+    } else if (method == "!t") {
+      send !t
+      GroupAdd, SMAltT, ahk_class TChoicesDlg
+      GroupAdd, SMAltT, ahk_class TTitleEdit
+      WinWaitActive, ahk_group SMAltT,, 2
+      if (WinActive("ahk_class TChoicesDlg")) {
+        send {enter}
+        WinWaitActive, ahk_class TTitleEdit,, 2
+      }
+      if (WinActive("ahk_class TTitleEdit")) {
+        ControlFocusWait("TMemo1")
+        clip(title)
+        send {enter}
+      }
+    }
   }
 }

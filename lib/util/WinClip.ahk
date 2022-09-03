@@ -5,7 +5,7 @@
     this.isinstance := 1
     this.allData := ""
   }
- 
+
   _toclipboard( ByRef data, size )
   {
     if !WinClipAPI.OpenClipboard()
@@ -45,7 +45,7 @@
     WinClipAPI.CloseClipboard()
     return lastPartOffset
   }
-  
+
   _fromclipboard( ByRef clipData )
   {
     if !WinClipAPI.OpenClipboard()

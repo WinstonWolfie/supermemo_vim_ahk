@@ -1,6 +1,6 @@
 ﻿; Grading
 ; Inspired by MasterHowToLearn's SuperMemoVim
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsGrading())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsGrading())
 ; Conflict with focusing to answer
 ; a::
 s::

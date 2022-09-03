@@ -1,4 +1,4 @@
-﻿#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
+﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
 ; Undo/Redo
 u::Send,^z
 ^r::Send,^y
@@ -20,7 +20,7 @@ u::Send,^z
 Return
 
 +z::Vim.State.SetMode("Z")
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::
   send ^s
   send !{F4}
@@ -32,18 +32,18 @@ Return
   Vim.State.SetMode("Vim_Normal")
 Return
 
-; #If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
+; #if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
 ; Space::send {Right}
 
 ; period
 ; .::send +^{Right}{BS}^v
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
+#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
 ^e::Vim.Move.Repeat("^e")
 ^y::Vim.Move.Repeat("^y")
 
 ; Q-dir
-#If Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")
+#if Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")
 ; For Q-dir, ^X mapping does not work, use !X instead.
 ; ^X does not work to be sent, too, use Down/Up
 ; switch to left top (1), right top (2), left bottom (3), right bottom (4)
@@ -57,4 +57,4 @@ Return
 ~e::
 Return
 
-#If
+#if

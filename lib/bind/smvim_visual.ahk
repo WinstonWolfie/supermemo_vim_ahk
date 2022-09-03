@@ -1,4 +1,4 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && Vim.SM.IsEditingHTML()
+﻿#if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && Vim.SM.IsEditingHTML()
 ~^+i::Vim.State.SetMode("Vim_Normal")  ; ignore
 
 .::  ; selected text becomes [...]
@@ -17,7 +17,7 @@ return
   KeyWait alt
   Vim.State.SetMode("Vim_Normal")
   Gui, HTMLTag:Add, Text,, &HTML tag:
-  list := "H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM|cloze|clozed|extract|SUB|SUP|BLOCKQUOTE"
+  list := "H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM|cloze|clozed|extract|SUB|SUP|BLOCKQUOTE|RUBY"
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, Button, default, &Add
   Gui, HTMLTag:Show,, Add HTML Tag
@@ -25,18 +25,27 @@ Return
 
 HTMLTagGuiEscape:
 HTMLTagGuiClose:
-  Gui, Destroy
+  gui destroy
 return
 
 HTMLTagButtonAdd:
-  Gui, Submit
-  Gui, Destroy
+  gui submit
+  gui destroy
   WinClip.Snap(ClipData)
   WinActivate, ahk_class TElWind
   if (tag == "cloze" || tag == "extract" || tag == "clozed") {
     StartingTag := "<SPAN class=" . tag
     EndingTag := "</SPAN>"
     tag := ""
+  } else if (tag = "ruby") {
+    InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above`, like Pinyin,, 272, 144
+    if (ErrorLevel || !UserInput)
+      return
+    clip("<RUBY>" . clip("",, true) . "<RP>(</RP><RT>" . UserInput
+                                                       . "</RT><RP>)</RP></RUBY>", true, true)
+    send ^+1
+    WinClip.Restore(ClipData)
+    return
   } else {
     StartingTag := "<" 
     EndingTag := ">" 
@@ -70,14 +79,14 @@ Return
 
 +l::  ; move to bottom of screen
   send {shift down}
-  Vim.SM.ClickButtom()
+  Vim.SM.ClickBottom()
   send {shift up}
 Return
 
 ExtractStay:
-#If Vim.IsVimGroup() and WinActive("ahk_class TElWind")
+#if Vim.IsVimGroup() and WinActive("ahk_class TElWind")
 ^!x::
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
+#if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^q::  ; extract (*q*uote)
   ReleaseKey("ctrl")
   send !x
@@ -97,9 +106,9 @@ z::  ; clo*z*e
 return
 
 ClozeStay:
-#If Vim.IsVimGroup() and WinActive("ahk_class TElWind")
+#if Vim.IsVimGroup() and WinActive("ahk_class TElWind")
 ^!z::
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
+#if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^z::
   ReleaseKey("ctrl")
   send !z
@@ -116,10 +125,10 @@ Return
 Return
 
 ClozeHinter:
-#If Vim.IsVimGroup() && WinActive("ahk_class TElWind")
+#if Vim.IsVimGroup() && WinActive("ahk_class TElWind")
 ^!+z::
 !+z::
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
+#if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^+z::
 +z::  ; cloze hinter
   if (ClozeHinterCtrlState && A_ThisLabel == "ClozeHinter") {  ; from cloze hinter label and ctrl is down
@@ -134,41 +143,50 @@ ClozeHinter:
   Gui, ClozeHinter:Add, Text,, &Hint:
   Gui, ClozeHinter:Add, Edit, vHint w196, % InitialText
   Gui, ClozeHinter:Add, CheckBox, vInside, &Inside square brackets
+  Gui, ClozeHinter:Add, CheckBox, vFullWidthChars, &Use fullwidth characters
   Gui, ClozeHinter:Add, Button, default, Clo&ze
   Gui, ClozeHinter:Show,, Cloze Hinter
 Return
 
 ClozeHinterGuiEscape:
 ClozeHinterGuiClose:
-  Gui, Destroy
+  gui destroy
   Vim.State.SetMode("Vim_Normal")
 return
 
 ClozeHinterButtonCloze:
-  Gui, Submit
-  Gui, Destroy
+  gui submit
+  gui destroy
   WinActivate, ahk_class TElWind
   send !z
   Vim.State.SetMode("Vim_Normal")
   if (!hint)  ; entered nothing
     return
   Vim.ToolTip("Cloze hinting...", true)
-  sleep_calculation := A_TickCount
+  SleepCalc := A_TickCount
   Vim.SM.WaitProcessing()
   if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items
-    Return
+    return
   send !{left}
-  sleep % (A_TickCount - sleep_calculation) / 3 * 2
+  sleep % (A_TickCount - SleepCalc) / 3 * 2
   send q
   if (Inside) {
+    if (FullWidthChars)
+      hint := StrReplace(hint, "/", "／")
     cloze := hint . "]"
   } else {
-    cloze := "...](" . hint . ")"
+    if (FullWidthChars) {
+      cloze := "...]（" . hint . "）"
+    } else {
+      cloze := "...](" . hint . ")"
+    }
   }
   Vim.SM.WaitTextFocus()
   if (Vim.SM.IsEditingPlainText()) {  ; editing plain text
     send ^a
-    clip(StrReplace(clip(), "[...]", "[" . cloze))
+    WinClip.Snap(ClipData)
+    clip(StrReplace(clip("",, true), "[...]", "[" . cloze),, true)
+    WinClip.Restore(ClipData)
   } else if (Vim.SM.IsEditingHTML()) {
     send {f3}
     WinWaitActive, ahk_class TMyFindDlg,, 0
@@ -176,7 +194,7 @@ ClozeHinterButtonCloze:
       send {esc}^{enter}h{enter}{f3}
       WinWaitActive, ahk_class TMyFindDlg,, 0
       if (ErrorLevel)
-        Return
+        return
     }
 		SetDefaultKeyboard(0x0409)  ; english-US	
 		SendInput {raw}[...]
@@ -184,12 +202,12 @@ ClozeHinterButtonCloze:
 		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
 		send ^{enter}
 		WinWaitActive, ahk_class TCommanderDlg,, 0
-		if ErrorLevel
+		if (ErrorLevel)
 			return
-		send h{enter}q{left}{right} ; put the caret after the [ of [...]
-		clip(cloze)
-		SendInput {del 4} ; delete ...] ; somehow, here send wouldn't be working well in slow computers
-		if WinExist("ahk_class TMyFindDlg") ; clears search box window
+		send h{enter}q{left}{right}  ; put the caret after the [ of [...]
+		WinClip.Paste(cloze)  ; works slightly better than clip()
+		send {del 4}  ; delete ...]
+		if (WinExist("ahk_class TMyFindDlg")) ; clears search box window
 			WinClose
   }
   if (!CtrlState) {  ; only goes back to topic if ctrl is up

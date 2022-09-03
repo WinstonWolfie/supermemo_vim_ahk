@@ -1,8 +1,8 @@
-﻿#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
+﻿#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
 r::Vim.State.SetMode("r_once")
 +r::Vim.State.SetMode("r_repeat")
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("r_once"))
+#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("r_once"))
 ~a::
 ~+a::
 ~b::
@@ -106,7 +106,7 @@ Return
   Vim.State.SetMode("Vim_Normal")
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("r_repeat"))
+#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("r_repeat"))
 ~a::
 ~+a::
 ~b::
@@ -208,4 +208,4 @@ Return
   send {:}{Del}
 Return
 
-#If
+#if

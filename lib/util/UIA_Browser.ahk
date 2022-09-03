@@ -17,7 +17,7 @@ class UIA_Browser {
 			this.GetCurrentMainPaneElement()
 		}
 	}
-	
+
 	__Get(member) {
 		if member not in base 
 		{
@@ -31,7 +31,7 @@ class UIA_Browser {
 			}
 		}
 	}
-	
+
 	__Call(member, params*) {
 		if !ObjHasKey(this.base, member) {
 			try
@@ -49,7 +49,7 @@ class UIA_Browser {
 			throw Exception("Method call not supported by " this.__Class " nor UIA_Interface or UIA_Element class or an error was encountered.",-1,member)
 		}
 	}
-	
+
 	GetCurrentMainPaneElement() { ; Refreshes UIA_Browser.MainPaneElement and also returns it
 		static EditControlCondition, EditNameCondition, EditAndCondition, ToolbarControlCondition
 		if !EditControlCondition
@@ -68,27 +68,27 @@ class UIA_Browser {
 		
 		return this.MainPaneElement := this.TWT.GetParentElement(this.NavigationBarElement)
 	}
-	
+
 	GetCurrentDocumentElement() { ; Returns the current document/content element of the browser
 		static docType
 		if !docType
 			docType := this.UIA.CreatePropertyCondition(this.UIA.ControlTypePropertyId, this.UIA.DocumentControlTypeId)
 		return this.BrowserElement.FindFirst(docType)
 	}
-	
+
 	JSSetTitle(newTitle) {
 		this.SetURL("javascriptdocument.title=""" js """; void(0);", True)
 	}
-	
+
 	JSExecute(js) {
 		this.SetURL("javascript:" js, True)
 	}
-	
+
 	JSAlert(js, closeAlert=True, timeOut=3000) {
 		this.SetURL("javascript:alert(" js ");", True)
 		return this.GetAlertText(closeAlert, timeOut)
 	}
-	
+
 	JSReturnThroughClipboard(js) {
 		saveClip := ClipboardAll
 		Clipboard=
@@ -99,7 +99,7 @@ class UIA_Browser {
 		saveClip=
 		return returnText
 	}
-	
+
 	JSReturnThroughTitle(js, timeOut=500) {
 		WinGetTitle, origTitle, % "ahk_id " this.BrowserId
 		this.SetURL("javascript:origTitle=document.title;document.title=(" js ");void(0);setTimeout(function() {document.title=origTitle;void(0);}, " timeOut ")", True)
@@ -110,7 +110,7 @@ class UIA_Browser {
 		} Until ((origTitle != newTitle) || (A_TickCount - startTime > timeOut))
 		return (origTitle == newTitle) ? "" : RegexReplace(newTitle, "(?: - Personal)? - [^-]+$")
 	}
-	
+
 	GetAlertText(closeAlert=True, timeOut=3000) {
 		static DialogCondition, DialogTW
 		if !IsObject(DialogCondition)
@@ -127,7 +127,7 @@ class UIA_Browser {
 		}
 		return text
 	}
-	
+
 	CloseAlert() {
 		static DialogCondition, DialogTW
 		if !IsObject(DialogCondition)
@@ -138,7 +138,7 @@ class UIA_Browser {
 			OKBut.Click()
 		}
 	}
-	
+
 	GetAllText() { ; Gets all text from the browser element (CurrentName properties for all child elements)
 		if !this.IsBrowserVisible()
 			WinActivate, % "ahk_id" this.BrowserId
@@ -157,7 +157,7 @@ class UIA_Browser {
 		return this.BrowserElement.FindAll(LinkCondition)
 
 	}
-	
+
 	__CompareTitles(compareTitle, winTitle) {
 		if (A_TitleMatchMode == 1) {
 			if (SubStr(winTitle, 1, StrLen(compareTitle)) == compareTitle)
@@ -174,7 +174,7 @@ class UIA_Browser {
 		}
 		return 0
 	}
-	
+
 	WaitTitleChange(targetTitle="", timeOut=10000) { ; Waits the browser title to change to targetTitle (by default just waits for the title to change), timeOut is in milliseconds (default is 10 seconds)
 		WinGetTitle, origTitle, % "ahk_id" this.BrowserId
 		startTime := A_TickCount, newTitle := origTitle
@@ -183,7 +183,7 @@ class UIA_Browser {
 			WinGetActiveTitle, newTitle
 		}
 	}
-	
+
 	WaitPageLoad(targetTitle="", timeOut=10000, sleepAfter=500) { ; Waits the browser page to load to targetTitle, default timeOut is 10 seconds, sleepAfter additionally sleeps for 500ms after the page has loaded. In Edge browser this just waits for the title to change, so its better to use the WaitElementExist function.
 		if (this.BrowserType != "Chrome") {
 			this.WaitTitleChange(targetTitle, timeOut)
@@ -213,11 +213,11 @@ class UIA_Browser {
 		if ((A_TickCount - startTime) < timeOut)
 			Sleep, %sleepAfter%
 	}
-	
+
 	Back() { ; Presses the Back button
 		this.TWT.GetFirstChildElement(this.NavigationBarElement).Click()
 	}
-	
+
 	Forward() { ; Presses the Forward button
 		this.TWT.GetNextSiblingElement(this.TWT.GetFirstChildElement(this.NavigationBarElement)).Click()
 	}
@@ -238,7 +238,7 @@ class UIA_Browser {
 		ButtonCondition := this.UIA.CreatePropertyCondition(this.UIA.ControlTypePropertyId, UIA_Enum.UIA_ControlTypeId("Button"))
 		this.NavigationBarElement.FindFirst(this.UIA.CreateAndCondition(NameCondition, ButtonCondition)).Click()
 	}
-	
+
 	GetCurrentURL(fromAddressBar=False) { ; Gets the current URL. fromAddressBar=True gets it straight from the URL bar element, which is not a very good method, because the text might be changed by the user and doesn't start with "http(s)://". Default of fromAddressBar=False will cause the real URL to be fetched, but the browser must be visible for it to work (if is not visible, it will be automatically activated).
 		if fromAddressBar {
 			URL := this.URLEditElement.CurrentValue
@@ -251,7 +251,7 @@ class UIA_Browser {
 			return this.GetCurrentDocumentElement().CurrentValue
 		}
 	}
-	
+
 	SetURL(newUrl, navigateToNewUrl = False) { ; Sets the URL bar to newUrl, optionally also navigates to it if navigateToNewUrl=True
 		this.URLEditElement.SetFocus()
 		valuePattern := this.URLEditElement.GetCurrentPatternAs("Value")

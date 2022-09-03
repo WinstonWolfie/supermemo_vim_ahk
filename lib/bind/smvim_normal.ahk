@@ -1,25 +1,28 @@
 ﻿; Editing text only
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
 +h::  ; move to top of screen
   ReleaseKey("shift")  ; to avoid clicking becomes selecting
   Vim.SM.ClickTop()
+  send {shift}
 Return
 
 +m::  ; move to middle of screen
   ReleaseKey("shift")  ; to avoid clicking becomes selecting
   Vim.SM.ClickMid()
+  send {shift}
 Return
 
 +l::  ; move to bottom of screen
   ReleaseKey("shift")  ; to avoid clicking becomes selecting
-  Vim.SM.ClickButtom()
+  Vim.SM.ClickBottom()
+  send {shift}
 Return
 
 ; Editing HTML
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML())
 ^c::send {home}>{space}
 
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
 +x::
 x::  ; open hyperlink in current caret position (Open in *n*ew window)
   ReleaseKey("shift")
@@ -43,11 +46,12 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
         if (!CurrentLink) {
           Vim.ToolTip("No link found.")
         } else if (InStr(CurrentLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
+          send {left}  ; otherwise it won't click the link
           click(A_CaretX, A_CaretY, "right")
           send n
         } else {
           if (Shift) {
-            Run % "iexplore.exe " . CurrentLink
+            run % "iexplore.exe " . CurrentLink
           } else {
             run % CurrentLink
           }
@@ -58,14 +62,14 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
       send n
     } else {
       if (Shift) {
-        Run % "iexplore.exe " . CurrentLink
+        run % "iexplore.exe " . CurrentLink
       } else {
         run % CurrentLink
       }
     }
   }
   Vim.State.SetMode()
-  clipboard := ClipSaved
+  WinClip.Restore(ClipData)
 return
 
 s::
@@ -83,12 +87,12 @@ s::
   send !{f12}fc  ; copy file path
   ClipWait 1
   if (!Clipboard) {
-    Clipboard := ClipSaved
+    WinClip.Restore(ClipData)
     return
   }
-  Run % "C:\Program Files (x86)\Vim\vim82\gVim.exe " . Clipboard
+  run % "C:\Program Files (x86)\Vim\vim82\gVim.exe " . Clipboard
   Vim.State.SetMode()
-  Clipboard := ClipSaved
+  WinClip.Restore(ClipData)
   WinWaitNotActive % "ahk_id " . hwnd
   WinWaitActive % "ahk_id " . hwnd
   send !{home}
@@ -98,4 +102,15 @@ s::
     sleep 100
     send !{left}
   }
-Return
+return
+
+#if (Vim.State.Vim.Enabled
+  && Vim.State.IsCurrentVimMode("Vim_Normal")
+  && (WinActive("ahk_class TElWind")
+   || WinActive("ahk_class TContents")
+   || WinActive("ahk_class TBrowser")))
+!h::send !{left}
+!l::send !{right}
+!j::send !{pgdn}
+!k::send !{pgup}
+!u::send ^{up}

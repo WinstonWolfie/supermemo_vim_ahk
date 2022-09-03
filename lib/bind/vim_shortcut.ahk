@@ -1,44 +1,29 @@
 ﻿; Launch Settings
-#If Vim.State.Vim.Enabled
+#if (Vim.State.Vim.Enabled)
 ^!+v::
   Vim.Setting.ShowGui()
 Return
 
 ; Check Mode
-#If Vim.IsVimGroup()
+#if (Vim.IsVimGroup())
 ^!+c::
   Vim.State.CheckMode(4, Vim.State.Mode)
 Return
 
 ; Suspend/restart
 ; Every other shortcut is disabled when vim_ahk is disabled, save for this one
-#If
+#if
 ^!+s::
   Vim.State.ToggleEnabled()
 Return
 
 ; Testing
 ; ^!+t::
-;   loop {
-;     Vim.ToolTip("Current caret: " . A_CaretX)
-;   }
-; Return
-
-; ^!+t::SetDefaultKeyboard(0x0409) ; english-US
-; UIA := UIA_Interface() ; Initialize UIA interface
-; WinActivate, ahk_class TElWind
-; npEl := UIA.ElementFromHandle(WinExist("ahk_class TElWind")) ; Get the element for the Notepad window
-; MsgBox, % npEl.DumpAll() ; Display all the sub-elements for the Notepad window. Press OK to continue
-; documentEl := npEl.FindFirstByType("Document") ; Find the first Document control (in Notepad there is only one). This assumes the user is running a relatively recent Windows and UIA interface version 2+ is available. In UIA interface v1 this control was Edit, so an alternative option instead of "Document" would be "UIA.__Version > 1 ? "Document" : "Edit""
-; documentEl.SetValue("Lorem ipsum") ; Set the value of the document control
-; MsgBox, Press OK to test saving. ; Wait for the user to press OK
-; fileEl := npEl.FindFirstByNameAndType("File", "MenuItem").Click() ; Click the "File" menu item
-; saveEl := npEl.WaitElementExistByName("Save",,2) ; Wait for the "Save" menu item to exist
-; saveEl.Click() ; And now click Save
-; Return
+;   run, % ComSpec . " /c python -m http.server", C:\SuperMemo\server, hide
+; return
 
 ; Shortcuts
-#If (Vim.State.Vim.Enabled)
+#if (Vim.State.Vim.Enabled)
 ^!r::Reload
 
 LAlt & RAlt::  ; for laptop
@@ -51,7 +36,7 @@ return
 #f::run % "C:\Program Files\Everything 1.5a\Everything64.exe"
 
 ; Browsers
-#If (Vim.State.Vim.Enabled && WinActive("ahk_group Browsers"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_group Browsers"))
 ^!w::send ^w!{tab}  ; close tab and switch back
 !l::
   if (WinActive("ahk_exe chrome.exe")) {
@@ -86,17 +71,19 @@ return
   LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  temp_clip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", "; ")
-  temp_clip := StrReplace(temp_clip, "`r`nSimilar", "`r`n`r`nSimilar")
-  temp_clip := StrReplace(temp_clip, "; Opposite", "`r`n`r`nOpposite")
-  temp_clip := StrReplace(temp_clip, "; Opuesta", "`r`n`r`nOpuesta")
-  temp_clip := StrReplace(temp_clip, "Opposite; ", "Opposite`r`n")
-  temp_clip := StrReplace(temp_clip, "Opuesta; ", "Opuesta`r`n")
-  Clipboard := StrReplace(temp_clip, "vulgar slang", "vulgar slang > ")
-  Vim.ToolTip("Copied:`n`n" . temp_clip)
+  TempClip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", ", ")
+  TempClip := StrReplace(TempClip, "`r`nSimilar`r`n", "`r`n`r`nsyn: ")
+  TempClip := StrReplace(TempClip, "Similar:`r`n", "`r`nsyn: ")
+  TempClip := StrReplace(TempClip, "Synonymes :`r`n", "`r`nsyn: ")
+  TempClip := StrReplace(TempClip, ", Opposite:`r`n", "`r`n`r`nant: ")
+  TempClip := StrReplace(TempClip, ", Opposite`r`n", "`r`n`r`nant: ")
+  TempClip := StrReplace(TempClip, ", Opuesta`r`n", "`r`n`r`nant: ")
+  TempClip := StrReplace(TempClip, "ant: , ", "ant: ")
+  Clipboard := StrReplace(TempClip, "vulgar slang", "vulgar slang > ")
+  Vim.ToolTip("Copied:`n`n" . TempClip)
 return
 
-^+!a::  ; import to supermemo
+^!a::  ; import to supermemo
 	ReleaseKey("ctrl")
 	ReleaseKey("shift")
   KeyWait alt
@@ -112,19 +99,21 @@ return
       Return
   }
   GetBrowserInfo(BrowserTitle, BrowserUrl, BrowserSource, BrowserDate)
-  if (Vim.HTML.ClipboardGet_HTML(Data)) {
+  if (Vim.HTML.ClipboardGet_HTML(data)) {
     HTML := Vim.HTML.Clean(data)
     RegExMatch(HTML, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", HTML)
     source := BrowserSource ? "<br>#Source: " . BrowserSource : ""
-    date := BrowserDate ? "<br>#Date: " . BrowserDate : "<br>#Date: Imported on " . CurrentTime
+    date := BrowserDate ? "<br>#Date: " . BrowserDate
+                        : "<br>#Date: Imported on " . CurrentTime
     clipboard := HTML
-                . "<br>#SuperMemo Reference:"
-                . "<br>#Link: " . BrowserUrl
-                . source
-                . date
-                . "<br>#Title: " . BrowserTitle
+               . "<br>#SuperMemo Reference:"
+               . "<br>#Link: " . BrowserUrl
+               . source
+               . date
+               . "<br>#Title: " . BrowserTitle
     ClipWait 10
     WinActivate, ahk_class TElWind
+    SetDefaultKeyboard(0x0409)  ; english-US	
     send ^{enter}h{enter}  ; clear search highlight, just in case
     WinWaitActive, ahk_class TElWind,, 0
     send ^n
@@ -150,7 +139,7 @@ return
   BrowserUrl := BrowserTitle := BrowserSource := BrowserDate := ""
   Vim.State.SetMode("Vim_Normal")
   sleep 700
-  clipboard := ClipSaved
+  WinClip.Restore(ClipData)
 Return
 
 ^!c::  ; copy and save references
@@ -167,7 +156,10 @@ Return
 return
 
 ; SumatraPDF/Calibre/MS Word to SuperMemo
-#If Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browsers") || WinActive("ahk_exe WINWORD.exe"))
+#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME")  ; SumatraPDF
+                            || WinActive("ahk_exe ebook-viewer.exe")     ; Calibre (a epub viewer)
+                            || WinActive("ahk_group Browsers")           ; browser group (chrome, edge, etc)
+                            || WinActive("ahk_exe WINWORD.exe")))        ; MS Word
 ^!x::
 !x::  ; pdf/epub extract to supermemo
   CtrlState := InStr(A_ThisHotkey, "^")
@@ -182,7 +174,6 @@ return
     return
   } else {
     WinGet, hwnd, ID, A
-    CleanExtract := false
     if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
       send a
     } else if (WinActive("ahk_exe ebook-viewer.exe")) {
@@ -226,15 +217,15 @@ return
   if (CtrlState) {
     send !{left}
   } else {
-    WinActivate, ahk_id %hwnd%
+    WinActivate % "ahk_id " . hwnd
   }
-  Clipboard := ClipSaved
+  WinClip.Restore(ClipData)
 return
 
 ; SumatraPDF
-#If (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && !Vim.State.IsCurrentVimMode("Z") && !A_CaretX && !ControlGetFocus())
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && !Vim.State.IsCurrentVimMode("Z") && !A_CaretX && !ControlGetFocus())
 +z::Vim.State.SetMode("Z")
-#If (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z") && !A_CaretX && !ControlGetFocus())
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z") && !A_CaretX && !ControlGetFocus())
 +z::  ; exit and save annotations
   send q
   WinWaitActive, Unsaved annotations,, 1
@@ -245,18 +236,18 @@ return
   Vim.State.SetMode("Vim_Normal")
 return
 
-#If (WinActive("ahk_class SUMATRA_PDF_FRAME"))
+#if (WinActive("ahk_class SUMATRA_PDF_FRAME"))
 !p::ControlFocus, Edit1, A  ; focus to page number field so you can enter a number
 
 ; IE
-#If (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ^+c::  ; open in default browser (in my case, chrome); similar to default shortcut ^+e to open in ms edge
   Vim.KeyRelease("ctrl")
   Vim.KeyRelease("shift")
   run % ControlGetText("Edit1")  ; browser url field
 Return
 
-#If (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
 !x::
   FormatTime, CurrentTime,, yyyy-MM-dd HH:mm:ss:%A_msec%
@@ -353,9 +344,9 @@ Return
   BrowserUrl := BrowserTitle := BrowserSource := ""
 Return
 
-#If (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm"))
 !p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
 
-#If (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
 ; Use English input method for choosing concept when import
 ~!g::SetDefaultKeyboard(0x0409)  ; english-US	

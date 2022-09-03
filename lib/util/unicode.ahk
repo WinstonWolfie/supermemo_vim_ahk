@@ -27,29 +27,27 @@
 
 ;; ========= CONDITION FUNCTIONS =====================================
 
-ActiveWindowTitle() {
-  global vim
-  WinGetTitle, title, A ;; A for active window
-  return Vim.State.IsCurrentVimMode("Insert_unicode") && title
-}
 EmacsCase() { 
   global vim
-  return Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class Emacs")
+  return (Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class Emacs"))
 }
+
 GtkApplicationCase() {
   global vim
-  return Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class gdkWindowToplevel")
+  return (Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class gdkWindowToplevel"))
 }
 
 ExcludedProgramCase() { 
   global vim
-  return Vim.State.IsCurrentVimMode("Insert_unicode") && 0
+  return (Vim.State.IsCurrentVimMode("Insert_unicode") && 0)
 }
+
 OtherCase() {
   global vim
-  return Vim.State.IsCurrentVimMode("Insert_unicode") && ( not EmacsCase() 
-    and not GtkApplicationCase()
-    and not ExcludedProgramCase() )
+  return (Vim.State.IsCurrentVimMode("Insert_unicode")
+       && !EmacsCase() 
+       && !GtkApplicationCase()
+       && !ExcludedProgramCase())
 }
 
 ;; ========= REQUIRED GLOBAL SETTINGS ================================
@@ -60,9 +58,9 @@ OtherCase() {
 EmacsEnabled = 0  ; For emacs there is (set-input-method "TeX") 
 Suspend
 
-#If Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Insert")
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Insert"))
 !^+u::Vim.State.SetMode("Insert_unicode")
-#If Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Insert_unicode")
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Insert_unicode"))
 !^+u::Vim.State.SetMode("Insert")
 
 ;; ========= TABLE OF SYMBOLS ========================================
@@ -1607,17 +1605,17 @@ Suspend
 
 ;; Glyph: '[' Descr: LEFT SQUARE BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lbrack::
 SendInput ^x8{Enter}5b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lbrack::
 SendInput ^+u5b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lbrack::
 SendInput {U+005B}
 return
@@ -1625,17 +1623,17 @@ return
 
 ;; Glyph: '\' Descr: REVERSE SOLIDUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\\::
 SendInput ^x8{Enter}5c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\\::
 SendInput ^+u5c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\\::
 SendInput {U+005C}
 return
@@ -1643,17 +1641,17 @@ return
 
 ;; Glyph: '\' Descr: REVERSE SOLIDUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\backslash::
 SendInput ^x8{Enter}5c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\backslash::
 SendInput ^+u5c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\backslash::
 SendInput {U+005C}
 return
@@ -1661,17 +1659,17 @@ return
 
 ;; Glyph: ']' Descr: RIGHT SQUARE BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rbrack::
 SendInput ^x8{Enter}5d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rbrack::
 SendInput ^+u5d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rbrack::
 SendInput {U+005D}
 return
@@ -1679,17 +1677,17 @@ return
 
 ;; Glyph: '{' Descr: LEFT CURLY BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lbrace::
 SendInput ^x8{Enter}7b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lbrace::
 SendInput ^+u7b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lbrace::
 SendInput {U+007B}
 return
@@ -1697,17 +1695,17 @@ return
 
 ;; Glyph: '|' Descr: VERTICAL LINE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vert::
 SendInput ^x8{Enter}7c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vert::
 SendInput ^+u7c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vert::
 SendInput {U+007C}
 return
@@ -1715,17 +1713,17 @@ return
 
 ;; Glyph: '}' Descr: RIGHT CURLY BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rbrace::
 SendInput ^x8{Enter}7d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rbrace::
 SendInput ^+u7d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rbrace::
 SendInput {U+007D}
 return
@@ -1733,17 +1731,17 @@ return
 
 ;; Glyph: '¡' Descr: INVERTED EXCLAMATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::!``::
 SendInput ^x8{Enter}a1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::!``::
 SendInput ^+ua1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::!``::
 SendInput {U+00A1}
 return
@@ -1751,17 +1749,17 @@ return
 
 ;; Glyph: '¢' Descr: CENT SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cent::
 SendInput ^x8{Enter}a2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cent::
 SendInput ^+ua2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cent::
 SendInput {U+00A2}
 return
@@ -1769,17 +1767,17 @@ return
 
 ;; Glyph: '£' Descr: POUND SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\pound::
 SendInput ^x8{Enter}a3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\pound::
 SendInput ^+ua3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\pound::
 SendInput {U+00A3}
 return
@@ -1787,17 +1785,17 @@ return
 
 ;; Glyph: '£' Descr: POUND SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\pounds::
 SendInput ^x8{Enter}a3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\pounds::
 SendInput ^+ua3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\pounds::
 SendInput {U+00A3}
 return
@@ -1805,17 +1803,17 @@ return
 
 ;; Glyph: '¤' Descr: CURRENCY SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\currency::
 SendInput ^x8{Enter}a4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\currency::
 SendInput ^+ua4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\currency::
 SendInput {U+00A4}
 return
@@ -1823,17 +1821,17 @@ return
 
 ;; Glyph: '¥' Descr: YEN SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\yen::
 SendInput ^x8{Enter}a5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\yen::
 SendInput ^+ua5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\yen::
 SendInput {U+00A5}
 return
@@ -1841,17 +1839,17 @@ return
 
 ;; Glyph: '§' Descr: SECTION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\S::
 SendInput ^x8{Enter}a7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\S::
 SendInput ^+ua7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\S::
 SendInput {U+00A7}
 return
@@ -1859,17 +1857,17 @@ return
 
 ;; Glyph: '§' Descr: SECTION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\section::
 SendInput ^x8{Enter}a7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\section::
 SendInput ^+ua7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\section::
 SendInput {U+00A7}
 return
@@ -1877,17 +1875,17 @@ return
 
 ;; Glyph: '¨' Descr: DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{}::
 SendInput ^x8{Enter}a8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{}::
 SendInput ^+ua8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{}::
 SendInput {U+00A8}
 return
@@ -1895,17 +1893,17 @@ return
 
 ;; Glyph: '©' Descr: COPYRIGHT SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\copyright::
 SendInput ^x8{Enter}a9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\copyright::
 SendInput ^+ua9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\copyright::
 SendInput {U+00A9}
 return
@@ -1913,17 +1911,17 @@ return
 
 ;; Glyph: 'ª' Descr: FEMININE ORDINAL INDICATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$^a$::
 SendInput ^x8{Enter}aa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$^a$::
 SendInput ^+uaa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$^a$::
 SendInput {U+00AA}
 return
@@ -1931,17 +1929,17 @@ return
 
 ;; Glyph: 'ª' Descr: FEMININE ORDINAL INDICATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ordfeminine::
 SendInput ^x8{Enter}aa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ordfeminine::
 SendInput ^+uaa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ordfeminine::
 SendInput {U+00AA}
 return
@@ -1949,17 +1947,17 @@ return
 
 ;; Glyph: '«' Descr: LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"<::
 SendInput ^x8{Enter}ab{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"<::
 SendInput ^+uab{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"<::
 SendInput {U+00AB}
 return
@@ -1967,17 +1965,17 @@ return
 
 ;; Glyph: '«' Descr: LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\flqq::
 SendInput ^x8{Enter}ab{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\flqq::
 SendInput ^+uab{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\flqq::
 SendInput {U+00AB}
 return
@@ -1985,17 +1983,17 @@ return
 
 ;; Glyph: '¬' Descr: NOT SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lnot::
 SendInput ^x8{Enter}ac{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lnot::
 SendInput ^+uac{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lnot::
 SendInput {U+00AC}
 return
@@ -2003,17 +2001,17 @@ return
 
 ;; Glyph: '¬' Descr: NOT SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\neg::
 SendInput ^x8{Enter}ac{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\neg::
 SendInput ^+uac{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\neg::
 SendInput {U+00AC}
 return
@@ -2021,17 +2019,17 @@ return
 
 ;; Glyph: '­' Descr: SOFT HYPHEN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\-::
 SendInput ^x8{Enter}ad{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\-::
 SendInput ^+uad{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\-::
 SendInput {U+00AD}
 return
@@ -2039,17 +2037,17 @@ return
 
 ;; Glyph: '®' Descr: REGISTERED SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circledR::
 SendInput ^x8{Enter}ae{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circledR::
 SendInput ^+uae{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circledR::
 SendInput {U+00AE}
 return
@@ -2057,17 +2055,17 @@ return
 
 ;; Glyph: '®' Descr: REGISTERED SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\registered::
 SendInput ^x8{Enter}ae{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\registered::
 SendInput ^+uae{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\registered::
 SendInput {U+00AE}
 return
@@ -2075,17 +2073,17 @@ return
 
 ;; Glyph: '¯' Descr: MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={}::
 SendInput ^x8{Enter}af{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={}::
 SendInput ^+uaf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={}::
 SendInput {U+00AF}
 return
@@ -2093,17 +2091,17 @@ return
 
 ;; Glyph: '°' Descr: DEGREE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\degree::
 SendInput ^x8{Enter}b0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\degree::
 SendInput ^+ub0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\degree::
 SendInput {U+00B0}
 return
@@ -2111,17 +2109,17 @@ return
 
 ;; Glyph: '±' Descr: PLUS-MINUS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$\pm$::
 SendInput ^x8{Enter}b1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$\pm$::
 SendInput ^+ub1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$\pm$::
 SendInput {U+00B1}
 return
@@ -2129,17 +2127,17 @@ return
 
 ;; Glyph: '±' Descr: PLUS-MINUS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\pm::
 SendInput ^x8{Enter}b1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\pm::
 SendInput ^+ub1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\pm::
 SendInput {U+00B1}
 return
@@ -2147,17 +2145,17 @@ return
 
 ;; Glyph: '²' Descr: SUPERSCRIPT TWO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$^2$::
 SendInput ^x8{Enter}b2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$^2$::
 SendInput ^+ub2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$^2$::
 SendInput {U+00B2}
 return
@@ -2165,17 +2163,17 @@ return
 
 ;; Glyph: '²' Descr: SUPERSCRIPT TWO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^2::
 SendInput ^x8{Enter}b2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^2::
 SendInput ^+ub2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^2::
 SendInput {U+00B2}
 return
@@ -2183,17 +2181,17 @@ return
 
 ;; Glyph: '³' Descr: SUPERSCRIPT THREE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$^3$::
 SendInput ^x8{Enter}b3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$^3$::
 SendInput ^+ub3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$^3$::
 SendInput {U+00B3}
 return
@@ -2201,17 +2199,17 @@ return
 
 ;; Glyph: '³' Descr: SUPERSCRIPT THREE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^3::
 SendInput ^x8{Enter}b3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^3::
 SendInput ^+ub3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^3::
 SendInput {U+00B3}
 return
@@ -2219,17 +2217,17 @@ return
 
 ;; Glyph: '´' Descr: ACUTE ACCENT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{}::
 SendInput ^x8{Enter}b4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{}::
 SendInput ^+ub4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{}::
 SendInput {U+00B4}
 return
@@ -2237,17 +2235,17 @@ return
 
 ;; Glyph: 'µ' Descr: MICRO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\micro::
 SendInput ^x8{Enter}b5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\micro::
 SendInput ^+ub5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\micro::
 SendInput {U+00B5}
 return
@@ -2255,17 +2253,17 @@ return
 
 ;; Glyph: 'µ' Descr: MICRO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textmu::
 SendInput ^x8{Enter}b5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textmu::
 SendInput ^+ub5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textmu::
 SendInput {U+00B5}
 return
@@ -2273,17 +2271,17 @@ return
 
 ;; Glyph: '¶' Descr: PILCROW SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\P::
 SendInput ^x8{Enter}b6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\P::
 SendInput ^+ub6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\P::
 SendInput {U+00B6}
 return
@@ -2291,17 +2289,17 @@ return
 
 ;; Glyph: '¶' Descr: PILCROW SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\paragraph::
 SendInput ^x8{Enter}b6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\paragraph::
 SendInput ^+ub6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\paragraph::
 SendInput {U+00B6}
 return
@@ -2309,17 +2307,17 @@ return
 
 ;; Glyph: '¶' Descr: PILCROW SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\pilcrow::
 SendInput ^x8{Enter}b6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\pilcrow::
 SendInput ^+ub6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\pilcrow::
 SendInput {U+00B6}
 return
@@ -2327,17 +2325,17 @@ return
 
 ;; Glyph: '·' Descr: MIDDLE DOT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$\cdot$::
 SendInput ^x8{Enter}b7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$\cdot$::
 SendInput ^+ub7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$\cdot$::
 SendInput {U+00B7}
 return
@@ -2345,17 +2343,17 @@ return
 
 ;; Glyph: '·' Descr: MIDDLE DOT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cdot::
 SendInput ^x8{Enter}b7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cdot::
 SendInput ^+ub7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cdot::
 SendInput {U+00B7}
 return
@@ -2363,17 +2361,17 @@ return
 
 ;; Glyph: '·' Descr: MIDDLE DOT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\centerdot::
 SendInput ^x8{Enter}b7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\centerdot::
 SendInput ^+ub7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\centerdot::
 SendInput {U+00B7}
 return
@@ -2381,17 +2379,17 @@ return
 
 ;; Glyph: '¸' Descr: CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{}::
 SendInput ^x8{Enter}b8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{}::
 SendInput ^+ub8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{}::
 SendInput {U+00B8}
 return
@@ -2399,17 +2397,17 @@ return
 
 ;; Glyph: '¹' Descr: SUPERSCRIPT ONE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$^1$::
 SendInput ^x8{Enter}b9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$^1$::
 SendInput ^+ub9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$^1$::
 SendInput {U+00B9}
 return
@@ -2417,17 +2415,17 @@ return
 
 ;; Glyph: '¹' Descr: SUPERSCRIPT ONE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^1::
 SendInput ^x8{Enter}b9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^1::
 SendInput ^+ub9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^1::
 SendInput {U+00B9}
 return
@@ -2435,17 +2433,17 @@ return
 
 ;; Glyph: 'º' Descr: MASCULINE ORDINAL INDICATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$^o$::
 SendInput ^x8{Enter}ba{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$^o$::
 SendInput ^+uba{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$^o$::
 SendInput {U+00BA}
 return
@@ -2453,17 +2451,17 @@ return
 
 ;; Glyph: 'º' Descr: MASCULINE ORDINAL INDICATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ordmasculine::
 SendInput ^x8{Enter}ba{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ordmasculine::
 SendInput ^+uba{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ordmasculine::
 SendInput {U+00BA}
 return
@@ -2471,17 +2469,17 @@ return
 
 ;; Glyph: 'º' Descr: MASCULINE ORDINAL INDICATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^o_::
 SendInput ^x8{Enter}ba{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^o_::
 SendInput ^+uba{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^o_::
 SendInput {U+00BA}
 return
@@ -2489,17 +2487,17 @@ return
 
 ;; Glyph: '»' Descr: RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\">::
 SendInput ^x8{Enter}bb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\">::
 SendInput ^+ubb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\">::
 SendInput {U+00BB}
 return
@@ -2507,17 +2505,17 @@ return
 
 ;; Glyph: '»' Descr: RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frqq::
 SendInput ^x8{Enter}bb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frqq::
 SendInput ^+ubb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frqq::
 SendInput {U+00BB}
 return
@@ -2525,17 +2523,17 @@ return
 
 ;; Glyph: '¼' Descr: VULGAR FRACTION ONE QUARTER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac14::
 SendInput ^x8{Enter}bc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac14::
 SendInput ^+ubc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac14::
 SendInput {U+00BC}
 return
@@ -2543,17 +2541,17 @@ return
 
 ;; Glyph: '½' Descr: VULGAR FRACTION ONE HALF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac12::
 SendInput ^x8{Enter}bd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac12::
 SendInput ^+ubd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac12::
 SendInput {U+00BD}
 return
@@ -2561,17 +2559,17 @@ return
 
 ;; Glyph: '¾' Descr: VULGAR FRACTION THREE QUARTERS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac34::
 SendInput ^x8{Enter}be{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac34::
 SendInput ^+ube{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac34::
 SendInput {U+00BE}
 return
@@ -2579,17 +2577,17 @@ return
 
 ;; Glyph: '¿' Descr: INVERTED QUESTION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::?``::
 SendInput ^x8{Enter}bf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::?``::
 SendInput ^+ubf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::?``::
 SendInput {U+00BF}
 return
@@ -2597,17 +2595,17 @@ return
 
 ;; Glyph: 'À' Descr: LATIN CAPITAL LETTER A WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``A::
 SendInput ^x8{Enter}c0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``A::
 SendInput ^+uc0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``A::
 SendInput {U+00C0}
 return
@@ -2615,17 +2613,17 @@ return
 
 ;; Glyph: 'À' Descr: LATIN CAPITAL LETTER A WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{A}::
 SendInput ^x8{Enter}c0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{A}::
 SendInput ^+uc0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{A}::
 SendInput {U+00C0}
 return
@@ -2633,17 +2631,17 @@ return
 
 ;; Glyph: 'Á' Descr: LATIN CAPITAL LETTER A WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'A::
 SendInput ^x8{Enter}c1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'A::
 SendInput ^+uc1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'A::
 SendInput {U+00C1}
 return
@@ -2651,17 +2649,17 @@ return
 
 ;; Glyph: 'Á' Descr: LATIN CAPITAL LETTER A WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{A}::
 SendInput ^x8{Enter}c1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{A}::
 SendInput ^+uc1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{A}::
 SendInput {U+00C1}
 return
@@ -2669,17 +2667,17 @@ return
 
 ;; Glyph: 'Â' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^A::
 SendInput ^x8{Enter}c2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^A::
 SendInput ^+uc2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^A::
 SendInput {U+00C2}
 return
@@ -2687,17 +2685,17 @@ return
 
 ;; Glyph: 'Â' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{A}::
 SendInput ^x8{Enter}c2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{A}::
 SendInput ^+uc2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{A}::
 SendInput {U+00C2}
 return
@@ -2705,17 +2703,17 @@ return
 
 ;; Glyph: 'Ã' Descr: LATIN CAPITAL LETTER A WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~A::
 SendInput ^x8{Enter}c3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~A::
 SendInput ^+uc3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~A::
 SendInput {U+00C3}
 return
@@ -2723,17 +2721,17 @@ return
 
 ;; Glyph: 'Ã' Descr: LATIN CAPITAL LETTER A WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{A}::
 SendInput ^x8{Enter}c3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{A}::
 SendInput ^+uc3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{A}::
 SendInput {U+00C3}
 return
@@ -2741,17 +2739,17 @@ return
 
 ;; Glyph: 'Ä' Descr: LATIN CAPITAL LETTER A WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"A::
 SendInput ^x8{Enter}c4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"A::
 SendInput ^+uc4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"A::
 SendInput {U+00C4}
 return
@@ -2759,17 +2757,17 @@ return
 
 ;; Glyph: 'Ä' Descr: LATIN CAPITAL LETTER A WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{A}::
 SendInput ^x8{Enter}c4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{A}::
 SendInput ^+uc4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{A}::
 SendInput {U+00C4}
 return
@@ -2777,17 +2775,17 @@ return
 
 ;; Glyph: 'Å' Descr: LATIN CAPITAL LETTER A WITH RING ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\AA::
 SendInput ^x8{Enter}c5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\AA::
 SendInput ^+uc5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\AA::
 SendInput {U+00C5}
 return
@@ -2795,17 +2793,17 @@ return
 
 ;; Glyph: 'Æ' Descr: LATIN CAPITAL LETTER AE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\AE::
 SendInput ^x8{Enter}c6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\AE::
 SendInput ^+uc6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\AE::
 SendInput {U+00C6}
 return
@@ -2813,17 +2811,17 @@ return
 
 ;; Glyph: 'Ç' Descr: LATIN CAPITAL LETTER C WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cC::
 SendInput ^x8{Enter}c7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cC::
 SendInput ^+uc7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cC::
 SendInput {U+00C7}
 return
@@ -2831,17 +2829,17 @@ return
 
 ;; Glyph: 'Ç' Descr: LATIN CAPITAL LETTER C WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{C}::
 SendInput ^x8{Enter}c7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{C}::
 SendInput ^+uc7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{C}::
 SendInput {U+00C7}
 return
@@ -2849,17 +2847,17 @@ return
 
 ;; Glyph: 'È' Descr: LATIN CAPITAL LETTER E WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``E::
 SendInput ^x8{Enter}c8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``E::
 SendInput ^+uc8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``E::
 SendInput {U+00C8}
 return
@@ -2867,17 +2865,17 @@ return
 
 ;; Glyph: 'È' Descr: LATIN CAPITAL LETTER E WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{E}::
 SendInput ^x8{Enter}c8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{E}::
 SendInput ^+uc8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{E}::
 SendInput {U+00C8}
 return
@@ -2885,17 +2883,17 @@ return
 
 ;; Glyph: 'É' Descr: LATIN CAPITAL LETTER E WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'E::
 SendInput ^x8{Enter}c9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'E::
 SendInput ^+uc9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'E::
 SendInput {U+00C9}
 return
@@ -2903,17 +2901,17 @@ return
 
 ;; Glyph: 'É' Descr: LATIN CAPITAL LETTER E WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{E}::
 SendInput ^x8{Enter}c9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{E}::
 SendInput ^+uc9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{E}::
 SendInput {U+00C9}
 return
@@ -2921,17 +2919,17 @@ return
 
 ;; Glyph: 'Ê' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^E::
 SendInput ^x8{Enter}ca{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^E::
 SendInput ^+uca{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^E::
 SendInput {U+00CA}
 return
@@ -2939,17 +2937,17 @@ return
 
 ;; Glyph: 'Ê' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{E}::
 SendInput ^x8{Enter}ca{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{E}::
 SendInput ^+uca{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{E}::
 SendInput {U+00CA}
 return
@@ -2957,17 +2955,17 @@ return
 
 ;; Glyph: 'Ë' Descr: LATIN CAPITAL LETTER E WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"E::
 SendInput ^x8{Enter}cb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"E::
 SendInput ^+ucb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"E::
 SendInput {U+00CB}
 return
@@ -2975,17 +2973,17 @@ return
 
 ;; Glyph: 'Ë' Descr: LATIN CAPITAL LETTER E WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{E}::
 SendInput ^x8{Enter}cb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{E}::
 SendInput ^+ucb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{E}::
 SendInput {U+00CB}
 return
@@ -2993,17 +2991,17 @@ return
 
 ;; Glyph: 'Ì' Descr: LATIN CAPITAL LETTER I WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``I::
 SendInput ^x8{Enter}cc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``I::
 SendInput ^+ucc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``I::
 SendInput {U+00CC}
 return
@@ -3011,17 +3009,17 @@ return
 
 ;; Glyph: 'Ì' Descr: LATIN CAPITAL LETTER I WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{I}::
 SendInput ^x8{Enter}cc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{I}::
 SendInput ^+ucc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{I}::
 SendInput {U+00CC}
 return
@@ -3029,17 +3027,17 @@ return
 
 ;; Glyph: 'Í' Descr: LATIN CAPITAL LETTER I WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'I::
 SendInput ^x8{Enter}cd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'I::
 SendInput ^+ucd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'I::
 SendInput {U+00CD}
 return
@@ -3047,17 +3045,17 @@ return
 
 ;; Glyph: 'Í' Descr: LATIN CAPITAL LETTER I WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{I}::
 SendInput ^x8{Enter}cd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{I}::
 SendInput ^+ucd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{I}::
 SendInput {U+00CD}
 return
@@ -3065,17 +3063,17 @@ return
 
 ;; Glyph: 'Î' Descr: LATIN CAPITAL LETTER I WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^I::
 SendInput ^x8{Enter}ce{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^I::
 SendInput ^+uce{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^I::
 SendInput {U+00CE}
 return
@@ -3083,17 +3081,17 @@ return
 
 ;; Glyph: 'Î' Descr: LATIN CAPITAL LETTER I WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{I}::
 SendInput ^x8{Enter}ce{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{I}::
 SendInput ^+uce{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{I}::
 SendInput {U+00CE}
 return
@@ -3101,17 +3099,17 @@ return
 
 ;; Glyph: 'Ï' Descr: LATIN CAPITAL LETTER I WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"I::
 SendInput ^x8{Enter}cf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"I::
 SendInput ^+ucf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"I::
 SendInput {U+00CF}
 return
@@ -3119,17 +3117,17 @@ return
 
 ;; Glyph: 'Ï' Descr: LATIN CAPITAL LETTER I WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{I}::
 SendInput ^x8{Enter}cf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{I}::
 SendInput ^+ucf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{I}::
 SendInput {U+00CF}
 return
@@ -3137,17 +3135,17 @@ return
 
 ;; Glyph: 'Ð' Descr: LATIN CAPITAL LETTER ETH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\DH::
 SendInput ^x8{Enter}d0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\DH::
 SendInput ^+ud0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\DH::
 SendInput {U+00D0}
 return
@@ -3155,17 +3153,17 @@ return
 
 ;; Glyph: 'Ñ' Descr: LATIN CAPITAL LETTER N WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~N::
 SendInput ^x8{Enter}d1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~N::
 SendInput ^+ud1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~N::
 SendInput {U+00D1}
 return
@@ -3173,17 +3171,17 @@ return
 
 ;; Glyph: 'Ñ' Descr: LATIN CAPITAL LETTER N WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{N}::
 SendInput ^x8{Enter}d1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{N}::
 SendInput ^+ud1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{N}::
 SendInput {U+00D1}
 return
@@ -3191,17 +3189,17 @@ return
 
 ;; Glyph: 'Ò' Descr: LATIN CAPITAL LETTER O WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``O::
 SendInput ^x8{Enter}d2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``O::
 SendInput ^+ud2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``O::
 SendInput {U+00D2}
 return
@@ -3209,17 +3207,17 @@ return
 
 ;; Glyph: 'Ò' Descr: LATIN CAPITAL LETTER O WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{O}::
 SendInput ^x8{Enter}d2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{O}::
 SendInput ^+ud2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{O}::
 SendInput {U+00D2}
 return
@@ -3227,17 +3225,17 @@ return
 
 ;; Glyph: 'Ó' Descr: LATIN CAPITAL LETTER O WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'O::
 SendInput ^x8{Enter}d3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'O::
 SendInput ^+ud3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'O::
 SendInput {U+00D3}
 return
@@ -3245,17 +3243,17 @@ return
 
 ;; Glyph: 'Ó' Descr: LATIN CAPITAL LETTER O WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{O}::
 SendInput ^x8{Enter}d3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{O}::
 SendInput ^+ud3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{O}::
 SendInput {U+00D3}
 return
@@ -3263,17 +3261,17 @@ return
 
 ;; Glyph: 'Ô' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^O::
 SendInput ^x8{Enter}d4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^O::
 SendInput ^+ud4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^O::
 SendInput {U+00D4}
 return
@@ -3281,17 +3279,17 @@ return
 
 ;; Glyph: 'Ô' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{O}::
 SendInput ^x8{Enter}d4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{O}::
 SendInput ^+ud4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{O}::
 SendInput {U+00D4}
 return
@@ -3299,17 +3297,17 @@ return
 
 ;; Glyph: 'Õ' Descr: LATIN CAPITAL LETTER O WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~O::
 SendInput ^x8{Enter}d5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~O::
 SendInput ^+ud5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~O::
 SendInput {U+00D5}
 return
@@ -3317,17 +3315,17 @@ return
 
 ;; Glyph: 'Õ' Descr: LATIN CAPITAL LETTER O WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{O}::
 SendInput ^x8{Enter}d5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{O}::
 SendInput ^+ud5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{O}::
 SendInput {U+00D5}
 return
@@ -3335,17 +3333,17 @@ return
 
 ;; Glyph: 'Ö' Descr: LATIN CAPITAL LETTER O WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"O::
 SendInput ^x8{Enter}d6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"O::
 SendInput ^+ud6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"O::
 SendInput {U+00D6}
 return
@@ -3353,17 +3351,17 @@ return
 
 ;; Glyph: 'Ö' Descr: LATIN CAPITAL LETTER O WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{O}::
 SendInput ^x8{Enter}d6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{O}::
 SendInput ^+ud6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{O}::
 SendInput {U+00D6}
 return
@@ -3371,17 +3369,17 @@ return
 
 ;; Glyph: '×' Descr: MULTIPLICATION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$\times$::
 SendInput ^x8{Enter}d7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$\times$::
 SendInput ^+ud7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$\times$::
 SendInput {U+00D7}
 return
@@ -3389,17 +3387,17 @@ return
 
 ;; Glyph: '×' Descr: MULTIPLICATION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\multiplication::
 SendInput ^x8{Enter}d7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\multiplication::
 SendInput ^+ud7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\multiplication::
 SendInput {U+00D7}
 return
@@ -3407,17 +3405,17 @@ return
 
 ;; Glyph: '×' Descr: MULTIPLICATION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\times::
 SendInput ^x8{Enter}d7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\times::
 SendInput ^+ud7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\times::
 SendInput {U+00D7}
 return
@@ -3425,17 +3423,17 @@ return
 
 ;; Glyph: 'Ø' Descr: LATIN CAPITAL LETTER O WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\O::
 SendInput ^x8{Enter}d8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\O::
 SendInput ^+ud8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\O::
 SendInput {U+00D8}
 return
@@ -3443,17 +3441,17 @@ return
 
 ;; Glyph: 'Ù' Descr: LATIN CAPITAL LETTER U WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``U::
 SendInput ^x8{Enter}d9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``U::
 SendInput ^+ud9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``U::
 SendInput {U+00D9}
 return
@@ -3461,17 +3459,17 @@ return
 
 ;; Glyph: 'Ù' Descr: LATIN CAPITAL LETTER U WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{U}::
 SendInput ^x8{Enter}d9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{U}::
 SendInput ^+ud9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{U}::
 SendInput {U+00D9}
 return
@@ -3479,17 +3477,17 @@ return
 
 ;; Glyph: 'Ú' Descr: LATIN CAPITAL LETTER U WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'U::
 SendInput ^x8{Enter}da{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'U::
 SendInput ^+uda{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'U::
 SendInput {U+00DA}
 return
@@ -3497,17 +3495,17 @@ return
 
 ;; Glyph: 'Ú' Descr: LATIN CAPITAL LETTER U WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{U}::
 SendInput ^x8{Enter}da{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{U}::
 SendInput ^+uda{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{U}::
 SendInput {U+00DA}
 return
@@ -3515,17 +3513,17 @@ return
 
 ;; Glyph: 'Û' Descr: LATIN CAPITAL LETTER U WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^U::
 SendInput ^x8{Enter}db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^U::
 SendInput ^+udb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^U::
 SendInput {U+00DB}
 return
@@ -3533,17 +3531,17 @@ return
 
 ;; Glyph: 'Û' Descr: LATIN CAPITAL LETTER U WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{U}::
 SendInput ^x8{Enter}db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{U}::
 SendInput ^+udb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{U}::
 SendInput {U+00DB}
 return
@@ -3551,17 +3549,17 @@ return
 
 ;; Glyph: 'Ü' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"U::
 SendInput ^x8{Enter}dc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"U::
 SendInput ^+udc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"U::
 SendInput {U+00DC}
 return
@@ -3569,17 +3567,17 @@ return
 
 ;; Glyph: 'Ü' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{U}::
 SendInput ^x8{Enter}dc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{U}::
 SendInput ^+udc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{U}::
 SendInput {U+00DC}
 return
@@ -3587,17 +3585,17 @@ return
 
 ;; Glyph: 'Ý' Descr: LATIN CAPITAL LETTER Y WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'Y::
 SendInput ^x8{Enter}dd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'Y::
 SendInput ^+udd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'Y::
 SendInput {U+00DD}
 return
@@ -3605,17 +3603,17 @@ return
 
 ;; Glyph: 'Ý' Descr: LATIN CAPITAL LETTER Y WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{Y}::
 SendInput ^x8{Enter}dd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{Y}::
 SendInput ^+udd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{Y}::
 SendInput {U+00DD}
 return
@@ -3623,17 +3621,17 @@ return
 
 ;; Glyph: 'Þ' Descr: LATIN CAPITAL LETTER THORN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\TH::
 SendInput ^x8{Enter}de{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\TH::
 SendInput ^+ude{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\TH::
 SendInput {U+00DE}
 return
@@ -3641,17 +3639,17 @@ return
 
 ;; Glyph: 'ß' Descr: LATIN SMALL LETTER SHARP S
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ss::
 SendInput ^x8{Enter}df{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ss::
 SendInput ^+udf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ss::
 SendInput {U+00DF}
 return
@@ -3659,17 +3657,17 @@ return
 
 ;; Glyph: 'à' Descr: LATIN SMALL LETTER A WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``a::
 SendInput ^x8{Enter}e0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``a::
 SendInput ^+ue0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``a::
 SendInput {U+00E0}
 return
@@ -3677,17 +3675,17 @@ return
 
 ;; Glyph: 'à' Descr: LATIN SMALL LETTER A WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{a}::
 SendInput ^x8{Enter}e0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{a}::
 SendInput ^+ue0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{a}::
 SendInput {U+00E0}
 return
@@ -3695,17 +3693,17 @@ return
 
 ;; Glyph: 'á' Descr: LATIN SMALL LETTER A WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'a::
 SendInput ^x8{Enter}e1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'a::
 SendInput ^+ue1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'a::
 SendInput {U+00E1}
 return
@@ -3713,17 +3711,17 @@ return
 
 ;; Glyph: 'á' Descr: LATIN SMALL LETTER A WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{a}::
 SendInput ^x8{Enter}e1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{a}::
 SendInput ^+ue1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{a}::
 SendInput {U+00E1}
 return
@@ -3731,17 +3729,17 @@ return
 
 ;; Glyph: 'â' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^a::
 SendInput ^x8{Enter}e2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^a::
 SendInput ^+ue2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^a::
 SendInput {U+00E2}
 return
@@ -3749,17 +3747,17 @@ return
 
 ;; Glyph: 'â' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{a}::
 SendInput ^x8{Enter}e2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{a}::
 SendInput ^+ue2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{a}::
 SendInput {U+00E2}
 return
@@ -3767,17 +3765,17 @@ return
 
 ;; Glyph: 'ã' Descr: LATIN SMALL LETTER A WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~a::
 SendInput ^x8{Enter}e3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~a::
 SendInput ^+ue3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~a::
 SendInput {U+00E3}
 return
@@ -3785,17 +3783,17 @@ return
 
 ;; Glyph: 'ã' Descr: LATIN SMALL LETTER A WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{a}::
 SendInput ^x8{Enter}e3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{a}::
 SendInput ^+ue3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{a}::
 SendInput {U+00E3}
 return
@@ -3803,17 +3801,17 @@ return
 
 ;; Glyph: 'ä' Descr: LATIN SMALL LETTER A WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"a::
 SendInput ^x8{Enter}e4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"a::
 SendInput ^+ue4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"a::
 SendInput {U+00E4}
 return
@@ -3821,17 +3819,17 @@ return
 
 ;; Glyph: 'ä' Descr: LATIN SMALL LETTER A WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{a}::
 SendInput ^x8{Enter}e4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{a}::
 SendInput ^+ue4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{a}::
 SendInput {U+00E4}
 return
@@ -3839,17 +3837,17 @@ return
 
 ;; Glyph: 'å' Descr: LATIN SMALL LETTER A WITH RING ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\aa::
 SendInput ^x8{Enter}e5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\aa::
 SendInput ^+ue5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\aa::
 SendInput {U+00E5}
 return
@@ -3857,17 +3855,17 @@ return
 
 ;; Glyph: 'æ' Descr: LATIN SMALL LETTER AE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ae::
 SendInput ^x8{Enter}e6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ae::
 SendInput ^+ue6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ae::
 SendInput {U+00E6}
 return
@@ -3875,17 +3873,17 @@ return
 
 ;; Glyph: 'ç' Descr: LATIN SMALL LETTER C WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cc::
 SendInput ^x8{Enter}e7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cc::
 SendInput ^+ue7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cc::
 SendInput {U+00E7}
 return
@@ -3893,17 +3891,17 @@ return
 
 ;; Glyph: 'ç' Descr: LATIN SMALL LETTER C WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{c}::
 SendInput ^x8{Enter}e7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{c}::
 SendInput ^+ue7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{c}::
 SendInput {U+00E7}
 return
@@ -3911,17 +3909,17 @@ return
 
 ;; Glyph: 'è' Descr: LATIN SMALL LETTER E WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``e::
 SendInput ^x8{Enter}e8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``e::
 SendInput ^+ue8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``e::
 SendInput {U+00E8}
 return
@@ -3929,17 +3927,17 @@ return
 
 ;; Glyph: 'è' Descr: LATIN SMALL LETTER E WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{e}::
 SendInput ^x8{Enter}e8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{e}::
 SendInput ^+ue8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{e}::
 SendInput {U+00E8}
 return
@@ -3947,17 +3945,17 @@ return
 
 ;; Glyph: 'é' Descr: LATIN SMALL LETTER E WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'e::
 SendInput ^x8{Enter}e9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'e::
 SendInput ^+ue9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'e::
 SendInput {U+00E9}
 return
@@ -3965,17 +3963,17 @@ return
 
 ;; Glyph: 'é' Descr: LATIN SMALL LETTER E WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{e}::
 SendInput ^x8{Enter}e9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{e}::
 SendInput ^+ue9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{e}::
 SendInput {U+00E9}
 return
@@ -3983,17 +3981,17 @@ return
 
 ;; Glyph: 'ê' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^e::
 SendInput ^x8{Enter}ea{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^e::
 SendInput ^+uea{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^e::
 SendInput {U+00EA}
 return
@@ -4001,17 +3999,17 @@ return
 
 ;; Glyph: 'ê' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{e}::
 SendInput ^x8{Enter}ea{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{e}::
 SendInput ^+uea{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{e}::
 SendInput {U+00EA}
 return
@@ -4019,17 +4017,17 @@ return
 
 ;; Glyph: 'ë' Descr: LATIN SMALL LETTER E WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"e::
 SendInput ^x8{Enter}eb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"e::
 SendInput ^+ueb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"e::
 SendInput {U+00EB}
 return
@@ -4037,17 +4035,17 @@ return
 
 ;; Glyph: 'ë' Descr: LATIN SMALL LETTER E WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{e}::
 SendInput ^x8{Enter}eb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{e}::
 SendInput ^+ueb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{e}::
 SendInput {U+00EB}
 return
@@ -4055,17 +4053,17 @@ return
 
 ;; Glyph: 'ì' Descr: LATIN SMALL LETTER I WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``i::
 SendInput ^x8{Enter}ec{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``i::
 SendInput ^+uec{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``i::
 SendInput {U+00EC}
 return
@@ -4073,17 +4071,17 @@ return
 
 ;; Glyph: 'ì' Descr: LATIN SMALL LETTER I WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{i}::
 SendInput ^x8{Enter}ec{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{i}::
 SendInput ^+uec{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{i}::
 SendInput {U+00EC}
 return
@@ -4091,17 +4089,17 @@ return
 
 ;; Glyph: 'í' Descr: LATIN SMALL LETTER I WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'i::
 SendInput ^x8{Enter}ed{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'i::
 SendInput ^+ued{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'i::
 SendInput {U+00ED}
 return
@@ -4109,17 +4107,17 @@ return
 
 ;; Glyph: 'í' Descr: LATIN SMALL LETTER I WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{i}::
 SendInput ^x8{Enter}ed{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{i}::
 SendInput ^+ued{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{i}::
 SendInput {U+00ED}
 return
@@ -4127,17 +4125,17 @@ return
 
 ;; Glyph: 'î' Descr: LATIN SMALL LETTER I WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^i::
 SendInput ^x8{Enter}ee{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^i::
 SendInput ^+uee{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^i::
 SendInput {U+00EE}
 return
@@ -4145,17 +4143,17 @@ return
 
 ;; Glyph: 'î' Descr: LATIN SMALL LETTER I WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{i}::
 SendInput ^x8{Enter}ee{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{i}::
 SendInput ^+uee{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{i}::
 SendInput {U+00EE}
 return
@@ -4163,17 +4161,17 @@ return
 
 ;; Glyph: 'ï' Descr: LATIN SMALL LETTER I WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"i::
 SendInput ^x8{Enter}ef{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"i::
 SendInput ^+uef{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"i::
 SendInput {U+00EF}
 return
@@ -4181,17 +4179,17 @@ return
 
 ;; Glyph: 'ï' Descr: LATIN SMALL LETTER I WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{i}::
 SendInput ^x8{Enter}ef{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{i}::
 SendInput ^+uef{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{i}::
 SendInput {U+00EF}
 return
@@ -4199,17 +4197,17 @@ return
 
 ;; Glyph: 'ð' Descr: LATIN SMALL LETTER ETH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\dh::
 SendInput ^x8{Enter}f0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\dh::
 SendInput ^+uf0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\dh::
 SendInput {U+00F0}
 return
@@ -4217,17 +4215,17 @@ return
 
 ;; Glyph: 'ñ' Descr: LATIN SMALL LETTER N WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~n::
 SendInput ^x8{Enter}f1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~n::
 SendInput ^+uf1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~n::
 SendInput {U+00F1}
 return
@@ -4235,17 +4233,17 @@ return
 
 ;; Glyph: 'ñ' Descr: LATIN SMALL LETTER N WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{n}::
 SendInput ^x8{Enter}f1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{n}::
 SendInput ^+uf1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{n}::
 SendInput {U+00F1}
 return
@@ -4253,17 +4251,17 @@ return
 
 ;; Glyph: 'ò' Descr: LATIN SMALL LETTER O WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``o::
 SendInput ^x8{Enter}f2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``o::
 SendInput ^+uf2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``o::
 SendInput {U+00F2}
 return
@@ -4271,17 +4269,17 @@ return
 
 ;; Glyph: 'ò' Descr: LATIN SMALL LETTER O WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{o}::
 SendInput ^x8{Enter}f2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{o}::
 SendInput ^+uf2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{o}::
 SendInput {U+00F2}
 return
@@ -4289,17 +4287,17 @@ return
 
 ;; Glyph: 'ó' Descr: LATIN SMALL LETTER O WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'o::
 SendInput ^x8{Enter}f3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'o::
 SendInput ^+uf3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'o::
 SendInput {U+00F3}
 return
@@ -4307,17 +4305,17 @@ return
 
 ;; Glyph: 'ó' Descr: LATIN SMALL LETTER O WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{o}::
 SendInput ^x8{Enter}f3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{o}::
 SendInput ^+uf3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{o}::
 SendInput {U+00F3}
 return
@@ -4325,17 +4323,17 @@ return
 
 ;; Glyph: 'ô' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^o::
 SendInput ^x8{Enter}f4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^o::
 SendInput ^+uf4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^o::
 SendInput {U+00F4}
 return
@@ -4343,17 +4341,17 @@ return
 
 ;; Glyph: 'ô' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{o}::
 SendInput ^x8{Enter}f4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{o}::
 SendInput ^+uf4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{o}::
 SendInput {U+00F4}
 return
@@ -4361,17 +4359,17 @@ return
 
 ;; Glyph: 'õ' Descr: LATIN SMALL LETTER O WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~o::
 SendInput ^x8{Enter}f5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~o::
 SendInput ^+uf5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~o::
 SendInput {U+00F5}
 return
@@ -4379,17 +4377,17 @@ return
 
 ;; Glyph: 'õ' Descr: LATIN SMALL LETTER O WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{o}::
 SendInput ^x8{Enter}f5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{o}::
 SendInput ^+uf5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{o}::
 SendInput {U+00F5}
 return
@@ -4397,17 +4395,17 @@ return
 
 ;; Glyph: 'ö' Descr: LATIN SMALL LETTER O WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"o::
 SendInput ^x8{Enter}f6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"o::
 SendInput ^+uf6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"o::
 SendInput {U+00F6}
 return
@@ -4415,17 +4413,17 @@ return
 
 ;; Glyph: 'ö' Descr: LATIN SMALL LETTER O WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{o}::
 SendInput ^x8{Enter}f6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{o}::
 SendInput ^+uf6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{o}::
 SendInput {U+00F6}
 return
@@ -4433,17 +4431,17 @@ return
 
 ;; Glyph: '÷' Descr: DIVISION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::$\div$::
 SendInput ^x8{Enter}f7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::$\div$::
 SendInput ^+uf7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::$\div$::
 SendInput {U+00F7}
 return
@@ -4451,17 +4449,17 @@ return
 
 ;; Glyph: '÷' Descr: DIVISION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\div::
 SendInput ^x8{Enter}f7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\div::
 SendInput ^+uf7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\div::
 SendInput {U+00F7}
 return
@@ -4469,17 +4467,17 @@ return
 
 ;; Glyph: '÷' Descr: DIVISION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\division::
 SendInput ^x8{Enter}f7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\division::
 SendInput ^+uf7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\division::
 SendInput {U+00F7}
 return
@@ -4487,17 +4485,17 @@ return
 
 ;; Glyph: 'ø' Descr: LATIN SMALL LETTER O WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\o::
 SendInput ^x8{Enter}f8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\o::
 SendInput ^+uf8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\o::
 SendInput {U+00F8}
 return
@@ -4505,17 +4503,17 @@ return
 
 ;; Glyph: 'ù' Descr: LATIN SMALL LETTER U WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``u::
 SendInput ^x8{Enter}f9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``u::
 SendInput ^+uf9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``u::
 SendInput {U+00F9}
 return
@@ -4523,17 +4521,17 @@ return
 
 ;; Glyph: 'ù' Descr: LATIN SMALL LETTER U WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{u}::
 SendInput ^x8{Enter}f9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{u}::
 SendInput ^+uf9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{u}::
 SendInput {U+00F9}
 return
@@ -4541,17 +4539,17 @@ return
 
 ;; Glyph: 'ú' Descr: LATIN SMALL LETTER U WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'u::
 SendInput ^x8{Enter}fa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'u::
 SendInput ^+ufa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'u::
 SendInput {U+00FA}
 return
@@ -4559,17 +4557,17 @@ return
 
 ;; Glyph: 'ú' Descr: LATIN SMALL LETTER U WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{u}::
 SendInput ^x8{Enter}fa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{u}::
 SendInput ^+ufa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{u}::
 SendInput {U+00FA}
 return
@@ -4577,17 +4575,17 @@ return
 
 ;; Glyph: 'û' Descr: LATIN SMALL LETTER U WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^u::
 SendInput ^x8{Enter}fb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^u::
 SendInput ^+ufb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^u::
 SendInput {U+00FB}
 return
@@ -4595,17 +4593,17 @@ return
 
 ;; Glyph: 'û' Descr: LATIN SMALL LETTER U WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{u}::
 SendInput ^x8{Enter}fb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{u}::
 SendInput ^+ufb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{u}::
 SendInput {U+00FB}
 return
@@ -4613,17 +4611,17 @@ return
 
 ;; Glyph: 'ü' Descr: LATIN SMALL LETTER U WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"u::
 SendInput ^x8{Enter}fc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"u::
 SendInput ^+ufc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"u::
 SendInput {U+00FC}
 return
@@ -4631,17 +4629,17 @@ return
 
 ;; Glyph: 'ü' Descr: LATIN SMALL LETTER U WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{u}::
 SendInput ^x8{Enter}fc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{u}::
 SendInput ^+ufc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{u}::
 SendInput {U+00FC}
 return
@@ -4649,17 +4647,17 @@ return
 
 ;; Glyph: 'ý' Descr: LATIN SMALL LETTER Y WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'y::
 SendInput ^x8{Enter}fd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'y::
 SendInput ^+ufd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'y::
 SendInput {U+00FD}
 return
@@ -4667,17 +4665,17 @@ return
 
 ;; Glyph: 'ý' Descr: LATIN SMALL LETTER Y WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{y}::
 SendInput ^x8{Enter}fd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{y}::
 SendInput ^+ufd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{y}::
 SendInput {U+00FD}
 return
@@ -4685,17 +4683,17 @@ return
 
 ;; Glyph: 'þ' Descr: LATIN SMALL LETTER THORN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\th::
 SendInput ^x8{Enter}fe{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\th::
 SendInput ^+ufe{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\th::
 SendInput {U+00FE}
 return
@@ -4703,17 +4701,17 @@ return
 
 ;; Glyph: 'ÿ' Descr: LATIN SMALL LETTER Y WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"y::
 SendInput ^x8{Enter}ff{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"y::
 SendInput ^+uff{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"y::
 SendInput {U+00FF}
 return
@@ -4721,17 +4719,17 @@ return
 
 ;; Glyph: 'ÿ' Descr: LATIN SMALL LETTER Y WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{y}::
 SendInput ^x8{Enter}ff{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{y}::
 SendInput ^+uff{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{y}::
 SendInput {U+00FF}
 return
@@ -4739,17 +4737,17 @@ return
 
 ;; Glyph: 'Ā' Descr: LATIN CAPITAL LETTER A WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=A::
 SendInput ^x8{Enter}100{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=A::
 SendInput ^+u100{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=A::
 SendInput {U+0100}
 return
@@ -4757,17 +4755,17 @@ return
 
 ;; Glyph: 'Ā' Descr: LATIN CAPITAL LETTER A WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={A}::
 SendInput ^x8{Enter}100{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={A}::
 SendInput ^+u100{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={A}::
 SendInput {U+0100}
 return
@@ -4775,17 +4773,17 @@ return
 
 ;; Glyph: 'ā' Descr: LATIN SMALL LETTER A WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=a::
 SendInput ^x8{Enter}101{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=a::
 SendInput ^+u101{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=a::
 SendInput {U+0101}
 return
@@ -4793,17 +4791,17 @@ return
 
 ;; Glyph: 'ā' Descr: LATIN SMALL LETTER A WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={a}::
 SendInput ^x8{Enter}101{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={a}::
 SendInput ^+u101{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={a}::
 SendInput {U+0101}
 return
@@ -4811,17 +4809,17 @@ return
 
 ;; Glyph: 'Ă' Descr: LATIN CAPITAL LETTER A WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uA::
 SendInput ^x8{Enter}102{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uA::
 SendInput ^+u102{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uA::
 SendInput {U+0102}
 return
@@ -4829,17 +4827,17 @@ return
 
 ;; Glyph: 'Ă' Descr: LATIN CAPITAL LETTER A WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{A}::
 SendInput ^x8{Enter}102{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{A}::
 SendInput ^+u102{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{A}::
 SendInput {U+0102}
 return
@@ -4847,17 +4845,17 @@ return
 
 ;; Glyph: 'ă' Descr: LATIN SMALL LETTER A WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ua::
 SendInput ^x8{Enter}103{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ua::
 SendInput ^+u103{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ua::
 SendInput {U+0103}
 return
@@ -4865,17 +4863,17 @@ return
 
 ;; Glyph: 'ă' Descr: LATIN SMALL LETTER A WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{a}::
 SendInput ^x8{Enter}103{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{a}::
 SendInput ^+u103{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{a}::
 SendInput {U+0103}
 return
@@ -4883,17 +4881,17 @@ return
 
 ;; Glyph: 'Ą' Descr: LATIN CAPITAL LETTER A WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\kA::
 SendInput ^x8{Enter}104{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\kA::
 SendInput ^+u104{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\kA::
 SendInput {U+0104}
 return
@@ -4901,17 +4899,17 @@ return
 
 ;; Glyph: 'Ą' Descr: LATIN CAPITAL LETTER A WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{A}::
 SendInput ^x8{Enter}104{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{A}::
 SendInput ^+u104{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{A}::
 SendInput {U+0104}
 return
@@ -4919,17 +4917,17 @@ return
 
 ;; Glyph: 'ą' Descr: LATIN SMALL LETTER A WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ka::
 SendInput ^x8{Enter}105{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ka::
 SendInput ^+u105{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ka::
 SendInput {U+0105}
 return
@@ -4937,17 +4935,17 @@ return
 
 ;; Glyph: 'ą' Descr: LATIN SMALL LETTER A WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{a}::
 SendInput ^x8{Enter}105{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{a}::
 SendInput ^+u105{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{a}::
 SendInput {U+0105}
 return
@@ -4955,17 +4953,17 @@ return
 
 ;; Glyph: 'Ć' Descr: LATIN CAPITAL LETTER C WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'C::
 SendInput ^x8{Enter}106{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'C::
 SendInput ^+u106{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'C::
 SendInput {U+0106}
 return
@@ -4973,17 +4971,17 @@ return
 
 ;; Glyph: 'Ć' Descr: LATIN CAPITAL LETTER C WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{C}::
 SendInput ^x8{Enter}106{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{C}::
 SendInput ^+u106{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{C}::
 SendInput {U+0106}
 return
@@ -4991,17 +4989,17 @@ return
 
 ;; Glyph: 'ć' Descr: LATIN SMALL LETTER C WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'c::
 SendInput ^x8{Enter}107{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'c::
 SendInput ^+u107{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'c::
 SendInput {U+0107}
 return
@@ -5009,17 +5007,17 @@ return
 
 ;; Glyph: 'ć' Descr: LATIN SMALL LETTER C WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{c}::
 SendInput ^x8{Enter}107{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{c}::
 SendInput ^+u107{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{c}::
 SendInput {U+0107}
 return
@@ -5027,17 +5025,17 @@ return
 
 ;; Glyph: 'Ĉ' Descr: LATIN CAPITAL LETTER C WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^C::
 SendInput ^x8{Enter}108{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^C::
 SendInput ^+u108{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^C::
 SendInput {U+0108}
 return
@@ -5045,17 +5043,17 @@ return
 
 ;; Glyph: 'Ĉ' Descr: LATIN CAPITAL LETTER C WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{C}::
 SendInput ^x8{Enter}108{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{C}::
 SendInput ^+u108{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{C}::
 SendInput {U+0108}
 return
@@ -5063,17 +5061,17 @@ return
 
 ;; Glyph: 'ĉ' Descr: LATIN SMALL LETTER C WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^c::
 SendInput ^x8{Enter}109{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^c::
 SendInput ^+u109{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^c::
 SendInput {U+0109}
 return
@@ -5081,17 +5079,17 @@ return
 
 ;; Glyph: 'ĉ' Descr: LATIN SMALL LETTER C WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{c}::
 SendInput ^x8{Enter}109{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{c}::
 SendInput ^+u109{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{c}::
 SendInput {U+0109}
 return
@@ -5099,17 +5097,17 @@ return
 
 ;; Glyph: 'Ċ' Descr: LATIN CAPITAL LETTER C WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.C::
 SendInput ^x8{Enter}10a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.C::
 SendInput ^+u10a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.C::
 SendInput {U+010A}
 return
@@ -5117,17 +5115,17 @@ return
 
 ;; Glyph: 'Ċ' Descr: LATIN CAPITAL LETTER C WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{C}::
 SendInput ^x8{Enter}10a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{C}::
 SendInput ^+u10a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{C}::
 SendInput {U+010A}
 return
@@ -5135,17 +5133,17 @@ return
 
 ;; Glyph: 'ċ' Descr: LATIN SMALL LETTER C WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.c::
 SendInput ^x8{Enter}10b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.c::
 SendInput ^+u10b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.c::
 SendInput {U+010B}
 return
@@ -5153,17 +5151,17 @@ return
 
 ;; Glyph: 'ċ' Descr: LATIN SMALL LETTER C WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{c}::
 SendInput ^x8{Enter}10b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{c}::
 SendInput ^+u10b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{c}::
 SendInput {U+010B}
 return
@@ -5171,17 +5169,17 @@ return
 
 ;; Glyph: 'Č' Descr: LATIN CAPITAL LETTER C WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vC::
 SendInput ^x8{Enter}10c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vC::
 SendInput ^+u10c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vC::
 SendInput {U+010C}
 return
@@ -5189,17 +5187,17 @@ return
 
 ;; Glyph: 'Č' Descr: LATIN CAPITAL LETTER C WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{C}::
 SendInput ^x8{Enter}10c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{C}::
 SendInput ^+u10c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{C}::
 SendInput {U+010C}
 return
@@ -5207,17 +5205,17 @@ return
 
 ;; Glyph: 'č' Descr: LATIN SMALL LETTER C WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vc::
 SendInput ^x8{Enter}10d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vc::
 SendInput ^+u10d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vc::
 SendInput {U+010D}
 return
@@ -5225,17 +5223,17 @@ return
 
 ;; Glyph: 'č' Descr: LATIN SMALL LETTER C WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{c}::
 SendInput ^x8{Enter}10d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{c}::
 SendInput ^+u10d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{c}::
 SendInput {U+010D}
 return
@@ -5243,17 +5241,17 @@ return
 
 ;; Glyph: 'Ď' Descr: LATIN CAPITAL LETTER D WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vD::
 SendInput ^x8{Enter}10e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vD::
 SendInput ^+u10e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vD::
 SendInput {U+010E}
 return
@@ -5261,17 +5259,17 @@ return
 
 ;; Glyph: 'Ď' Descr: LATIN CAPITAL LETTER D WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{D}::
 SendInput ^x8{Enter}10e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{D}::
 SendInput ^+u10e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{D}::
 SendInput {U+010E}
 return
@@ -5279,17 +5277,17 @@ return
 
 ;; Glyph: 'ď' Descr: LATIN SMALL LETTER D WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vd::
 SendInput ^x8{Enter}10f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vd::
 SendInput ^+u10f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vd::
 SendInput {U+010F}
 return
@@ -5297,17 +5295,17 @@ return
 
 ;; Glyph: 'ď' Descr: LATIN SMALL LETTER D WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{d}::
 SendInput ^x8{Enter}10f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{d}::
 SendInput ^+u10f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{d}::
 SendInput {U+010F}
 return
@@ -5315,17 +5313,17 @@ return
 
 ;; Glyph: 'Ē' Descr: LATIN CAPITAL LETTER E WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=E::
 SendInput ^x8{Enter}112{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=E::
 SendInput ^+u112{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=E::
 SendInput {U+0112}
 return
@@ -5333,17 +5331,17 @@ return
 
 ;; Glyph: 'Ē' Descr: LATIN CAPITAL LETTER E WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={E}::
 SendInput ^x8{Enter}112{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={E}::
 SendInput ^+u112{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={E}::
 SendInput {U+0112}
 return
@@ -5351,17 +5349,17 @@ return
 
 ;; Glyph: 'ē' Descr: LATIN SMALL LETTER E WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=e::
 SendInput ^x8{Enter}113{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=e::
 SendInput ^+u113{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=e::
 SendInput {U+0113}
 return
@@ -5369,17 +5367,17 @@ return
 
 ;; Glyph: 'ē' Descr: LATIN SMALL LETTER E WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={e}::
 SendInput ^x8{Enter}113{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={e}::
 SendInput ^+u113{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={e}::
 SendInput {U+0113}
 return
@@ -5387,17 +5385,17 @@ return
 
 ;; Glyph: 'Ĕ' Descr: LATIN CAPITAL LETTER E WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uE::
 SendInput ^x8{Enter}114{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uE::
 SendInput ^+u114{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uE::
 SendInput {U+0114}
 return
@@ -5405,17 +5403,17 @@ return
 
 ;; Glyph: 'Ĕ' Descr: LATIN CAPITAL LETTER E WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{E}::
 SendInput ^x8{Enter}114{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{E}::
 SendInput ^+u114{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{E}::
 SendInput {U+0114}
 return
@@ -5423,17 +5421,17 @@ return
 
 ;; Glyph: 'ĕ' Descr: LATIN SMALL LETTER E WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ue::
 SendInput ^x8{Enter}115{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ue::
 SendInput ^+u115{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ue::
 SendInput {U+0115}
 return
@@ -5441,17 +5439,17 @@ return
 
 ;; Glyph: 'ĕ' Descr: LATIN SMALL LETTER E WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{e}::
 SendInput ^x8{Enter}115{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{e}::
 SendInput ^+u115{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{e}::
 SendInput {U+0115}
 return
@@ -5459,17 +5457,17 @@ return
 
 ;; Glyph: 'Ė' Descr: LATIN CAPITAL LETTER E WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.E::
 SendInput ^x8{Enter}116{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.E::
 SendInput ^+u116{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.E::
 SendInput {U+0116}
 return
@@ -5477,17 +5475,17 @@ return
 
 ;; Glyph: 'Ė' Descr: LATIN CAPITAL LETTER E WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{E}::
 SendInput ^x8{Enter}116{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{E}::
 SendInput ^+u116{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{E}::
 SendInput {U+0116}
 return
@@ -5495,17 +5493,17 @@ return
 
 ;; Glyph: 'ė' Descr: LATIN SMALL LETTER E WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.e::
 SendInput ^x8{Enter}117{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.e::
 SendInput ^+u117{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.e::
 SendInput {U+0117}
 return
@@ -5513,17 +5511,17 @@ return
 
 ;; Glyph: 'ė' Descr: LATIN SMALL LETTER E WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{e}::
 SendInput ^x8{Enter}117{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{e}::
 SendInput ^+u117{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{e}::
 SendInput {U+0117}
 return
@@ -5531,17 +5529,17 @@ return
 
 ;; Glyph: 'Ę' Descr: LATIN CAPITAL LETTER E WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\kE::
 SendInput ^x8{Enter}118{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\kE::
 SendInput ^+u118{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\kE::
 SendInput {U+0118}
 return
@@ -5549,17 +5547,17 @@ return
 
 ;; Glyph: 'Ę' Descr: LATIN CAPITAL LETTER E WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{E}::
 SendInput ^x8{Enter}118{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{E}::
 SendInput ^+u118{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{E}::
 SendInput {U+0118}
 return
@@ -5567,17 +5565,17 @@ return
 
 ;; Glyph: 'ę' Descr: LATIN SMALL LETTER E WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ke::
 SendInput ^x8{Enter}119{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ke::
 SendInput ^+u119{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ke::
 SendInput {U+0119}
 return
@@ -5585,17 +5583,17 @@ return
 
 ;; Glyph: 'ę' Descr: LATIN SMALL LETTER E WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{e}::
 SendInput ^x8{Enter}119{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{e}::
 SendInput ^+u119{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{e}::
 SendInput {U+0119}
 return
@@ -5603,17 +5601,17 @@ return
 
 ;; Glyph: 'Ě' Descr: LATIN CAPITAL LETTER E WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vE::
 SendInput ^x8{Enter}11a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vE::
 SendInput ^+u11a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vE::
 SendInput {U+011A}
 return
@@ -5621,17 +5619,17 @@ return
 
 ;; Glyph: 'Ě' Descr: LATIN CAPITAL LETTER E WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{E}::
 SendInput ^x8{Enter}11a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{E}::
 SendInput ^+u11a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{E}::
 SendInput {U+011A}
 return
@@ -5639,17 +5637,17 @@ return
 
 ;; Glyph: 'ě' Descr: LATIN SMALL LETTER E WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ve::
 SendInput ^x8{Enter}11b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ve::
 SendInput ^+u11b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ve::
 SendInput {U+011B}
 return
@@ -5657,17 +5655,17 @@ return
 
 ;; Glyph: 'ě' Descr: LATIN SMALL LETTER E WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{e}::
 SendInput ^x8{Enter}11b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{e}::
 SendInput ^+u11b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{e}::
 SendInput {U+011B}
 return
@@ -5675,17 +5673,17 @@ return
 
 ;; Glyph: 'Ĝ' Descr: LATIN CAPITAL LETTER G WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^G::
 SendInput ^x8{Enter}11c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^G::
 SendInput ^+u11c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^G::
 SendInput {U+011C}
 return
@@ -5693,17 +5691,17 @@ return
 
 ;; Glyph: 'Ĝ' Descr: LATIN CAPITAL LETTER G WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{G}::
 SendInput ^x8{Enter}11c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{G}::
 SendInput ^+u11c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{G}::
 SendInput {U+011C}
 return
@@ -5711,17 +5709,17 @@ return
 
 ;; Glyph: 'ĝ' Descr: LATIN SMALL LETTER G WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^g::
 SendInput ^x8{Enter}11d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^g::
 SendInput ^+u11d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^g::
 SendInput {U+011D}
 return
@@ -5729,17 +5727,17 @@ return
 
 ;; Glyph: 'ĝ' Descr: LATIN SMALL LETTER G WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{g}::
 SendInput ^x8{Enter}11d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{g}::
 SendInput ^+u11d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{g}::
 SendInput {U+011D}
 return
@@ -5747,17 +5745,17 @@ return
 
 ;; Glyph: 'Ğ' Descr: LATIN CAPITAL LETTER G WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uG::
 SendInput ^x8{Enter}11e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uG::
 SendInput ^+u11e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uG::
 SendInput {U+011E}
 return
@@ -5765,17 +5763,17 @@ return
 
 ;; Glyph: 'Ğ' Descr: LATIN CAPITAL LETTER G WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{G}::
 SendInput ^x8{Enter}11e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{G}::
 SendInput ^+u11e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{G}::
 SendInput {U+011E}
 return
@@ -5783,17 +5781,17 @@ return
 
 ;; Glyph: 'ğ' Descr: LATIN SMALL LETTER G WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ug::
 SendInput ^x8{Enter}11f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ug::
 SendInput ^+u11f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ug::
 SendInput {U+011F}
 return
@@ -5801,17 +5799,17 @@ return
 
 ;; Glyph: 'ğ' Descr: LATIN SMALL LETTER G WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{g}::
 SendInput ^x8{Enter}11f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{g}::
 SendInput ^+u11f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{g}::
 SendInput {U+011F}
 return
@@ -5819,17 +5817,17 @@ return
 
 ;; Glyph: 'Ġ' Descr: LATIN CAPITAL LETTER G WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.G::
 SendInput ^x8{Enter}120{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.G::
 SendInput ^+u120{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.G::
 SendInput {U+0120}
 return
@@ -5837,17 +5835,17 @@ return
 
 ;; Glyph: 'Ġ' Descr: LATIN CAPITAL LETTER G WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{G}::
 SendInput ^x8{Enter}120{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{G}::
 SendInput ^+u120{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{G}::
 SendInput {U+0120}
 return
@@ -5855,17 +5853,17 @@ return
 
 ;; Glyph: 'ġ' Descr: LATIN SMALL LETTER G WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.g::
 SendInput ^x8{Enter}121{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.g::
 SendInput ^+u121{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.g::
 SendInput {U+0121}
 return
@@ -5873,17 +5871,17 @@ return
 
 ;; Glyph: 'ġ' Descr: LATIN SMALL LETTER G WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{g}::
 SendInput ^x8{Enter}121{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{g}::
 SendInput ^+u121{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{g}::
 SendInput {U+0121}
 return
@@ -5891,17 +5889,17 @@ return
 
 ;; Glyph: 'Ģ' Descr: LATIN CAPITAL LETTER G WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cG::
 SendInput ^x8{Enter}122{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cG::
 SendInput ^+u122{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cG::
 SendInput {U+0122}
 return
@@ -5909,17 +5907,17 @@ return
 
 ;; Glyph: 'Ģ' Descr: LATIN CAPITAL LETTER G WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{G}::
 SendInput ^x8{Enter}122{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{G}::
 SendInput ^+u122{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{G}::
 SendInput {U+0122}
 return
@@ -5927,17 +5925,17 @@ return
 
 ;; Glyph: 'ģ' Descr: LATIN SMALL LETTER G WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cg::
 SendInput ^x8{Enter}123{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cg::
 SendInput ^+u123{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cg::
 SendInput {U+0123}
 return
@@ -5945,17 +5943,17 @@ return
 
 ;; Glyph: 'ģ' Descr: LATIN SMALL LETTER G WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{g}::
 SendInput ^x8{Enter}123{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{g}::
 SendInput ^+u123{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{g}::
 SendInput {U+0123}
 return
@@ -5963,17 +5961,17 @@ return
 
 ;; Glyph: 'Ĥ' Descr: LATIN CAPITAL LETTER H WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^H::
 SendInput ^x8{Enter}124{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^H::
 SendInput ^+u124{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^H::
 SendInput {U+0124}
 return
@@ -5981,17 +5979,17 @@ return
 
 ;; Glyph: 'Ĥ' Descr: LATIN CAPITAL LETTER H WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{H}::
 SendInput ^x8{Enter}124{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{H}::
 SendInput ^+u124{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{H}::
 SendInput {U+0124}
 return
@@ -5999,17 +5997,17 @@ return
 
 ;; Glyph: 'ĥ' Descr: LATIN SMALL LETTER H WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^h::
 SendInput ^x8{Enter}125{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^h::
 SendInput ^+u125{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^h::
 SendInput {U+0125}
 return
@@ -6017,17 +6015,17 @@ return
 
 ;; Glyph: 'ĥ' Descr: LATIN SMALL LETTER H WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{h}::
 SendInput ^x8{Enter}125{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{h}::
 SendInput ^+u125{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{h}::
 SendInput {U+0125}
 return
@@ -6035,17 +6033,17 @@ return
 
 ;; Glyph: 'Ĩ' Descr: LATIN CAPITAL LETTER I WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~I::
 SendInput ^x8{Enter}128{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~I::
 SendInput ^+u128{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~I::
 SendInput {U+0128}
 return
@@ -6053,17 +6051,17 @@ return
 
 ;; Glyph: 'Ĩ' Descr: LATIN CAPITAL LETTER I WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{I}::
 SendInput ^x8{Enter}128{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{I}::
 SendInput ^+u128{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{I}::
 SendInput {U+0128}
 return
@@ -6071,17 +6069,17 @@ return
 
 ;; Glyph: 'ĩ' Descr: LATIN SMALL LETTER I WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~i::
 SendInput ^x8{Enter}129{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~i::
 SendInput ^+u129{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~i::
 SendInput {U+0129}
 return
@@ -6089,17 +6087,17 @@ return
 
 ;; Glyph: 'ĩ' Descr: LATIN SMALL LETTER I WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{\i}::
 SendInput ^x8{Enter}129{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{\i}::
 SendInput ^+u129{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{\i}::
 SendInput {U+0129}
 return
@@ -6107,17 +6105,17 @@ return
 
 ;; Glyph: 'ĩ' Descr: LATIN SMALL LETTER I WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{i}::
 SendInput ^x8{Enter}129{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{i}::
 SendInput ^+u129{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{i}::
 SendInput {U+0129}
 return
@@ -6125,17 +6123,17 @@ return
 
 ;; Glyph: 'Ī' Descr: LATIN CAPITAL LETTER I WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=I::
 SendInput ^x8{Enter}12a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=I::
 SendInput ^+u12a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=I::
 SendInput {U+012A}
 return
@@ -6143,17 +6141,17 @@ return
 
 ;; Glyph: 'Ī' Descr: LATIN CAPITAL LETTER I WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={I}::
 SendInput ^x8{Enter}12a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={I}::
 SendInput ^+u12a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={I}::
 SendInput {U+012A}
 return
@@ -6161,17 +6159,17 @@ return
 
 ;; Glyph: 'ī' Descr: LATIN SMALL LETTER I WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=i::
 SendInput ^x8{Enter}12b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=i::
 SendInput ^+u12b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=i::
 SendInput {U+012B}
 return
@@ -6179,17 +6177,17 @@ return
 
 ;; Glyph: 'ī' Descr: LATIN SMALL LETTER I WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={\i}::
 SendInput ^x8{Enter}12b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={\i}::
 SendInput ^+u12b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={\i}::
 SendInput {U+012B}
 return
@@ -6197,17 +6195,17 @@ return
 
 ;; Glyph: 'ī' Descr: LATIN SMALL LETTER I WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={i}::
 SendInput ^x8{Enter}12b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={i}::
 SendInput ^+u12b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={i}::
 SendInput {U+012B}
 return
@@ -6215,17 +6213,17 @@ return
 
 ;; Glyph: 'Ĭ' Descr: LATIN CAPITAL LETTER I WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uI::
 SendInput ^x8{Enter}12c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uI::
 SendInput ^+u12c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uI::
 SendInput {U+012C}
 return
@@ -6233,17 +6231,17 @@ return
 
 ;; Glyph: 'Ĭ' Descr: LATIN CAPITAL LETTER I WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{I}::
 SendInput ^x8{Enter}12c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{I}::
 SendInput ^+u12c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{I}::
 SendInput {U+012C}
 return
@@ -6251,17 +6249,17 @@ return
 
 ;; Glyph: 'ĭ' Descr: LATIN SMALL LETTER I WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ui::
 SendInput ^x8{Enter}12d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ui::
 SendInput ^+u12d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ui::
 SendInput {U+012D}
 return
@@ -6269,17 +6267,17 @@ return
 
 ;; Glyph: 'ĭ' Descr: LATIN SMALL LETTER I WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{\i}::
 SendInput ^x8{Enter}12d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{\i}::
 SendInput ^+u12d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{\i}::
 SendInput {U+012D}
 return
@@ -6287,17 +6285,17 @@ return
 
 ;; Glyph: 'ĭ' Descr: LATIN SMALL LETTER I WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{i}::
 SendInput ^x8{Enter}12d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{i}::
 SendInput ^+u12d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{i}::
 SendInput {U+012D}
 return
@@ -6305,17 +6303,17 @@ return
 
 ;; Glyph: 'Į' Descr: LATIN CAPITAL LETTER I WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\kI::
 SendInput ^x8{Enter}12e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\kI::
 SendInput ^+u12e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\kI::
 SendInput {U+012E}
 return
@@ -6323,17 +6321,17 @@ return
 
 ;; Glyph: 'Į' Descr: LATIN CAPITAL LETTER I WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{I}::
 SendInput ^x8{Enter}12e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{I}::
 SendInput ^+u12e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{I}::
 SendInput {U+012E}
 return
@@ -6341,17 +6339,17 @@ return
 
 ;; Glyph: 'į' Descr: LATIN SMALL LETTER I WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ki::
 SendInput ^x8{Enter}12f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ki::
 SendInput ^+u12f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ki::
 SendInput {U+012F}
 return
@@ -6359,17 +6357,17 @@ return
 
 ;; Glyph: 'į' Descr: LATIN SMALL LETTER I WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{i}::
 SendInput ^x8{Enter}12f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{i}::
 SendInput ^+u12f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{i}::
 SendInput {U+012F}
 return
@@ -6377,17 +6375,17 @@ return
 
 ;; Glyph: 'İ' Descr: LATIN CAPITAL LETTER I WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.I::
 SendInput ^x8{Enter}130{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.I::
 SendInput ^+u130{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.I::
 SendInput {U+0130}
 return
@@ -6395,17 +6393,17 @@ return
 
 ;; Glyph: 'İ' Descr: LATIN CAPITAL LETTER I WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{I}::
 SendInput ^x8{Enter}130{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{I}::
 SendInput ^+u130{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{I}::
 SendInput {U+0130}
 return
@@ -6413,17 +6411,17 @@ return
 
 ;; Glyph: 'ı' Descr: LATIN SMALL LETTER DOTLESS I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\i::
 SendInput ^x8{Enter}131{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\i::
 SendInput ^+u131{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\i::
 SendInput {U+0131}
 return
@@ -6431,17 +6429,17 @@ return
 
 ;; Glyph: 'ı' Descr: LATIN SMALL LETTER DOTLESS I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\imath::
 SendInput ^x8{Enter}131{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\imath::
 SendInput ^+u131{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\imath::
 SendInput {U+0131}
 return
@@ -6449,17 +6447,17 @@ return
 
 ;; Glyph: 'Ĵ' Descr: LATIN CAPITAL LETTER J WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^J::
 SendInput ^x8{Enter}134{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^J::
 SendInput ^+u134{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^J::
 SendInput {U+0134}
 return
@@ -6467,17 +6465,17 @@ return
 
 ;; Glyph: 'Ĵ' Descr: LATIN CAPITAL LETTER J WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{J}::
 SendInput ^x8{Enter}134{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{J}::
 SendInput ^+u134{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{J}::
 SendInput {U+0134}
 return
@@ -6485,17 +6483,17 @@ return
 
 ;; Glyph: 'ĵ' Descr: LATIN SMALL LETTER J WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^j::
 SendInput ^x8{Enter}135{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^j::
 SendInput ^+u135{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^j::
 SendInput {U+0135}
 return
@@ -6503,17 +6501,17 @@ return
 
 ;; Glyph: 'ĵ' Descr: LATIN SMALL LETTER J WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{\j}::
 SendInput ^x8{Enter}135{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{\j}::
 SendInput ^+u135{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{\j}::
 SendInput {U+0135}
 return
@@ -6521,17 +6519,17 @@ return
 
 ;; Glyph: 'ĵ' Descr: LATIN SMALL LETTER J WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{j}::
 SendInput ^x8{Enter}135{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{j}::
 SendInput ^+u135{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{j}::
 SendInput {U+0135}
 return
@@ -6539,17 +6537,17 @@ return
 
 ;; Glyph: 'Ķ' Descr: LATIN CAPITAL LETTER K WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cK::
 SendInput ^x8{Enter}136{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cK::
 SendInput ^+u136{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cK::
 SendInput {U+0136}
 return
@@ -6557,17 +6555,17 @@ return
 
 ;; Glyph: 'Ķ' Descr: LATIN CAPITAL LETTER K WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{K}::
 SendInput ^x8{Enter}136{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{K}::
 SendInput ^+u136{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{K}::
 SendInput {U+0136}
 return
@@ -6575,17 +6573,17 @@ return
 
 ;; Glyph: 'ķ' Descr: LATIN SMALL LETTER K WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ck::
 SendInput ^x8{Enter}137{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ck::
 SendInput ^+u137{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ck::
 SendInput {U+0137}
 return
@@ -6593,17 +6591,17 @@ return
 
 ;; Glyph: 'ķ' Descr: LATIN SMALL LETTER K WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{k}::
 SendInput ^x8{Enter}137{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{k}::
 SendInput ^+u137{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{k}::
 SendInput {U+0137}
 return
@@ -6611,17 +6609,17 @@ return
 
 ;; Glyph: 'Ĺ' Descr: LATIN CAPITAL LETTER L WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'L::
 SendInput ^x8{Enter}139{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'L::
 SendInput ^+u139{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'L::
 SendInput {U+0139}
 return
@@ -6629,17 +6627,17 @@ return
 
 ;; Glyph: 'Ĺ' Descr: LATIN CAPITAL LETTER L WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{L}::
 SendInput ^x8{Enter}139{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{L}::
 SendInput ^+u139{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{L}::
 SendInput {U+0139}
 return
@@ -6647,17 +6645,17 @@ return
 
 ;; Glyph: 'ĺ' Descr: LATIN SMALL LETTER L WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'l::
 SendInput ^x8{Enter}13a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'l::
 SendInput ^+u13a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'l::
 SendInput {U+013A}
 return
@@ -6665,17 +6663,17 @@ return
 
 ;; Glyph: 'ĺ' Descr: LATIN SMALL LETTER L WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{l}::
 SendInput ^x8{Enter}13a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{l}::
 SendInput ^+u13a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{l}::
 SendInput {U+013A}
 return
@@ -6683,17 +6681,17 @@ return
 
 ;; Glyph: 'Ļ' Descr: LATIN CAPITAL LETTER L WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cL::
 SendInput ^x8{Enter}13b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cL::
 SendInput ^+u13b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cL::
 SendInput {U+013B}
 return
@@ -6701,17 +6699,17 @@ return
 
 ;; Glyph: 'Ļ' Descr: LATIN CAPITAL LETTER L WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{L}::
 SendInput ^x8{Enter}13b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{L}::
 SendInput ^+u13b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{L}::
 SendInput {U+013B}
 return
@@ -6719,17 +6717,17 @@ return
 
 ;; Glyph: 'ļ' Descr: LATIN SMALL LETTER L WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cl::
 SendInput ^x8{Enter}13c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cl::
 SendInput ^+u13c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cl::
 SendInput {U+013C}
 return
@@ -6737,17 +6735,17 @@ return
 
 ;; Glyph: 'ļ' Descr: LATIN SMALL LETTER L WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{l}::
 SendInput ^x8{Enter}13c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{l}::
 SendInput ^+u13c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{l}::
 SendInput {U+013C}
 return
@@ -6755,17 +6753,17 @@ return
 
 ;; Glyph: 'Ľ' Descr: LATIN CAPITAL LETTER L WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vL::
 SendInput ^x8{Enter}13d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vL::
 SendInput ^+u13d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vL::
 SendInput {U+013D}
 return
@@ -6773,17 +6771,17 @@ return
 
 ;; Glyph: 'Ľ' Descr: LATIN CAPITAL LETTER L WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{L}::
 SendInput ^x8{Enter}13d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{L}::
 SendInput ^+u13d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{L}::
 SendInput {U+013D}
 return
@@ -6791,17 +6789,17 @@ return
 
 ;; Glyph: 'ľ' Descr: LATIN SMALL LETTER L WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vl::
 SendInput ^x8{Enter}13e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vl::
 SendInput ^+u13e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vl::
 SendInput {U+013E}
 return
@@ -6809,17 +6807,17 @@ return
 
 ;; Glyph: 'ľ' Descr: LATIN SMALL LETTER L WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{l}::
 SendInput ^x8{Enter}13e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{l}::
 SendInput ^+u13e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{l}::
 SendInput {U+013E}
 return
@@ -6827,17 +6825,17 @@ return
 
 ;; Glyph: 'Ł' Descr: LATIN CAPITAL LETTER L WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\L::
 SendInput ^x8{Enter}141{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\L::
 SendInput ^+u141{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\L::
 SendInput {U+0141}
 return
@@ -6845,17 +6843,17 @@ return
 
 ;; Glyph: 'ł' Descr: LATIN SMALL LETTER L WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\l::
 SendInput ^x8{Enter}142{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\l::
 SendInput ^+u142{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\l::
 SendInput {U+0142}
 return
@@ -6863,17 +6861,17 @@ return
 
 ;; Glyph: 'Ń' Descr: LATIN CAPITAL LETTER N WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'N::
 SendInput ^x8{Enter}143{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'N::
 SendInput ^+u143{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'N::
 SendInput {U+0143}
 return
@@ -6881,17 +6879,17 @@ return
 
 ;; Glyph: 'Ń' Descr: LATIN CAPITAL LETTER N WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{N}::
 SendInput ^x8{Enter}143{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{N}::
 SendInput ^+u143{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{N}::
 SendInput {U+0143}
 return
@@ -6899,17 +6897,17 @@ return
 
 ;; Glyph: 'ń' Descr: LATIN SMALL LETTER N WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'n::
 SendInput ^x8{Enter}144{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'n::
 SendInput ^+u144{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'n::
 SendInput {U+0144}
 return
@@ -6917,17 +6915,17 @@ return
 
 ;; Glyph: 'ń' Descr: LATIN SMALL LETTER N WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{n}::
 SendInput ^x8{Enter}144{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{n}::
 SendInput ^+u144{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{n}::
 SendInput {U+0144}
 return
@@ -6935,17 +6933,17 @@ return
 
 ;; Glyph: 'Ņ' Descr: LATIN CAPITAL LETTER N WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cN::
 SendInput ^x8{Enter}145{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cN::
 SendInput ^+u145{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cN::
 SendInput {U+0145}
 return
@@ -6953,17 +6951,17 @@ return
 
 ;; Glyph: 'Ņ' Descr: LATIN CAPITAL LETTER N WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{N}::
 SendInput ^x8{Enter}145{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{N}::
 SendInput ^+u145{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{N}::
 SendInput {U+0145}
 return
@@ -6971,17 +6969,17 @@ return
 
 ;; Glyph: 'ņ' Descr: LATIN SMALL LETTER N WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cn::
 SendInput ^x8{Enter}146{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cn::
 SendInput ^+u146{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cn::
 SendInput {U+0146}
 return
@@ -6989,17 +6987,17 @@ return
 
 ;; Glyph: 'ņ' Descr: LATIN SMALL LETTER N WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{n}::
 SendInput ^x8{Enter}146{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{n}::
 SendInput ^+u146{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{n}::
 SendInput {U+0146}
 return
@@ -7007,17 +7005,17 @@ return
 
 ;; Glyph: 'Ň' Descr: LATIN CAPITAL LETTER N WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vN::
 SendInput ^x8{Enter}147{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vN::
 SendInput ^+u147{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vN::
 SendInput {U+0147}
 return
@@ -7025,17 +7023,17 @@ return
 
 ;; Glyph: 'Ň' Descr: LATIN CAPITAL LETTER N WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{N}::
 SendInput ^x8{Enter}147{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{N}::
 SendInput ^+u147{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{N}::
 SendInput {U+0147}
 return
@@ -7043,17 +7041,17 @@ return
 
 ;; Glyph: 'ň' Descr: LATIN SMALL LETTER N WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vn::
 SendInput ^x8{Enter}148{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vn::
 SendInput ^+u148{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vn::
 SendInput {U+0148}
 return
@@ -7061,17 +7059,17 @@ return
 
 ;; Glyph: 'ň' Descr: LATIN SMALL LETTER N WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{n}::
 SendInput ^x8{Enter}148{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{n}::
 SendInput ^+u148{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{n}::
 SendInput {U+0148}
 return
@@ -7079,17 +7077,17 @@ return
 
 ;; Glyph: 'Ō' Descr: LATIN CAPITAL LETTER O WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=O::
 SendInput ^x8{Enter}14c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=O::
 SendInput ^+u14c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=O::
 SendInput {U+014C}
 return
@@ -7097,17 +7095,17 @@ return
 
 ;; Glyph: 'Ō' Descr: LATIN CAPITAL LETTER O WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={O}::
 SendInput ^x8{Enter}14c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={O}::
 SendInput ^+u14c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={O}::
 SendInput {U+014C}
 return
@@ -7115,17 +7113,17 @@ return
 
 ;; Glyph: 'ō' Descr: LATIN SMALL LETTER O WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=o::
 SendInput ^x8{Enter}14d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=o::
 SendInput ^+u14d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=o::
 SendInput {U+014D}
 return
@@ -7133,17 +7131,17 @@ return
 
 ;; Glyph: 'ō' Descr: LATIN SMALL LETTER O WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={o}::
 SendInput ^x8{Enter}14d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={o}::
 SendInput ^+u14d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={o}::
 SendInput {U+014D}
 return
@@ -7151,17 +7149,17 @@ return
 
 ;; Glyph: 'Ŏ' Descr: LATIN CAPITAL LETTER O WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uO::
 SendInput ^x8{Enter}14e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uO::
 SendInput ^+u14e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uO::
 SendInput {U+014E}
 return
@@ -7169,17 +7167,17 @@ return
 
 ;; Glyph: 'Ŏ' Descr: LATIN CAPITAL LETTER O WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{O}::
 SendInput ^x8{Enter}14e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{O}::
 SendInput ^+u14e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{O}::
 SendInput {U+014E}
 return
@@ -7187,17 +7185,17 @@ return
 
 ;; Glyph: 'ŏ' Descr: LATIN SMALL LETTER O WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uo::
 SendInput ^x8{Enter}14f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uo::
 SendInput ^+u14f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uo::
 SendInput {U+014F}
 return
@@ -7205,17 +7203,17 @@ return
 
 ;; Glyph: 'ŏ' Descr: LATIN SMALL LETTER O WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{o}::
 SendInput ^x8{Enter}14f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{o}::
 SendInput ^+u14f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{o}::
 SendInput {U+014F}
 return
@@ -7223,17 +7221,17 @@ return
 
 ;; Glyph: 'Ő' Descr: LATIN CAPITAL LETTER O WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\HO::
 SendInput ^x8{Enter}150{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\HO::
 SendInput ^+u150{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\HO::
 SendInput {U+0150}
 return
@@ -7241,17 +7239,17 @@ return
 
 ;; Glyph: 'Ő' Descr: LATIN CAPITAL LETTER O WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\H{O}::
 SendInput ^x8{Enter}150{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\H{O}::
 SendInput ^+u150{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\H{O}::
 SendInput {U+0150}
 return
@@ -7259,17 +7257,17 @@ return
 
 ;; Glyph: 'ő' Descr: LATIN SMALL LETTER O WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Ho::
 SendInput ^x8{Enter}151{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Ho::
 SendInput ^+u151{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Ho::
 SendInput {U+0151}
 return
@@ -7277,17 +7275,17 @@ return
 
 ;; Glyph: 'ő' Descr: LATIN SMALL LETTER O WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\H{o}::
 SendInput ^x8{Enter}151{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\H{o}::
 SendInput ^+u151{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\H{o}::
 SendInput {U+0151}
 return
@@ -7295,17 +7293,17 @@ return
 
 ;; Glyph: 'ő' Descr: LATIN SMALL LETTER O WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Uo::
 SendInput ^x8{Enter}151{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Uo::
 SendInput ^+u151{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Uo::
 SendInput {U+0151}
 return
@@ -7313,17 +7311,17 @@ return
 
 ;; Glyph: 'ő' Descr: LATIN SMALL LETTER O WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\U{o}::
 SendInput ^x8{Enter}151{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\U{o}::
 SendInput ^+u151{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\U{o}::
 SendInput {U+0151}
 return
@@ -7331,17 +7329,17 @@ return
 
 ;; Glyph: 'Œ' Descr: LATIN CAPITAL LIGATURE OE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\OE::
 SendInput ^x8{Enter}152{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\OE::
 SendInput ^+u152{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\OE::
 SendInput {U+0152}
 return
@@ -7349,17 +7347,17 @@ return
 
 ;; Glyph: 'œ' Descr: LATIN SMALL LIGATURE OE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\oe::
 SendInput ^x8{Enter}153{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\oe::
 SendInput ^+u153{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\oe::
 SendInput {U+0153}
 return
@@ -7367,17 +7365,17 @@ return
 
 ;; Glyph: 'Ŕ' Descr: LATIN CAPITAL LETTER R WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'R::
 SendInput ^x8{Enter}154{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'R::
 SendInput ^+u154{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'R::
 SendInput {U+0154}
 return
@@ -7385,17 +7383,17 @@ return
 
 ;; Glyph: 'Ŕ' Descr: LATIN CAPITAL LETTER R WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{R}::
 SendInput ^x8{Enter}154{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{R}::
 SendInput ^+u154{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{R}::
 SendInput {U+0154}
 return
@@ -7403,17 +7401,17 @@ return
 
 ;; Glyph: 'ŕ' Descr: LATIN SMALL LETTER R WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'r::
 SendInput ^x8{Enter}155{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'r::
 SendInput ^+u155{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'r::
 SendInput {U+0155}
 return
@@ -7421,17 +7419,17 @@ return
 
 ;; Glyph: 'ŕ' Descr: LATIN SMALL LETTER R WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{r}::
 SendInput ^x8{Enter}155{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{r}::
 SendInput ^+u155{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{r}::
 SendInput {U+0155}
 return
@@ -7439,17 +7437,17 @@ return
 
 ;; Glyph: 'Ŗ' Descr: LATIN CAPITAL LETTER R WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cR::
 SendInput ^x8{Enter}156{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cR::
 SendInput ^+u156{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cR::
 SendInput {U+0156}
 return
@@ -7457,17 +7455,17 @@ return
 
 ;; Glyph: 'Ŗ' Descr: LATIN CAPITAL LETTER R WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{R}::
 SendInput ^x8{Enter}156{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{R}::
 SendInput ^+u156{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{R}::
 SendInput {U+0156}
 return
@@ -7475,17 +7473,17 @@ return
 
 ;; Glyph: 'ŗ' Descr: LATIN SMALL LETTER R WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cr::
 SendInput ^x8{Enter}157{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cr::
 SendInput ^+u157{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cr::
 SendInput {U+0157}
 return
@@ -7493,17 +7491,17 @@ return
 
 ;; Glyph: 'ŗ' Descr: LATIN SMALL LETTER R WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{r}::
 SendInput ^x8{Enter}157{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{r}::
 SendInput ^+u157{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{r}::
 SendInput {U+0157}
 return
@@ -7511,17 +7509,17 @@ return
 
 ;; Glyph: 'Ř' Descr: LATIN CAPITAL LETTER R WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vR::
 SendInput ^x8{Enter}158{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vR::
 SendInput ^+u158{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vR::
 SendInput {U+0158}
 return
@@ -7529,17 +7527,17 @@ return
 
 ;; Glyph: 'Ř' Descr: LATIN CAPITAL LETTER R WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{R}::
 SendInput ^x8{Enter}158{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{R}::
 SendInput ^+u158{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{R}::
 SendInput {U+0158}
 return
@@ -7547,17 +7545,17 @@ return
 
 ;; Glyph: 'ř' Descr: LATIN SMALL LETTER R WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vr::
 SendInput ^x8{Enter}159{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vr::
 SendInput ^+u159{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vr::
 SendInput {U+0159}
 return
@@ -7565,17 +7563,17 @@ return
 
 ;; Glyph: 'ř' Descr: LATIN SMALL LETTER R WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{r}::
 SendInput ^x8{Enter}159{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{r}::
 SendInput ^+u159{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{r}::
 SendInput {U+0159}
 return
@@ -7583,17 +7581,17 @@ return
 
 ;; Glyph: 'Ś' Descr: LATIN CAPITAL LETTER S WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'S::
 SendInput ^x8{Enter}15a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'S::
 SendInput ^+u15a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'S::
 SendInput {U+015A}
 return
@@ -7601,17 +7599,17 @@ return
 
 ;; Glyph: 'Ś' Descr: LATIN CAPITAL LETTER S WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{S}::
 SendInput ^x8{Enter}15a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{S}::
 SendInput ^+u15a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{S}::
 SendInput {U+015A}
 return
@@ -7619,17 +7617,17 @@ return
 
 ;; Glyph: 'ś' Descr: LATIN SMALL LETTER S WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'s::
 SendInput ^x8{Enter}15b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'s::
 SendInput ^+u15b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'s::
 SendInput {U+015B}
 return
@@ -7637,17 +7635,17 @@ return
 
 ;; Glyph: 'ś' Descr: LATIN SMALL LETTER S WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{s}::
 SendInput ^x8{Enter}15b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{s}::
 SendInput ^+u15b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{s}::
 SendInput {U+015B}
 return
@@ -7655,17 +7653,17 @@ return
 
 ;; Glyph: 'Ŝ' Descr: LATIN CAPITAL LETTER S WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^S::
 SendInput ^x8{Enter}15c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^S::
 SendInput ^+u15c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^S::
 SendInput {U+015C}
 return
@@ -7673,17 +7671,17 @@ return
 
 ;; Glyph: 'Ŝ' Descr: LATIN CAPITAL LETTER S WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{S}::
 SendInput ^x8{Enter}15c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{S}::
 SendInput ^+u15c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{S}::
 SendInput {U+015C}
 return
@@ -7691,17 +7689,17 @@ return
 
 ;; Glyph: 'ŝ' Descr: LATIN SMALL LETTER S WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^s::
 SendInput ^x8{Enter}15d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^s::
 SendInput ^+u15d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^s::
 SendInput {U+015D}
 return
@@ -7709,17 +7707,17 @@ return
 
 ;; Glyph: 'ŝ' Descr: LATIN SMALL LETTER S WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{s}::
 SendInput ^x8{Enter}15d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{s}::
 SendInput ^+u15d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{s}::
 SendInput {U+015D}
 return
@@ -7727,17 +7725,17 @@ return
 
 ;; Glyph: 'Ş' Descr: LATIN CAPITAL LETTER S WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cS::
 SendInput ^x8{Enter}15e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cS::
 SendInput ^+u15e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cS::
 SendInput {U+015E}
 return
@@ -7745,17 +7743,17 @@ return
 
 ;; Glyph: 'Ş' Descr: LATIN CAPITAL LETTER S WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{S}::
 SendInput ^x8{Enter}15e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{S}::
 SendInput ^+u15e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{S}::
 SendInput {U+015E}
 return
@@ -7763,17 +7761,17 @@ return
 
 ;; Glyph: 'ş' Descr: LATIN SMALL LETTER S WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cs::
 SendInput ^x8{Enter}15f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cs::
 SendInput ^+u15f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cs::
 SendInput {U+015F}
 return
@@ -7781,17 +7779,17 @@ return
 
 ;; Glyph: 'ş' Descr: LATIN SMALL LETTER S WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{s}::
 SendInput ^x8{Enter}15f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{s}::
 SendInput ^+u15f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{s}::
 SendInput {U+015F}
 return
@@ -7799,17 +7797,17 @@ return
 
 ;; Glyph: 'Š' Descr: LATIN CAPITAL LETTER S WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vS::
 SendInput ^x8{Enter}160{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vS::
 SendInput ^+u160{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vS::
 SendInput {U+0160}
 return
@@ -7817,17 +7815,17 @@ return
 
 ;; Glyph: 'Š' Descr: LATIN CAPITAL LETTER S WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{S}::
 SendInput ^x8{Enter}160{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{S}::
 SendInput ^+u160{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{S}::
 SendInput {U+0160}
 return
@@ -7835,17 +7833,17 @@ return
 
 ;; Glyph: 'š' Descr: LATIN SMALL LETTER S WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vs::
 SendInput ^x8{Enter}161{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vs::
 SendInput ^+u161{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vs::
 SendInput {U+0161}
 return
@@ -7853,17 +7851,17 @@ return
 
 ;; Glyph: 'š' Descr: LATIN SMALL LETTER S WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{s}::
 SendInput ^x8{Enter}161{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{s}::
 SendInput ^+u161{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{s}::
 SendInput {U+0161}
 return
@@ -7871,17 +7869,17 @@ return
 
 ;; Glyph: 'Ţ' Descr: LATIN CAPITAL LETTER T WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cT::
 SendInput ^x8{Enter}162{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cT::
 SendInput ^+u162{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cT::
 SendInput {U+0162}
 return
@@ -7889,17 +7887,17 @@ return
 
 ;; Glyph: 'Ţ' Descr: LATIN CAPITAL LETTER T WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{T}::
 SendInput ^x8{Enter}162{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{T}::
 SendInput ^+u162{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{T}::
 SendInput {U+0162}
 return
@@ -7907,17 +7905,17 @@ return
 
 ;; Glyph: 'ţ' Descr: LATIN SMALL LETTER T WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ct::
 SendInput ^x8{Enter}163{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ct::
 SendInput ^+u163{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ct::
 SendInput {U+0163}
 return
@@ -7925,17 +7923,17 @@ return
 
 ;; Glyph: 'ţ' Descr: LATIN SMALL LETTER T WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{t}::
 SendInput ^x8{Enter}163{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{t}::
 SendInput ^+u163{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{t}::
 SendInput {U+0163}
 return
@@ -7943,17 +7941,17 @@ return
 
 ;; Glyph: 'Ť' Descr: LATIN CAPITAL LETTER T WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vT::
 SendInput ^x8{Enter}164{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vT::
 SendInput ^+u164{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vT::
 SendInput {U+0164}
 return
@@ -7961,17 +7959,17 @@ return
 
 ;; Glyph: 'Ť' Descr: LATIN CAPITAL LETTER T WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{T}::
 SendInput ^x8{Enter}164{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{T}::
 SendInput ^+u164{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{T}::
 SendInput {U+0164}
 return
@@ -7979,17 +7977,17 @@ return
 
 ;; Glyph: 'ť' Descr: LATIN SMALL LETTER T WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vt::
 SendInput ^x8{Enter}165{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vt::
 SendInput ^+u165{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vt::
 SendInput {U+0165}
 return
@@ -7997,17 +7995,17 @@ return
 
 ;; Glyph: 'ť' Descr: LATIN SMALL LETTER T WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{t}::
 SendInput ^x8{Enter}165{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{t}::
 SendInput ^+u165{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{t}::
 SendInput {U+0165}
 return
@@ -8015,17 +8013,17 @@ return
 
 ;; Glyph: 'Ũ' Descr: LATIN CAPITAL LETTER U WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~U::
 SendInput ^x8{Enter}168{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~U::
 SendInput ^+u168{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~U::
 SendInput {U+0168}
 return
@@ -8033,17 +8031,17 @@ return
 
 ;; Glyph: 'Ũ' Descr: LATIN CAPITAL LETTER U WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{U}::
 SendInput ^x8{Enter}168{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{U}::
 SendInput ^+u168{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{U}::
 SendInput {U+0168}
 return
@@ -8051,17 +8049,17 @@ return
 
 ;; Glyph: 'ũ' Descr: LATIN SMALL LETTER U WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~u::
 SendInput ^x8{Enter}169{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~u::
 SendInput ^+u169{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~u::
 SendInput {U+0169}
 return
@@ -8069,17 +8067,17 @@ return
 
 ;; Glyph: 'ũ' Descr: LATIN SMALL LETTER U WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{u}::
 SendInput ^x8{Enter}169{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{u}::
 SendInput ^+u169{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{u}::
 SendInput {U+0169}
 return
@@ -8087,17 +8085,17 @@ return
 
 ;; Glyph: 'Ū' Descr: LATIN CAPITAL LETTER U WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=U::
 SendInput ^x8{Enter}16a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=U::
 SendInput ^+u16a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=U::
 SendInput {U+016A}
 return
@@ -8105,17 +8103,17 @@ return
 
 ;; Glyph: 'Ū' Descr: LATIN CAPITAL LETTER U WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={U}::
 SendInput ^x8{Enter}16a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={U}::
 SendInput ^+u16a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={U}::
 SendInput {U+016A}
 return
@@ -8123,17 +8121,17 @@ return
 
 ;; Glyph: 'ū' Descr: LATIN SMALL LETTER U WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=u::
 SendInput ^x8{Enter}16b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=u::
 SendInput ^+u16b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=u::
 SendInput {U+016B}
 return
@@ -8141,17 +8139,17 @@ return
 
 ;; Glyph: 'ū' Descr: LATIN SMALL LETTER U WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={u}::
 SendInput ^x8{Enter}16b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={u}::
 SendInput ^+u16b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={u}::
 SendInput {U+016B}
 return
@@ -8159,17 +8157,17 @@ return
 
 ;; Glyph: 'Ŭ' Descr: LATIN CAPITAL LETTER U WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uU::
 SendInput ^x8{Enter}16c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uU::
 SendInput ^+u16c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uU::
 SendInput {U+016C}
 return
@@ -8177,17 +8175,17 @@ return
 
 ;; Glyph: 'Ŭ' Descr: LATIN CAPITAL LETTER U WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{U}::
 SendInput ^x8{Enter}16c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{U}::
 SendInput ^+u16c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{U}::
 SendInput {U+016C}
 return
@@ -8195,17 +8193,17 @@ return
 
 ;; Glyph: 'ŭ' Descr: LATIN SMALL LETTER U WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uu::
 SendInput ^x8{Enter}16d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uu::
 SendInput ^+u16d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uu::
 SendInput {U+016D}
 return
@@ -8213,17 +8211,17 @@ return
 
 ;; Glyph: 'ŭ' Descr: LATIN SMALL LETTER U WITH BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{u}::
 SendInput ^x8{Enter}16d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{u}::
 SendInput ^+u16d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{u}::
 SendInput {U+016D}
 return
@@ -8231,17 +8229,17 @@ return
 
 ;; Glyph: 'Ű' Descr: LATIN CAPITAL LETTER U WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\HU::
 SendInput ^x8{Enter}170{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\HU::
 SendInput ^+u170{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\HU::
 SendInput {U+0170}
 return
@@ -8249,17 +8247,17 @@ return
 
 ;; Glyph: 'Ű' Descr: LATIN CAPITAL LETTER U WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\H{U}::
 SendInput ^x8{Enter}170{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\H{U}::
 SendInput ^+u170{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\H{U}::
 SendInput {U+0170}
 return
@@ -8267,17 +8265,17 @@ return
 
 ;; Glyph: 'ű' Descr: LATIN SMALL LETTER U WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Hu::
 SendInput ^x8{Enter}171{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Hu::
 SendInput ^+u171{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Hu::
 SendInput {U+0171}
 return
@@ -8285,17 +8283,17 @@ return
 
 ;; Glyph: 'ű' Descr: LATIN SMALL LETTER U WITH DOUBLE ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\H{u}::
 SendInput ^x8{Enter}171{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\H{u}::
 SendInput ^+u171{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\H{u}::
 SendInput {U+0171}
 return
@@ -8303,17 +8301,17 @@ return
 
 ;; Glyph: 'Ų' Descr: LATIN CAPITAL LETTER U WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\kU::
 SendInput ^x8{Enter}172{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\kU::
 SendInput ^+u172{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\kU::
 SendInput {U+0172}
 return
@@ -8321,17 +8319,17 @@ return
 
 ;; Glyph: 'Ų' Descr: LATIN CAPITAL LETTER U WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{U}::
 SendInput ^x8{Enter}172{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{U}::
 SendInput ^+u172{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{U}::
 SendInput {U+0172}
 return
@@ -8339,17 +8337,17 @@ return
 
 ;; Glyph: 'ų' Descr: LATIN SMALL LETTER U WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ku::
 SendInput ^x8{Enter}173{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ku::
 SendInput ^+u173{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ku::
 SendInput {U+0173}
 return
@@ -8357,17 +8355,17 @@ return
 
 ;; Glyph: 'ų' Descr: LATIN SMALL LETTER U WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{u}::
 SendInput ^x8{Enter}173{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{u}::
 SendInput ^+u173{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{u}::
 SendInput {U+0173}
 return
@@ -8375,17 +8373,17 @@ return
 
 ;; Glyph: 'Ŵ' Descr: LATIN CAPITAL LETTER W WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^W::
 SendInput ^x8{Enter}174{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^W::
 SendInput ^+u174{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^W::
 SendInput {U+0174}
 return
@@ -8393,17 +8391,17 @@ return
 
 ;; Glyph: 'Ŵ' Descr: LATIN CAPITAL LETTER W WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{W}::
 SendInput ^x8{Enter}174{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{W}::
 SendInput ^+u174{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{W}::
 SendInput {U+0174}
 return
@@ -8411,17 +8409,17 @@ return
 
 ;; Glyph: 'ŵ' Descr: LATIN SMALL LETTER W WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^w::
 SendInput ^x8{Enter}175{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^w::
 SendInput ^+u175{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^w::
 SendInput {U+0175}
 return
@@ -8429,17 +8427,17 @@ return
 
 ;; Glyph: 'ŵ' Descr: LATIN SMALL LETTER W WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{w}::
 SendInput ^x8{Enter}175{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{w}::
 SendInput ^+u175{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{w}::
 SendInput {U+0175}
 return
@@ -8447,17 +8445,17 @@ return
 
 ;; Glyph: 'Ŷ' Descr: LATIN CAPITAL LETTER Y WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^Y::
 SendInput ^x8{Enter}176{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^Y::
 SendInput ^+u176{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^Y::
 SendInput {U+0176}
 return
@@ -8465,17 +8463,17 @@ return
 
 ;; Glyph: 'Ŷ' Descr: LATIN CAPITAL LETTER Y WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{Y}::
 SendInput ^x8{Enter}176{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{Y}::
 SendInput ^+u176{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{Y}::
 SendInput {U+0176}
 return
@@ -8483,17 +8481,17 @@ return
 
 ;; Glyph: 'ŷ' Descr: LATIN SMALL LETTER Y WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^y::
 SendInput ^x8{Enter}177{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^y::
 SendInput ^+u177{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^y::
 SendInput {U+0177}
 return
@@ -8501,17 +8499,17 @@ return
 
 ;; Glyph: 'ŷ' Descr: LATIN SMALL LETTER Y WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{y}::
 SendInput ^x8{Enter}177{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{y}::
 SendInput ^+u177{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{y}::
 SendInput {U+0177}
 return
@@ -8519,17 +8517,17 @@ return
 
 ;; Glyph: 'Ÿ' Descr: LATIN CAPITAL LETTER Y WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"Y::
 SendInput ^x8{Enter}178{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"Y::
 SendInput ^+u178{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"Y::
 SendInput {U+0178}
 return
@@ -8537,17 +8535,17 @@ return
 
 ;; Glyph: 'Ÿ' Descr: LATIN CAPITAL LETTER Y WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{Y}::
 SendInput ^x8{Enter}178{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{Y}::
 SendInput ^+u178{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{Y}::
 SendInput {U+0178}
 return
@@ -8555,17 +8553,17 @@ return
 
 ;; Glyph: 'Ź' Descr: LATIN CAPITAL LETTER Z WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'Z::
 SendInput ^x8{Enter}179{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'Z::
 SendInput ^+u179{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'Z::
 SendInput {U+0179}
 return
@@ -8573,17 +8571,17 @@ return
 
 ;; Glyph: 'Ź' Descr: LATIN CAPITAL LETTER Z WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{Z}::
 SendInput ^x8{Enter}179{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{Z}::
 SendInput ^+u179{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{Z}::
 SendInput {U+0179}
 return
@@ -8591,17 +8589,17 @@ return
 
 ;; Glyph: 'ź' Descr: LATIN SMALL LETTER Z WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'z::
 SendInput ^x8{Enter}17a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'z::
 SendInput ^+u17a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'z::
 SendInput {U+017A}
 return
@@ -8609,17 +8607,17 @@ return
 
 ;; Glyph: 'ź' Descr: LATIN SMALL LETTER Z WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{z}::
 SendInput ^x8{Enter}17a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{z}::
 SendInput ^+u17a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{z}::
 SendInput {U+017A}
 return
@@ -8627,17 +8625,17 @@ return
 
 ;; Glyph: 'Ż' Descr: LATIN CAPITAL LETTER Z WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.Z::
 SendInput ^x8{Enter}17b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.Z::
 SendInput ^+u17b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.Z::
 SendInput {U+017B}
 return
@@ -8645,17 +8643,17 @@ return
 
 ;; Glyph: 'Ż' Descr: LATIN CAPITAL LETTER Z WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{Z}::
 SendInput ^x8{Enter}17b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{Z}::
 SendInput ^+u17b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{Z}::
 SendInput {U+017B}
 return
@@ -8663,17 +8661,17 @@ return
 
 ;; Glyph: 'ż' Descr: LATIN SMALL LETTER Z WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.z::
 SendInput ^x8{Enter}17c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.z::
 SendInput ^+u17c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.z::
 SendInput {U+017C}
 return
@@ -8681,17 +8679,17 @@ return
 
 ;; Glyph: 'ż' Descr: LATIN SMALL LETTER Z WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{z}::
 SendInput ^x8{Enter}17c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{z}::
 SendInput ^+u17c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{z}::
 SendInput {U+017C}
 return
@@ -8699,17 +8697,17 @@ return
 
 ;; Glyph: 'Ž' Descr: LATIN CAPITAL LETTER Z WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vZ::
 SendInput ^x8{Enter}17d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vZ::
 SendInput ^+u17d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vZ::
 SendInput {U+017D}
 return
@@ -8717,17 +8715,17 @@ return
 
 ;; Glyph: 'Ž' Descr: LATIN CAPITAL LETTER Z WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{Z}::
 SendInput ^x8{Enter}17d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{Z}::
 SendInput ^+u17d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{Z}::
 SendInput {U+017D}
 return
@@ -8735,17 +8733,17 @@ return
 
 ;; Glyph: 'ž' Descr: LATIN SMALL LETTER Z WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vz::
 SendInput ^x8{Enter}17e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vz::
 SendInput ^+u17e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vz::
 SendInput {U+017E}
 return
@@ -8753,17 +8751,17 @@ return
 
 ;; Glyph: 'ž' Descr: LATIN SMALL LETTER Z WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{z}::
 SendInput ^x8{Enter}17e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{z}::
 SendInput ^+u17e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{z}::
 SendInput {U+017E}
 return
@@ -8771,17 +8769,17 @@ return
 
 ;; Glyph: 'ƛ' Descr: LATIN SMALL LETTER LAMBDA WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lambdabar::
 SendInput ^x8{Enter}19b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lambdabar::
 SendInput ^+u19b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lambdabar::
 SendInput {U+019B}
 return
@@ -8789,17 +8787,17 @@ return
 
 ;; Glyph: 'Ǎ' Descr: LATIN CAPITAL LETTER A WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vA::
 SendInput ^x8{Enter}1cd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vA::
 SendInput ^+u1cd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vA::
 SendInput {U+01CD}
 return
@@ -8807,17 +8805,17 @@ return
 
 ;; Glyph: 'Ǎ' Descr: LATIN CAPITAL LETTER A WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{A}::
 SendInput ^x8{Enter}1cd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{A}::
 SendInput ^+u1cd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{A}::
 SendInput {U+01CD}
 return
@@ -8825,17 +8823,17 @@ return
 
 ;; Glyph: 'ǎ' Descr: LATIN SMALL LETTER A WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\va::
 SendInput ^x8{Enter}1ce{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\va::
 SendInput ^+u1ce{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\va::
 SendInput {U+01CE}
 return
@@ -8843,17 +8841,17 @@ return
 
 ;; Glyph: 'ǎ' Descr: LATIN SMALL LETTER A WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{a}::
 SendInput ^x8{Enter}1ce{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{a}::
 SendInput ^+u1ce{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{a}::
 SendInput {U+01CE}
 return
@@ -8861,17 +8859,17 @@ return
 
 ;; Glyph: 'Ǐ' Descr: LATIN CAPITAL LETTER I WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vI::
 SendInput ^x8{Enter}1cf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vI::
 SendInput ^+u1cf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vI::
 SendInput {U+01CF}
 return
@@ -8879,17 +8877,17 @@ return
 
 ;; Glyph: 'Ǐ' Descr: LATIN CAPITAL LETTER I WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{I}::
 SendInput ^x8{Enter}1cf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{I}::
 SendInput ^+u1cf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{I}::
 SendInput {U+01CF}
 return
@@ -8897,17 +8895,17 @@ return
 
 ;; Glyph: 'ǐ' Descr: LATIN SMALL LETTER I WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vi::
 SendInput ^x8{Enter}1d0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vi::
 SendInput ^+u1d0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vi::
 SendInput {U+01D0}
 return
@@ -8915,17 +8913,17 @@ return
 
 ;; Glyph: 'ǐ' Descr: LATIN SMALL LETTER I WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{\i}::
 SendInput ^x8{Enter}1d0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{\i}::
 SendInput ^+u1d0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{\i}::
 SendInput {U+01D0}
 return
@@ -8933,17 +8931,17 @@ return
 
 ;; Glyph: 'ǐ' Descr: LATIN SMALL LETTER I WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{i}::
 SendInput ^x8{Enter}1d0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{i}::
 SendInput ^+u1d0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{i}::
 SendInput {U+01D0}
 return
@@ -8951,17 +8949,17 @@ return
 
 ;; Glyph: 'Ǒ' Descr: LATIN CAPITAL LETTER O WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vO::
 SendInput ^x8{Enter}1d1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vO::
 SendInput ^+u1d1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vO::
 SendInput {U+01D1}
 return
@@ -8969,17 +8967,17 @@ return
 
 ;; Glyph: 'Ǒ' Descr: LATIN CAPITAL LETTER O WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{O}::
 SendInput ^x8{Enter}1d1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{O}::
 SendInput ^+u1d1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{O}::
 SendInput {U+01D1}
 return
@@ -8987,17 +8985,17 @@ return
 
 ;; Glyph: 'ǒ' Descr: LATIN SMALL LETTER O WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vo::
 SendInput ^x8{Enter}1d2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vo::
 SendInput ^+u1d2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vo::
 SendInput {U+01D2}
 return
@@ -9005,17 +9003,17 @@ return
 
 ;; Glyph: 'ǒ' Descr: LATIN SMALL LETTER O WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{o}::
 SendInput ^x8{Enter}1d2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{o}::
 SendInput ^+u1d2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{o}::
 SendInput {U+01D2}
 return
@@ -9023,17 +9021,17 @@ return
 
 ;; Glyph: 'Ǔ' Descr: LATIN CAPITAL LETTER U WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vU::
 SendInput ^x8{Enter}1d3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vU::
 SendInput ^+u1d3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vU::
 SendInput {U+01D3}
 return
@@ -9041,17 +9039,17 @@ return
 
 ;; Glyph: 'Ǔ' Descr: LATIN CAPITAL LETTER U WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{U}::
 SendInput ^x8{Enter}1d3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{U}::
 SendInput ^+u1d3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{U}::
 SendInput {U+01D3}
 return
@@ -9059,17 +9057,17 @@ return
 
 ;; Glyph: 'ǔ' Descr: LATIN SMALL LETTER U WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vu::
 SendInput ^x8{Enter}1d4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vu::
 SendInput ^+u1d4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vu::
 SendInput {U+01D4}
 return
@@ -9077,17 +9075,17 @@ return
 
 ;; Glyph: 'ǔ' Descr: LATIN SMALL LETTER U WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{u}::
 SendInput ^x8{Enter}1d4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{u}::
 SendInput ^+u1d4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{u}::
 SendInput {U+01D4}
 return
@@ -9095,17 +9093,17 @@ return
 
 ;; Glyph: 'Ǖ' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\=U::
 SendInput ^x8{Enter}1d5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\=U::
 SendInput ^+u1d5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\=U::
 SendInput {U+01D5}
 return
@@ -9113,17 +9111,17 @@ return
 
 ;; Glyph: 'Ǖ' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\={U}::
 SendInput ^x8{Enter}1d5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\={U}::
 SendInput ^+u1d5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\={U}::
 SendInput {U+01D5}
 return
@@ -9131,17 +9129,17 @@ return
 
 ;; Glyph: 'ǖ' Descr: LATIN SMALL LETTER U WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\=u::
 SendInput ^x8{Enter}1d6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\=u::
 SendInput ^+u1d6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\=u::
 SendInput {U+01D6}
 return
@@ -9149,17 +9147,17 @@ return
 
 ;; Glyph: 'ǖ' Descr: LATIN SMALL LETTER U WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\={u}::
 SendInput ^x8{Enter}1d6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\={u}::
 SendInput ^+u1d6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\={u}::
 SendInput {U+01D6}
 return
@@ -9167,17 +9165,17 @@ return
 
 ;; Glyph: 'Ǘ' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\'U::
 SendInput ^x8{Enter}1d7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\'U::
 SendInput ^+u1d7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\'U::
 SendInput {U+01D7}
 return
@@ -9185,17 +9183,17 @@ return
 
 ;; Glyph: 'Ǘ' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\'{U}::
 SendInput ^x8{Enter}1d7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\'{U}::
 SendInput ^+u1d7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\'{U}::
 SendInput {U+01D7}
 return
@@ -9203,17 +9201,17 @@ return
 
 ;; Glyph: 'ǘ' Descr: LATIN SMALL LETTER U WITH DIAERESIS AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\'u::
 SendInput ^x8{Enter}1d8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\'u::
 SendInput ^+u1d8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\'u::
 SendInput {U+01D8}
 return
@@ -9221,17 +9219,17 @@ return
 
 ;; Glyph: 'ǘ' Descr: LATIN SMALL LETTER U WITH DIAERESIS AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\'{u}::
 SendInput ^x8{Enter}1d8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\'{u}::
 SendInput ^+u1d8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\'{u}::
 SendInput {U+01D8}
 return
@@ -9239,17 +9237,17 @@ return
 
 ;; Glyph: 'Ǚ' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS AND CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\vU::
 SendInput ^x8{Enter}1d9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\vU::
 SendInput ^+u1d9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\vU::
 SendInput {U+01D9}
 return
@@ -9257,17 +9255,17 @@ return
 
 ;; Glyph: 'Ǚ' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS AND CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\v{U}::
 SendInput ^x8{Enter}1d9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\v{U}::
 SendInput ^+u1d9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\v{U}::
 SendInput {U+01D9}
 return
@@ -9275,17 +9273,17 @@ return
 
 ;; Glyph: 'ǚ' Descr: LATIN SMALL LETTER U WITH DIAERESIS AND CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\vu::
 SendInput ^x8{Enter}1da{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\vu::
 SendInput ^+u1da{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\vu::
 SendInput {U+01DA}
 return
@@ -9293,17 +9291,17 @@ return
 
 ;; Glyph: 'ǚ' Descr: LATIN SMALL LETTER U WITH DIAERESIS AND CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\v{u}::
 SendInput ^x8{Enter}1da{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\v{u}::
 SendInput ^+u1da{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\v{u}::
 SendInput {U+01DA}
 return
@@ -9311,17 +9309,17 @@ return
 
 ;; Glyph: 'Ǜ' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\``U::
 SendInput ^x8{Enter}1db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\``U::
 SendInput ^+u1db{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\``U::
 SendInput {U+01DB}
 return
@@ -9329,17 +9327,17 @@ return
 
 ;; Glyph: 'Ǜ' Descr: LATIN CAPITAL LETTER U WITH DIAERESIS AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\``{U}::
 SendInput ^x8{Enter}1db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\``{U}::
 SendInput ^+u1db{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\``{U}::
 SendInput {U+01DB}
 return
@@ -9347,17 +9345,17 @@ return
 
 ;; Glyph: 'ǜ' Descr: LATIN SMALL LETTER U WITH DIAERESIS AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\``u::
 SendInput ^x8{Enter}1dc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\``u::
 SendInput ^+u1dc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\``u::
 SendInput {U+01DC}
 return
@@ -9365,17 +9363,17 @@ return
 
 ;; Glyph: 'ǜ' Descr: LATIN SMALL LETTER U WITH DIAERESIS AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\``{u}::
 SendInput ^x8{Enter}1dc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\``{u}::
 SendInput ^+u1dc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\``{u}::
 SendInput {U+01DC}
 return
@@ -9383,17 +9381,17 @@ return
 
 ;; Glyph: 'Ǟ' Descr: LATIN CAPITAL LETTER A WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\=A::
 SendInput ^x8{Enter}1de{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\=A::
 SendInput ^+u1de{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\=A::
 SendInput {U+01DE}
 return
@@ -9401,17 +9399,17 @@ return
 
 ;; Glyph: 'Ǟ' Descr: LATIN CAPITAL LETTER A WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\={A}::
 SendInput ^x8{Enter}1de{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\={A}::
 SendInput ^+u1de{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\={A}::
 SendInput {U+01DE}
 return
@@ -9419,17 +9417,17 @@ return
 
 ;; Glyph: 'ǟ' Descr: LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\=a::
 SendInput ^x8{Enter}1df{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\=a::
 SendInput ^+u1df{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\=a::
 SendInput {U+01DF}
 return
@@ -9437,17 +9435,17 @@ return
 
 ;; Glyph: 'ǟ' Descr: LATIN SMALL LETTER A WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\={a}::
 SendInput ^x8{Enter}1df{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\={a}::
 SendInput ^+u1df{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\={a}::
 SendInput {U+01DF}
 return
@@ -9455,17 +9453,17 @@ return
 
 ;; Glyph: 'Ǡ' Descr: LATIN CAPITAL LETTER A WITH DOT ABOVE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.\=A::
 SendInput ^x8{Enter}1e0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.\=A::
 SendInput ^+u1e0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.\=A::
 SendInput {U+01E0}
 return
@@ -9473,17 +9471,17 @@ return
 
 ;; Glyph: 'Ǡ' Descr: LATIN CAPITAL LETTER A WITH DOT ABOVE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.\={A}::
 SendInput ^x8{Enter}1e0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.\={A}::
 SendInput ^+u1e0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.\={A}::
 SendInput {U+01E0}
 return
@@ -9491,17 +9489,17 @@ return
 
 ;; Glyph: 'ǡ' Descr: LATIN SMALL LETTER A WITH DOT ABOVE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.\=a::
 SendInput ^x8{Enter}1e1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.\=a::
 SendInput ^+u1e1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.\=a::
 SendInput {U+01E1}
 return
@@ -9509,17 +9507,17 @@ return
 
 ;; Glyph: 'ǡ' Descr: LATIN SMALL LETTER A WITH DOT ABOVE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.\={a}::
 SendInput ^x8{Enter}1e1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.\={a}::
 SendInput ^+u1e1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.\={a}::
 SendInput {U+01E1}
 return
@@ -9527,17 +9525,17 @@ return
 
 ;; Glyph: 'Ǣ' Descr: LATIN CAPITAL LETTER AE WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\AE::
 SendInput ^x8{Enter}1e2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\AE::
 SendInput ^+u1e2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\AE::
 SendInput {U+01E2}
 return
@@ -9545,17 +9543,17 @@ return
 
 ;; Glyph: 'Ǣ' Descr: LATIN CAPITAL LETTER AE WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={\AE}::
 SendInput ^x8{Enter}1e2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={\AE}::
 SendInput ^+u1e2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={\AE}::
 SendInput {U+01E2}
 return
@@ -9563,17 +9561,17 @@ return
 
 ;; Glyph: 'ǣ' Descr: LATIN SMALL LETTER AE WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\ae::
 SendInput ^x8{Enter}1e3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\ae::
 SendInput ^+u1e3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\ae::
 SendInput {U+01E3}
 return
@@ -9581,17 +9579,17 @@ return
 
 ;; Glyph: 'ǣ' Descr: LATIN SMALL LETTER AE WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={\ae}::
 SendInput ^x8{Enter}1e3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={\ae}::
 SendInput ^+u1e3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={\ae}::
 SendInput {U+01E3}
 return
@@ -9599,17 +9597,17 @@ return
 
 ;; Glyph: 'Ǧ' Descr: LATIN CAPITAL LETTER G WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vG::
 SendInput ^x8{Enter}1e6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vG::
 SendInput ^+u1e6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vG::
 SendInput {U+01E6}
 return
@@ -9617,17 +9615,17 @@ return
 
 ;; Glyph: 'Ǧ' Descr: LATIN CAPITAL LETTER G WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{G}::
 SendInput ^x8{Enter}1e6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{G}::
 SendInput ^+u1e6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{G}::
 SendInput {U+01E6}
 return
@@ -9635,17 +9633,17 @@ return
 
 ;; Glyph: 'ǧ' Descr: LATIN SMALL LETTER G WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vg::
 SendInput ^x8{Enter}1e7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vg::
 SendInput ^+u1e7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vg::
 SendInput {U+01E7}
 return
@@ -9653,17 +9651,17 @@ return
 
 ;; Glyph: 'ǧ' Descr: LATIN SMALL LETTER G WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{g}::
 SendInput ^x8{Enter}1e7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{g}::
 SendInput ^+u1e7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{g}::
 SendInput {U+01E7}
 return
@@ -9671,17 +9669,17 @@ return
 
 ;; Glyph: 'Ǩ' Descr: LATIN CAPITAL LETTER K WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vK::
 SendInput ^x8{Enter}1e8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vK::
 SendInput ^+u1e8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vK::
 SendInput {U+01E8}
 return
@@ -9689,17 +9687,17 @@ return
 
 ;; Glyph: 'Ǩ' Descr: LATIN CAPITAL LETTER K WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{K}::
 SendInput ^x8{Enter}1e8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{K}::
 SendInput ^+u1e8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{K}::
 SendInput {U+01E8}
 return
@@ -9707,17 +9705,17 @@ return
 
 ;; Glyph: 'ǩ' Descr: LATIN SMALL LETTER K WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vk::
 SendInput ^x8{Enter}1e9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vk::
 SendInput ^+u1e9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vk::
 SendInput {U+01E9}
 return
@@ -9725,17 +9723,17 @@ return
 
 ;; Glyph: 'ǩ' Descr: LATIN SMALL LETTER K WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{k}::
 SendInput ^x8{Enter}1e9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{k}::
 SendInput ^+u1e9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{k}::
 SendInput {U+01E9}
 return
@@ -9743,17 +9741,17 @@ return
 
 ;; Glyph: 'Ǫ' Descr: LATIN CAPITAL LETTER O WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\kO::
 SendInput ^x8{Enter}1ea{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\kO::
 SendInput ^+u1ea{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\kO::
 SendInput {U+01EA}
 return
@@ -9761,17 +9759,17 @@ return
 
 ;; Glyph: 'Ǫ' Descr: LATIN CAPITAL LETTER O WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{O}::
 SendInput ^x8{Enter}1ea{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{O}::
 SendInput ^+u1ea{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{O}::
 SendInput {U+01EA}
 return
@@ -9779,17 +9777,17 @@ return
 
 ;; Glyph: 'ǫ' Descr: LATIN SMALL LETTER O WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ko::
 SendInput ^x8{Enter}1eb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ko::
 SendInput ^+u1eb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ko::
 SendInput {U+01EB}
 return
@@ -9797,17 +9795,17 @@ return
 
 ;; Glyph: 'ǫ' Descr: LATIN SMALL LETTER O WITH OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{o}::
 SendInput ^x8{Enter}1eb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{o}::
 SendInput ^+u1eb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{o}::
 SendInput {U+01EB}
 return
@@ -9815,17 +9813,17 @@ return
 
 ;; Glyph: 'Ǭ' Descr: LATIN CAPITAL LETTER O WITH OGONEK AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k\=O::
 SendInput ^x8{Enter}1ec{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k\=O::
 SendInput ^+u1ec{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k\=O::
 SendInput {U+01EC}
 return
@@ -9833,17 +9831,17 @@ return
 
 ;; Glyph: 'Ǭ' Descr: LATIN CAPITAL LETTER O WITH OGONEK AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k\={O}::
 SendInput ^x8{Enter}1ec{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k\={O}::
 SendInput ^+u1ec{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k\={O}::
 SendInput {U+01EC}
 return
@@ -9851,17 +9849,17 @@ return
 
 ;; Glyph: 'ǭ' Descr: LATIN SMALL LETTER O WITH OGONEK AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k\=o::
 SendInput ^x8{Enter}1ed{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k\=o::
 SendInput ^+u1ed{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k\=o::
 SendInput {U+01ED}
 return
@@ -9869,17 +9867,17 @@ return
 
 ;; Glyph: 'ǭ' Descr: LATIN SMALL LETTER O WITH OGONEK AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k\={o}::
 SendInput ^x8{Enter}1ed{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k\={o}::
 SendInput ^+u1ed{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k\={o}::
 SendInput {U+01ED}
 return
@@ -9887,17 +9885,17 @@ return
 
 ;; Glyph: 'ǰ' Descr: LATIN SMALL LETTER J WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vj::
 SendInput ^x8{Enter}1f0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vj::
 SendInput ^+u1f0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vj::
 SendInput {U+01F0}
 return
@@ -9905,17 +9903,17 @@ return
 
 ;; Glyph: 'ǰ' Descr: LATIN SMALL LETTER J WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{\j}::
 SendInput ^x8{Enter}1f0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{\j}::
 SendInput ^+u1f0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{\j}::
 SendInput {U+01F0}
 return
@@ -9923,17 +9921,17 @@ return
 
 ;; Glyph: 'ǰ' Descr: LATIN SMALL LETTER J WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{j}::
 SendInput ^x8{Enter}1f0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{j}::
 SendInput ^+u1f0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{j}::
 SendInput {U+01F0}
 return
@@ -9941,17 +9939,17 @@ return
 
 ;; Glyph: 'Ǵ' Descr: LATIN CAPITAL LETTER G WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'G::
 SendInput ^x8{Enter}1f4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'G::
 SendInput ^+u1f4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'G::
 SendInput {U+01F4}
 return
@@ -9959,17 +9957,17 @@ return
 
 ;; Glyph: 'Ǵ' Descr: LATIN CAPITAL LETTER G WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{G}::
 SendInput ^x8{Enter}1f4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{G}::
 SendInput ^+u1f4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{G}::
 SendInput {U+01F4}
 return
@@ -9977,17 +9975,17 @@ return
 
 ;; Glyph: 'ǵ' Descr: LATIN SMALL LETTER G WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'g::
 SendInput ^x8{Enter}1f5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'g::
 SendInput ^+u1f5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'g::
 SendInput {U+01F5}
 return
@@ -9995,17 +9993,17 @@ return
 
 ;; Glyph: 'ǵ' Descr: LATIN SMALL LETTER G WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{g}::
 SendInput ^x8{Enter}1f5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{g}::
 SendInput ^+u1f5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{g}::
 SendInput {U+01F5}
 return
@@ -10013,17 +10011,17 @@ return
 
 ;; Glyph: 'Ǹ' Descr: LATIN CAPITAL LETTER N WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``N::
 SendInput ^x8{Enter}1f8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``N::
 SendInput ^+u1f8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``N::
 SendInput {U+01F8}
 return
@@ -10031,17 +10029,17 @@ return
 
 ;; Glyph: 'Ǹ' Descr: LATIN CAPITAL LETTER N WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{N}::
 SendInput ^x8{Enter}1f8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{N}::
 SendInput ^+u1f8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{N}::
 SendInput {U+01F8}
 return
@@ -10049,17 +10047,17 @@ return
 
 ;; Glyph: 'ǹ' Descr: LATIN SMALL LETTER N WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``n::
 SendInput ^x8{Enter}1f9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``n::
 SendInput ^+u1f9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``n::
 SendInput {U+01F9}
 return
@@ -10067,17 +10065,17 @@ return
 
 ;; Glyph: 'ǹ' Descr: LATIN SMALL LETTER N WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{n}::
 SendInput ^x8{Enter}1f9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{n}::
 SendInput ^+u1f9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{n}::
 SendInput {U+01F9}
 return
@@ -10085,17 +10083,17 @@ return
 
 ;; Glyph: 'Ǽ' Descr: LATIN CAPITAL LETTER AE WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'\AE::
 SendInput ^x8{Enter}1fc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'\AE::
 SendInput ^+u1fc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'\AE::
 SendInput {U+01FC}
 return
@@ -10103,17 +10101,17 @@ return
 
 ;; Glyph: 'Ǽ' Descr: LATIN CAPITAL LETTER AE WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{\AE}::
 SendInput ^x8{Enter}1fc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{\AE}::
 SendInput ^+u1fc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{\AE}::
 SendInput {U+01FC}
 return
@@ -10121,17 +10119,17 @@ return
 
 ;; Glyph: 'ǽ' Descr: LATIN SMALL LETTER AE WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'\ae::
 SendInput ^x8{Enter}1fd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'\ae::
 SendInput ^+u1fd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'\ae::
 SendInput {U+01FD}
 return
@@ -10139,17 +10137,17 @@ return
 
 ;; Glyph: 'ǽ' Descr: LATIN SMALL LETTER AE WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{\ae}::
 SendInput ^x8{Enter}1fd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{\ae}::
 SendInput ^+u1fd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{\ae}::
 SendInput {U+01FD}
 return
@@ -10157,17 +10155,17 @@ return
 
 ;; Glyph: 'Ǿ' Descr: LATIN CAPITAL LETTER O WITH STROKE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'\O::
 SendInput ^x8{Enter}1fe{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'\O::
 SendInput ^+u1fe{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'\O::
 SendInput {U+01FE}
 return
@@ -10175,17 +10173,17 @@ return
 
 ;; Glyph: 'Ǿ' Descr: LATIN CAPITAL LETTER O WITH STROKE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{\O}::
 SendInput ^x8{Enter}1fe{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{\O}::
 SendInput ^+u1fe{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{\O}::
 SendInput {U+01FE}
 return
@@ -10193,17 +10191,17 @@ return
 
 ;; Glyph: 'ǿ' Descr: LATIN SMALL LETTER O WITH STROKE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'\o::
 SendInput ^x8{Enter}1ff{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'\o::
 SendInput ^+u1ff{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'\o::
 SendInput {U+01FF}
 return
@@ -10211,17 +10209,17 @@ return
 
 ;; Glyph: 'ǿ' Descr: LATIN SMALL LETTER O WITH STROKE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{\o}::
 SendInput ^x8{Enter}1ff{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{\o}::
 SendInput ^+u1ff{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{\o}::
 SendInput {U+01FF}
 return
@@ -10229,17 +10227,17 @@ return
 
 ;; Glyph: 'Ȟ' Descr: LATIN CAPITAL LETTER H WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vH::
 SendInput ^x8{Enter}21e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vH::
 SendInput ^+u21e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vH::
 SendInput {U+021E}
 return
@@ -10247,17 +10245,17 @@ return
 
 ;; Glyph: 'Ȟ' Descr: LATIN CAPITAL LETTER H WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{H}::
 SendInput ^x8{Enter}21e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{H}::
 SendInput ^+u21e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{H}::
 SendInput {U+021E}
 return
@@ -10265,17 +10263,17 @@ return
 
 ;; Glyph: 'ȟ' Descr: LATIN SMALL LETTER H WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vh::
 SendInput ^x8{Enter}21f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vh::
 SendInput ^+u21f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vh::
 SendInput {U+021F}
 return
@@ -10283,17 +10281,17 @@ return
 
 ;; Glyph: 'ȟ' Descr: LATIN SMALL LETTER H WITH CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{h}::
 SendInput ^x8{Enter}21f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{h}::
 SendInput ^+u21f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{h}::
 SendInput {U+021F}
 return
@@ -10301,17 +10299,17 @@ return
 
 ;; Glyph: 'Ȧ' Descr: LATIN CAPITAL LETTER A WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.A::
 SendInput ^x8{Enter}226{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.A::
 SendInput ^+u226{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.A::
 SendInput {U+0226}
 return
@@ -10319,17 +10317,17 @@ return
 
 ;; Glyph: 'Ȧ' Descr: LATIN CAPITAL LETTER A WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{A}::
 SendInput ^x8{Enter}226{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{A}::
 SendInput ^+u226{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{A}::
 SendInput {U+0226}
 return
@@ -10337,17 +10335,17 @@ return
 
 ;; Glyph: 'ȧ' Descr: LATIN SMALL LETTER A WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.a::
 SendInput ^x8{Enter}227{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.a::
 SendInput ^+u227{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.a::
 SendInput {U+0227}
 return
@@ -10355,17 +10353,17 @@ return
 
 ;; Glyph: 'ȧ' Descr: LATIN SMALL LETTER A WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{a}::
 SendInput ^x8{Enter}227{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{a}::
 SendInput ^+u227{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{a}::
 SendInput {U+0227}
 return
@@ -10373,17 +10371,17 @@ return
 
 ;; Glyph: 'Ȩ' Descr: LATIN CAPITAL LETTER E WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cE::
 SendInput ^x8{Enter}228{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cE::
 SendInput ^+u228{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cE::
 SendInput {U+0228}
 return
@@ -10391,17 +10389,17 @@ return
 
 ;; Glyph: 'Ȩ' Descr: LATIN CAPITAL LETTER E WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{E}::
 SendInput ^x8{Enter}228{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{E}::
 SendInput ^+u228{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{E}::
 SendInput {U+0228}
 return
@@ -10409,17 +10407,17 @@ return
 
 ;; Glyph: 'ȩ' Descr: LATIN SMALL LETTER E WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ce::
 SendInput ^x8{Enter}229{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ce::
 SendInput ^+u229{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ce::
 SendInput {U+0229}
 return
@@ -10427,17 +10425,17 @@ return
 
 ;; Glyph: 'ȩ' Descr: LATIN SMALL LETTER E WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{e}::
 SendInput ^x8{Enter}229{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{e}::
 SendInput ^+u229{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{e}::
 SendInput {U+0229}
 return
@@ -10445,17 +10443,17 @@ return
 
 ;; Glyph: 'Ȫ' Descr: LATIN CAPITAL LETTER O WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\=O::
 SendInput ^x8{Enter}22a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\=O::
 SendInput ^+u22a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\=O::
 SendInput {U+022A}
 return
@@ -10463,17 +10461,17 @@ return
 
 ;; Glyph: 'Ȫ' Descr: LATIN CAPITAL LETTER O WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\={O}::
 SendInput ^x8{Enter}22a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\={O}::
 SendInput ^+u22a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\={O}::
 SendInput {U+022A}
 return
@@ -10481,17 +10479,17 @@ return
 
 ;; Glyph: 'ȫ' Descr: LATIN SMALL LETTER O WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\=o::
 SendInput ^x8{Enter}22b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\=o::
 SendInput ^+u22b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\=o::
 SendInput {U+022B}
 return
@@ -10499,17 +10497,17 @@ return
 
 ;; Glyph: 'ȫ' Descr: LATIN SMALL LETTER O WITH DIAERESIS AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\={o}::
 SendInput ^x8{Enter}22b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\={o}::
 SendInput ^+u22b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\={o}::
 SendInput {U+022B}
 return
@@ -10517,17 +10515,17 @@ return
 
 ;; Glyph: 'Ȭ' Descr: LATIN CAPITAL LETTER O WITH TILDE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\=O::
 SendInput ^x8{Enter}22c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\=O::
 SendInput ^+u22c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\=O::
 SendInput {U+022C}
 return
@@ -10535,17 +10533,17 @@ return
 
 ;; Glyph: 'Ȭ' Descr: LATIN CAPITAL LETTER O WITH TILDE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\={O}::
 SendInput ^x8{Enter}22c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\={O}::
 SendInput ^+u22c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\={O}::
 SendInput {U+022C}
 return
@@ -10553,17 +10551,17 @@ return
 
 ;; Glyph: 'ȭ' Descr: LATIN SMALL LETTER O WITH TILDE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\=o::
 SendInput ^x8{Enter}22d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\=o::
 SendInput ^+u22d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\=o::
 SendInput {U+022D}
 return
@@ -10571,17 +10569,17 @@ return
 
 ;; Glyph: 'ȭ' Descr: LATIN SMALL LETTER O WITH TILDE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\={o}::
 SendInput ^x8{Enter}22d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\={o}::
 SendInput ^+u22d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\={o}::
 SendInput {U+022D}
 return
@@ -10589,17 +10587,17 @@ return
 
 ;; Glyph: 'Ȯ' Descr: LATIN CAPITAL LETTER O WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.O::
 SendInput ^x8{Enter}22e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.O::
 SendInput ^+u22e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.O::
 SendInput {U+022E}
 return
@@ -10607,17 +10605,17 @@ return
 
 ;; Glyph: 'Ȯ' Descr: LATIN CAPITAL LETTER O WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{O}::
 SendInput ^x8{Enter}22e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{O}::
 SendInput ^+u22e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{O}::
 SendInput {U+022E}
 return
@@ -10625,17 +10623,17 @@ return
 
 ;; Glyph: 'ȯ' Descr: LATIN SMALL LETTER O WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.o::
 SendInput ^x8{Enter}22f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.o::
 SendInput ^+u22f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.o::
 SendInput {U+022F}
 return
@@ -10643,17 +10641,17 @@ return
 
 ;; Glyph: 'ȯ' Descr: LATIN SMALL LETTER O WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{o}::
 SendInput ^x8{Enter}22f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{o}::
 SendInput ^+u22f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{o}::
 SendInput {U+022F}
 return
@@ -10661,17 +10659,17 @@ return
 
 ;; Glyph: 'Ȱ' Descr: LATIN CAPITAL LETTER O WITH DOT ABOVE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.\=O::
 SendInput ^x8{Enter}230{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.\=O::
 SendInput ^+u230{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.\=O::
 SendInput {U+0230}
 return
@@ -10679,17 +10677,17 @@ return
 
 ;; Glyph: 'Ȱ' Descr: LATIN CAPITAL LETTER O WITH DOT ABOVE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.\={O}::
 SendInput ^x8{Enter}230{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.\={O}::
 SendInput ^+u230{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.\={O}::
 SendInput {U+0230}
 return
@@ -10697,17 +10695,17 @@ return
 
 ;; Glyph: 'ȱ' Descr: LATIN SMALL LETTER O WITH DOT ABOVE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.\=o::
 SendInput ^x8{Enter}231{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.\=o::
 SendInput ^+u231{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.\=o::
 SendInput {U+0231}
 return
@@ -10715,17 +10713,17 @@ return
 
 ;; Glyph: 'ȱ' Descr: LATIN SMALL LETTER O WITH DOT ABOVE AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.\={o}::
 SendInput ^x8{Enter}231{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.\={o}::
 SendInput ^+u231{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.\={o}::
 SendInput {U+0231}
 return
@@ -10733,17 +10731,17 @@ return
 
 ;; Glyph: 'Ȳ' Descr: LATIN CAPITAL LETTER Y WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=Y::
 SendInput ^x8{Enter}232{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=Y::
 SendInput ^+u232{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=Y::
 SendInput {U+0232}
 return
@@ -10751,17 +10749,17 @@ return
 
 ;; Glyph: 'Ȳ' Descr: LATIN CAPITAL LETTER Y WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={Y}::
 SendInput ^x8{Enter}232{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={Y}::
 SendInput ^+u232{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={Y}::
 SendInput {U+0232}
 return
@@ -10769,17 +10767,17 @@ return
 
 ;; Glyph: 'ȳ' Descr: LATIN SMALL LETTER Y WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=y::
 SendInput ^x8{Enter}233{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=y::
 SendInput ^+u233{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=y::
 SendInput {U+0233}
 return
@@ -10787,17 +10785,17 @@ return
 
 ;; Glyph: 'ȳ' Descr: LATIN SMALL LETTER Y WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={y}::
 SendInput ^x8{Enter}233{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={y}::
 SendInput ^+u233{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={y}::
 SendInput {U+0233}
 return
@@ -10805,17 +10803,17 @@ return
 
 ;; Glyph: 'ʰ' Descr: MODIFIER LETTER SMALL H
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^h::
 SendInput ^x8{Enter}2b0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^h::
 SendInput ^+u2b0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^h::
 SendInput {U+02B0}
 return
@@ -10823,17 +10821,17 @@ return
 
 ;; Glyph: 'ʱ' Descr: MODIFIER LETTER SMALL H WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\h hook::
 SendInput ^x8{Enter}2b1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\h hook::
 SendInput ^+u2b1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\h hook::
 SendInput {U+02B1}
 return
@@ -10841,17 +10839,17 @@ return
 
 ;; Glyph: 'ʱ' Descr: MODIFIER LETTER SMALL H WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\h with hook::
 SendInput ^x8{Enter}2b1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\h with hook::
 SendInput ^+u2b1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\h with hook::
 SendInput {U+02B1}
 return
@@ -10859,17 +10857,17 @@ return
 
 ;; Glyph: 'ʲ' Descr: MODIFIER LETTER SMALL J
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^j::
 SendInput ^x8{Enter}2b2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^j::
 SendInput ^+u2b2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^j::
 SendInput {U+02B2}
 return
@@ -10877,17 +10875,17 @@ return
 
 ;; Glyph: 'ʳ' Descr: MODIFIER LETTER SMALL R
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^r::
 SendInput ^x8{Enter}2b3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^r::
 SendInput ^+u2b3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^r::
 SendInput {U+02B3}
 return
@@ -10895,17 +10893,17 @@ return
 
 ;; Glyph: 'ʴ' Descr: MODIFIER LETTER SMALL TURNED R
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned r::
 SendInput ^x8{Enter}2b4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned r::
 SendInput ^+u2b4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned r::
 SendInput {U+02B4}
 return
@@ -10913,17 +10911,17 @@ return
 
 ;; Glyph: 'ʵ' Descr: MODIFIER LETTER SMALL TURNED R WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned r hook::
 SendInput ^x8{Enter}2b5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned r hook::
 SendInput ^+u2b5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned r hook::
 SendInput {U+02B5}
 return
@@ -10931,17 +10929,17 @@ return
 
 ;; Glyph: 'ʵ' Descr: MODIFIER LETTER SMALL TURNED R WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned r with hook::
 SendInput ^x8{Enter}2b5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned r with hook::
 SendInput ^+u2b5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned r with hook::
 SendInput {U+02B5}
 return
@@ -10949,17 +10947,17 @@ return
 
 ;; Glyph: 'ʶ' Descr: MODIFIER LETTER SMALL CAPITAL INVERTED R
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\capital inverted r::
 SendInput ^x8{Enter}2b6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\capital inverted r::
 SendInput ^+u2b6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\capital inverted r::
 SendInput {U+02B6}
 return
@@ -10967,17 +10965,17 @@ return
 
 ;; Glyph: 'ʷ' Descr: MODIFIER LETTER SMALL W
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^w::
 SendInput ^x8{Enter}2b7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^w::
 SendInput ^+u2b7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^w::
 SendInput {U+02B7}
 return
@@ -10985,17 +10983,17 @@ return
 
 ;; Glyph: 'ʸ' Descr: MODIFIER LETTER SMALL Y
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^y::
 SendInput ^x8{Enter}2b8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^y::
 SendInput ^+u2b8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^y::
 SendInput {U+02B8}
 return
@@ -11003,17 +11001,17 @@ return
 
 ;; Glyph: 'ˇ' Descr: CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v{}::
 SendInput ^x8{Enter}2c7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v{}::
 SendInput ^+u2c7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v{}::
 SendInput {U+02C7}
 return
@@ -11021,17 +11019,17 @@ return
 
 ;; Glyph: '˘' Descr: BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u{}::
 SendInput ^x8{Enter}2d8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u{}::
 SendInput ^+u2d8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u{}::
 SendInput {U+02D8}
 return
@@ -11039,17 +11037,17 @@ return
 
 ;; Glyph: '˙' Descr: DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{}::
 SendInput ^x8{Enter}2d9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{}::
 SendInput ^+u2d9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{}::
 SendInput {U+02D9}
 return
@@ -11057,17 +11055,17 @@ return
 
 ;; Glyph: '˛' Descr: OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k{}::
 SendInput ^x8{Enter}2db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k{}::
 SendInput ^+u2db{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k{}::
 SendInput {U+02DB}
 return
@@ -11075,17 +11073,17 @@ return
 
 ;; Glyph: '˜' Descr: SMALL TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{}::
 SendInput ^x8{Enter}2dc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{}::
 SendInput ^+u2dc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{}::
 SendInput {U+02DC}
 return
@@ -11093,17 +11091,17 @@ return
 
 ;; Glyph: '˝' Descr: DOUBLE ACUTE ACCENT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\H{}::
 SendInput ^x8{Enter}2dd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\H{}::
 SendInput ^+u2dd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\H{}::
 SendInput {U+02DD}
 return
@@ -11111,17 +11109,17 @@ return
 
 ;; Glyph: 'ˠ' Descr: MODIFIER LETTER SMALL GAMMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\gamma::
 SendInput ^x8{Enter}2e0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\gamma::
 SendInput ^+u2e0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\gamma::
 SendInput {U+02E0}
 return
@@ -11129,17 +11127,17 @@ return
 
 ;; Glyph: 'ˡ' Descr: MODIFIER LETTER SMALL L
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^l::
 SendInput ^x8{Enter}2e1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^l::
 SendInput ^+u2e1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^l::
 SendInput {U+02E1}
 return
@@ -11147,17 +11145,17 @@ return
 
 ;; Glyph: 'ˢ' Descr: MODIFIER LETTER SMALL S
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^s::
 SendInput ^x8{Enter}2e2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^s::
 SendInput ^+u2e2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^s::
 SendInput {U+02E2}
 return
@@ -11165,17 +11163,17 @@ return
 
 ;; Glyph: 'ˣ' Descr: MODIFIER LETTER SMALL X
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^x::
 SendInput ^x8{Enter}2e3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^x::
 SendInput ^+u2e3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^x::
 SendInput {U+02E3}
 return
@@ -11183,17 +11181,17 @@ return
 
 ;; Glyph: 'ˤ' Descr: MODIFIER LETTER SMALL REVERSED GLOTTAL STOP
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\reversed glottal stop::
 SendInput ^x8{Enter}2e4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\reversed glottal stop::
 SendInput ^+u2e4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\reversed glottal stop::
 SendInput {U+02E4}
 return
@@ -11201,17 +11199,17 @@ return
 
 ;; Glyph: '̀' Descr: COMBINING GRAVE ACCENT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``::
 SendInput ^x8{Enter}300{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``::
 SendInput ^+u300{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``::
 SendInput {U+0300}
 return
@@ -11219,17 +11217,17 @@ return
 
 ;; Glyph: '́' Descr: COMBINING ACUTE ACCENT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'::
 SendInput ^x8{Enter}301{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'::
 SendInput ^+u301{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'::
 SendInput {U+0301}
 return
@@ -11237,17 +11235,17 @@ return
 
 ;; Glyph: '̂' Descr: COMBINING CIRCUMFLEX ACCENT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^::
 SendInput ^x8{Enter}302{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^::
 SendInput ^+u302{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^::
 SendInput {U+0302}
 return
@@ -11255,17 +11253,17 @@ return
 
 ;; Glyph: '̃' Descr: COMBINING TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~::
 SendInput ^x8{Enter}303{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~::
 SendInput ^+u303{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~::
 SendInput {U+0303}
 return
@@ -11273,17 +11271,17 @@ return
 
 ;; Glyph: '̄' Descr: COMBINING MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=::
 SendInput ^x8{Enter}304{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=::
 SendInput ^+u304{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=::
 SendInput {U+0304}
 return
@@ -11291,17 +11289,17 @@ return
 
 ;; Glyph: '̆' Descr: COMBINING BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u::
 SendInput ^x8{Enter}306{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u::
 SendInput ^+u306{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u::
 SendInput {U+0306}
 return
@@ -11309,17 +11307,17 @@ return
 
 ;; Glyph: '̇' Descr: COMBINING DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.::
 SendInput ^x8{Enter}307{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.::
 SendInput ^+u307{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.::
 SendInput {U+0307}
 return
@@ -11327,17 +11325,17 @@ return
 
 ;; Glyph: '̈' Descr: COMBINING DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"::
 SendInput ^x8{Enter}308{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"::
 SendInput ^+u308{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"::
 SendInput {U+0308}
 return
@@ -11345,17 +11343,17 @@ return
 
 ;; Glyph: '̋' Descr: COMBINING DOUBLE ACUTE ACCENT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\H::
 SendInput ^x8{Enter}30b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\H::
 SendInput ^+u30b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\H::
 SendInput {U+030B}
 return
@@ -11363,17 +11361,17 @@ return
 
 ;; Glyph: '̌' Descr: COMBINING CARON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v::
 SendInput ^x8{Enter}30c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v::
 SendInput ^+u30c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v::
 SendInput {U+030C}
 return
@@ -11381,17 +11379,17 @@ return
 
 ;; Glyph: '̣' Descr: COMBINING DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d::
 SendInput ^x8{Enter}323{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d::
 SendInput ^+u323{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d::
 SendInput {U+0323}
 return
@@ -11399,17 +11397,17 @@ return
 
 ;; Glyph: '̧' Descr: COMBINING CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c::
 SendInput ^x8{Enter}327{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c::
 SendInput ^+u327{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c::
 SendInput {U+0327}
 return
@@ -11417,17 +11415,17 @@ return
 
 ;; Glyph: '̨' Descr: COMBINING OGONEK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\k::
 SendInput ^x8{Enter}328{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\k::
 SendInput ^+u328{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\k::
 SendInput {U+0328}
 return
@@ -11435,17 +11433,17 @@ return
 
 ;; Glyph: '̱' Descr: COMBINING MACRON BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\b::
 SendInput ^x8{Enter}331{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\b::
 SendInput ^+u331{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\b::
 SendInput {U+0331}
 return
@@ -11453,17 +11451,17 @@ return
 
 ;; Glyph: '̸' Descr: COMBINING LONG SOLIDUS OVERLAY
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\not::
 SendInput ^x8{Enter}338{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\not::
 SendInput ^+u338{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\not::
 SendInput {U+0338}
 return
@@ -11471,17 +11469,17 @@ return
 
 ;; Glyph: 'Ͱ' Descr: GREEK CAPITAL LETTER HETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Heta::
 SendInput ^x8{Enter}370{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Heta::
 SendInput ^+u370{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Heta::
 SendInput {U+0370}
 return
@@ -11489,17 +11487,17 @@ return
 
 ;; Glyph: 'ͱ' Descr: GREEK SMALL LETTER HETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\heta::
 SendInput ^x8{Enter}371{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\heta::
 SendInput ^+u371{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\heta::
 SendInput {U+0371}
 return
@@ -11507,17 +11505,17 @@ return
 
 ;; Glyph: 'Ϳ' Descr: GREEK CAPITAL LETTER YOT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Yot::
 SendInput ^x8{Enter}37f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Yot::
 SendInput ^+u37f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Yot::
 SendInput {U+037F}
 return
@@ -11525,17 +11523,17 @@ return
 
 ;; Glyph: 'Α' Descr: GREEK CAPITAL LETTER ALPHA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Alpha::
 SendInput ^x8{Enter}391{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Alpha::
 SendInput ^+u391{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Alpha::
 SendInput {U+0391}
 return
@@ -11543,17 +11541,17 @@ return
 
 ;; Glyph: 'Β' Descr: GREEK CAPITAL LETTER BETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Beta::
 SendInput ^x8{Enter}392{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Beta::
 SendInput ^+u392{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Beta::
 SendInput {U+0392}
 return
@@ -11561,17 +11559,17 @@ return
 
 ;; Glyph: 'Γ' Descr: GREEK CAPITAL LETTER GAMMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Gamma::
 SendInput ^x8{Enter}393{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Gamma::
 SendInput ^+u393{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Gamma::
 SendInput {U+0393}
 return
@@ -11579,17 +11577,17 @@ return
 
 ;; Glyph: 'Δ' Descr: GREEK CAPITAL LETTER DELTA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Delta::
 SendInput ^x8{Enter}394{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Delta::
 SendInput ^+u394{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Delta::
 SendInput {U+0394}
 return
@@ -11597,17 +11595,17 @@ return
 
 ;; Glyph: 'Ε' Descr: GREEK CAPITAL LETTER EPSILON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Epsilon::
 SendInput ^x8{Enter}395{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Epsilon::
 SendInput ^+u395{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Epsilon::
 SendInput {U+0395}
 return
@@ -11615,17 +11613,17 @@ return
 
 ;; Glyph: 'Ζ' Descr: GREEK CAPITAL LETTER ZETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Zeta::
 SendInput ^x8{Enter}396{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Zeta::
 SendInput ^+u396{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Zeta::
 SendInput {U+0396}
 return
@@ -11633,17 +11631,17 @@ return
 
 ;; Glyph: 'Η' Descr: GREEK CAPITAL LETTER ETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Eta::
 SendInput ^x8{Enter}397{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Eta::
 SendInput ^+u397{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Eta::
 SendInput {U+0397}
 return
@@ -11651,17 +11649,17 @@ return
 
 ;; Glyph: 'Θ' Descr: GREEK CAPITAL LETTER THETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Theta::
 SendInput ^x8{Enter}398{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Theta::
 SendInput ^+u398{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Theta::
 SendInput {U+0398}
 return
@@ -11669,17 +11667,17 @@ return
 
 ;; Glyph: 'Ι' Descr: GREEK CAPITAL LETTER IOTA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Iota::
 SendInput ^x8{Enter}399{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Iota::
 SendInput ^+u399{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Iota::
 SendInput {U+0399}
 return
@@ -11687,17 +11685,17 @@ return
 
 ;; Glyph: 'Κ' Descr: GREEK CAPITAL LETTER KAPPA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Kappa::
 SendInput ^x8{Enter}39a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Kappa::
 SendInput ^+u39a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Kappa::
 SendInput {U+039A}
 return
@@ -11705,17 +11703,17 @@ return
 
 ;; Glyph: 'Λ' Descr: GREEK CAPITAL LETTER LAMDA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Lambda::
 SendInput ^x8{Enter}39b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Lambda::
 SendInput ^+u39b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Lambda::
 SendInput {U+039B}
 return
@@ -11723,17 +11721,17 @@ return
 
 ;; Glyph: 'Λ' Descr: GREEK CAPITAL LETTER LAMDA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Lamda::
 SendInput ^x8{Enter}39b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Lamda::
 SendInput ^+u39b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Lamda::
 SendInput {U+039B}
 return
@@ -11741,17 +11739,17 @@ return
 
 ;; Glyph: 'Μ' Descr: GREEK CAPITAL LETTER MU
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Mu::
 SendInput ^x8{Enter}39c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Mu::
 SendInput ^+u39c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Mu::
 SendInput {U+039C}
 return
@@ -11759,17 +11757,17 @@ return
 
 ;; Glyph: 'Ν' Descr: GREEK CAPITAL LETTER NU
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Nu::
 SendInput ^x8{Enter}39d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Nu::
 SendInput ^+u39d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Nu::
 SendInput {U+039D}
 return
@@ -11777,17 +11775,17 @@ return
 
 ;; Glyph: 'Ξ' Descr: GREEK CAPITAL LETTER XI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Xi::
 SendInput ^x8{Enter}39e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Xi::
 SendInput ^+u39e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Xi::
 SendInput {U+039E}
 return
@@ -11795,17 +11793,17 @@ return
 
 ;; Glyph: 'Ο' Descr: GREEK CAPITAL LETTER OMICRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Omicron::
 SendInput ^x8{Enter}39f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Omicron::
 SendInput ^+u39f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Omicron::
 SendInput {U+039F}
 return
@@ -11813,17 +11811,17 @@ return
 
 ;; Glyph: 'Π' Descr: GREEK CAPITAL LETTER PI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Pi::
 SendInput ^x8{Enter}3a0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Pi::
 SendInput ^+u3a0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Pi::
 SendInput {U+03A0}
 return
@@ -11831,17 +11829,17 @@ return
 
 ;; Glyph: 'Ρ' Descr: GREEK CAPITAL LETTER RHO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Rho::
 SendInput ^x8{Enter}3a1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Rho::
 SendInput ^+u3a1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Rho::
 SendInput {U+03A1}
 return
@@ -11849,17 +11847,17 @@ return
 
 ;; Glyph: 'Σ' Descr: GREEK CAPITAL LETTER SIGMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Sigma::
 SendInput ^x8{Enter}3a3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Sigma::
 SendInput ^+u3a3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Sigma::
 SendInput {U+03A3}
 return
@@ -11867,17 +11865,17 @@ return
 
 ;; Glyph: 'Τ' Descr: GREEK CAPITAL LETTER TAU
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Tau::
 SendInput ^x8{Enter}3a4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Tau::
 SendInput ^+u3a4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Tau::
 SendInput {U+03A4}
 return
@@ -11885,17 +11883,17 @@ return
 
 ;; Glyph: 'Υ' Descr: GREEK CAPITAL LETTER UPSILON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Upsilon::
 SendInput ^x8{Enter}3a5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Upsilon::
 SendInput ^+u3a5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Upsilon::
 SendInput {U+03A5}
 return
@@ -11903,17 +11901,17 @@ return
 
 ;; Glyph: 'Φ' Descr: GREEK CAPITAL LETTER PHI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Phi::
 SendInput ^x8{Enter}3a6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Phi::
 SendInput ^+u3a6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Phi::
 SendInput {U+03A6}
 return
@@ -11921,17 +11919,17 @@ return
 
 ;; Glyph: 'Χ' Descr: GREEK CAPITAL LETTER CHI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Chi::
 SendInput ^x8{Enter}3a7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Chi::
 SendInput ^+u3a7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Chi::
 SendInput {U+03A7}
 return
@@ -11939,17 +11937,17 @@ return
 
 ;; Glyph: 'Ψ' Descr: GREEK CAPITAL LETTER PSI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Psi::
 SendInput ^x8{Enter}3a8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Psi::
 SendInput ^+u3a8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Psi::
 SendInput {U+03A8}
 return
@@ -11957,17 +11955,17 @@ return
 
 ;; Glyph: 'Ω' Descr: GREEK CAPITAL LETTER OMEGA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Omega::
 SendInput ^x8{Enter}3a9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Omega::
 SendInput ^+u3a9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Omega::
 SendInput {U+03A9}
 return
@@ -11975,17 +11973,17 @@ return
 
 ;; Glyph: 'α' Descr: GREEK SMALL LETTER ALPHA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\alpha::
 SendInput ^x8{Enter}3b1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\alpha::
 SendInput ^+u3b1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\alpha::
 SendInput {U+03B1}
 return
@@ -11993,17 +11991,17 @@ return
 
 ;; Glyph: 'β' Descr: GREEK SMALL LETTER BETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\beta::
 SendInput ^x8{Enter}3b2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\beta::
 SendInput ^+u3b2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\beta::
 SendInput {U+03B2}
 return
@@ -12011,17 +12009,17 @@ return
 
 ;; Glyph: 'γ' Descr: GREEK SMALL LETTER GAMMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gamma::
 SendInput ^x8{Enter}3b3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gamma::
 SendInput ^+u3b3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gamma::
 SendInput {U+03B3}
 return
@@ -12029,17 +12027,17 @@ return
 
 ;; Glyph: 'δ' Descr: GREEK SMALL LETTER DELTA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\delta::
 SendInput ^x8{Enter}3b4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\delta::
 SendInput ^+u3b4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\delta::
 SendInput {U+03B4}
 return
@@ -12047,17 +12045,17 @@ return
 
 ;; Glyph: 'ε' Descr: GREEK SMALL LETTER EPSILON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varepsilon::
 SendInput ^x8{Enter}3b5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varepsilon::
 SendInput ^+u3b5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varepsilon::
 SendInput {U+03B5}
 return
@@ -12065,17 +12063,17 @@ return
 
 ;; Glyph: 'ζ' Descr: GREEK SMALL LETTER ZETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\zeta::
 SendInput ^x8{Enter}3b6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\zeta::
 SendInput ^+u3b6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\zeta::
 SendInput {U+03B6}
 return
@@ -12083,17 +12081,17 @@ return
 
 ;; Glyph: 'η' Descr: GREEK SMALL LETTER ETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\eta::
 SendInput ^x8{Enter}3b7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\eta::
 SendInput ^+u3b7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\eta::
 SendInput {U+03B7}
 return
@@ -12101,17 +12099,17 @@ return
 
 ;; Glyph: 'θ' Descr: GREEK SMALL LETTER THETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\theta::
 SendInput ^x8{Enter}3b8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\theta::
 SendInput ^+u3b8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\theta::
 SendInput {U+03B8}
 return
@@ -12119,17 +12117,17 @@ return
 
 ;; Glyph: 'ι' Descr: GREEK SMALL LETTER IOTA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\iota::
 SendInput ^x8{Enter}3b9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\iota::
 SendInput ^+u3b9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\iota::
 SendInput {U+03B9}
 return
@@ -12137,17 +12135,17 @@ return
 
 ;; Glyph: 'κ' Descr: GREEK SMALL LETTER KAPPA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\kappa::
 SendInput ^x8{Enter}3ba{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\kappa::
 SendInput ^+u3ba{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\kappa::
 SendInput {U+03BA}
 return
@@ -12155,17 +12153,17 @@ return
 
 ;; Glyph: 'λ' Descr: GREEK SMALL LETTER LAMDA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lambda::
 SendInput ^x8{Enter}3bb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lambda::
 SendInput ^+u3bb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lambda::
 SendInput {U+03BB}
 return
@@ -12173,17 +12171,17 @@ return
 
 ;; Glyph: 'λ' Descr: GREEK SMALL LETTER LAMDA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lamda::
 SendInput ^x8{Enter}3bb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lamda::
 SendInput ^+u3bb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lamda::
 SendInput {U+03BB}
 return
@@ -12191,17 +12189,17 @@ return
 
 ;; Glyph: 'μ' Descr: GREEK SMALL LETTER MU
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\mu::
 SendInput ^x8{Enter}3bc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\mu::
 SendInput ^+u3bc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\mu::
 SendInput {U+03BC}
 return
@@ -12209,17 +12207,17 @@ return
 
 ;; Glyph: 'ν' Descr: GREEK SMALL LETTER NU
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nu::
 SendInput ^x8{Enter}3bd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nu::
 SendInput ^+u3bd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nu::
 SendInput {U+03BD}
 return
@@ -12227,17 +12225,17 @@ return
 
 ;; Glyph: 'ξ' Descr: GREEK SMALL LETTER XI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\xi::
 SendInput ^x8{Enter}3be{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\xi::
 SendInput ^+u3be{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\xi::
 SendInput {U+03BE}
 return
@@ -12245,17 +12243,17 @@ return
 
 ;; Glyph: 'ο' Descr: GREEK SMALL LETTER OMICRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\omicron::
 SendInput ^x8{Enter}3bf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\omicron::
 SendInput ^+u3bf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\omicron::
 SendInput {U+03BF}
 return
@@ -12263,17 +12261,17 @@ return
 
 ;; Glyph: 'π' Descr: GREEK SMALL LETTER PI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\pi::
 SendInput ^x8{Enter}3c0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\pi::
 SendInput ^+u3c0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\pi::
 SendInput {U+03C0}
 return
@@ -12281,17 +12279,17 @@ return
 
 ;; Glyph: 'ρ' Descr: GREEK SMALL LETTER RHO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rho::
 SendInput ^x8{Enter}3c1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rho::
 SendInput ^+u3c1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rho::
 SendInput {U+03C1}
 return
@@ -12299,17 +12297,17 @@ return
 
 ;; Glyph: 'ς' Descr: GREEK SMALL LETTER FINAL SIGMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varsigma::
 SendInput ^x8{Enter}3c2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varsigma::
 SendInput ^+u3c2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varsigma::
 SendInput {U+03C2}
 return
@@ -12317,17 +12315,17 @@ return
 
 ;; Glyph: 'σ' Descr: GREEK SMALL LETTER SIGMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sigma::
 SendInput ^x8{Enter}3c3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sigma::
 SendInput ^+u3c3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sigma::
 SendInput {U+03C3}
 return
@@ -12335,17 +12333,17 @@ return
 
 ;; Glyph: 'τ' Descr: GREEK SMALL LETTER TAU
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\tau::
 SendInput ^x8{Enter}3c4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\tau::
 SendInput ^+u3c4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\tau::
 SendInput {U+03C4}
 return
@@ -12353,17 +12351,17 @@ return
 
 ;; Glyph: 'υ' Descr: GREEK SMALL LETTER UPSILON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\upsilon::
 SendInput ^x8{Enter}3c5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\upsilon::
 SendInput ^+u3c5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\upsilon::
 SendInput {U+03C5}
 return
@@ -12371,17 +12369,17 @@ return
 
 ;; Glyph: 'φ' Descr: GREEK SMALL LETTER PHI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\phi::
 SendInput ^x8{Enter}3c6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\phi::
 SendInput ^+u3c6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\phi::
 SendInput {U+03C6}
 return
@@ -12389,17 +12387,17 @@ return
 
 ;; Glyph: 'φ' Descr: GREEK SMALL LETTER PHI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\straightphi::
 SendInput ^x8{Enter}3c6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\straightphi::
 SendInput ^+u3c6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\straightphi::
 SendInput {U+03C6}
 return
@@ -12407,17 +12405,17 @@ return
 
 ;; Glyph: 'χ' Descr: GREEK SMALL LETTER CHI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\chi::
 SendInput ^x8{Enter}3c7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\chi::
 SendInput ^+u3c7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\chi::
 SendInput {U+03C7}
 return
@@ -12425,17 +12423,17 @@ return
 
 ;; Glyph: 'ψ' Descr: GREEK SMALL LETTER PSI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\psi::
 SendInput ^x8{Enter}3c8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\psi::
 SendInput ^+u3c8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\psi::
 SendInput {U+03C8}
 return
@@ -12443,17 +12441,17 @@ return
 
 ;; Glyph: 'ω' Descr: GREEK SMALL LETTER OMEGA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\omega::
 SendInput ^x8{Enter}3c9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\omega::
 SendInput ^+u3c9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\omega::
 SendInput {U+03C9}
 return
@@ -12461,17 +12459,17 @@ return
 
 ;; Glyph: 'ϐ' Descr: GREEK BETA SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varbeta::
 SendInput ^x8{Enter}3d0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varbeta::
 SendInput ^+u3d0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varbeta::
 SendInput {U+03D0}
 return
@@ -12479,17 +12477,17 @@ return
 
 ;; Glyph: 'ϑ' Descr: GREEK THETA SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vartheta::
 SendInput ^x8{Enter}3d1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vartheta::
 SendInput ^+u3d1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vartheta::
 SendInput {U+03D1}
 return
@@ -12497,17 +12495,17 @@ return
 
 ;; Glyph: 'ϕ' Descr: GREEK PHI SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varphi::
 SendInput ^x8{Enter}3d5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varphi::
 SendInput ^+u3d5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varphi::
 SendInput {U+03D5}
 return
@@ -12515,17 +12513,17 @@ return
 
 ;; Glyph: 'ϖ' Descr: GREEK PI SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varpi::
 SendInput ^x8{Enter}3d6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varpi::
 SendInput ^+u3d6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varpi::
 SendInput {U+03D6}
 return
@@ -12533,17 +12531,17 @@ return
 
 ;; Glyph: 'ϗ' Descr: GREEK KAI SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varkai::
 SendInput ^x8{Enter}3d7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varkai::
 SendInput ^+u3d7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varkai::
 SendInput {U+03D7}
 return
@@ -12551,17 +12549,17 @@ return
 
 ;; Glyph: 'Ϛ' Descr: GREEK LETTER STIGMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Stigma::
 SendInput ^x8{Enter}3da{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Stigma::
 SendInput ^+u3da{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Stigma::
 SendInput {U+03DA}
 return
@@ -12569,17 +12567,17 @@ return
 
 ;; Glyph: 'ϛ' Descr: GREEK SMALL LETTER STIGMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\stigma::
 SendInput ^x8{Enter}3db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\stigma::
 SendInput ^+u3db{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\stigma::
 SendInput {U+03DB}
 return
@@ -12587,17 +12585,17 @@ return
 
 ;; Glyph: 'Ϝ' Descr: GREEK LETTER DIGAMMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Digamma::
 SendInput ^x8{Enter}3dc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Digamma::
 SendInput ^+u3dc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Digamma::
 SendInput {U+03DC}
 return
@@ -12605,17 +12603,17 @@ return
 
 ;; Glyph: 'ϝ' Descr: GREEK SMALL LETTER DIGAMMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\digamma::
 SendInput ^x8{Enter}3dd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\digamma::
 SendInput ^+u3dd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\digamma::
 SendInput {U+03DD}
 return
@@ -12623,17 +12621,17 @@ return
 
 ;; Glyph: 'Ϟ' Descr: GREEK LETTER KOPPA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Koppa::
 SendInput ^x8{Enter}3de{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Koppa::
 SendInput ^+u3de{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Koppa::
 SendInput {U+03DE}
 return
@@ -12641,17 +12639,17 @@ return
 
 ;; Glyph: 'ϟ' Descr: GREEK SMALL LETTER KOPPA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\koppa::
 SendInput ^x8{Enter}3df{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\koppa::
 SendInput ^+u3df{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\koppa::
 SendInput {U+03DF}
 return
@@ -12659,17 +12657,17 @@ return
 
 ;; Glyph: 'Ϡ' Descr: GREEK LETTER SAMPI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Sampi::
 SendInput ^x8{Enter}3e0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Sampi::
 SendInput ^+u3e0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Sampi::
 SendInput {U+03E0}
 return
@@ -12677,17 +12675,17 @@ return
 
 ;; Glyph: 'ϡ' Descr: GREEK SMALL LETTER SAMPI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sampi::
 SendInput ^x8{Enter}3e1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sampi::
 SendInput ^+u3e1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sampi::
 SendInput {U+03E1}
 return
@@ -12695,17 +12693,17 @@ return
 
 ;; Glyph: 'Ϣ' Descr: COPTIC CAPITAL LETTER SHEI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Shei::
 SendInput ^x8{Enter}3e2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Shei::
 SendInput ^+u3e2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Shei::
 SendInput {U+03E2}
 return
@@ -12713,17 +12711,17 @@ return
 
 ;; Glyph: 'ϣ' Descr: COPTIC SMALL LETTER SHEI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\shei::
 SendInput ^x8{Enter}3e3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\shei::
 SendInput ^+u3e3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\shei::
 SendInput {U+03E3}
 return
@@ -12731,17 +12729,17 @@ return
 
 ;; Glyph: 'Ϥ' Descr: COPTIC CAPITAL LETTER FEI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Fei::
 SendInput ^x8{Enter}3e4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Fei::
 SendInput ^+u3e4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Fei::
 SendInput {U+03E4}
 return
@@ -12749,17 +12747,17 @@ return
 
 ;; Glyph: 'ϥ' Descr: COPTIC SMALL LETTER FEI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\fei::
 SendInput ^x8{Enter}3e5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\fei::
 SendInput ^+u3e5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\fei::
 SendInput {U+03E5}
 return
@@ -12767,17 +12765,17 @@ return
 
 ;; Glyph: 'Ϧ' Descr: COPTIC CAPITAL LETTER KHEI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Khei::
 SendInput ^x8{Enter}3e6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Khei::
 SendInput ^+u3e6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Khei::
 SendInput {U+03E6}
 return
@@ -12785,17 +12783,17 @@ return
 
 ;; Glyph: 'ϧ' Descr: COPTIC SMALL LETTER KHEI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\khei::
 SendInput ^x8{Enter}3e7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\khei::
 SendInput ^+u3e7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\khei::
 SendInput {U+03E7}
 return
@@ -12803,17 +12801,17 @@ return
 
 ;; Glyph: 'Ϩ' Descr: COPTIC CAPITAL LETTER HORI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Hori::
 SendInput ^x8{Enter}3e8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Hori::
 SendInput ^+u3e8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Hori::
 SendInput {U+03E8}
 return
@@ -12821,17 +12819,17 @@ return
 
 ;; Glyph: 'ϩ' Descr: COPTIC SMALL LETTER HORI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\hori::
 SendInput ^x8{Enter}3e9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\hori::
 SendInput ^+u3e9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\hori::
 SendInput {U+03E9}
 return
@@ -12839,17 +12837,17 @@ return
 
 ;; Glyph: 'Ϫ' Descr: COPTIC CAPITAL LETTER GANGIA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Gangia::
 SendInput ^x8{Enter}3ea{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Gangia::
 SendInput ^+u3ea{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Gangia::
 SendInput {U+03EA}
 return
@@ -12857,17 +12855,17 @@ return
 
 ;; Glyph: 'ϫ' Descr: COPTIC SMALL LETTER GANGIA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gangia::
 SendInput ^x8{Enter}3eb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gangia::
 SendInput ^+u3eb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gangia::
 SendInput {U+03EB}
 return
@@ -12875,17 +12873,17 @@ return
 
 ;; Glyph: 'Ϭ' Descr: COPTIC CAPITAL LETTER SHIMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Shima::
 SendInput ^x8{Enter}3ec{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Shima::
 SendInput ^+u3ec{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Shima::
 SendInput {U+03EC}
 return
@@ -12893,17 +12891,17 @@ return
 
 ;; Glyph: 'ϭ' Descr: COPTIC SMALL LETTER SHIMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\shima::
 SendInput ^x8{Enter}3ed{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\shima::
 SendInput ^+u3ed{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\shima::
 SendInput {U+03ED}
 return
@@ -12911,17 +12909,17 @@ return
 
 ;; Glyph: 'Ϯ' Descr: COPTIC CAPITAL LETTER DEI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Dei::
 SendInput ^x8{Enter}3ee{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Dei::
 SendInput ^+u3ee{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Dei::
 SendInput {U+03EE}
 return
@@ -12929,17 +12927,17 @@ return
 
 ;; Glyph: 'ϯ' Descr: COPTIC SMALL LETTER DEI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\dei::
 SendInput ^x8{Enter}3ef{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\dei::
 SendInput ^+u3ef{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\dei::
 SendInput {U+03EF}
 return
@@ -12947,17 +12945,17 @@ return
 
 ;; Glyph: 'ϰ' Descr: GREEK KAPPA SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varkappa::
 SendInput ^x8{Enter}3f0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varkappa::
 SendInput ^+u3f0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varkappa::
 SendInput {U+03F0}
 return
@@ -12965,17 +12963,17 @@ return
 
 ;; Glyph: 'ϱ' Descr: GREEK RHO SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varrho::
 SendInput ^x8{Enter}3f1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varrho::
 SendInput ^+u3f1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varrho::
 SendInput {U+03F1}
 return
@@ -12983,17 +12981,17 @@ return
 
 ;; Glyph: 'ϵ' Descr: GREEK LUNATE EPSILON SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\epsilon::
 SendInput ^x8{Enter}3f5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\epsilon::
 SendInput ^+u3f5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\epsilon::
 SendInput {U+03F5}
 return
@@ -13001,17 +12999,17 @@ return
 
 ;; Glyph: 'Ϸ' Descr: GREEK CAPITAL LETTER SHO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Sho::
 SendInput ^x8{Enter}3f7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Sho::
 SendInput ^+u3f7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Sho::
 SendInput {U+03F7}
 return
@@ -13019,17 +13017,17 @@ return
 
 ;; Glyph: 'ϸ' Descr: GREEK SMALL LETTER SHO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sho::
 SendInput ^x8{Enter}3f8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sho::
 SendInput ^+u3f8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sho::
 SendInput {U+03F8}
 return
@@ -13037,17 +13035,17 @@ return
 
 ;; Glyph: 'Ϻ' Descr: GREEK CAPITAL LETTER SAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\San::
 SendInput ^x8{Enter}3fa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\San::
 SendInput ^+u3fa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\San::
 SendInput {U+03FA}
 return
@@ -13055,17 +13053,17 @@ return
 
 ;; Glyph: 'ϻ' Descr: GREEK SMALL LETTER SAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\san::
 SendInput ^x8{Enter}3fb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\san::
 SendInput ^+u3fb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\san::
 SendInput {U+03FB}
 return
@@ -13073,17 +13071,17 @@ return
 
 ;; Glyph: '؋' Descr: AFGHANI SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\afghani::
 SendInput ^x8{Enter}60b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\afghani::
 SendInput ^+u60b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\afghani::
 SendInput {U+060B}
 return
@@ -13091,17 +13089,17 @@ return
 
 ;; Glyph: '฿' Descr: THAI CURRENCY SYMBOL BAHT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textbaht::
 SendInput ^x8{Enter}e3f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textbaht::
 SendInput ^+ue3f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textbaht::
 SendInput {U+0E3F}
 return
@@ -13109,17 +13107,17 @@ return
 
 ;; Glyph: 'ᴬ' Descr: MODIFIER LETTER CAPITAL A
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^A::
 SendInput ^x8{Enter}1d2c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^A::
 SendInput ^+u1d2c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^A::
 SendInput {U+1D2C}
 return
@@ -13127,17 +13125,17 @@ return
 
 ;; Glyph: 'ᴭ' Descr: MODIFIER LETTER CAPITAL AE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\Ae::
 SendInput ^x8{Enter}1d2d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\Ae::
 SendInput ^+u1d2d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\Ae::
 SendInput {U+1D2D}
 return
@@ -13145,17 +13143,17 @@ return
 
 ;; Glyph: 'ᴮ' Descr: MODIFIER LETTER CAPITAL B
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^B::
 SendInput ^x8{Enter}1d2e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^B::
 SendInput ^+u1d2e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^B::
 SendInput {U+1D2E}
 return
@@ -13163,17 +13161,17 @@ return
 
 ;; Glyph: 'ᴯ' Descr: MODIFIER LETTER CAPITAL BARRED B
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\Barred B::
 SendInput ^x8{Enter}1d2f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\Barred B::
 SendInput ^+u1d2f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\Barred B::
 SendInput {U+1D2F}
 return
@@ -13181,17 +13179,17 @@ return
 
 ;; Glyph: 'ᴰ' Descr: MODIFIER LETTER CAPITAL D
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^D::
 SendInput ^x8{Enter}1d30{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^D::
 SendInput ^+u1d30{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^D::
 SendInput {U+1D30}
 return
@@ -13199,17 +13197,17 @@ return
 
 ;; Glyph: 'ᴱ' Descr: MODIFIER LETTER CAPITAL E
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^E::
 SendInput ^x8{Enter}1d31{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^E::
 SendInput ^+u1d31{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^E::
 SendInput {U+1D31}
 return
@@ -13217,17 +13215,17 @@ return
 
 ;; Glyph: 'ᴲ' Descr: MODIFIER LETTER CAPITAL REVERSED E
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\Reversed E::
 SendInput ^x8{Enter}1d32{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\Reversed E::
 SendInput ^+u1d32{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\Reversed E::
 SendInput {U+1D32}
 return
@@ -13235,17 +13233,17 @@ return
 
 ;; Glyph: 'ᴳ' Descr: MODIFIER LETTER CAPITAL G
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^G::
 SendInput ^x8{Enter}1d33{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^G::
 SendInput ^+u1d33{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^G::
 SendInput {U+1D33}
 return
@@ -13253,17 +13251,17 @@ return
 
 ;; Glyph: 'ᴴ' Descr: MODIFIER LETTER CAPITAL H
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^H::
 SendInput ^x8{Enter}1d34{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^H::
 SendInput ^+u1d34{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^H::
 SendInput {U+1D34}
 return
@@ -13271,17 +13269,17 @@ return
 
 ;; Glyph: 'ᴵ' Descr: MODIFIER LETTER CAPITAL I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^I::
 SendInput ^x8{Enter}1d35{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^I::
 SendInput ^+u1d35{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^I::
 SendInput {U+1D35}
 return
@@ -13289,17 +13287,17 @@ return
 
 ;; Glyph: 'ᴶ' Descr: MODIFIER LETTER CAPITAL J
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^J::
 SendInput ^x8{Enter}1d36{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^J::
 SendInput ^+u1d36{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^J::
 SendInput {U+1D36}
 return
@@ -13307,17 +13305,17 @@ return
 
 ;; Glyph: 'ᴷ' Descr: MODIFIER LETTER CAPITAL K
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^K::
 SendInput ^x8{Enter}1d37{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^K::
 SendInput ^+u1d37{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^K::
 SendInput {U+1D37}
 return
@@ -13325,17 +13323,17 @@ return
 
 ;; Glyph: 'ᴸ' Descr: MODIFIER LETTER CAPITAL L
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^L::
 SendInput ^x8{Enter}1d38{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^L::
 SendInput ^+u1d38{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^L::
 SendInput {U+1D38}
 return
@@ -13343,17 +13341,17 @@ return
 
 ;; Glyph: 'ᴹ' Descr: MODIFIER LETTER CAPITAL M
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^M::
 SendInput ^x8{Enter}1d39{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^M::
 SendInput ^+u1d39{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^M::
 SendInput {U+1D39}
 return
@@ -13361,17 +13359,17 @@ return
 
 ;; Glyph: 'ᴺ' Descr: MODIFIER LETTER CAPITAL N
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^N::
 SendInput ^x8{Enter}1d3a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^N::
 SendInput ^+u1d3a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^N::
 SendInput {U+1D3A}
 return
@@ -13379,17 +13377,17 @@ return
 
 ;; Glyph: 'ᴻ' Descr: MODIFIER LETTER CAPITAL REVERSED N
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\Reversed N::
 SendInput ^x8{Enter}1d3b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\Reversed N::
 SendInput ^+u1d3b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\Reversed N::
 SendInput {U+1D3B}
 return
@@ -13397,17 +13395,17 @@ return
 
 ;; Glyph: 'ᴼ' Descr: MODIFIER LETTER CAPITAL O
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^O::
 SendInput ^x8{Enter}1d3c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^O::
 SendInput ^+u1d3c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^O::
 SendInput {U+1D3C}
 return
@@ -13415,17 +13413,17 @@ return
 
 ;; Glyph: 'ᴽ' Descr: MODIFIER LETTER CAPITAL OU
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\Ou::
 SendInput ^x8{Enter}1d3d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\Ou::
 SendInput ^+u1d3d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\Ou::
 SendInput {U+1D3D}
 return
@@ -13433,17 +13431,17 @@ return
 
 ;; Glyph: 'ᴾ' Descr: MODIFIER LETTER CAPITAL P
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^P::
 SendInput ^x8{Enter}1d3e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^P::
 SendInput ^+u1d3e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^P::
 SendInput {U+1D3E}
 return
@@ -13451,17 +13449,17 @@ return
 
 ;; Glyph: 'ᴿ' Descr: MODIFIER LETTER CAPITAL R
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^R::
 SendInput ^x8{Enter}1d3f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^R::
 SendInput ^+u1d3f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^R::
 SendInput {U+1D3F}
 return
@@ -13469,17 +13467,17 @@ return
 
 ;; Glyph: 'ᵀ' Descr: MODIFIER LETTER CAPITAL T
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^T::
 SendInput ^x8{Enter}1d40{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^T::
 SendInput ^+u1d40{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^T::
 SendInput {U+1D40}
 return
@@ -13487,17 +13485,17 @@ return
 
 ;; Glyph: 'ᵁ' Descr: MODIFIER LETTER CAPITAL U
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^U::
 SendInput ^x8{Enter}1d41{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^U::
 SendInput ^+u1d41{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^U::
 SendInput {U+1D41}
 return
@@ -13505,17 +13503,17 @@ return
 
 ;; Glyph: 'ᵂ' Descr: MODIFIER LETTER CAPITAL W
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^W::
 SendInput ^x8{Enter}1d42{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^W::
 SendInput ^+u1d42{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^W::
 SendInput {U+1D42}
 return
@@ -13523,17 +13521,17 @@ return
 
 ;; Glyph: 'ᵃ' Descr: MODIFIER LETTER SMALL A
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^a::
 SendInput ^x8{Enter}1d43{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^a::
 SendInput ^+u1d43{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^a::
 SendInput {U+1D43}
 return
@@ -13541,17 +13539,17 @@ return
 
 ;; Glyph: 'ᵄ' Descr: MODIFIER LETTER SMALL TURNED A
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned a::
 SendInput ^x8{Enter}1d44{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned a::
 SendInput ^+u1d44{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned a::
 SendInput {U+1D44}
 return
@@ -13559,17 +13557,17 @@ return
 
 ;; Glyph: 'ᵅ' Descr: MODIFIER LETTER SMALL ALPHA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\alpha::
 SendInput ^x8{Enter}1d45{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\alpha::
 SendInput ^+u1d45{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\alpha::
 SendInput {U+1D45}
 return
@@ -13577,17 +13575,17 @@ return
 
 ;; Glyph: 'ᵆ' Descr: MODIFIER LETTER SMALL TURNED AE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned ae::
 SendInput ^x8{Enter}1d46{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned ae::
 SendInput ^+u1d46{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned ae::
 SendInput {U+1D46}
 return
@@ -13595,17 +13593,17 @@ return
 
 ;; Glyph: 'ᵇ' Descr: MODIFIER LETTER SMALL B
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^b::
 SendInput ^x8{Enter}1d47{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^b::
 SendInput ^+u1d47{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^b::
 SendInput {U+1D47}
 return
@@ -13613,17 +13611,17 @@ return
 
 ;; Glyph: 'ᵈ' Descr: MODIFIER LETTER SMALL D
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^d::
 SendInput ^x8{Enter}1d48{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^d::
 SendInput ^+u1d48{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^d::
 SendInput {U+1D48}
 return
@@ -13631,17 +13629,17 @@ return
 
 ;; Glyph: 'ᵉ' Descr: MODIFIER LETTER SMALL E
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^e::
 SendInput ^x8{Enter}1d49{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^e::
 SendInput ^+u1d49{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^e::
 SendInput {U+1D49}
 return
@@ -13649,17 +13647,17 @@ return
 
 ;; Glyph: 'ᵊ' Descr: MODIFIER LETTER SMALL SCHWA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\schwa::
 SendInput ^x8{Enter}1d4a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\schwa::
 SendInput ^+u1d4a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\schwa::
 SendInput {U+1D4A}
 return
@@ -13667,17 +13665,17 @@ return
 
 ;; Glyph: 'ᵋ' Descr: MODIFIER LETTER SMALL OPEN E
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\open e::
 SendInput ^x8{Enter}1d4b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\open e::
 SendInput ^+u1d4b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\open e::
 SendInput {U+1D4B}
 return
@@ -13685,17 +13683,17 @@ return
 
 ;; Glyph: 'ᵌ' Descr: MODIFIER LETTER SMALL TURNED OPEN E
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned open e::
 SendInput ^x8{Enter}1d4c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned open e::
 SendInput ^+u1d4c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned open e::
 SendInput {U+1D4C}
 return
@@ -13703,17 +13701,17 @@ return
 
 ;; Glyph: 'ᵍ' Descr: MODIFIER LETTER SMALL G
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^g::
 SendInput ^x8{Enter}1d4d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^g::
 SendInput ^+u1d4d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^g::
 SendInput {U+1D4D}
 return
@@ -13721,17 +13719,17 @@ return
 
 ;; Glyph: 'ᵎ' Descr: MODIFIER LETTER SMALL TURNED I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned i::
 SendInput ^x8{Enter}1d4e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned i::
 SendInput ^+u1d4e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned i::
 SendInput {U+1D4E}
 return
@@ -13739,17 +13737,17 @@ return
 
 ;; Glyph: 'ᵏ' Descr: MODIFIER LETTER SMALL K
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^k::
 SendInput ^x8{Enter}1d4f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^k::
 SendInput ^+u1d4f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^k::
 SendInput {U+1D4F}
 return
@@ -13757,17 +13755,17 @@ return
 
 ;; Glyph: 'ᵐ' Descr: MODIFIER LETTER SMALL M
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^m::
 SendInput ^x8{Enter}1d50{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^m::
 SendInput ^+u1d50{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^m::
 SendInput {U+1D50}
 return
@@ -13775,17 +13773,17 @@ return
 
 ;; Glyph: 'ᵑ' Descr: MODIFIER LETTER SMALL ENG
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\eng::
 SendInput ^x8{Enter}1d51{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\eng::
 SendInput ^+u1d51{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\eng::
 SendInput {U+1D51}
 return
@@ -13793,17 +13791,17 @@ return
 
 ;; Glyph: 'ᵒ' Descr: MODIFIER LETTER SMALL O
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^o::
 SendInput ^x8{Enter}1d52{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^o::
 SendInput ^+u1d52{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^o::
 SendInput {U+1D52}
 return
@@ -13811,17 +13809,17 @@ return
 
 ;; Glyph: 'ᵓ' Descr: MODIFIER LETTER SMALL OPEN O
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\open o::
 SendInput ^x8{Enter}1d53{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\open o::
 SendInput ^+u1d53{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\open o::
 SendInput {U+1D53}
 return
@@ -13829,17 +13827,17 @@ return
 
 ;; Glyph: 'ᵔ' Descr: MODIFIER LETTER SMALL TOP HALF O
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\top half o::
 SendInput ^x8{Enter}1d54{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\top half o::
 SendInput ^+u1d54{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\top half o::
 SendInput {U+1D54}
 return
@@ -13847,17 +13845,17 @@ return
 
 ;; Glyph: 'ᵕ' Descr: MODIFIER LETTER SMALL BOTTOM HALF O
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\bottom half o::
 SendInput ^x8{Enter}1d55{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\bottom half o::
 SendInput ^+u1d55{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\bottom half o::
 SendInput {U+1D55}
 return
@@ -13865,17 +13863,17 @@ return
 
 ;; Glyph: 'ᵖ' Descr: MODIFIER LETTER SMALL P
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^p::
 SendInput ^x8{Enter}1d56{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^p::
 SendInput ^+u1d56{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^p::
 SendInput {U+1D56}
 return
@@ -13883,17 +13881,17 @@ return
 
 ;; Glyph: 'ᵗ' Descr: MODIFIER LETTER SMALL T
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^t::
 SendInput ^x8{Enter}1d57{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^t::
 SendInput ^+u1d57{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^t::
 SendInput {U+1D57}
 return
@@ -13901,17 +13899,17 @@ return
 
 ;; Glyph: 'ᵘ' Descr: MODIFIER LETTER SMALL U
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^u::
 SendInput ^x8{Enter}1d58{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^u::
 SendInput ^+u1d58{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^u::
 SendInput {U+1D58}
 return
@@ -13919,17 +13917,17 @@ return
 
 ;; Glyph: 'ᵙ' Descr: MODIFIER LETTER SMALL SIDEWAYS U
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\sideways u::
 SendInput ^x8{Enter}1d59{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\sideways u::
 SendInput ^+u1d59{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\sideways u::
 SendInput {U+1D59}
 return
@@ -13937,17 +13935,17 @@ return
 
 ;; Glyph: 'ᵚ' Descr: MODIFIER LETTER SMALL TURNED M
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned m::
 SendInput ^x8{Enter}1d5a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned m::
 SendInput ^+u1d5a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned m::
 SendInput {U+1D5A}
 return
@@ -13955,17 +13953,17 @@ return
 
 ;; Glyph: 'ᵛ' Descr: MODIFIER LETTER SMALL V
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^v::
 SendInput ^x8{Enter}1d5b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^v::
 SendInput ^+u1d5b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^v::
 SendInput {U+1D5B}
 return
@@ -13973,17 +13971,17 @@ return
 
 ;; Glyph: 'ᵜ' Descr: MODIFIER LETTER SMALL AIN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\ain::
 SendInput ^x8{Enter}1d5c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\ain::
 SendInput ^+u1d5c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\ain::
 SendInput {U+1D5C}
 return
@@ -13991,17 +13989,17 @@ return
 
 ;; Glyph: 'ᵝ' Descr: MODIFIER LETTER SMALL BETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\beta::
 SendInput ^x8{Enter}1d5d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\beta::
 SendInput ^+u1d5d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\beta::
 SendInput {U+1D5D}
 return
@@ -14009,17 +14007,17 @@ return
 
 ;; Glyph: 'ᵞ' Descr: MODIFIER LETTER SMALL GREEK GAMMA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\greek gamma::
 SendInput ^x8{Enter}1d5e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\greek gamma::
 SendInput ^+u1d5e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\greek gamma::
 SendInput {U+1D5E}
 return
@@ -14027,17 +14025,17 @@ return
 
 ;; Glyph: 'ᵟ' Descr: MODIFIER LETTER SMALL DELTA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\delta::
 SendInput ^x8{Enter}1d5f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\delta::
 SendInput ^+u1d5f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\delta::
 SendInput {U+1D5F}
 return
@@ -14045,17 +14043,17 @@ return
 
 ;; Glyph: 'ᵠ' Descr: MODIFIER LETTER SMALL GREEK PHI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\greek phi::
 SendInput ^x8{Enter}1d60{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\greek phi::
 SendInput ^+u1d60{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\greek phi::
 SendInput {U+1D60}
 return
@@ -14063,17 +14061,17 @@ return
 
 ;; Glyph: 'ᵡ' Descr: MODIFIER LETTER SMALL CHI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\chi::
 SendInput ^x8{Enter}1d61{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\chi::
 SendInput ^+u1d61{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\chi::
 SendInput {U+1D61}
 return
@@ -14081,17 +14079,17 @@ return
 
 ;; Glyph: 'ᵢ' Descr: LATIN SUBSCRIPT SMALL LETTER I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_i::
 SendInput ^x8{Enter}1d62{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_i::
 SendInput ^+u1d62{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_i::
 SendInput {U+1D62}
 return
@@ -14099,17 +14097,17 @@ return
 
 ;; Glyph: 'ᵣ' Descr: LATIN SUBSCRIPT SMALL LETTER R
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_r::
 SendInput ^x8{Enter}1d63{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_r::
 SendInput ^+u1d63{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_r::
 SendInput {U+1D63}
 return
@@ -14117,17 +14115,17 @@ return
 
 ;; Glyph: 'ᵤ' Descr: LATIN SUBSCRIPT SMALL LETTER U
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_u::
 SendInput ^x8{Enter}1d64{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_u::
 SendInput ^+u1d64{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_u::
 SendInput {U+1D64}
 return
@@ -14135,17 +14133,17 @@ return
 
 ;; Glyph: 'ᵥ' Descr: LATIN SUBSCRIPT SMALL LETTER V
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_v::
 SendInput ^x8{Enter}1d65{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_v::
 SendInput ^+u1d65{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_v::
 SendInput {U+1D65}
 return
@@ -14153,17 +14151,17 @@ return
 
 ;; Glyph: 'ᶛ' Descr: MODIFIER LETTER SMALL TURNED ALPHA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned alpha::
 SendInput ^x8{Enter}1d9b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned alpha::
 SendInput ^+u1d9b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned alpha::
 SendInput {U+1D9B}
 return
@@ -14171,17 +14169,17 @@ return
 
 ;; Glyph: 'ᶜ' Descr: MODIFIER LETTER SMALL C
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^c::
 SendInput ^x8{Enter}1d9c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^c::
 SendInput ^+u1d9c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^c::
 SendInput {U+1D9C}
 return
@@ -14189,17 +14187,17 @@ return
 
 ;; Glyph: 'ᶝ' Descr: MODIFIER LETTER SMALL C WITH CURL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\c with curl::
 SendInput ^x8{Enter}1d9d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\c with curl::
 SendInput ^+u1d9d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\c with curl::
 SendInput {U+1D9D}
 return
@@ -14207,17 +14205,17 @@ return
 
 ;; Glyph: 'ᶞ' Descr: MODIFIER LETTER SMALL ETH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\eth::
 SendInput ^x8{Enter}1d9e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\eth::
 SendInput ^+u1d9e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\eth::
 SendInput {U+1D9E}
 return
@@ -14225,17 +14223,17 @@ return
 
 ;; Glyph: 'ᶟ' Descr: MODIFIER LETTER SMALL REVERSED OPEN E
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\reversed open e::
 SendInput ^x8{Enter}1d9f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\reversed open e::
 SendInput ^+u1d9f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\reversed open e::
 SendInput {U+1D9F}
 return
@@ -14243,17 +14241,17 @@ return
 
 ;; Glyph: 'ᶠ' Descr: MODIFIER LETTER SMALL F
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^f::
 SendInput ^x8{Enter}1da0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^f::
 SendInput ^+u1da0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^f::
 SendInput {U+1DA0}
 return
@@ -14261,17 +14259,17 @@ return
 
 ;; Glyph: 'ᶡ' Descr: MODIFIER LETTER SMALL DOTLESS J WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\dotless j with stroke::
 SendInput ^x8{Enter}1da1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\dotless j with stroke::
 SendInput ^+u1da1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\dotless j with stroke::
 SendInput {U+1DA1}
 return
@@ -14279,17 +14277,17 @@ return
 
 ;; Glyph: 'ᶢ' Descr: MODIFIER LETTER SMALL SCRIPT G
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\script g::
 SendInput ^x8{Enter}1da2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\script g::
 SendInput ^+u1da2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\script g::
 SendInput {U+1DA2}
 return
@@ -14297,17 +14295,17 @@ return
 
 ;; Glyph: 'ᶣ' Descr: MODIFIER LETTER SMALL TURNED H
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned h::
 SendInput ^x8{Enter}1da3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned h::
 SendInput ^+u1da3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned h::
 SendInput {U+1DA3}
 return
@@ -14315,17 +14313,17 @@ return
 
 ;; Glyph: 'ᶤ' Descr: MODIFIER LETTER SMALL I WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\i with stroke::
 SendInput ^x8{Enter}1da4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\i with stroke::
 SendInput ^+u1da4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\i with stroke::
 SendInput {U+1DA4}
 return
@@ -14333,17 +14331,17 @@ return
 
 ;; Glyph: 'ᶥ' Descr: MODIFIER LETTER SMALL IOTA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\iota::
 SendInput ^x8{Enter}1da5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\iota::
 SendInput ^+u1da5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\iota::
 SendInput {U+1DA5}
 return
@@ -14351,17 +14349,17 @@ return
 
 ;; Glyph: 'ᶦ' Descr: MODIFIER LETTER SMALL CAPITAL I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\capital i::
 SendInput ^x8{Enter}1da6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\capital i::
 SendInput ^+u1da6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\capital i::
 SendInput {U+1DA6}
 return
@@ -14369,17 +14367,17 @@ return
 
 ;; Glyph: 'ᶧ' Descr: MODIFIER LETTER SMALL CAPITAL I WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\capital i with stroke::
 SendInput ^x8{Enter}1da7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\capital i with stroke::
 SendInput ^+u1da7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\capital i with stroke::
 SendInput {U+1DA7}
 return
@@ -14387,17 +14385,17 @@ return
 
 ;; Glyph: 'ᶨ' Descr: MODIFIER LETTER SMALL J WITH CROSSED-TAIL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\j with crossed-tail::
 SendInput ^x8{Enter}1da8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\j with crossed-tail::
 SendInput ^+u1da8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\j with crossed-tail::
 SendInput {U+1DA8}
 return
@@ -14405,17 +14403,17 @@ return
 
 ;; Glyph: 'ᶩ' Descr: MODIFIER LETTER SMALL L WITH RETROFLEX HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\l with retroflex hook::
 SendInput ^x8{Enter}1da9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\l with retroflex hook::
 SendInput ^+u1da9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\l with retroflex hook::
 SendInput {U+1DA9}
 return
@@ -14423,17 +14421,17 @@ return
 
 ;; Glyph: 'ᶪ' Descr: MODIFIER LETTER SMALL L WITH PALATAL HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\l with palatal hook::
 SendInput ^x8{Enter}1daa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\l with palatal hook::
 SendInput ^+u1daa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\l with palatal hook::
 SendInput {U+1DAA}
 return
@@ -14441,17 +14439,17 @@ return
 
 ;; Glyph: 'ᶫ' Descr: MODIFIER LETTER SMALL CAPITAL L
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\capital l::
 SendInput ^x8{Enter}1dab{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\capital l::
 SendInput ^+u1dab{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\capital l::
 SendInput {U+1DAB}
 return
@@ -14459,17 +14457,17 @@ return
 
 ;; Glyph: 'ᶬ' Descr: MODIFIER LETTER SMALL M WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\m with hook::
 SendInput ^x8{Enter}1dac{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\m with hook::
 SendInput ^+u1dac{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\m with hook::
 SendInput {U+1DAC}
 return
@@ -14477,17 +14475,17 @@ return
 
 ;; Glyph: 'ᶭ' Descr: MODIFIER LETTER SMALL TURNED M WITH LONG LEG
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned m with long leg::
 SendInput ^x8{Enter}1dad{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned m with long leg::
 SendInput ^+u1dad{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned m with long leg::
 SendInput {U+1DAD}
 return
@@ -14495,17 +14493,17 @@ return
 
 ;; Glyph: 'ᶮ' Descr: MODIFIER LETTER SMALL N WITH LEFT HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\n with left hook::
 SendInput ^x8{Enter}1dae{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\n with left hook::
 SendInput ^+u1dae{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\n with left hook::
 SendInput {U+1DAE}
 return
@@ -14513,17 +14511,17 @@ return
 
 ;; Glyph: 'ᶯ' Descr: MODIFIER LETTER SMALL N WITH RETROFLEX HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\n with retroflex hook::
 SendInput ^x8{Enter}1daf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\n with retroflex hook::
 SendInput ^+u1daf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\n with retroflex hook::
 SendInput {U+1DAF}
 return
@@ -14531,17 +14529,17 @@ return
 
 ;; Glyph: 'ᶰ' Descr: MODIFIER LETTER SMALL CAPITAL N
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\capital n::
 SendInput ^x8{Enter}1db0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\capital n::
 SendInput ^+u1db0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\capital n::
 SendInput {U+1DB0}
 return
@@ -14549,17 +14547,17 @@ return
 
 ;; Glyph: 'ᶱ' Descr: MODIFIER LETTER SMALL BARRED O
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\barred o::
 SendInput ^x8{Enter}1db1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\barred o::
 SendInput ^+u1db1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\barred o::
 SendInput {U+1DB1}
 return
@@ -14567,17 +14565,17 @@ return
 
 ;; Glyph: 'ᶲ' Descr: MODIFIER LETTER SMALL PHI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\phi::
 SendInput ^x8{Enter}1db2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\phi::
 SendInput ^+u1db2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\phi::
 SendInput {U+1DB2}
 return
@@ -14585,17 +14583,17 @@ return
 
 ;; Glyph: 'ᶳ' Descr: MODIFIER LETTER SMALL S WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\s with hook::
 SendInput ^x8{Enter}1db3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\s with hook::
 SendInput ^+u1db3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\s with hook::
 SendInput {U+1DB3}
 return
@@ -14603,17 +14601,17 @@ return
 
 ;; Glyph: 'ᶴ' Descr: MODIFIER LETTER SMALL ESH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\esh::
 SendInput ^x8{Enter}1db4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\esh::
 SendInput ^+u1db4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\esh::
 SendInput {U+1DB4}
 return
@@ -14621,17 +14619,17 @@ return
 
 ;; Glyph: 'ᶵ' Descr: MODIFIER LETTER SMALL T WITH PALATAL HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\t with palatal hook::
 SendInput ^x8{Enter}1db5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\t with palatal hook::
 SendInput ^+u1db5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\t with palatal hook::
 SendInput {U+1DB5}
 return
@@ -14639,17 +14637,17 @@ return
 
 ;; Glyph: 'ᶶ' Descr: MODIFIER LETTER SMALL U BAR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\u bar::
 SendInput ^x8{Enter}1db6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\u bar::
 SendInput ^+u1db6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\u bar::
 SendInput {U+1DB6}
 return
@@ -14657,17 +14655,17 @@ return
 
 ;; Glyph: 'ᶷ' Descr: MODIFIER LETTER SMALL UPSILON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\upsilon::
 SendInput ^x8{Enter}1db7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\upsilon::
 SendInput ^+u1db7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\upsilon::
 SendInput {U+1DB7}
 return
@@ -14675,17 +14673,17 @@ return
 
 ;; Glyph: 'ᶸ' Descr: MODIFIER LETTER SMALL CAPITAL U
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\capital u::
 SendInput ^x8{Enter}1db8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\capital u::
 SendInput ^+u1db8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\capital u::
 SendInput {U+1DB8}
 return
@@ -14693,17 +14691,17 @@ return
 
 ;; Glyph: 'ᶹ' Descr: MODIFIER LETTER SMALL V WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\v with hook::
 SendInput ^x8{Enter}1db9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\v with hook::
 SendInput ^+u1db9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\v with hook::
 SendInput {U+1DB9}
 return
@@ -14711,17 +14709,17 @@ return
 
 ;; Glyph: 'ᶺ' Descr: MODIFIER LETTER SMALL TURNED V
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\turned v::
 SendInput ^x8{Enter}1dba{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\turned v::
 SendInput ^+u1dba{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\turned v::
 SendInput {U+1DBA}
 return
@@ -14729,17 +14727,17 @@ return
 
 ;; Glyph: 'ᶻ' Descr: MODIFIER LETTER SMALL Z
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^z::
 SendInput ^x8{Enter}1dbb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^z::
 SendInput ^+u1dbb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^z::
 SendInput {U+1DBB}
 return
@@ -14747,17 +14745,17 @@ return
 
 ;; Glyph: 'ᶼ' Descr: MODIFIER LETTER SMALL Z WITH RETROFLEX HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\z with retroflex hook::
 SendInput ^x8{Enter}1dbc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\z with retroflex hook::
 SendInput ^+u1dbc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\z with retroflex hook::
 SendInput {U+1DBC}
 return
@@ -14765,17 +14763,17 @@ return
 
 ;; Glyph: 'ᶽ' Descr: MODIFIER LETTER SMALL Z WITH CURL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\z with curl::
 SendInput ^x8{Enter}1dbd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\z with curl::
 SendInput ^+u1dbd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\z with curl::
 SendInput {U+1DBD}
 return
@@ -14783,17 +14781,17 @@ return
 
 ;; Glyph: 'ᶾ' Descr: MODIFIER LETTER SMALL EZH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\ezh::
 SendInput ^x8{Enter}1dbe{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\ezh::
 SendInput ^+u1dbe{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\ezh::
 SendInput {U+1DBE}
 return
@@ -14801,17 +14799,17 @@ return
 
 ;; Glyph: 'ᶿ' Descr: MODIFIER LETTER SMALL THETA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\theta::
 SendInput ^x8{Enter}1dbf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\theta::
 SendInput ^+u1dbf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\theta::
 SendInput {U+1DBF}
 return
@@ -14819,17 +14817,17 @@ return
 
 ;; Glyph: 'Ḃ' Descr: LATIN CAPITAL LETTER B WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.B::
 SendInput ^x8{Enter}1e02{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.B::
 SendInput ^+u1e02{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.B::
 SendInput {U+1E02}
 return
@@ -14837,17 +14835,17 @@ return
 
 ;; Glyph: 'Ḃ' Descr: LATIN CAPITAL LETTER B WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{B}::
 SendInput ^x8{Enter}1e02{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{B}::
 SendInput ^+u1e02{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{B}::
 SendInput {U+1E02}
 return
@@ -14855,17 +14853,17 @@ return
 
 ;; Glyph: 'ḃ' Descr: LATIN SMALL LETTER B WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.b::
 SendInput ^x8{Enter}1e03{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.b::
 SendInput ^+u1e03{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.b::
 SendInput {U+1E03}
 return
@@ -14873,17 +14871,17 @@ return
 
 ;; Glyph: 'ḃ' Descr: LATIN SMALL LETTER B WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{b}::
 SendInput ^x8{Enter}1e03{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{b}::
 SendInput ^+u1e03{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{b}::
 SendInput {U+1E03}
 return
@@ -14891,17 +14889,17 @@ return
 
 ;; Glyph: 'Ḅ' Descr: LATIN CAPITAL LETTER B WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{B}::
 SendInput ^x8{Enter}1e04{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{B}::
 SendInput ^+u1e04{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{B}::
 SendInput {U+1E04}
 return
@@ -14909,17 +14907,17 @@ return
 
 ;; Glyph: 'ḅ' Descr: LATIN SMALL LETTER B WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{b}::
 SendInput ^x8{Enter}1e05{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{b}::
 SendInput ^+u1e05{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{b}::
 SendInput {U+1E05}
 return
@@ -14927,17 +14925,17 @@ return
 
 ;; Glyph: 'Ḉ' Descr: LATIN CAPITAL LETTER C WITH CEDILLA AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c\'C::
 SendInput ^x8{Enter}1e08{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c\'C::
 SendInput ^+u1e08{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c\'C::
 SendInput {U+1E08}
 return
@@ -14945,17 +14943,17 @@ return
 
 ;; Glyph: 'Ḉ' Descr: LATIN CAPITAL LETTER C WITH CEDILLA AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c\'{C}::
 SendInput ^x8{Enter}1e08{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c\'{C}::
 SendInput ^+u1e08{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c\'{C}::
 SendInput {U+1E08}
 return
@@ -14963,17 +14961,17 @@ return
 
 ;; Glyph: 'ḉ' Descr: LATIN SMALL LETTER C WITH CEDILLA AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c\'c::
 SendInput ^x8{Enter}1e09{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c\'c::
 SendInput ^+u1e09{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c\'c::
 SendInput {U+1E09}
 return
@@ -14981,17 +14979,17 @@ return
 
 ;; Glyph: 'ḉ' Descr: LATIN SMALL LETTER C WITH CEDILLA AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c\'{c}::
 SendInput ^x8{Enter}1e09{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c\'{c}::
 SendInput ^+u1e09{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c\'{c}::
 SendInput {U+1E09}
 return
@@ -14999,17 +14997,17 @@ return
 
 ;; Glyph: 'Ḋ' Descr: LATIN CAPITAL LETTER D WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.D::
 SendInput ^x8{Enter}1e0a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.D::
 SendInput ^+u1e0a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.D::
 SendInput {U+1E0A}
 return
@@ -15017,17 +15015,17 @@ return
 
 ;; Glyph: 'Ḋ' Descr: LATIN CAPITAL LETTER D WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{D}::
 SendInput ^x8{Enter}1e0a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{D}::
 SendInput ^+u1e0a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{D}::
 SendInput {U+1E0A}
 return
@@ -15035,17 +15033,17 @@ return
 
 ;; Glyph: 'ḋ' Descr: LATIN SMALL LETTER D WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.d::
 SendInput ^x8{Enter}1e0b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.d::
 SendInput ^+u1e0b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.d::
 SendInput {U+1E0B}
 return
@@ -15053,17 +15051,17 @@ return
 
 ;; Glyph: 'ḋ' Descr: LATIN SMALL LETTER D WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{d}::
 SendInput ^x8{Enter}1e0b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{d}::
 SendInput ^+u1e0b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{d}::
 SendInput {U+1E0B}
 return
@@ -15071,17 +15069,17 @@ return
 
 ;; Glyph: 'Ḍ' Descr: LATIN CAPITAL LETTER D WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{D}::
 SendInput ^x8{Enter}1e0c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{D}::
 SendInput ^+u1e0c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{D}::
 SendInput {U+1E0C}
 return
@@ -15089,17 +15087,17 @@ return
 
 ;; Glyph: 'ḍ' Descr: LATIN SMALL LETTER D WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{d}::
 SendInput ^x8{Enter}1e0d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{d}::
 SendInput ^+u1e0d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{d}::
 SendInput {U+1E0D}
 return
@@ -15107,17 +15105,17 @@ return
 
 ;; Glyph: 'Ḑ' Descr: LATIN CAPITAL LETTER D WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cD::
 SendInput ^x8{Enter}1e10{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cD::
 SendInput ^+u1e10{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cD::
 SendInput {U+1E10}
 return
@@ -15125,17 +15123,17 @@ return
 
 ;; Glyph: 'Ḑ' Descr: LATIN CAPITAL LETTER D WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{D}::
 SendInput ^x8{Enter}1e10{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{D}::
 SendInput ^+u1e10{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{D}::
 SendInput {U+1E10}
 return
@@ -15143,17 +15141,17 @@ return
 
 ;; Glyph: 'ḑ' Descr: LATIN SMALL LETTER D WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cd::
 SendInput ^x8{Enter}1e11{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cd::
 SendInput ^+u1e11{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cd::
 SendInput {U+1E11}
 return
@@ -15161,17 +15159,17 @@ return
 
 ;; Glyph: 'ḑ' Descr: LATIN SMALL LETTER D WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{d}::
 SendInput ^x8{Enter}1e11{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{d}::
 SendInput ^+u1e11{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{d}::
 SendInput {U+1E11}
 return
@@ -15179,17 +15177,17 @@ return
 
 ;; Glyph: 'Ḕ' Descr: LATIN CAPITAL LETTER E WITH MACRON AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\``E::
 SendInput ^x8{Enter}1e14{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\``E::
 SendInput ^+u1e14{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\``E::
 SendInput {U+1E14}
 return
@@ -15197,17 +15195,17 @@ return
 
 ;; Glyph: 'Ḕ' Descr: LATIN CAPITAL LETTER E WITH MACRON AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\``{E}::
 SendInput ^x8{Enter}1e14{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\``{E}::
 SendInput ^+u1e14{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\``{E}::
 SendInput {U+1E14}
 return
@@ -15215,17 +15213,17 @@ return
 
 ;; Glyph: 'ḕ' Descr: LATIN SMALL LETTER E WITH MACRON AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\``e::
 SendInput ^x8{Enter}1e15{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\``e::
 SendInput ^+u1e15{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\``e::
 SendInput {U+1E15}
 return
@@ -15233,17 +15231,17 @@ return
 
 ;; Glyph: 'ḕ' Descr: LATIN SMALL LETTER E WITH MACRON AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\``{e}::
 SendInput ^x8{Enter}1e15{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\``{e}::
 SendInput ^+u1e15{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\``{e}::
 SendInput {U+1E15}
 return
@@ -15251,17 +15249,17 @@ return
 
 ;; Glyph: 'Ḗ' Descr: LATIN CAPITAL LETTER E WITH MACRON AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\'E::
 SendInput ^x8{Enter}1e16{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\'E::
 SendInput ^+u1e16{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\'E::
 SendInput {U+1E16}
 return
@@ -15269,17 +15267,17 @@ return
 
 ;; Glyph: 'Ḗ' Descr: LATIN CAPITAL LETTER E WITH MACRON AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\'{E}::
 SendInput ^x8{Enter}1e16{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\'{E}::
 SendInput ^+u1e16{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\'{E}::
 SendInput {U+1E16}
 return
@@ -15287,17 +15285,17 @@ return
 
 ;; Glyph: 'ḗ' Descr: LATIN SMALL LETTER E WITH MACRON AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\'e::
 SendInput ^x8{Enter}1e17{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\'e::
 SendInput ^+u1e17{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\'e::
 SendInput {U+1E17}
 return
@@ -15305,17 +15303,17 @@ return
 
 ;; Glyph: 'ḗ' Descr: LATIN SMALL LETTER E WITH MACRON AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\'{e}::
 SendInput ^x8{Enter}1e17{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\'{e}::
 SendInput ^+u1e17{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\'{e}::
 SendInput {U+1E17}
 return
@@ -15323,17 +15321,17 @@ return
 
 ;; Glyph: 'Ḝ' Descr: LATIN CAPITAL LETTER E WITH CEDILLA AND BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c\uE::
 SendInput ^x8{Enter}1e1c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c\uE::
 SendInput ^+u1e1c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c\uE::
 SendInput {U+1E1C}
 return
@@ -15341,17 +15339,17 @@ return
 
 ;; Glyph: 'Ḝ' Descr: LATIN CAPITAL LETTER E WITH CEDILLA AND BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c\u{E}::
 SendInput ^x8{Enter}1e1c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c\u{E}::
 SendInput ^+u1e1c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c\u{E}::
 SendInput {U+1E1C}
 return
@@ -15359,17 +15357,17 @@ return
 
 ;; Glyph: 'ḝ' Descr: LATIN SMALL LETTER E WITH CEDILLA AND BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c\ue::
 SendInput ^x8{Enter}1e1d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c\ue::
 SendInput ^+u1e1d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c\ue::
 SendInput {U+1E1D}
 return
@@ -15377,17 +15375,17 @@ return
 
 ;; Glyph: 'ḝ' Descr: LATIN SMALL LETTER E WITH CEDILLA AND BREVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c\u{e}::
 SendInput ^x8{Enter}1e1d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c\u{e}::
 SendInput ^+u1e1d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c\u{e}::
 SendInput {U+1E1D}
 return
@@ -15395,17 +15393,17 @@ return
 
 ;; Glyph: 'Ḟ' Descr: LATIN CAPITAL LETTER F WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.F::
 SendInput ^x8{Enter}1e1e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.F::
 SendInput ^+u1e1e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.F::
 SendInput {U+1E1E}
 return
@@ -15413,17 +15411,17 @@ return
 
 ;; Glyph: 'Ḟ' Descr: LATIN CAPITAL LETTER F WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{F}::
 SendInput ^x8{Enter}1e1e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{F}::
 SendInput ^+u1e1e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{F}::
 SendInput {U+1E1E}
 return
@@ -15431,17 +15429,17 @@ return
 
 ;; Glyph: 'ḟ' Descr: LATIN SMALL LETTER F WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.f::
 SendInput ^x8{Enter}1e1f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.f::
 SendInput ^+u1e1f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.f::
 SendInput {U+1E1F}
 return
@@ -15449,17 +15447,17 @@ return
 
 ;; Glyph: 'ḟ' Descr: LATIN SMALL LETTER F WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{f}::
 SendInput ^x8{Enter}1e1f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{f}::
 SendInput ^+u1e1f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{f}::
 SendInput {U+1E1F}
 return
@@ -15467,17 +15465,17 @@ return
 
 ;; Glyph: 'Ḡ' Descr: LATIN CAPITAL LETTER G WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=G::
 SendInput ^x8{Enter}1e20{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=G::
 SendInput ^+u1e20{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=G::
 SendInput {U+1E20}
 return
@@ -15485,17 +15483,17 @@ return
 
 ;; Glyph: 'Ḡ' Descr: LATIN CAPITAL LETTER G WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={G}::
 SendInput ^x8{Enter}1e20{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={G}::
 SendInput ^+u1e20{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={G}::
 SendInput {U+1E20}
 return
@@ -15503,17 +15501,17 @@ return
 
 ;; Glyph: 'ḡ' Descr: LATIN SMALL LETTER G WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=g::
 SendInput ^x8{Enter}1e21{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=g::
 SendInput ^+u1e21{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=g::
 SendInput {U+1E21}
 return
@@ -15521,17 +15519,17 @@ return
 
 ;; Glyph: 'ḡ' Descr: LATIN SMALL LETTER G WITH MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\={g}::
 SendInput ^x8{Enter}1e21{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\={g}::
 SendInput ^+u1e21{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\={g}::
 SendInput {U+1E21}
 return
@@ -15539,17 +15537,17 @@ return
 
 ;; Glyph: 'Ḣ' Descr: LATIN CAPITAL LETTER H WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.H::
 SendInput ^x8{Enter}1e22{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.H::
 SendInput ^+u1e22{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.H::
 SendInput {U+1E22}
 return
@@ -15557,17 +15555,17 @@ return
 
 ;; Glyph: 'Ḣ' Descr: LATIN CAPITAL LETTER H WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{H}::
 SendInput ^x8{Enter}1e22{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{H}::
 SendInput ^+u1e22{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{H}::
 SendInput {U+1E22}
 return
@@ -15575,17 +15573,17 @@ return
 
 ;; Glyph: 'ḣ' Descr: LATIN SMALL LETTER H WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.h::
 SendInput ^x8{Enter}1e23{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.h::
 SendInput ^+u1e23{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.h::
 SendInput {U+1E23}
 return
@@ -15593,17 +15591,17 @@ return
 
 ;; Glyph: 'ḣ' Descr: LATIN SMALL LETTER H WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{h}::
 SendInput ^x8{Enter}1e23{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{h}::
 SendInput ^+u1e23{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{h}::
 SendInput {U+1E23}
 return
@@ -15611,17 +15609,17 @@ return
 
 ;; Glyph: 'Ḥ' Descr: LATIN CAPITAL LETTER H WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{H}::
 SendInput ^x8{Enter}1e24{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{H}::
 SendInput ^+u1e24{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{H}::
 SendInput {U+1E24}
 return
@@ -15629,17 +15627,17 @@ return
 
 ;; Glyph: 'ḥ' Descr: LATIN SMALL LETTER H WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{h}::
 SendInput ^x8{Enter}1e25{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{h}::
 SendInput ^+u1e25{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{h}::
 SendInput {U+1E25}
 return
@@ -15647,17 +15645,17 @@ return
 
 ;; Glyph: 'Ḧ' Descr: LATIN CAPITAL LETTER H WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"H::
 SendInput ^x8{Enter}1e26{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"H::
 SendInput ^+u1e26{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"H::
 SendInput {U+1E26}
 return
@@ -15665,17 +15663,17 @@ return
 
 ;; Glyph: 'Ḧ' Descr: LATIN CAPITAL LETTER H WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{H}::
 SendInput ^x8{Enter}1e26{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{H}::
 SendInput ^+u1e26{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{H}::
 SendInput {U+1E26}
 return
@@ -15683,17 +15681,17 @@ return
 
 ;; Glyph: 'ḧ' Descr: LATIN SMALL LETTER H WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"h::
 SendInput ^x8{Enter}1e27{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"h::
 SendInput ^+u1e27{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"h::
 SendInput {U+1E27}
 return
@@ -15701,17 +15699,17 @@ return
 
 ;; Glyph: 'ḧ' Descr: LATIN SMALL LETTER H WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{h}::
 SendInput ^x8{Enter}1e27{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{h}::
 SendInput ^+u1e27{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{h}::
 SendInput {U+1E27}
 return
@@ -15719,17 +15717,17 @@ return
 
 ;; Glyph: 'Ḩ' Descr: LATIN CAPITAL LETTER H WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cH::
 SendInput ^x8{Enter}1e28{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cH::
 SendInput ^+u1e28{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cH::
 SendInput {U+1E28}
 return
@@ -15737,17 +15735,17 @@ return
 
 ;; Glyph: 'Ḩ' Descr: LATIN CAPITAL LETTER H WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{H}::
 SendInput ^x8{Enter}1e28{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{H}::
 SendInput ^+u1e28{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{H}::
 SendInput {U+1E28}
 return
@@ -15755,17 +15753,17 @@ return
 
 ;; Glyph: 'ḩ' Descr: LATIN SMALL LETTER H WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ch::
 SendInput ^x8{Enter}1e29{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ch::
 SendInput ^+u1e29{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ch::
 SendInput {U+1E29}
 return
@@ -15773,17 +15771,17 @@ return
 
 ;; Glyph: 'ḩ' Descr: LATIN SMALL LETTER H WITH CEDILLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\c{h}::
 SendInput ^x8{Enter}1e29{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\c{h}::
 SendInput ^+u1e29{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\c{h}::
 SendInput {U+1E29}
 return
@@ -15791,17 +15789,17 @@ return
 
 ;; Glyph: 'Ḯ' Descr: LATIN CAPITAL LETTER I WITH DIAERESIS AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\'I::
 SendInput ^x8{Enter}1e2e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\'I::
 SendInput ^+u1e2e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\'I::
 SendInput {U+1E2E}
 return
@@ -15809,17 +15807,17 @@ return
 
 ;; Glyph: 'Ḯ' Descr: LATIN CAPITAL LETTER I WITH DIAERESIS AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\'{I}::
 SendInput ^x8{Enter}1e2e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\'{I}::
 SendInput ^+u1e2e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\'{I}::
 SendInput {U+1E2E}
 return
@@ -15827,17 +15825,17 @@ return
 
 ;; Glyph: 'ḯ' Descr: LATIN SMALL LETTER I WITH DIAERESIS AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\'i::
 SendInput ^x8{Enter}1e2f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\'i::
 SendInput ^+u1e2f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\'i::
 SendInput {U+1E2F}
 return
@@ -15845,17 +15843,17 @@ return
 
 ;; Glyph: 'ḯ' Descr: LATIN SMALL LETTER I WITH DIAERESIS AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"\'{i}::
 SendInput ^x8{Enter}1e2f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"\'{i}::
 SendInput ^+u1e2f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"\'{i}::
 SendInput {U+1E2F}
 return
@@ -15863,17 +15861,17 @@ return
 
 ;; Glyph: 'Ḱ' Descr: LATIN CAPITAL LETTER K WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'K::
 SendInput ^x8{Enter}1e30{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'K::
 SendInput ^+u1e30{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'K::
 SendInput {U+1E30}
 return
@@ -15881,17 +15879,17 @@ return
 
 ;; Glyph: 'Ḱ' Descr: LATIN CAPITAL LETTER K WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{K}::
 SendInput ^x8{Enter}1e30{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{K}::
 SendInput ^+u1e30{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{K}::
 SendInput {U+1E30}
 return
@@ -15899,17 +15897,17 @@ return
 
 ;; Glyph: 'ḱ' Descr: LATIN SMALL LETTER K WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'k::
 SendInput ^x8{Enter}1e31{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'k::
 SendInput ^+u1e31{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'k::
 SendInput {U+1E31}
 return
@@ -15917,17 +15915,17 @@ return
 
 ;; Glyph: 'ḱ' Descr: LATIN SMALL LETTER K WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{k}::
 SendInput ^x8{Enter}1e31{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{k}::
 SendInput ^+u1e31{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{k}::
 SendInput {U+1E31}
 return
@@ -15935,17 +15933,17 @@ return
 
 ;; Glyph: 'Ḳ' Descr: LATIN CAPITAL LETTER K WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{K}::
 SendInput ^x8{Enter}1e32{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{K}::
 SendInput ^+u1e32{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{K}::
 SendInput {U+1E32}
 return
@@ -15953,17 +15951,17 @@ return
 
 ;; Glyph: 'ḳ' Descr: LATIN SMALL LETTER K WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{k}::
 SendInput ^x8{Enter}1e33{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{k}::
 SendInput ^+u1e33{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{k}::
 SendInput {U+1E33}
 return
@@ -15971,17 +15969,17 @@ return
 
 ;; Glyph: 'Ḷ' Descr: LATIN CAPITAL LETTER L WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{L}::
 SendInput ^x8{Enter}1e36{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{L}::
 SendInput ^+u1e36{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{L}::
 SendInput {U+1E36}
 return
@@ -15989,17 +15987,17 @@ return
 
 ;; Glyph: 'ḷ' Descr: LATIN SMALL LETTER L WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{l}::
 SendInput ^x8{Enter}1e37{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{l}::
 SendInput ^+u1e37{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{l}::
 SendInput {U+1E37}
 return
@@ -16007,17 +16005,17 @@ return
 
 ;; Glyph: 'Ḹ' Descr: LATIN CAPITAL LETTER L WITH DOT BELOW AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\=L::
 SendInput ^x8{Enter}1e38{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\=L::
 SendInput ^+u1e38{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\=L::
 SendInput {U+1E38}
 return
@@ -16025,17 +16023,17 @@ return
 
 ;; Glyph: 'Ḹ' Descr: LATIN CAPITAL LETTER L WITH DOT BELOW AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\={L}::
 SendInput ^x8{Enter}1e38{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\={L}::
 SendInput ^+u1e38{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\={L}::
 SendInput {U+1E38}
 return
@@ -16043,17 +16041,17 @@ return
 
 ;; Glyph: 'ḹ' Descr: LATIN SMALL LETTER L WITH DOT BELOW AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\=l::
 SendInput ^x8{Enter}1e39{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\=l::
 SendInput ^+u1e39{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\=l::
 SendInput {U+1E39}
 return
@@ -16061,17 +16059,17 @@ return
 
 ;; Glyph: 'ḹ' Descr: LATIN SMALL LETTER L WITH DOT BELOW AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\={l}::
 SendInput ^x8{Enter}1e39{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\={l}::
 SendInput ^+u1e39{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\={l}::
 SendInput {U+1E39}
 return
@@ -16079,17 +16077,17 @@ return
 
 ;; Glyph: 'Ḿ' Descr: LATIN CAPITAL LETTER M WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'M::
 SendInput ^x8{Enter}1e3e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'M::
 SendInput ^+u1e3e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'M::
 SendInput {U+1E3E}
 return
@@ -16097,17 +16095,17 @@ return
 
 ;; Glyph: 'Ḿ' Descr: LATIN CAPITAL LETTER M WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{M}::
 SendInput ^x8{Enter}1e3e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{M}::
 SendInput ^+u1e3e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{M}::
 SendInput {U+1E3E}
 return
@@ -16115,17 +16113,17 @@ return
 
 ;; Glyph: 'ḿ' Descr: LATIN SMALL LETTER M WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'m::
 SendInput ^x8{Enter}1e3f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'m::
 SendInput ^+u1e3f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'m::
 SendInput {U+1E3F}
 return
@@ -16133,17 +16131,17 @@ return
 
 ;; Glyph: 'ḿ' Descr: LATIN SMALL LETTER M WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{m}::
 SendInput ^x8{Enter}1e3f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{m}::
 SendInput ^+u1e3f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{m}::
 SendInput {U+1E3F}
 return
@@ -16151,17 +16149,17 @@ return
 
 ;; Glyph: 'Ṁ' Descr: LATIN CAPITAL LETTER M WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.M::
 SendInput ^x8{Enter}1e40{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.M::
 SendInput ^+u1e40{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.M::
 SendInput {U+1E40}
 return
@@ -16169,17 +16167,17 @@ return
 
 ;; Glyph: 'Ṁ' Descr: LATIN CAPITAL LETTER M WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{M}::
 SendInput ^x8{Enter}1e40{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{M}::
 SendInput ^+u1e40{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{M}::
 SendInput {U+1E40}
 return
@@ -16187,17 +16185,17 @@ return
 
 ;; Glyph: 'ṁ' Descr: LATIN SMALL LETTER M WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.m::
 SendInput ^x8{Enter}1e41{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.m::
 SendInput ^+u1e41{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.m::
 SendInput {U+1E41}
 return
@@ -16205,17 +16203,17 @@ return
 
 ;; Glyph: 'ṁ' Descr: LATIN SMALL LETTER M WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{m}::
 SendInput ^x8{Enter}1e41{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{m}::
 SendInput ^+u1e41{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{m}::
 SendInput {U+1E41}
 return
@@ -16223,17 +16221,17 @@ return
 
 ;; Glyph: 'Ṃ' Descr: LATIN CAPITAL LETTER M WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{M}::
 SendInput ^x8{Enter}1e42{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{M}::
 SendInput ^+u1e42{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{M}::
 SendInput {U+1E42}
 return
@@ -16241,17 +16239,17 @@ return
 
 ;; Glyph: 'ṃ' Descr: LATIN SMALL LETTER M WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{m}::
 SendInput ^x8{Enter}1e43{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{m}::
 SendInput ^+u1e43{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{m}::
 SendInput {U+1E43}
 return
@@ -16259,17 +16257,17 @@ return
 
 ;; Glyph: 'Ṅ' Descr: LATIN CAPITAL LETTER N WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.N::
 SendInput ^x8{Enter}1e44{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.N::
 SendInput ^+u1e44{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.N::
 SendInput {U+1E44}
 return
@@ -16277,17 +16275,17 @@ return
 
 ;; Glyph: 'Ṅ' Descr: LATIN CAPITAL LETTER N WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{N}::
 SendInput ^x8{Enter}1e44{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{N}::
 SendInput ^+u1e44{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{N}::
 SendInput {U+1E44}
 return
@@ -16295,17 +16293,17 @@ return
 
 ;; Glyph: 'ṅ' Descr: LATIN SMALL LETTER N WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.n::
 SendInput ^x8{Enter}1e45{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.n::
 SendInput ^+u1e45{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.n::
 SendInput {U+1E45}
 return
@@ -16313,17 +16311,17 @@ return
 
 ;; Glyph: 'ṅ' Descr: LATIN SMALL LETTER N WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{n}::
 SendInput ^x8{Enter}1e45{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{n}::
 SendInput ^+u1e45{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{n}::
 SendInput {U+1E45}
 return
@@ -16331,17 +16329,17 @@ return
 
 ;; Glyph: 'Ṇ' Descr: LATIN CAPITAL LETTER N WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{N}::
 SendInput ^x8{Enter}1e46{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{N}::
 SendInput ^+u1e46{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{N}::
 SendInput {U+1E46}
 return
@@ -16349,17 +16347,17 @@ return
 
 ;; Glyph: 'ṇ' Descr: LATIN SMALL LETTER N WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{n}::
 SendInput ^x8{Enter}1e47{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{n}::
 SendInput ^+u1e47{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{n}::
 SendInput {U+1E47}
 return
@@ -16367,17 +16365,17 @@ return
 
 ;; Glyph: 'Ṍ' Descr: LATIN CAPITAL LETTER O WITH TILDE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\'O::
 SendInput ^x8{Enter}1e4c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\'O::
 SendInput ^+u1e4c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\'O::
 SendInput {U+1E4C}
 return
@@ -16385,17 +16383,17 @@ return
 
 ;; Glyph: 'Ṍ' Descr: LATIN CAPITAL LETTER O WITH TILDE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\'{O}::
 SendInput ^x8{Enter}1e4c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\'{O}::
 SendInput ^+u1e4c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\'{O}::
 SendInput {U+1E4C}
 return
@@ -16403,17 +16401,17 @@ return
 
 ;; Glyph: 'ṍ' Descr: LATIN SMALL LETTER O WITH TILDE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\'o::
 SendInput ^x8{Enter}1e4d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\'o::
 SendInput ^+u1e4d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\'o::
 SendInput {U+1E4D}
 return
@@ -16421,17 +16419,17 @@ return
 
 ;; Glyph: 'ṍ' Descr: LATIN SMALL LETTER O WITH TILDE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\'{o}::
 SendInput ^x8{Enter}1e4d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\'{o}::
 SendInput ^+u1e4d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\'{o}::
 SendInput {U+1E4D}
 return
@@ -16439,17 +16437,17 @@ return
 
 ;; Glyph: 'Ṏ' Descr: LATIN CAPITAL LETTER O WITH TILDE AND DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\"O::
 SendInput ^x8{Enter}1e4e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\"O::
 SendInput ^+u1e4e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\"O::
 SendInput {U+1E4E}
 return
@@ -16457,17 +16455,17 @@ return
 
 ;; Glyph: 'Ṏ' Descr: LATIN CAPITAL LETTER O WITH TILDE AND DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\"{O}::
 SendInput ^x8{Enter}1e4e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\"{O}::
 SendInput ^+u1e4e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\"{O}::
 SendInput {U+1E4E}
 return
@@ -16475,17 +16473,17 @@ return
 
 ;; Glyph: 'ṏ' Descr: LATIN SMALL LETTER O WITH TILDE AND DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\"o::
 SendInput ^x8{Enter}1e4f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\"o::
 SendInput ^+u1e4f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\"o::
 SendInput {U+1E4F}
 return
@@ -16493,17 +16491,17 @@ return
 
 ;; Glyph: 'ṏ' Descr: LATIN SMALL LETTER O WITH TILDE AND DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\"{o}::
 SendInput ^x8{Enter}1e4f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\"{o}::
 SendInput ^+u1e4f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\"{o}::
 SendInput {U+1E4F}
 return
@@ -16511,17 +16509,17 @@ return
 
 ;; Glyph: 'Ṑ' Descr: LATIN CAPITAL LETTER O WITH MACRON AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\``O::
 SendInput ^x8{Enter}1e50{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\``O::
 SendInput ^+u1e50{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\``O::
 SendInput {U+1E50}
 return
@@ -16529,17 +16527,17 @@ return
 
 ;; Glyph: 'Ṑ' Descr: LATIN CAPITAL LETTER O WITH MACRON AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\``{O}::
 SendInput ^x8{Enter}1e50{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\``{O}::
 SendInput ^+u1e50{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\``{O}::
 SendInput {U+1E50}
 return
@@ -16547,17 +16545,17 @@ return
 
 ;; Glyph: 'ṑ' Descr: LATIN SMALL LETTER O WITH MACRON AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\``o::
 SendInput ^x8{Enter}1e51{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\``o::
 SendInput ^+u1e51{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\``o::
 SendInput {U+1E51}
 return
@@ -16565,17 +16563,17 @@ return
 
 ;; Glyph: 'ṑ' Descr: LATIN SMALL LETTER O WITH MACRON AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\``{o}::
 SendInput ^x8{Enter}1e51{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\``{o}::
 SendInput ^+u1e51{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\``{o}::
 SendInput {U+1E51}
 return
@@ -16583,17 +16581,17 @@ return
 
 ;; Glyph: 'Ṓ' Descr: LATIN CAPITAL LETTER O WITH MACRON AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\'O::
 SendInput ^x8{Enter}1e52{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\'O::
 SendInput ^+u1e52{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\'O::
 SendInput {U+1E52}
 return
@@ -16601,17 +16599,17 @@ return
 
 ;; Glyph: 'Ṓ' Descr: LATIN CAPITAL LETTER O WITH MACRON AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\'{O}::
 SendInput ^x8{Enter}1e52{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\'{O}::
 SendInput ^+u1e52{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\'{O}::
 SendInput {U+1E52}
 return
@@ -16619,17 +16617,17 @@ return
 
 ;; Glyph: 'ṓ' Descr: LATIN SMALL LETTER O WITH MACRON AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\'o::
 SendInput ^x8{Enter}1e53{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\'o::
 SendInput ^+u1e53{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\'o::
 SendInput {U+1E53}
 return
@@ -16637,17 +16635,17 @@ return
 
 ;; Glyph: 'ṓ' Descr: LATIN SMALL LETTER O WITH MACRON AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\'{o}::
 SendInput ^x8{Enter}1e53{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\'{o}::
 SendInput ^+u1e53{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\'{o}::
 SendInput {U+1E53}
 return
@@ -16655,17 +16653,17 @@ return
 
 ;; Glyph: 'Ṕ' Descr: LATIN CAPITAL LETTER P WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'P::
 SendInput ^x8{Enter}1e54{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'P::
 SendInput ^+u1e54{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'P::
 SendInput {U+1E54}
 return
@@ -16673,17 +16671,17 @@ return
 
 ;; Glyph: 'Ṕ' Descr: LATIN CAPITAL LETTER P WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{P}::
 SendInput ^x8{Enter}1e54{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{P}::
 SendInput ^+u1e54{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{P}::
 SendInput {U+1E54}
 return
@@ -16691,17 +16689,17 @@ return
 
 ;; Glyph: 'ṕ' Descr: LATIN SMALL LETTER P WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'p::
 SendInput ^x8{Enter}1e55{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'p::
 SendInput ^+u1e55{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'p::
 SendInput {U+1E55}
 return
@@ -16709,17 +16707,17 @@ return
 
 ;; Glyph: 'ṕ' Descr: LATIN SMALL LETTER P WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{p}::
 SendInput ^x8{Enter}1e55{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{p}::
 SendInput ^+u1e55{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{p}::
 SendInput {U+1E55}
 return
@@ -16727,17 +16725,17 @@ return
 
 ;; Glyph: 'Ṗ' Descr: LATIN CAPITAL LETTER P WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.P::
 SendInput ^x8{Enter}1e56{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.P::
 SendInput ^+u1e56{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.P::
 SendInput {U+1E56}
 return
@@ -16745,17 +16743,17 @@ return
 
 ;; Glyph: 'Ṗ' Descr: LATIN CAPITAL LETTER P WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{P}::
 SendInput ^x8{Enter}1e56{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{P}::
 SendInput ^+u1e56{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{P}::
 SendInput {U+1E56}
 return
@@ -16763,17 +16761,17 @@ return
 
 ;; Glyph: 'ṗ' Descr: LATIN SMALL LETTER P WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.p::
 SendInput ^x8{Enter}1e57{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.p::
 SendInput ^+u1e57{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.p::
 SendInput {U+1E57}
 return
@@ -16781,17 +16779,17 @@ return
 
 ;; Glyph: 'ṗ' Descr: LATIN SMALL LETTER P WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{p}::
 SendInput ^x8{Enter}1e57{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{p}::
 SendInput ^+u1e57{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{p}::
 SendInput {U+1E57}
 return
@@ -16799,17 +16797,17 @@ return
 
 ;; Glyph: 'Ṙ' Descr: LATIN CAPITAL LETTER R WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.R::
 SendInput ^x8{Enter}1e58{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.R::
 SendInput ^+u1e58{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.R::
 SendInput {U+1E58}
 return
@@ -16817,17 +16815,17 @@ return
 
 ;; Glyph: 'Ṙ' Descr: LATIN CAPITAL LETTER R WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{R}::
 SendInput ^x8{Enter}1e58{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{R}::
 SendInput ^+u1e58{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{R}::
 SendInput {U+1E58}
 return
@@ -16835,17 +16833,17 @@ return
 
 ;; Glyph: 'ṙ' Descr: LATIN SMALL LETTER R WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.r::
 SendInput ^x8{Enter}1e59{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.r::
 SendInput ^+u1e59{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.r::
 SendInput {U+1E59}
 return
@@ -16853,17 +16851,17 @@ return
 
 ;; Glyph: 'ṙ' Descr: LATIN SMALL LETTER R WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{r}::
 SendInput ^x8{Enter}1e59{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{r}::
 SendInput ^+u1e59{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{r}::
 SendInput {U+1E59}
 return
@@ -16871,17 +16869,17 @@ return
 
 ;; Glyph: 'Ṛ' Descr: LATIN CAPITAL LETTER R WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{R}::
 SendInput ^x8{Enter}1e5a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{R}::
 SendInput ^+u1e5a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{R}::
 SendInput {U+1E5A}
 return
@@ -16889,17 +16887,17 @@ return
 
 ;; Glyph: 'ṛ' Descr: LATIN SMALL LETTER R WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{r}::
 SendInput ^x8{Enter}1e5b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{r}::
 SendInput ^+u1e5b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{r}::
 SendInput {U+1E5B}
 return
@@ -16907,17 +16905,17 @@ return
 
 ;; Glyph: 'Ṝ' Descr: LATIN CAPITAL LETTER R WITH DOT BELOW AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\=R::
 SendInput ^x8{Enter}1e5c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\=R::
 SendInput ^+u1e5c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\=R::
 SendInput {U+1E5C}
 return
@@ -16925,17 +16923,17 @@ return
 
 ;; Glyph: 'Ṝ' Descr: LATIN CAPITAL LETTER R WITH DOT BELOW AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\={R}::
 SendInput ^x8{Enter}1e5c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\={R}::
 SendInput ^+u1e5c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\={R}::
 SendInput {U+1E5C}
 return
@@ -16943,17 +16941,17 @@ return
 
 ;; Glyph: 'ṝ' Descr: LATIN SMALL LETTER R WITH DOT BELOW AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\=r::
 SendInput ^x8{Enter}1e5d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\=r::
 SendInput ^+u1e5d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\=r::
 SendInput {U+1E5D}
 return
@@ -16961,17 +16959,17 @@ return
 
 ;; Glyph: 'ṝ' Descr: LATIN SMALL LETTER R WITH DOT BELOW AND MACRON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\={r}::
 SendInput ^x8{Enter}1e5d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\={r}::
 SendInput ^+u1e5d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\={r}::
 SendInput {U+1E5D}
 return
@@ -16979,17 +16977,17 @@ return
 
 ;; Glyph: 'Ṡ' Descr: LATIN CAPITAL LETTER S WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.S::
 SendInput ^x8{Enter}1e60{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.S::
 SendInput ^+u1e60{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.S::
 SendInput {U+1E60}
 return
@@ -16997,17 +16995,17 @@ return
 
 ;; Glyph: 'Ṡ' Descr: LATIN CAPITAL LETTER S WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{S}::
 SendInput ^x8{Enter}1e60{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{S}::
 SendInput ^+u1e60{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{S}::
 SendInput {U+1E60}
 return
@@ -17015,17 +17013,17 @@ return
 
 ;; Glyph: 'ṡ' Descr: LATIN SMALL LETTER S WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.s::
 SendInput ^x8{Enter}1e61{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.s::
 SendInput ^+u1e61{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.s::
 SendInput {U+1E61}
 return
@@ -17033,17 +17031,17 @@ return
 
 ;; Glyph: 'ṡ' Descr: LATIN SMALL LETTER S WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{s}::
 SendInput ^x8{Enter}1e61{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{s}::
 SendInput ^+u1e61{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{s}::
 SendInput {U+1E61}
 return
@@ -17051,17 +17049,17 @@ return
 
 ;; Glyph: 'Ṣ' Descr: LATIN CAPITAL LETTER S WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{S}::
 SendInput ^x8{Enter}1e62{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{S}::
 SendInput ^+u1e62{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{S}::
 SendInput {U+1E62}
 return
@@ -17069,17 +17067,17 @@ return
 
 ;; Glyph: 'ṣ' Descr: LATIN SMALL LETTER S WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{s}::
 SendInput ^x8{Enter}1e63{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{s}::
 SendInput ^+u1e63{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{s}::
 SendInput {U+1E63}
 return
@@ -17087,17 +17085,17 @@ return
 
 ;; Glyph: 'Ṥ' Descr: LATIN CAPITAL LETTER S WITH ACUTE AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'\.S::
 SendInput ^x8{Enter}1e64{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'\.S::
 SendInput ^+u1e64{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'\.S::
 SendInput {U+1E64}
 return
@@ -17105,17 +17103,17 @@ return
 
 ;; Glyph: 'Ṥ' Descr: LATIN CAPITAL LETTER S WITH ACUTE AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'\.{S}::
 SendInput ^x8{Enter}1e64{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'\.{S}::
 SendInput ^+u1e64{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'\.{S}::
 SendInput {U+1E64}
 return
@@ -17123,17 +17121,17 @@ return
 
 ;; Glyph: 'ṥ' Descr: LATIN SMALL LETTER S WITH ACUTE AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'\.s::
 SendInput ^x8{Enter}1e65{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'\.s::
 SendInput ^+u1e65{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'\.s::
 SendInput {U+1E65}
 return
@@ -17141,17 +17139,17 @@ return
 
 ;; Glyph: 'ṥ' Descr: LATIN SMALL LETTER S WITH ACUTE AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'\.{s}::
 SendInput ^x8{Enter}1e65{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'\.{s}::
 SendInput ^+u1e65{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'\.{s}::
 SendInput {U+1E65}
 return
@@ -17159,17 +17157,17 @@ return
 
 ;; Glyph: 'Ṧ' Descr: LATIN CAPITAL LETTER S WITH CARON AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v\.S::
 SendInput ^x8{Enter}1e66{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v\.S::
 SendInput ^+u1e66{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v\.S::
 SendInput {U+1E66}
 return
@@ -17177,17 +17175,17 @@ return
 
 ;; Glyph: 'Ṧ' Descr: LATIN CAPITAL LETTER S WITH CARON AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v\.{S}::
 SendInput ^x8{Enter}1e66{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v\.{S}::
 SendInput ^+u1e66{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v\.{S}::
 SendInput {U+1E66}
 return
@@ -17195,17 +17193,17 @@ return
 
 ;; Glyph: 'ṧ' Descr: LATIN SMALL LETTER S WITH CARON AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v\.s::
 SendInput ^x8{Enter}1e67{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v\.s::
 SendInput ^+u1e67{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v\.s::
 SendInput {U+1E67}
 return
@@ -17213,17 +17211,17 @@ return
 
 ;; Glyph: 'ṧ' Descr: LATIN SMALL LETTER S WITH CARON AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\v\.{s}::
 SendInput ^x8{Enter}1e67{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\v\.{s}::
 SendInput ^+u1e67{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\v\.{s}::
 SendInput {U+1E67}
 return
@@ -17231,17 +17229,17 @@ return
 
 ;; Glyph: 'Ṩ' Descr: LATIN CAPITAL LETTER S WITH DOT BELOW AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\.S::
 SendInput ^x8{Enter}1e68{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\.S::
 SendInput ^+u1e68{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\.S::
 SendInput {U+1E68}
 return
@@ -17249,17 +17247,17 @@ return
 
 ;; Glyph: 'Ṩ' Descr: LATIN CAPITAL LETTER S WITH DOT BELOW AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\.{S}::
 SendInput ^x8{Enter}1e68{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\.{S}::
 SendInput ^+u1e68{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\.{S}::
 SendInput {U+1E68}
 return
@@ -17267,17 +17265,17 @@ return
 
 ;; Glyph: 'ṩ' Descr: LATIN SMALL LETTER S WITH DOT BELOW AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\.s::
 SendInput ^x8{Enter}1e69{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\.s::
 SendInput ^+u1e69{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\.s::
 SendInput {U+1E69}
 return
@@ -17285,17 +17283,17 @@ return
 
 ;; Glyph: 'ṩ' Descr: LATIN SMALL LETTER S WITH DOT BELOW AND DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d\.{s}::
 SendInput ^x8{Enter}1e69{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d\.{s}::
 SendInput ^+u1e69{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d\.{s}::
 SendInput {U+1E69}
 return
@@ -17303,17 +17301,17 @@ return
 
 ;; Glyph: 'Ṫ' Descr: LATIN CAPITAL LETTER T WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.T::
 SendInput ^x8{Enter}1e6a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.T::
 SendInput ^+u1e6a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.T::
 SendInput {U+1E6A}
 return
@@ -17321,17 +17319,17 @@ return
 
 ;; Glyph: 'Ṫ' Descr: LATIN CAPITAL LETTER T WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{T}::
 SendInput ^x8{Enter}1e6a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{T}::
 SendInput ^+u1e6a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{T}::
 SendInput {U+1E6A}
 return
@@ -17339,17 +17337,17 @@ return
 
 ;; Glyph: 'ṫ' Descr: LATIN SMALL LETTER T WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.t::
 SendInput ^x8{Enter}1e6b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.t::
 SendInput ^+u1e6b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.t::
 SendInput {U+1E6B}
 return
@@ -17357,17 +17355,17 @@ return
 
 ;; Glyph: 'ṫ' Descr: LATIN SMALL LETTER T WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{t}::
 SendInput ^x8{Enter}1e6b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{t}::
 SendInput ^+u1e6b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{t}::
 SendInput {U+1E6B}
 return
@@ -17375,17 +17373,17 @@ return
 
 ;; Glyph: 'Ṭ' Descr: LATIN CAPITAL LETTER T WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{T}::
 SendInput ^x8{Enter}1e6c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{T}::
 SendInput ^+u1e6c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{T}::
 SendInput {U+1E6C}
 return
@@ -17393,17 +17391,17 @@ return
 
 ;; Glyph: 'ṭ' Descr: LATIN SMALL LETTER T WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{t}::
 SendInput ^x8{Enter}1e6d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{t}::
 SendInput ^+u1e6d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{t}::
 SendInput {U+1E6D}
 return
@@ -17411,17 +17409,17 @@ return
 
 ;; Glyph: 'Ṹ' Descr: LATIN CAPITAL LETTER U WITH TILDE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\'U::
 SendInput ^x8{Enter}1e78{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\'U::
 SendInput ^+u1e78{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\'U::
 SendInput {U+1E78}
 return
@@ -17429,17 +17427,17 @@ return
 
 ;; Glyph: 'Ṹ' Descr: LATIN CAPITAL LETTER U WITH TILDE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\'{U}::
 SendInput ^x8{Enter}1e78{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\'{U}::
 SendInput ^+u1e78{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\'{U}::
 SendInput {U+1E78}
 return
@@ -17447,17 +17445,17 @@ return
 
 ;; Glyph: 'ṹ' Descr: LATIN SMALL LETTER U WITH TILDE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\'u::
 SendInput ^x8{Enter}1e79{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\'u::
 SendInput ^+u1e79{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\'u::
 SendInput {U+1E79}
 return
@@ -17465,17 +17463,17 @@ return
 
 ;; Glyph: 'ṹ' Descr: LATIN SMALL LETTER U WITH TILDE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~\'{u}::
 SendInput ^x8{Enter}1e79{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~\'{u}::
 SendInput ^+u1e79{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~\'{u}::
 SendInput {U+1E79}
 return
@@ -17483,17 +17481,17 @@ return
 
 ;; Glyph: 'Ṻ' Descr: LATIN CAPITAL LETTER U WITH MACRON AND DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\"U::
 SendInput ^x8{Enter}1e7a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\"U::
 SendInput ^+u1e7a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\"U::
 SendInput {U+1E7A}
 return
@@ -17501,17 +17499,17 @@ return
 
 ;; Glyph: 'Ṻ' Descr: LATIN CAPITAL LETTER U WITH MACRON AND DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\"{U}::
 SendInput ^x8{Enter}1e7a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\"{U}::
 SendInput ^+u1e7a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\"{U}::
 SendInput {U+1E7A}
 return
@@ -17519,17 +17517,17 @@ return
 
 ;; Glyph: 'ṻ' Descr: LATIN SMALL LETTER U WITH MACRON AND DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\"u::
 SendInput ^x8{Enter}1e7b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\"u::
 SendInput ^+u1e7b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\"u::
 SendInput {U+1E7B}
 return
@@ -17537,17 +17535,17 @@ return
 
 ;; Glyph: 'ṻ' Descr: LATIN SMALL LETTER U WITH MACRON AND DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\=\"{u}::
 SendInput ^x8{Enter}1e7b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\=\"{u}::
 SendInput ^+u1e7b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\=\"{u}::
 SendInput {U+1E7B}
 return
@@ -17555,17 +17553,17 @@ return
 
 ;; Glyph: 'Ṽ' Descr: LATIN CAPITAL LETTER V WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~V::
 SendInput ^x8{Enter}1e7c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~V::
 SendInput ^+u1e7c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~V::
 SendInput {U+1E7C}
 return
@@ -17573,17 +17571,17 @@ return
 
 ;; Glyph: 'Ṽ' Descr: LATIN CAPITAL LETTER V WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{V}::
 SendInput ^x8{Enter}1e7c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{V}::
 SendInput ^+u1e7c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{V}::
 SendInput {U+1E7C}
 return
@@ -17591,17 +17589,17 @@ return
 
 ;; Glyph: 'ṽ' Descr: LATIN SMALL LETTER V WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~v::
 SendInput ^x8{Enter}1e7d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~v::
 SendInput ^+u1e7d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~v::
 SendInput {U+1E7D}
 return
@@ -17609,17 +17607,17 @@ return
 
 ;; Glyph: 'ṽ' Descr: LATIN SMALL LETTER V WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{v}::
 SendInput ^x8{Enter}1e7d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{v}::
 SendInput ^+u1e7d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{v}::
 SendInput {U+1E7D}
 return
@@ -17627,17 +17625,17 @@ return
 
 ;; Glyph: 'Ṿ' Descr: LATIN CAPITAL LETTER V WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{V}::
 SendInput ^x8{Enter}1e7e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{V}::
 SendInput ^+u1e7e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{V}::
 SendInput {U+1E7E}
 return
@@ -17645,17 +17643,17 @@ return
 
 ;; Glyph: 'ṿ' Descr: LATIN SMALL LETTER V WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{v}::
 SendInput ^x8{Enter}1e7f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{v}::
 SendInput ^+u1e7f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{v}::
 SendInput {U+1E7F}
 return
@@ -17663,17 +17661,17 @@ return
 
 ;; Glyph: 'Ẁ' Descr: LATIN CAPITAL LETTER W WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``W::
 SendInput ^x8{Enter}1e80{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``W::
 SendInput ^+u1e80{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``W::
 SendInput {U+1E80}
 return
@@ -17681,17 +17679,17 @@ return
 
 ;; Glyph: 'Ẁ' Descr: LATIN CAPITAL LETTER W WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{W}::
 SendInput ^x8{Enter}1e80{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{W}::
 SendInput ^+u1e80{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{W}::
 SendInput {U+1E80}
 return
@@ -17699,17 +17697,17 @@ return
 
 ;; Glyph: 'ẁ' Descr: LATIN SMALL LETTER W WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``w::
 SendInput ^x8{Enter}1e81{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``w::
 SendInput ^+u1e81{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``w::
 SendInput {U+1E81}
 return
@@ -17717,17 +17715,17 @@ return
 
 ;; Glyph: 'ẁ' Descr: LATIN SMALL LETTER W WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{w}::
 SendInput ^x8{Enter}1e81{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{w}::
 SendInput ^+u1e81{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{w}::
 SendInput {U+1E81}
 return
@@ -17735,17 +17733,17 @@ return
 
 ;; Glyph: 'Ẃ' Descr: LATIN CAPITAL LETTER W WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'W::
 SendInput ^x8{Enter}1e82{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'W::
 SendInput ^+u1e82{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'W::
 SendInput {U+1E82}
 return
@@ -17753,17 +17751,17 @@ return
 
 ;; Glyph: 'Ẃ' Descr: LATIN CAPITAL LETTER W WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{W}::
 SendInput ^x8{Enter}1e82{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{W}::
 SendInput ^+u1e82{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{W}::
 SendInput {U+1E82}
 return
@@ -17771,17 +17769,17 @@ return
 
 ;; Glyph: 'ẃ' Descr: LATIN SMALL LETTER W WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'w::
 SendInput ^x8{Enter}1e83{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'w::
 SendInput ^+u1e83{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'w::
 SendInput {U+1E83}
 return
@@ -17789,17 +17787,17 @@ return
 
 ;; Glyph: 'ẃ' Descr: LATIN SMALL LETTER W WITH ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\'{w}::
 SendInput ^x8{Enter}1e83{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\'{w}::
 SendInput ^+u1e83{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\'{w}::
 SendInput {U+1E83}
 return
@@ -17807,17 +17805,17 @@ return
 
 ;; Glyph: 'Ẅ' Descr: LATIN CAPITAL LETTER W WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"W::
 SendInput ^x8{Enter}1e84{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"W::
 SendInput ^+u1e84{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"W::
 SendInput {U+1E84}
 return
@@ -17825,17 +17823,17 @@ return
 
 ;; Glyph: 'Ẅ' Descr: LATIN CAPITAL LETTER W WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{W}::
 SendInput ^x8{Enter}1e84{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{W}::
 SendInput ^+u1e84{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{W}::
 SendInput {U+1E84}
 return
@@ -17843,17 +17841,17 @@ return
 
 ;; Glyph: 'ẅ' Descr: LATIN SMALL LETTER W WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"w::
 SendInput ^x8{Enter}1e85{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"w::
 SendInput ^+u1e85{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"w::
 SendInput {U+1E85}
 return
@@ -17861,17 +17859,17 @@ return
 
 ;; Glyph: 'ẅ' Descr: LATIN SMALL LETTER W WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{w}::
 SendInput ^x8{Enter}1e85{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{w}::
 SendInput ^+u1e85{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{w}::
 SendInput {U+1E85}
 return
@@ -17879,17 +17877,17 @@ return
 
 ;; Glyph: 'Ẇ' Descr: LATIN CAPITAL LETTER W WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.W::
 SendInput ^x8{Enter}1e86{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.W::
 SendInput ^+u1e86{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.W::
 SendInput {U+1E86}
 return
@@ -17897,17 +17895,17 @@ return
 
 ;; Glyph: 'Ẇ' Descr: LATIN CAPITAL LETTER W WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{W}::
 SendInput ^x8{Enter}1e86{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{W}::
 SendInput ^+u1e86{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{W}::
 SendInput {U+1E86}
 return
@@ -17915,17 +17913,17 @@ return
 
 ;; Glyph: 'ẇ' Descr: LATIN SMALL LETTER W WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.w::
 SendInput ^x8{Enter}1e87{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.w::
 SendInput ^+u1e87{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.w::
 SendInput {U+1E87}
 return
@@ -17933,17 +17931,17 @@ return
 
 ;; Glyph: 'ẇ' Descr: LATIN SMALL LETTER W WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{w}::
 SendInput ^x8{Enter}1e87{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{w}::
 SendInput ^+u1e87{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{w}::
 SendInput {U+1E87}
 return
@@ -17951,17 +17949,17 @@ return
 
 ;; Glyph: 'Ẉ' Descr: LATIN CAPITAL LETTER W WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{W}::
 SendInput ^x8{Enter}1e88{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{W}::
 SendInput ^+u1e88{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{W}::
 SendInput {U+1E88}
 return
@@ -17969,17 +17967,17 @@ return
 
 ;; Glyph: 'ẉ' Descr: LATIN SMALL LETTER W WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{w}::
 SendInput ^x8{Enter}1e89{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{w}::
 SendInput ^+u1e89{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{w}::
 SendInput {U+1E89}
 return
@@ -17987,17 +17985,17 @@ return
 
 ;; Glyph: 'Ẋ' Descr: LATIN CAPITAL LETTER X WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.X::
 SendInput ^x8{Enter}1e8a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.X::
 SendInput ^+u1e8a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.X::
 SendInput {U+1E8A}
 return
@@ -18005,17 +18003,17 @@ return
 
 ;; Glyph: 'Ẋ' Descr: LATIN CAPITAL LETTER X WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{X}::
 SendInput ^x8{Enter}1e8a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{X}::
 SendInput ^+u1e8a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{X}::
 SendInput {U+1E8A}
 return
@@ -18023,17 +18021,17 @@ return
 
 ;; Glyph: 'ẋ' Descr: LATIN SMALL LETTER X WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.x::
 SendInput ^x8{Enter}1e8b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.x::
 SendInput ^+u1e8b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.x::
 SendInput {U+1E8B}
 return
@@ -18041,17 +18039,17 @@ return
 
 ;; Glyph: 'ẋ' Descr: LATIN SMALL LETTER X WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{x}::
 SendInput ^x8{Enter}1e8b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{x}::
 SendInput ^+u1e8b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{x}::
 SendInput {U+1E8B}
 return
@@ -18059,17 +18057,17 @@ return
 
 ;; Glyph: 'Ẍ' Descr: LATIN CAPITAL LETTER X WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"X::
 SendInput ^x8{Enter}1e8c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"X::
 SendInput ^+u1e8c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"X::
 SendInput {U+1E8C}
 return
@@ -18077,17 +18075,17 @@ return
 
 ;; Glyph: 'Ẍ' Descr: LATIN CAPITAL LETTER X WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{X}::
 SendInput ^x8{Enter}1e8c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{X}::
 SendInput ^+u1e8c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{X}::
 SendInput {U+1E8C}
 return
@@ -18095,17 +18093,17 @@ return
 
 ;; Glyph: 'ẍ' Descr: LATIN SMALL LETTER X WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"x::
 SendInput ^x8{Enter}1e8d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"x::
 SendInput ^+u1e8d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"x::
 SendInput {U+1E8D}
 return
@@ -18113,17 +18111,17 @@ return
 
 ;; Glyph: 'ẍ' Descr: LATIN SMALL LETTER X WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{x}::
 SendInput ^x8{Enter}1e8d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{x}::
 SendInput ^+u1e8d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{x}::
 SendInput {U+1E8D}
 return
@@ -18131,17 +18129,17 @@ return
 
 ;; Glyph: 'Ẏ' Descr: LATIN CAPITAL LETTER Y WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.Y::
 SendInput ^x8{Enter}1e8e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.Y::
 SendInput ^+u1e8e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.Y::
 SendInput {U+1E8E}
 return
@@ -18149,17 +18147,17 @@ return
 
 ;; Glyph: 'Ẏ' Descr: LATIN CAPITAL LETTER Y WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{Y}::
 SendInput ^x8{Enter}1e8e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{Y}::
 SendInput ^+u1e8e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{Y}::
 SendInput {U+1E8E}
 return
@@ -18167,17 +18165,17 @@ return
 
 ;; Glyph: 'ẏ' Descr: LATIN SMALL LETTER Y WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.y::
 SendInput ^x8{Enter}1e8f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.y::
 SendInput ^+u1e8f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.y::
 SendInput {U+1E8F}
 return
@@ -18185,17 +18183,17 @@ return
 
 ;; Glyph: 'ẏ' Descr: LATIN SMALL LETTER Y WITH DOT ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\.{y}::
 SendInput ^x8{Enter}1e8f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\.{y}::
 SendInput ^+u1e8f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\.{y}::
 SendInput {U+1E8F}
 return
@@ -18203,17 +18201,17 @@ return
 
 ;; Glyph: 'Ẑ' Descr: LATIN CAPITAL LETTER Z WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^Z::
 SendInput ^x8{Enter}1e90{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^Z::
 SendInput ^+u1e90{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^Z::
 SendInput {U+1E90}
 return
@@ -18221,17 +18219,17 @@ return
 
 ;; Glyph: 'Ẑ' Descr: LATIN CAPITAL LETTER Z WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{Z}::
 SendInput ^x8{Enter}1e90{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{Z}::
 SendInput ^+u1e90{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{Z}::
 SendInput {U+1E90}
 return
@@ -18239,17 +18237,17 @@ return
 
 ;; Glyph: 'ẑ' Descr: LATIN SMALL LETTER Z WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^z::
 SendInput ^x8{Enter}1e91{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^z::
 SendInput ^+u1e91{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^z::
 SendInput {U+1E91}
 return
@@ -18257,17 +18255,17 @@ return
 
 ;; Glyph: 'ẑ' Descr: LATIN SMALL LETTER Z WITH CIRCUMFLEX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^{z}::
 SendInput ^x8{Enter}1e91{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^{z}::
 SendInput ^+u1e91{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^{z}::
 SendInput {U+1E91}
 return
@@ -18275,17 +18273,17 @@ return
 
 ;; Glyph: 'Ẓ' Descr: LATIN CAPITAL LETTER Z WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{Z}::
 SendInput ^x8{Enter}1e92{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{Z}::
 SendInput ^+u1e92{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{Z}::
 SendInput {U+1E92}
 return
@@ -18293,17 +18291,17 @@ return
 
 ;; Glyph: 'ẓ' Descr: LATIN SMALL LETTER Z WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{z}::
 SendInput ^x8{Enter}1e93{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{z}::
 SendInput ^+u1e93{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{z}::
 SendInput {U+1E93}
 return
@@ -18311,17 +18309,17 @@ return
 
 ;; Glyph: 'ẗ' Descr: LATIN SMALL LETTER T WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"t::
 SendInput ^x8{Enter}1e97{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"t::
 SendInput ^+u1e97{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"t::
 SendInput {U+1E97}
 return
@@ -18329,17 +18327,17 @@ return
 
 ;; Glyph: 'ẗ' Descr: LATIN SMALL LETTER T WITH DIAERESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"{t}::
 SendInput ^x8{Enter}1e97{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"{t}::
 SendInput ^+u1e97{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"{t}::
 SendInput {U+1E97}
 return
@@ -18347,17 +18345,17 @@ return
 
 ;; Glyph: 'Ạ' Descr: LATIN CAPITAL LETTER A WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{A}::
 SendInput ^x8{Enter}1ea0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{A}::
 SendInput ^+u1ea0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{A}::
 SendInput {U+1EA0}
 return
@@ -18365,17 +18363,17 @@ return
 
 ;; Glyph: 'ạ' Descr: LATIN SMALL LETTER A WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{a}::
 SendInput ^x8{Enter}1ea1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{a}::
 SendInput ^+u1ea1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{a}::
 SendInput {U+1EA1}
 return
@@ -18383,17 +18381,17 @@ return
 
 ;; Glyph: 'Ấ' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'A::
 SendInput ^x8{Enter}1ea4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'A::
 SendInput ^+u1ea4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'A::
 SendInput {U+1EA4}
 return
@@ -18401,17 +18399,17 @@ return
 
 ;; Glyph: 'Ấ' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'{A}::
 SendInput ^x8{Enter}1ea4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'{A}::
 SendInput ^+u1ea4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'{A}::
 SendInput {U+1EA4}
 return
@@ -18419,17 +18417,17 @@ return
 
 ;; Glyph: 'ấ' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'a::
 SendInput ^x8{Enter}1ea5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'a::
 SendInput ^+u1ea5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'a::
 SendInput {U+1EA5}
 return
@@ -18437,17 +18435,17 @@ return
 
 ;; Glyph: 'ấ' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'{a}::
 SendInput ^x8{Enter}1ea5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'{a}::
 SendInput ^+u1ea5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'{a}::
 SendInput {U+1EA5}
 return
@@ -18455,17 +18453,17 @@ return
 
 ;; Glyph: 'Ầ' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``A::
 SendInput ^x8{Enter}1ea6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``A::
 SendInput ^+u1ea6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``A::
 SendInput {U+1EA6}
 return
@@ -18473,17 +18471,17 @@ return
 
 ;; Glyph: 'Ầ' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``{A}::
 SendInput ^x8{Enter}1ea6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``{A}::
 SendInput ^+u1ea6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``{A}::
 SendInput {U+1EA6}
 return
@@ -18491,17 +18489,17 @@ return
 
 ;; Glyph: 'ầ' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``a::
 SendInput ^x8{Enter}1ea7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``a::
 SendInput ^+u1ea7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``a::
 SendInput {U+1EA7}
 return
@@ -18509,17 +18507,17 @@ return
 
 ;; Glyph: 'ầ' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``{a}::
 SendInput ^x8{Enter}1ea7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``{a}::
 SendInput ^+u1ea7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``{a}::
 SendInput {U+1EA7}
 return
@@ -18527,17 +18525,17 @@ return
 
 ;; Glyph: 'Ẫ' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~A::
 SendInput ^x8{Enter}1eaa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~A::
 SendInput ^+u1eaa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~A::
 SendInput {U+1EAA}
 return
@@ -18545,17 +18543,17 @@ return
 
 ;; Glyph: 'Ẫ' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~{A}::
 SendInput ^x8{Enter}1eaa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~{A}::
 SendInput ^+u1eaa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~{A}::
 SendInput {U+1EAA}
 return
@@ -18563,17 +18561,17 @@ return
 
 ;; Glyph: 'ẫ' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~a::
 SendInput ^x8{Enter}1eab{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~a::
 SendInput ^+u1eab{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~a::
 SendInput {U+1EAB}
 return
@@ -18581,17 +18579,17 @@ return
 
 ;; Glyph: 'ẫ' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~{a}::
 SendInput ^x8{Enter}1eab{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~{a}::
 SendInput ^+u1eab{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~{a}::
 SendInput {U+1EAB}
 return
@@ -18599,17 +18597,17 @@ return
 
 ;; Glyph: 'Ậ' Descr: LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\d{A}::
 SendInput ^x8{Enter}1eac{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\d{A}::
 SendInput ^+u1eac{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\d{A}::
 SendInput {U+1EAC}
 return
@@ -18617,17 +18615,17 @@ return
 
 ;; Glyph: 'ậ' Descr: LATIN SMALL LETTER A WITH CIRCUMFLEX AND DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\d{a}::
 SendInput ^x8{Enter}1ead{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\d{a}::
 SendInput ^+u1ead{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\d{a}::
 SendInput {U+1EAD}
 return
@@ -18635,17 +18633,17 @@ return
 
 ;; Glyph: 'Ắ' Descr: LATIN CAPITAL LETTER A WITH BREVE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\'A::
 SendInput ^x8{Enter}1eae{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\'A::
 SendInput ^+u1eae{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\'A::
 SendInput {U+1EAE}
 return
@@ -18653,17 +18651,17 @@ return
 
 ;; Glyph: 'Ắ' Descr: LATIN CAPITAL LETTER A WITH BREVE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\'{A}::
 SendInput ^x8{Enter}1eae{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\'{A}::
 SendInput ^+u1eae{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\'{A}::
 SendInput {U+1EAE}
 return
@@ -18671,17 +18669,17 @@ return
 
 ;; Glyph: 'ắ' Descr: LATIN SMALL LETTER A WITH BREVE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\'a::
 SendInput ^x8{Enter}1eaf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\'a::
 SendInput ^+u1eaf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\'a::
 SendInput {U+1EAF}
 return
@@ -18689,17 +18687,17 @@ return
 
 ;; Glyph: 'ắ' Descr: LATIN SMALL LETTER A WITH BREVE AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\'{a}::
 SendInput ^x8{Enter}1eaf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\'{a}::
 SendInput ^+u1eaf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\'{a}::
 SendInput {U+1EAF}
 return
@@ -18707,17 +18705,17 @@ return
 
 ;; Glyph: 'Ằ' Descr: LATIN CAPITAL LETTER A WITH BREVE AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\``A::
 SendInput ^x8{Enter}1eb0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\``A::
 SendInput ^+u1eb0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\``A::
 SendInput {U+1EB0}
 return
@@ -18725,17 +18723,17 @@ return
 
 ;; Glyph: 'Ằ' Descr: LATIN CAPITAL LETTER A WITH BREVE AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\``{A}::
 SendInput ^x8{Enter}1eb0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\``{A}::
 SendInput ^+u1eb0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\``{A}::
 SendInput {U+1EB0}
 return
@@ -18743,17 +18741,17 @@ return
 
 ;; Glyph: 'ằ' Descr: LATIN SMALL LETTER A WITH BREVE AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\``a::
 SendInput ^x8{Enter}1eb1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\``a::
 SendInput ^+u1eb1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\``a::
 SendInput {U+1EB1}
 return
@@ -18761,17 +18759,17 @@ return
 
 ;; Glyph: 'ằ' Descr: LATIN SMALL LETTER A WITH BREVE AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\``{a}::
 SendInput ^x8{Enter}1eb1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\``{a}::
 SendInput ^+u1eb1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\``{a}::
 SendInput {U+1EB1}
 return
@@ -18779,17 +18777,17 @@ return
 
 ;; Glyph: 'Ẵ' Descr: LATIN CAPITAL LETTER A WITH BREVE AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\~A::
 SendInput ^x8{Enter}1eb4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\~A::
 SendInput ^+u1eb4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\~A::
 SendInput {U+1EB4}
 return
@@ -18797,17 +18795,17 @@ return
 
 ;; Glyph: 'Ẵ' Descr: LATIN CAPITAL LETTER A WITH BREVE AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\~{A}::
 SendInput ^x8{Enter}1eb4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\~{A}::
 SendInput ^+u1eb4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\~{A}::
 SendInput {U+1EB4}
 return
@@ -18815,17 +18813,17 @@ return
 
 ;; Glyph: 'ẵ' Descr: LATIN SMALL LETTER A WITH BREVE AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\~a::
 SendInput ^x8{Enter}1eb5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\~a::
 SendInput ^+u1eb5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\~a::
 SendInput {U+1EB5}
 return
@@ -18833,17 +18831,17 @@ return
 
 ;; Glyph: 'ẵ' Descr: LATIN SMALL LETTER A WITH BREVE AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\~{a}::
 SendInput ^x8{Enter}1eb5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\~{a}::
 SendInput ^+u1eb5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\~{a}::
 SendInput {U+1EB5}
 return
@@ -18851,17 +18849,17 @@ return
 
 ;; Glyph: 'Ặ' Descr: LATIN CAPITAL LETTER A WITH BREVE AND DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\d{A}::
 SendInput ^x8{Enter}1eb6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\d{A}::
 SendInput ^+u1eb6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\d{A}::
 SendInput {U+1EB6}
 return
@@ -18869,17 +18867,17 @@ return
 
 ;; Glyph: 'ặ' Descr: LATIN SMALL LETTER A WITH BREVE AND DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\u\d{a}::
 SendInput ^x8{Enter}1eb7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\u\d{a}::
 SendInput ^+u1eb7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\u\d{a}::
 SendInput {U+1EB7}
 return
@@ -18887,17 +18885,17 @@ return
 
 ;; Glyph: 'Ẹ' Descr: LATIN CAPITAL LETTER E WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{E}::
 SendInput ^x8{Enter}1eb8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{E}::
 SendInput ^+u1eb8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{E}::
 SendInput {U+1EB8}
 return
@@ -18905,17 +18903,17 @@ return
 
 ;; Glyph: 'ẹ' Descr: LATIN SMALL LETTER E WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{e}::
 SendInput ^x8{Enter}1eb9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{e}::
 SendInput ^+u1eb9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{e}::
 SendInput {U+1EB9}
 return
@@ -18923,17 +18921,17 @@ return
 
 ;; Glyph: 'Ẽ' Descr: LATIN CAPITAL LETTER E WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~E::
 SendInput ^x8{Enter}1ebc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~E::
 SendInput ^+u1ebc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~E::
 SendInput {U+1EBC}
 return
@@ -18941,17 +18939,17 @@ return
 
 ;; Glyph: 'Ẽ' Descr: LATIN CAPITAL LETTER E WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{E}::
 SendInput ^x8{Enter}1ebc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{E}::
 SendInput ^+u1ebc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{E}::
 SendInput {U+1EBC}
 return
@@ -18959,17 +18957,17 @@ return
 
 ;; Glyph: 'ẽ' Descr: LATIN SMALL LETTER E WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~e::
 SendInput ^x8{Enter}1ebd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~e::
 SendInput ^+u1ebd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~e::
 SendInput {U+1EBD}
 return
@@ -18977,17 +18975,17 @@ return
 
 ;; Glyph: 'ẽ' Descr: LATIN SMALL LETTER E WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{e}::
 SendInput ^x8{Enter}1ebd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{e}::
 SendInput ^+u1ebd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{e}::
 SendInput {U+1EBD}
 return
@@ -18995,17 +18993,17 @@ return
 
 ;; Glyph: 'Ế' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'E::
 SendInput ^x8{Enter}1ebe{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'E::
 SendInput ^+u1ebe{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'E::
 SendInput {U+1EBE}
 return
@@ -19013,17 +19011,17 @@ return
 
 ;; Glyph: 'Ế' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'{E}::
 SendInput ^x8{Enter}1ebe{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'{E}::
 SendInput ^+u1ebe{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'{E}::
 SendInput {U+1EBE}
 return
@@ -19031,17 +19029,17 @@ return
 
 ;; Glyph: 'ế' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'e::
 SendInput ^x8{Enter}1ebf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'e::
 SendInput ^+u1ebf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'e::
 SendInput {U+1EBF}
 return
@@ -19049,17 +19047,17 @@ return
 
 ;; Glyph: 'ế' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'{e}::
 SendInput ^x8{Enter}1ebf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'{e}::
 SendInput ^+u1ebf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'{e}::
 SendInput {U+1EBF}
 return
@@ -19067,17 +19065,17 @@ return
 
 ;; Glyph: 'Ề' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``E::
 SendInput ^x8{Enter}1ec0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``E::
 SendInput ^+u1ec0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``E::
 SendInput {U+1EC0}
 return
@@ -19085,17 +19083,17 @@ return
 
 ;; Glyph: 'Ề' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``{E}::
 SendInput ^x8{Enter}1ec0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``{E}::
 SendInput ^+u1ec0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``{E}::
 SendInput {U+1EC0}
 return
@@ -19103,17 +19101,17 @@ return
 
 ;; Glyph: 'ề' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``e::
 SendInput ^x8{Enter}1ec1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``e::
 SendInput ^+u1ec1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``e::
 SendInput {U+1EC1}
 return
@@ -19121,17 +19119,17 @@ return
 
 ;; Glyph: 'ề' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``{e}::
 SendInput ^x8{Enter}1ec1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``{e}::
 SendInput ^+u1ec1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``{e}::
 SendInput {U+1EC1}
 return
@@ -19139,17 +19137,17 @@ return
 
 ;; Glyph: 'Ễ' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~E::
 SendInput ^x8{Enter}1ec4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~E::
 SendInput ^+u1ec4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~E::
 SendInput {U+1EC4}
 return
@@ -19157,17 +19155,17 @@ return
 
 ;; Glyph: 'Ễ' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~{E}::
 SendInput ^x8{Enter}1ec4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~{E}::
 SendInput ^+u1ec4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~{E}::
 SendInput {U+1EC4}
 return
@@ -19175,17 +19173,17 @@ return
 
 ;; Glyph: 'ễ' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~e::
 SendInput ^x8{Enter}1ec5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~e::
 SendInput ^+u1ec5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~e::
 SendInput {U+1EC5}
 return
@@ -19193,17 +19191,17 @@ return
 
 ;; Glyph: 'ễ' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~{e}::
 SendInput ^x8{Enter}1ec5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~{e}::
 SendInput ^+u1ec5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~{e}::
 SendInput {U+1EC5}
 return
@@ -19211,17 +19209,17 @@ return
 
 ;; Glyph: 'Ệ' Descr: LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\d{E}::
 SendInput ^x8{Enter}1ec6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\d{E}::
 SendInput ^+u1ec6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\d{E}::
 SendInput {U+1EC6}
 return
@@ -19229,17 +19227,17 @@ return
 
 ;; Glyph: 'ệ' Descr: LATIN SMALL LETTER E WITH CIRCUMFLEX AND DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\d{e}::
 SendInput ^x8{Enter}1ec7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\d{e}::
 SendInput ^+u1ec7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\d{e}::
 SendInput {U+1EC7}
 return
@@ -19247,17 +19245,17 @@ return
 
 ;; Glyph: 'Ị' Descr: LATIN CAPITAL LETTER I WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{I}::
 SendInput ^x8{Enter}1eca{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{I}::
 SendInput ^+u1eca{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{I}::
 SendInput {U+1ECA}
 return
@@ -19265,17 +19263,17 @@ return
 
 ;; Glyph: 'ị' Descr: LATIN SMALL LETTER I WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{i}::
 SendInput ^x8{Enter}1ecb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{i}::
 SendInput ^+u1ecb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{i}::
 SendInput {U+1ECB}
 return
@@ -19283,17 +19281,17 @@ return
 
 ;; Glyph: 'Ọ' Descr: LATIN CAPITAL LETTER O WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{O}::
 SendInput ^x8{Enter}1ecc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{O}::
 SendInput ^+u1ecc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{O}::
 SendInput {U+1ECC}
 return
@@ -19301,17 +19299,17 @@ return
 
 ;; Glyph: 'ọ' Descr: LATIN SMALL LETTER O WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{o}::
 SendInput ^x8{Enter}1ecd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{o}::
 SendInput ^+u1ecd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{o}::
 SendInput {U+1ECD}
 return
@@ -19319,17 +19317,17 @@ return
 
 ;; Glyph: 'Ố' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'O::
 SendInput ^x8{Enter}1ed0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'O::
 SendInput ^+u1ed0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'O::
 SendInput {U+1ED0}
 return
@@ -19337,17 +19335,17 @@ return
 
 ;; Glyph: 'Ố' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'{O}::
 SendInput ^x8{Enter}1ed0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'{O}::
 SendInput ^+u1ed0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'{O}::
 SendInput {U+1ED0}
 return
@@ -19355,17 +19353,17 @@ return
 
 ;; Glyph: 'ố' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'o::
 SendInput ^x8{Enter}1ed1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'o::
 SendInput ^+u1ed1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'o::
 SendInput {U+1ED1}
 return
@@ -19373,17 +19371,17 @@ return
 
 ;; Glyph: 'ố' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX AND ACUTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\'{o}::
 SendInput ^x8{Enter}1ed1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\'{o}::
 SendInput ^+u1ed1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\'{o}::
 SendInput {U+1ED1}
 return
@@ -19391,17 +19389,17 @@ return
 
 ;; Glyph: 'Ồ' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``O::
 SendInput ^x8{Enter}1ed2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``O::
 SendInput ^+u1ed2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``O::
 SendInput {U+1ED2}
 return
@@ -19409,17 +19407,17 @@ return
 
 ;; Glyph: 'Ồ' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``{O}::
 SendInput ^x8{Enter}1ed2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``{O}::
 SendInput ^+u1ed2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``{O}::
 SendInput {U+1ED2}
 return
@@ -19427,17 +19425,17 @@ return
 
 ;; Glyph: 'ồ' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``o::
 SendInput ^x8{Enter}1ed3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``o::
 SendInput ^+u1ed3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``o::
 SendInput {U+1ED3}
 return
@@ -19445,17 +19443,17 @@ return
 
 ;; Glyph: 'ồ' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX AND GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\``{o}::
 SendInput ^x8{Enter}1ed3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\``{o}::
 SendInput ^+u1ed3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\``{o}::
 SendInput {U+1ED3}
 return
@@ -19463,17 +19461,17 @@ return
 
 ;; Glyph: 'Ỗ' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~O::
 SendInput ^x8{Enter}1ed6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~O::
 SendInput ^+u1ed6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~O::
 SendInput {U+1ED6}
 return
@@ -19481,17 +19479,17 @@ return
 
 ;; Glyph: 'Ỗ' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~{O}::
 SendInput ^x8{Enter}1ed6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~{O}::
 SendInput ^+u1ed6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~{O}::
 SendInput {U+1ED6}
 return
@@ -19499,17 +19497,17 @@ return
 
 ;; Glyph: 'ỗ' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~o::
 SendInput ^x8{Enter}1ed7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~o::
 SendInput ^+u1ed7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~o::
 SendInput {U+1ED7}
 return
@@ -19517,17 +19515,17 @@ return
 
 ;; Glyph: 'ỗ' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX AND TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\~{o}::
 SendInput ^x8{Enter}1ed7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\~{o}::
 SendInput ^+u1ed7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\~{o}::
 SendInput {U+1ED7}
 return
@@ -19535,17 +19533,17 @@ return
 
 ;; Glyph: 'Ộ' Descr: LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\d{O}::
 SendInput ^x8{Enter}1ed8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\d{O}::
 SendInput ^+u1ed8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\d{O}::
 SendInput {U+1ED8}
 return
@@ -19553,17 +19551,17 @@ return
 
 ;; Glyph: 'ộ' Descr: LATIN SMALL LETTER O WITH CIRCUMFLEX AND DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\^\d{o}::
 SendInput ^x8{Enter}1ed9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\^\d{o}::
 SendInput ^+u1ed9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\^\d{o}::
 SendInput {U+1ED9}
 return
@@ -19571,17 +19569,17 @@ return
 
 ;; Glyph: 'Ụ' Descr: LATIN CAPITAL LETTER U WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{U}::
 SendInput ^x8{Enter}1ee4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{U}::
 SendInput ^+u1ee4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{U}::
 SendInput {U+1EE4}
 return
@@ -19589,17 +19587,17 @@ return
 
 ;; Glyph: 'ụ' Descr: LATIN SMALL LETTER U WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{u}::
 SendInput ^x8{Enter}1ee5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{u}::
 SendInput ^+u1ee5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{u}::
 SendInput {U+1EE5}
 return
@@ -19607,17 +19605,17 @@ return
 
 ;; Glyph: 'Ỳ' Descr: LATIN CAPITAL LETTER Y WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``Y::
 SendInput ^x8{Enter}1ef2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``Y::
 SendInput ^+u1ef2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``Y::
 SendInput {U+1EF2}
 return
@@ -19625,17 +19623,17 @@ return
 
 ;; Glyph: 'Ỳ' Descr: LATIN CAPITAL LETTER Y WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{Y}::
 SendInput ^x8{Enter}1ef2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{Y}::
 SendInput ^+u1ef2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{Y}::
 SendInput {U+1EF2}
 return
@@ -19643,17 +19641,17 @@ return
 
 ;; Glyph: 'ỳ' Descr: LATIN SMALL LETTER Y WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``y::
 SendInput ^x8{Enter}1ef3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``y::
 SendInput ^+u1ef3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``y::
 SendInput {U+1EF3}
 return
@@ -19661,17 +19659,17 @@ return
 
 ;; Glyph: 'ỳ' Descr: LATIN SMALL LETTER Y WITH GRAVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\``{y}::
 SendInput ^x8{Enter}1ef3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\``{y}::
 SendInput ^+u1ef3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\``{y}::
 SendInput {U+1EF3}
 return
@@ -19679,17 +19677,17 @@ return
 
 ;; Glyph: 'Ỵ' Descr: LATIN CAPITAL LETTER Y WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{Y}::
 SendInput ^x8{Enter}1ef4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{Y}::
 SendInput ^+u1ef4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{Y}::
 SendInput {U+1EF4}
 return
@@ -19697,17 +19695,17 @@ return
 
 ;; Glyph: 'ỵ' Descr: LATIN SMALL LETTER Y WITH DOT BELOW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\d{y}::
 SendInput ^x8{Enter}1ef5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\d{y}::
 SendInput ^+u1ef5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\d{y}::
 SendInput {U+1EF5}
 return
@@ -19715,17 +19713,17 @@ return
 
 ;; Glyph: 'Ỹ' Descr: LATIN CAPITAL LETTER Y WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~Y::
 SendInput ^x8{Enter}1ef8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~Y::
 SendInput ^+u1ef8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~Y::
 SendInput {U+1EF8}
 return
@@ -19733,17 +19731,17 @@ return
 
 ;; Glyph: 'Ỹ' Descr: LATIN CAPITAL LETTER Y WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{Y}::
 SendInput ^x8{Enter}1ef8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{Y}::
 SendInput ^+u1ef8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{Y}::
 SendInput {U+1EF8}
 return
@@ -19751,17 +19749,17 @@ return
 
 ;; Glyph: 'ỹ' Descr: LATIN SMALL LETTER Y WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~y::
 SendInput ^x8{Enter}1ef9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~y::
 SendInput ^+u1ef9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~y::
 SendInput {U+1EF9}
 return
@@ -19769,17 +19767,17 @@ return
 
 ;; Glyph: 'ỹ' Descr: LATIN SMALL LETTER Y WITH TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\~{y}::
 SendInput ^x8{Enter}1ef9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\~{y}::
 SendInput ^+u1ef9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\~{y}::
 SendInput {U+1EF9}
 return
@@ -19787,17 +19785,17 @@ return
 
 ;; Glyph: ' ' Descr: EM QUAD
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\quad::
 SendInput ^x8{Enter}2001{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\quad::
 SendInput ^+u2001{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\quad::
 SendInput {U+2001}
 return
@@ -19805,17 +19803,17 @@ return
 
 ;; Glyph: '‌' Descr: ZERO WIDTH NON-JOINER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\/::
 SendInput ^x8{Enter}200c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\/::
 SendInput ^+u200c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\/::
 SendInput {U+200C}
 return
@@ -19823,17 +19821,17 @@ return
 
 ;; Glyph: '–' Descr: EN DASH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::--::
 SendInput ^x8{Enter}2013{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::--::
 SendInput ^+u2013{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::--::
 SendInput {U+2013}
 return
@@ -19841,17 +19839,17 @@ return
 
 ;; Glyph: '—' Descr: EM DASH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::---::
 SendInput ^x8{Enter}2014{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::---::
 SendInput ^+u2014{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::---::
 SendInput {U+2014}
 return
@@ -19859,17 +19857,17 @@ return
 
 ;; Glyph: '‖' Descr: DOUBLE VERTICAL LINE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Vert::
 SendInput ^x8{Enter}2016{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Vert::
 SendInput ^+u2016{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Vert::
 SendInput {U+2016}
 return
@@ -19877,17 +19875,17 @@ return
 
 ;; Glyph: '‘' Descr: LEFT SINGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\grq::
 SendInput ^x8{Enter}2018{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\grq::
 SendInput ^+u2018{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\grq::
 SendInput {U+2018}
 return
@@ -19895,17 +19893,17 @@ return
 
 ;; Glyph: '‘' Descr: LEFT SINGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lq::
 SendInput ^x8{Enter}2018{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lq::
 SendInput ^+u2018{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lq::
 SendInput {U+2018}
 return
@@ -19913,17 +19911,17 @@ return
 
 ;; Glyph: '’' Descr: RIGHT SINGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rq::
 SendInput ^x8{Enter}2019{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rq::
 SendInput ^+u2019{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rq::
 SendInput {U+2019}
 return
@@ -19931,17 +19929,17 @@ return
 
 ;; Glyph: '‚' Descr: SINGLE LOW-9 QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\glq::
 SendInput ^x8{Enter}201a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\glq::
 SendInput ^+u201a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\glq::
 SendInput {U+201A}
 return
@@ -19949,17 +19947,17 @@ return
 
 ;; Glyph: '“' Descr: LEFT DOUBLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"'::
 SendInput ^x8{Enter}201c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"'::
 SendInput ^+u201c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"'::
 SendInput {U+201C}
 return
@@ -19967,17 +19965,17 @@ return
 
 ;; Glyph: '“' Descr: LEFT DOUBLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\grqq::
 SendInput ^x8{Enter}201c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\grqq::
 SendInput ^+u201c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\grqq::
 SendInput {U+201C}
 return
@@ -19985,17 +19983,17 @@ return
 
 ;; Glyph: '“' Descr: LEFT DOUBLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ldq::
 SendInput ^x8{Enter}201c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ldq::
 SendInput ^+u201c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ldq::
 SendInput {U+201C}
 return
@@ -20003,17 +20001,17 @@ return
 
 ;; Glyph: '”' Descr: RIGHT DOUBLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rdq::
 SendInput ^x8{Enter}201d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rdq::
 SendInput ^+u201d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rdq::
 SendInput {U+201D}
 return
@@ -20021,17 +20019,17 @@ return
 
 ;; Glyph: '„' Descr: DOUBLE LOW-9 QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\"``::
 SendInput ^x8{Enter}201e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\"``::
 SendInput ^+u201e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\"``::
 SendInput {U+201E}
 return
@@ -20039,17 +20037,17 @@ return
 
 ;; Glyph: '„' Descr: DOUBLE LOW-9 QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\glqq::
 SendInput ^x8{Enter}201e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\glqq::
 SendInput ^+u201e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\glqq::
 SendInput {U+201E}
 return
@@ -20057,17 +20055,17 @@ return
 
 ;; Glyph: '†' Descr: DAGGER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\dag::
 SendInput ^x8{Enter}2020{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\dag::
 SendInput ^+u2020{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\dag::
 SendInput {U+2020}
 return
@@ -20075,17 +20073,17 @@ return
 
 ;; Glyph: '†' Descr: DAGGER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\dagger::
 SendInput ^x8{Enter}2020{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\dagger::
 SendInput ^+u2020{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\dagger::
 SendInput {U+2020}
 return
@@ -20093,17 +20091,17 @@ return
 
 ;; Glyph: '‡' Descr: DOUBLE DAGGER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ddag::
 SendInput ^x8{Enter}2021{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ddag::
 SendInput ^+u2021{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ddag::
 SendInput {U+2021}
 return
@@ -20111,17 +20109,17 @@ return
 
 ;; Glyph: '‡' Descr: DOUBLE DAGGER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ddagger::
 SendInput ^x8{Enter}2021{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ddagger::
 SendInput ^+u2021{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ddagger::
 SendInput {U+2021}
 return
@@ -20129,17 +20127,17 @@ return
 
 ;; Glyph: '•' Descr: BULLET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bullet::
 SendInput ^x8{Enter}2022{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bullet::
 SendInput ^+u2022{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bullet::
 SendInput {U+2022}
 return
@@ -20147,17 +20145,17 @@ return
 
 ;; Glyph: '…' Descr: HORIZONTAL ELLIPSIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ldots::
 SendInput ^x8{Enter}2026{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ldots::
 SendInput ^+u2026{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ldots::
 SendInput {U+2026}
 return
@@ -20165,17 +20163,17 @@ return
 
 ;; Glyph: '' Descr: LINE SEPARATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\newline::
 SendInput ^x8{Enter}2028{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\newline::
 SendInput ^+u2028{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\newline::
 SendInput {U+2028}
 return
@@ -20183,17 +20181,17 @@ return
 
 ;; Glyph: '' Descr: PARAGRAPH SEPARATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\par::
 SendInput ^x8{Enter}2029{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\par::
 SendInput ^+u2029{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\par::
 SendInput {U+2029}
 return
@@ -20201,17 +20199,17 @@ return
 
 ;; Glyph: ' ' Descr: NARROW NO-BREAK SPACE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\`,::
 SendInput ^x8{Enter}202f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\`,::
 SendInput ^+u202f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\`,::
 SendInput {U+202F}
 return
@@ -20219,17 +20217,17 @@ return
 
 ;; Glyph: '‰' Descr: PER MILLE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\permil::
 SendInput ^x8{Enter}2030{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\permil::
 SendInput ^+u2030{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\permil::
 SendInput {U+2030}
 return
@@ -20237,17 +20235,17 @@ return
 
 ;; Glyph: '‱' Descr: PER TEN THOUSAND SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textpertenthousand::
 SendInput ^x8{Enter}2031{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textpertenthousand::
 SendInput ^+u2031{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textpertenthousand::
 SendInput {U+2031}
 return
@@ -20255,17 +20253,17 @@ return
 
 ;; Glyph: '′' Descr: PRIME
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\prime::
 SendInput ^x8{Enter}2032{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\prime::
 SendInput ^+u2032{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\prime::
 SendInput {U+2032}
 return
@@ -20273,17 +20271,17 @@ return
 
 ;; Glyph: '′' Descr: PRIME
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varprime::
 SendInput ^x8{Enter}2032{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varprime::
 SendInput ^+u2032{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varprime::
 SendInput {U+2032}
 return
@@ -20291,17 +20289,17 @@ return
 
 ;; Glyph: '‵' Descr: REVERSED PRIME
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\backprime::
 SendInput ^x8{Enter}2035{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\backprime::
 SendInput ^+u2035{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\backprime::
 SendInput {U+2035}
 return
@@ -20309,17 +20307,17 @@ return
 
 ;; Glyph: '‹' Descr: SINGLE LEFT-POINTING ANGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\flq::
 SendInput ^x8{Enter}2039{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\flq::
 SendInput ^+u2039{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\flq::
 SendInput {U+2039}
 return
@@ -20327,17 +20325,17 @@ return
 
 ;; Glyph: '›' Descr: SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frq::
 SendInput ^x8{Enter}203a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frq::
 SendInput ^+u203a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frq::
 SendInput {U+203A}
 return
@@ -20345,17 +20343,17 @@ return
 
 ;; Glyph: '※' Descr: REFERENCE MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textreferencemark::
 SendInput ^x8{Enter}203b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textreferencemark::
 SendInput ^+u203b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textreferencemark::
 SendInput {U+203B}
 return
@@ -20363,17 +20361,17 @@ return
 
 ;; Glyph: '‽' Descr: INTERROBANG
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textinterrobang::
 SendInput ^x8{Enter}203d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textinterrobang::
 SendInput ^+u203d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textinterrobang::
 SendInput {U+203D}
 return
@@ -20381,17 +20379,17 @@ return
 
 ;; Glyph: '⁄' Descr: FRACTION SLASH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textfractionsolidus::
 SendInput ^x8{Enter}2044{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textfractionsolidus::
 SendInput ^+u2044{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textfractionsolidus::
 SendInput {U+2044}
 return
@@ -20399,17 +20397,17 @@ return
 
 ;; Glyph: '⁅' Descr: LEFT SQUARE BRACKET WITH QUILL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textlquill::
 SendInput ^x8{Enter}2045{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textlquill::
 SendInput ^+u2045{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textlquill::
 SendInput {U+2045}
 return
@@ -20417,17 +20415,17 @@ return
 
 ;; Glyph: '⁆' Descr: RIGHT SQUARE BRACKET WITH QUILL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textrquill::
 SendInput ^x8{Enter}2046{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textrquill::
 SendInput ^+u2046{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textrquill::
 SendInput {U+2046}
 return
@@ -20435,17 +20433,17 @@ return
 
 ;; Glyph: '⁒' Descr: COMMERCIAL MINUS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textdiscount::
 SendInput ^x8{Enter}2052{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textdiscount::
 SendInput ^+u2052{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textdiscount::
 SendInput {U+2052}
 return
@@ -20453,17 +20451,17 @@ return
 
 ;; Glyph: '⁰' Descr: SUPERSCRIPT ZERO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^0::
 SendInput ^x8{Enter}2070{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^0::
 SendInput ^+u2070{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^0::
 SendInput {U+2070}
 return
@@ -20471,17 +20469,17 @@ return
 
 ;; Glyph: 'ⁱ' Descr: SUPERSCRIPT LATIN SMALL LETTER I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^i::
 SendInput ^x8{Enter}2071{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^i::
 SendInput ^+u2071{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^i::
 SendInput {U+2071}
 return
@@ -20489,17 +20487,17 @@ return
 
 ;; Glyph: '⁴' Descr: SUPERSCRIPT FOUR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^4::
 SendInput ^x8{Enter}2074{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^4::
 SendInput ^+u2074{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^4::
 SendInput {U+2074}
 return
@@ -20507,17 +20505,17 @@ return
 
 ;; Glyph: '⁵' Descr: SUPERSCRIPT FIVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^5::
 SendInput ^x8{Enter}2075{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^5::
 SendInput ^+u2075{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^5::
 SendInput {U+2075}
 return
@@ -20525,17 +20523,17 @@ return
 
 ;; Glyph: '⁶' Descr: SUPERSCRIPT SIX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^6::
 SendInput ^x8{Enter}2076{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^6::
 SendInput ^+u2076{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^6::
 SendInput {U+2076}
 return
@@ -20543,17 +20541,17 @@ return
 
 ;; Glyph: '⁷' Descr: SUPERSCRIPT SEVEN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^7::
 SendInput ^x8{Enter}2077{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^7::
 SendInput ^+u2077{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^7::
 SendInput {U+2077}
 return
@@ -20561,17 +20559,17 @@ return
 
 ;; Glyph: '⁸' Descr: SUPERSCRIPT EIGHT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^8::
 SendInput ^x8{Enter}2078{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^8::
 SendInput ^+u2078{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^8::
 SendInput {U+2078}
 return
@@ -20579,17 +20577,17 @@ return
 
 ;; Glyph: '⁹' Descr: SUPERSCRIPT NINE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^9::
 SendInput ^x8{Enter}2079{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^9::
 SendInput ^+u2079{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^9::
 SendInput {U+2079}
 return
@@ -20597,17 +20595,17 @@ return
 
 ;; Glyph: '⁺' Descr: SUPERSCRIPT PLUS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^+::
 SendInput ^x8{Enter}207a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^+::
 SendInput ^+u207a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^+::
 SendInput {U+207A}
 return
@@ -20615,17 +20613,17 @@ return
 
 ;; Glyph: '⁻' Descr: SUPERSCRIPT MINUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^-::
 SendInput ^x8{Enter}207b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^-::
 SendInput ^+u207b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^-::
 SendInput {U+207B}
 return
@@ -20633,17 +20631,17 @@ return
 
 ;; Glyph: '⁼' Descr: SUPERSCRIPT EQUALS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^=::
 SendInput ^x8{Enter}207c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^=::
 SendInput ^+u207c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^=::
 SendInput {U+207C}
 return
@@ -20651,17 +20649,17 @@ return
 
 ;; Glyph: '⁽' Descr: SUPERSCRIPT LEFT PARENTHESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^(::
 SendInput ^x8{Enter}207d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^(::
 SendInput ^+u207d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^(::
 SendInput {U+207D}
 return
@@ -20669,17 +20667,17 @@ return
 
 ;; Glyph: '⁾' Descr: SUPERSCRIPT RIGHT PARENTHESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^)::
 SendInput ^x8{Enter}207e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^)::
 SendInput ^+u207e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^)::
 SendInput {U+207E}
 return
@@ -20687,17 +20685,17 @@ return
 
 ;; Glyph: 'ⁿ' Descr: SUPERSCRIPT LATIN SMALL LETTER N
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^n::
 SendInput ^x8{Enter}207f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^n::
 SendInput ^+u207f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^n::
 SendInput {U+207F}
 return
@@ -20705,17 +20703,17 @@ return
 
 ;; Glyph: '₀' Descr: SUBSCRIPT ZERO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_0::
 SendInput ^x8{Enter}2080{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_0::
 SendInput ^+u2080{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_0::
 SendInput {U+2080}
 return
@@ -20723,17 +20721,17 @@ return
 
 ;; Glyph: '₁' Descr: SUBSCRIPT ONE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_1::
 SendInput ^x8{Enter}2081{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_1::
 SendInput ^+u2081{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_1::
 SendInput {U+2081}
 return
@@ -20741,17 +20739,17 @@ return
 
 ;; Glyph: '₂' Descr: SUBSCRIPT TWO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_2::
 SendInput ^x8{Enter}2082{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_2::
 SendInput ^+u2082{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_2::
 SendInput {U+2082}
 return
@@ -20759,17 +20757,17 @@ return
 
 ;; Glyph: '₃' Descr: SUBSCRIPT THREE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_3::
 SendInput ^x8{Enter}2083{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_3::
 SendInput ^+u2083{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_3::
 SendInput {U+2083}
 return
@@ -20777,17 +20775,17 @@ return
 
 ;; Glyph: '₄' Descr: SUBSCRIPT FOUR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_4::
 SendInput ^x8{Enter}2084{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_4::
 SendInput ^+u2084{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_4::
 SendInput {U+2084}
 return
@@ -20795,17 +20793,17 @@ return
 
 ;; Glyph: '₅' Descr: SUBSCRIPT FIVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_5::
 SendInput ^x8{Enter}2085{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_5::
 SendInput ^+u2085{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_5::
 SendInput {U+2085}
 return
@@ -20813,17 +20811,17 @@ return
 
 ;; Glyph: '₆' Descr: SUBSCRIPT SIX
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_6::
 SendInput ^x8{Enter}2086{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_6::
 SendInput ^+u2086{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_6::
 SendInput {U+2086}
 return
@@ -20831,17 +20829,17 @@ return
 
 ;; Glyph: '₇' Descr: SUBSCRIPT SEVEN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_7::
 SendInput ^x8{Enter}2087{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_7::
 SendInput ^+u2087{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_7::
 SendInput {U+2087}
 return
@@ -20849,17 +20847,17 @@ return
 
 ;; Glyph: '₈' Descr: SUBSCRIPT EIGHT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_8::
 SendInput ^x8{Enter}2088{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_8::
 SendInput ^+u2088{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_8::
 SendInput {U+2088}
 return
@@ -20867,17 +20865,17 @@ return
 
 ;; Glyph: '₉' Descr: SUBSCRIPT NINE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_9::
 SendInput ^x8{Enter}2089{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_9::
 SendInput ^+u2089{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_9::
 SendInput {U+2089}
 return
@@ -20885,17 +20883,17 @@ return
 
 ;; Glyph: '₊' Descr: SUBSCRIPT PLUS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_+::
 SendInput ^x8{Enter}208a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_+::
 SendInput ^+u208a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_+::
 SendInput {U+208A}
 return
@@ -20903,17 +20901,17 @@ return
 
 ;; Glyph: '₋' Descr: SUBSCRIPT MINUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_-::
 SendInput ^x8{Enter}208b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_-::
 SendInput ^+u208b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_-::
 SendInput {U+208B}
 return
@@ -20921,17 +20919,17 @@ return
 
 ;; Glyph: '₌' Descr: SUBSCRIPT EQUALS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_=::
 SendInput ^x8{Enter}208c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_=::
 SendInput ^+u208c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_=::
 SendInput {U+208C}
 return
@@ -20939,17 +20937,17 @@ return
 
 ;; Glyph: '₍' Descr: SUBSCRIPT LEFT PARENTHESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_(::
 SendInput ^x8{Enter}208d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_(::
 SendInput ^+u208d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_(::
 SendInput {U+208D}
 return
@@ -20957,17 +20955,17 @@ return
 
 ;; Glyph: '₎' Descr: SUBSCRIPT RIGHT PARENTHESIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_)::
 SendInput ^x8{Enter}208e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_)::
 SendInput ^+u208e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_)::
 SendInput {U+208E}
 return
@@ -20975,17 +20973,17 @@ return
 
 ;; Glyph: 'ₐ' Descr: LATIN SUBSCRIPT SMALL LETTER A
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_a::
 SendInput ^x8{Enter}2090{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_a::
 SendInput ^+u2090{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_a::
 SendInput {U+2090}
 return
@@ -20993,17 +20991,17 @@ return
 
 ;; Glyph: 'ₑ' Descr: LATIN SUBSCRIPT SMALL LETTER E
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_e::
 SendInput ^x8{Enter}2091{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_e::
 SendInput ^+u2091{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_e::
 SendInput {U+2091}
 return
@@ -21011,17 +21009,17 @@ return
 
 ;; Glyph: 'ₒ' Descr: LATIN SUBSCRIPT SMALL LETTER O
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_o::
 SendInput ^x8{Enter}2092{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_o::
 SendInput ^+u2092{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_o::
 SendInput {U+2092}
 return
@@ -21029,17 +21027,17 @@ return
 
 ;; Glyph: 'ₓ' Descr: LATIN SUBSCRIPT SMALL LETTER X
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_x::
 SendInput ^x8{Enter}2093{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_x::
 SendInput ^+u2093{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_x::
 SendInput {U+2093}
 return
@@ -21047,17 +21045,17 @@ return
 
 ;; Glyph: 'ₕ' Descr: LATIN SUBSCRIPT SMALL LETTER H
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_h::
 SendInput ^x8{Enter}2095{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_h::
 SendInput ^+u2095{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_h::
 SendInput {U+2095}
 return
@@ -21065,17 +21063,17 @@ return
 
 ;; Glyph: 'ₖ' Descr: LATIN SUBSCRIPT SMALL LETTER K
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_k::
 SendInput ^x8{Enter}2096{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_k::
 SendInput ^+u2096{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_k::
 SendInput {U+2096}
 return
@@ -21083,17 +21081,17 @@ return
 
 ;; Glyph: 'ₗ' Descr: LATIN SUBSCRIPT SMALL LETTER L
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_l::
 SendInput ^x8{Enter}2097{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_l::
 SendInput ^+u2097{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_l::
 SendInput {U+2097}
 return
@@ -21101,17 +21099,17 @@ return
 
 ;; Glyph: 'ₘ' Descr: LATIN SUBSCRIPT SMALL LETTER M
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_m::
 SendInput ^x8{Enter}2098{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_m::
 SendInput ^+u2098{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_m::
 SendInput {U+2098}
 return
@@ -21119,17 +21117,17 @@ return
 
 ;; Glyph: 'ₙ' Descr: LATIN SUBSCRIPT SMALL LETTER N
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_n::
 SendInput ^x8{Enter}2099{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_n::
 SendInput ^+u2099{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_n::
 SendInput {U+2099}
 return
@@ -21137,17 +21135,17 @@ return
 
 ;; Glyph: 'ₚ' Descr: LATIN SUBSCRIPT SMALL LETTER P
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_p::
 SendInput ^x8{Enter}209a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_p::
 SendInput ^+u209a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_p::
 SendInput {U+209A}
 return
@@ -21155,17 +21153,17 @@ return
 
 ;; Glyph: 'ₛ' Descr: LATIN SUBSCRIPT SMALL LETTER S
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_s::
 SendInput ^x8{Enter}209b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_s::
 SendInput ^+u209b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_s::
 SendInput {U+209B}
 return
@@ -21173,17 +21171,17 @@ return
 
 ;; Glyph: 'ₜ' Descr: LATIN SUBSCRIPT SMALL LETTER T
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_t::
 SendInput ^x8{Enter}209c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_t::
 SendInput ^+u209c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_t::
 SendInput {U+209C}
 return
@@ -21191,17 +21189,17 @@ return
 
 ;; Glyph: '₡' Descr: COLON SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\colon::
 SendInput ^x8{Enter}20a1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\colon::
 SendInput ^+u20a1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\colon::
 SendInput {U+20A1}
 return
@@ -21209,17 +21207,17 @@ return
 
 ;; Glyph: '₡' Descr: COLON SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textcolonmonetary::
 SendInput ^x8{Enter}20a1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textcolonmonetary::
 SendInput ^+u20a1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textcolonmonetary::
 SendInput {U+20A1}
 return
@@ -21227,17 +21225,17 @@ return
 
 ;; Glyph: '₢' Descr: CRUZEIRO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cruzeiro::
 SendInput ^x8{Enter}20a2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cruzeiro::
 SendInput ^+u20a2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cruzeiro::
 SendInput {U+20A2}
 return
@@ -21245,17 +21243,17 @@ return
 
 ;; Glyph: '₤' Descr: LIRA SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lira::
 SendInput ^x8{Enter}20a4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lira::
 SendInput ^+u20a4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lira::
 SendInput {U+20A4}
 return
@@ -21263,17 +21261,17 @@ return
 
 ;; Glyph: '₤' Descr: LIRA SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textlira::
 SendInput ^x8{Enter}20a4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textlira::
 SendInput ^+u20a4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textlira::
 SendInput {U+20A4}
 return
@@ -21281,17 +21279,17 @@ return
 
 ;; Glyph: '₥' Descr: MILL SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\mill::
 SendInput ^x8{Enter}20a5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\mill::
 SendInput ^+u20a5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\mill::
 SendInput {U+20A5}
 return
@@ -21299,17 +21297,17 @@ return
 
 ;; Glyph: '₦' Descr: NAIRA SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\naira::
 SendInput ^x8{Enter}20a6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\naira::
 SendInput ^+u20a6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\naira::
 SendInput {U+20A6}
 return
@@ -21317,17 +21315,17 @@ return
 
 ;; Glyph: '₦' Descr: NAIRA SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textnaira::
 SendInput ^x8{Enter}20a6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textnaira::
 SendInput ^+u20a6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textnaira::
 SendInput {U+20A6}
 return
@@ -21335,17 +21333,17 @@ return
 
 ;; Glyph: '₧' Descr: PESETA SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\peseta::
 SendInput ^x8{Enter}20a7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\peseta::
 SendInput ^+u20a7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\peseta::
 SendInput {U+20A7}
 return
@@ -21353,17 +21351,17 @@ return
 
 ;; Glyph: '₨' Descr: RUPEE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rupee::
 SendInput ^x8{Enter}20a8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rupee::
 SendInput ^+u20a8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rupee::
 SendInput {U+20A8}
 return
@@ -21371,17 +21369,17 @@ return
 
 ;; Glyph: '₩' Descr: WON SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textwon::
 SendInput ^x8{Enter}20a9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textwon::
 SendInput ^+u20a9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textwon::
 SendInput {U+20A9}
 return
@@ -21389,17 +21387,17 @@ return
 
 ;; Glyph: '₩' Descr: WON SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\won::
 SendInput ^x8{Enter}20a9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\won::
 SendInput ^+u20a9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\won::
 SendInput {U+20A9}
 return
@@ -21407,17 +21405,17 @@ return
 
 ;; Glyph: '₫' Descr: DONG SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\dong::
 SendInput ^x8{Enter}20ab{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\dong::
 SendInput ^+u20ab{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\dong::
 SendInput {U+20AB}
 return
@@ -21425,17 +21423,17 @@ return
 
 ;; Glyph: '€' Descr: EURO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\euro::
 SendInput ^x8{Enter}20ac{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\euro::
 SendInput ^+u20ac{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\euro::
 SendInput {U+20AC}
 return
@@ -21443,17 +21441,17 @@ return
 
 ;; Glyph: '₭' Descr: KIP SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\kip::
 SendInput ^x8{Enter}20ad{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\kip::
 SendInput ^+u20ad{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\kip::
 SendInput {U+20AD}
 return
@@ -21461,17 +21459,17 @@ return
 
 ;; Glyph: '₮' Descr: TUGRIK SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\tugrik::
 SendInput ^x8{Enter}20ae{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\tugrik::
 SendInput ^+u20ae{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\tugrik::
 SendInput {U+20AE}
 return
@@ -21479,17 +21477,17 @@ return
 
 ;; Glyph: '₯' Descr: DRACHMA SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\drachma::
 SendInput ^x8{Enter}20af{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\drachma::
 SendInput ^+u20af{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\drachma::
 SendInput {U+20AF}
 return
@@ -21497,17 +21495,17 @@ return
 
 ;; Glyph: '₱' Descr: PESO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\peso::
 SendInput ^x8{Enter}20b1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\peso::
 SendInput ^+u20b1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\peso::
 SendInput {U+20B1}
 return
@@ -21515,17 +21513,17 @@ return
 
 ;; Glyph: '₱' Descr: PESO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textpeso::
 SendInput ^x8{Enter}20b1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textpeso::
 SendInput ^+u20b1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textpeso::
 SendInput {U+20B1}
 return
@@ -21533,17 +21531,17 @@ return
 
 ;; Glyph: '₲' Descr: GUARANI SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\guarani::
 SendInput ^x8{Enter}20b2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\guarani::
 SendInput ^+u20b2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\guarani::
 SendInput {U+20B2}
 return
@@ -21551,17 +21549,17 @@ return
 
 ;; Glyph: '₳' Descr: AUSTRAL SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\austral::
 SendInput ^x8{Enter}20b3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\austral::
 SendInput ^+u20b3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\austral::
 SendInput {U+20B3}
 return
@@ -21569,17 +21567,17 @@ return
 
 ;; Glyph: '₴' Descr: HRYVNIA SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\hryvnia::
 SendInput ^x8{Enter}20b4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\hryvnia::
 SendInput ^+u20b4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\hryvnia::
 SendInput {U+20B4}
 return
@@ -21587,17 +21585,17 @@ return
 
 ;; Glyph: '₵' Descr: CEDI SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cedi::
 SendInput ^x8{Enter}20b5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cedi::
 SendInput ^+u20b5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cedi::
 SendInput {U+20B5}
 return
@@ -21605,17 +21603,17 @@ return
 
 ;; Glyph: '₷' Descr: SPESMILO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\spesmilo::
 SendInput ^x8{Enter}20b7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\spesmilo::
 SendInput ^+u20b7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\spesmilo::
 SendInput {U+20B7}
 return
@@ -21623,17 +21621,17 @@ return
 
 ;; Glyph: '₸' Descr: TENGE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\tenge::
 SendInput ^x8{Enter}20b8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\tenge::
 SendInput ^+u20b8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\tenge::
 SendInput {U+20B8}
 return
@@ -21641,17 +21639,17 @@ return
 
 ;; Glyph: '₼' Descr: MANAT SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\manat::
 SendInput ^x8{Enter}20bc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\manat::
 SendInput ^+u20bc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\manat::
 SendInput {U+20BC}
 return
@@ -21659,17 +21657,17 @@ return
 
 ;; Glyph: '₽' Descr: RUBLE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ruble::
 SendInput ^x8{Enter}20bd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ruble::
 SendInput ^+u20bd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ruble::
 SendInput {U+20BD}
 return
@@ -21677,17 +21675,17 @@ return
 
 ;; Glyph: '₾' Descr: LARI SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lari::
 SendInput ^x8{Enter}20be{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lari::
 SendInput ^+u20be{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lari::
 SendInput {U+20BE}
 return
@@ -21695,17 +21693,17 @@ return
 
 ;; Glyph: '⃗' Descr: COMBINING RIGHT ARROW ABOVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vec::
 SendInput ^x8{Enter}20d7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vec::
 SendInput ^+u20d7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vec::
 SendInput {U+20D7}
 return
@@ -21713,17 +21711,17 @@ return
 
 ;; Glyph: '⃝' Descr: COMBINING ENCLOSING CIRCLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textbigcircle::
 SendInput ^x8{Enter}20dd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textbigcircle::
 SendInput ^+u20dd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textbigcircle::
 SendInput {U+20DD}
 return
@@ -21731,17 +21729,17 @@ return
 
 ;; Glyph: '℃' Descr: DEGREE CELSIUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\celsius::
 SendInput ^x8{Enter}2103{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\celsius::
 SendInput ^+u2103{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\celsius::
 SendInput {U+2103}
 return
@@ -21749,17 +21747,17 @@ return
 
 ;; Glyph: 'ℏ' Descr: PLANCK CONSTANT OVER TWO PI
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\hbar::
 SendInput ^x8{Enter}210f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\hbar::
 SendInput ^+u210f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\hbar::
 SendInput {U+210F}
 return
@@ -21767,17 +21765,17 @@ return
 
 ;; Glyph: 'ℐ' Descr: SCRIPT CAPITAL I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\mathscr{I}::
 SendInput ^x8{Enter}2110{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\mathscr{I}::
 SendInput ^+u2110{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\mathscr{I}::
 SendInput {U+2110}
 return
@@ -21785,17 +21783,17 @@ return
 
 ;; Glyph: 'ℑ' Descr: BLACK-LETTER CAPITAL I
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Im::
 SendInput ^x8{Enter}2111{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Im::
 SendInput ^+u2111{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Im::
 SendInput {U+2111}
 return
@@ -21803,17 +21801,17 @@ return
 
 ;; Glyph: 'ℓ' Descr: SCRIPT SMALL L
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ell::
 SendInput ^x8{Enter}2113{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ell::
 SendInput ^+u2113{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ell::
 SendInput {U+2113}
 return
@@ -21821,17 +21819,17 @@ return
 
 ;; Glyph: 'ℕ' Descr: DOUBLE-STRUCK CAPITAL N
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Bbb{N}::
 SendInput ^x8{Enter}2115{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Bbb{N}::
 SendInput ^+u2115{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Bbb{N}::
 SendInput {U+2115}
 return
@@ -21839,17 +21837,17 @@ return
 
 ;; Glyph: '№' Descr: NUMERO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\numero::
 SendInput ^x8{Enter}2116{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\numero::
 SendInput ^+u2116{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\numero::
 SendInput {U+2116}
 return
@@ -21857,17 +21855,17 @@ return
 
 ;; Glyph: '№' Descr: NUMERO SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textnumero::
 SendInput ^x8{Enter}2116{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textnumero::
 SendInput ^+u2116{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textnumero::
 SendInput {U+2116}
 return
@@ -21875,17 +21873,17 @@ return
 
 ;; Glyph: '℗' Descr: SOUND RECORDING COPYRIGHT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textcircledP::
 SendInput ^x8{Enter}2117{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textcircledP::
 SendInput ^+u2117{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textcircledP::
 SendInput {U+2117}
 return
@@ -21893,17 +21891,17 @@ return
 
 ;; Glyph: '℘' Descr: SCRIPT CAPITAL P
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\wp::
 SendInput ^x8{Enter}2118{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\wp::
 SendInput ^+u2118{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\wp::
 SendInput {U+2118}
 return
@@ -21911,17 +21909,17 @@ return
 
 ;; Glyph: 'ℙ' Descr: DOUBLE-STRUCK CAPITAL P
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Bbb{P}::
 SendInput ^x8{Enter}2119{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Bbb{P}::
 SendInput ^+u2119{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Bbb{P}::
 SendInput {U+2119}
 return
@@ -21929,17 +21927,17 @@ return
 
 ;; Glyph: 'ℜ' Descr: BLACK-LETTER CAPITAL R
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Re::
 SendInput ^x8{Enter}211c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Re::
 SendInput ^+u211c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Re::
 SendInput {U+211C}
 return
@@ -21947,17 +21945,17 @@ return
 
 ;; Glyph: 'ℝ' Descr: DOUBLE-STRUCK CAPITAL R
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Bbb{R}::
 SendInput ^x8{Enter}211d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Bbb{R}::
 SendInput ^+u211d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Bbb{R}::
 SendInput {U+211D}
 return
@@ -21965,17 +21963,17 @@ return
 
 ;; Glyph: '℞' Descr: PRESCRIPTION TAKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textrecipe::
 SendInput ^x8{Enter}211e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textrecipe::
 SendInput ^+u211e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textrecipe::
 SendInput {U+211E}
 return
@@ -21983,17 +21981,17 @@ return
 
 ;; Glyph: '℠' Descr: SERVICE MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^{SM}::
 SendInput ^x8{Enter}2120{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^{SM}::
 SendInput ^+u2120{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^{SM}::
 SendInput {U+2120}
 return
@@ -22001,17 +21999,17 @@ return
 
 ;; Glyph: '℡' Descr: TELEPHONE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\telephone::
 SendInput ^x8{Enter}2121{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\telephone::
 SendInput ^+u2121{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\telephone::
 SendInput {U+2121}
 return
@@ -22019,17 +22017,17 @@ return
 
 ;; Glyph: '℡' Descr: TELEPHONE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^{TEL}::
 SendInput ^x8{Enter}2121{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^{TEL}::
 SendInput ^+u2121{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^{TEL}::
 SendInput {U+2121}
 return
@@ -22037,17 +22035,17 @@ return
 
 ;; Glyph: '™' Descr: TRADE MARK SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^{TM}::
 SendInput ^x8{Enter}2122{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^{TM}::
 SendInput ^+u2122{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^{TM}::
 SendInput {U+2122}
 return
@@ -22055,17 +22053,17 @@ return
 
 ;; Glyph: 'ℤ' Descr: DOUBLE-STRUCK CAPITAL Z
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Bbb{Z}::
 SendInput ^x8{Enter}2124{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Bbb{Z}::
 SendInput ^+u2124{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Bbb{Z}::
 SendInput {U+2124}
 return
@@ -22073,17 +22071,17 @@ return
 
 ;; Glyph: '℥' Descr: OUNCE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ounce::
 SendInput ^x8{Enter}2125{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ounce::
 SendInput ^+u2125{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ounce::
 SendInput {U+2125}
 return
@@ -22091,17 +22089,17 @@ return
 
 ;; Glyph: 'Ω' Descr: OHM SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ohm::
 SendInput ^x8{Enter}2126{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ohm::
 SendInput ^+u2126{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ohm::
 SendInput {U+2126}
 return
@@ -22109,17 +22107,17 @@ return
 
 ;; Glyph: '℧' Descr: INVERTED OHM SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\mho::
 SendInput ^x8{Enter}2127{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\mho::
 SendInput ^+u2127{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\mho::
 SendInput {U+2127}
 return
@@ -22127,17 +22125,17 @@ return
 
 ;; Glyph: 'K' Descr: KELVIN SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\kelvin::
 SendInput ^x8{Enter}212a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\kelvin::
 SendInput ^+u212a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\kelvin::
 SendInput {U+212A}
 return
@@ -22145,17 +22143,17 @@ return
 
 ;; Glyph: 'Å' Descr: ANGSTROM SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\angstrom::
 SendInput ^x8{Enter}212b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\angstrom::
 SendInput ^+u212b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\angstrom::
 SendInput {U+212B}
 return
@@ -22163,17 +22161,17 @@ return
 
 ;; Glyph: '℮' Descr: ESTIMATED SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textestimated::
 SendInput ^x8{Enter}212e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textestimated::
 SendInput ^+u212e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textestimated::
 SendInput {U+212E}
 return
@@ -22181,17 +22179,17 @@ return
 
 ;; Glyph: 'ℵ' Descr: ALEF SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\aleph::
 SendInput ^x8{Enter}2135{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\aleph::
 SendInput ^+u2135{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\aleph::
 SendInput {U+2135}
 return
@@ -22199,17 +22197,17 @@ return
 
 ;; Glyph: 'ℶ' Descr: BET SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\beth::
 SendInput ^x8{Enter}2136{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\beth::
 SendInput ^+u2136{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\beth::
 SendInput {U+2136}
 return
@@ -22217,17 +22215,17 @@ return
 
 ;; Glyph: 'ℷ' Descr: GIMEL SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gimel::
 SendInput ^x8{Enter}2137{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gimel::
 SendInput ^+u2137{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gimel::
 SendInput {U+2137}
 return
@@ -22235,17 +22233,17 @@ return
 
 ;; Glyph: 'ℸ' Descr: DALET SYMBOL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\daleth::
 SendInput ^x8{Enter}2138{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\daleth::
 SendInput ^+u2138{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\daleth::
 SendInput {U+2138}
 return
@@ -22253,17 +22251,17 @@ return
 
 ;; Glyph: '℻' Descr: FACSIMILE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\facsimile::
 SendInput ^x8{Enter}213b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\facsimile::
 SendInput ^+u213b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\facsimile::
 SendInput {U+213B}
 return
@@ -22271,17 +22269,17 @@ return
 
 ;; Glyph: '⅌' Descr: PER SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\per::
 SendInput ^x8{Enter}214c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\per::
 SendInput ^+u214c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\per::
 SendInput {U+214C}
 return
@@ -22289,17 +22287,17 @@ return
 
 ;; Glyph: '⅓' Descr: VULGAR FRACTION ONE THIRD
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac13::
 SendInput ^x8{Enter}2153{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac13::
 SendInput ^+u2153{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac13::
 SendInput {U+2153}
 return
@@ -22307,17 +22305,17 @@ return
 
 ;; Glyph: '⅔' Descr: VULGAR FRACTION TWO THIRDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac23::
 SendInput ^x8{Enter}2154{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac23::
 SendInput ^+u2154{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac23::
 SendInput {U+2154}
 return
@@ -22325,17 +22323,17 @@ return
 
 ;; Glyph: '⅕' Descr: VULGAR FRACTION ONE FIFTH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac15::
 SendInput ^x8{Enter}2155{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac15::
 SendInput ^+u2155{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac15::
 SendInput {U+2155}
 return
@@ -22343,17 +22341,17 @@ return
 
 ;; Glyph: '⅖' Descr: VULGAR FRACTION TWO FIFTHS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac25::
 SendInput ^x8{Enter}2156{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac25::
 SendInput ^+u2156{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac25::
 SendInput {U+2156}
 return
@@ -22361,17 +22359,17 @@ return
 
 ;; Glyph: '⅗' Descr: VULGAR FRACTION THREE FIFTHS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac35::
 SendInput ^x8{Enter}2157{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac35::
 SendInput ^+u2157{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac35::
 SendInput {U+2157}
 return
@@ -22379,17 +22377,17 @@ return
 
 ;; Glyph: '⅘' Descr: VULGAR FRACTION FOUR FIFTHS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac45::
 SendInput ^x8{Enter}2158{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac45::
 SendInput ^+u2158{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac45::
 SendInput {U+2158}
 return
@@ -22397,17 +22395,17 @@ return
 
 ;; Glyph: '⅙' Descr: VULGAR FRACTION ONE SIXTH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac16::
 SendInput ^x8{Enter}2159{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac16::
 SendInput ^+u2159{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac16::
 SendInput {U+2159}
 return
@@ -22415,17 +22413,17 @@ return
 
 ;; Glyph: '⅚' Descr: VULGAR FRACTION FIVE SIXTHS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac56::
 SendInput ^x8{Enter}215a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac56::
 SendInput ^+u215a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac56::
 SendInput {U+215A}
 return
@@ -22433,17 +22431,17 @@ return
 
 ;; Glyph: '⅛' Descr: VULGAR FRACTION ONE EIGHTH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac18::
 SendInput ^x8{Enter}215b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac18::
 SendInput ^+u215b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac18::
 SendInput {U+215B}
 return
@@ -22451,17 +22449,17 @@ return
 
 ;; Glyph: '⅜' Descr: VULGAR FRACTION THREE EIGHTHS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac38::
 SendInput ^x8{Enter}215c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac38::
 SendInput ^+u215c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac38::
 SendInput {U+215C}
 return
@@ -22469,17 +22467,17 @@ return
 
 ;; Glyph: '⅝' Descr: VULGAR FRACTION FIVE EIGHTHS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac58::
 SendInput ^x8{Enter}215d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac58::
 SendInput ^+u215d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac58::
 SendInput {U+215D}
 return
@@ -22487,17 +22485,17 @@ return
 
 ;; Glyph: '⅞' Descr: VULGAR FRACTION SEVEN EIGHTHS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac78::
 SendInput ^x8{Enter}215e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac78::
 SendInput ^+u215e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac78::
 SendInput {U+215E}
 return
@@ -22505,17 +22503,17 @@ return
 
 ;; Glyph: '⅟' Descr: FRACTION NUMERATOR ONE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frac1::
 SendInput ^x8{Enter}215f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frac1::
 SendInput ^+u215f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frac1::
 SendInput {U+215F}
 return
@@ -22523,17 +22521,17 @@ return
 
 ;; Glyph: '←' Descr: LEFTWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gets::
 SendInput ^x8{Enter}2190{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gets::
 SendInput ^+u2190{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gets::
 SendInput {U+2190}
 return
@@ -22541,17 +22539,17 @@ return
 
 ;; Glyph: '←' Descr: LEFTWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftarrow::
 SendInput ^x8{Enter}2190{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftarrow::
 SendInput ^+u2190{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftarrow::
 SendInput {U+2190}
 return
@@ -22559,17 +22557,17 @@ return
 
 ;; Glyph: '←' Descr: LEFTWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\longleftarrow::
 SendInput ^x8{Enter}2190{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\longleftarrow::
 SendInput ^+u2190{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\longleftarrow::
 SendInput {U+2190}
 return
@@ -22577,17 +22575,17 @@ return
 
 ;; Glyph: '↑' Descr: UPWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uparrow::
 SendInput ^x8{Enter}2191{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uparrow::
 SendInput ^+u2191{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uparrow::
 SendInput {U+2191}
 return
@@ -22595,17 +22593,17 @@ return
 
 ;; Glyph: '→' Descr: RIGHTWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\longrightarrow::
 SendInput ^x8{Enter}2192{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\longrightarrow::
 SendInput ^+u2192{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\longrightarrow::
 SendInput {U+2192}
 return
@@ -22613,17 +22611,17 @@ return
 
 ;; Glyph: '→' Descr: RIGHTWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rightarrow::
 SendInput ^x8{Enter}2192{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rightarrow::
 SendInput ^+u2192{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rightarrow::
 SendInput {U+2192}
 return
@@ -22631,17 +22629,17 @@ return
 
 ;; Glyph: '→' Descr: RIGHTWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\to::
 SendInput ^x8{Enter}2192{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\to::
 SendInput ^+u2192{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\to::
 SendInput {U+2192}
 return
@@ -22649,17 +22647,17 @@ return
 
 ;; Glyph: '↓' Descr: DOWNWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\downarrow::
 SendInput ^x8{Enter}2193{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\downarrow::
 SendInput ^+u2193{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\downarrow::
 SendInput {U+2193}
 return
@@ -22667,17 +22665,17 @@ return
 
 ;; Glyph: '↔' Descr: LEFT RIGHT ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftrightarrow::
 SendInput ^x8{Enter}2194{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftrightarrow::
 SendInput ^+u2194{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftrightarrow::
 SendInput {U+2194}
 return
@@ -22685,17 +22683,17 @@ return
 
 ;; Glyph: '↔' Descr: LEFT RIGHT ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\longleftrightarrow::
 SendInput ^x8{Enter}2194{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\longleftrightarrow::
 SendInput ^+u2194{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\longleftrightarrow::
 SendInput {U+2194}
 return
@@ -22703,17 +22701,17 @@ return
 
 ;; Glyph: '↕' Descr: UP DOWN ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\updownarrow::
 SendInput ^x8{Enter}2195{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\updownarrow::
 SendInput ^+u2195{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\updownarrow::
 SendInput {U+2195}
 return
@@ -22721,17 +22719,17 @@ return
 
 ;; Glyph: '↖' Descr: NORTH WEST ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nwarrow::
 SendInput ^x8{Enter}2196{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nwarrow::
 SendInput ^+u2196{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nwarrow::
 SendInput {U+2196}
 return
@@ -22739,17 +22737,17 @@ return
 
 ;; Glyph: '↗' Descr: NORTH EAST ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nearrow::
 SendInput ^x8{Enter}2197{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nearrow::
 SendInput ^+u2197{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nearrow::
 SendInput {U+2197}
 return
@@ -22757,17 +22755,17 @@ return
 
 ;; Glyph: '↘' Descr: SOUTH EAST ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\searrow::
 SendInput ^x8{Enter}2198{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\searrow::
 SendInput ^+u2198{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\searrow::
 SendInput {U+2198}
 return
@@ -22775,17 +22773,17 @@ return
 
 ;; Glyph: '↙' Descr: SOUTH WEST ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\swarrow::
 SendInput ^x8{Enter}2199{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\swarrow::
 SendInput ^+u2199{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\swarrow::
 SendInput {U+2199}
 return
@@ -22793,17 +22791,17 @@ return
 
 ;; Glyph: '↚' Descr: LEFTWARDS ARROW WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nleftarrow::
 SendInput ^x8{Enter}219a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nleftarrow::
 SendInput ^+u219a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nleftarrow::
 SendInput {U+219A}
 return
@@ -22811,17 +22809,17 @@ return
 
 ;; Glyph: '↛' Descr: RIGHTWARDS ARROW WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nrightarrow::
 SendInput ^x8{Enter}219b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nrightarrow::
 SendInput ^+u219b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nrightarrow::
 SendInput {U+219B}
 return
@@ -22829,17 +22827,17 @@ return
 
 ;; Glyph: '↝' Descr: RIGHTWARDS WAVE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leadsto::
 SendInput ^x8{Enter}219d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leadsto::
 SendInput ^+u219d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leadsto::
 SendInput {U+219D}
 return
@@ -22847,17 +22845,17 @@ return
 
 ;; Glyph: '↞' Descr: LEFTWARDS TWO HEADED ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\twoheadleftarrow::
 SendInput ^x8{Enter}219e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\twoheadleftarrow::
 SendInput ^+u219e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\twoheadleftarrow::
 SendInput {U+219E}
 return
@@ -22865,17 +22863,17 @@ return
 
 ;; Glyph: '↠' Descr: RIGHTWARDS TWO HEADED ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\twoheadrightarrow::
 SendInput ^x8{Enter}21a0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\twoheadrightarrow::
 SendInput ^+u21a0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\twoheadrightarrow::
 SendInput {U+21A0}
 return
@@ -22883,17 +22881,17 @@ return
 
 ;; Glyph: '↢' Descr: LEFTWARDS ARROW WITH TAIL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftarrowtail::
 SendInput ^x8{Enter}21a2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftarrowtail::
 SendInput ^+u21a2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftarrowtail::
 SendInput {U+21A2}
 return
@@ -22901,17 +22899,17 @@ return
 
 ;; Glyph: '↣' Descr: RIGHTWARDS ARROW WITH TAIL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rightarrowtail::
 SendInput ^x8{Enter}21a3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rightarrowtail::
 SendInput ^+u21a3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rightarrowtail::
 SendInput {U+21A3}
 return
@@ -22919,17 +22917,17 @@ return
 
 ;; Glyph: '↦' Descr: RIGHTWARDS ARROW FROM BAR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\longmapsto::
 SendInput ^x8{Enter}21a6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\longmapsto::
 SendInput ^+u21a6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\longmapsto::
 SendInput {U+21A6}
 return
@@ -22937,17 +22935,17 @@ return
 
 ;; Glyph: '↦' Descr: RIGHTWARDS ARROW FROM BAR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\mapsto::
 SendInput ^x8{Enter}21a6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\mapsto::
 SendInput ^+u21a6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\mapsto::
 SendInput {U+21A6}
 return
@@ -22955,17 +22953,17 @@ return
 
 ;; Glyph: '↩' Descr: LEFTWARDS ARROW WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\hookleftarrow::
 SendInput ^x8{Enter}21a9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\hookleftarrow::
 SendInput ^+u21a9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\hookleftarrow::
 SendInput {U+21A9}
 return
@@ -22973,17 +22971,17 @@ return
 
 ;; Glyph: '↪' Descr: RIGHTWARDS ARROW WITH HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\hookrightarrow::
 SendInput ^x8{Enter}21aa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\hookrightarrow::
 SendInput ^+u21aa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\hookrightarrow::
 SendInput {U+21AA}
 return
@@ -22991,17 +22989,17 @@ return
 
 ;; Glyph: '↫' Descr: LEFTWARDS ARROW WITH LOOP
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\looparrowleft::
 SendInput ^x8{Enter}21ab{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\looparrowleft::
 SendInput ^+u21ab{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\looparrowleft::
 SendInput {U+21AB}
 return
@@ -23009,17 +23007,17 @@ return
 
 ;; Glyph: '↬' Descr: RIGHTWARDS ARROW WITH LOOP
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\looparrowright::
 SendInput ^x8{Enter}21ac{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\looparrowright::
 SendInput ^+u21ac{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\looparrowright::
 SendInput {U+21AC}
 return
@@ -23027,17 +23025,17 @@ return
 
 ;; Glyph: '↭' Descr: LEFT RIGHT WAVE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftrightsquigarrow::
 SendInput ^x8{Enter}21ad{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftrightsquigarrow::
 SendInput ^+u21ad{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftrightsquigarrow::
 SendInput {U+21AD}
 return
@@ -23045,17 +23043,17 @@ return
 
 ;; Glyph: '↮' Descr: LEFT RIGHT ARROW WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nleftrightarrow::
 SendInput ^x8{Enter}21ae{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nleftrightarrow::
 SendInput ^+u21ae{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nleftrightarrow::
 SendInput {U+21AE}
 return
@@ -23063,17 +23061,17 @@ return
 
 ;; Glyph: '↰' Descr: UPWARDS ARROW WITH TIP LEFTWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Lsh::
 SendInput ^x8{Enter}21b0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Lsh::
 SendInput ^+u21b0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Lsh::
 SendInput {U+21B0}
 return
@@ -23081,17 +23079,17 @@ return
 
 ;; Glyph: '↱' Descr: UPWARDS ARROW WITH TIP RIGHTWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Rsh::
 SendInput ^x8{Enter}21b1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Rsh::
 SendInput ^+u21b1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Rsh::
 SendInput {U+21B1}
 return
@@ -23099,17 +23097,17 @@ return
 
 ;; Glyph: '↶' Descr: ANTICLOCKWISE TOP SEMICIRCLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\curvearrowleft::
 SendInput ^x8{Enter}21b6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\curvearrowleft::
 SendInput ^+u21b6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\curvearrowleft::
 SendInput {U+21B6}
 return
@@ -23117,17 +23115,17 @@ return
 
 ;; Glyph: '↷' Descr: CLOCKWISE TOP SEMICIRCLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\curvearrowright::
 SendInput ^x8{Enter}21b7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\curvearrowright::
 SendInput ^+u21b7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\curvearrowright::
 SendInput {U+21B7}
 return
@@ -23135,17 +23133,17 @@ return
 
 ;; Glyph: '↺' Descr: ANTICLOCKWISE OPEN CIRCLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circlearrowleft::
 SendInput ^x8{Enter}21ba{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circlearrowleft::
 SendInput ^+u21ba{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circlearrowleft::
 SendInput {U+21BA}
 return
@@ -23153,17 +23151,17 @@ return
 
 ;; Glyph: '↻' Descr: CLOCKWISE OPEN CIRCLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circlearrowright::
 SendInput ^x8{Enter}21bb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circlearrowright::
 SendInput ^+u21bb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circlearrowright::
 SendInput {U+21BB}
 return
@@ -23171,17 +23169,17 @@ return
 
 ;; Glyph: '↼' Descr: LEFTWARDS HARPOON WITH BARB UPWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftharpoonup::
 SendInput ^x8{Enter}21bc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftharpoonup::
 SendInput ^+u21bc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftharpoonup::
 SendInput {U+21BC}
 return
@@ -23189,17 +23187,17 @@ return
 
 ;; Glyph: '↽' Descr: LEFTWARDS HARPOON WITH BARB DOWNWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftharpoondown::
 SendInput ^x8{Enter}21bd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftharpoondown::
 SendInput ^+u21bd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftharpoondown::
 SendInput {U+21BD}
 return
@@ -23207,17 +23205,17 @@ return
 
 ;; Glyph: '↾' Descr: UPWARDS HARPOON WITH BARB RIGHTWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uprightharpoon::
 SendInput ^x8{Enter}21be{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uprightharpoon::
 SendInput ^+u21be{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uprightharpoon::
 SendInput {U+21BE}
 return
@@ -23225,17 +23223,17 @@ return
 
 ;; Glyph: '↿' Descr: UPWARDS HARPOON WITH BARB LEFTWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\upleftharpoon::
 SendInput ^x8{Enter}21bf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\upleftharpoon::
 SendInput ^+u21bf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\upleftharpoon::
 SendInput {U+21BF}
 return
@@ -23243,17 +23241,17 @@ return
 
 ;; Glyph: '⇀' Descr: RIGHTWARDS HARPOON WITH BARB UPWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rightharpoonup::
 SendInput ^x8{Enter}21c0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rightharpoonup::
 SendInput ^+u21c0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rightharpoonup::
 SendInput {U+21C0}
 return
@@ -23261,17 +23259,17 @@ return
 
 ;; Glyph: '⇁' Descr: RIGHTWARDS HARPOON WITH BARB DOWNWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rightharpoondown::
 SendInput ^x8{Enter}21c1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rightharpoondown::
 SendInput ^+u21c1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rightharpoondown::
 SendInput {U+21C1}
 return
@@ -23279,17 +23277,17 @@ return
 
 ;; Glyph: '⇂' Descr: DOWNWARDS HARPOON WITH BARB RIGHTWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\downrightharpoon::
 SendInput ^x8{Enter}21c2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\downrightharpoon::
 SendInput ^+u21c2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\downrightharpoon::
 SendInput {U+21C2}
 return
@@ -23297,17 +23295,17 @@ return
 
 ;; Glyph: '⇃' Descr: DOWNWARDS HARPOON WITH BARB LEFTWARDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\downleftharpoon::
 SendInput ^x8{Enter}21c3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\downleftharpoon::
 SendInput ^+u21c3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\downleftharpoon::
 SendInput {U+21C3}
 return
@@ -23315,17 +23313,17 @@ return
 
 ;; Glyph: '⇄' Descr: RIGHTWARDS ARROW OVER LEFTWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rightleftarrows::
 SendInput ^x8{Enter}21c4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rightleftarrows::
 SendInput ^+u21c4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rightleftarrows::
 SendInput {U+21C4}
 return
@@ -23333,17 +23331,17 @@ return
 
 ;; Glyph: '⇆' Descr: LEFTWARDS ARROW OVER RIGHTWARDS ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftrightarrows::
 SendInput ^x8{Enter}21c6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftrightarrows::
 SendInput ^+u21c6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftrightarrows::
 SendInput {U+21C6}
 return
@@ -23351,17 +23349,17 @@ return
 
 ;; Glyph: '⇇' Descr: LEFTWARDS PAIRED ARROWS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftleftarrows::
 SendInput ^x8{Enter}21c7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftleftarrows::
 SendInput ^+u21c7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftleftarrows::
 SendInput {U+21C7}
 return
@@ -23369,17 +23367,17 @@ return
 
 ;; Glyph: '⇈' Descr: UPWARDS PAIRED ARROWS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\upuparrows::
 SendInput ^x8{Enter}21c8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\upuparrows::
 SendInput ^+u21c8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\upuparrows::
 SendInput {U+21C8}
 return
@@ -23387,17 +23385,17 @@ return
 
 ;; Glyph: '⇉' Descr: RIGHTWARDS PAIRED ARROWS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rightrightarrows::
 SendInput ^x8{Enter}21c9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rightrightarrows::
 SendInput ^+u21c9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rightrightarrows::
 SendInput {U+21C9}
 return
@@ -23405,17 +23403,17 @@ return
 
 ;; Glyph: '⇊' Descr: DOWNWARDS PAIRED ARROWS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\downdownarrows::
 SendInput ^x8{Enter}21ca{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\downdownarrows::
 SendInput ^+u21ca{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\downdownarrows::
 SendInput {U+21CA}
 return
@@ -23423,17 +23421,17 @@ return
 
 ;; Glyph: '⇋' Descr: LEFTWARDS HARPOON OVER RIGHTWARDS HARPOON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftrightharpoons::
 SendInput ^x8{Enter}21cb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftrightharpoons::
 SendInput ^+u21cb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftrightharpoons::
 SendInput {U+21CB}
 return
@@ -23441,17 +23439,17 @@ return
 
 ;; Glyph: '⇌' Descr: RIGHTWARDS HARPOON OVER LEFTWARDS HARPOON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rightleftharpoons::
 SendInput ^x8{Enter}21cc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rightleftharpoons::
 SendInput ^+u21cc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rightleftharpoons::
 SendInput {U+21CC}
 return
@@ -23459,17 +23457,17 @@ return
 
 ;; Glyph: '⇍' Descr: LEFTWARDS DOUBLE ARROW WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nLeftarrow::
 SendInput ^x8{Enter}21cd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nLeftarrow::
 SendInput ^+u21cd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nLeftarrow::
 SendInput {U+21CD}
 return
@@ -23477,17 +23475,17 @@ return
 
 ;; Glyph: '⇎' Descr: LEFT RIGHT DOUBLE ARROW WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nLeftrightarrow::
 SendInput ^x8{Enter}21ce{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nLeftrightarrow::
 SendInput ^+u21ce{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nLeftrightarrow::
 SendInput {U+21CE}
 return
@@ -23495,17 +23493,17 @@ return
 
 ;; Glyph: '⇏' Descr: RIGHTWARDS DOUBLE ARROW WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nRightarrow::
 SendInput ^x8{Enter}21cf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nRightarrow::
 SendInput ^+u21cf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nRightarrow::
 SendInput {U+21CF}
 return
@@ -23513,17 +23511,17 @@ return
 
 ;; Glyph: '⇐' Descr: LEFTWARDS DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Leftarrow::
 SendInput ^x8{Enter}21d0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Leftarrow::
 SendInput ^+u21d0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Leftarrow::
 SendInput {U+21D0}
 return
@@ -23531,17 +23529,17 @@ return
 
 ;; Glyph: '⇐' Descr: LEFTWARDS DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Longleftarrow::
 SendInput ^x8{Enter}21d0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Longleftarrow::
 SendInput ^+u21d0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Longleftarrow::
 SendInput {U+21D0}
 return
@@ -23549,17 +23547,17 @@ return
 
 ;; Glyph: '⇑' Descr: UPWARDS DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Uparrow::
 SendInput ^x8{Enter}21d1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Uparrow::
 SendInput ^+u21d1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Uparrow::
 SendInput {U+21D1}
 return
@@ -23567,17 +23565,17 @@ return
 
 ;; Glyph: '⇒' Descr: RIGHTWARDS DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Longrightarrow::
 SendInput ^x8{Enter}21d2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Longrightarrow::
 SendInput ^+u21d2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Longrightarrow::
 SendInput {U+21D2}
 return
@@ -23585,17 +23583,17 @@ return
 
 ;; Glyph: '⇒' Descr: RIGHTWARDS DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Rightarrow::
 SendInput ^x8{Enter}21d2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Rightarrow::
 SendInput ^+u21d2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Rightarrow::
 SendInput {U+21D2}
 return
@@ -23603,17 +23601,17 @@ return
 
 ;; Glyph: '⇓' Descr: DOWNWARDS DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Downarrow::
 SendInput ^x8{Enter}21d3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Downarrow::
 SendInput ^+u21d3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Downarrow::
 SendInput {U+21D3}
 return
@@ -23621,17 +23619,17 @@ return
 
 ;; Glyph: '⇔' Descr: LEFT RIGHT DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Leftrightarrow::
 SendInput ^x8{Enter}21d4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Leftrightarrow::
 SendInput ^+u21d4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Leftrightarrow::
 SendInput {U+21D4}
 return
@@ -23639,17 +23637,17 @@ return
 
 ;; Glyph: '⇔' Descr: LEFT RIGHT DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Longleftrightarrow::
 SendInput ^x8{Enter}21d4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Longleftrightarrow::
 SendInput ^+u21d4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Longleftrightarrow::
 SendInput {U+21D4}
 return
@@ -23657,17 +23655,17 @@ return
 
 ;; Glyph: '⇔' Descr: LEFT RIGHT DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\iff::
 SendInput ^x8{Enter}21d4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\iff::
 SendInput ^+u21d4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\iff::
 SendInput {U+21D4}
 return
@@ -23675,17 +23673,17 @@ return
 
 ;; Glyph: '⇕' Descr: UP DOWN DOUBLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Updownarrow::
 SendInput ^x8{Enter}21d5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Updownarrow::
 SendInput ^+u21d5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Updownarrow::
 SendInput {U+21D5}
 return
@@ -23693,17 +23691,17 @@ return
 
 ;; Glyph: '⇚' Descr: LEFTWARDS TRIPLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Lleftarrow::
 SendInput ^x8{Enter}21da{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Lleftarrow::
 SendInput ^+u21da{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Lleftarrow::
 SendInput {U+21DA}
 return
@@ -23711,17 +23709,17 @@ return
 
 ;; Glyph: '⇛' Descr: RIGHTWARDS TRIPLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Rrightarrow::
 SendInput ^x8{Enter}21db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Rrightarrow::
 SendInput ^+u21db{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Rrightarrow::
 SendInput {U+21DB}
 return
@@ -23729,17 +23727,17 @@ return
 
 ;; Glyph: '⇝' Descr: RIGHTWARDS SQUIGGLE ARROW
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\squigarrowright::
 SendInput ^x8{Enter}21dd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\squigarrowright::
 SendInput ^+u21dd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\squigarrowright::
 SendInput {U+21DD}
 return
@@ -23747,17 +23745,17 @@ return
 
 ;; Glyph: '∀' Descr: FOR ALL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\forall::
 SendInput ^x8{Enter}2200{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\forall::
 SendInput ^+u2200{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\forall::
 SendInput {U+2200}
 return
@@ -23765,17 +23763,17 @@ return
 
 ;; Glyph: '∁' Descr: COMPLEMENT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\complement::
 SendInput ^x8{Enter}2201{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\complement::
 SendInput ^+u2201{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\complement::
 SendInput {U+2201}
 return
@@ -23783,17 +23781,17 @@ return
 
 ;; Glyph: '∂' Descr: PARTIAL DIFFERENTIAL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\partial::
 SendInput ^x8{Enter}2202{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\partial::
 SendInput ^+u2202{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\partial::
 SendInput {U+2202}
 return
@@ -23801,17 +23799,17 @@ return
 
 ;; Glyph: '∃' Descr: THERE EXISTS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\exists::
 SendInput ^x8{Enter}2203{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\exists::
 SendInput ^+u2203{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\exists::
 SendInput {U+2203}
 return
@@ -23819,17 +23817,17 @@ return
 
 ;; Glyph: '∄' Descr: THERE DOES NOT EXIST
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nexists::
 SendInput ^x8{Enter}2204{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nexists::
 SendInput ^+u2204{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nexists::
 SendInput {U+2204}
 return
@@ -23837,17 +23835,17 @@ return
 
 ;; Glyph: '∅' Descr: EMPTY SET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\emptyset::
 SendInput ^x8{Enter}2205{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\emptyset::
 SendInput ^+u2205{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\emptyset::
 SendInput {U+2205}
 return
@@ -23855,17 +23853,17 @@ return
 
 ;; Glyph: '∇' Descr: NABLA
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nabla::
 SendInput ^x8{Enter}2207{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nabla::
 SendInput ^+u2207{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nabla::
 SendInput {U+2207}
 return
@@ -23873,17 +23871,17 @@ return
 
 ;; Glyph: '∈' Descr: ELEMENT OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\in::
 SendInput ^x8{Enter}2208{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\in::
 SendInput ^+u2208{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\in::
 SendInput {U+2208}
 return
@@ -23891,17 +23889,17 @@ return
 
 ;; Glyph: '∉' Descr: NOT AN ELEMENT OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\notin::
 SendInput ^x8{Enter}2209{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\notin::
 SendInput ^+u2209{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\notin::
 SendInput {U+2209}
 return
@@ -23909,17 +23907,17 @@ return
 
 ;; Glyph: '∋' Descr: CONTAINS AS MEMBER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ni::
 SendInput ^x8{Enter}220b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ni::
 SendInput ^+u220b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ni::
 SendInput {U+220B}
 return
@@ -23927,17 +23925,17 @@ return
 
 ;; Glyph: '∍' Descr: SMALL CONTAINS AS MEMBER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\backepsilon::
 SendInput ^x8{Enter}220d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\backepsilon::
 SendInput ^+u220d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\backepsilon::
 SendInput {U+220D}
 return
@@ -23945,17 +23943,17 @@ return
 
 ;; Glyph: '∎' Descr: END OF PROOF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\qed::
 SendInput ^x8{Enter}220e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\qed::
 SendInput ^+u220e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\qed::
 SendInput {U+220E}
 return
@@ -23963,17 +23961,17 @@ return
 
 ;; Glyph: '∏' Descr: N-ARY PRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\prod::
 SendInput ^x8{Enter}220f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\prod::
 SendInput ^+u220f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\prod::
 SendInput {U+220F}
 return
@@ -23981,17 +23979,17 @@ return
 
 ;; Glyph: '∐' Descr: N-ARY COPRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\amalg::
 SendInput ^x8{Enter}2210{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\amalg::
 SendInput ^+u2210{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\amalg::
 SendInput {U+2210}
 return
@@ -23999,17 +23997,17 @@ return
 
 ;; Glyph: '∐' Descr: N-ARY COPRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\coprod::
 SendInput ^x8{Enter}2210{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\coprod::
 SendInput ^+u2210{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\coprod::
 SendInput {U+2210}
 return
@@ -24017,17 +24015,17 @@ return
 
 ;; Glyph: '∐' Descr: N-ARY COPRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\smallamalg::
 SendInput ^x8{Enter}2210{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\smallamalg::
 SendInput ^+u2210{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\smallamalg::
 SendInput {U+2210}
 return
@@ -24035,17 +24033,17 @@ return
 
 ;; Glyph: '∑' Descr: N-ARY SUMMATION
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sum::
 SendInput ^x8{Enter}2211{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sum::
 SendInput ^+u2211{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sum::
 SendInput {U+2211}
 return
@@ -24053,17 +24051,17 @@ return
 
 ;; Glyph: '−' Descr: MINUS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\minus::
 SendInput ^x8{Enter}2212{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\minus::
 SendInput ^+u2212{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\minus::
 SendInput {U+2212}
 return
@@ -24071,17 +24069,17 @@ return
 
 ;; Glyph: '∓' Descr: MINUS-OR-PLUS SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\mp::
 SendInput ^x8{Enter}2213{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\mp::
 SendInput ^+u2213{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\mp::
 SendInput {U+2213}
 return
@@ -24089,17 +24087,17 @@ return
 
 ;; Glyph: '∔' Descr: DOT PLUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\dotplus::
 SendInput ^x8{Enter}2214{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\dotplus::
 SendInput ^+u2214{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\dotplus::
 SendInput {U+2214}
 return
@@ -24107,17 +24105,17 @@ return
 
 ;; Glyph: '∖' Descr: SET MINUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\setminus::
 SendInput ^x8{Enter}2216{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\setminus::
 SendInput ^+u2216{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\setminus::
 SendInput {U+2216}
 return
@@ -24125,17 +24123,17 @@ return
 
 ;; Glyph: '∖' Descr: SET MINUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\smallsetminus::
 SendInput ^x8{Enter}2216{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\smallsetminus::
 SendInput ^+u2216{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\smallsetminus::
 SendInput {U+2216}
 return
@@ -24143,17 +24141,17 @@ return
 
 ;; Glyph: '∗' Descr: ASTERISK OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ast::
 SendInput ^x8{Enter}2217{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ast::
 SendInput ^+u2217{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ast::
 SendInput {U+2217}
 return
@@ -24161,17 +24159,17 @@ return
 
 ;; Glyph: '∘' Descr: RING OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circ::
 SendInput ^x8{Enter}2218{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circ::
 SendInput ^+u2218{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circ::
 SendInput {U+2218}
 return
@@ -24179,17 +24177,17 @@ return
 
 ;; Glyph: '√' Descr: SQUARE ROOT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\surd::
 SendInput ^x8{Enter}221a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\surd::
 SendInput ^+u221a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\surd::
 SendInput {U+221A}
 return
@@ -24197,17 +24195,17 @@ return
 
 ;; Glyph: '∝' Descr: PROPORTIONAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\propto::
 SendInput ^x8{Enter}221d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\propto::
 SendInput ^+u221d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\propto::
 SendInput {U+221D}
 return
@@ -24215,17 +24213,17 @@ return
 
 ;; Glyph: '∝' Descr: PROPORTIONAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\varpropto::
 SendInput ^x8{Enter}221d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\varpropto::
 SendInput ^+u221d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\varpropto::
 SendInput {U+221D}
 return
@@ -24233,17 +24231,17 @@ return
 
 ;; Glyph: '∞' Descr: INFINITY
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\infty::
 SendInput ^x8{Enter}221e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\infty::
 SendInput ^+u221e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\infty::
 SendInput {U+221E}
 return
@@ -24251,17 +24249,17 @@ return
 
 ;; Glyph: '∠' Descr: ANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\angle::
 SendInput ^x8{Enter}2220{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\angle::
 SendInput ^+u2220{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\angle::
 SendInput {U+2220}
 return
@@ -24269,17 +24267,17 @@ return
 
 ;; Glyph: '∡' Descr: MEASURED ANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\measuredangle::
 SendInput ^x8{Enter}2221{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\measuredangle::
 SendInput ^+u2221{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\measuredangle::
 SendInput {U+2221}
 return
@@ -24287,17 +24285,17 @@ return
 
 ;; Glyph: '∢' Descr: SPHERICAL ANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sphericalangle::
 SendInput ^x8{Enter}2222{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sphericalangle::
 SendInput ^+u2222{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sphericalangle::
 SendInput {U+2222}
 return
@@ -24305,17 +24303,17 @@ return
 
 ;; Glyph: '∣' Descr: DIVIDES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\mid::
 SendInput ^x8{Enter}2223{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\mid::
 SendInput ^+u2223{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\mid::
 SendInput {U+2223}
 return
@@ -24323,17 +24321,17 @@ return
 
 ;; Glyph: '∣' Descr: DIVIDES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\shortmid::
 SendInput ^x8{Enter}2223{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\shortmid::
 SendInput ^+u2223{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\shortmid::
 SendInput {U+2223}
 return
@@ -24341,17 +24339,17 @@ return
 
 ;; Glyph: '∤' Descr: DOES NOT DIVIDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nmid::
 SendInput ^x8{Enter}2224{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nmid::
 SendInput ^+u2224{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nmid::
 SendInput {U+2224}
 return
@@ -24359,17 +24357,17 @@ return
 
 ;; Glyph: '∤' Descr: DOES NOT DIVIDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nshortmid::
 SendInput ^x8{Enter}2224{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nshortmid::
 SendInput ^+u2224{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nshortmid::
 SendInput {U+2224}
 return
@@ -24377,17 +24375,17 @@ return
 
 ;; Glyph: '∥' Descr: PARALLEL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\parallel::
 SendInput ^x8{Enter}2225{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\parallel::
 SendInput ^+u2225{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\parallel::
 SendInput {U+2225}
 return
@@ -24395,17 +24393,17 @@ return
 
 ;; Glyph: '∥' Descr: PARALLEL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\shortparallel::
 SendInput ^x8{Enter}2225{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\shortparallel::
 SendInput ^+u2225{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\shortparallel::
 SendInput {U+2225}
 return
@@ -24413,17 +24411,17 @@ return
 
 ;; Glyph: '∦' Descr: NOT PARALLEL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nparallel::
 SendInput ^x8{Enter}2226{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nparallel::
 SendInput ^+u2226{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nparallel::
 SendInput {U+2226}
 return
@@ -24431,17 +24429,17 @@ return
 
 ;; Glyph: '∦' Descr: NOT PARALLEL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nshortparallel::
 SendInput ^x8{Enter}2226{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nshortparallel::
 SendInput ^+u2226{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nshortparallel::
 SendInput {U+2226}
 return
@@ -24449,17 +24447,17 @@ return
 
 ;; Glyph: '∧' Descr: LOGICAL AND
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\wedge::
 SendInput ^x8{Enter}2227{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\wedge::
 SendInput ^+u2227{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\wedge::
 SendInput {U+2227}
 return
@@ -24467,17 +24465,17 @@ return
 
 ;; Glyph: '∨' Descr: LOGICAL OR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vee::
 SendInput ^x8{Enter}2228{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vee::
 SendInput ^+u2228{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vee::
 SendInput {U+2228}
 return
@@ -24485,17 +24483,17 @@ return
 
 ;; Glyph: '∩' Descr: INTERSECTION
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cap::
 SendInput ^x8{Enter}2229{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cap::
 SendInput ^+u2229{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cap::
 SendInput {U+2229}
 return
@@ -24503,17 +24501,17 @@ return
 
 ;; Glyph: '∪' Descr: UNION
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cup::
 SendInput ^x8{Enter}222a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cup::
 SendInput ^+u222a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cup::
 SendInput {U+222A}
 return
@@ -24521,17 +24519,17 @@ return
 
 ;; Glyph: '∫' Descr: INTEGRAL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\int::
 SendInput ^x8{Enter}222b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\int::
 SendInput ^+u222b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\int::
 SendInput {U+222B}
 return
@@ -24539,17 +24537,17 @@ return
 
 ;; Glyph: '∮' Descr: CONTOUR INTEGRAL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\oint::
 SendInput ^x8{Enter}222e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\oint::
 SendInput ^+u222e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\oint::
 SendInput {U+222E}
 return
@@ -24557,17 +24555,17 @@ return
 
 ;; Glyph: '∴' Descr: THEREFORE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\therefore::
 SendInput ^x8{Enter}2234{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\therefore::
 SendInput ^+u2234{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\therefore::
 SendInput {U+2234}
 return
@@ -24575,17 +24573,17 @@ return
 
 ;; Glyph: '∵' Descr: BECAUSE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\because::
 SendInput ^x8{Enter}2235{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\because::
 SendInput ^+u2235{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\because::
 SendInput {U+2235}
 return
@@ -24593,17 +24591,17 @@ return
 
 ;; Glyph: '∼' Descr: TILDE OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sim::
 SendInput ^x8{Enter}223c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sim::
 SendInput ^+u223c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sim::
 SendInput {U+223C}
 return
@@ -24611,17 +24609,17 @@ return
 
 ;; Glyph: '∼' Descr: TILDE OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\thicksim::
 SendInput ^x8{Enter}223c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\thicksim::
 SendInput ^+u223c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\thicksim::
 SendInput {U+223C}
 return
@@ -24629,17 +24627,17 @@ return
 
 ;; Glyph: '∽' Descr: REVERSED TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\backsim::
 SendInput ^x8{Enter}223d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\backsim::
 SendInput ^+u223d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\backsim::
 SendInput {U+223D}
 return
@@ -24647,17 +24645,17 @@ return
 
 ;; Glyph: '≀' Descr: WREATH PRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\wr::
 SendInput ^x8{Enter}2240{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\wr::
 SendInput ^+u2240{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\wr::
 SendInput {U+2240}
 return
@@ -24665,17 +24663,17 @@ return
 
 ;; Glyph: '≁' Descr: NOT TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsim::
 SendInput ^x8{Enter}2241{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsim::
 SendInput ^+u2241{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsim::
 SendInput {U+2241}
 return
@@ -24683,17 +24681,17 @@ return
 
 ;; Glyph: '≃' Descr: ASYMPTOTICALLY EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\simeq::
 SendInput ^x8{Enter}2243{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\simeq::
 SendInput ^+u2243{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\simeq::
 SendInput {U+2243}
 return
@@ -24701,17 +24699,17 @@ return
 
 ;; Glyph: '≄' Descr: NOT ASYMPTOTICALLY EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsimeq::
 SendInput ^x8{Enter}2244{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsimeq::
 SendInput ^+u2244{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsimeq::
 SendInput {U+2244}
 return
@@ -24719,17 +24717,17 @@ return
 
 ;; Glyph: '≅' Descr: APPROXIMATELY EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cong::
 SendInput ^x8{Enter}2245{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cong::
 SendInput ^+u2245{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cong::
 SendInput {U+2245}
 return
@@ -24737,17 +24735,17 @@ return
 
 ;; Glyph: '≇' Descr: NEITHER APPROXIMATELY NOR ACTUALLY EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ncong::
 SendInput ^x8{Enter}2247{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ncong::
 SendInput ^+u2247{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ncong::
 SendInput {U+2247}
 return
@@ -24755,17 +24753,17 @@ return
 
 ;; Glyph: '≈' Descr: ALMOST EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\approx::
 SendInput ^x8{Enter}2248{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\approx::
 SendInput ^+u2248{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\approx::
 SendInput {U+2248}
 return
@@ -24773,17 +24771,17 @@ return
 
 ;; Glyph: '≈' Descr: ALMOST EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\thickapprox::
 SendInput ^x8{Enter}2248{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\thickapprox::
 SendInput ^+u2248{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\thickapprox::
 SendInput {U+2248}
 return
@@ -24791,17 +24789,17 @@ return
 
 ;; Glyph: '≉' Descr: NOT ALMOST EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\napprox::
 SendInput ^x8{Enter}2249{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\napprox::
 SendInput ^+u2249{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\napprox::
 SendInput {U+2249}
 return
@@ -24809,17 +24807,17 @@ return
 
 ;; Glyph: '≊' Descr: ALMOST EQUAL OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\approxeq::
 SendInput ^x8{Enter}224a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\approxeq::
 SendInput ^+u224a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\approxeq::
 SendInput {U+224A}
 return
@@ -24827,17 +24825,17 @@ return
 
 ;; Glyph: '≌' Descr: ALL EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\backcong::
 SendInput ^x8{Enter}224c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\backcong::
 SendInput ^+u224c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\backcong::
 SendInput {U+224C}
 return
@@ -24845,17 +24843,17 @@ return
 
 ;; Glyph: '≍' Descr: EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\asymp::
 SendInput ^x8{Enter}224d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\asymp::
 SendInput ^+u224d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\asymp::
 SendInput {U+224D}
 return
@@ -24863,17 +24861,17 @@ return
 
 ;; Glyph: '≎' Descr: GEOMETRICALLY EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Bumpeq::
 SendInput ^x8{Enter}224e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Bumpeq::
 SendInput ^+u224e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Bumpeq::
 SendInput {U+224E}
 return
@@ -24881,17 +24879,17 @@ return
 
 ;; Glyph: '≏' Descr: DIFFERENCE BETWEEN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bumpeq::
 SendInput ^x8{Enter}224f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bumpeq::
 SendInput ^+u224f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bumpeq::
 SendInput {U+224F}
 return
@@ -24899,17 +24897,17 @@ return
 
 ;; Glyph: '≐' Descr: APPROACHES THE LIMIT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\doteq::
 SendInput ^x8{Enter}2250{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\doteq::
 SendInput ^+u2250{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\doteq::
 SendInput {U+2250}
 return
@@ -24917,17 +24915,17 @@ return
 
 ;; Glyph: '≑' Descr: GEOMETRICALLY EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\doteqdot::
 SendInput ^x8{Enter}2251{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\doteqdot::
 SendInput ^+u2251{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\doteqdot::
 SendInput {U+2251}
 return
@@ -24935,17 +24933,17 @@ return
 
 ;; Glyph: '≒' Descr: APPROXIMATELY EQUAL TO OR THE IMAGE OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\fallingdotseq::
 SendInput ^x8{Enter}2252{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\fallingdotseq::
 SendInput ^+u2252{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\fallingdotseq::
 SendInput {U+2252}
 return
@@ -24953,17 +24951,17 @@ return
 
 ;; Glyph: '≓' Descr: IMAGE OF OR APPROXIMATELY EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\risingdotseq::
 SendInput ^x8{Enter}2253{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\risingdotseq::
 SendInput ^+u2253{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\risingdotseq::
 SendInput {U+2253}
 return
@@ -24971,17 +24969,17 @@ return
 
 ;; Glyph: '≔' Descr: COLON EQUALS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\coloneq::
 SendInput ^x8{Enter}2254{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\coloneq::
 SendInput ^+u2254{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\coloneq::
 SendInput {U+2254}
 return
@@ -24989,17 +24987,17 @@ return
 
 ;; Glyph: '≕' Descr: EQUALS COLON
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\eqcolon::
 SendInput ^x8{Enter}2255{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\eqcolon::
 SendInput ^+u2255{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\eqcolon::
 SendInput {U+2255}
 return
@@ -25007,17 +25005,17 @@ return
 
 ;; Glyph: '≖' Descr: RING IN EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\eqcirc::
 SendInput ^x8{Enter}2256{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\eqcirc::
 SendInput ^+u2256{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\eqcirc::
 SendInput {U+2256}
 return
@@ -25025,17 +25023,17 @@ return
 
 ;; Glyph: '≗' Descr: RING EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circeq::
 SendInput ^x8{Enter}2257{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circeq::
 SendInput ^+u2257{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circeq::
 SendInput {U+2257}
 return
@@ -25043,17 +25041,17 @@ return
 
 ;; Glyph: '≙' Descr: ESTIMATES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\defs::
 SendInput ^x8{Enter}2259{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\defs::
 SendInput ^+u2259{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\defs::
 SendInput {U+2259}
 return
@@ -25061,17 +25059,17 @@ return
 
 ;; Glyph: '≜' Descr: DELTA EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\triangleq::
 SendInput ^x8{Enter}225c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\triangleq::
 SendInput ^+u225c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\triangleq::
 SendInput {U+225C}
 return
@@ -25079,17 +25077,17 @@ return
 
 ;; Glyph: '≠' Descr: NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ne::
 SendInput ^x8{Enter}2260{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ne::
 SendInput ^+u2260{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ne::
 SendInput {U+2260}
 return
@@ -25097,17 +25095,17 @@ return
 
 ;; Glyph: '≠' Descr: NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\neq::
 SendInput ^x8{Enter}2260{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\neq::
 SendInput ^+u2260{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\neq::
 SendInput {U+2260}
 return
@@ -25115,17 +25113,17 @@ return
 
 ;; Glyph: '≡' Descr: IDENTICAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\equiv::
 SendInput ^x8{Enter}2261{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\equiv::
 SendInput ^+u2261{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\equiv::
 SendInput {U+2261}
 return
@@ -25133,17 +25131,17 @@ return
 
 ;; Glyph: '≢' Descr: NOT IDENTICAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nequiv::
 SendInput ^x8{Enter}2262{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nequiv::
 SendInput ^+u2262{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nequiv::
 SendInput {U+2262}
 return
@@ -25151,17 +25149,17 @@ return
 
 ;; Glyph: '≤' Descr: LESS-THAN OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\le::
 SendInput ^x8{Enter}2264{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\le::
 SendInput ^+u2264{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\le::
 SendInput {U+2264}
 return
@@ -25169,17 +25167,17 @@ return
 
 ;; Glyph: '≤' Descr: LESS-THAN OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leq::
 SendInput ^x8{Enter}2264{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leq::
 SendInput ^+u2264{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leq::
 SendInput {U+2264}
 return
@@ -25187,17 +25185,17 @@ return
 
 ;; Glyph: '≤' Descr: LESS-THAN OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leqslant::
 SendInput ^x8{Enter}2264{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leqslant::
 SendInput ^+u2264{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leqslant::
 SendInput {U+2264}
 return
@@ -25205,17 +25203,17 @@ return
 
 ;; Glyph: '≥' Descr: GREATER-THAN OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ge::
 SendInput ^x8{Enter}2265{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ge::
 SendInput ^+u2265{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ge::
 SendInput {U+2265}
 return
@@ -25223,17 +25221,17 @@ return
 
 ;; Glyph: '≥' Descr: GREATER-THAN OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\geq::
 SendInput ^x8{Enter}2265{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\geq::
 SendInput ^+u2265{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\geq::
 SendInput {U+2265}
 return
@@ -25241,17 +25239,17 @@ return
 
 ;; Glyph: '≥' Descr: GREATER-THAN OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\geqslant::
 SendInput ^x8{Enter}2265{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\geqslant::
 SendInput ^+u2265{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\geqslant::
 SendInput {U+2265}
 return
@@ -25259,17 +25257,17 @@ return
 
 ;; Glyph: '≦' Descr: LESS-THAN OVER EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leqq::
 SendInput ^x8{Enter}2266{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leqq::
 SendInput ^+u2266{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leqq::
 SendInput {U+2266}
 return
@@ -25277,17 +25275,17 @@ return
 
 ;; Glyph: '≧' Descr: GREATER-THAN OVER EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\geqq::
 SendInput ^x8{Enter}2267{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\geqq::
 SendInput ^+u2267{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\geqq::
 SendInput {U+2267}
 return
@@ -25295,17 +25293,17 @@ return
 
 ;; Glyph: '≨' Descr: LESS-THAN BUT NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lneq::
 SendInput ^x8{Enter}2268{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lneq::
 SendInput ^+u2268{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lneq::
 SendInput {U+2268}
 return
@@ -25313,17 +25311,17 @@ return
 
 ;; Glyph: '≨' Descr: LESS-THAN BUT NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lneqq::
 SendInput ^x8{Enter}2268{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lneqq::
 SendInput ^+u2268{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lneqq::
 SendInput {U+2268}
 return
@@ -25331,17 +25329,17 @@ return
 
 ;; Glyph: '≨' Descr: LESS-THAN BUT NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lvertneqq::
 SendInput ^x8{Enter}2268{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lvertneqq::
 SendInput ^+u2268{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lvertneqq::
 SendInput {U+2268}
 return
@@ -25349,17 +25347,17 @@ return
 
 ;; Glyph: '≩' Descr: GREATER-THAN BUT NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gneq::
 SendInput ^x8{Enter}2269{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gneq::
 SendInput ^+u2269{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gneq::
 SendInput {U+2269}
 return
@@ -25367,17 +25365,17 @@ return
 
 ;; Glyph: '≩' Descr: GREATER-THAN BUT NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gneqq::
 SendInput ^x8{Enter}2269{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gneqq::
 SendInput ^+u2269{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gneqq::
 SendInput {U+2269}
 return
@@ -25385,17 +25383,17 @@ return
 
 ;; Glyph: '≩' Descr: GREATER-THAN BUT NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gvertneqq::
 SendInput ^x8{Enter}2269{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gvertneqq::
 SendInput ^+u2269{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gvertneqq::
 SendInput {U+2269}
 return
@@ -25403,17 +25401,17 @@ return
 
 ;; Glyph: '≪' Descr: MUCH LESS-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ll::
 SendInput ^x8{Enter}226a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ll::
 SendInput ^+u226a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ll::
 SendInput {U+226A}
 return
@@ -25421,17 +25419,17 @@ return
 
 ;; Glyph: '≫' Descr: MUCH GREATER-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gg::
 SendInput ^x8{Enter}226b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gg::
 SendInput ^+u226b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gg::
 SendInput {U+226B}
 return
@@ -25439,17 +25437,17 @@ return
 
 ;; Glyph: '≬' Descr: BETWEEN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\between::
 SendInput ^x8{Enter}226c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\between::
 SendInput ^+u226c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\between::
 SendInput {U+226C}
 return
@@ -25457,17 +25455,17 @@ return
 
 ;; Glyph: '≮' Descr: NOT LESS-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nless::
 SendInput ^x8{Enter}226e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nless::
 SendInput ^+u226e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nless::
 SendInput {U+226E}
 return
@@ -25475,17 +25473,17 @@ return
 
 ;; Glyph: '≯' Descr: NOT GREATER-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ngtr::
 SendInput ^x8{Enter}226f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ngtr::
 SendInput ^+u226f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ngtr::
 SendInput {U+226F}
 return
@@ -25493,17 +25491,17 @@ return
 
 ;; Glyph: '≰' Descr: NEITHER LESS-THAN NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nleq::
 SendInput ^x8{Enter}2270{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nleq::
 SendInput ^+u2270{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nleq::
 SendInput {U+2270}
 return
@@ -25511,17 +25509,17 @@ return
 
 ;; Glyph: '≰' Descr: NEITHER LESS-THAN NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nleqq::
 SendInput ^x8{Enter}2270{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nleqq::
 SendInput ^+u2270{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nleqq::
 SendInput {U+2270}
 return
@@ -25529,17 +25527,17 @@ return
 
 ;; Glyph: '≰' Descr: NEITHER LESS-THAN NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nleqslant::
 SendInput ^x8{Enter}2270{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nleqslant::
 SendInput ^+u2270{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nleqslant::
 SendInput {U+2270}
 return
@@ -25547,17 +25545,17 @@ return
 
 ;; Glyph: '≱' Descr: NEITHER GREATER-THAN NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ngeq::
 SendInput ^x8{Enter}2271{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ngeq::
 SendInput ^+u2271{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ngeq::
 SendInput {U+2271}
 return
@@ -25565,17 +25563,17 @@ return
 
 ;; Glyph: '≱' Descr: NEITHER GREATER-THAN NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ngeqq::
 SendInput ^x8{Enter}2271{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ngeqq::
 SendInput ^+u2271{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ngeqq::
 SendInput {U+2271}
 return
@@ -25583,17 +25581,17 @@ return
 
 ;; Glyph: '≱' Descr: NEITHER GREATER-THAN NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ngeqslant::
 SendInput ^x8{Enter}2271{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ngeqslant::
 SendInput ^+u2271{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ngeqslant::
 SendInput {U+2271}
 return
@@ -25601,17 +25599,17 @@ return
 
 ;; Glyph: '≲' Descr: LESS-THAN OR EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lessapprox::
 SendInput ^x8{Enter}2272{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lessapprox::
 SendInput ^+u2272{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lessapprox::
 SendInput {U+2272}
 return
@@ -25619,17 +25617,17 @@ return
 
 ;; Glyph: '≲' Descr: LESS-THAN OR EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lesssim::
 SendInput ^x8{Enter}2272{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lesssim::
 SendInput ^+u2272{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lesssim::
 SendInput {U+2272}
 return
@@ -25637,17 +25635,17 @@ return
 
 ;; Glyph: '≳' Descr: GREATER-THAN OR EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gtrapprox::
 SendInput ^x8{Enter}2273{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gtrapprox::
 SendInput ^+u2273{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gtrapprox::
 SendInput {U+2273}
 return
@@ -25655,17 +25653,17 @@ return
 
 ;; Glyph: '≳' Descr: GREATER-THAN OR EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gtrsim::
 SendInput ^x8{Enter}2273{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gtrsim::
 SendInput ^+u2273{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gtrsim::
 SendInput {U+2273}
 return
@@ -25673,17 +25671,17 @@ return
 
 ;; Glyph: '≶' Descr: LESS-THAN OR GREATER-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lessgtr::
 SendInput ^x8{Enter}2276{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lessgtr::
 SendInput ^+u2276{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lessgtr::
 SendInput {U+2276}
 return
@@ -25691,17 +25689,17 @@ return
 
 ;; Glyph: '≷' Descr: GREATER-THAN OR LESS-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gtrless::
 SendInput ^x8{Enter}2277{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gtrless::
 SendInput ^+u2277{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gtrless::
 SendInput {U+2277}
 return
@@ -25709,17 +25707,17 @@ return
 
 ;; Glyph: '≺' Descr: PRECEDES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\prec::
 SendInput ^x8{Enter}227a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\prec::
 SendInput ^+u227a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\prec::
 SendInput {U+227A}
 return
@@ -25727,17 +25725,17 @@ return
 
 ;; Glyph: '≻' Descr: SUCCEEDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\succ::
 SendInput ^x8{Enter}227b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\succ::
 SendInput ^+u227b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\succ::
 SendInput {U+227B}
 return
@@ -25745,17 +25743,17 @@ return
 
 ;; Glyph: '≼' Descr: PRECEDES OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\curlypreceq::
 SendInput ^x8{Enter}227c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\curlypreceq::
 SendInput ^+u227c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\curlypreceq::
 SendInput {U+227C}
 return
@@ -25763,17 +25761,17 @@ return
 
 ;; Glyph: '≼' Descr: PRECEDES OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\preceq::
 SendInput ^x8{Enter}227c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\preceq::
 SendInput ^+u227c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\preceq::
 SendInput {U+227C}
 return
@@ -25781,17 +25779,17 @@ return
 
 ;; Glyph: '≽' Descr: SUCCEEDS OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\succcurlyeq::
 SendInput ^x8{Enter}227d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\succcurlyeq::
 SendInput ^+u227d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\succcurlyeq::
 SendInput {U+227D}
 return
@@ -25799,17 +25797,17 @@ return
 
 ;; Glyph: '≽' Descr: SUCCEEDS OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\succeq::
 SendInput ^x8{Enter}227d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\succeq::
 SendInput ^+u227d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\succeq::
 SendInput {U+227D}
 return
@@ -25817,17 +25815,17 @@ return
 
 ;; Glyph: '≾' Descr: PRECEDES OR EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\precapprox::
 SendInput ^x8{Enter}227e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\precapprox::
 SendInput ^+u227e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\precapprox::
 SendInput {U+227E}
 return
@@ -25835,17 +25833,17 @@ return
 
 ;; Glyph: '≾' Descr: PRECEDES OR EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\precsim::
 SendInput ^x8{Enter}227e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\precsim::
 SendInput ^+u227e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\precsim::
 SendInput {U+227E}
 return
@@ -25853,17 +25851,17 @@ return
 
 ;; Glyph: '≿' Descr: SUCCEEDS OR EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\succapprox::
 SendInput ^x8{Enter}227f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\succapprox::
 SendInput ^+u227f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\succapprox::
 SendInput {U+227F}
 return
@@ -25871,17 +25869,17 @@ return
 
 ;; Glyph: '≿' Descr: SUCCEEDS OR EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\succsim::
 SendInput ^x8{Enter}227f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\succsim::
 SendInput ^+u227f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\succsim::
 SendInput {U+227F}
 return
@@ -25889,17 +25887,17 @@ return
 
 ;; Glyph: '⊀' Descr: DOES NOT PRECEDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nprec::
 SendInput ^x8{Enter}2280{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nprec::
 SendInput ^+u2280{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nprec::
 SendInput {U+2280}
 return
@@ -25907,17 +25905,17 @@ return
 
 ;; Glyph: '⊁' Descr: DOES NOT SUCCEED
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsucc::
 SendInput ^x8{Enter}2281{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsucc::
 SendInput ^+u2281{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsucc::
 SendInput {U+2281}
 return
@@ -25925,17 +25923,17 @@ return
 
 ;; Glyph: '⊂' Descr: SUBSET OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\subset::
 SendInput ^x8{Enter}2282{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\subset::
 SendInput ^+u2282{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\subset::
 SendInput {U+2282}
 return
@@ -25943,17 +25941,17 @@ return
 
 ;; Glyph: '⊃' Descr: SUPERSET OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\supset::
 SendInput ^x8{Enter}2283{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\supset::
 SendInput ^+u2283{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\supset::
 SendInput {U+2283}
 return
@@ -25961,17 +25959,17 @@ return
 
 ;; Glyph: '⊄' Descr: NOT A SUBSET OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsubset::
 SendInput ^x8{Enter}2284{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsubset::
 SendInput ^+u2284{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsubset::
 SendInput {U+2284}
 return
@@ -25979,17 +25977,17 @@ return
 
 ;; Glyph: '⊅' Descr: NOT A SUPERSET OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsupset::
 SendInput ^x8{Enter}2285{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsupset::
 SendInput ^+u2285{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsupset::
 SendInput {U+2285}
 return
@@ -25997,17 +25995,17 @@ return
 
 ;; Glyph: '⊆' Descr: SUBSET OF OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\subseteq::
 SendInput ^x8{Enter}2286{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\subseteq::
 SendInput ^+u2286{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\subseteq::
 SendInput {U+2286}
 return
@@ -26015,17 +26013,17 @@ return
 
 ;; Glyph: '⊆' Descr: SUBSET OF OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\subseteqq::
 SendInput ^x8{Enter}2286{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\subseteqq::
 SendInput ^+u2286{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\subseteqq::
 SendInput {U+2286}
 return
@@ -26033,17 +26031,17 @@ return
 
 ;; Glyph: '⊇' Descr: SUPERSET OF OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\supseteq::
 SendInput ^x8{Enter}2287{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\supseteq::
 SendInput ^+u2287{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\supseteq::
 SendInput {U+2287}
 return
@@ -26051,17 +26049,17 @@ return
 
 ;; Glyph: '⊇' Descr: SUPERSET OF OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\supseteqq::
 SendInput ^x8{Enter}2287{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\supseteqq::
 SendInput ^+u2287{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\supseteqq::
 SendInput {U+2287}
 return
@@ -26069,17 +26067,17 @@ return
 
 ;; Glyph: '⊈' Descr: NEITHER A SUBSET OF NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsubseteq::
 SendInput ^x8{Enter}2288{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsubseteq::
 SendInput ^+u2288{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsubseteq::
 SendInput {U+2288}
 return
@@ -26087,17 +26085,17 @@ return
 
 ;; Glyph: '⊈' Descr: NEITHER A SUBSET OF NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsubseteqq::
 SendInput ^x8{Enter}2288{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsubseteqq::
 SendInput ^+u2288{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsubseteqq::
 SendInput {U+2288}
 return
@@ -26105,17 +26103,17 @@ return
 
 ;; Glyph: '⊉' Descr: NEITHER A SUPERSET OF NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsupseteq::
 SendInput ^x8{Enter}2289{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsupseteq::
 SendInput ^+u2289{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsupseteq::
 SendInput {U+2289}
 return
@@ -26123,17 +26121,17 @@ return
 
 ;; Glyph: '⊉' Descr: NEITHER A SUPERSET OF NOR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsupseteqq::
 SendInput ^x8{Enter}2289{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsupseteqq::
 SendInput ^+u2289{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsupseteqq::
 SendInput {U+2289}
 return
@@ -26141,17 +26139,17 @@ return
 
 ;; Glyph: '⊊' Descr: SUBSET OF WITH NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\subsetneq::
 SendInput ^x8{Enter}228a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\subsetneq::
 SendInput ^+u228a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\subsetneq::
 SendInput {U+228A}
 return
@@ -26159,17 +26157,17 @@ return
 
 ;; Glyph: '⊊' Descr: SUBSET OF WITH NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\subsetneqq::
 SendInput ^x8{Enter}228a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\subsetneqq::
 SendInput ^+u228a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\subsetneqq::
 SendInput {U+228A}
 return
@@ -26177,17 +26175,17 @@ return
 
 ;; Glyph: '⊋' Descr: SUPERSET OF WITH NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\supsetneq::
 SendInput ^x8{Enter}228b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\supsetneq::
 SendInput ^+u228b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\supsetneq::
 SendInput {U+228B}
 return
@@ -26195,17 +26193,17 @@ return
 
 ;; Glyph: '⊋' Descr: SUPERSET OF WITH NOT EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\supsetneqq::
 SendInput ^x8{Enter}228b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\supsetneqq::
 SendInput ^+u228b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\supsetneqq::
 SendInput {U+228B}
 return
@@ -26213,17 +26211,17 @@ return
 
 ;; Glyph: '⊎' Descr: MULTISET UNION
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uplus::
 SendInput ^x8{Enter}228e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uplus::
 SendInput ^+u228e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uplus::
 SendInput {U+228E}
 return
@@ -26231,17 +26229,17 @@ return
 
 ;; Glyph: '⊏' Descr: SQUARE IMAGE OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sqsubset::
 SendInput ^x8{Enter}228f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sqsubset::
 SendInput ^+u228f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sqsubset::
 SendInput {U+228F}
 return
@@ -26249,17 +26247,17 @@ return
 
 ;; Glyph: '⊐' Descr: SQUARE ORIGINAL OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sqsupset::
 SendInput ^x8{Enter}2290{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sqsupset::
 SendInput ^+u2290{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sqsupset::
 SendInput {U+2290}
 return
@@ -26267,17 +26265,17 @@ return
 
 ;; Glyph: '⊑' Descr: SQUARE IMAGE OF OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sqsubseteq::
 SendInput ^x8{Enter}2291{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sqsubseteq::
 SendInput ^+u2291{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sqsubseteq::
 SendInput {U+2291}
 return
@@ -26285,17 +26283,17 @@ return
 
 ;; Glyph: '⊒' Descr: SQUARE ORIGINAL OF OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sqsupseteq::
 SendInput ^x8{Enter}2292{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sqsupseteq::
 SendInput ^+u2292{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sqsupseteq::
 SendInput {U+2292}
 return
@@ -26303,17 +26301,17 @@ return
 
 ;; Glyph: '⊓' Descr: SQUARE CAP
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sqcap::
 SendInput ^x8{Enter}2293{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sqcap::
 SendInput ^+u2293{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sqcap::
 SendInput {U+2293}
 return
@@ -26321,17 +26319,17 @@ return
 
 ;; Glyph: '⊔' Descr: SQUARE CUP
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sqcup::
 SendInput ^x8{Enter}2294{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sqcup::
 SendInput ^+u2294{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sqcup::
 SendInput {U+2294}
 return
@@ -26339,17 +26337,17 @@ return
 
 ;; Glyph: '⊕' Descr: CIRCLED PLUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\oplus::
 SendInput ^x8{Enter}2295{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\oplus::
 SendInput ^+u2295{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\oplus::
 SendInput {U+2295}
 return
@@ -26357,17 +26355,17 @@ return
 
 ;; Glyph: '⊖' Descr: CIRCLED MINUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ominus::
 SendInput ^x8{Enter}2296{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ominus::
 SendInput ^+u2296{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ominus::
 SendInput {U+2296}
 return
@@ -26375,17 +26373,17 @@ return
 
 ;; Glyph: '⊗' Descr: CIRCLED TIMES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\otimes::
 SendInput ^x8{Enter}2297{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\otimes::
 SendInput ^+u2297{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\otimes::
 SendInput {U+2297}
 return
@@ -26393,17 +26391,17 @@ return
 
 ;; Glyph: '⊘' Descr: CIRCLED DIVISION SLASH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\oslash::
 SendInput ^x8{Enter}2298{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\oslash::
 SendInput ^+u2298{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\oslash::
 SendInput {U+2298}
 return
@@ -26411,17 +26409,17 @@ return
 
 ;; Glyph: '⊙' Descr: CIRCLED DOT OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\odot::
 SendInput ^x8{Enter}2299{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\odot::
 SendInput ^+u2299{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\odot::
 SendInput {U+2299}
 return
@@ -26429,17 +26427,17 @@ return
 
 ;; Glyph: '⊚' Descr: CIRCLED RING OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circledcirc::
 SendInput ^x8{Enter}229a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circledcirc::
 SendInput ^+u229a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circledcirc::
 SendInput {U+229A}
 return
@@ -26447,17 +26445,17 @@ return
 
 ;; Glyph: '⊛' Descr: CIRCLED ASTERISK OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circledast::
 SendInput ^x8{Enter}229b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circledast::
 SendInput ^+u229b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circledast::
 SendInput {U+229B}
 return
@@ -26465,17 +26463,17 @@ return
 
 ;; Glyph: '⊝' Descr: CIRCLED DASH
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circleddash::
 SendInput ^x8{Enter}229d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circleddash::
 SendInput ^+u229d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circleddash::
 SendInput {U+229D}
 return
@@ -26483,17 +26481,17 @@ return
 
 ;; Glyph: '⊞' Descr: SQUARED PLUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\boxplus::
 SendInput ^x8{Enter}229e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\boxplus::
 SendInput ^+u229e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\boxplus::
 SendInput {U+229E}
 return
@@ -26501,17 +26499,17 @@ return
 
 ;; Glyph: '⊟' Descr: SQUARED MINUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\boxminus::
 SendInput ^x8{Enter}229f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\boxminus::
 SendInput ^+u229f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\boxminus::
 SendInput {U+229F}
 return
@@ -26519,17 +26517,17 @@ return
 
 ;; Glyph: '⊠' Descr: SQUARED TIMES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\boxtimes::
 SendInput ^x8{Enter}22a0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\boxtimes::
 SendInput ^+u22a0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\boxtimes::
 SendInput {U+22A0}
 return
@@ -26537,17 +26535,17 @@ return
 
 ;; Glyph: '⊡' Descr: SQUARED DOT OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\dotsquare::
 SendInput ^x8{Enter}22a1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\dotsquare::
 SendInput ^+u22a1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\dotsquare::
 SendInput {U+22A1}
 return
@@ -26555,17 +26553,17 @@ return
 
 ;; Glyph: '⊢' Descr: RIGHT TACK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vdash::
 SendInput ^x8{Enter}22a2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vdash::
 SendInput ^+u22a2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vdash::
 SendInput {U+22A2}
 return
@@ -26573,17 +26571,17 @@ return
 
 ;; Glyph: '⊣' Descr: LEFT TACK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\dashv::
 SendInput ^x8{Enter}22a3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\dashv::
 SendInput ^+u22a3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\dashv::
 SendInput {U+22A3}
 return
@@ -26591,17 +26589,17 @@ return
 
 ;; Glyph: '⊤' Descr: DOWN TACK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\top::
 SendInput ^x8{Enter}22a4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\top::
 SendInput ^+u22a4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\top::
 SendInput {U+22A4}
 return
@@ -26609,17 +26607,17 @@ return
 
 ;; Glyph: '⊥' Descr: UP TACK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bot::
 SendInput ^x8{Enter}22a5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bot::
 SendInput ^+u22a5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bot::
 SendInput {U+22A5}
 return
@@ -26627,17 +26625,17 @@ return
 
 ;; Glyph: '⊥' Descr: UP TACK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\perp::
 SendInput ^x8{Enter}22a5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\perp::
 SendInput ^+u22a5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\perp::
 SendInput {U+22A5}
 return
@@ -26645,17 +26643,17 @@ return
 
 ;; Glyph: '⊧' Descr: MODELS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\models::
 SendInput ^x8{Enter}22a7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\models::
 SendInput ^+u22a7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\models::
 SendInput {U+22A7}
 return
@@ -26663,17 +26661,17 @@ return
 
 ;; Glyph: '⊨' Descr: TRUE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vDash::
 SendInput ^x8{Enter}22a8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vDash::
 SendInput ^+u22a8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vDash::
 SendInput {U+22A8}
 return
@@ -26681,17 +26679,17 @@ return
 
 ;; Glyph: '⊩' Descr: FORCES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Vdash::
 SendInput ^x8{Enter}22a9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Vdash::
 SendInput ^+u22a9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Vdash::
 SendInput {U+22A9}
 return
@@ -26699,17 +26697,17 @@ return
 
 ;; Glyph: '⊪' Descr: TRIPLE VERTICAL BAR RIGHT TURNSTILE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Vvdash::
 SendInput ^x8{Enter}22aa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Vvdash::
 SendInput ^+u22aa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Vvdash::
 SendInput {U+22AA}
 return
@@ -26717,17 +26715,17 @@ return
 
 ;; Glyph: '⊬' Descr: DOES NOT PROVE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nvdash::
 SendInput ^x8{Enter}22ac{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nvdash::
 SendInput ^+u22ac{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nvdash::
 SendInput {U+22AC}
 return
@@ -26735,17 +26733,17 @@ return
 
 ;; Glyph: '⊭' Descr: NOT TRUE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nvDash::
 SendInput ^x8{Enter}22ad{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nvDash::
 SendInput ^+u22ad{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nvDash::
 SendInput {U+22AD}
 return
@@ -26753,17 +26751,17 @@ return
 
 ;; Glyph: '⊮' Descr: DOES NOT FORCE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nVdash::
 SendInput ^x8{Enter}22ae{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nVdash::
 SendInput ^+u22ae{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nVdash::
 SendInput {U+22AE}
 return
@@ -26771,17 +26769,17 @@ return
 
 ;; Glyph: '⊯' Descr: NEGATED DOUBLE VERTICAL BAR DOUBLE RIGHT TURNSTILE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nVDash::
 SendInput ^x8{Enter}22af{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nVDash::
 SendInput ^+u22af{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nVDash::
 SendInput {U+22AF}
 return
@@ -26789,17 +26787,17 @@ return
 
 ;; Glyph: '⊲' Descr: NORMAL SUBGROUP OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vartriangleleft::
 SendInput ^x8{Enter}22b2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vartriangleleft::
 SendInput ^+u22b2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vartriangleleft::
 SendInput {U+22B2}
 return
@@ -26807,17 +26805,17 @@ return
 
 ;; Glyph: '⊳' Descr: CONTAINS AS NORMAL SUBGROUP
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vartriangleright::
 SendInput ^x8{Enter}22b3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vartriangleright::
 SendInput ^+u22b3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vartriangleright::
 SendInput {U+22B3}
 return
@@ -26825,17 +26823,17 @@ return
 
 ;; Glyph: '⊴' Descr: NORMAL SUBGROUP OF OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\trianglelefteq::
 SendInput ^x8{Enter}22b4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\trianglelefteq::
 SendInput ^+u22b4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\trianglelefteq::
 SendInput {U+22B4}
 return
@@ -26843,17 +26841,17 @@ return
 
 ;; Glyph: '⊵' Descr: CONTAINS AS NORMAL SUBGROUP OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\trianglerighteq::
 SendInput ^x8{Enter}22b5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\trianglerighteq::
 SendInput ^+u22b5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\trianglerighteq::
 SendInput {U+22B5}
 return
@@ -26861,17 +26859,17 @@ return
 
 ;; Glyph: '⊸' Descr: MULTIMAP
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\multimap::
 SendInput ^x8{Enter}22b8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\multimap::
 SendInput ^+u22b8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\multimap::
 SendInput {U+22B8}
 return
@@ -26879,17 +26877,17 @@ return
 
 ;; Glyph: '⊺' Descr: INTERCALATE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\intercal::
 SendInput ^x8{Enter}22ba{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\intercal::
 SendInput ^+u22ba{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\intercal::
 SendInput {U+22BA}
 return
@@ -26897,17 +26895,17 @@ return
 
 ;; Glyph: '⊻' Descr: XOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\veebar::
 SendInput ^x8{Enter}22bb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\veebar::
 SendInput ^+u22bb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\veebar::
 SendInput {U+22BB}
 return
@@ -26915,17 +26913,17 @@ return
 
 ;; Glyph: '⊼' Descr: NAND
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\barwedge::
 SendInput ^x8{Enter}22bc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\barwedge::
 SendInput ^+u22bc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\barwedge::
 SendInput {U+22BC}
 return
@@ -26933,17 +26931,17 @@ return
 
 ;; Glyph: '⋀' Descr: N-ARY LOGICAL AND
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bigwedge::
 SendInput ^x8{Enter}22c0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bigwedge::
 SendInput ^+u22c0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bigwedge::
 SendInput {U+22C0}
 return
@@ -26951,17 +26949,17 @@ return
 
 ;; Glyph: '⋁' Descr: N-ARY LOGICAL OR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bigvee::
 SendInput ^x8{Enter}22c1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bigvee::
 SendInput ^+u22c1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bigvee::
 SendInput {U+22C1}
 return
@@ -26969,17 +26967,17 @@ return
 
 ;; Glyph: '⋂' Descr: N-ARY INTERSECTION
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bigcap::
 SendInput ^x8{Enter}22c2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bigcap::
 SendInput ^+u22c2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bigcap::
 SendInput {U+22C2}
 return
@@ -26987,17 +26985,17 @@ return
 
 ;; Glyph: '⋃' Descr: N-ARY UNION
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bigcup::
 SendInput ^x8{Enter}22c3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bigcup::
 SendInput ^+u22c3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bigcup::
 SendInput {U+22C3}
 return
@@ -27005,17 +27003,17 @@ return
 
 ;; Glyph: '⋄' Descr: DIAMOND OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\diamond::
 SendInput ^x8{Enter}22c4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\diamond::
 SendInput ^+u22c4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\diamond::
 SendInput {U+22C4}
 return
@@ -27023,17 +27021,17 @@ return
 
 ;; Glyph: '⋆' Descr: STAR OPERATOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\star::
 SendInput ^x8{Enter}22c6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\star::
 SendInput ^+u22c6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\star::
 SendInput {U+22C6}
 return
@@ -27041,17 +27039,17 @@ return
 
 ;; Glyph: '⋇' Descr: DIVISION TIMES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\divideontimes::
 SendInput ^x8{Enter}22c7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\divideontimes::
 SendInput ^+u22c7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\divideontimes::
 SendInput {U+22C7}
 return
@@ -27059,17 +27057,17 @@ return
 
 ;; Glyph: '⋈' Descr: BOWTIE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Join::
 SendInput ^x8{Enter}22c8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Join::
 SendInput ^+u22c8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Join::
 SendInput {U+22C8}
 return
@@ -27077,17 +27075,17 @@ return
 
 ;; Glyph: '⋈' Descr: BOWTIE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bowtie::
 SendInput ^x8{Enter}22c8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bowtie::
 SendInput ^+u22c8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bowtie::
 SendInput {U+22C8}
 return
@@ -27095,17 +27093,17 @@ return
 
 ;; Glyph: '⋉' Descr: LEFT NORMAL FACTOR SEMIDIRECT PRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ltimes::
 SendInput ^x8{Enter}22c9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ltimes::
 SendInput ^+u22c9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ltimes::
 SendInput {U+22C9}
 return
@@ -27113,17 +27111,17 @@ return
 
 ;; Glyph: '⋊' Descr: RIGHT NORMAL FACTOR SEMIDIRECT PRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rtimes::
 SendInput ^x8{Enter}22ca{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rtimes::
 SendInput ^+u22ca{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rtimes::
 SendInput {U+22CA}
 return
@@ -27131,17 +27129,17 @@ return
 
 ;; Glyph: '⋋' Descr: LEFT SEMIDIRECT PRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\leftthreetimes::
 SendInput ^x8{Enter}22cb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\leftthreetimes::
 SendInput ^+u22cb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\leftthreetimes::
 SendInput {U+22CB}
 return
@@ -27149,17 +27147,17 @@ return
 
 ;; Glyph: '⋌' Descr: RIGHT SEMIDIRECT PRODUCT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rightthreetimes::
 SendInput ^x8{Enter}22cc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rightthreetimes::
 SendInput ^+u22cc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rightthreetimes::
 SendInput {U+22CC}
 return
@@ -27167,17 +27165,17 @@ return
 
 ;; Glyph: '⋍' Descr: REVERSED TILDE EQUALS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\backsimeq::
 SendInput ^x8{Enter}22cd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\backsimeq::
 SendInput ^+u22cd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\backsimeq::
 SendInput {U+22CD}
 return
@@ -27185,17 +27183,17 @@ return
 
 ;; Glyph: '⋎' Descr: CURLY LOGICAL OR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\curlyvee::
 SendInput ^x8{Enter}22ce{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\curlyvee::
 SendInput ^+u22ce{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\curlyvee::
 SendInput {U+22CE}
 return
@@ -27203,17 +27201,17 @@ return
 
 ;; Glyph: '⋏' Descr: CURLY LOGICAL AND
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\curlywedge::
 SendInput ^x8{Enter}22cf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\curlywedge::
 SendInput ^+u22cf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\curlywedge::
 SendInput {U+22CF}
 return
@@ -27221,17 +27219,17 @@ return
 
 ;; Glyph: '⋐' Descr: DOUBLE SUBSET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Subset::
 SendInput ^x8{Enter}22d0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Subset::
 SendInput ^+u22d0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Subset::
 SendInput {U+22D0}
 return
@@ -27239,17 +27237,17 @@ return
 
 ;; Glyph: '⋑' Descr: DOUBLE SUPERSET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Supset::
 SendInput ^x8{Enter}22d1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Supset::
 SendInput ^+u22d1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Supset::
 SendInput {U+22D1}
 return
@@ -27257,17 +27255,17 @@ return
 
 ;; Glyph: '⋒' Descr: DOUBLE INTERSECTION
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Cap::
 SendInput ^x8{Enter}22d2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Cap::
 SendInput ^+u22d2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Cap::
 SendInput {U+22D2}
 return
@@ -27275,17 +27273,17 @@ return
 
 ;; Glyph: '⋓' Descr: DOUBLE UNION
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Cup::
 SendInput ^x8{Enter}22d3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Cup::
 SendInput ^+u22d3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Cup::
 SendInput {U+22D3}
 return
@@ -27293,17 +27291,17 @@ return
 
 ;; Glyph: '⋔' Descr: PITCHFORK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\pitchfork::
 SendInput ^x8{Enter}22d4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\pitchfork::
 SendInput ^+u22d4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\pitchfork::
 SendInput {U+22D4}
 return
@@ -27311,17 +27309,17 @@ return
 
 ;; Glyph: '⋖' Descr: LESS-THAN WITH DOT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lessdot::
 SendInput ^x8{Enter}22d6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lessdot::
 SendInput ^+u22d6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lessdot::
 SendInput {U+22D6}
 return
@@ -27329,17 +27327,17 @@ return
 
 ;; Glyph: '⋗' Descr: GREATER-THAN WITH DOT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gtrdot::
 SendInput ^x8{Enter}22d7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gtrdot::
 SendInput ^+u22d7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gtrdot::
 SendInput {U+22D7}
 return
@@ -27347,17 +27345,17 @@ return
 
 ;; Glyph: '⋘' Descr: VERY MUCH LESS-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Ll::
 SendInput ^x8{Enter}22d8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Ll::
 SendInput ^+u22d8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Ll::
 SendInput {U+22D8}
 return
@@ -27365,17 +27363,17 @@ return
 
 ;; Glyph: '⋙' Descr: VERY MUCH GREATER-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ggg::
 SendInput ^x8{Enter}22d9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ggg::
 SendInput ^+u22d9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ggg::
 SendInput {U+22D9}
 return
@@ -27383,17 +27381,17 @@ return
 
 ;; Glyph: '⋚' Descr: LESS-THAN EQUAL TO OR GREATER-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lesseqgtr::
 SendInput ^x8{Enter}22da{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lesseqgtr::
 SendInput ^+u22da{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lesseqgtr::
 SendInput {U+22DA}
 return
@@ -27401,17 +27399,17 @@ return
 
 ;; Glyph: '⋚' Descr: LESS-THAN EQUAL TO OR GREATER-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lesseqqgtr::
 SendInput ^x8{Enter}22da{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lesseqqgtr::
 SendInput ^+u22da{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lesseqqgtr::
 SendInput {U+22DA}
 return
@@ -27419,17 +27417,17 @@ return
 
 ;; Glyph: '⋛' Descr: GREATER-THAN EQUAL TO OR LESS-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gtreqless::
 SendInput ^x8{Enter}22db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gtreqless::
 SendInput ^+u22db{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gtreqless::
 SendInput {U+22DB}
 return
@@ -27437,17 +27435,17 @@ return
 
 ;; Glyph: '⋛' Descr: GREATER-THAN EQUAL TO OR LESS-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gtreqqless::
 SendInput ^x8{Enter}22db{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gtreqqless::
 SendInput ^+u22db{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gtreqqless::
 SendInput {U+22DB}
 return
@@ -27455,17 +27453,17 @@ return
 
 ;; Glyph: '⋜' Descr: EQUAL TO OR LESS-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\eqslantless::
 SendInput ^x8{Enter}22dc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\eqslantless::
 SendInput ^+u22dc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\eqslantless::
 SendInput {U+22DC}
 return
@@ -27473,17 +27471,17 @@ return
 
 ;; Glyph: '⋝' Descr: EQUAL TO OR GREATER-THAN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\eqslantgtr::
 SendInput ^x8{Enter}22dd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\eqslantgtr::
 SendInput ^+u22dd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\eqslantgtr::
 SendInput {U+22DD}
 return
@@ -27491,17 +27489,17 @@ return
 
 ;; Glyph: '⋞' Descr: EQUAL TO OR PRECEDES
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\curlyeqprec::
 SendInput ^x8{Enter}22de{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\curlyeqprec::
 SendInput ^+u22de{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\curlyeqprec::
 SendInput {U+22DE}
 return
@@ -27509,17 +27507,17 @@ return
 
 ;; Glyph: '⋟' Descr: EQUAL TO OR SUCCEEDS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\curlyeqsucc::
 SendInput ^x8{Enter}22df{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\curlyeqsucc::
 SendInput ^+u22df{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\curlyeqsucc::
 SendInput {U+22DF}
 return
@@ -27527,17 +27525,17 @@ return
 
 ;; Glyph: '⋠' Descr: DOES NOT PRECEDE OR EQUAL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\npreceq::
 SendInput ^x8{Enter}22e0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\npreceq::
 SendInput ^+u22e0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\npreceq::
 SendInput {U+22E0}
 return
@@ -27545,17 +27543,17 @@ return
 
 ;; Glyph: '⋡' Descr: DOES NOT SUCCEED OR EQUAL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nsucceq::
 SendInput ^x8{Enter}22e1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nsucceq::
 SendInput ^+u22e1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nsucceq::
 SendInput {U+22E1}
 return
@@ -27563,17 +27561,17 @@ return
 
 ;; Glyph: '⋦' Descr: LESS-THAN BUT NOT EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lnapprox::
 SendInput ^x8{Enter}22e6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lnapprox::
 SendInput ^+u22e6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lnapprox::
 SendInput {U+22E6}
 return
@@ -27581,17 +27579,17 @@ return
 
 ;; Glyph: '⋦' Descr: LESS-THAN BUT NOT EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lnsim::
 SendInput ^x8{Enter}22e6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lnsim::
 SendInput ^+u22e6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lnsim::
 SendInput {U+22E6}
 return
@@ -27599,17 +27597,17 @@ return
 
 ;; Glyph: '⋧' Descr: GREATER-THAN BUT NOT EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gnapprox::
 SendInput ^x8{Enter}22e7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gnapprox::
 SendInput ^+u22e7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gnapprox::
 SendInput {U+22E7}
 return
@@ -27617,17 +27615,17 @@ return
 
 ;; Glyph: '⋧' Descr: GREATER-THAN BUT NOT EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\gnsim::
 SendInput ^x8{Enter}22e7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\gnsim::
 SendInput ^+u22e7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\gnsim::
 SendInput {U+22E7}
 return
@@ -27635,17 +27633,17 @@ return
 
 ;; Glyph: '⋨' Descr: PRECEDES BUT NOT EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\precnapprox::
 SendInput ^x8{Enter}22e8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\precnapprox::
 SendInput ^+u22e8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\precnapprox::
 SendInput {U+22E8}
 return
@@ -27653,17 +27651,17 @@ return
 
 ;; Glyph: '⋨' Descr: PRECEDES BUT NOT EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\precnsim::
 SendInput ^x8{Enter}22e8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\precnsim::
 SendInput ^+u22e8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\precnsim::
 SendInput {U+22E8}
 return
@@ -27671,17 +27669,17 @@ return
 
 ;; Glyph: '⋩' Descr: SUCCEEDS BUT NOT EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\succnapprox::
 SendInput ^x8{Enter}22e9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\succnapprox::
 SendInput ^+u22e9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\succnapprox::
 SendInput {U+22E9}
 return
@@ -27689,17 +27687,17 @@ return
 
 ;; Glyph: '⋩' Descr: SUCCEEDS BUT NOT EQUIVALENT TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\succnsim::
 SendInput ^x8{Enter}22e9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\succnsim::
 SendInput ^+u22e9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\succnsim::
 SendInput {U+22E9}
 return
@@ -27707,17 +27705,17 @@ return
 
 ;; Glyph: '⋪' Descr: NOT NORMAL SUBGROUP OF
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ntriangleleft::
 SendInput ^x8{Enter}22ea{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ntriangleleft::
 SendInput ^+u22ea{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ntriangleleft::
 SendInput {U+22EA}
 return
@@ -27725,17 +27723,17 @@ return
 
 ;; Glyph: '⋫' Descr: DOES NOT CONTAIN AS NORMAL SUBGROUP
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ntriangleright::
 SendInput ^x8{Enter}22eb{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ntriangleright::
 SendInput ^+u22eb{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ntriangleright::
 SendInput {U+22EB}
 return
@@ -27743,17 +27741,17 @@ return
 
 ;; Glyph: '⋬' Descr: NOT NORMAL SUBGROUP OF OR EQUAL TO
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ntrianglelefteq::
 SendInput ^x8{Enter}22ec{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ntrianglelefteq::
 SendInput ^+u22ec{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ntrianglelefteq::
 SendInput {U+22EC}
 return
@@ -27761,17 +27759,17 @@ return
 
 ;; Glyph: '⋭' Descr: DOES NOT CONTAIN AS NORMAL SUBGROUP OR EQUAL
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ntrianglerighteq::
 SendInput ^x8{Enter}22ed{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ntrianglerighteq::
 SendInput ^+u22ed{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ntrianglerighteq::
 SendInput {U+22ED}
 return
@@ -27779,17 +27777,17 @@ return
 
 ;; Glyph: '⋮' Descr: VERTICAL ELLIPSIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\vdots::
 SendInput ^x8{Enter}22ee{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\vdots::
 SendInput ^+u22ee{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\vdots::
 SendInput {U+22EE}
 return
@@ -27797,17 +27795,17 @@ return
 
 ;; Glyph: '⋯' Descr: MIDLINE HORIZONTAL ELLIPSIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\cdots::
 SendInput ^x8{Enter}22ef{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\cdots::
 SendInput ^+u22ef{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\cdots::
 SendInput {U+22EF}
 return
@@ -27815,17 +27813,17 @@ return
 
 ;; Glyph: '⋱' Descr: DOWN RIGHT DIAGONAL ELLIPSIS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ddots::
 SendInput ^x8{Enter}22f1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ddots::
 SendInput ^+u22f1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ddots::
 SendInput {U+22F1}
 return
@@ -27833,17 +27831,17 @@ return
 
 ;; Glyph: '⌀' Descr: DIAMETER SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\diameter::
 SendInput ^x8{Enter}2300{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\diameter::
 SendInput ^+u2300{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\diameter::
 SendInput {U+2300}
 return
@@ -27851,17 +27849,17 @@ return
 
 ;; Glyph: '⌈' Descr: LEFT CEILING
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lceil::
 SendInput ^x8{Enter}2308{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lceil::
 SendInput ^+u2308{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lceil::
 SendInput {U+2308}
 return
@@ -27869,17 +27867,17 @@ return
 
 ;; Glyph: '⌉' Descr: RIGHT CEILING
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rceil::
 SendInput ^x8{Enter}2309{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rceil::
 SendInput ^+u2309{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rceil::
 SendInput {U+2309}
 return
@@ -27887,17 +27885,17 @@ return
 
 ;; Glyph: '⌊' Descr: LEFT FLOOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lfloor::
 SendInput ^x8{Enter}230a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lfloor::
 SendInput ^+u230a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lfloor::
 SendInput {U+230A}
 return
@@ -27905,17 +27903,17 @@ return
 
 ;; Glyph: '⌋' Descr: RIGHT FLOOR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rfloor::
 SendInput ^x8{Enter}230b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rfloor::
 SendInput ^+u230b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rfloor::
 SendInput {U+230B}
 return
@@ -27923,17 +27921,17 @@ return
 
 ;; Glyph: '⌜' Descr: TOP LEFT CORNER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ulcorner::
 SendInput ^x8{Enter}231c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ulcorner::
 SendInput ^+u231c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ulcorner::
 SendInput {U+231C}
 return
@@ -27941,17 +27939,17 @@ return
 
 ;; Glyph: '⌝' Descr: TOP RIGHT CORNER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\urcorner::
 SendInput ^x8{Enter}231d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\urcorner::
 SendInput ^+u231d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\urcorner::
 SendInput {U+231D}
 return
@@ -27959,17 +27957,17 @@ return
 
 ;; Glyph: '⌞' Descr: BOTTOM LEFT CORNER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\llcorner::
 SendInput ^x8{Enter}231e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\llcorner::
 SendInput ^+u231e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\llcorner::
 SendInput {U+231E}
 return
@@ -27977,17 +27975,17 @@ return
 
 ;; Glyph: '⌟' Descr: BOTTOM RIGHT CORNER
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lrcorner::
 SendInput ^x8{Enter}231f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lrcorner::
 SendInput ^+u231f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lrcorner::
 SendInput {U+231F}
 return
@@ -27995,17 +27993,17 @@ return
 
 ;; Glyph: '⌢' Descr: FROWN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\frown::
 SendInput ^x8{Enter}2322{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\frown::
 SendInput ^+u2322{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\frown::
 SendInput {U+2322}
 return
@@ -28013,17 +28011,17 @@ return
 
 ;; Glyph: '⌣' Descr: SMILE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\smallsmile::
 SendInput ^x8{Enter}2323{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\smallsmile::
 SendInput ^+u2323{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\smallsmile::
 SendInput {U+2323}
 return
@@ -28031,17 +28029,17 @@ return
 
 ;; Glyph: '⌣' Descr: SMILE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\smile::
 SendInput ^x8{Enter}2323{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\smile::
 SendInput ^+u2323{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\smile::
 SendInput {U+2323}
 return
@@ -28049,17 +28047,17 @@ return
 
 ;; Glyph: 'Ⓢ' Descr: CIRCLED LATIN CAPITAL LETTER S
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\circledS::
 SendInput ^x8{Enter}24c8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\circledS::
 SendInput ^+u24c8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\circledS::
 SendInput {U+24C8}
 return
@@ -28067,17 +28065,17 @@ return
 
 ;; Glyph: '□' Descr: WHITE SQUARE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Box::
 SendInput ^x8{Enter}25a1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Box::
 SendInput ^+u25a1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Box::
 SendInput {U+25A1}
 return
@@ -28085,17 +28083,17 @@ return
 
 ;; Glyph: '□' Descr: WHITE SQUARE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\square::
 SendInput ^x8{Enter}25a1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\square::
 SendInput ^+u25a1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\square::
 SendInput {U+25A1}
 return
@@ -28103,17 +28101,17 @@ return
 
 ;; Glyph: '▪' Descr: BLACK SMALL SQUARE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\blacksquare::
 SendInput ^x8{Enter}25aa{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\blacksquare::
 SendInput ^+u25aa{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\blacksquare::
 SendInput {U+25AA}
 return
@@ -28121,17 +28119,17 @@ return
 
 ;; Glyph: '△' Descr: WHITE UP-POINTING TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bigtriangleup::
 SendInput ^x8{Enter}25b3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bigtriangleup::
 SendInput ^+u25b3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bigtriangleup::
 SendInput {U+25B3}
 return
@@ -28139,17 +28137,17 @@ return
 
 ;; Glyph: '▴' Descr: BLACK UP-POINTING SMALL TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\blacktriangle::
 SendInput ^x8{Enter}25b4{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\blacktriangle::
 SendInput ^+u25b4{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\blacktriangle::
 SendInput {U+25B4}
 return
@@ -28157,17 +28155,17 @@ return
 
 ;; Glyph: '▵' Descr: WHITE UP-POINTING SMALL TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\triangle::
 SendInput ^x8{Enter}25b5{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\triangle::
 SendInput ^+u25b5{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\triangle::
 SendInput {U+25B5}
 return
@@ -28175,17 +28173,17 @@ return
 
 ;; Glyph: '▷' Descr: WHITE RIGHT-POINTING TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rhd::
 SendInput ^x8{Enter}25b7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rhd::
 SendInput ^+u25b7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rhd::
 SendInput {U+25B7}
 return
@@ -28193,17 +28191,17 @@ return
 
 ;; Glyph: '▸' Descr: BLACK RIGHT-POINTING SMALL TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\blacktriangleright::
 SendInput ^x8{Enter}25b8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\blacktriangleright::
 SendInput ^+u25b8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\blacktriangleright::
 SendInput {U+25B8}
 return
@@ -28211,17 +28209,17 @@ return
 
 ;; Glyph: '▹' Descr: WHITE RIGHT-POINTING SMALL TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\triangleright::
 SendInput ^x8{Enter}25b9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\triangleright::
 SendInput ^+u25b9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\triangleright::
 SendInput {U+25B9}
 return
@@ -28229,17 +28227,17 @@ return
 
 ;; Glyph: '▽' Descr: WHITE DOWN-POINTING TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bigtriangledown::
 SendInput ^x8{Enter}25bd{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bigtriangledown::
 SendInput ^+u25bd{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bigtriangledown::
 SendInput {U+25BD}
 return
@@ -28247,17 +28245,17 @@ return
 
 ;; Glyph: '▾' Descr: BLACK DOWN-POINTING SMALL TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\blacktriangledown::
 SendInput ^x8{Enter}25be{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\blacktriangledown::
 SendInput ^+u25be{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\blacktriangledown::
 SendInput {U+25BE}
 return
@@ -28265,17 +28263,17 @@ return
 
 ;; Glyph: '▿' Descr: WHITE DOWN-POINTING SMALL TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\triangledown::
 SendInput ^x8{Enter}25bf{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\triangledown::
 SendInput ^+u25bf{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\triangledown::
 SendInput {U+25BF}
 return
@@ -28283,17 +28281,17 @@ return
 
 ;; Glyph: '◁' Descr: WHITE LEFT-POINTING TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lhd::
 SendInput ^x8{Enter}25c1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lhd::
 SendInput ^+u25c1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lhd::
 SendInput {U+25C1}
 return
@@ -28301,17 +28299,17 @@ return
 
 ;; Glyph: '◂' Descr: BLACK LEFT-POINTING SMALL TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\blacktriangleleft::
 SendInput ^x8{Enter}25c2{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\blacktriangleleft::
 SendInput ^+u25c2{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\blacktriangleleft::
 SendInput {U+25C2}
 return
@@ -28319,17 +28317,17 @@ return
 
 ;; Glyph: '◃' Descr: WHITE LEFT-POINTING SMALL TRIANGLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\triangleleft::
 SendInput ^x8{Enter}25c3{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\triangleleft::
 SendInput ^+u25c3{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\triangleleft::
 SendInput {U+25C3}
 return
@@ -28337,17 +28335,17 @@ return
 
 ;; Glyph: '◇' Descr: WHITE DIAMOND
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Diamond::
 SendInput ^x8{Enter}25c7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Diamond::
 SendInput ^+u25c7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Diamond::
 SendInput {U+25C7}
 return
@@ -28355,17 +28353,17 @@ return
 
 ;; Glyph: '◦' Descr: WHITE BULLET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textopenbullet::
 SendInput ^x8{Enter}25e6{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textopenbullet::
 SendInput ^+u25e6{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textopenbullet::
 SendInput {U+25E6}
 return
@@ -28373,17 +28371,17 @@ return
 
 ;; Glyph: '◯' Descr: LARGE CIRCLE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bigcirc::
 SendInput ^x8{Enter}25ef{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bigcirc::
 SendInput ^+u25ef{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bigcirc::
 SendInput {U+25EF}
 return
@@ -28391,17 +28389,17 @@ return
 
 ;; Glyph: '★' Descr: BLACK STAR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\bigstar::
 SendInput ^x8{Enter}2605{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\bigstar::
 SendInput ^+u2605{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\bigstar::
 SendInput {U+2605}
 return
@@ -28409,17 +28407,17 @@ return
 
 ;; Glyph: '☡' Descr: CAUTION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\caution::
 SendInput ^x8{Enter}2621{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\caution::
 SendInput ^+u2621{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\caution::
 SendInput {U+2621}
 return
@@ -28427,17 +28425,17 @@ return
 
 ;; Glyph: '☢' Descr: RADIOACTIVE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\radioactive::
 SendInput ^x8{Enter}2622{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\radioactive::
 SendInput ^+u2622{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\radioactive::
 SendInput {U+2622}
 return
@@ -28445,17 +28443,17 @@ return
 
 ;; Glyph: '☣' Descr: BIOHAZARD SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\biohazard::
 SendInput ^x8{Enter}2623{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\biohazard::
 SendInput ^+u2623{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\biohazard::
 SendInput {U+2623}
 return
@@ -28463,17 +28461,17 @@ return
 
 ;; Glyph: '☹' Descr: WHITE FROWNING FACE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Frowny::
 SendInput ^x8{Enter}2639{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Frowny::
 SendInput ^+u2639{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Frowny::
 SendInput {U+2639}
 return
@@ -28481,17 +28479,17 @@ return
 
 ;; Glyph: '☺' Descr: WHITE SMILING FACE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Smiley::
 SendInput ^x8{Enter}263a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Smiley::
 SendInput ^+u263a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Smiley::
 SendInput {U+263A}
 return
@@ -28499,17 +28497,17 @@ return
 
 ;; Glyph: '☻' Descr: BLACK SMILING FACE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\blacksmiley::
 SendInput ^x8{Enter}263b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\blacksmiley::
 SendInput ^+u263b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\blacksmiley::
 SendInput {U+263B}
 return
@@ -28517,17 +28515,17 @@ return
 
 ;; Glyph: '♀' Descr: FEMALE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\female::
 SendInput ^x8{Enter}2640{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\female::
 SendInput ^+u2640{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\female::
 SendInput {U+2640}
 return
@@ -28535,17 +28533,17 @@ return
 
 ;; Glyph: '♂' Descr: MALE SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\male::
 SendInput ^x8{Enter}2642{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\male::
 SendInput ^+u2642{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\male::
 SendInput {U+2642}
 return
@@ -28553,17 +28551,17 @@ return
 
 ;; Glyph: '♠' Descr: BLACK SPADE SUIT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\spadesuit::
 SendInput ^x8{Enter}2660{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\spadesuit::
 SendInput ^+u2660{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\spadesuit::
 SendInput {U+2660}
 return
@@ -28571,17 +28569,17 @@ return
 
 ;; Glyph: '♢' Descr: WHITE DIAMOND SUIT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\diamondsuit::
 SendInput ^x8{Enter}2662{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\diamondsuit::
 SendInput ^+u2662{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\diamondsuit::
 SendInput {U+2662}
 return
@@ -28589,17 +28587,17 @@ return
 
 ;; Glyph: '♣' Descr: BLACK CLUB SUIT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\clubsuit::
 SendInput ^x8{Enter}2663{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\clubsuit::
 SendInput ^+u2663{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\clubsuit::
 SendInput {U+2663}
 return
@@ -28607,17 +28605,17 @@ return
 
 ;; Glyph: '♥' Descr: BLACK HEART SUIT
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\heartsuit::
 SendInput ^x8{Enter}2665{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\heartsuit::
 SendInput ^+u2665{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\heartsuit::
 SendInput {U+2665}
 return
@@ -28625,17 +28623,17 @@ return
 
 ;; Glyph: '♪' Descr: EIGHTH NOTE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textmusicalnote::
 SendInput ^x8{Enter}266a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textmusicalnote::
 SendInput ^+u266a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textmusicalnote::
 SendInput {U+266A}
 return
@@ -28643,17 +28641,17 @@ return
 
 ;; Glyph: '♭' Descr: MUSIC FLAT SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\flat::
 SendInput ^x8{Enter}266d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\flat::
 SendInput ^+u266d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\flat::
 SendInput {U+266D}
 return
@@ -28661,17 +28659,17 @@ return
 
 ;; Glyph: '♮' Descr: MUSIC NATURAL SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\natural::
 SendInput ^x8{Enter}266e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\natural::
 SendInput ^+u266e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\natural::
 SendInput {U+266E}
 return
@@ -28679,17 +28677,17 @@ return
 
 ;; Glyph: '♯' Descr: MUSIC SHARP SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sharp::
 SendInput ^x8{Enter}266f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sharp::
 SendInput ^+u266f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sharp::
 SendInput {U+266F}
 return
@@ -28697,17 +28695,17 @@ return
 
 ;; Glyph: '⚠' Descr: WARNING SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\warning::
 SendInput ^x8{Enter}26a0{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\warning::
 SendInput ^+u26a0{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\warning::
 SendInput {U+26A0}
 return
@@ -28715,17 +28713,17 @@ return
 
 ;; Glyph: '✉' Descr: ENVELOPE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\Letter::
 SendInput ^x8{Enter}2709{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\Letter::
 SendInput ^+u2709{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\Letter::
 SendInput {U+2709}
 return
@@ -28733,17 +28731,17 @@ return
 
 ;; Glyph: '✓' Descr: CHECK MARK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\checkmark::
 SendInput ^x8{Enter}2713{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\checkmark::
 SendInput ^+u2713{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\checkmark::
 SendInput {U+2713}
 return
@@ -28751,17 +28749,17 @@ return
 
 ;; Glyph: '✝' Descr: LATIN CROSS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\textdied::
 SendInput ^x8{Enter}271d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\textdied::
 SendInput ^+u271d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\textdied::
 SendInput {U+271D}
 return
@@ -28769,17 +28767,17 @@ return
 
 ;; Glyph: '✠' Descr: MALTESE CROSS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\maltese::
 SendInput ^x8{Enter}2720{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\maltese::
 SendInput ^+u2720{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\maltese::
 SendInput {U+2720}
 return
@@ -28787,17 +28785,17 @@ return
 
 ;; Glyph: '✦' Descr: BLACK FOUR POINTED STAR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\blacklozenge::
 SendInput ^x8{Enter}2726{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\blacklozenge::
 SendInput ^+u2726{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\blacklozenge::
 SendInput {U+2726}
 return
@@ -28805,17 +28803,17 @@ return
 
 ;; Glyph: '✧' Descr: WHITE FOUR POINTED STAR
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\lozenge::
 SendInput ^x8{Enter}2727{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\lozenge::
 SendInput ^+u2727{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\lozenge::
 SendInput {U+2727}
 return
@@ -28823,17 +28821,17 @@ return
 
 ;; Glyph: '⟨' Descr: MATHEMATICAL LEFT ANGLE BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\langle::
 SendInput ^x8{Enter}27e8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\langle::
 SendInput ^+u27e8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\langle::
 SendInput {U+27E8}
 return
@@ -28841,17 +28839,17 @@ return
 
 ;; Glyph: '⟩' Descr: MATHEMATICAL RIGHT ANGLE BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rangle::
 SendInput ^x8{Enter}27e9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rangle::
 SendInput ^+u27e9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rangle::
 SendInput {U+27E9}
 return
@@ -28859,17 +28857,17 @@ return
 
 ;; Glyph: '⯑' Descr: UNCERTAINTY SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\uncertainty::
 SendInput ^x8{Enter}2bd1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\uncertainty::
 SendInput ^+u2bd1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\uncertainty::
 SendInput {U+2BD1}
 return
@@ -28877,17 +28875,17 @@ return
 
 ;; Glyph: 'ⱼ' Descr: LATIN SUBSCRIPT SMALL LETTER J
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::_j::
 SendInput ^x8{Enter}2c7c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::_j::
 SendInput ^+u2c7c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::_j::
 SendInput {U+2C7C}
 return
@@ -28895,17 +28893,17 @@ return
 
 ;; Glyph: 'ⱽ' Descr: MODIFIER LETTER CAPITAL V
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^V::
 SendInput ^x8{Enter}2c7d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^V::
 SendInput ^+u2c7d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^V::
 SendInput {U+2C7D}
 return
@@ -28913,17 +28911,17 @@ return
 
 ;; Glyph: '《' Descr: LEFT DOUBLE ANGLE BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\ldata::
 SendInput ^x8{Enter}300a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\ldata::
 SendInput ^+u300a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\ldata::
 SendInput {U+300A}
 return
@@ -28931,17 +28929,17 @@ return
 
 ;; Glyph: '》' Descr: RIGHT DOUBLE ANGLE BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rdata::
 SendInput ^x8{Enter}300b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rdata::
 SendInput ^+u300b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rdata::
 SendInput {U+300B}
 return
@@ -28949,17 +28947,17 @@ return
 
 ;; Glyph: '〚' Descr: LEFT WHITE SQUARE BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\llbracket::
 SendInput ^x8{Enter}301a{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\llbracket::
 SendInput ^+u301a{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\llbracket::
 SendInput {U+301A}
 return
@@ -28967,17 +28965,17 @@ return
 
 ;; Glyph: '〛' Descr: RIGHT WHITE SQUARE BRACKET
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rrbracket::
 SendInput ^x8{Enter}301b{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rrbracket::
 SendInput ^+u301b{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rrbracket::
 SendInput {U+301B}
 return
@@ -28985,17 +28983,17 @@ return
 
 ;; Glyph: '㉐' Descr: PARTNERSHIP SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\partnership::
 SendInput ^x8{Enter}3250{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\partnership::
 SendInput ^+u3250{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\partnership::
 SendInput {U+3250}
 return
@@ -29003,17 +29001,17 @@ return
 
 ;; Glyph: 'ꟸ' Descr: MODIFIER LETTER CAPITAL H WITH STROKE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\H With Stroke::
 SendInput ^x8{Enter}a7f8{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\H With Stroke::
 SendInput ^+ua7f8{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\H With Stroke::
 SendInput {U+A7F8}
 return
@@ -29021,17 +29019,17 @@ return
 
 ;; Glyph: 'ꟹ' Descr: MODIFIER LETTER SMALL LIGATURE OE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\ligature oe::
 SendInput ^x8{Enter}a7f9{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\ligature oe::
 SendInput ^+ua7f9{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\ligature oe::
 SendInput {U+A7F9}
 return
@@ -29039,17 +29037,17 @@ return
 
 ;; Glyph: 'ꭜ' Descr: MODIFIER LETTER SMALL HENG
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\heng::
 SendInput ^x8{Enter}ab5c{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\heng::
 SendInput ^+uab5c{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\heng::
 SendInput {U+AB5C}
 return
@@ -29057,17 +29055,17 @@ return
 
 ;; Glyph: 'ꭝ' Descr: MODIFIER LETTER SMALL L WITH INVERTED LAZY S
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\l with inverted lazy s::
 SendInput ^x8{Enter}ab5d{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\l with inverted lazy s::
 SendInput ^+uab5d{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\l with inverted lazy s::
 SendInput {U+AB5D}
 return
@@ -29075,17 +29073,17 @@ return
 
 ;; Glyph: 'ꭞ' Descr: MODIFIER LETTER SMALL L WITH MIDDLE TILDE
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\l with middle tilde::
 SendInput ^x8{Enter}ab5e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\l with middle tilde::
 SendInput ^+uab5e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\l with middle tilde::
 SendInput {U+AB5E}
 return
@@ -29093,17 +29091,17 @@ return
 
 ;; Glyph: 'ꭟ' Descr: MODIFIER LETTER SMALL U WITH LEFT HOOK
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::^\u with left hook::
 SendInput ^x8{Enter}ab5f{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::^\u with left hook::
 SendInput ^+uab5f{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::^\u with left hook::
 SendInput {U+AB5F}
 return
@@ -29111,17 +29109,17 @@ return
 
 ;; Glyph: '﷼' Descr: RIAL SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\rial::
 SendInput ^x8{Enter}fdfc{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\rial::
 SendInput ^+ufdfc{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\rial::
 SendInput {U+FDFC}
 return
@@ -29129,17 +29127,17 @@ return
 
 ;; Glyph: '﹨' Descr: SMALL REVERSE SOLIDUS
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\sbs::
 SendInput ^x8{Enter}fe68{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\sbs::
 SendInput ^+ufe68{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\sbs::
 SendInput {U+FE68}
 return
@@ -29147,17 +29145,17 @@ return
 
 ;; Glyph: '𐆎' Descr: NOMISMA SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\nomisma::
 SendInput ^x8{Enter}1018e{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\nomisma::
 SendInput ^+u1018e{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\nomisma::
 SendInput {U+1018E}
 return
@@ -29165,17 +29163,17 @@ return
 
 ;; Glyph: '🚧' Descr: CONSTRUCTION SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\construction::
 SendInput ^x8{Enter}1f6a7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\construction::
 SendInput ^+u1f6a7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\construction::
 SendInput {U+1F6A7}
 return
@@ -29183,17 +29181,17 @@ return
 
 ;; Glyph: '🛇' Descr: PROHIBITED SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\prohibited::
 SendInput ^x8{Enter}1f6c7{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\prohibited::
 SendInput ^+u1f6c7{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\prohibited::
 SendInput {U+1F6C7}
 return
@@ -29201,17 +29199,17 @@ return
 
 ;; Glyph: '🛑' Descr: OCTAGONAL SIGN
 
-#If EmacsCase() && EmacsEnabled
+#if EmacsCase() && EmacsEnabled
 ::\octagonal::
 SendInput ^x8{Enter}1f6d1{Enter}
 return
 
-#If GtkApplicationCase()
+#if GtkApplicationCase()
 ::\octagonal::
 SendInput ^+u1f6d1{Enter}
 return
 
-#If OtherCase()
+#if OtherCase()
 ::\octagonal::
 SendInput {U+1F6D1}
 return

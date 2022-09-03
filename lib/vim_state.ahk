@@ -111,8 +111,8 @@
   }
 
   HandleEsc() {
-    global Vim, VimEscNormal, SMVimSendEscInsert, vimSendEscNormal, VimLongEscNormal
-    if (this.Vim.SM.IsEditingText())
+    global Vim, VimEscNormal, SMVimSendEscInsert, VimSendEscNormal, VimLongEscNormal
+    if (this.Vim.SM.IsEditingText() && A_ThisHotkey != "esc")
       this.Vim.SM.ClickMid()
     if (!VimEscNormal) {
       send {Esc}
@@ -122,10 +122,10 @@
     ; within the time limit, sets ErrorLevel to 1.
     KeyWait, Esc, T0.5
     LongPress := ErrorLevel
-    both := VimLongEscNormal && LongPress
+    both := (VimLongEscNormal && LongPress)
     neither := !(VimLongEscNormal || LongPress)
-    SetNormal :=  both or neither
-    ; In SuperMemo you can use ESC to both escape and enter normal mode.
+    SetNormal := (both || neither)
+    ; In SuperMemo you can use esc to both escape and enter normal mode
     if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
       send {Esc}
     }
@@ -135,29 +135,31 @@
     if (LongPress) {
       ; Have to ensure the key has been released, otherwise this will get
       ; triggered again.
-      KeyWait, Esc
+      KeyWait Esc
     }
   }
 
   HandleCtrlBracket() {
-    global Vim, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal
+    global Vim, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimCtrlBracketToEsc
     if (!VimCtrlBracketNormal) {
       send ^[
       Return
     }
     KeyWait, [, T0.5
     LongPress := ErrorLevel
-    both := VimLongCtrlBracketNormal && LongPress
+    both := (VimLongCtrlBracketNormal && LongPress)
     neither := !(VimLongCtrlBracketNormal || LongPress)
-    SetNormal :=  both or neither
-    if (!SetNormal or (VimSendCtrlBracketNormal && this.IsCurrentVimMode("Vim_Normal"))) {
+    SetNormal := (both || neither)
+    if (VimCtrlBracketToEsc)
+      send {esc}
+    if (!SetNormal || (VimSendCtrlBracketNormal && this.IsCurrentVimMode("Vim_Normal"))) {
       send ^[
     }
     if (SetNormal) {
       this.SetNormal()
     }
     if (LongPress) {
-      KeyWait, [
+      KeyWait [
     }
   }
 

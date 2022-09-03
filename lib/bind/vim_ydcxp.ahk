@@ -1,4 +1,4 @@
-﻿#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
+﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0)
 c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0)
@@ -37,19 +37,19 @@ Return
   }
 Return
 
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_y"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_y"))
 y::
   Vim.Move.YDCMove()
   send {Left}{Home}
 Return
 
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
 d::Vim.Move.YDCMove()
 
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c"))
 c::Vim.Move.YDCMove()
 
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && Vim.IsNavigating())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && Vim.IsNavigating())
 x::
   if (!Vim.State.n)
     Vim.State.n := 1
@@ -64,7 +64,7 @@ return
   Vim.State.SetMode()
 return
 
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
 x::
   if (!Vim.State.n)
     Vim.State.n := 1
@@ -80,7 +80,7 @@ return
 return
 
 ; Paste
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
 ^p::
 p::
   ;i:=0
@@ -142,16 +142,16 @@ Return
   KeyWait, p
 Return
 
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
 u::Vim.State.SetMode("Vim_ydc_gu", 0, -1, 0)
 +u::Vim.State.SetMode("Vim_ydc_g+u", 0, -1, 0)
 ~::Vim.State.SetMode("Vim_ydc_g~", 0, -1, 0)
 
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_gu"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_gu"))
 u::Vim.Move.YDCMove()
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g+u"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g+u"))
 +u::
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g~"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g~"))
 ~::
   KeyWait Shift  ; cannot use ReleaseKey("shift"), shift will still get stuck
   Vim.Move.YDCMove()

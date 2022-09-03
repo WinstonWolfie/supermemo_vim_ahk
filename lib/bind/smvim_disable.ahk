@@ -1,4 +1,4 @@
-﻿#If (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ; Disable
 ^+j::
 ^m::

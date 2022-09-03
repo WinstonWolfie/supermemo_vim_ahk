@@ -1,46 +1,53 @@
 ﻿; Visual Char/Block/Line
-#If Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
+#if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))
 v::
-  if Vim.State.IsCurrentVimMode("Vim_Normal")
+  if (Vim.State.IsCurrentVimMode("Vim_Normal")) {
     Vim.State.SetMode("Vim_VisualFirst")
-  else if Vim.State.IsCurrentVimMode("Vim_VisualChar") || Vim.State.IsCurrentVimMode("Vim_VisualFirst")
+  } else if (Vim.State.IsCurrentVimMode("Vim_VisualChar") || Vim.State.IsCurrentVimMode("Vim_VisualFirst")) {
     Vim.State.SetNormal()
-  else
+  } else {
     Vim.State.SetMode("Vim_VisualChar")
+  }
 Return
 
 +v::
-  if Vim.State.StrIsInCurrentVimMode("VisualLine")
+  if (Vim.State.StrIsInCurrentVimMode("VisualLine")) {
     Vim.State.SetNormal()
-  else {
+  } else {
     send {Home}+{Down}
     Vim.State.SetMode("Vim_VisualLineFirst")
   }
 Return
 
 ^v::
-  if Vim.State.StrIsInCurrentVimMode("VisualBlock")
+  if (Vim.State.StrIsInCurrentVimMode("VisualBlock")) {
     Vim.State.SetNormal()
-  else if Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")
-    if Vim.IsHTML() {
+  } else if (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) {
+    if (Vim.IsHTML()) {
       Vim.Move.ParagraphDown()
       Vim.Move.ParagraphUp()
       Vim.Move.SelectParagraphDown()
       Vim.State.SetMode("Vim_VisualParagraphFirst")
-    } else if Vim.SM.IsEditingPlainText() {
+    } else if (Vim.SM.IsEditingPlainText()) {
       send {Home}+{Down}
       Vim.State.SetMode("Vim_VisualLineFirst")
     } else {
-      if !WinActive("ahk_exe notepad++.exe")  ; notepad++ requires alt down
+      if (!WinActive("ahk_exe notepad++.exe"))  ; notepad++ requires alt down
         send ^b
       Vim.State.SetMode("Vim_VisualBlock")
     }
+  }
 Return
 
-#If Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual"))
 ; Visual to insert
 +i::
   send {left}
+  Vim.State.SetMode("Insert")
+Return
+
++a::
+  send {right}
   Vim.State.SetMode("Insert")
 Return
 

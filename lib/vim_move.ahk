@@ -1143,22 +1143,22 @@
           send ^t
           this.Vim.SM.WaitTextFocus()
         } else if (WinActive("ahk_class TContents")) {
-					ControlClickWinCoord(295, 50)
+					ClickDPIAdjusted(295, 50)  ; ControlClickWinCoord() doesn't work well
         } else if (WinActive("ahk_class TBrowser")) {
-					ControlClickWinCoord(638, 46)
+					ClickDPIAdjusted(638, 46)
         }
         SendInput ^{home}{down %line%}
         if (WinActive("ahk_class TContents")) {
-					ControlClickWinCoord(295, 50)
+					ClickDPIAdjusted(295, 50)
         } else if (WinActive("ahk_class TBrowser")) {
-					ControlClickWinCoord(638, 46)
+					ClickDPIAdjusted(638, 46)
         }
       } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
         ControlGetPos, XCoord,,,, Internet Explorer_Server2, ahk_class TElWind
         if (XCoord) {
-          ControlSend, Internet Explorer_Server2, {home}, A
+          ControlSend, Internet Explorer_Server2, {home}
         } else {
-          ControlSend, Internet Explorer_Server1, {home}, A
+          ControlSend, Internet Explorer_Server1, {home}
         }
       } else {
         send ^{Home}
@@ -1174,24 +1174,26 @@
         } else if (this.Vim.SM.IsEditingText()) {
           this.Vim.SM.ClickTop()
         } else if (WinActive("ahk_class TContents")) {
-					ControlClickWinCoord(295, 50)
+					ClickDPIAdjusted(295, 50)
+          send ^{home}
         } else if (WinActive("ahk_class TBrowser")) {
-					ControlClickWinCoord(638, 46)
+					ClickDPIAdjusted(638, 46)
+          send ^{home}
         } else {
           send ^{home}
         }
         SendInput {down %line%}
         if (WinActive("ahk_class TContents")) {
-					ControlClickWinCoord(295, 50)
+					ClickDPIAdjusted(295, 50)
         } else if (WinActive("ahk_class TBrowser")) {
-					ControlClickWinCoord(638, 46)
+					ClickDPIAdjusted(638, 46)
         }
       } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
         ControlGetPos, XCoord,,,, Internet Explorer_Server2, ahk_class TElWind
         if (XCoord) {
-          ControlSend, Internet Explorer_Server2, {end}, A
+          ControlSend, Internet Explorer_Server2, {end}
         } else {
-          ControlSend, Internet Explorer_Server1, {end}, A
+          ControlSend, Internet Explorer_Server1, {end}
         }
       } else {
         if (this.shift == 1) {
@@ -1303,7 +1305,7 @@
 
   Inner(key="") {
     if (key == "w") {
-      send ^{left}
+      send ^{right}^{left}
       this.Move("e")
     } else if (key == "s") {
       send {right}  ; so if at start of a sentence, select this sentence

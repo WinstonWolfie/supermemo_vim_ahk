@@ -1,5 +1,5 @@
 ﻿; Editing text only
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
 ^q::Vim.State.SetMode("SMVim_ExtractStay", 0, -1, 0)
 ^z::Vim.State.SetMode("SMVim_ClozeStay", 0, -1, 0)
 q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0)
@@ -11,17 +11,17 @@ z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)
   ClozeHinterCtrlState := GetKeyState("Ctrl")
 Return
 
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText() && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText() && Vim.State.g)
 !t::Vim.State.SetMode("SMVim_AltT", 0, -1, 0)
 !q::Vim.State.SetMode("SMAltQ_Command", 0, -1, 0)
 
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_Extract") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_Extract") && Vim.SM.IsEditingText())
 q::
-#If (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_Cloze") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_Cloze") && Vim.SM.IsEditingText())
 z::
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMVim_AltT") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMVim_AltT") && Vim.SM.IsEditingText())
 !t::Vim.Move.YDCMove()
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMAltQ_Command") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMAltQ_Command") && Vim.SM.IsEditingText())
 !q::SMAltQYdcMove := true
 
 a::

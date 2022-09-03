@@ -1,4 +1,4 @@
-﻿#If (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
   ReleaseKey("ctrl")
   Vim.SM.DeselectAllComponents()
@@ -96,20 +96,7 @@ return
   Vim.State.SetNormal()
 return
 
-^!t::
-  send !t
-  GroupAdd, SMAltT, ahk_class TChoicesDlg
-  GroupAdd, SMAltT, ahk_class TTitleEdit
-  WinWaitActive, ahk_group SMAltT,, 0
-  if (WinActive("ahk_class TChoicesDlg")) {
-    send {enter}
-    WinWaitActive, ahk_class TTitleEdit,, 0
-  }
-  if (WinActive("ahk_class TTitleEdit")) {
-    ControlFocusWait("TMemo1")
-    send ^v{enter}
-  }
-Return
+^!t::Vim.SM.SetTitle(Clipboard, "!t")
 
 ^!f::  ; use IE's search
   if (Vim.SM.IsEditingHTML()) {
@@ -124,17 +111,25 @@ return
 
 ~^enter::SetDefaultKeyboard(0x0409)  ; english-US	
 
-#If (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
-; more intuitive inter-element linking, inspired by obsidian
-; 1. go to the element you want to link to and press ctrl+alt+g
-; 2. go to the element you want to have the hyperlink, select text and press ctrl+alt+k
+^!p::  ; convert to a *p*lain-text template
+  ; send ^+m  ; open template registry
+  send ^+p!t  ; much faster than above
+  SetDefaultKeyboard(0x0409)  ; english-US	
+  send cl  ; my plain-text template name is classic
+  send {enter}
+  Vim.State.SetMode("Vim_Normal")
+return
+
+; More intuitive inter-element linking, inspired by obsidian
+; 1. Go to the element you want to link to and press ctrl+alt+g
+; 2. Go to the element you want to have the hyperlink, select text and press ctrl+alt+k
 ^!g::
   WinClip.Snap(ClipDataElemLink)
   send ^g^c{esc}
   Vim.State.SetNormal()
 return
 
-#If (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())
+#if (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())
 ^!k::
   if (RegExMatch(Clipboard, "^https?:\/\/") || RegExMatch(Clipboard, "^file:\/\/\/")) {
     link := Clipboard
@@ -144,17 +139,17 @@ return
     link := ""
   }
   if (!clip() || !link)  ; no selection
-    Return
+    return
   send ^k
   WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2  ; a bit more delay since everybody knows how slow IE can be
   clip(link)
   send {enter}
-  Vim.Caret.SwitchToSameWindow()  ; refresh caret
   if (ClipDataElemLink) {
     WinClip.Restore(ClipDataElemLink)
     ClipDataElemLink := ""
   }
   Vim.State.SetNormal()
+  Vim.Caret.SwitchToSameWindow()  ; refresh caret
 return
 
 ^!l::
@@ -171,7 +166,7 @@ return
     ; To do: detect selection contents
     ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
       ; Vim.ToolTip("Please select text or image only.")
-      ; Clipboard := ClipSaved
+      ; WinClip.Restore(ClipData)
       ; Return
     ; } else
     if (!InStr(data, "<IMG")) {  ; text only
@@ -250,13 +245,15 @@ return
     }
   }
   WinClip.Restore(ClipData)
-Return
+return
 
 DownloadLatex:
   UrlDownloadToFile, % LatexLink, % LatexPath
-Return
+return
 
-#If (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
+#if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
+!r::ControlClickWinCoord(39, A_CaretY)
+
 !a::  ; insert activity
   Gui, PlanInsert:Add, Text,, &Activity:
   list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM|Piano|Meditation|Translation|Job"
@@ -266,17 +263,17 @@ Return
   KeyWait Alt
   Gui, PlanInsert:Show,, Insert Activity
   SetDefaultKeyboard(0x0409)  ; english-US	
-Return
+return
 
 PlanInsertGuiEscape:
 PlanInsertGuiClose:
-  Gui, Destroy
+  gui destroy
 return
 
 PlanInsertButtonInsert:
   KeyWait alt
-  Gui, Submit
-  Gui, Destroy
+  gui submit
+  gui destroy
   FormatTime, CurrentTime,, HH:mm
   WinActivate, ahk_class TPlanDlg
   if (!NoSplit) {
@@ -297,11 +294,11 @@ PlanInsertButtonInsert:
   Vim.State.SetNormal(true)
 return
 
-#If (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
 !+d::ControlClickWinCoord(250, 66)
 !+s::ControlClickWinCoord(173, 67)
 
-#If Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg")
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg"))
 ; Task value script, modified from Naess's priority script
 !0::
 !Numpad0::
@@ -342,3 +339,32 @@ return
 !9::
 !Numpad9::
 !NumpadPgup::Vim.SM.SetTaskValue(0,360.76)
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg"))  ; priority window (alt+p)
+enter::
+  priority := ControlGetText("TEdit5")
+  if (RegExMatch(priority, "^\."))
+    ControlSend, TEdit5, {home}0
+  send {enter}
+return
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TMyFindDlg"))
+; So ctrl+ff (hold ctrl and press f twice) could be a shorthand for search clipboard
+^f::send ^v{enter}
+
+#if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
+d::
+  Vim.State.SetMode("SMVimPlanDragging")
+  MouseGetPos, XCoord, YCoord
+  MouseMove, 15, % A_CaretY + 11, 0
+  click down
+return
+
+#if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.IsCurrentVimMode("SMVimPlanDragging"))
+j::MouseMove, 0, 22, 0, R
+k::MouseMove, 0, -22, 0, R
+p::
+  click up
+  MouseMove, XCoord, YCoord, 0
+  Vim.State.SetMode("Vim_Normal")
+return

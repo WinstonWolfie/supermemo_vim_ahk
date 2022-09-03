@@ -1,10 +1,10 @@
-﻿#If (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))
+﻿#if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))
 /::
   send ^f
   Vim.State.SetMode("Insert")
 Return
 
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 *::
   ReleaseKey("shift")
   WinClip.Snap(ClipData)
@@ -20,4 +20,4 @@ Return
 n::send {F3}
 +n::send +{F3}
 
-#If
+#if

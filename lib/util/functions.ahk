@@ -389,7 +389,9 @@ GetBrowserTitleSourceDate(BrowserUrl, ByRef BrowserTitle, ByRef BrowserSource, B
 	; Try to use - or | to find source
 	} else {
 		ReversedTitle := StrReverse(BrowserTitle)
-		if (InStr(ReversedTitle, " | ") && (!InStr(ReversedTitle, " - ") || InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - "))) {  ; used to find source
+		if (InStr(ReversedTitle, " | ")
+		 && (!InStr(ReversedTitle, " - ")
+		 	|| InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - "))) {  ; used to find source
 			separator := " | "
 		} else if (InStr(ReversedTitle, " - ")) {
 			separator := " - "
@@ -439,9 +441,13 @@ ClickDPIAdjusted(XCoord, YCoord) {
 	SetMouseDelay % MouseDelay
 }
 
-ControlClickWinCoord(XCoord, YCoord) {
-  WinGet, hwnd, ID, A
-  ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % "ahk_id " hwnd,,,, NA
+ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
+	if (!Wintitle) {
+		WinGet, hwnd, ID, A
+		ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % "ahk_id " hwnd,,,, NA
+	} else {
+		ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
+	}
 }
 
 WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=5000) {

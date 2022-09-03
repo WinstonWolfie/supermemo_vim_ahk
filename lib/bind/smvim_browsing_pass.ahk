@@ -1,5 +1,5 @@
 ﻿; making sure grading works (in case VimDisableUnused > 1)
-#If Vim.IsVimGroup() && Vim.SM.IsGrading()
+#if Vim.IsVimGroup() && Vim.SM.IsGrading()
 ; cannot use ~ here to send the key itself
 0::
 1::
@@ -10,7 +10,7 @@
   send % A_ThisHotkey
 Return
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
+#if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
 a::
 b::
 c::
@@ -108,8 +108,8 @@ Return
 ~^p::  ; open Plan; vim_ahk go right and paste without format
 Return
 
-#If Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")
+#if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser")
 ~^l::
 Return
 
-#If
+#if

@@ -375,16 +375,20 @@ class VimAhk{
     Return Str
   }
   
-  IsWhitespaceOnly(Str) {
-    Return (!RegExMatch(Str, "[\S]"))
+  IsWhitespaceOnly(str) {
+    return (!RegExMatch(str, "[\S]"))
   }
   
   IsHTML() {
-    Return (this.SM.IsEditingHTML() || WinActive("ahk_group HTML"))
+    return (this.SM.IsEditingHTML() || WinActive("ahk_group HTML"))
   }
 
   IsNavigating() {
-    Return (this.SM.IsNavigatingPlan() || this.SM.IsNavigatingTask() || this.SM.IsNavigatingContentWindow() || !A_CaretX)
+    return (this.SM.IsNavigatingPlan()
+         || this.SM.IsNavigatingTask()
+         || this.SM.IsNavigatingContentWindow()
+         || this.SM.IsNavigatingBrowser()
+         || !A_CaretX)
   }
 
   ToolTip(Text:="", Permanent:=false, Period:=-2000) {

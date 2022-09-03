@@ -1,11 +1,11 @@
 ﻿; Q-dir
-#If Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")
+#if Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")
 ; Enter insert mode to quickly locate the file/folder by using the first letter
 /::Vim.State.SetMode("Insert")
 ; Enter insert mode at rename
 ~F2::Vim.State.SetMode("Insert")
 
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 i::
   if (Vim.State.g)
     Vim.Move.Move("g")
@@ -47,21 +47,19 @@ Return
 ; Keys that need insert mode
 ~f2::
   sleep 50
-  if A_CaretX
+  if (A_CaretX)
     Vim.State.SetMode("Insert")
 Return
 
 alt::  ; for access keys
-  ; can't use KeyWait alt, any hotkeys that use modifier alt would trigger this script
+  ; Can't use KeyWait alt, any hotkeys that use modifier alt would trigger this script
   send {alt}  ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert
   Vim.State.SetMode("Insert")
 return
 
-~AppsKey::
-  Vim.State.SetMode("Insert")
-Return
+~AppsKey::Vim.State.SetMode("Insert")
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual"))
 ~#a::Vim.State.SetMode("Insert")  ; text editor everywhere shortcut
 
-#If
+#if

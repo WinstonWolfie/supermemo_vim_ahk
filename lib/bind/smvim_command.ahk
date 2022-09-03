@@ -1,4 +1,4 @@
-﻿#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TElWind"))
+﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TElWind"))
 +c::  ; add new concept
   send {alt}er
   Vim.State.SetMode("Vim_Normal")
@@ -55,7 +55,7 @@ SMCleanHTML:
   HTMLPath := Clipboard
   FileRead, HTML, % HTMLPath
   if (!HTML) {
-    Clipboard := ClipSaved
+    WinClip.Restore(ClipData)
     Return
   }
   NewHTML := Vim.HTML.Clean(HTML)
@@ -66,7 +66,7 @@ SMCleanHTML:
   send {esc}
   if (ContinueLearning)
     ControlSend, TBitBtn2, {enter}
-  Clipboard := ClipSaved
+  WinClip.Restore(ClipData)
 Return
 
 l::  ; *l*ink concept
@@ -81,37 +81,38 @@ return
 
 w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.State.SetMode("Vim_Normal")
+  if (Vim.SM.IsEditingPlainText())
+    return
   ; save read point
 	send !g^{f7}  ; !g in case it's learning
-  if (Vim.SM.IsEditingPlainText())
-    Return
   if (!Vim.SM.IsEditingHTML()) {
     send ^t
     Vim.SM.WaitTextFocus()
     if (!Vim.SM.IsEditingHTML())
-      Return
+      return
   }
+  Vim.SM.SaveHTML()  ; making sure the html path is correct
   send {esc}
+  Vim.SM.WaitTextExit()  ; making changes to the html file requires not editing html in SM
   WinClip.Snap(ClipData)
   LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
-  Vim.SM.WaitTextExit()
   send !{f10}tc  ; copy template
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (InStr(Clipboard, "Link:")) {
-    RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)  ; regexmatch cannot store into clipboard
+    RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)  ; RegExMatch cannot store into clipboard
     if (!InStr(Link, "wikipedia.org/wiki")) {
-      Vim.ToolTip("Not wikipedia!")
-      Clipboard := ClipSaved
+      Vim.ToolTip("Not Wikipedia!")
+      WinClip.Restore(ClipData)
       return
     }
     if (InStr(Link, "en.wikipedia.org")) {
-      Vim.ToolTip("English wikipedia doesn't need to be prepared!")
-      Clipboard := ClipSaved
+      Vim.ToolTip("English Wikipedia doesn't need to be prepared!")
+      WinClip.Restore(ClipData)
       return
     }
   } else {
     Vim.ToolTip("No reference.")
-    Clipboard := ClipSaved
+    WinClip.Restore(ClipData)
     return
   }
   RegExMatch(Link, "(?<=https:\/\/)(.*?)(?=\/wiki\/)", WikiLink)
@@ -128,8 +129,11 @@ w::  ; prepare *w*ikipedia articles in languages other than English
     if (!ErrorLevel)
       send 2{enter}  ; makes selection title
     send {esc}
+  } else {
+    Vim.SM.ClickMid()
+    send {esc}
   }
-  Clipboard := ClipSaved
+  WinClip.Restore(ClipData)
 return
 
 i::  ; learn outstanding *i*tems only
@@ -175,6 +179,7 @@ return
   send ^+l
 return
 
+SMSetLinkFromClipboard:
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
   WinClip.Snap(ClipData)
@@ -214,7 +219,13 @@ r::  ; set *r*eference's link to what's in the clipboard
     Vim.SM.WaitTextFocus()
     send ^{end}{enter}
     clip(BrowserTitle,, true)
-    send +{home}!t
+    MouseGetPos, XCoord, YCoord
+    send +{home}
+    WaitCaretMove(XCoord, YCoord)
+    send !t  ; set title
+		WinWaitNotActive, ahk_class TElWind,, 0.25  ; could appear a loading bar
+		if (!ErrorLevel)
+			WinWaitActive, ahk_class TElWind,, 5
   }
   WinClip.Restore(ClipData)
   BrowserTitle := BrowserSource := BrowserDate := ""
@@ -235,16 +246,8 @@ s::  ; turn active language item to passive (*s*witch)
   WinGetActiveTitle, CurrentTitle
   send ^+s
   WinWaitTitleChange(CurrentTitle, 500)
-  loop {
-    if (!Vim.SM.IsEditingText()) {
-      send q
-      Vim.SM.WaitTextFocus(100)
-    } else if (Vim.SM.IsEditingText()) {
-      break
-    } else if (A_Index > 5) {
-      return
-    }
-  }
+  send q
+  Vim.SM.WaitTextFocus(500)
   ControlGetFocus, CurrentControl, A
   send ^{home}en:{space}^t
   ControlWaitNotFocus(CurrentControl)
@@ -264,7 +267,7 @@ return
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
   send q
-  Vim.SM.WaitTextFocus()
+  Vim.SM.WaitTextFocus(500)
   if (Vim.SM.IsEditingHTML()) {
     send ^{home}^+{right 2}^x
   } else if (Vim.SM.IsEditingPlainText()) {
@@ -276,37 +279,34 @@ return
   send ^+s
   WinWaitTitleChange(CurrentTitle, 500)
   send q
-  Vim.SM.WaitTextFocus(100)
+  Vim.SM.WaitTextFocus(500)
   send ^v{left 2}{esc}
-  Clipboard := ClipSaved
+  WinClip.Restore(ClipData)
 return
 
 p::  ; hyperlink to scri*p*t component
-  Vim.State.SetMode("Vim_Normal")
+  CollectionName := Vim.SM.GetCollectionName()
   send !n  ; new topic
-  Vim.SM.WaitTextFocus()
-  send ^v  ; so the link is clickable
-  send ^t{f9}{enter}  ; opens script editor
-  SendInput {raw}url
-  send {space}^v  ; paste the link
-  send !o{esc}  ; close script editor
-  if (BrowserTitle) {
-    send !t
-    GroupAdd, SMAltT, ahk_class TChoicesDlg
-    GroupAdd, SMAltT, ahk_class TTitleEdit
-    WinWaitActive, ahk_group SMAltT,, 0
-    if (WinActive("ahk_class TChoicesDlg")) {
-      WinActivate, ahk_class TChoicesDlg  ; sometimes the enter is not send??
-      ControlSend, TGroupButton3, {enter}, ahk_class TChoicesDlg
-      WinWaitActive, ahk_class TTitleEdit,, 0
-    }
-    if (WinActive("ahk_class TTitleEdit")) {
-      ControlFocusWait("TMemo1")
-      Clip(BrowserTitle)
-      send {enter}
-    }
+  if (!Vim.SM.WaitTextFocus(5000))
+    return
+  if (CollectionName = "passive" || CollectionName = "music" || CollectionName = "bgm") {
+    Vim.State.SetMode("Vim_Normal")
+    send ^v  ; so the link is clickable
+    send ^t{f9}{enter}  ; opens script editor
+    send url{space}^v  ; paste the link
+    send !o{esc}  ; close script editor
+    if (BrowserTitle)
+      Vim.SM.SetTitle(BrowserTitle)
+    BrowserTitle := BrowserSource := BrowserDate := BrowserUrl := ""
+  } else if (CollectionName = "gaming") {
+    gosub SMSetLinkFromClipboard
+    Vim.State.SetMode("Insert")
+    send ^{home}
+  } else {  ; for now everything else is treated like standard topics and links
+    gosub SMSetLinkFromClipboard
+    Vim.State.SetMode("Insert")
+    send ^{home}
   }
-  BrowserTitle := BrowserSource := BrowserDate := BrowserUrl := ""
 return
 
 m::  ; co*m*ment current element "audio"
@@ -357,14 +357,7 @@ d::  ; learn all elements with the comment "au*d*io"
   }
 return
 
-t::
-  send ^+m
-  SendInput {Raw}cl
-  send {Enter}
-  Vim.State.SetMode("Vim_Normal")
-Return
-
-#If (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 c::  ; learn child
   Vim.State.SetMode("Vim_Normal")
   send ^{space}
@@ -390,7 +383,7 @@ c::  ; learn child
   Vim.SM.PlayIfCertainCollection()
 return
 
-#If ((Vim.IsVimGroup()
+#if ((Vim.IsVimGroup()
       && Vim.State.IsCurrentVimMode("Command")
       && (WinActive("ahk_class TElWind")
           || WinActive("ahk_class TContents")

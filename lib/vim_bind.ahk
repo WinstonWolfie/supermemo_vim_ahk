@@ -25,4 +25,4 @@
 #Include %A_LineFile%\..\bind\CapsLock.ahk
 
 ; Reset the condition
-#If
+#if
