@@ -70,10 +70,10 @@ Gui Add, Button, xm+60 yp+30 w150 gButCapture vButCapture, Start capturing
 Gui Add, Button, xp+300 yp w192 vButRefreshTreeView gButRefreshTreeView +Disabled, Start capturing to show tree
 
 Gui Add, TreeView, x320 y8 w300 h435 hwndhMainTreeView vMainTreeView gMainTreeView
-Gui, Font, Bold
-Gui, Add, StatusBar, gMainSB vMainSB
+gui, Font, Bold
+gui, Add, StatusBar, gMainSB vMainSB
 SB_SetText("`tClick here to enable Acc path capturing (can't be used with UIA!)")
-Gui, Font
+gui, Font
 SB_SetParts(380)
 SB_SetText("`tCurrent UIA Interface version: " UIA.__Version,2)
 
@@ -261,7 +261,7 @@ RedrawTreeView(el, noAncestors=True) {
 	TV_Delete()
 	TV_Add("Constructing TreeView, do not move the mouse...")
 	GuiControl, Main: -Redraw, MainTreeView
-	Gui, TreeView, MainTreeView
+	gui, TreeView, MainTreeView
 	TV_Delete()
 	Stored.TreeView := {}
 	if noAncestors {
@@ -662,13 +662,13 @@ RangeTip(x:="", y:="", w:="", h:="", color:="Red", d:=2) ; from the FindText lib
   {
     id:=0
     Loop 4
-      Gui, Range_%A_Index%: Destroy
+      gui, Range_%A_Index%: Destroy
     return
   }
   if (!id)
   {
     Loop 4
-      Gui, Range_%A_Index%: +Hwndid +AlwaysOnTop -Caption +ToolWindow
+      gui, Range_%A_Index%: +Hwndid +AlwaysOnTop -Caption +ToolWindow
         -DPIScale +E0x08000000
   }
   x:=Floor(x), y:=Floor(y), w:=Floor(w), h:=Floor(h), d:=Floor(d)
@@ -679,8 +679,8 @@ RangeTip(x:="", y:="", w:="", h:="", color:="Red", d:=2) ; from the FindText lib
     , y1:=(i=3 ? y+h : y-d)
     , w1:=(i=1 or i=3 ? w+2*d : d)
     , h1:=(i=2 or i=4 ? h+2*d : d)
-    Gui, Range_%i%: Color, %color%
-    Gui, Range_%i%: Show, NA x%x1% y%y1% w%w1% h%h1%
+    gui, Range_%i%: Color, %color%
+    gui, Range_%i%: Show, NA x%x1% y%y1% w%w1% h%h1%
   }
 }
 

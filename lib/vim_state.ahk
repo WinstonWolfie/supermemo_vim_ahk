@@ -1,4 +1,4 @@
-﻿class VimState{
+﻿class VimState {
   __New(vim) {
     this.Vim := vim
 
@@ -125,18 +125,34 @@
     both := (VimLongEscNormal && LongPress)
     neither := !(VimLongEscNormal || LongPress)
     SetNormal := (both || neither)
-    ; In SuperMemo you can use esc to both escape and enter normal mode
-    if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
-      send {Esc}
-    }
-    if (SetNormal || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
-      this.SetNormal()
+    if (this.IsCurrentVimMode("SMVimPlanDragging")) {
+      this.HandlePlanDraggingSetNormal()
+    } else {
+      ; In SuperMemo you can use esc to both escape and enter normal mode
+      if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
+        send {Esc}
+      }
+      if (SetNormal || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
+        this.SetNormal()
+      }
     }
     if (LongPress) {
       ; Have to ensure the key has been released, otherwise this will get
       ; triggered again.
       KeyWait Esc
     }
+  }
+
+  HandlePlanDraggingSetNormal() {
+    global XCoordSaved, YCoordSaved, IniXCoord, IniYCoord
+    MouseGetPos,, YCoord
+    MouseMove, IniXCoord, % IniYCoord - 11, 0
+    click up
+    click  ; to uncheck the "fix"
+    ControlClickWinCoord(114, YCoord)
+    send {tab}+{tab 2}
+    MouseMove, XCoordSaved, YCoordSaved, 0
+    this.SetMode("Vim_Normal")
   }
 
   HandleCtrlBracket() {
@@ -150,13 +166,17 @@
     both := (VimLongCtrlBracketNormal && LongPress)
     neither := !(VimLongCtrlBracketNormal || LongPress)
     SetNormal := (both || neither)
-    if (VimCtrlBracketToEsc)
-      send {esc}
-    if (!SetNormal || (VimSendCtrlBracketNormal && this.IsCurrentVimMode("Vim_Normal"))) {
-      send ^[
-    }
-    if (SetNormal) {
-      this.SetNormal()
+    if (this.IsCurrentVimMode("SMVimPlanDragging")) {
+      this.HandlePlanDraggingSetNormal()
+    } else {
+      if (VimCtrlBracketToEsc)
+        send {esc}
+      if (!SetNormal || (VimSendCtrlBracketNormal && this.IsCurrentVimMode("Vim_Normal"))) {
+        send ^[
+      }
+      if (SetNormal) {
+        this.SetNormal()
+      }
     }
     if (LongPress) {
       KeyWait [

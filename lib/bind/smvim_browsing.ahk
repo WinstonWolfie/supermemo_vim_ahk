@@ -14,7 +14,7 @@ SMGoToLink:
 s::  ; gs: go to link
   Vim.State.SetMode()
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send !{f10}tc  ; copy template
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (InStr(Clipboard, "Link:")) {
@@ -30,7 +30,7 @@ s::  ; gs: go to link
       }
     }
   } else {
-    Vim.ToolTip("No link found.")
+    ToolTip("No link found.")
     WinClip.Restore(ClipData)
   }
 Return
@@ -211,15 +211,15 @@ y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
 y::  ; yy: copy current source url
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send !{f10}tc  ; copy template
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (InStr(Clipboard, "Link:")) {
     RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", link)  ; RegexMatch cannot store into clipboard
     Clipboard := link
-    Vim.ToolTip("Copied " . clipboard)
+    ToolTip("Copied " . clipboard)
   } else {
-    Vim.ToolTip("Link not found.")
+    ToolTip("Link not found.")
     WinClip.Restore(ClipData)
   }
   Vim.State.SetNormal()
@@ -236,89 +236,6 @@ s::ControlClickWinCoord(253, 48)  ; *s*witch plan
 b::send !b  ; begin
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingTask())
 s::ControlClickWinCoord(153, 52)  ; *s*witch tasklist
-
-; For incremental YouTube
-; Need "Start" button on screen
-#if (Vim.IsVimGroup()
-  && WinActive("ahk_class TElWind")
-  && (FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start.png", "n o64", XCoord, YCoord)
-   || FindClick(A_ScriptDir . "\lib\bind\util\sm_yt_start_hover.png", "n o64", XCoord, YCoord)))
-^+!s::
-  CoordMode, Mouse, Screen
-  click % XCoord . " " . YCoord  ; click start
-Return
-
-^+!`::
-  XCoord += 170
-  CoordMode, Mouse, Screen
-  click % XCoord . " " . YCoord  ; click play
-Return
-
-^+!r::
-  XCoord += 195
-  CoordMode, Mouse, Screen
-  click % XCoord . " " . YCoord  ; click reset
-Return
-
-^+!left::
-^+!right::
-^+!numpadleft::
-^+!numpadright::
-  XCoord += 110
-  YCoord -= 60
-  CoordMode, Mouse, Screen
-  click % XCoord . " " . YCoord
-  if (InStr(A_ThisHotkey, "left")) {
-    send {left}
-  } else if (InStr(A_ThisHotkey, "right")) {
-    send {right}
-  }
-  send ^t
-  sleep 10
-  send ^t
-Return
-
-^+!y::  ; focus to youtube video
-  Vim.ReleaseKey("ctrl")
-  Vim.ReleaseKey("shift")
-  KeyWait alt
-  XCoord += 110
-  YCoord -= 60
-  CoordMode, Mouse, Screen
-  click % XCoord . " " . YCoord
-  Vim.State.SetMode("Insert")  ; insert so youtube can read keys like j, l, etc
-Return
-
-^+!k::  ; pause
-  Vim.ReleaseKey("ctrl")
-  Vim.ReleaseKey("shift")
-  KeyWait alt
-  CoordMode, Mouse, Screen
-  YCoord -= 60
-  click % XCoord . " " . YCoord
-  send ^t
-  sleep 10
-  send ^t
-  sleep 400
-  if (FindClick(A_ScriptDir . "\lib\bind\util\yt_more_videos_right.png", "o96", XCoord, YCoord)) {
-    XCoord -= 10
-    YCoord -= 65
-    click % XCoord . " " . YCoord
-    send ^t
-    sleep 10
-    send ^t
-  }
-Return
-
-^+!n::  ; focus to notes
-  Vim.ReleaseKey("ctrl")
-  Vim.ReleaseKey("shift")
-  KeyWait alt
-  send ^t
-  sleep 10
-  send ^t
-  Vim.State.SetNormal()
-Return
 
 ; Browsing/editing
 #if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
@@ -338,19 +255,19 @@ m::
   if (Vim.SM.IsEditingHTML())
     Vim.SM.ClickMid()
   send ^{f7}  ; set read point
-  Vim.ToolTip("Read point set")
+  ToolTip("Read point set")
 Return
 
 !f7::
 `::
   send !{f7}  ; go to read point
-  Vim.ToolTip("Go to read point")
+  ToolTip("Go to read point")
 Return
 
 !m::
 ^+f7::
   send ^+{f7}  ; clear read point
-  Vim.ToolTip("Read point cleared")
+  ToolTip("Read point cleared")
 Return
 
 !+j::send !+{pgdn}  ; go to next sibling
@@ -376,7 +293,7 @@ Return
     send ^t
     Vim.SM.WaitTextFocus(1000)  ; make sure CurrentFocus is updated    
     if (!Vim.SM.IsEditingText()) {  ; still found no text
-      Vim.ToolTip("Text not found.")
+      ToolTip("Text not found.")
       Vim.State.SetNormal()
       return
     }
@@ -389,17 +306,17 @@ Return
     send ^{Home}
   ControlGetFocus, CurrentFocus, ahk_class TElWind
   if (AltState) {
-    Gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
+    gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
   } else if (CtrlState) {
-    Gui, Search:Add, Text,, &Find text:`n(will go to visual mode after the search)
+    gui, Search:Add, Text,, &Find text:`n(will go to visual mode after the search)
   } else {
-    Gui, Search:Add, Text,, &Find text:
+    gui, Search:Add, Text,, &Find text:
   }
-  Gui, Search:Add, Edit, vUserInput w196, % VimLastSearch
-  Gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
-  Gui, Search:Add, Button, default, &Search
+  gui, Search:Add, Edit, vUserInput w196, % VimLastSearch
+  gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
+  gui, Search:Add, Button, default, &Search
   sleep 50  ; short sleep so element won't try to regain focus
-  Gui, Search:Show,, Search
+  gui, Search:Show,, Search
 return
 
 SearchGuiEscape:
@@ -440,7 +357,7 @@ SearchButtonSearch:
         }
       }
     } else {
-      Vim.ToolTip("Not found.")
+      ToolTip("Not found.")
       Vim.State.SetNormal()
       Return
     }
@@ -479,7 +396,7 @@ SearchButtonSearch:
     send ^{enter}  ; to open commander; convienently, if a "not found" window pops up, this would close it
     WinWaitActive, ahk_class TCommanderDlg,, 1
     if (ErrorLevel) {
-      Vim.ToolTip("Not found.")
+      ToolTip("Not found.")
       Vim.State.SetNormal()
       send {esc}^{enter}h{enter}{esc}
       Return
@@ -506,4 +423,4 @@ SearchButtonSearch:
         ControlFocus, %CurrentFocus%, ahk_class TElWind
     }
   }
-Return
+return

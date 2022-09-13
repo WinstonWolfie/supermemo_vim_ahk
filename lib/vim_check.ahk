@@ -1,4 +1,4 @@
-﻿class VimCheck{
+﻿class VimCheck {
   __New(Vim) {
     this.Vim := Vim
   }

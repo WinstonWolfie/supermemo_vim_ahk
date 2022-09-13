@@ -14,7 +14,14 @@ Return
   if (Vim.State.StrIsInCurrentVimMode("VisualLine")) {
     Vim.State.SetNormal()
   } else {
-    send {Home}+{Down}
+    if (Vim.SM.IsEditingPlainText()) {
+      XSaved := A_CaretX, YSaved := A_CaretY
+      send {home}+{down}
+      if (A_CaretX == XSaved && A_CaretY == YSaved)  ; didn't move
+        send +{end}
+    } else {
+      send {Home}+{Down}
+    }
     Vim.State.SetMode("Vim_VisualLineFirst")
   }
 Return
@@ -105,7 +112,7 @@ Return
 *::
   ReleaseKey("shift")
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   WinGet, hwnd, ID, A
@@ -119,25 +126,34 @@ Return
 ^p::
 +p::
 p::
-  if (GetKeyState("ctrl"))
+  WinClip.Snap(ClipData)
+  if (InStr(A_ThisHotkey, "^")) {
     Clipboard := Clipboard
+    ClipWait 10
+  }
   send ^v
   Vim.State.SetMode("Vim_Normal")
+  sleep 20
+  WinClip.Restore(ClipData)
 Return
 
 ConvertToLowercase:
 u::
-  selection := clip()
+  WinClip.Snap(ClipData)
+  selection := clip("",, true)
   StringLower, selection, selection
-  clip(selection)
+  clip(selection,, true)
+  WinClip.Restore(ClipData)
   Vim.State.SetMode("Vim_Normal")
 Return
 
 ConvertToUppercase:
 +u::
-  selection := clip()
+  WinClip.Snap(ClipData)
+  selection := clip("",, true)
   StringUpper, selection, selection
-  clip(selection)
+  clip(selection,, true)
+  WinClip.Restore(ClipData)
   Vim.State.SetMode("Vim_Normal")
 Return
 

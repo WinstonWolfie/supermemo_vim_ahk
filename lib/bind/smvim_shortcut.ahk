@@ -12,7 +12,7 @@
       pos += 4
       SendInput {left}{right %pos%}
     } else {
-      Vim.ToolTip("Not found.")
+      ToolTip("Not found.")
       Vim.State.SetNormal()
       Return
     }
@@ -32,7 +32,7 @@
     send {right}^{enter}
     WinWaitActive, ahk_class TCommanderDlg,, 0
     if ErrorLevel {
-      Vim.ToolTip("Not found.")
+      ToolTip("Not found.")
       Vim.State.SetNormal()
       send {esc}^{enter}h{enter}{esc}
       Return
@@ -59,12 +59,12 @@ return
 >^>+bs::  ; for processing pending queue Advanced English 2018: delete element and keep learning
   ReleaseKey("Ctrl")
   ReleaseKey("Shift")
-  WinGetTitle, CurrentTitle, A
+  WinGetTitle, CurrTitle, A
   send ^+{del}
   WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
-  WinWaitTitleChange(CurrentTitle, 500)
+  WinWaitTitleChange(CurrTitle, 500)
   ; no need for sleep here
   if (WinActive("ahk_class TElWind"))
     ControlSend, TBitBtn2, {enter}, ahk_class TElWind
@@ -76,14 +76,14 @@ return
 >^>+\::  ; Done! and keep learning
   ReleaseKey("Ctrl")
   ReleaseKey("Shift")
-  WinGetTitle, CurrentTitle, A
+  WinGetTitle, CurrTitle, A
   send ^+{enter}
   WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the collection?"
   send {enter}
   WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
-  WinWaitTitleChange(CurrentTitle, 500)
+  WinWaitTitleChange(CurrTitle, 500)
   sleep 50
   if (WinActive("ahk_class TElWind"))
     ControlSend, TBitBtn2, {enter}, ahk_class TElWind
@@ -96,7 +96,7 @@ return
   Vim.State.SetNormal()
 return
 
-^!t::Vim.SM.SetTitle(Clipboard, "!t")
+^!t::Vim.SM.SetTitle(Clipboard)
 
 ^!f::  ; use IE's search
   if (Vim.SM.IsEditingHTML()) {
@@ -112,15 +112,52 @@ return
 ~^enter::SetDefaultKeyboard(0x0409)  ; english-US	
 
 ^!p::  ; convert to a *p*lain-text template
-  ; send ^+m  ; open template registry
-  send ^+p!t  ; much faster than above
+  send ^+p!t  ; much faster than ^+m
   SetDefaultKeyboard(0x0409)  ; english-US	
   send cl  ; my plain-text template name is classic
   send {enter}
   Vim.State.SetMode("Vim_Normal")
 return
 
-; More intuitive inter-element linking, inspired by obsidian
+SMCtrlN:
+^n::
+  Vim.State.SetMode("Vim_Normal")
+  if (InStr(Clipboard, "youtube.com")) {
+    WinGetTitle, CurrTitle, A
+    send ^n
+    WinWaitTitleChange(CurrTitle)
+    StartTime := A_TickCount
+    loop {
+      if (ControlGet("hwnd",, "Internet Explorer_Server1")) {
+        break
+      } else if (A_TickCount - StartTime > 8000) {
+        return
+      }
+    }
+    sleep 2000
+    NewImport := true
+    gosub SMSetLinkFromClipboard
+    send ^+m
+    WinWaitActive, ahk_class TRegistryForm,, 0
+    SetDefaultKeyboard(0x0409)  ; english-US
+    send yo  ; YouTube
+    send {enter}
+    WinWaitActive, ahk_class TElWind,, 2
+    send q
+    Vim.SM.WaitTextFocus()
+    Vim.SM.MoveAboveRef()
+    send !\\
+    WinWaitNotActive, ahk_class TElWind,, 0
+    if (!ErrorLevel)
+      send {enter}
+    WinWaitActive, ahk_class TElWind,, 0
+    send {esc}
+  } else {
+    send ^n
+  }
+return
+
+; More intuitive inter-element linking, inspired by Obsidian
 ; 1. Go to the element you want to link to and press ctrl+alt+g
 ; 2. Go to the element you want to have the hyperlink, select text and press ctrl+alt+k
 ^!g::
@@ -155,37 +192,37 @@ return
 ^!l::
   ReleaseKey("ctrl")
   KeyWait alt
-  FormatTime, CurrentTimeDisplay,, % "yyyy-MM-dd HH:mm:ss:" . A_msec
-  CurrentTimeFileName := RegExReplace(CurrentTimeDisplay, " |:", "-")
+  FormatTime, CurrTimeDisplay,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
+  CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   Vim.State.SetMode("Vim_Normal")
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   If (Vim.HTML.ClipboardGet_HTML(Data)) {
     ; To do: detect selection contents
     ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
-      ; Vim.ToolTip("Please select text or image only.")
+      ; ToolTip("Please select text or image only.")
       ; WinClip.Restore(ClipData)
       ; Return
     ; } else
     if (!InStr(data, "<IMG")) {  ; text only
       send {bs}^{f7}  ; set read point
       WinGetText, VisibleText, ahk_class TElWind
-      RegExMatch(VisibleText, "(?<=LearnBar\r\n)(.*?)(?= \(SuperMemo 18: )", CollectionName)
+      RegExMatch(VisibleText, "(?<=\r\n)(.*?)(?= \(SuperMemo)", CollectionName)
       RegExMatch(VisibleText, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", CollectionPath)
       LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
       LatexFormula := Enc_Uri(LatexFormula)
       LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
       LatexFolderPath := CollectionPath . CollectionName . "\LaTeX"
-      LatexPath := LatexFolderPath . "\" . CurrentTimeFileName . ".png"
+      LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
       SetTimer, DownloadLatex, -1
       FileCreateDir % LatexFolderPath
       ImgHTML = <img alt="%Clipboard%" src="%LatexPath%">
       clip(ImgHTML, true, true)
       send ^+1
       Vim.SM.SaveHTML()
-      Clipboard := ""
+      WinClip.Clear()
       send !{f12}fc  ; copy file path
       ClipWait 2
       HTMLPath := Clipboard
@@ -202,7 +239,7 @@ return
         }
       */
       
-      fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %CurrentTimeDisplay%</SPAN>
+      fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %CurrTimeDisplay%</SPAN>
       if (InStr(HTML, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ")) {  ; converted before
         send {esc}
         Vim.SM.WaitTextExit(5000)
@@ -255,14 +292,15 @@ return
 !r::ControlClickWinCoord(39, A_CaretY)
 
 !a::  ; insert activity
-  Gui, PlanInsert:Add, Text,, &Activity:
-  list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest|School|Planning|Investing|SM|Shower|IM|Piano|Meditation|Translation|Job"
-  Gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, % list
-  Gui, PlanInsert:Add, CheckBox, vNoSplit, &Do not split current activity
-  Gui, PlanInsert:Add, Button, default, &Insert
-  KeyWait Alt
-  Gui, PlanInsert:Show,, Insert Activity
   SetDefaultKeyboard(0x0409)  ; english-US	
+  gui, PlanInsert:Add, Text,, &Activity:
+  list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest"
+        . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Translation|Job|Misc"
+  gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, % list
+  gui, PlanInsert:Add, CheckBox, vNoSplit, &Do not split current activity
+  gui, PlanInsert:Add, Button, default, &Insert
+  KeyWait Alt
+  gui, PlanInsert:Show,, Insert Activity
 return
 
 PlanInsertGuiEscape:
@@ -274,7 +312,7 @@ PlanInsertButtonInsert:
   KeyWait alt
   gui submit
   gui destroy
-  FormatTime, CurrentTime,, HH:mm
+  FormatTime, CurrTime,, HH:mm
   WinActivate, ahk_class TPlanDlg
   if (!NoSplit) {
     send ^t  ; split
@@ -284,10 +322,9 @@ PlanInsertButtonInsert:
   }
   ControlSend, TStringGrid1, {down}{ins}, ahk_class TPlanDlg  ; inserting one activity below the current selected activity and start editing
   WinActivate, ahk_class TPlanDlg  ; just in case
-  ; cannot use ControlSendRaw, uppercase will become lowercase
-  SendInput {raw}%activity%  ; SendInput is faster than clip() here
-  send +{tab}
-  SendInput {raw}%CurrentTime%
+  ; Cannot use ControlSendRaw, uppercase will become lowercase
+  send % "{raw}" . activity
+  send % "+{tab}" . CurrTime
   send {enter}^s
   if (Activity == "Break" || Activity == "Sports" || Activity == "Piano")
     run b  ; my personal backup script
@@ -301,50 +338,50 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg"))
 ; Task value script, modified from Naess's priority script
 !0::
-!Numpad0::
-!NumpadIns::Vim.SM.SetTaskValue(9024.74,9999)
+Numpad0::
+NumpadIns::Vim.SM.SetTaskValue(9024.74,9999)
 
 !1::
-!Numpad1::
-!NumpadEnd::Vim.SM.SetTaskValue(7055.79,9024.74)
+Numpad1::
+NumpadEnd::Vim.SM.SetTaskValue(7055.79,9024.74)
 
 !2::
-!Numpad2::
-!NumpadDown::Vim.SM.SetTaskValue(5775.76,7055.78)
+Numpad2::
+NumpadDown::Vim.SM.SetTaskValue(5775.76,7055.78)
 
 !3::
-!Numpad3::
-!NumpadPgdn::Vim.SM.SetTaskValue(4625,5775.75)
+Numpad3::
+NumpadPgdn::Vim.SM.SetTaskValue(4625,5775.75)
 
 !4::
-!Numpad4::
-!NumpadLeft::Vim.SM.SetTaskValue(3721.04,4624)
+Numpad4::
+NumpadLeft::Vim.SM.SetTaskValue(3721.04,4624)
 
 !5::
-!Numpad5::
-!NumpadClear::Vim.SM.SetTaskValue(2808.86,3721.03)
+Numpad5::
+NumpadClear::Vim.SM.SetTaskValue(2808.86,3721.03)
 
 !6::
-!Numpad6::
-!NumpadRight::Vim.SM.SetTaskValue(1849.18,2808.85)
+Numpad6::
+NumpadRight::Vim.SM.SetTaskValue(1849.18,2808.85)
 
 !7::
-!Numpad7::
-!NumpadHome::Vim.SM.SetTaskValue(841.32,1849.17)
+Numpad7::
+NumpadHome::Vim.SM.SetTaskValue(841.32,1849.17)
 
 !8::
-!Numpad8::
-!NumpadUp::Vim.SM.SetTaskValue(360.77,841.31)
+Numpad8::
+NumpadUp::Vim.SM.SetTaskValue(360.77,841.31)
 
 !9::
-!Numpad9::
-!NumpadPgup::Vim.SM.SetTaskValue(0,360.76)
+Numpad9::
+NumpadPgup::Vim.SM.SetTaskValue(0,360.76)
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg"))  ; priority window (alt+p)
 enter::
-  priority := ControlGetText("TEdit5")
-  if (RegExMatch(priority, "^\."))
-    ControlSend, TEdit5, {home}0
+  prio := ControlGetText("TEdit5")
+  if (RegExMatch(prio, "^\."))
+    ControlSetText, TEdit5, % "0" . prio
   send {enter}
 return
 
@@ -355,8 +392,9 @@ return
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
 d::
   Vim.State.SetMode("SMVimPlanDragging")
-  MouseGetPos, XCoord, YCoord
+  MouseGetPos, XCoordSaved, YCoordSaved
   MouseMove, 15, % A_CaretY + 11, 0
+  MouseGetPos, IniXCoord, IniYCoord
   click down
 return
 
@@ -364,7 +402,83 @@ return
 j::MouseMove, 0, 22, 0, R
 k::MouseMove, 0, -22, 0, R
 p::
+  MouseMove, 0, 11, 0, R  ; put after
++p::  ; put before
   click up
-  MouseMove, XCoord, YCoord, 0
+  MouseMove, XCoordSaved, YCoordSaved, 0
   Vim.State.SetMode("Vim_Normal")
+return
+
+#if (WinActive("ahk_group Browsers") || WinActive("ahk_class TElWind"))
+^!s::
+^+!s::
+^!`::
+  KeyWait alt
+  if (WinActive("ahk_group Browsers") && !Vim.Browser.VidTime && !InStr(A_ThisHotkey, "``")) {
+    Vim.Browser.VidTime := Vim.Browser.GetVidtime()
+    if (!Vim.Browser.VidTime) {
+      Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
+      if (!Vim.Browser.VidTime || ErrorLevel)
+        return
+    }
+    send ^w
+  }
+  WinActivate, ahk_class TElWind
+  if (!Vim.Browser.VidTime && !InStr(A_ThisHotkey, "``")) {
+    Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
+    if (!Vim.Browser.VidTime || ErrorLevel)
+      return
+  }
+  if (Vim.SM.IsPassiveCollection()) {
+    Vim.SM.DeselectAllComponents()
+    ToolTip := EditRef := false
+    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+    send q^t{f9}
+    WinWaitActive, ahk_class TScriptEditor,, 0
+    ControlGetText, script, TMemo1
+    if (InStr(A_ThisHotkey, "``") || !sec)
+      sec := 0
+    if (InStr(script, "youtube.com")) {
+      replacement := "&t=" . sec . "s"
+      match := "&t=.*s"
+    } else if (InStr(script, "bilibili.com")) {
+      replacement := "?&t=" . sec
+      match := "\?&t=.*"
+    } else {
+      send {esc 2}
+      EditRef := true
+    }
+    if (!EditRef) {  ; time in script component
+      if (RegExMatch(script, match)) {
+        ControlSetText, TMemo1, % RegExReplace(script, match, replacement)
+      } else {
+        ControlSetText, TMemo1, % script . replacement
+      }
+      send !o{esc}  ; close script editor
+      ToolTip := true
+    } else {  ; time in comment
+      if (InStr(A_ThisHotkey, "``"))
+        Vim.Browser.VidTime := "0:00"
+      Vim.Browser.comment := Vim.Browser.VidTime
+      send !{f10}fe
+      WinWaitActive, ahk_class TInputDlg,, 0
+      ControlGetText, OldRef, TMemo1
+      NewComment := "`n#Comment: " . Vim.Browser.comment . "`n"
+      if (InStr(OldRef, "#Comment") && Vim.Browser.comment) {
+        NewRef := RegExReplace(OldRef, "#Comment: .*", NewComment)
+      } else {
+        NewRef := OldRef . NewComment
+      }
+      ControlSetText, TMemo1, % NewRef
+      send !{enter}
+    }
+  }
+  WinActivate, ahk_class TElWind
+  if (InStr(A_ThisHotkey, "+") && !InStr(A_ThisHotkey, "``")) {
+    send {enter}
+    Vim.SM.PlayIfCertainCollection()
+  }
+  if (ToolTip)
+    ToolTip("Time stamp in script component set as " . sec . "s")
+  Vim.Browser.Clear()
 return

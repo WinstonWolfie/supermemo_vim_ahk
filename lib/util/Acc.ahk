@@ -196,3 +196,12 @@ Acc_Get(Cmd, ChildPath="", ChildID=0, WinTitle="", WinText="", ExcludeTitle="", 
 	if Acc_Error()
 		throw Exception(ErrorLevel,-1)
 }
+
+GetElementByName(AccObj, name) {  ; https://www.autohotkey.com/board/topic/103178-/?p=637687p
+   if (AccObj.accName(0) = name)
+      return AccObj
+
+   for k, v in Acc_Children(AccObj)
+      if IsObject(obj := GetElementByName(v, name))
+         return obj
+}

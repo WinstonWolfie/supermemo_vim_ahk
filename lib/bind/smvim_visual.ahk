@@ -16,11 +16,12 @@ return
 !a::  ; parse ht*m*l
   KeyWait alt
   Vim.State.SetMode("Vim_Normal")
-  Gui, HTMLTag:Add, Text,, &HTML tag:
+  gui, HTMLTag:Add, Text,, &HTML tag:
   list := "H1||H2|H3|H4|H5|H6|B|I|U|STRONG|CODE|PRE|EM|cloze|clozed|extract|SUB|SUP|BLOCKQUOTE|RUBY"
-  Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
-  Gui, HTMLTag:Add, Button, default, &Add
-  Gui, HTMLTag:Show,, Add HTML Tag
+  gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
+  gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
+  gui, HTMLTag:Add, Button, default, &Add
+  gui, HTMLTag:Show,, Add HTML Tag
 Return
 
 HTMLTagGuiEscape:
@@ -32,6 +33,15 @@ HTMLTagButtonAdd:
   gui submit
   gui destroy
   WinClip.Snap(ClipData)
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  send ^c
+  ClipWait, LongCopy ? 0.6 : 0.2, True
+  if (OriginalHTML) {
+    if (Vim.HTML.ClipboardGet_HTML(data))
+      RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", content)
+  } else {
+    content := clipboard
+  }
   WinActivate, ahk_class TElWind
   if (tag == "cloze" || tag == "extract" || tag == "clozed") {
     StartingTag := "<SPAN class=" . tag
@@ -41,8 +51,8 @@ HTMLTagButtonAdd:
     InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above`, like Pinyin,, 272, 144
     if (ErrorLevel || !UserInput)
       return
-    clip("<RUBY>" . clip("",, true) . "<RP>(</RP><RT>" . UserInput
-                                                       . "</RT><RP>)</RP></RUBY>", true, true)
+    clip("<RUBY>" . content . "<RP>(</RP><RT>" . UserInput
+       . "</RT><RP>)</RP></RUBY>", true, true)
     send ^+1
     WinClip.Restore(ClipData)
     return
@@ -50,10 +60,10 @@ HTMLTagButtonAdd:
     StartingTag := "<" 
     EndingTag := ">" 
   }
-  clip(StartingTag . tag . ">" . clip("",, true) . "</" . tag . EndingTag, true, true)
+  clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag, true, true)
   send ^+1
   WinClip.Restore(ClipData)
-Return
+return
 
 m::  ; highlight: *m*ark
   send {AppsKey}rh  ; highlight
@@ -140,12 +150,12 @@ ClozeHinter:
   ReleaseKey("ctrl")
   ReleaseKey("shift")
   InitialText := Clip()
-  Gui, ClozeHinter:Add, Text,, &Hint:
-  Gui, ClozeHinter:Add, Edit, vHint w196, % InitialText
-  Gui, ClozeHinter:Add, CheckBox, vInside, &Inside square brackets
-  Gui, ClozeHinter:Add, CheckBox, vFullWidthChars, &Use fullwidth characters
-  Gui, ClozeHinter:Add, Button, default, Clo&ze
-  Gui, ClozeHinter:Show,, Cloze Hinter
+  gui, ClozeHinter:Add, Text,, &Hint:
+  gui, ClozeHinter:Add, Edit, vHint w196, % InitialText
+  gui, ClozeHinter:Add, CheckBox, vInside, &Inside square brackets
+  gui, ClozeHinter:Add, CheckBox, vFullWidthChars, &Use fullwidth characters
+  gui, ClozeHinter:Add, Button, default, Clo&ze
+  gui, ClozeHinter:Show,, Cloze Hinter
 Return
 
 ClozeHinterGuiEscape:
@@ -162,7 +172,7 @@ ClozeHinterButtonCloze:
   Vim.State.SetMode("Vim_Normal")
   if (!hint)  ; entered nothing
     return
-  Vim.ToolTip("Cloze hinting...", true)
+  ToolTip("Cloze hinting...", true)
   SleepCalc := A_TickCount
   Vim.SM.WaitProcessing()
   if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items

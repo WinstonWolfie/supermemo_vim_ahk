@@ -29,11 +29,12 @@ wc := new WinClip
 #Include %A_LineFile%\..\vim_tooltip.ahk
 #Include %A_LineFile%\..\vim_sm.ahk
 #Include %A_LineFile%\..\vim_html.ahk
+#Include %A_LineFile%\..\vim_browser.ahk
 
 ; Key Bindings
 #Include %A_LineFile%\..\vim_bind.ahk
 
-class VimAhk{
+class VimAhk {
   __About() {
     this.About.Version := "v0.11.3"
     this.About.Date := "14/Feb/2022"
@@ -59,6 +60,7 @@ class VimAhk{
     this.VimToolTip := new VimToolTip(this)
     this.SM := new VimSM(this)
     this.HTML := new VimHTML(this)
+    this.Browser := new VimBrowser(this)
 
     ; Group Settings
     this.GroupDel := ","
@@ -236,10 +238,13 @@ class VimAhk{
 
   SetTwoLetterMap(key1, key2) {
     EnterNormal := ObjBindMethod(this, "TwoLetterEnterNormal")
+    EmptyReturn := ObjBindMethod(this, "EmptyReturn")
     Enabled := ObjBindMethod(this, "TwoLetterNormalMapsEnabled")
     HotKey If, % Enabled
     HotKey, %key1% & %key2%, % EnterNormal
     HotKey, %key2% & %key1%, % EnterNormal
+    HotKey, % "~" . key1, % EmptyReturn
+    HotKey, % "~" . key2, % EmptyReturn
   }
 
   TwoLetterNormalMapsEnabled() {
@@ -248,13 +253,17 @@ class VimAhk{
 
   TwoLetterEnterNormal() {
     if (this.State.StrIsInCurrentVimMode("Insert")) {
-      SendInput, {BackSpace 1}
+      send {bs}
     } else if (this.State.StrIsInCurrentVimMode("Visual")) {
       send {right}{up}
     } else if (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText()) {
-      SendInput {up}{esc}
+      send {up}{esc}
     }
     this.State.SetNormal()
+  }
+
+  EmptyReturn() {
+    return
   }
 
   Setup() {
@@ -333,7 +342,8 @@ class VimAhk{
     }
     BlockInput, Send
     tempClip := clipboard
-    clipboard := ""
+    global WInClip
+    WinClip.Clear()
     SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
     ClipWait 0.1
     ret := False
@@ -355,9 +365,9 @@ class VimAhk{
       ; no shortcuts there, so movement keys are used for up/down navigation
       ; if more windows are found without shortcuts in the future, they will be all added here
       return (Button1 == "Cancel (i.e. restore the old version of references)"
-              || Button2 == "Combine old and new references for this element"
-              || Button3 == "Change references in all elements produced from the original article"
-              || Button4 == "Change only the references of the currently displayed element")
+           || Button2 == "Combine old and new references for this element"
+           || Button3 == "Change references in all elements produced from the original article"
+           || Button4 == "Change only the references of the currently displayed element")
     }
   }
   
@@ -390,15 +400,4 @@ class VimAhk{
          || this.SM.IsNavigatingBrowser()
          || !A_CaretX)
   }
-
-  ToolTip(Text:="", Permanent:=false, Period:=-2000) {
-    CoordMode, ToolTip, Screen
-    ToolTip, % Text, % A_ScreenWidth / 3, % A_ScreenHeight / 4 * 3, 20
-    if (!Permanent)
-      SetTimer, RemoveToolTip, % Period
-  }
 }
-
-RemoveToolTip:
-  ToolTip,,,, 20
-return

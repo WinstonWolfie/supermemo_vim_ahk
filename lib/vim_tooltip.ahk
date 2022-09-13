@@ -1,4 +1,4 @@
-class VimToolTip{
+class VimToolTip {
   __New(vim) {
     this.Vim := vim
 

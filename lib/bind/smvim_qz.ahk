@@ -8,7 +8,7 @@ z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)
 +z::
 ^+z::
   Vim.State.SetMode("SMVim_ClozeHinter", 0, -1, 0)
-  ClozeHinterCtrlState := GetKeyState("Ctrl")
+  ClozeHinterCtrlState := InStr(A_ThisHotkey, "^")
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText() && Vim.State.g)
@@ -127,4 +127,4 @@ space::
   } else {
     Vim.State.SetMode("SMVim_AltQ", 0, -1, 0)
   }
-Return
+return

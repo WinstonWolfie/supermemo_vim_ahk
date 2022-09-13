@@ -28,7 +28,7 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
   ReleaseKey("shift")
   Shift := InStr(A_ThisHotkey, "+")
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send +{right}^c{left}
   ClipWait, LongCopy ? 0.6 : 0.2, True
   If (clipboard ~= "\s" || !Clipboard) {
@@ -38,13 +38,13 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
   If (Vim.HTML.ClipboardGet_HTML(data)) {
     RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrentLink)
     if (!CurrentLink) {
-      Clipboard := ""
+      WinClip.Clear()
       send +{left}^c{right}
       ClipWait, LongCopy ? 0.6 : 0.2, True
       If (Vim.HTML.ClipboardGet_HTML(data)) {
         RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrentLink)
         if (!CurrentLink) {
-          Vim.ToolTip("No link found.")
+          ToolTip("No link found.")
         } else if (InStr(CurrentLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
           send {left}  ; otherwise it won't click the link
           click(A_CaretX, A_CaretY, "right")
@@ -83,14 +83,14 @@ s::
   Vim.SM.SaveHTML()
   send {esc}  ; leave html
   WinClip.Snap(ClipData)
-  Clipboard := ""
+  WinClip.Clear()
   send !{f12}fc  ; copy file path
   ClipWait 1
   if (!Clipboard) {
     WinClip.Restore(ClipData)
     return
   }
-  run % "C:\Program Files (x86)\Vim\vim82\gVim.exe " . Clipboard
+  run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . Clipboard
   Vim.State.SetMode()
   WinClip.Restore(ClipData)
   WinWaitNotActive % "ahk_id " . hwnd

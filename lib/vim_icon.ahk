@@ -1,4 +1,4 @@
-﻿class VimIcon{
+﻿class VimIcon {
   __New(vim) {
     global VimScriptPath
     this.Vim := vim

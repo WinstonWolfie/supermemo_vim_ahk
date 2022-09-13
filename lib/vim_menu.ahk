@@ -1,4 +1,4 @@
-﻿class VimMenu{
+﻿class VimMenu {
   __New(Vim) {
     this.Vim := Vim
   }

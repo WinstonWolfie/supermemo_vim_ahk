@@ -1,4 +1,4 @@
-﻿class VimAbout Extends VimGui{
+﻿class VimAbout Extends VimGui {
   __New(vim) {
     this.Vim := vim
 
@@ -13,20 +13,20 @@
 
   MakeGui() {
     global VimHomepage, VimAboutOK, VimScriptPath
-    Gui, % this.Hwnd ":-MinimizeBox"
-    Gui, % this.Hwnd ":-Resize"
-    Gui, % this.Hwnd ":Add", Text, , % "Vim Ahk (vim_ahk):`n" this.Description
-    Gui, % this.Hwnd ":Font", Underline
-    Gui, % this.Hwnd ":Add", Text, Y+0 cBlue vVimHomepage, Homepage
+    gui, % this.Hwnd ":-MinimizeBox"
+    gui, % this.Hwnd ":-Resize"
+    gui, % this.Hwnd ":Add", Text, , % "Vim Ahk (vim_ahk):`n" this.Description
+    gui, % this.Hwnd ":Font", Underline
+    gui, % this.Hwnd ":Add", Text, Y+0 cBlue vVimHomepage, Homepage
     VimGuiAboutOpenHomepage := ObjBindMethod(this, "OpenHomepage")
     GuiControl, +G, VimHomepage, % VimGuiAboutOpenHomepage
-    Gui, % this.Hwnd ":Font", Norm
-    Gui, % this.Hwnd ":Add", Text, , % "Author: " this.Author
-    Gui, % this.Hwnd ":Add", Text, , % "Version: " this.Version
-    Gui, % this.Hwnd ":Add", Text, Y+0, % "Last update: " this.Date
-    Gui, % this.Hwnd ":Add", Text, , Script path:`n%VimScriptPath%
-    Gui, % this.Hwnd ":Add", Text, , % "Setting file:`n" this.Vim.Ini.Ini
-    Gui, % this.Hwnd ":Add", Button, +HwndOK X200 W100 Default vVimAboutOK, &OK
+    gui, % this.Hwnd ":Font", Norm
+    gui, % this.Hwnd ":Add", Text, , % "Author: " this.Author
+    gui, % this.Hwnd ":Add", Text, , % "Version: " this.Version
+    gui, % this.Hwnd ":Add", Text, Y+0, % "Last update: " this.Date
+    gui, % this.Hwnd ":Add", Text, , Script path:`n%VimScriptPath%
+    gui, % this.Hwnd ":Add", Text, , % "Setting file:`n" this.Vim.Ini.Ini
+    gui, % this.Hwnd ":Add", Button, +HwndOK X200 W100 Default vVimAboutOK, &OK
     this.HwndAll.Push(OK)
     ok := ObjBindMethod(this, "OK")
     GuiControl, +G, VimAboutOK, % ok

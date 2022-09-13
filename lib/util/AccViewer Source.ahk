@@ -27,89 +27,89 @@ SetBatchLines, -1
 	Gui Main: New, HWNDhwnd LabelGui AlwaysOnTop, Accessible Info Viewer
 	Gui Main: Default
 	Win.Main := hwnd
-	; Gui, Color, White
-	Gui, Add, Checkbox, x70 y8 h20 gHotTracker_OnCheck vHotTrackerEnabled Checked0, HotTracking
-	Gui, Add, Text, x+0 hp 0x201 Disabled, (F1)
-	Gui, Add, Button, x+70 ggotoParentAcc vBtnParent, Parent
-	Gui, Add, Button, x+10 ggotoRootAcc vBtnRoot, Root
-	Gui, Add, Button, x+10 vShowStructure gShowStructure, Show Acc Structure
+	; gui, Color, White
+	gui, Add, Checkbox, x70 y8 h20 gHotTracker_OnCheck vHotTrackerEnabled Checked0, HotTracking
+	gui, Add, Text, x+0 hp 0x201 Disabled, (F1)
+	gui, Add, Button, x+70 ggotoParentAcc vBtnParent, Parent
+	gui, Add, Button, x+10 ggotoRootAcc vBtnRoot, Root
+	gui, Add, Button, x+10 vShowStructure gShowStructure, Show Acc Structure
 	{
-		Gui, Add, Text, x10 y3 w25 h26 Border gCrossHair ReadOnly Border 0x6 ; SS_WHITERECT=0x6
-		Gui, Add, Text, x10 y3 w25 h4 Border HWNDh9 +0x4E
+		gui, Add, Text, x10 y3 w25 h26 Border gCrossHair ReadOnly Border 0x6 ; SS_WHITERECT=0x6
+		gui, Add, Text, x10 y3 w25 h4 Border HWNDh9 +0x4E
 		CreatePixel(h9, 0x0046D5)
 
-		Gui, Add, Text, x13 y17 w19 h1 Border vHBar
-		Gui, Add, Text, x22 y8 w1 h19 Border vVBar
+		gui, Add, Text, x13 y17 w19 h1 Border vHBar
+		gui, Add, Text, x22 y8 w1 h19 Border vVBar
 	}
 	{
-		Gui, Font, bold
-		Gui, Add, GroupBox, x2 y32 w465 h130 vWinCtrl, Window/Control Info
-		Gui, Font
-		Gui, Add, Text, x7 y49 h20, % "WinTitle:"
-		Gui, Add, Edit, ReadOnly x+0 y47 w401 h20 vWinTitle ,
-		Gui, Add, Text, x7 y71 h20, % "    Text:"
-		Gui, Add, Edit, ReadOnly x+0 y69 w401 h20 vText ,
-		Gui, Add, Text, x7 y93 h20, % "    Hwnd:"
-		Gui, Add, Edit, ReadOnly x+0 y91 w112 h20 vHwnd,
-		Gui, Add, Text, x+30 y93 h20 vClassText, % "Class(NN):"
-		Gui, Add, Edit, ReadOnly x+0 y91 w198 h20 vClass,
-		Gui, Add, Text, x7 y115 h20, % "Position:"
-		Gui, Add, Edit, ReadOnly x+0 y113 w112 h20 vPosition,
-		Gui, Add, Text, x+30 y115 h20, % "  Process:"
-		Gui, Add, Edit, ReadOnly x+0 y113 w198 h20 vProcess,
-		Gui, Add, Text, x7 y137 h20, % "    Size:"
-		Gui, Add, Edit, ReadOnly x+0 y135 w112 h20 vSize,
-		Gui, Add, Text, x+30 y137 h20, % "  Proc ID:"
-		Gui, Add, Edit, ReadOnly x+0 y135 w198 h20 vProcID,
+		gui, Font, bold
+		gui, Add, GroupBox, x2 y32 w465 h130 vWinCtrl, Window/Control Info
+		gui, Font
+		gui, Add, Text, x7 y49 h20, % "WinTitle:"
+		gui, Add, Edit, ReadOnly x+0 y47 w401 h20 vWinTitle ,
+		gui, Add, Text, x7 y71 h20, % "    Text:"
+		gui, Add, Edit, ReadOnly x+0 y69 w401 h20 vText ,
+		gui, Add, Text, x7 y93 h20, % "    Hwnd:"
+		gui, Add, Edit, ReadOnly x+0 y91 w112 h20 vHwnd,
+		gui, Add, Text, x+30 y93 h20 vClassText, % "Class(NN):"
+		gui, Add, Edit, ReadOnly x+0 y91 w198 h20 vClass,
+		gui, Add, Text, x7 y115 h20, % "Position:"
+		gui, Add, Edit, ReadOnly x+0 y113 w112 h20 vPosition,
+		gui, Add, Text, x+30 y115 h20, % "  Process:"
+		gui, Add, Edit, ReadOnly x+0 y113 w198 h20 vProcess,
+		gui, Add, Text, x7 y137 h20, % "    Size:"
+		gui, Add, Edit, ReadOnly x+0 y135 w112 h20 vSize,
+		gui, Add, Text, x+30 y137 h20, % "  Proc ID:"
+		gui, Add, Edit, ReadOnly x+0 y135 w198 h20 vProcID,
 	}
 	{
-		Gui, Font, bold
-		Gui, Add, GroupBox, x2 y165 w465 h290 vAcc, Accessible Info
-		Gui, Font
-		Gui, Add, Text, x7 y182 w42 h20 Right, Name:
-		Gui, Add, Edit, ReadOnly x51 y180 w411 h20 vAccName ,
-		Gui, Add, Text, x7 y204 w42 h20 Right, Value:
-		Gui, Add, Edit, ReadOnly x51 y202 w225 h20 vAccValue ,
-		Gui, Add, Button, x+0 hp gModifyAccValue vModifyAccValue Default Disabled, Modify
-		Gui, Add, Text, x+20 y204 h20, % "ChildCount:"
-		Gui, Add, Edit, ReadOnly x+0 y202 w55 h20 vAccChildCount,
-		Gui, Add, Text, x7 y226 w42 h20 Right, Role:
-		Gui, Add, Edit, ReadOnly x51 y224 w411 h20 vAccRole,
-		Gui, Add, Text, x7 y248 w42 h20 Right, State:
-		Gui, Add, Edit, ReadOnly x51 y246 w411 h50 -Wrap vAccState,
-		Gui, Add, Button, xp y+0 h22 w100 vStateSelect gSelectAcc Disabled, Select
-		Gui, Add, Text, x7 y320 w42 h20 Right, Action:
-		Gui, Add, Edit, ReadOnly x51 y318 w142 h20 vAccAction,
-		Gui, Add, Button, x+0 gDoDefaultAction hp vExecute Disabled, Execute
-		Gui, Add, Text, x+30 y320 h20, % "     Focus:"
-		Gui, Add, Edit, ReadOnly x+0 y318 w120 h20 vAccFocus,
+		gui, Font, bold
+		gui, Add, GroupBox, x2 y165 w465 h290 vAcc, Accessible Info
+		gui, Font
+		gui, Add, Text, x7 y182 w42 h20 Right, Name:
+		gui, Add, Edit, ReadOnly x51 y180 w411 h20 vAccName ,
+		gui, Add, Text, x7 y204 w42 h20 Right, Value:
+		gui, Add, Edit, ReadOnly x51 y202 w225 h20 vAccValue ,
+		gui, Add, Button, x+0 hp gModifyAccValue vModifyAccValue Default Disabled, Modify
+		gui, Add, Text, x+20 y204 h20, % "ChildCount:"
+		gui, Add, Edit, ReadOnly x+0 y202 w55 h20 vAccChildCount,
+		gui, Add, Text, x7 y226 w42 h20 Right, Role:
+		gui, Add, Edit, ReadOnly x51 y224 w411 h20 vAccRole,
+		gui, Add, Text, x7 y248 w42 h20 Right, State:
+		gui, Add, Edit, ReadOnly x51 y246 w411 h50 -Wrap vAccState,
+		gui, Add, Button, xp y+0 h22 w100 vStateSelect gSelectAcc Disabled, Select
+		gui, Add, Text, x7 y320 w42 h20 Right, Action:
+		gui, Add, Edit, ReadOnly x51 y318 w142 h20 vAccAction,
+		gui, Add, Button, x+0 gDoDefaultAction hp vExecute Disabled, Execute
+		gui, Add, Text, x+30 y320 h20, % "     Focus:"
+		gui, Add, Edit, ReadOnly x+0 y318 w120 h20 vAccFocus,
 		{
-			Gui, Add, Text, x7 y342 w75 h20 Right vAccLocationText, Location:
-			Gui, Add, Edit, ReadOnly x+0 y340 w380 h20 vAccLocation ,
-			Gui, Add, Text, x7 y364 w75 h20 Right, Description:
-			Gui, Add, Edit, ReadOnly x+0 y362 w380 h20 vAccDescription ,
-			Gui, Add, Text, x7 y386 w75 h20 Right, Keyboard:
-			Gui, Add, Edit, ReadOnly x+0 y384 w380 h20 vAccKeyboard ,
-			Gui, Add, Text, x7 y408 w75 h20 Right, Help:
-			Gui, Add, Edit, ReadOnly x+0 y406 w380 h20 vAccHelp ,
-			Gui, Add, Text, x7 y430 w75 h20 Right, HelpTopic:
-			Gui, Add, Edit, ReadOnly x+0 y428 w380 h20 vAccHelpTopic ,
-			Gui, Add, Text, x7 y+8 w75 Right, Selection:
-			Gui, Add, Edit, ReadOnly x+0 yp-3 w380 h20 vAccSelection,
+			gui, Add, Text, x7 y342 w75 h20 Right vAccLocationText, Location:
+			gui, Add, Edit, ReadOnly x+0 y340 w380 h20 vAccLocation ,
+			gui, Add, Text, x7 y364 w75 h20 Right, Description:
+			gui, Add, Edit, ReadOnly x+0 y362 w380 h20 vAccDescription ,
+			gui, Add, Text, x7 y386 w75 h20 Right, Keyboard:
+			gui, Add, Edit, ReadOnly x+0 y384 w380 h20 vAccKeyboard ,
+			gui, Add, Text, x7 y408 w75 h20 Right, Help:
+			gui, Add, Edit, ReadOnly x+0 y406 w380 h20 vAccHelp ,
+			gui, Add, Text, x7 y430 w75 h20 Right, HelpTopic:
+			gui, Add, Edit, ReadOnly x+0 y428 w380 h20 vAccHelpTopic ,
+			gui, Add, Text, x7 y+8 w75 Right, Selection:
+			gui, Add, Edit, ReadOnly x+0 yp-3 w380 h20 vAccSelection,
 		}
 	}
 	{
-		Gui, Add, StatusBar, gShowMainGui
+		gui, Add, StatusBar, gShowMainGui
 		SB_SetParts(110, 180, 100)
 		; SB_SetText("get full path", 3)
 		SB_SetText("`tshow more", 4)
 	}
 	{
 		Gui Acc: New, ToolWindow Resize LabelAcc HWNDhwnd, Acc Structure
-		Gui, Margin, 0, 0
-		Gui, Font,, Microsoft YaHei
-		Gui, Add, TreeView, w300 h357 vTView gTreeView R17 AltSubmit HWNDhTV 0x200 ;BackgroundF0F0F0
-		Gui, Show, Hide
+		gui, Margin, 0, 0
+		gui, Font,, Microsoft YaHei
+		gui, Add, TreeView, w300 h357 vTView gTreeView R17 AltSubmit HWNDhTV 0x200 ;BackgroundF0F0F0
+		gui, Show, Hide
 		Win.Acc := hwnd
 		DllCall("UxTheme.dll\SetWindowTheme", "ptr", hTV, "str", "Explorer", "ptr", 0)
 	}
@@ -122,7 +122,7 @@ TempMenu_CopyCode:
 TempMenu_CopyCodeSingle:
 TempMenu_CopyCodeParameters:
 	defaultGui := A_DefaultGui
-	Gui, % Win.Main ":Default"
+	gui, % Win.Main ":Default"
 
 	SB_SetText("", 2)
 	SB_SetText("Searching..", 3)
@@ -137,7 +137,7 @@ TempMenu_CopyCodeParameters:
 	SB_SetText("Path: " fullPath, 2)
 	SB_SetText("get full path", 3)
 	
-	Gui, % defaultGui ":Default"
+	gui, % defaultGui ":Default"
 
 	ToolTip("Copied",,,, 2000)
 Return
@@ -208,11 +208,11 @@ ShowMainGui:
 				height := 369
 				while height<503 {
 					height += 10
-					Gui, Show, w470 h%height%
+					gui, Show, w470 h%height%
 					Sleep, 20
 				}
 			}
-			Gui, Show, w470 h503
+			gui, Show, w470 h503
 			ShowingLess := false
 		}
 		else {
@@ -220,11 +220,11 @@ ShowMainGui:
 				height := 503
 				while height>369 {
 					height -= 10
-					Gui, Show, w470 h%height%
+					gui, Show, w470 h%height%
 					Sleep, 20
 				}
 			}
-			Gui, Show, w470 h369
+			gui, Show, w470 h369
 			GuiControl, Hide, AccDescription
 			GuiControl, Hide, AccLocation
 			GuiControl, Hide, AccLocationText
@@ -738,8 +738,8 @@ class Outline {
 
 		this.hwnds := {}
 		Loop, 4 {
-			Gui, New, -Caption +ToolWindow HWNDhwnd -DPIScale +E%WS_EX_TRANSPARENT% +E%WS_EX_LAYERED%
-			Gui, Color, %color%
+			gui, New, -Caption +ToolWindow HWNDhwnd -DPIScale +E%WS_EX_TRANSPARENT% +E%WS_EX_LAYERED%
+			gui, Color, %color%
 			this[A_Index] := hwnd
 			DllCall("SetLayeredWindowAttributes", "ptr", hwnd, uint, 0, "uchar", 255, "int", 2)
 		}
@@ -749,7 +749,7 @@ class Outline {
 		this.right := this[2]
 		this.bottom := this[3]
 		this.left := this[4]
-		Gui, %preDefaultGui%: Default
+		gui, %preDefaultGui%: Default
 	}
 
 	MoveTogether(arrHwnd, arrPos) {
@@ -779,11 +779,11 @@ class Outline {
 		this.isVisible := true
 	}
 	GuiShow(name, x, y, w, h) {
-		Gui, % this[name] ":Show", % "NA x" x " y" y " w" w " h" h
+		gui, % this[name] ":Show", % "NA x" x " y" y " w" w " h" h
 	}
 	Hide() {
 		Loop, 4
-			Gui, % this[A_Index] ": Hide"
+			gui, % this[A_Index] ": Hide"
 		this.isVisible := false
 	}
 	SetAbove(hwnd) {
@@ -799,15 +799,15 @@ class Outline {
 		this.isVisible := !param
 	}
 	Color(color) {
-		Gui, +HWNDdefault
+		gui, +HWNDdefault
 		Loop, 4
-			Gui, % this[A_Index] ": Color" , %color%
+			gui, % this[A_Index] ": Color" , %color%
 		this.color := color
-		Gui, %default%: Default
+		gui, %default%: Default
 	}
 	Destroy() {
 		Loop, 4
-			Gui, % this[A_Index] ": Destroy"
+			gui, % this[A_Index] ": Destroy"
 	}
 }
 CreatePixel(hwnd, Color) {
@@ -1055,12 +1055,12 @@ _InputBox(Title:="", oParam := "")
 {
 	preTDPI := DllCall("SetThreadDpiAwarenessContext", "int", -4)
 
-	Gui, % Win.Main ":+OwnDialogs -AlwaysOnTop"
+	gui, % Win.Main ":+OwnDialogs -AlwaysOnTop"
 
 	InputBox, v, %Title%,,,, % oParam.Height,,,,, % oParam.Default
 	CancelPressed := ErrorLevel
 
-	Gui, % Win.Main ":+AlwaysOnTop"
+	gui, % Win.Main ":+AlwaysOnTop"
 
 	DllCall("SetThreadDpiAwarenessContext", "int", preTDPI)
 	return CancelPressed ? "" : v
@@ -1068,9 +1068,9 @@ _InputBox(Title:="", oParam := "")
 
 _error(title, text) {
 	preTDPI := DllCall("SetThreadDpiAwarenessContext", "int", -4)
-	Gui, % Win.Main ":+OwnDialogs -AlwaysOnTop"
+	gui, % Win.Main ":+OwnDialogs -AlwaysOnTop"
 	MsgBox, 48, %title%, %text%
-	Gui, % Win.Main ":+AlwaysOnTop"
+	gui, % Win.Main ":+AlwaysOnTop"
 	DllCall("SetThreadDpiAwarenessContext", "int", preTDPI)
 }
 

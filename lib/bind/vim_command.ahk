@@ -36,24 +36,31 @@ Return
 ^`;::
   ReleaseKey("ctrl")
   WinGet, hwnd, ID, A
-  Gui, VimCommander:Add, Text,, &Command:
+  gui, VimCommander:Add, Text,, &Command:
   list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search"
         . "|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE"
         . "|Define (Google)|YT History In IE|Wiktionary|Discord go live"
-        . "|Copy current window's title|Copy as HTML|Forvo|Pin current window at top"
+        . "|Copy current window's title|Copy current window's position"
+        . "|Copy as HTML|Forvo|Pin current window at top"
         . "|Acc Viewer|Translate (Google)|Clear clipboard|Forcellini|RAE"
         . "|Show selection as html|Oxford Advanced Learner's Dictionary"
         . "|Alatius: a Latin macronizer|UIA Viewer"
+        . "|Set selection as Vim.Browser.VidTime"
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list .= "|Set current element as concept hook|Memorise children of current element"
     if (Vim.SM.IsEditingText())
       list .= "|Cloze and Done!"
   } else if (WinActive("ahk_class TBrowser")) {
     list .= "|Memorise current browser|Set browser position"
+  } else if (WinActive("ahk_class CabinetWClass")) {
+    list .= "|Mark file as imported"
   }
-  Gui, VimCommander:Add, Combobox, vCommand gAutoComplete w196, % list
-  Gui, VimCommander:Add, Button, default, &Execute
-  Gui, VimCommander:Show,, Vim Commander
+  if (WinExist("ahk_class TElWind") && Vim.SM.IsPassiveCollection()) {
+    list .= "|Reformat script component"
+  }
+  gui, VimCommander:Add, Combobox, vCommand gAutoComplete w256, % list
+  gui, VimCommander:Add, Button, default, &Execute
+  gui, VimCommander:Show,, Vim Commander
 Return
 
 VimCommanderGuiEscape:
@@ -72,7 +79,7 @@ VimCommanderButtonExecute:
   }
   Vim.State.SetMode("Insert",,,,, true)
   WinActivate % "ahk_id " . hwnd
-  Gosub % command
+  gosub % command
 return
 
 #if (Vim.State.Vim.Enabled)
@@ -83,7 +90,7 @@ return
 #if
 SMPlan:
   if (!WinExist("ahk_group SuperMemo")) {
-    run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\SuperMemo\SuperMemo.lnk
+    run C:\SuperMemo\systems\all.kno
     WinWaitActive, ahk_class TElWind,, 10
     if (ErrorLevel)
       return
@@ -93,14 +100,14 @@ SMPlan:
     ControlClickWinCoord(466, 46, "ahk_class TPlanDlg")  ; ControlSend doesn't work here in background
     WinClose
   }
-	CurrentTick := A_TickCount
+	CurrTick := A_TickCount
   while (!WinExist("ahk_class TPlanDlg")) {
     if (WinExist("ahk_class TElParamDlg"))  ; ^+!p could trigger this
       WinClose
     if (WinExist("ahk_class TMsgDialog"))
       WinClose
     ControlSend, TBitBtn2, {ctrl down}p{ctrl up}, ahk_class TElWind
-		if (A_TickCount := CurrentTick + 5000)
+		if (A_TickCount := CurrTick + 5000)
 			return
   }
   WinActivate, ahk_class TPlanDlg
@@ -137,15 +144,15 @@ return
 MoveMouseToCaret:
   MouseMove, % A_CaretX, % A_CaretY
   if (A_CaretX) {
-    Vim.ToolTip("Current caret position: " . A_CaretX . " " . A_CaretY)
+    ToolTip("Current caret position: " . A_CaretX . " " . A_CaretY)
   } else {
-    Vim.ToolTip("Caret not found.")
+    ToolTip("Caret not found.")
   }
-Return
+return
 
 LaTeX:
   run https://latex.vimsky.com/
-Return
+return
 
 WaybackMachine:
   url := clip()
@@ -155,7 +162,7 @@ WaybackMachine:
       return
   }
   run % "https://web.archive.org/web/*/" . url
-Return
+return
 
 DeepL:
   text := clip()
@@ -169,14 +176,14 @@ Return
 
 YouGlish:
   term := clip()
-  Gui, YouGlish:Add, Text,, &Term:
-  Gui, YouGlish:Add, Edit, vTerm, % term
-  Gui, YouGlish:Add, Text,, &Language:
+  gui, YouGlish:Add, Text,, &Term:
+  gui, YouGlish:Add, Edit, vTerm, % term
+  gui, YouGlish:Add, Text,, &Language:
   list := "English||Spanish|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|American Sign Language"
-  Gui, YouGlish:Add, Combobox, vLanguage gAutoComplete, % list
-  Gui, YouGlish:Add, Button, default, &Search
-  Gui, YouGlish:Show,, YouGlish
+  gui, YouGlish:Add, Combobox, vLanguage gAutoComplete, % list
+  gui, YouGlish:Add, Button, default, &Search
+  gui, YouGlish:Show,, YouGlish
 Return
 
 YouGlishGuiEscape:
@@ -199,13 +206,13 @@ return
 
 DefineGoogle:
   term := clip()
-  Gui, GoogleDefine:Add, Text,, &Term:
-  Gui, GoogleDefine:Add, Edit, vTerm, % term
-  Gui, GoogleDefine:Add, Text,, &Language Code:
+  gui, GoogleDefine:Add, Text,, &Term:
+  gui, GoogleDefine:Add, Edit, vTerm, % term
+  gui, GoogleDefine:Add, Text,, &Language Code:
   list := "es||en|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
-  Gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete, % list
-  Gui, GoogleDefine:Add, Button, default, &Search
-  Gui, GoogleDefine:Show,, Google Define
+  gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete, % list
+  gui, GoogleDefine:Add, Button, default, &Search
+  gui, GoogleDefine:Show,, Google Define
 Return
 
 GoogleDefineGuiEscape:
@@ -245,14 +252,14 @@ return
 
 Wiktionary:
   term := clip()
-  Gui, Wiktionary:Add, Text,, &Term:
-  Gui, Wiktionary:Add, Edit, vTerm, % term
-  Gui, Wiktionary:Add, Text,, &Language:
+  gui, Wiktionary:Add, Text,, &Term:
+  gui, Wiktionary:Add, Edit, vTerm, % term
+  gui, Wiktionary:Add, Text,, &Language:
   list := "Spanish||English|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|Latin|Ancient Greek|Chinese"
-  Gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete, % list
-  Gui, Wiktionary:Add, Button, default, &Search
-  Gui, Wiktionary:Show,, Wiktionary
+  gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete, % list
+  gui, Wiktionary:Add, Button, default, &Search
+  gui, Wiktionary:Show,, Wiktionary
 return
 
 WiktionaryGuiEscape:
@@ -285,12 +292,12 @@ return
 
 CopyCurrentWindowsTitle:
   Clipboard := WinGetTitle("A")
-  Vim.ToolTip("Copied " . Clipboard)
+  ToolTip("Copied " . Clipboard)
 return
 
 CopyAsHTML:
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (!Clipboard) {
@@ -301,7 +308,7 @@ CopyAsHTML:
     RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
     Clipboard := data
   }
-  Vim.ToolTip("Copied`n`n" . data)
+  ToolTip("Copied`n`n" . data)
 return
 
 Forvo:
@@ -331,7 +338,7 @@ SetCurrentElementAsConceptHook:
   if (!ErrorLevel)
     send {enter}
   ControlSend, TVirtualStringTree1, {esc}, ahk_class TContents
-  Vim.ToolTip("Hook set.")
+  ToolTip("Hook set.")
   Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -397,18 +404,15 @@ return
 
 ShowSelectionAsHTML:
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (Vim.HTML.ClipboardGet_HTML(data)) {
     RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
-    Clipboard := data
-    MsgBox, 4,, % "Open in Vim?`n`n" . data
-    IfMsgBox yes
-    {
-      Run C:\Program Files (x86)\Vim\vim82\gVim.exe
-      WinWaitActive, ahk_class Vim,, 0
-      send "{+}p{enter}  ; paste from clipboard
+    MsgBox, 4,, % "Copy?`n`n" . data
+    IfMsgBox, yes, {
+      Clipboard := data
+      return
     }
   }
   WinClip.Restore(ClipData)
@@ -442,5 +446,57 @@ AlatiusALatinMacronizer:
 return
 
 SetBrowserPosition:
-  WinMove, ahk_class TBrowser,, 0, 0, 776, 759
+  WinMove, ahk_class TBrowser,, 0, 0, 846, 1034
+return
+
+SetSelectionAsVimBrowserVidTime:
+  Vim.Browser.VidTime := RegExReplace(clip(), "(^\s*|\s*$)")
+  ToolTip("Vim.Browser.VidTime set as " . Vim.Browser.VidTime)
+return
+
+ReformatScriptComponent:
+  WinClip.Snap(ClipData)
+  if (Vim.SM.IsLearning()) {
+    send !g
+    ContinueLearning := true
+  } else {
+    ContinueLearning := false
+  }
+  Vim.SM.DeselectAllComponents()
+  WinClip.Clear()
+  send ^a^x
+  ClipWait 1
+  ScriptArray := StrSplit(Clipboard, "`n`r")
+  Vim.Browser.url := RegExReplace(ScriptArray[1], "(^\s*|\s*$)")
+  Vim.Browser.title := WinGetTitle()
+  if (InStr(Vim.Browser.url, "youtube.com")) {
+    Vim.Browser.VidTime := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
+    YTSeconds := ScriptArray[2] ? Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) : 0
+    Vim.Browser.source := "YouTube"
+    send ^t{f9}  ; opens script editor
+    WinWaitActive, ahk_class TScriptEditor,, 0
+    send ^{end}
+    send % "&t=" . YTSeconds . "s"
+    send !o{esc}  ; close script editor
+  } else {
+    Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
+  }
+  WinClip.SetText(Vim.Browser.url)
+  gosub SMSetLinkFromClipboard
+  send {esc}
+  if (ContinueLearning)
+    send {enter}
+  WinClip.Restore(ClipData)
+  Vim.Browser.Clear()
+return
+
+MarkFileAsImported:
+  send {f2}{home}IMPORTED_{enter}
+return
+
+CopyCurrentWindowsPosition:
+  WinGetPos, x, y, w, h, A
+  Clipboard := "x = " . x . " y = " . y . " w = " . w . " h = " . h
+  ClipWait 10
+  ToolTip("Copied " . Clipboard)
 return

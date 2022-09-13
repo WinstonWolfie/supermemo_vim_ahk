@@ -1,6 +1,6 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TElWind"))
 +c::  ; add new concept
-  send {alt}er
+  PostMessage, 0x0111, 126,,, ahk_class TElWind
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -47,7 +47,7 @@ SMCleanHTML:
   }
   send {esc}
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   Vim.SM.WaitTextExit()
   WinWaitActive, ahk_class TElWind,, 0  ; sometimes, if a processing box appears, the next line may not be sent
   send !{f12}fc  ; copy file path
@@ -95,23 +95,23 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   send {esc}
   Vim.SM.WaitTextExit()  ; making changes to the html file requires not editing html in SM
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send !{f10}tc  ; copy template
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (InStr(Clipboard, "Link:")) {
     RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)  ; RegExMatch cannot store into clipboard
     if (!InStr(Link, "wikipedia.org/wiki")) {
-      Vim.ToolTip("Not Wikipedia!")
+      ToolTip("Not Wikipedia!")
       WinClip.Restore(ClipData)
       return
     }
     if (InStr(Link, "en.wikipedia.org")) {
-      Vim.ToolTip("English Wikipedia doesn't need to be prepared!")
+      ToolTip("English Wikipedia doesn't need to be prepared!")
       WinClip.Restore(ClipData)
       return
     }
   } else {
-    Vim.ToolTip("No reference.")
+    ToolTip("No reference.")
     WinClip.Restore(ClipData)
     return
   }
@@ -140,7 +140,7 @@ i::  ; learn outstanding *i*tems only
   Vim.State.SetMode("Vim_Normal")
   SetDefaultKeyboard(0x0409)  ; english-US	
   send !{home}{esc 4}  ; clear any hidden windows
-  send !vo
+  PostMessage, 0x0111, 202,,, ahk_class TElWind  ; View - Outstanding
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
@@ -182,53 +182,58 @@ return
 SMSetLinkFromClipboard:
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
-  WinClip.Snap(ClipData)
   NewLink := "`n#Link: " . Clipboard . "`n"
   send !{f10}fe
   WinWaitActive, ahk_class TInputDlg,, 0
-  LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
-  send ^a^c
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (InStr(Clipboard, "#Link")) {
-    NewRef := RegExReplace(Clipboard, "#Link: .*", NewLink)
+  if (NewImport) {
+    NewImport := false
+    OldRef := ""
   } else {
-    NewRef := Clipboard . NewLink
+    ControlGetText, OldRef, TMemo1
   }
-  if (BrowserSource) {
-    NewSource := "`n#Source: " . BrowserSource . "`n"
+  if (InStr(OldRef, "#Link")) {
+    NewRef := RegExReplace(OldRef, "#Link: .*", NewLink)
+  } else {
+    NewRef := OldRef . NewLink
+  }
+  if (Vim.Browser.title) {
+    NewTitle := "`n#Title: " . Vim.Browser.title . "`n"
+    if (InStr(NewRef, "#Title")) {
+      NewRef := RegExReplace(NewRef, "#Title: .*", NewTitle)
+    } else {
+      NewRef .= NewTitle
+    }
+  }
+  if (Vim.Browser.source) {
+    NewSource := "`n#Source: " . Vim.Browser.source . "`n"
     if (InStr(NewRef, "#Source")) {
       NewRef := RegExReplace(NewRef, "#Source: .*", NewSource)
     } else {
       NewRef .= NewSource
     }
   }
-  if (BrowserDate) {
-    NewDate := "`n#Date: " . BrowserDate . "`n"
+  if (Vim.Browser.date) {
+    NewDate := "`n#Date: " . Vim.Browser.date . "`n"
     if (InStr(NewRef, "#Date")) {
-      NewRef := RegExReplace(NewRef, "#Date: .*", BrowserDate)
+      NewRef := RegExReplace(NewRef, "#Date: .*", Vim.Browser.date)
     } else {
       NewRef .= NewDate
     }
   }
-  clip(NewRef,, true)
-  send !{enter}
-  WinWaitActive, ahk_class TElWind,, 0
-  if (BrowserTitle && WinActive("ahk_class TElWind")) {
-    if (!Vim.SM.IsEditingText())
-      send q
-    Vim.SM.WaitTextFocus()
-    send ^{end}{enter}
-    clip(BrowserTitle,, true)
-    MouseGetPos, XCoord, YCoord
-    send +{home}
-    WaitCaretMove(XCoord, YCoord)
-    send !t  ; set title
-		WinWaitNotActive, ahk_class TElWind,, 0.25  ; could appear a loading bar
-		if (!ErrorLevel)
-			WinWaitActive, ahk_class TElWind,, 5
+  if (Vim.Browser.comment) {
+    NewComment := "`n#Comment: " . Vim.Browser.comment . "`n"
+    if (InStr(NewRef, "#Comment")) {
+      NewRef := RegExReplace(NewRef, "#Comment: .*", Vim.Browser.comment)
+    } else {
+      NewRef .= NewComment
+    }
   }
-  WinClip.Restore(ClipData)
-  BrowserTitle := BrowserSource := BrowserDate := ""
+  ControlSetText, TMemo1, % NewRef
+  send !{enter}
+  WinWaitActive, ahk_class TElWind,, 1
+  if (Vim.Browser.title && WinActive("ahk_class TElWind") && WinGetTitle() != Vim.Browser.title)
+    Vim.SM.SetTitle(Vim.Browser.title)
+  Vim.Browser.Clear()
 return
 
 o::  ; c*o*mpress images
@@ -243,14 +248,15 @@ s::  ; turn active language item to passive (*s*witch)
   Vim.SM.DeselectAllComponents()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
-  WinGetActiveTitle, CurrentTitle
+  WinGetActiveTitle, CurrTitle
   send ^+s
-  WinWaitTitleChange(CurrentTitle, 500)
+  WinWaitTitleChange(CurrTitle, 1000)
+  sleep 1000  ; for unknown reason this large amount of delay would work, not otherwise
   send q
-  Vim.SM.WaitTextFocus(500)
-  ControlGetFocus, CurrentControl, A
+  Vim.SM.WaitTextFocus(1000)
+  ControlGetFocus, CurrControl
   send ^{home}en:{space}^t
-  ControlWaitNotFocus(CurrentControl)
+  ControlWaitNotFocus(CurrControl)
   if (Vim.SM.IsEditingHTML()) {
     send ^{home}^{del 2}
   } else if (Vim.SM.IsEditingPlainText()) {
@@ -267,7 +273,7 @@ return
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
   send q
-  Vim.SM.WaitTextFocus(500)
+  Vim.SM.WaitTextFocus(1000)
   if (Vim.SM.IsEditingHTML()) {
     send ^{home}^+{right 2}^x
   } else if (Vim.SM.IsEditingPlainText()) {
@@ -275,38 +281,42 @@ return
   }
   send {esc}
   Vim.SM.WaitTextExit()
-  WinGetActiveTitle, CurrentTitle
+  WinGetActiveTitle, CurrTitle
   send ^+s
-  WinWaitTitleChange(CurrentTitle, 500)
+  WinWaitTitleChange(CurrTitle, 1000)
   send q
-  Vim.SM.WaitTextFocus(500)
+  Vim.SM.WaitTextFocus(1000)
   send ^v{left 2}{esc}
   WinClip.Restore(ClipData)
 return
 
+SMHyperLinkToTopic:
 p::  ; hyperlink to scri*p*t component
-  CollectionName := Vim.SM.GetCollectionName()
   send !n  ; new topic
   if (!Vim.SM.WaitTextFocus(5000))
     return
-  if (CollectionName = "passive" || CollectionName = "music" || CollectionName = "bgm") {
-    Vim.State.SetMode("Vim_Normal")
-    send ^v  ; so the link is clickable
+  if (Vim.SM.IsPassiveCollection()) {
     send ^t{f9}{enter}  ; opens script editor
     send url{space}^v  ; paste the link
+    if (Vim.Browser.VidTime) {
+      sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+      if (InStr(Vim.Browser.url, "youtube.com")) {
+        send % "&t=" . sec . "s"
+      } else if (InStr(Vim.Browser.url, "bilibili.com")) {
+        send % "?&t=" . sec
+      }
+    }
     send !o{esc}  ; close script editor
-    if (BrowserTitle)
-      Vim.SM.SetTitle(BrowserTitle)
-    BrowserTitle := BrowserSource := BrowserDate := BrowserUrl := ""
-  } else if (CollectionName = "gaming") {
     gosub SMSetLinkFromClipboard
-    Vim.State.SetMode("Insert")
-    send ^{home}
+    send {esc}
   } else {  ; for now everything else is treated like standard topics and links
     gosub SMSetLinkFromClipboard
     Vim.State.SetMode("Insert")
     send ^{home}
   }
+  if (sec)
+    ToolTip("Time stamp in script component set as " . sec . "s")
+  Vim.Browser.Clear()
 return
 
 m::  ; co*m*ment current element "audio"
@@ -326,9 +336,9 @@ return
 d::  ; learn all elements with the comment "au*d*io"
   Vim.State.SetMode("Vim_Normal")
   send !{home}{esc 4}  ; escape potential hidden window
-  send !soc  ; open comment registry
+  PostMessage, 0x0111, 169,,, ahk_class TElWind  ; Comment registry
   WinWaitActive, ahk_class TRegistryForm,, 0
-  SendInput {raw}audio
+  send a  ; search for audio
   send !b  ; browse all elements
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
@@ -345,15 +355,14 @@ d::  ; learn all elements with the comment "au*d*io"
     WinWaitNotActive, ahk_class TProgressBox,, 10
   WinWaitActive, ahk_class TBrowser,, 0
   send ^l  ; learn
-  WinWaitActive, ahk_class TElWind,, 0
+  WinWaitActive, ahk_class TElWind,, 1
   loop {
-    sleep 40
     if (Vim.SM.IsLearning()) {
       send ^{f10}
-      Return
+      return
     }
     if (A_Index > 5)
-      Return
+      return
   }
 return
 
@@ -384,12 +393,15 @@ c::  ; learn child
 return
 
 #if ((Vim.IsVimGroup()
-      && Vim.State.IsCurrentVimMode("Command")
-      && (WinActive("ahk_class TElWind")
-          || WinActive("ahk_class TContents")
-          || WinActive("ahk_class TBrowser")))
-     || Vim.SM.IsLearning())  ; so you can just press numpads when you finished grading
-; Priority script, made by Naess and modified by Guillem
+   && Vim.State.IsCurrentVimMode("Command")
+   && (WinActive("ahk_class TElWind")
+    || WinActive("ahk_class TContents")
+    || WinActive("ahk_class TBrowser")))
+    || Vim.SM.IsLearning()  ; so you can just press numpads when you finished grading
+    || (WinActive("SuperMemo Import") && WinActive("ahk_class AutoHotkeyGUI"))
+    || (WinActive("Priority") && WinActive("ahk_class #32770"))
+    || (WinActive("ahk_class TPriorityDlg")))
+; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
 ; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png
 !0::

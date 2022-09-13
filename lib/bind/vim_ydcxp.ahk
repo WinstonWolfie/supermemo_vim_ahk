@@ -109,8 +109,10 @@ p::
   ;  i+=1
   ;  break
   ;}
-  if (GetKeyState("ctrl"))
+  if (InStr(A_ThisHotkey, "^")) {
     Clipboard := Clipboard
+    ClipWait 10
+  }
   if (Vim.State.LineCopy == 1 && Vim.Move.YdcClipSaved == Clipboard) {
     ; if WinActive("ahk_group VimNoLBCopyGroup") {
     ;   send {End}{Enter}^v{Home}
@@ -130,8 +132,10 @@ Return
 
 ^+p::
 +p::
-  if (GetKeyState("ctrl"))
+  if (InStr(A_ThisHotkey, "^")) {
     Clipboard := Clipboard
+    ClipWait 10
+  }
   if (Vim.State.LineCopy == 1 && Vim.Move.YdcClipSaved == Clipboard) {
     ; send {Up}{End}{Enter}^v{BS}{Home}
     send {Up}{End}{Enter}^v{Home}

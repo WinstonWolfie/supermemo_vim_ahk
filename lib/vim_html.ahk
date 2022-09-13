@@ -1,4 +1,4 @@
-class VimHTML{
+class VimHTML {
   __New(Vim) {
     this.Vim := Vim
   }
@@ -84,5 +84,4 @@ class VimHTML{
 
   Return (Res1 & Res2)
   }
-
 }

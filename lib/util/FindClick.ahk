@@ -303,9 +303,9 @@
               DxInfo .= $ "2:Image Preview - Measuring width and height" #
               . "q:" DllCall("QueryPerformanceCounter", "Int64*", QPC) * QPC #
               . "t:The image dimensions will be measured by quickly creating an AutoHotkey GUI containing the image. This is a relatively CPU-intensive step but only need be done once per session - the information is stored in the cache for future calls with the same image.`n`n<table>Image Width;%ImageW%`nImage Height;%ImageH%</table>" #
-            Gui, %GuiA%:Add, Picture, Hwnd@, %ImageFilePath%
+            gui, %GuiA%:Add, Picture, Hwnd@, %ImageFilePath%
             WinGetPos, , , ImageW, ImageH, ahk_id %@%
-            Gui, %GuiA%:Destroy
+            gui, %GuiA%:Destroy
             If (ImageW = "") {
               Error = Image file type unsupported
               Message = Image file "%ImageFile%" appears to be of an unsupported filetype.
@@ -809,8 +809,8 @@
       GuiControlGet, @, %GuiB%:, Edit1
       If !ErrorLevel
         GuiCommand .= "`n" @
-      Gui, %GuiA%:-Disabled
-      Gui, %GuiB%:Destroy
+      gui, %GuiA%:-Disabled
+      gui, %GuiB%:Destroy
     } Else If GuiTitle
       WinSetTitle, ahk_id %GuiHWND%, , % SubStr(GuiTitle, 1, InStr(GuiTitle, ":") - 1) ;% A_ThisFunc A_Space (A_Gui = GuiA ? "Debugger" : "Screenshot Creator")
   }
@@ -846,8 +846,8 @@
   {
     Loop, Parse, Options, `;
       If (A_Index = 1) {
-        Gui, %A_LoopField%:Destroy
-        Gui, %A_LoopField%:+LastFound
+        gui, %A_LoopField%:Destroy
+        gui, %A_LoopField%:+LastFound
         ThisNum := A_LoopField, ThisHWND := WinExist()
       } Else {
         @2 := @3 := @4 := ""
@@ -855,7 +855,7 @@
         If @1 in Trans,Region
           WinSet, %@1%, %@2%, ahk_id %ThisHWND%
         Else
-          Gui, %ThisNum%:%@1%, %@2%, %@3%, % SubStr(A_LoopField, StrLen(@1 @2 @3) + 4)
+          gui, %ThisNum%:%@1%, %@2%, %@3%, % SubStr(A_LoopField, StrLen(@1 @2 @3) + 4)
       }
     Return ThisHWND
   }
@@ -1104,7 +1104,7 @@
           }
       }
     @ := Items + 1, %@%_q := QPC_Final, PreviousStep := 0, PlaySpeed := PlaySpeed / 20
-    Gui, %GuiA%:Show, % "w" Width + Margins * 2 " h" TreeViewHeight + TextBoxHeight + ControlHeight + Margins * 4  ; move north
+    gui, %GuiA%:Show, % "w" Width + Margins * 2 " h" TreeViewHeight + TextBoxHeight + ControlHeight + Margins * 4  ; move north
     Hotkey, IfWinActive, ahk_id %GuiHWND%
     Loop, Parse, Hotkeys, `,
       If (Hotkey%A_LoopField% <> "")
@@ -1127,15 +1127,15 @@
           Menu, %A_ThisFunc%MenuSettings, % (CompactView := !CompactView) ? "Check" : "Uncheck", %MenuSettingsCompactView%%A_Tab%%HotkeyCompactView%
         Loop % n := 10 {
           GuiControl, %GuiA%:Move, ErrorLevel, % "x" Margins " y" Margins + (Margins + ControlHeight) * (n - (@ := CompactView ? A_Index : n - A_Index)) / n " w" Width - ShrinkByW * @ / n " h" TreeViewHeight - ShrinkByH * @ / n
-          Gui, %GuiA%:Show, % "NA w" Width + Margins * 2 - ShrinkByW * @ / n " h" TreeViewHeight + Margins * 4 + TextBoxHeight + ControlHeight - (ShrinkByH + TextBoxHeight + Margins * 2 + ControlHeight) * @ / n
+          gui, %GuiA%:Show, % "NA w" Width + Margins * 2 - ShrinkByW * @ / n " h" TreeViewHeight + Margins * 4 + TextBoxHeight + ControlHeight - (ShrinkByH + TextBoxHeight + Margins * 2 + ControlHeight) * @ / n
         }
         Loop, Parse, Buttons, `,
           GuiControl, %GuiA%:Move, %A_LoopField%, % CompactView ? "y-200" : "y" Margins
       } Else If (TempGuiCommand = ButtonPrev) or (TempGuiCommand = HotkeyPrev) or (TempGuiCommand = MenuFilePrev)
         CurrentStep -= CurrentStep = 1 ? 0 : 1
       Else If (TempGuiCommand = "Normal") or (TempGuiCommand = MenuFileExit) {
-        Gui, %GuiA%:Destroy
-        Gui, %GuiB%:Destroy
+        gui, %GuiA%:Destroy
+        gui, %GuiB%:Destroy
         Hotkey, IfWinActive, ahk_id %GuiHWND%
         Loop, Parse, Hotkeys, `,
           If (Hotkey%A_LoopField% <> "")
@@ -1177,7 +1177,7 @@
         If ErrorLevel
           MsgBox, 262144, %A_ScriptName% - %A_ThisFunc%: Alert, Check file`n`t%A_LineFile%`nline`n`t%LineNumber%`nto find this setting.`n`n`n(Note: To have this open your editor instead of showing a message box, check line %DebugSettingsLocation% and change the variables `%EditorPath`% and `%EditorCommand`%.)
       } Else If (A_ThisMenuItem = MenuFileSave) {
-        Gui, %GuiA%:+OwnDialogs
+        gui, %GuiA%:+OwnDialogs
         FileSelectFile, File, S, %A_ThisFunc%-dx-%A_Now%.txt
         If !ErrorLevel {
           FileDelete, %File%
@@ -1185,7 +1185,7 @@
           FileAppend, %@%, %File%
           MsgBox, 262144, %A_ScriptName% - %A_ThisFunc%: Alert, Disgnostic file saved successfully.
         }
-        Gui, %GuiA%:-OwnDialogs
+        gui, %GuiA%:-OwnDialogs
       } Else If (TempGuiCommand = A_ThisFunc "MenuHelp") {
         If (A_ThisMenuItem = MenuHelpWhitespaceView)
           MsgBox, 262144, Whitespace Viewer Legend, If the "Show Whitespace" option is checked in the Settings menu, the following substitutions will be made for all non-visible characters:`n`n[EMPTY STRING]`ta blank/empty string`n[0 : FALSE]`t`t0 (`%false`%)`n[1 : TRUE]`t`t1 (`%true`%)`n[CR]`t`tcarriage return (``r)`n[NL]`t`tnewline (``n)`n[_]`t`tspace (`%A_Space`%)`n[ » ]`t`ttab (`%A_Tab`%)`n[Chr1], [Chr2], etc`tASCII character #1, #2, etc (these are non-visible characters)`n`nThese substitutions are not made when copying the contents of variables using the Clipboard menu.
@@ -1242,7 +1242,7 @@
         Menu, %A_ThisFunc%MenuFile, Rename, ----, % MenuFileEdit LastLine := A_Space %CurrentStep%_l
         Menu, %A_ThisFunc%MenuFile, % %CurrentStep%_l ? "Enable" : "Disable", %MenuFileEdit%%LastLine%
         ControlSetText, Edit2, % "Time (ms):  " (%CurrentStep%_q ? Round((%@%_q - %CurrentStep%_q) * QPC_Rate, 3) : "") "`r`nLine No.:   " %CurrentStep%_l, ahk_id %GuiHWND%
-        Gui, %GuiB%:Destroy
+        gui, %GuiB%:Destroy
         If (%CurrentStep%_g <> "") and ShowGraphics {
           @ := CurrentStep, @1 := Asc(%CurrentStep%_g) = 43 ? 1 : Asc(%CurrentStep%_g) = 45 ? -1 : 0
           If @1
@@ -1378,7 +1378,7 @@
             GuiControl, %GuiA%:Focus, ErrorLevel
         } Else If (TempGuiCommand = PauseHotkey) or (TempGuiCommand = ButtonUnpause) or (TempGuiCommand = ButtonPause) {
           If (TempGuiCommand <> ButtonPause) {
-            Gui, %GuiA%:Show, % "NA h" Margins * 4 + 1 + ControlHeight * 2 + (SquareSize + SquareSpacing) * SquaresHigh - SquareSpacing
+            gui, %GuiA%:Show, % "NA h" Margins * 4 + 1 + ControlHeight * 2 + (SquareSize + SquareSpacing) * SquaresHigh - SquareSpacing
             ControlSetText, Button2, %ButtonPause%, ahk_id %GuiHWND%
             GuiControl, %GuiA%:, Edit2
             WinSet, AlwaysOnTop, On, ahk_id %GuiHWND%
@@ -1404,7 +1404,7 @@
             While (GuiCommand = "~LButton") {
               MouseGetPos, MouseX, MouseY
               MouseX -= OffsetX, MouseY -= OffsetY
-              Gui, %GuiB%:Show, % "NA x" MouseX - CenterX - CurRegionThickness " y" MouseY - CenterY - CurRegionThickness
+              gui, %GuiB%:Show, % "NA x" MouseX - CenterX - CurRegionThickness " y" MouseY - CenterY - CurRegionThickness
               chdc := DllCall("CreateCompatibleDC", Ptr, False), hdc2 := chdc ? chdc : DllCall("GetDC", Ptr, False), VarSetCapacity(bi, 40, 0), NumPut(SquaresWide, bi, 4, "uint"), NumPut(SquaresHigh, bi, 8, "uint"), NumPut(40, bi, 0, "uint"), NumPut(1, bi, 12, "ushort"), NumPut(0, bi, 16, "uInt"), NumPut(32, bi, 14, "ushort"), hbm := DllCall("CreateDIBSection", Ptr, hdc2, Ptr, &bi, "uint", 0, PtrA, False, Ptr, 0, "uint", 0, Ptr)  ; Gdip_BitmapFromScreen
               If !chdc
                 DllCall("ReleaseDC", Ptr, False, Ptr, hdc2)
@@ -1426,7 +1426,7 @@
             If (hModule := DllCall("GetModuleHandle", "str", "gdiplus", Ptr))
               DllCall("FreeLibrary", Ptr, hModule)
           }  ; End GDI+
-          Gui, %GuiA%:Show, % "h" Margins * 17 + 1 + ControlHeight * 5 + (SquareSize + SquareSpacing) * SquaresHigh - SquareSpacing
+          gui, %GuiA%:Show, % "h" Margins * 17 + 1 + ControlHeight * 5 + (SquareSize + SquareSpacing) * SquaresHigh - SquareSpacing
           ControlSetText, Button2, %ButtonUnpause%, ahk_id %GuiHWND%
           GuiCommand := GuiCommand = "Normal" ? "Normal" : !AbsolutePath and AutoJumpToFileName ? ButtonJumpToFileName : "ErrorLevel"
         } Else If (TempGuiCommand = ButtonAddOption) {
@@ -1438,11 +1438,11 @@
           SendMessage, 0xB1, StrLen(@1) + 1, StrLen(@1 @2) + 1, Edit6, ahk_id %GuiHWND%
         } Else If (TempGuiCommand = ButtonBrowse) {
           ControlGetText, FilePaths, ComboBox1, ahk_id %GuiHWND%
-          Gui, %GuiA%:+OwnDialogs
+          gui, %GuiA%:+OwnDialogs
           FileSelectFile, Destination, , %FilePaths%, , % "Screenshot Files (" SubStr(RegExReplace(DefaultExts, "(?:\||^)\.?(\w+)", "*.$1;"), 1, -1) ")"
           If !ErrorLevel
             ControlSetText, Edit6, % Destination .= InStr(Destination, ".", 0, InStr("\" Destination, "\", 0, 0)) ? "" : SubStr(DefaultExts, 1, InStr(DefaultExts, "|") - 1), ahk_id %GuiHWND%
-          Gui, %GuiA%:-OwnDialogs
+          gui, %GuiA%:-OwnDialogs
           GuiCommand := AutoJumpToFileName ? ButtonJumpToFileName : "ErrorLevel"
         } Else If (TempGuiCommand = ButtonOther) {
           WinGetPos, GuiX, GuiY, , , ahk_id %GuiHWND%
@@ -1453,9 +1453,9 @@
           GuiControl, % GuiA ":" (DiagnosticMode ? "-" : "+") "ReadOnly", Edit5
         } Else If (TempGuiCommand = A_ThisFunc "OptionInfo") {
           @ := SubStr(A_ThisMenuItem, 1, InStr(A_ThisMenuItem, A_Tab) - 1)
-          Gui, %GuiA%:+Disabled
+          gui, %GuiA%:+Disabled
           WinWaitClose, % "ahk_id " %A_ThisFunc%(">NewGui<", GuiB . ";+Label" A_ThisFunc " +Owner" GuiA . ";Add,Text,x" Margins " y" Margins " w" InputBoxWidth "," OptionInfo_%@%_Description "`n`nDefault:`t`t" OptionInfo_%@%_Default "`nUser Default:`t" OptionInfo_%@%_UserDefault . ";Add,Edit,xp y+" Margins " wp h" ControlHeight . ";Add,Button,g" A_ThisFunc "Close xp y+" Margins " w" (InputBoxWidth - Margins * 2) // 3 " hp," ButtonInputBoxHelp . ";Add,Button,g" A_ThisFunc "Close x+" Margins " yp wp hp," ButtonInputBoxCancel . ";Add,Button,g" A_ThisFunc "Close x+" Margins " yp wp hp +Default," ButtonInputBoxAdd . ";Show,w" InputBoxWidth + Margins * 2 ",Add Option: " @ " - " OptionInfo_%@%_Main)
-          Gui, %GuiA%:-Disabled
+          gui, %GuiA%:-Disabled
           TempGuiCommand := GuiCommand, GuiCommand := ""
           If (InStr(TempGuiCommand, ButtonInputBoxAdd) = 1) {
             NewOption := SubStr(TempGuiCommand, InStr(TempGuiCommand, "`n") + 1)
@@ -1499,7 +1499,7 @@
             }
         } Else {
           If (TempGuiCommand = ButtonSave) or (TempGuiCommand = ButtonTest) {
-            Gui, %GuiA%:+OwnDialogs
+            gui, %GuiA%:+OwnDialogs
             If (TempGuiCommand = ButtonTest) {
               OutputFile := TempFile
               ControlGet, DiagnosticMode, Checked, , Button5, ahk_id %GuiHWND%
@@ -1540,15 +1540,15 @@
             ControlGet, CopyToClipboard, Checked, , Button9, ahk_id %GuiHWND%
           }
           If (GuiCommand <> "ErrorLevel") {
-            Gui, %GuiA%:Destroy
-            Gui, %GuiB%:Destroy
+            gui, %GuiA%:Destroy
+            gui, %GuiB%:Destroy
             Hotkey, IfWinExist, ahk_id %GuiHWND%
             Hotkey, ~LButton, Off
             Hotkey, %PauseHotkey%, Off
             Hotkey, IfWinExist
             SetWinDelay, %WinDelay%
           } Else
-            Gui, %GuiA%:-OwnDialogs
+            gui, %GuiA%:-OwnDialogs
           If (TempGuiCommand = ButtonSave) or (TempGuiCommand = ButtonTest) {
             If (X1 = "")
               X1 := 1, Y1 := 1, X2 := SquaresWide, Y2 := SquaresHigh

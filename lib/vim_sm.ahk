@@ -118,14 +118,23 @@ class VimSM {
   }
 
   SetPriority(min, max) {
-    send !p  ; open priority window
-    send % random(min, max) . "{enter}"
-    this.Vim.State.SetNormal()
+    if (WinActive("SuperMemo Import") && WinActive("ahk_class AutoHotkeyGUI")) {
+      ControlSetText, Edit1, % random(min, max)
+      ControlFocus Edit2
+    } else if (WinActive("Priority") && WinActive("ahk_class #32770")) {  ; input dialogue
+      ControlSetText, Edit1, % random(min, max)
+    } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
+      ControlSetText, TEdit5, % random(min, max)
+    } else if (WinActive("ahk_group SuperMemo")) {
+      send !p  ; open priority window
+      send % random(min, max) . "{enter}"
+      this.Vim.State.SetNormal()
+    }
   }
 
   SetTaskValue(min, max) {
-    send !v  ; focus to task value
-    send % random(min, max) . "{tab}"
+    ControlSetText, TEdit8, % random(min, max)
+    ControlFocus, TEdit7
     this.Vim.State.SetNormal()
   }
 
@@ -163,7 +172,7 @@ class VimSM {
   }
 
   ; Wait until cloze/extract is finished
-  ; sometimes it doesn't work, because the A_CaretX was never gone
+  ; Sometimes it doesn't work, because the A_CaretX was never gone
   WaitProcessing(timeout:=5000) {
     StartTime := A_TickCount
     Loop {
@@ -220,8 +229,7 @@ class VimSM {
   }
 
   PlayIfCertainCollection() {
-    CollectionName := this.GetCollectionName()
-    if (CollectionName = "passive" || CollectionName = "music") {
+    if (this.IsPassiveCollection()) {
       StartTime := A_TickCount
       Loop {
         if (ControlGetText("TBitBtn3") == "Next repetition") {
@@ -239,8 +247,8 @@ class VimSM {
     }
   }
 
-  SaveHTML() {
-    if (this.IsEditingHTML())
+  SaveHTML(pass:=false) {
+    if (this.IsEditingHTML() && !pass)
       send {esc}
     send ^+{f6}  ; opens notepad
     WinWaitNotActive, ahk_class TElWind,, 5
@@ -249,45 +257,45 @@ class VimSM {
   }
 
   GetCollectionName() {
-    RegExMatch(WinGetText(), "(?<=\r\n)(.*?)(?= \(SuperMemo)", CollectionName)
+    RegExMatch(WinGetText("ahk_class TElWind"), "(?<=\r\n)(.*?)(?= \(SuperMemo)", CollectionName)
     return CollectionName
   }
 
   GetLinkFromElement() {
-    this.WinClip.Snap(ClipData)
-    LongCopy := A_TickCount, Clipboard := "", LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+    global WinClip
+    WinClip.Snap(ClipData)
+    WinClip.Clear()
     send !{f10}tc  ; copy template
-    ClipWait, LongCopy ? 0.6 : 0.2, True
+    ClipWait 1
     if (InStr(Clipboard, "Link:")) {
       RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", link)
       return link
     }
-    this.WinClip.Restore(ClipData)
+    WinClip.Restore(ClipData)
   }
 
-  SetTitle(title, method:="!c") {
-    if (method == "!c") {
-      send !c
-      WinWaitActive, ahk_class TContents,, 2
-      ControlFocusWait("TVirtualStringTree1",,,,,1000)
-      send {f2}
-      ControlFocusWait("TVTEdit1",,,,, 1000)
-      clip(title)
-      send {esc}
-    } else if (method == "!t") {
-      send !t
-      GroupAdd, SMAltT, ahk_class TChoicesDlg
-      GroupAdd, SMAltT, ahk_class TTitleEdit
-      WinWaitActive, ahk_group SMAltT,, 2
-      if (WinActive("ahk_class TChoicesDlg")) {
-        send {enter}
-        WinWaitActive, ahk_class TTitleEdit,, 2
-      }
-      if (WinActive("ahk_class TTitleEdit")) {
-        ControlFocusWait("TMemo1")
-        clip(title)
-        send {enter}
-      }
+  SetTitle(title) {
+    send !t
+    GroupAdd, SMAltT, ahk_class TChoicesDlg
+    GroupAdd, SMAltT, ahk_class TTitleEdit
+    WinWaitActive, ahk_group SMAltT,, 2
+    if (WinActive("ahk_class TChoicesDlg")) {
+      send {enter}
+      WinWaitActive, ahk_class TTitleEdit,, 2
     }
+    if (WinActive("ahk_class TTitleEdit")) {
+      ControlSetText, TMemo1, % title
+      ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
+    }
+  }
+
+  GetCurrConcept() {
+    RegExMatch(WinGetText("ahk_class TElWind"), "(?<=\)\r\n)(.*?)($|\r\n)", ConceptName)
+    return ConceptName
+  }
+
+  IsPassiveCollection() {
+    CollectionName := this.GetCollectionName()
+    return (CollectionName = "passive" || CollectionName = "music" || CollectionName = "bgm")
   }
 }

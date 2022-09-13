@@ -1,4 +1,4 @@
-class VimCaret{
+class VimCaret {
   __New(vim) {
     global VimScriptPath
     this.Vim := vim

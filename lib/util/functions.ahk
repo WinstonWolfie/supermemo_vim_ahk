@@ -319,102 +319,11 @@ StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
 	return String
 }
 
-GetBrowserInfo(ByRef BrowserTitle, ByRef BrowserUrl, ByRef BrowserSource, ByRef BrowserDate) {
-	BrowserTitle := BrowserUrl := BrowserSource := BrowserDate := ""
-	global WinClip
-  WinClip.Snap(ClipData)
-	Clipboard := ""
-	CurrentTick := A_TickCount
-	send {f6}^l  ; for moronic websites that use ctrl+L as a shortcut (I'm looking at you, paratranz)
-	while (!Clipboard) {
-		send ^l^c
-		if (A_TickCount := CurrentTick + 500)
-			Break
-	}
-	If (Clipboard) {
-    BrowserUrl := ParseUrl(Clipboard)
-    GetBrowserTitleSourceDate(BrowserUrl, BrowserTitle, BrowserSource, BrowserDate)
-	}
-	if (WinActive("ahk_exe msedge.exe")) {
-		send ^l{f6}
-	} else {
-		send ^l+{f6}
-	}
-  WinClip.Restore(ClipData)
-}
-
-ParseUrl(url) {
-	url := RegExReplace(url, "#(.*)$")
-	if (InStr(url, "youtube.com") && InStr(url, "v=")) {
-		RegExMatch(url, "v=\K[\w\-]+", YTLink)
-		url := "https://www.youtube.com/watch?v=" . YTLink
-	} else if (InStr(url, "bilibili.com/video")) {
-		url := RegExReplace(url, "(\/\?|&)vd_source=.*")
-	} else if (InStr(url, "netflix.com/watch")) {
-		url := RegExReplace(url, "\?trackId=.*")
-	}
-	return url
-}
-
-GetBrowserTitleSourceDate(BrowserUrl, ByRef BrowserTitle, ByRef BrowserSource, ByRef BrowserDate) {
-	WinGetActiveTitle BrowserTitle
-	BrowserTitle := RegExReplace(BrowserTitle, "( - Google Chrome| — Mozilla Firefox|( and [0-9]+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
-	; Sites that need special attention
-	if (InStr(BrowserTitle, "很帅的日报")) {
-		BrowserDate := StrReplace(BrowserTitle, "很帅的日报 ")
-		BrowserTitle := "很帅的日报"
-	} else if (InStr(BrowserTitle, "_百度百科")) {
-		BrowserSource := "百度百科"
-		BrowserTitle := StrReplace(BrowserTitle, "_百度百科")
-	} else if (InStr(BrowserTitle, "_百度知道")) {
-		BrowserSource := "百度知道"
-		BrowserTitle := StrReplace(BrowserTitle, "_百度知道")
-	} else if (InStr(BrowserUrl, "reddit.com")) {
-		RegExMatch(BrowserUrl, "reddit\.com\/\Kr\/[^\/]+", BrowserSource)
-		BrowserTitle := StrReplace(BrowserTitle, " : " . StrReplace(BrowserSource, "r/"))
-	; Sites that don't include source in the title
-	} else if (InStr(BrowserUrl, "dailystoic.com")) {
-		BrowserSource := "Daily Stoic"
-	} else if (InStr(BrowserUrl, "healthline.com")) {
-		BrowserSource := "Healthline"
-	} else if (InStr(BrowserUrl, "medicalnewstoday.com")) {
-		BrowserSource := "Medical News Today"
-	} else if (InStr(BrowserUrl, "investopedia.com")) {
-		BrowserSource := "Investopedia"
-	; Sites that should be skipped
-	} else if (InStr(BrowserUrl, "mp.weixin.qq.com")) {
-		return
-	} else if (InStr(BrowserUrl, "universityhealthnews.com")) {
-		return
-	; Try to use - or | to find source
-	} else {
-		ReversedTitle := StrReverse(BrowserTitle)
-		if (InStr(ReversedTitle, " | ")
-		 && (!InStr(ReversedTitle, " - ")
-		 	|| InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - "))) {  ; used to find source
-			separator := " | "
-		} else if (InStr(ReversedTitle, " - ")) {
-			separator := " - "
-		} else if (InStr(ReversedTitle, " – ")) {
-			separator := " – "  ; websites like BetterExplained
-		} else {
-			separator := ""
-		}
-		pos := separator ? InStr(StrReverse(BrowserTitle), separator) : 0
-		if (pos) {
-			BrowserSource := SubStr(BrowserTitle, StrLen(BrowserTitle) - pos - 1, StrLen(BrowserTitle))
-			if (InStr(BrowserSource, separator))
-				BrowserSource := StrReplace(BrowserSource, separator,,, 1)
-			BrowserTitle := SubStr(BrowserTitle, 1, StrLen(BrowserTitle) - pos - 2)
-		}
-	}
-}
-
 WinWaitTitleChange(OriginalTitle:="", TimeOut:=5000) {
 	if (!OriginalTitle)
 		WinGetTitle, OriginalTitle, A
 	StartTime := A_TickCount
-	Loop {
+	loop {
 		if (WinGetTitle() != OriginalTitle) {
 			return true
 		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
@@ -489,3 +398,21 @@ SetDefaultKeyboard(LocaleID) {  ; https://www.autohotkey.com/boards/viewtopic.ph
 	}
 }
 return
+
+ToolTip(text:="", perma:=false, period:=-2000) {
+	CoordMode, ToolTip, Screen
+	ToolTip, % text, % A_ScreenWidth / 3, % A_ScreenHeight / 4 * 3, 20
+	if (!perma)
+		SetTimer, RemoveToolTip, % period
+}
+
+RemoveToolTip:
+  ToolTip,,,, 20
+return
+
+RevArr(arr) {
+	newarr := []
+	for index, value in arr
+			newarr.InsertAt(1, value)
+	return newarr
+}

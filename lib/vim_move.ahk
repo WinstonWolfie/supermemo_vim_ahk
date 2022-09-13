@@ -1,4 +1,4 @@
-﻿class VimMove{
+﻿class VimMove {
   __New(vim) {
     this.Vim := vim
     this.shift := 0
@@ -1164,70 +1164,70 @@
         send ^{Home}
       }
     } else if (key == "+g") {
-      if (this.Vim.State.n > 0) {
-        line := this.Vim.State.n - 1
-        this.Vim.State.n := 0
         ReleaseKey("shift")
-        if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {  ; browsing
-          this.Vim.SM.ClickTop()
-          this.Vim.SM.WaitTextFocus()
-        } else if (this.Vim.SM.IsEditingText()) {
-          this.Vim.SM.ClickTop()
-        } else if (WinActive("ahk_class TContents")) {
-					ClickDPIAdjusted(295, 50)
-          send ^{home}
-        } else if (WinActive("ahk_class TBrowser")) {
-					ClickDPIAdjusted(638, 46)
-          send ^{home}
-        } else {
-          send ^{home}
-        }
-        SendInput {down %line%}
-        if (WinActive("ahk_class TContents")) {
-					ClickDPIAdjusted(295, 50)
-        } else if (WinActive("ahk_class TBrowser")) {
-					ClickDPIAdjusted(638, 46)
-        }
-      } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-        ControlGetPos, XCoord,,,, Internet Explorer_Server2, ahk_class TElWind
-        if (XCoord) {
-          ControlSend, Internet Explorer_Server2, {end}
-        } else {
-          ControlSend, Internet Explorer_Server1, {end}
-        }
-      } else {
-        if (this.shift == 1) {
-          send ^+{End}+{Home}
-        } else {
-          send ^{End}
-          if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_class TContents"))
-            send {Home}
-        }
-        if (this.Vim.SM.IsEditingHTML()) {
-          send ^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-          if (this.shift == 1)
-            send +{down}  ; go down one line, if there are references this would include the #SuperMemo Reference
-          if (InStr(clip(), "#SuperMemo Reference:")) {
-            if (this.shift == 1) {
-              send +{up 4}  ; select until start of last line
-            } else {
-              send {up 3}  ; go to start of last line
-            }
-            if (this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
-              send +{end}
+        if (this.Vim.State.n > 0) {
+          line := this.Vim.State.n - 1
+          this.Vim.State.n := 0
+          if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {  ; browsing
+            this.Vim.SM.ClickTop()
+            this.Vim.SM.WaitTextFocus()
+          } else if (this.Vim.SM.IsEditingText()) {
+            this.Vim.SM.ClickTop()
+          } else if (WinActive("ahk_class TContents")) {
+            ClickDPIAdjusted(295, 50)
+            send ^{home}
+          } else if (WinActive("ahk_class TBrowser")) {
+            ClickDPIAdjusted(638, 46)
+            send ^{home}
           } else {
-            if (this.shift == 1) {
-              send ^+{end}
-              if (!this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
-                send +{home}
+            send ^{home}
+          }
+          SendInput {down %line%}
+          if (WinActive("ahk_class TContents")) {
+            ClickDPIAdjusted(295, 50)
+          } else if (WinActive("ahk_class TBrowser")) {
+            ClickDPIAdjusted(638, 46)
+          }
+        } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
+          ControlGetPos, XCoord,,,, Internet Explorer_Server2, ahk_class TElWind
+          if (XCoord) {
+            ControlSend, Internet Explorer_Server2, {end}
+          } else {
+            ControlSend, Internet Explorer_Server1, {end}
+          }
+        } else {
+          if (this.shift == 1) {
+            send ^+{End}+{Home}
+          } else {
+            send ^{End}
+            if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_class TContents"))
+              send {Home}
+          }
+          if (this.Vim.SM.IsEditingHTML()) {
+            send ^+{up}  ; if there are references this would select (or deselect in visual mode) them all
+            if (this.shift == 1)
+              send +{down}  ; go down one line, if there are references this would include the #SuperMemo Reference
+            if (InStr(clip(), "#SuperMemo Reference:")) {
+              if (this.shift == 1) {
+                send +{up 4}  ; select until start of last line
+              } else {
+                send {up 3}  ; go to start of last line
+              }
+              if (this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
+                send +{end}
             } else {
-              send ^{end}
-              if (!this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
-                send {home}
+              if (this.shift == 1) {
+                send ^+{end}
+                if (!this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
+                  send +{home}
+              } else {
+                send ^{end}
+                if (!this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
+                  send {home}
+              }
             }
           }
         }
-      }
     } else if (key == "{") {
       if (this.Vim.State.n > 0 && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         paragraph := this.Vim.State.n - 1
