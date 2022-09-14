@@ -36,35 +36,34 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
     ClipWait, LongCopy ? 0.6 : 0.2, True
   }
   If (Vim.HTML.ClipboardGet_HTML(data)) {
-    RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrentLink)
-    if (!CurrentLink) {
+    RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrLink)
+    RunLink := false
+    if (!CurrLink) {
       WinClip.Clear()
       send +{left}^c{right}
       ClipWait, LongCopy ? 0.6 : 0.2, True
       If (Vim.HTML.ClipboardGet_HTML(data)) {
-        RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrentLink)
-        if (!CurrentLink) {
+        RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrLink)
+        if (!CurrLink) {
           ToolTip("No link found.")
-        } else if (InStr(CurrentLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
-          send {left}  ; otherwise it won't click the link
-          click(A_CaretX, A_CaretY, "right")
-          send n
         } else {
-          if (Shift) {
-            run % "iexplore.exe " . CurrentLink
-          } else {
-            run % CurrentLink
-          }
+          RunLink := true
         }
       }
-    } else if (InStr(CurrentLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
-      click(A_CaretX, A_CaretY, "right")
-      send n
     } else {
-      if (Shift) {
-        run % "iexplore.exe " . CurrentLink
+      RunLink := true
+    }
+    if (RunLink) {
+      if (InStr(CurrLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
+        RegExMatch(CurrLink, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
+        send % "^g" . ElementNumber . "{enter}"
       } else {
-        run % CurrentLink
+        if (Shift) {
+          ; run % "iexplore.exe " . CurrLink  ; RIP IE
+          Vim.Browser.RunInIE(CurrLink)
+        } else {
+          run % CurrLink
+        }
       }
     }
   }

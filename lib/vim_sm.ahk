@@ -223,9 +223,9 @@ class VimSM {
   }
 
   IsLearning() {
-    ControlGetText, CurrentText, TBitBtn3
+    ControlGetText, CurrText, TBitBtn3
     return (WinActive("ahk_class TElWind")
-         && (CurrentText == "Next repetition" || CurrentText == "Show answer"))
+         && (CurrText == "Next repetition" || CurrText == "Show answer"))
   }
 
   PlayIfCertainCollection() {

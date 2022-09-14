@@ -112,10 +112,17 @@ return
 ~^enter::SetDefaultKeyboard(0x0409)  ; english-US	
 
 ^!p::  ; convert to a *p*lain-text template
+  if (Vim.SM.IsLearning()) {
+    ContinueLearning := true
+  } else {
+    ContinueLearning := false
+  }
   send ^+p!t  ; much faster than ^+m
   SetDefaultKeyboard(0x0409)  ; english-US	
   send cl  ; my plain-text template name is classic
   send {enter}
+  if (ContinueLearning)
+    send {enter}
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -391,21 +398,46 @@ return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
 d::
-  Vim.State.SetMode("SMVimPlanDragging")
+  Vim.State.SetMode("SMVim_PlanDragging")
   MouseGetPos, XCoordSaved, YCoordSaved
-  MouseMove, 15, % A_CaretY + 11, 0
+  ; Get current entry coords
+  send {home}{right}{f2}  ; sometimes A_Caret isn't accurate
+  ControlFocusWait("TInplaceEdit1")
+  IniYCoord := A_CaretY
+  send +{tab}
+  ; Calculate entry height
+  send {down}{right}{f2}
+  ControlFocusWait("TInplaceEdit1")
+  PlanEntryGap := A_CaretY - IniYCoord
+  send {up}{left}  ; go back
+  ; Move to position
+  MouseMove, 20, % IniYCoord + PlanEntryGap / 2, 0
   MouseGetPos, IniXCoord, IniYCoord
   click down
 return
 
-#if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.IsCurrentVimMode("SMVimPlanDragging"))
-j::MouseMove, 0, 22, 0, R
-k::MouseMove, 0, -22, 0, R
+#if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.IsCurrentVimMode("SMVim_PlanDragging"))
+j::
+  Vim.State.n := Vim.State.n ? Vim.State.n : 1
+  MouseMove, 0, % Vim.State.n * PlanEntryGap, 0, R
+  Vim.State.n := 0
+return
+
+k::
+  Vim.State.n := Vim.State.n ? Vim.State.n : 1
+  MouseMove, 0, % -1 * Vim.State.n * PlanEntryGap, 0, R
+  Vim.State.n := 0
+return
+
 p::
-  MouseMove, 0, 11, 0, R  ; put after
+  MouseMove, 0, % PlanEntryGap, 0, R  ; put after
 +p::  ; put before
   click up
+  MouseGetPos, XCoord, YCoord
+  if (XCoord == IniXCoord && YCoord == IniYCoord)  ; no change
+    click  ; to unfix
   MouseMove, XCoordSaved, YCoordSaved, 0
+  SMVimPlanDraggingPut := true
   Vim.State.SetMode("Vim_Normal")
 return
 

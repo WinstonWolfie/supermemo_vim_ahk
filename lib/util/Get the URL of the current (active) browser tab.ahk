@@ -1,3 +1,4 @@
+; https://www.autohotkey.com/boards/viewtopic.php?t=3702
 ; AutoHotkey Version: AutoHotkey 1.1
 ; Language:           English
 ; Platform:           Win7 SP1 / Win8.1 / Win10

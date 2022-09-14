@@ -57,18 +57,20 @@
   }
 
   SetMode(Mode="", g=0, n=0, LineCopy=-1, fts="", NoRefresh:=false) {
-    PreviousMode := this.Mode
+    PrevMode := this.Mode
     this.CheckValidMode(Mode)
     if (Mode != "") {
       this.Mode := Mode
+      if (PrevMode == "SMVim_PlanDragging" && mode == "Vim_Normal")
+        this.HandlePlanDraggingSetNormal()
       if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
       if (!NoRefresh) {
-        NoRefresh := ((InStr(PreviousMode, "Vim_") && InStr(Mode, "Vim_"))
-                      || (InStr(PreviousMode, "Command") || InStr(Mode, "Command")))
+        NoRefresh := ((InStr(PrevMode, "Vim_") && InStr(Mode, "Vim_"))
+                   || (InStr(PrevMode, "Command") || InStr(Mode, "Command")))
       }
-      if (A_CaretX && PreviousMode != Mode && !this.Vim.IsNavigating() && !NoRefresh) {
+      if (A_CaretX && PrevMode != Mode && !this.Vim.IsNavigating() && !NoRefresh) {
         this.Vim.Caret.SetCaret(this.Mode)
       } else if (!A_CaretX || this.Vim.IsNavigating() || NoRefresh) {
         this.Vim.Caret.SetCaret(this.Mode, true)
@@ -125,16 +127,12 @@
     both := (VimLongEscNormal && LongPress)
     neither := !(VimLongEscNormal || LongPress)
     SetNormal := (both || neither)
-    if (this.IsCurrentVimMode("SMVimPlanDragging")) {
-      this.HandlePlanDraggingSetNormal()
-    } else {
-      ; In SuperMemo you can use esc to both escape and enter normal mode
-      if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
-        send {Esc}
-      }
-      if (SetNormal || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
-        this.SetNormal()
-      }
+    ; In SuperMemo you can use esc to both escape and enter normal mode
+    if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
+      send {Esc}
+    }
+    if (SetNormal || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
+      this.SetNormal()
     }
     if (LongPress) {
       ; Have to ensure the key has been released, otherwise this will get
@@ -144,15 +142,18 @@
   }
 
   HandlePlanDraggingSetNormal() {
-    global XCoordSaved, YCoordSaved, IniXCoord, IniYCoord
-    MouseGetPos,, YCoord
-    MouseMove, IniXCoord, % IniYCoord - 11, 0
-    click up
-    click  ; to uncheck the "fix"
-    ControlClickWinCoord(114, YCoord)
-    send {tab}+{tab 2}
-    MouseMove, XCoordSaved, YCoordSaved, 0
-    this.SetMode("Vim_Normal")
+    global XCoordSaved, YCoordSaved, IniXCoord, IniYCoord, SMVimPlanDraggingPut
+    if (SMVimPlanDraggingPut) {
+      SMVimPlanDraggingPut := false
+    } else {
+      MouseGetPos,, YCoord
+      MouseMove, IniXCoord, IniYCoord, 0
+      click up
+      click  ; to uncheck the "fix"
+      ControlClickWinCoord(114, YCoord)
+      send {tab}+{tab 2}
+      MouseMove, XCoordSaved, YCoordSaved, 0
+    }
   }
 
   HandleCtrlBracket() {
@@ -166,17 +167,13 @@
     both := (VimLongCtrlBracketNormal && LongPress)
     neither := !(VimLongCtrlBracketNormal || LongPress)
     SetNormal := (both || neither)
-    if (this.IsCurrentVimMode("SMVimPlanDragging")) {
-      this.HandlePlanDraggingSetNormal()
-    } else {
-      if (VimCtrlBracketToEsc)
-        send {esc}
-      if (!SetNormal || (VimSendCtrlBracketNormal && this.IsCurrentVimMode("Vim_Normal"))) {
-        send ^[
-      }
-      if (SetNormal) {
-        this.SetNormal()
-      }
+    if (VimCtrlBracketToEsc)
+      send {esc}
+    if (!SetNormal || (VimSendCtrlBracketNormal && this.IsCurrentVimMode("Vim_Normal"))) {
+      send ^[
+    }
+    if (SetNormal) {
+      this.SetNormal()
     }
     if (LongPress) {
       KeyWait [

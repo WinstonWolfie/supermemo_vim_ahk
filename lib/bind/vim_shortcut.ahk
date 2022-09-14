@@ -14,7 +14,9 @@
 #if (Vim.State.Vim.Enabled)
 ; Testing
 ; ^!+t::
-; msgbox % ControlGet("hwnd",, "Internet Explorer_Server1")
+; ie := ComObjCreate("InternetExplorer.Application")
+; ie.Visible := true  ; This is known to work incorrectly on IE7.
+; ie.Navigate("https://www.autohotkey.com/")
 ; return
 
 ; Shortcuts
@@ -31,6 +33,39 @@ return
 ^#h::send ^#{left}
 ^#l::send ^#{right}
 
+^+!p::
+  ReleaseKey("ctrl")
+  ReleaseKey("shift")
+  KeyWait alt
+SMPlan:
+  if (!WinExist("ahk_group SuperMemo")) {
+    run C:\SuperMemo\systems\all.kno
+    WinWaitActive, ahk_class TElWind,, 10
+    if (ErrorLevel)
+      return
+  }
+  if (WinExist("ahk_class TPlanDlg")) {
+    ; Save first if there's an opened plan window
+    ControlClickWinCoord(466, 46, "ahk_class TPlanDlg")  ; ControlSend doesn't work here in background
+    WinClose
+  }
+  ControlGetText, CurrText, TBitBtn3, ahk_class TElWind
+  if (CurrText == "Next repetition" || CurrText == "Show answer")  ; not to spoil answer
+    ControlSend, TBitBtn3, {home}, ahk_class TElWind
+	CurrTick := A_TickCount
+  while (!WinExist("ahk_class TPlanDlg")) {
+    if (WinExist("ahk_class TElParamDlg"))  ; ^+!p could trigger this
+      WinClose
+    if (WinExist("ahk_class TMsgDialog"))
+      WinClose
+    ControlSend, TBitBtn2, {ctrl down}p{ctrl up}, ahk_class TElWind
+		if (A_TickCount := CurrTick + 5000)
+			return
+  }
+  WinActivate, ahk_class TPlanDlg
+  Vim.State.SetMode("Vim_Normal")
+return
+
 ; Browsers
 #if (Vim.State.Vim.Enabled && WinActive("ahk_group Browsers"))
 ^!w::send ^w!{tab}  ; close tab and switch back
@@ -38,8 +73,8 @@ return
 !l::Vim.Browser.FocusToText()
 
 ^!i::  ; open in *I*E
-	ReleaseKey("ctrl")
-  run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL())
+  Vim.Browser.RunInIE(Vim.Browser.ParseUrl(GetActiveBrowserURL()))
+  ; run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL())  ; RIP old method
 Return
 
 ^!t::  ; copy title
@@ -63,7 +98,7 @@ return
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   TempClip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", ", ")
-  TempClip := StrReplace(TempClip, "`r`nSimilar`r`n", "`r`n`r`nsyn: ")
+  TempClip := StrReplace(TempClip, "Similar`r`n", "`r`nsyn: ")
   TempClip := StrReplace(TempClip, "Similar:`r`n", "`r`nsyn: ")
   TempClip := StrReplace(TempClip, "Synonymes :`r`n", "`r`nsyn: ")
   TempClip := StrReplace(TempClip, ", Opposite:`r`n", "`r`n`r`nant: ")
@@ -252,6 +287,22 @@ return
   }
 return
 
+~^f::
+  if (A_PriorHotkey != "~^f" || A_TimeSincePriorHotkey > 400) {
+    KeyWait f
+    return
+  }
+  send ^v
+return
+
+~^l::
+  if (A_PriorHotkey != "~^l" || A_TimeSincePriorHotkey > 400) {
+    KeyWait l
+    return
+  }
+  send ^v
+return
+
 ; SumatraPDF/Calibre/MS Word to SuperMemo
 #if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME")  ; SumatraPDF
                             || WinActive("ahk_exe ebook-viewer.exe")     ; Calibre (a epub viewer)
@@ -404,11 +455,8 @@ return
 
 ; IE
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
-^+c::  ; open in default browser (in my case, chrome); similar to default shortcut ^+e to open in ms edge
-  ReleaseKey("ctrl")
-  ReleaseKey("shift")
-  run % ControlGetText("Edit1")  ; browser url field
-Return
+; Open in default browser (in my case, chrome); similar to default shortcut ^+e to open in ms edge
+^+c::run % ControlGetText("Edit1")  ; browser url field
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::

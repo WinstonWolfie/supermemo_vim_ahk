@@ -14,14 +14,15 @@ SMGoToLink:
 s::  ; gs: go to link
   Vim.State.SetMode()
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  WinClip.Clear()
   send !{f10}tc  ; copy template
-  ClipWait, LongCopy ? 0.6 : 0.2, True
+  ClipWait 1
   if (InStr(Clipboard, "Link:")) {
     RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)
     WinClip.Restore(ClipData)  ; restore clipboard here in case run doesn't work
     if (InStr(A_ThisHotkey, "+")) {
-      run % "iexplore.exe " . Link
+      ; run % "iexplore.exe " . Link  ; RIP IE
+      Vim.Browser.RunInIE(link)
     } else {
       if (Vim.SM.GetCollectionName() = "gaming") {
         run % "msedge.exe " . link

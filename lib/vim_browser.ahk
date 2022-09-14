@@ -208,4 +208,10 @@ class VimBrowser {
     RegExMatch(text, "\n\K[0-9]{4}-[0-9]{2}-[0-9]{2}", date)
     return date
   }
+
+  RunInIE(url) {
+    ie := ComObjCreate("InternetExplorer.Application")
+    ie.Visible := true
+    ie.Navigate(url)
+  }
 }

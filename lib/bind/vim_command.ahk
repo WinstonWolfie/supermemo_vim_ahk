@@ -82,38 +82,6 @@ VimCommanderButtonExecute:
   gosub % command
 return
 
-#if (Vim.State.Vim.Enabled)
-^+!p::
-  ReleaseKey("ctrl")
-  ReleaseKey("shift")
-  KeyWait alt
-#if
-SMPlan:
-  if (!WinExist("ahk_group SuperMemo")) {
-    run C:\SuperMemo\systems\all.kno
-    WinWaitActive, ahk_class TElWind,, 10
-    if (ErrorLevel)
-      return
-  }
-  if (WinExist("ahk_class TPlanDlg")) {
-    ; Save first if there's an opened plan window
-    ControlClickWinCoord(466, 46, "ahk_class TPlanDlg")  ; ControlSend doesn't work here in background
-    WinClose
-  }
-	CurrTick := A_TickCount
-  while (!WinExist("ahk_class TPlanDlg")) {
-    if (WinExist("ahk_class TElParamDlg"))  ; ^+!p could trigger this
-      WinClose
-    if (WinExist("ahk_class TMsgDialog"))
-      WinClose
-    ControlSend, TBitBtn2, {ctrl down}p{ctrl up}, ahk_class TElWind
-		if (A_TickCount := CurrTick + 5000)
-			return
-  }
-  WinActivate, ahk_class TPlanDlg
-  Vim.State.SetMode("Vim_Normal")
-return
-
 WindowSpy:
   run C:\Program Files\AutoHotkey\WindowSpy.ahk
 return
@@ -247,7 +215,8 @@ ClozeAndDone:
 return
 
 YTHistoryInIE:
-  run iexplore.exe https://www.youtube.com/feed/history
+  ; run iexplore.exe https://www.youtube.com/feed/history  ; RIP IE
+  Vim.Browser.RunInIE("https://www.youtube.com/feed/history")
 return
 
 Wiktionary:
