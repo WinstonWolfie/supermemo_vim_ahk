@@ -155,7 +155,7 @@ class VimBrowser {
       VidTime := this.MatchBLTime(Clipboard)
     }
     if (site = "bl")
-      MouseMove, % XSaved, % YSaved
+      MouseMove, XSaved, YSaved
     if (!NoRestore)
       WinClip.Restore(ClipData)
     return (VidTime)

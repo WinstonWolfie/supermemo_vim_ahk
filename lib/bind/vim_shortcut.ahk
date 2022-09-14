@@ -110,8 +110,10 @@ return
   ToolTip("Copied:`n`n" . TempClip)
 return
 
+; Incremental video: Import current YT video to SM
+; Import current webpage to supermemo
 ^+!a::
-^!a::  ; import to supermemo
+^!a::
 	ReleaseKey("ctrl")
 	ReleaseKey("shift")
   KeyWait alt
@@ -134,7 +136,7 @@ return
     if (!Clipboard)
       return
     if (InStr(CurrUrl, "bilibili.com"))
-      MouseMove, % XSaved, % YSaved
+      MouseMove, XSaved, YSaved
   }
   Vim.Browser.GetInfo()
   if (InStr(Vim.Browser.url, "youtube.com") && SMImportCtrlA) {

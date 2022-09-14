@@ -441,10 +441,11 @@ p::
   Vim.State.SetMode("Vim_Normal")
 return
 
+; Incremental video
 #if (WinActive("ahk_group Browsers") || WinActive("ahk_class TElWind"))
-^!s::
-^+!s::
-^!`::
+^!s::  ; sync time from browser to sm
+^+!s::  ; sync time from browser to sm and keep learning
+^!`::  ; clear time
   KeyWait alt
   if (WinActive("ahk_group Browsers") && !Vim.Browser.VidTime && !InStr(A_ThisHotkey, "``")) {
     Vim.Browser.VidTime := Vim.Browser.GetVidtime()

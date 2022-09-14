@@ -110,7 +110,7 @@ Search:
 return
 
 MoveMouseToCaret:
-  MouseMove, % A_CaretX, % A_CaretY
+  MouseMove, A_CaretX, A_CaretY
   if (A_CaretX) {
     ToolTip("Current caret position: " . A_CaretX . " " . A_CaretY)
   } else {
