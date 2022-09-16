@@ -1294,6 +1294,8 @@
     if (WinActive("ahk_group VimLBSelectGroup") && this.Vim.State.n == 2)
       send {right}
     send {End}
+    if (this.Vim.State.IsCurrentVimMode("Vim_ydc_c"))
+      send {left}
     if (this.Vim.State.StrIsInCurrentVimMode("SMVim_") && this.Vim.SM.IsEditingHTML())
       send {left}
     if (!WinActive("ahk_group VimLBSelectGroup")) {

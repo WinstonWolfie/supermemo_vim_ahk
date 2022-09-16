@@ -20,25 +20,29 @@
     send {f3}
     WinWaitActive, ahk_class TMyFindDlg,, 0
     if (ErrorLevel) {
-      send {esc}^{enter}h{enter}{f3}
+      send {esc}^{enter}  ; open commander
+      send {text}h  ; Highlight: Clear
+      send {enter}{f3}
       WinWaitActive, ahk_class TMyFindDlg,, 0
       if (ErrorLevel)
-        Return
+        return
     }
-		SetDefaultKeyboard(0x0409)  ; english-US	
-    SendInput {raw}[...]
+    ControlSetText, TEdit1, [...]
     send {enter}
     WinWaitNotActive, ahk_class TMyFindDlg,, 0  ; faster than wait for element window to be active
-    send {right}^{enter}
+    send {right}^{enter}  ; put caret on the right and open commander
     WinWaitActive, ahk_class TCommanderDlg,, 0
-    if ErrorLevel {
+    if (ErrorLevel) {
       ToolTip("Not found.")
       Vim.State.SetNormal()
-      send {esc}^{enter}h{enter}{esc}
-      Return
+      send {esc}^{enter}  ; open commander
+      send {text}h  ; Highlight: Clear
+      send {enter}{esc}
+      return
     }
-    send h{enter}q
-    if WinExist("ahk_class TMyFindDlg")  ; clears search box window
+    ControlSetText, TEdit2, h  ; Highlight: Clear
+    send {enter}q
+    if (WinExist("ahk_class TMyFindDlg"))  ; clears search box window
       WinClose
   }
   Vim.State.SetMode("Insert")
@@ -118,8 +122,7 @@ return
     ContinueLearning := false
   }
   send ^+p!t  ; much faster than ^+m
-  SetDefaultKeyboard(0x0409)  ; english-US	
-  send cl  ; my plain-text template name is classic
+  send {text}cl  ; my plain-text template name is classic
   send {enter}
   if (ContinueLearning)
     send {enter}
@@ -142,12 +145,12 @@ SMCtrlN:
       }
     }
     sleep 2000
-    NewImport := true
+    ; Somehow PostMessage doesn't work reliably here
+    send !{f10}fe  ; open registry editor
     gosub SMSetLinkFromClipboard
     send ^+m
     WinWaitActive, ahk_class TRegistryForm,, 0
-    SetDefaultKeyboard(0x0409)  ; english-US
-    send yo  ; YouTube
+    send {text}yo  ; YouTube
     send {enter}
     WinWaitActive, ahk_class TElWind,, 2
     send q
@@ -229,11 +232,7 @@ return
       clip(ImgHTML, true, true)
       send ^+1
       Vim.SM.SaveHTML()
-      WinClip.Clear()
-      send !{f12}fc  ; copy file path
-      ClipWait 2
-      HTMLPath := Clipboard
-      FileRead, HTML, % HTMLPath
+      FileRead, HTML, % Vim.SM.GetFilePath(true)
       if (!HTML)
         HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
       
@@ -443,20 +442,26 @@ return
 
 ; Incremental video
 #if (WinActive("ahk_group Browsers") || WinActive("ahk_class TElWind"))
-^!s::  ; sync time from browser to sm
-^+!s::  ; sync time from browser to sm and keep learning
+^!s::  ; sync time
+!+s::  ; sync time but browser tab stays open
+^+!s::  ; sync time and keep learning
 ^!`::  ; clear time
+!+`::  ; clear time but browser tab stays open
+^+!`::  ; clear time and keep learning
   KeyWait alt
-  if (WinActive("ahk_group Browsers") && !Vim.Browser.VidTime && !InStr(A_ThisHotkey, "``")) {
-    Vim.Browser.VidTime := Vim.Browser.GetVidtime()
-    if (!Vim.Browser.VidTime) {
-      Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
-      if (!Vim.Browser.VidTime || ErrorLevel)
-        return
+  if (WinActive("ahk_group Browsers") && !Vim.Browser.VidTime) {
+    if (!InStr(A_ThisHotkey, "``")) {
+      Vim.Browser.VidTime := Vim.Browser.GetVidtime()
+      if (!Vim.Browser.VidTime) {
+        Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
+        if (!Vim.Browser.VidTime || ErrorLevel)
+          return
+      }
     }
-    send ^w
+    if (InStr(A_ThisHotkey, "^"))  ; hotkeys with ctrl will close the tab
+      send ^w
+    WinActivate, ahk_class TElWind
   }
-  WinActivate, ahk_class TElWind
   if (!Vim.Browser.VidTime && !InStr(A_ThisHotkey, "``")) {
     Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
     if (!Vim.Browser.VidTime || ErrorLevel)
@@ -493,7 +498,7 @@ return
       if (InStr(A_ThisHotkey, "``"))
         Vim.Browser.VidTime := "0:00"
       Vim.Browser.comment := Vim.Browser.VidTime
-      send !{f10}fe
+      Vim.SM.PostMsg(660, true)
       WinWaitActive, ahk_class TInputDlg,, 0
       ControlGetText, OldRef, TMemo1
       NewComment := "`n#Comment: " . Vim.Browser.comment . "`n"
@@ -507,7 +512,7 @@ return
     }
   }
   WinActivate, ahk_class TElWind
-  if (InStr(A_ThisHotkey, "+") && !InStr(A_ThisHotkey, "``")) {
+  if (InStr(A_ThisHotkey, "^+!")) {
     send {enter}
     Vim.SM.PlayIfCertainCollection()
   }

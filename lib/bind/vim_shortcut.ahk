@@ -14,9 +14,7 @@
 #if (Vim.State.Vim.Enabled)
 ; Testing
 ; ^!+t::
-; ie := ComObjCreate("InternetExplorer.Application")
-; ie.Visible := true  ; This is known to work incorrectly on IE7.
-; ie.Navigate("https://www.autohotkey.com/")
+; send t
 ; return
 
 ; Shortcuts
@@ -114,16 +112,16 @@ return
 ; Import current webpage to supermemo
 ^+!a::
 ^!a::
-	ReleaseKey("ctrl")
-	ReleaseKey("shift")
-  KeyWait alt
   SetTimer, GetChromeUrl, -1
+  ReleaseKey("ctrl")
+  ReleaseKey("shift")
+  KeyWait alt
   FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
   WinClip.Snap(ClipData)
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  SMImportCtrlA := SMYTImport := false
+  SMImportCtrlA := SMVidImport := false
   if (!Clipboard) {
     SMImportCtrlA := true
     if (InStr(CurrUrl, "bilibili.com")) {
@@ -133,21 +131,21 @@ return
     }
     send ^a^c
     ClipWait 1
+    send {esc}
     if (!Clipboard)
       return
     if (InStr(CurrUrl, "bilibili.com"))
       MouseMove, XSaved, YSaved
   }
-  Vim.Browser.GetInfo()
+  Vim.Browser.GetInfo("", true)
   if (InStr(Vim.Browser.url, "youtube.com") && SMImportCtrlA) {
-    SMYTImport := true
-    send {esc}
+    SMVidImport := true
     Vim.Browser.VidTime := Vim.Browser.MatchYTTime(Clipboard)
     Vim.Browser.date := Vim.Browser.MatchYTDate(Clipboard)
+    Vim.Browser.source .= ": " . Vim.Browser.MatchYTSource(Clipboard)
     Clipboard := Vim.Browser.url
   } else if (InStr(Vim.Browser.url, "bilibili.com") && SMImportCtrlA) {
-    SMYTImport := true
-    send {esc}
+    SMVidImport := true
     Vim.Browser.VidTime := Vim.Browser.MatchBLTime(Clipboard)
     Vim.Browser.date := Vim.Browser.MatchBLDate(Clipboard)
     Clipboard := Vim.Browser.url
@@ -167,9 +165,21 @@ return
               . "<br>#Title: " . Vim.Browser.Title
     ClipWait 10
   }
-  SetDefaultKeyboard(0x0409)  ; english-US	
+  InfoToolTip := "
+  (
+Url: " . Vim.Browser.url . "
+Title : " . Vim.Browser.Title . "
+  )"
+  if (Vim.Browser.Source)
+    InfoToolTip .= "`nSource: " . Vim.Browser.Source
+  if (Vim.Browser.Date)
+    InfoToolTip .= "`nDate: " . Vim.Browser.Date
+  if (Vim.Browser.VidTime)
+    InfoToolTip .= "`nTime stamp: " . Vim.Browser.VidTime
+  ToolTip(InfoToolTip)
   prio := concept := ""
   if (InStr(A_ThisHotkey, "+")) {
+    SetDefaultKeyboard(0x0409)  ; english-US	
     gui, SMImport:Add, Text,, &Priority:
     gui, SMImport:Add, Edit, vPrio
     gui, SMImport:Add, Text,, &Concept:
@@ -192,15 +202,17 @@ SMImportContinue:
       WinWaitActive, ahk_class TElWind,, 3
     }
   }
-  if (SMYTImport) {
-    NewImport := true
+  if (SMVidImport) {
     if (Vim.SM.IsPassiveCollection()) {
       gosub SMHyperLinkToTopic
     } else {
       gosub SMCtrlN
     }
   } else {
-    send ^{enter}h{enter}  ; clear search highlight, just in case
+    ; Clear search highlight, just in case
+    send {esc}^{enter}  ; open commander
+    send {text}h  ; Highlight: Clear
+    send {enter}
     WinWaitActive, ahk_class TElWind,, 0
     send ^n
     WinWaitNotActive, ahk_class TElWind,, 2  ; could appear a loading bar
@@ -276,16 +288,20 @@ return
 return
 
 !+d::  ; check duplicates in SM
-  WinClip.Snap(ClipData)
-  Vim.Browser.GetUrl(true)
+  WinGet, hwnd, ID, A
+  KeyWait alt
+  Vim.Browser.GetUrl()
   WinActivate, ahk_class TElWind
-  send ^f^v{enter}
+  send ^f
+  WinWaitActive, ahk_class TMyFindDlg,, 0
+  ControlSetText, TEdit1, % Vim.Browser.url
+  send {enter}
   Vim.Browser.Clear()
-  WinClip.Restore(ClipData)
   WinWaitActive, ahk_class TMsgDialog,, 10
   if (!ErrorLevel) {
     WinClose, ahk_class TMsgDialog
     ToolTip("No duplicates found.")
+    WinActivate % "ahk_id " . hwnd
   }
 return
 
@@ -315,7 +331,6 @@ return
 !+x::
 !x::  ; pdf/epub extract to supermemo
   KeyWait alt
-  SetDefaultKeyboard(0x0409)  ; english-US	
   WinClip.Snap(ClipData)
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c  ; clip() doesn't keep format; nor ClipboardAll can work with functions
@@ -329,16 +344,12 @@ return
     prio := ""
     if (InStr(A_ThisHotkey, "+")) {
       InputBox, prio, Priority, Enter extract priority.,, 196, 128
-      if (ErrorLevel || !prio) {
-        WinClip.Restore(ClipData)
-        return
-      }
       WinWaitActive, % "ahk_id " . hwnd,, 1
     }
     if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
-      send a
+      send {text}a
     } else if (WinActive("ahk_exe ebook-viewer.exe")) {
-      send q  ; needs to enable this shortcut in settings
+      send {text}q  ; needs to enable this shortcut in settings
     } else if (WinActive("ahk_group Browsers")) {
       send !h
     } else if (WinActive("ahk_exe WINWORD.exe")) {
@@ -395,11 +406,13 @@ ExtractToSM:
       WinClip.Restore(ClipData)
       return
     }
-    send % prio . "{enter}"
+    ControlSetText, TEdit5, % prio
+    send {enter}
   } else {
     send !x  ; extract
   }
   Vim.SM.WaitProcessing()
+  sleep 20  ; short sleep to make sure the extraction is done
   Vim.SM.MoveAboveRef(true)
   send !\\
   WinWaitNotActive, ahk_class TElWind,, 2
@@ -463,8 +476,8 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
 !x::
+  KeyWait alt
   FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
-  WinClip.Snap( clipData )
   if (A_ThisHotkey == "^!x") {
     send ^a!ct{enter}  ; truncate silence
     WinWaitActive, Truncate Silence,, 5
@@ -479,7 +492,8 @@ return
     send ^+e  ; save
     WinWaitActive, Export Audio,, 5
   } else if (A_ThisHotkey == "!x") {
-    send !fer  ; export selected audio
+    PostMessage, 0x0111, 17011,,, A  ; export selected audio
+    return
     WinWaitActive, Export Selected Audio,, 5
   }
   if (ErrorLevel)
@@ -490,7 +504,7 @@ return
   } else {
     TempPath := A_Desktop . "\temp.mp3"
   }
-  Control, choose, 3, ComboBox3  ; choose mp3 from file type
+  control, choose, 3, ComboBox3  ; choose mp3 from file type
   ControlSetText, Edit1, % TempPath
   send {enter}
   WinWaitActive, Warning,, 0
@@ -505,14 +519,14 @@ return
   ControlGetFocus, QuestionFieldName, A
   if (Vim.Browser.title) {
     QuestionField := Vim.Browser.title
-                    . "`n#SuperMemo Reference:"
-                    . "`n#Link: " . Vim.Browser.url
-                    . "`n#Title: " . Vim.Browser.title
+                   . "`n#SuperMemo Reference:"
+                   . "`n#Link: " . Vim.Browser.url
+                   . "`n#Title: " . Vim.Browser.title
     if (Vim.Browser.source)
       QuestionField .= "`n#Source: " . Vim.Browser.source
     if (Vim.Browser.date)
       QuestionField .= "`n#Source: " . Vim.Browser.date
-    clip(QuestionField,, true)
+    clip(QuestionField)
   } else {
     QuestionField := ""
     send C:
@@ -525,8 +539,8 @@ return
     StartTime := A_TickCount
     if (WinActive("ahk_class TMsgDialog")) {
       send {esc}  ; Directory not found; Create? or MCI error
-      WinWaitActive, ahk_group SMCtrlQ,, 0
-    } else if (A_TickCount - StartTime > 500) {
+      WinWaitActive, ahk_group SMCtrlQ,, 0.1
+    } else if (A_TickCount - StartTime > 1000) {
       return
     }
   }
@@ -545,14 +559,13 @@ return
   send n
   WinWaitNotActive, ahk_class TInputDlg,, 0
   send y
-  send !{f10}np  ; previous component
-  send !{f10}np
+  Vim.SM.PostMsg(992, true)  ; previous component
+  Vim.SM.PostMsg(992, true)
   ControlFocusWait(QuestionFieldName)
   if (QuestionField)
     send ^+{down}{bs}  ; delete text so the question field is empty
   send ^t
   ControlWaitNotFocus(QuestionFieldName)
-  WinClip.Restore( clipData )
   send ^v  ; paste: text or image
   WinWaitNotActive, ahk_class TElWind,, 5  ; if it's an image
   if (!ErrorLevel) {

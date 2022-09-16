@@ -31,8 +31,8 @@ Return::
   Vim.State.SetMode("Insert")
 Return
 
-; Commander, can be launched anywhere as long as vim_ahk is enabled
-#if Vim.State.Vim.Enabled && !Vim.State.IsCurrentVimMode("Command")
+; Commander, can be launched anywhere as long as the script is enabled
+#if (Vim.State.Vim.Enabled && !Vim.State.IsCurrentVimMode("Command"))
 ^`;::
   ReleaseKey("ctrl")
   WinGet, hwnd, ID, A
@@ -440,23 +440,29 @@ ReformatScriptComponent:
   Vim.Browser.title := WinGetTitle()
   if (InStr(Vim.Browser.url, "youtube.com")) {
     Vim.Browser.VidTime := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
-    YTSeconds := ScriptArray[2] ? Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) : 0
+    YTTime := ""
+    if (ScriptArray[2])
+      YTTime := "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s"
     Vim.Browser.source := "YouTube"
-    send ^t{f9}  ; opens script editor
-    WinWaitActive, ahk_class TScriptEditor,, 0
-    send ^{end}
-    send % "&t=" . YTSeconds . "s"
-    send !o{esc}  ; close script editor
+    if (YTTime) {
+      send ^t{f9}  ; opens script editor
+      WinWaitActive, ahk_class TScriptEditor,, 0
+      ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime
+      send !o{esc}  ; close script editor
+    }
   } else {
     Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
   }
   WinClip.SetText(Vim.Browser.url)
+  ; Somehow PostMessage doesn't work reliably here
+  send !{f10}fe  ; open registry editor
   gosub SMSetLinkFromClipboard
   send {esc}
   if (ContinueLearning)
     send {enter}
   WinClip.Restore(ClipData)
   Vim.Browser.Clear()
+  Vim.State.SetMode("Vim_Normal")
 return
 
 MarkFileAsImported:

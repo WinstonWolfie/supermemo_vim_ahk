@@ -307,5 +307,9 @@ return                                                               ;|
 ;-----------------------------------o                                ;|
 CapsLock & q::send !{f4}                                             ;|
 ;-----------------------------------o                                ;|
-CapsLock & g::send {AppsKey}                                         ;|
+CapsLock & g::                                                       ;|
+    send {AppsKey}                                                   ;|
+    if (Vim.IsVimGroup())                                            ;|
+        Vim.State.SetMode("Insert")                                  ;|
+return                                                               ;|
 ;---------------------------------------------------------------------o

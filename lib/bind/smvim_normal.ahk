@@ -81,17 +81,7 @@ s::
   send ^{f7}
   Vim.SM.SaveHTML()
   send {esc}  ; leave html
-  WinClip.Snap(ClipData)
-  WinClip.Clear()
-  send !{f12}fc  ; copy file path
-  ClipWait 1
-  if (!Clipboard) {
-    WinClip.Restore(ClipData)
-    return
-  }
-  run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . Clipboard
-  Vim.State.SetMode()
-  WinClip.Restore(ClipData)
+  run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . Vim.SM.GetFilePath()
   WinWaitNotActive % "ahk_id " . hwnd
   WinWaitActive % "ahk_id " . hwnd
   send !{home}
@@ -101,6 +91,7 @@ s::
     sleep 100
     send !{left}
   }
+  Vim.State.SetMode()
 return
 
 #if (Vim.State.Vim.Enabled

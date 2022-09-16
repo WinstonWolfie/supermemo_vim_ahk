@@ -45,7 +45,7 @@ HTMLTagButtonAdd:
   WinActivate, ahk_class TElWind
   if (tag == "cloze" || tag == "extract" || tag == "clozed") {
     StartingTag := "<SPAN class=" . tag
-    EndingTag := "</SPAN>"
+    EndingTag := "SPAN>"
     tag := ""
   } else if (tag = "ruby") {
     InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above`, like Pinyin,, 272, 144
@@ -201,20 +201,20 @@ ClozeHinterButtonCloze:
     send {f3}
     WinWaitActive, ahk_class TMyFindDlg,, 0
     if (ErrorLevel) {
-      send {esc}^{enter}h{enter}{f3}
+      send {esc}^{enter}  ; open commander
+      send {text}h  ; Highlight: Clear
+      send {enter}{f3}
       WinWaitActive, ahk_class TMyFindDlg,, 0
       if (ErrorLevel)
         return
     }
-		SetDefaultKeyboard(0x0409)  ; english-US	
-		SendInput {raw}[...]
+    ControlSetText, TEdit1, [...]
 		send {enter}
 		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
 		send ^{enter}
 		WinWaitActive, ahk_class TCommanderDlg,, 0
-		if (ErrorLevel)
-			return
-		send h{enter}q{left}{right}  ; put the caret after the [ of [...]
+    ControlSetText, TEdit2, h
+		send {enter}q{left}{right}  ; put the caret after the [ of [...]
 		WinClip.Paste(cloze)  ; works slightly better than clip()
 		send {del 4}  ; delete ...]
 		if (WinExist("ahk_class TMyFindDlg")) ; clears search box window

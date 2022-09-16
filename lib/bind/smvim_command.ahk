@@ -1,6 +1,6 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TElWind"))
 +c::  ; add new concept
-  PostMessage, 0x0111, 126,,, ahk_class TElWind
+  Vim.SM.PostMsg(126)
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -30,34 +30,28 @@ return
 SMCleanHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
+  if (Vim.SM.IsEditingPlainText())
+    return
   if (Vim.SM.IsLearning()) {
     ContinueLearning := true
+    send !g  ; cancel learning
   } else {
     ContinueLearning := false
   }
-  ; save read point
-	send !g^{f7}  ; !g in case it's learning
-  if (Vim.SM.IsEditingPlainText())
-    Return
+	send ^{f7}  ; save read point
   if (!Vim.SM.IsEditingHTML()) {
     send ^t
     Vim.SM.WaitTextFocus()
     if (!Vim.SM.IsEditingHTML())
-      Return
+      return
   }
   send {esc}
-  WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   Vim.SM.WaitTextExit()
   WinWaitActive, ahk_class TElWind,, 0  ; sometimes, if a processing box appears, the next line may not be sent
-  send !{f12}fc  ; copy file path
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  HTMLPath := Clipboard
+  HTMLPath := Vim.SM.GetFilePath()
   FileRead, HTML, % HTMLPath
-  if (!HTML) {
-    WinClip.Restore(ClipData)
-    Return
-  }
+  if (!HTML)
+    return
   NewHTML := Vim.HTML.Clean(HTML)
   FileDelete % HTMLPath
   FileAppend, % NewHTML, % HTMLPath
@@ -66,16 +60,15 @@ SMCleanHTML:
   send {esc}
   if (ContinueLearning)
     ControlSend, TBitBtn2, {enter}
-  WinClip.Restore(ClipData)
 Return
 
 l::  ; *l*ink concept
-  send !{f10}cl
+  Vim.SM.PostMsg(644, true)
   Vim.State.SetMode("Vim_Normal")
 return
 
 +l::  ; list links
-  send !{f10}cs
+  Vim.SM.PostMsg(652, true)
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -94,25 +87,18 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.SM.SaveHTML()  ; making sure the html path is correct
   send {esc}
   Vim.SM.WaitTextExit()  ; making changes to the html file requires not editing html in SM
-  WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
-  send !{f10}tc  ; copy template
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (InStr(Clipboard, "Link:")) {
-    RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)  ; RegExMatch cannot store into clipboard
+  link := Vim.SM.GetLink()
+  if (link) {
     if (!InStr(Link, "wikipedia.org/wiki")) {
       ToolTip("Not Wikipedia!")
-      WinClip.Restore(ClipData)
       return
     }
     if (InStr(Link, "en.wikipedia.org")) {
       ToolTip("English Wikipedia doesn't need to be prepared!")
-      WinClip.Restore(ClipData)
       return
     }
   } else {
     ToolTip("No reference.")
-    WinClip.Restore(ClipData)
     return
   }
   RegExMatch(Link, "(?<=https:\/\/)(.*?)(?=\/wiki\/)", WikiLink)
@@ -138,14 +124,14 @@ return
 
 i::  ; learn outstanding *i*tems only
   Vim.State.SetMode("Vim_Normal")
-  SetDefaultKeyboard(0x0409)  ; english-US	
   send !{home}{esc 4}  ; clear any hidden windows
-  PostMessage, 0x0111, 202,,, ahk_class TElWind  ; View - Outstanding
+  Vim.SM.PostMsg(202)  ; View - Outstanding
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
   WinWaitActive, ahk_class TBrowser,, 0
-  send {AppsKey}ci
+  send {AppsKey}
+  send {text}ci
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
@@ -155,18 +141,19 @@ return
 
 +i::  ; learn current element's outstanding child item
   Vim.State.SetMode("Vim_Normal")
-  SetDefaultKeyboard(0x0409)  ; english-US	
   send ^{space}
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
   WinWaitActive, ahk_class TBrowser,, 0
-  send {AppsKey}ci
+  send {AppsKey}
+  send {text}ci
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
   WinWaitActive, ahk_class TBrowser,, 0
-  send {AppsKey}co
+  send {AppsKey}
+  send {text}co
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
@@ -179,66 +166,9 @@ return
   send ^+l
 return
 
-SMSetLinkFromClipboard:
-r::  ; set *r*eference's link to what's in the clipboard
-  Vim.State.SetMode("Vim_Normal")
-  NewLink := "`n#Link: " . Clipboard . "`n"
-  send !{f10}fe
-  WinWaitActive, ahk_class TInputDlg,, 0
-  if (NewImport) {
-    NewImport := false
-    OldRef := ""
-  } else {
-    ControlGetText, OldRef, TMemo1
-  }
-  if (InStr(OldRef, "#Link")) {
-    NewRef := RegExReplace(OldRef, "#Link: .*", NewLink)
-  } else {
-    NewRef := OldRef . NewLink
-  }
-  if (Vim.Browser.title) {
-    NewTitle := "`n#Title: " . Vim.Browser.title . "`n"
-    if (InStr(NewRef, "#Title")) {
-      NewRef := RegExReplace(NewRef, "#Title: .*", NewTitle)
-    } else {
-      NewRef .= NewTitle
-    }
-  }
-  if (Vim.Browser.source) {
-    NewSource := "`n#Source: " . Vim.Browser.source . "`n"
-    if (InStr(NewRef, "#Source")) {
-      NewRef := RegExReplace(NewRef, "#Source: .*", NewSource)
-    } else {
-      NewRef .= NewSource
-    }
-  }
-  if (Vim.Browser.date) {
-    NewDate := "`n#Date: " . Vim.Browser.date . "`n"
-    if (InStr(NewRef, "#Date")) {
-      NewRef := RegExReplace(NewRef, "#Date: .*", Vim.Browser.date)
-    } else {
-      NewRef .= NewDate
-    }
-  }
-  if (Vim.Browser.comment) {
-    NewComment := "`n#Comment: " . Vim.Browser.comment . "`n"
-    if (InStr(NewRef, "#Comment")) {
-      NewRef := RegExReplace(NewRef, "#Comment: .*", Vim.Browser.comment)
-    } else {
-      NewRef .= NewComment
-    }
-  }
-  ControlSetText, TMemo1, % NewRef
-  send !{enter}
-  WinWaitActive, ahk_class TElWind,, 1
-  if (Vim.Browser.title && WinActive("ahk_class TElWind") && WinGetTitle() != Vim.Browser.title)
-    Vim.SM.SetTitle(Vim.Browser.title)
-  Vim.Browser.Clear()
-return
-
 o::  ; c*o*mpress images
-  send ^{enter}
-  SendInput {raw}co  ; Compress images
+  send ^{enter}  ; open commander
+  send {text}co  ; Compress images
   send {enter}
   Vim.State.SetMode("Vim_Normal")
 return
@@ -290,33 +220,85 @@ return
   WinClip.Restore(ClipData)
 return
 
-SMHyperLinkToTopic:
 p::  ; hyperlink to scri*p*t component
+  Vim.State.SetMode("Vim_Normal")
+SMHyperLinkToTopic:
   send !n  ; new topic
-  if (!Vim.SM.WaitTextFocus(5000))
+  if (!Vim.SM.WaitTextFocus())
     return
+  ; Somehow PostMessage doesn't work reliably here
+  send !{f10}fe  ; open registry editor
+  gosub SMSetLinkFromClipboard
   if (Vim.SM.IsPassiveCollection()) {
     send ^t{f9}{enter}  ; opens script editor
-    send url{space}^v  ; paste the link
+    WinWaitActive, ahk_class TScriptEditor,, 0
+    script := "url " . Clipboard
     if (Vim.Browser.VidTime) {
       sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
       if (InStr(Vim.Browser.url, "youtube.com")) {
-        send % "&t=" . sec . "s"
+        script .= "&t=" . sec . "s"
       } else if (InStr(Vim.Browser.url, "bilibili.com")) {
-        send % "?&t=" . sec
+        script .= "?&t=" . sec
       }
     }
-    send !o{esc}  ; close script editor
-    gosub SMSetLinkFromClipboard
-    send {esc}
-  } else {  ; for now everything else is treated like standard topics and links
-    gosub SMSetLinkFromClipboard
-    Vim.State.SetMode("Insert")
-    send ^{home}
-  }
-  if (sec)
+    ControlSetText, TMemo1, % script
+    send !o{esc 2}  ; close script editor
     ToolTip("Time stamp in script component set as " . sec . "s")
+  }
   Vim.Browser.Clear()
+return
+
+r::  ; set *r*eference's link to what's in the clipboard
+  Vim.State.SetMode("Vim_Normal")
+  Vim.SM.PostMsg(961, true)
+SMSetLinkFromClipboard:
+  WinWaitActive, ahk_class TInputDlg,, 1
+  ControlGetText, OldRef, TMemo1
+  NewLink := "`n#Link: " . Clipboard . "`n"
+  if (InStr(OldRef, "#Link")) {
+    NewRef := RegExReplace(OldRef, "#Link: .*", NewLink)
+  } else {
+    NewRef := OldRef . NewLink
+  }
+  if (Vim.Browser.title) {
+    NewTitle := "`n#Title: " . Vim.Browser.title . "`n"
+    if (InStr(NewRef, "#Title")) {
+      NewRef := RegExReplace(NewRef, "#Title: .*", NewTitle)
+    } else {
+      NewRef .= NewTitle
+    }
+  }
+  if (Vim.Browser.source) {
+    NewSource := "`n#Source: " . Vim.Browser.source . "`n"
+    if (InStr(NewRef, "#Source")) {
+      NewRef := RegExReplace(NewRef, "#Source: .*", NewSource)
+    } else {
+      NewRef .= NewSource
+    }
+  }
+  if (Vim.Browser.date) {
+    NewDate := "`n#Date: " . Vim.Browser.date . "`n"
+    if (InStr(NewRef, "#Date")) {
+      NewRef := RegExReplace(NewRef, "#Date: .*", Vim.Browser.date)
+    } else {
+      NewRef .= NewDate
+    }
+  }
+  if (Vim.Browser.comment) {
+    NewComment := "`n#Comment: " . Vim.Browser.comment . "`n"
+    if (InStr(NewRef, "#Comment")) {
+      NewRef := RegExReplace(NewRef, "#Comment: .*", Vim.Browser.comment)
+    } else {
+      NewRef .= NewComment
+    }
+  }
+  ControlSetText, TMemo1, % NewRef
+  send !{enter}
+  WinWaitActive, ahk_class TElWind,, 1
+  if (Vim.Browser.title && WinActive("ahk_class TElWind") && WinGetTitle() != Vim.Browser.title)
+    Vim.SM.SetTitle(Vim.Browser.title)
+  if (A_ThisLabel != "SMSetLinkFromClipboard")
+    Vim.Browser.Clear()
 return
 
 m::  ; co*m*ment current element "audio"
@@ -336,7 +318,7 @@ return
 d::  ; learn all elements with the comment "au*d*io"
   Vim.State.SetMode("Vim_Normal")
   send !{home}{esc 4}  ; escape potential hidden window
-  PostMessage, 0x0111, 169,,, ahk_class TElWind  ; Comment registry
+  Vim.SM.PostMsg(169)  ; Comment registry
   WinWaitActive, ahk_class TRegistryForm,, 0
   send a  ; search for audio
   send !b  ; browse all elements

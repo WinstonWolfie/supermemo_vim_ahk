@@ -241,7 +241,7 @@ class VimSM {
       }
     } else if (CollectionName = "gaming") {
       ControlTextWait("TBitBtn3", "Next repetition")
-      link := this.GetLinkFromElement()
+      link := this.GetLink()
       if (link)
         run % "msedge.exe " . link
     }
@@ -261,17 +261,33 @@ class VimSM {
     return CollectionName
   }
 
-  GetLinkFromElement() {
+  GetLink(NoRestore:=false) {
     global WinClip
-    WinClip.Snap(ClipData)
+    if (!NoRestore)
+      WinClip.Snap(ClipData)
     WinClip.Clear()
-    send !{f10}tc  ; copy template
-    ClipWait 1
-    if (InStr(Clipboard, "Link:")) {
-      RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", link)
+    code := this.GetTemplateCode(NoRestore)
+    if (InStr(code, "Link:")) {
+      RegExMatch(code, "(?<=#Link: <a href="").*(?="")", link)
+      if (!NoRestore)
+        WinClip.Restore(ClipData)
       return link
+    } else {
+      WinClip.Restore(ClipData)
     }
-    WinClip.Restore(ClipData)
+  }
+
+  GetFilePath(NoRestore:=false) {
+    global WinClip
+    if (!NoRestore)
+      WinClip.Snap(ClipData)
+    WinClip.Clear()
+    this.PostMsg(987, true)
+    ClipWait 1
+    path := Clipboard
+    if (!NoRestore)
+      WinClip.Restore(ClipData)
+    return path
   }
 
   SetTitle(title) {
@@ -297,5 +313,33 @@ class VimSM {
   IsPassiveCollection() {
     CollectionName := this.GetCollectionName()
     return (CollectionName = "passive" || CollectionName = "music" || CollectionName = "bgm")
+  }
+
+  PostMsg(msg, ContextMenu:=false) {
+    if (!ContextMenu) {
+      PostMessage, 0x0111, % msg,,, ahk_class TElWind
+    } else {
+      WinGet, ActivePID, PID, A
+      if (ActivePID && WinGet("ProcessName") == "sm18.exe") {
+        PrevDetectHiddenWindows := A_DetectHiddenWindows
+        DetectHiddenWindows on
+        WinGet, ContextMenuID, list, % "ahk_class TPUtilWindow ahk_pid " . ActivePID
+        PostMessage, 0x0111, % msg,,, % "ahk_id " . ContextMenuID5
+        DetectHiddenWindows % PrevDetectHiddenWindows
+      }
+    }
+  }
+
+  GetTemplateCode(NoRestore:=false) {
+    global WinClip
+    if (!NoRestore)
+      WinClip.Snap(ClipData)
+    WinClip.Clear()
+    this.PostMsg(693, true)
+    ClipWait 1
+    code := Clipboard
+    if (!NoRestore)
+      WinClip.Restore(ClipData)
+    return code
   }
 }

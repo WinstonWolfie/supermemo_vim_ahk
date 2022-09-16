@@ -13,13 +13,8 @@ g::Vim.Move.Move("g")  ; 3gg goes to the 3rd line of entire text
 SMGoToLink:
 s::  ; gs: go to link
   Vim.State.SetMode()
-  WinClip.Snap(ClipData)
-  WinClip.Clear()
-  send !{f10}tc  ; copy template
-  ClipWait 1
-  if (InStr(Clipboard, "Link:")) {
-    RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", Link)
-    WinClip.Restore(ClipData)  ; restore clipboard here in case run doesn't work
+  link := Vim.SM.GetLink()
+  if (link) {
     if (InStr(A_ThisHotkey, "+")) {
       ; run % "iexplore.exe " . Link  ; RIP IE
       Vim.Browser.RunInIE(link)
@@ -32,7 +27,6 @@ s::  ; gs: go to link
     }
   } else {
     ToolTip("No link found.")
-    WinClip.Restore(ClipData)
   }
 Return
 
@@ -83,7 +77,7 @@ c::  ; gc: go to next *c*omponent
 Return
 
 +c::  ; gC: go to previous *c*omponent
-  send !{f12}fl  ; previous component
+  Vim.SM.PostMsg(992, true)
   Vim.State.SetMode()
 Return
 
@@ -211,20 +205,15 @@ f::Vim.SM.ClickMid()  ; click on html component
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
 y::  ; yy: copy current source url
-  WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
-  send !{f10}tc  ; copy template
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (InStr(Clipboard, "Link:")) {
-    RegExMatch(Clipboard, "(?<=#Link: <a href="").*(?="")", link)  ; RegexMatch cannot store into clipboard
-    Clipboard := link
-    ToolTip("Copied " . clipboard)
-  } else {
+  link := Vim.SM.GetLink()
+  if (!link) {
     ToolTip("Link not found.")
-    WinClip.Restore(ClipData)
+  } else {
+    ToolTip("Copied " . link)
+    Clipboard := link
   }
   Vim.State.SetNormal()
-Return
+return
 
 e::  ; ye: duplicate current element
   send !d
@@ -368,12 +357,14 @@ SearchButtonSearch:
     send {f3}
     WinWaitActive, ahk_class TMyFindDlg,, 0
     if (ErrorLevel) {
-      send {esc}^{enter}h{enter}{f3}
+      send {esc}^{enter}  ; open commander
+      send {text}h  ; Highlight: Clear
+      send {enter}{f3}
       WinWaitActive, ahk_class TMyFindDlg,, 0
       if (ErrorLevel)
-        Return
+        return
     }
-    WinClip.Paste(UserInput)
+    ControlSetText, TEdit1, % UserInput
     if (WholeWord)
       send !w  ; match whole word
     send !c  ; match case
@@ -384,7 +375,7 @@ SearchButtonSearch:
     }
     WinWaitNotActive, ahk_class TMyFindDlg,, 0  ; faster than wait for element window to be active
     if (ErrorLevel)
-      Return
+      return
     if (!AltState) {
       if (RShiftState) {
         send {right}  ; put caret on right of searched text
@@ -394,12 +385,14 @@ SearchButtonSearch:
         send {left}  ; put caret on left of searched text
       }
     }
-    send ^{enter}  ; to open commander; convienently, if a "not found" window pops up, this would close it
+    send ^{enter}  ; open commander; convienently, if a "not found" window pops up, this would close it
     WinWaitActive, ahk_class TCommanderDlg,, 1
     if (ErrorLevel) {
       ToolTip("Not found.")
       Vim.State.SetNormal()
-      send {esc}^{enter}h{enter}{esc}
+      send {esc}^{enter}
+      send {text}h  ; Highlight: Clear
+      send {enter}{esc}
       Return
     }
     send h{enter}

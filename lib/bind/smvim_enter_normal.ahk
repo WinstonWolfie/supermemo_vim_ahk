@@ -21,7 +21,7 @@ Return
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would move the caret in some instances
 return
 
-#if (Vim.IsVimGroup() && Vim.SM.IsEditingHTML() && !Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.StrIsInCurrentVimMode("Command"))  ; SuperMemo element window
+#if (Vim.IsVimGroup() && !Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.StrIsInCurrentVimMode("Command"))  ; SuperMemo element window
 ^l::  ; learn
   ControlSend, TBitBtn2, {ctrl down}l{ctrl up}, ahk_class TElWind
   Vim.State.SetMode("Vim_Normal")

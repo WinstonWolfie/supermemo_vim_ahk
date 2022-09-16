@@ -12,13 +12,13 @@ class VimBrowser {
     this.comment := ""
   }
 
-  GetInfo(NoRestore:=false) {
+  GetInfo(NoRestore:=false, SkipCopying:=false) {
     this.clear()
     global WinClip
     if (!NoRestore)
       WinClip.Snap(ClipData)
-    this.url := this.GetUrl(!NoRestore)
-    this.GetTitleSourceDate()
+    this.GetUrl(!NoRestore)
+    this.GetTitleSourceDate(SkipCopying)
     if (!NoRestore)
       WinClip.Restore(ClipData)
   }
@@ -36,7 +36,7 @@ class VimBrowser {
     return url
   }
 
-  GetTitleSourceDate() {
+  GetTitleSourceDate(SkipCopying:=false) {
     WinGetActiveTitle CurrTitle
     this.Title := RegExReplace(CurrTitle, "( - Google Chrome| — Mozilla Firefox|( and [0-9]+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
 
@@ -63,6 +63,8 @@ class VimBrowser {
       this.Source := "Medical News Today"
     } else if (InStr(this.Url, "investopedia.com")) {
       this.Source := "Investopedia"
+    } else if (InStr(this.Url, "github.com")) {
+      this.Source := "Github"
 
     ; Sites that should be skipped
     } else if (InStr(this.Url, "mp.weixin.qq.com")) {
@@ -71,24 +73,29 @@ class VimBrowser {
       return
 
     ; Sites that require special attention
-    } else if (InStr(this.Url, "youtube.com")) {
+    } else if (InStr(this.title, " - YouTube")) {
       this.source := "YouTube"
       this.title := StrReplace(this.title, " - YouTube")
-      global WinClip
-      WinClip.Clear()
-      send ^a^c
-      ClipWait 1
-      send {esc}
-      this.date := this.MatchYTDate(Clipboard)
+      if (!SkipCopying) {
+        global WinClip
+        WinClip.Clear()
+        send ^a^c
+        ClipWait 1
+        send {esc}
+        this.date := this.MatchYTDate(Clipboard)
+        this.source .= ": " . this.MatchYTSource(Clipboard)
+      }
     } else if (InStr(this.Title, "_哔哩哔哩_bilibili")) {
       this.Source := "哔哩哔哩"
       this.Title := StrReplace(this.Title, "_哔哩哔哩_bilibili")
-      global WinClip
-      WinClip.Clear()
-      send ^a^c
-      ClipWait 1
-      send {esc}
-      this.date := this.MatchBLDate(Clipboard)
+      if (!SkipCopying) {
+        global WinClip
+        WinClip.Clear()
+        send ^a^c
+        ClipWait 1
+        send {esc}
+        this.date := this.MatchBLDate(Clipboard)
+      }
 
     ; Try to use - or | to find source
     } else {
@@ -158,7 +165,7 @@ class VimBrowser {
       MouseMove, XSaved, YSaved
     if (!NoRestore)
       WinClip.Restore(ClipData)
-    return (VidTime)
+    return VidTime
   }
 
   GetUrl(NoRestore:=false) {
@@ -174,7 +181,7 @@ class VimBrowser {
         return
     }
     this.FocusToText()
-    Clipboard := url := this.ParseUrl(Clipboard)
+    Clipboard := this.url := this.ParseUrl(Clipboard)
     if (!NoRestore)
       WinClip.Restore(ClipData)
     return (url)
@@ -190,7 +197,12 @@ class VimBrowser {
   }
 
   MatchYTTime(text) {
-    RegExMatch(text, "Avatar image(\r\n)+\K[0-9:]+", VidTime)
+    RegExMatch(text, "\r\n\K[0-9:]+(?= \/ )", VidTime)
+    return VidTime
+  }
+
+  MatchYTSource(text) {
+    RegExMatch(text, "SAVE(\r\n){3}\K.*", VidTime)
     return VidTime
   }
 
