@@ -251,6 +251,17 @@ ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeT
   }
 }
 
+ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+  StartTime := A_TickCount
+  Loop {
+    if (ControlGet("hwnd",, Control, WinTitle, %WinText%, %ExcludeTitle%, %ExcludeText%)) {
+      Return True
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      Return False
+    }
+  }
+}
+
 ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
   StartTime := A_TickCount
   Loop {
@@ -370,16 +381,6 @@ WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=5000) {
 			return true
 		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
 			return false
-		}
-	}
-}
-
-ReleaseKey(Key) {
-	if (GetKeyState(Key)) {
-		if (key = "ctrl" || key = "shift") {
-			send {blind}{l%Key% up}{r%Key% up}
-		} else {
-			send {blind}{%key% up}
 		}
 	}
 }

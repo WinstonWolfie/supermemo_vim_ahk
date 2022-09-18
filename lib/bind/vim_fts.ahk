@@ -94,7 +94,7 @@ _::
 .::
 >::
 space::
-  ReleaseKey("shift")
+  KeyWait shift
   CurrentHotkey := A_ThisHotkey
   if (CurrentHotkey = "space")
     CurrentHotkey := " "

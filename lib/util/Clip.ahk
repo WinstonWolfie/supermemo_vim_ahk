@@ -2,13 +2,6 @@
 ; Originally by berban - updated February 18, 2019 - modified by Winston
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156
 Clip(Text="", Reselect="", NoRestore:=false) {
-  if (Clipboard && text == Clipboard) {  ; to save time
-    send ^v
-    sleep 20
-    if (ReSelect)
-      send % "{Shift Down}{Left " StrLen(StrReplace(Text, "`r")) "}{Shift Up}"
-    return
-  }
   global WinClip
   if (!NoRestore)
     WinClip.Snap(ClipData)

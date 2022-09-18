@@ -174,7 +174,7 @@ ShowMainGui:
 			or if RegExMatch(SB_Text, "Id: \K\d+", SB_Text) {
 				SB_Text := StrReplace(SB_Text, ",", ".")
 				if (A_EventInfo = 2 && childId)
-					Clipboard := """" SB_Text """, " childId
+					WinClip.Clear()"" SB_Text """, " childId
 				else
 					Clipboard := SB_Text
 

@@ -332,7 +332,7 @@
               DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
               pos := RegExMatch(DetectionStr, "^(?:[^A-Za-zÀ-ÖØ-öø-ÿ]*[A-Za-zÀ-ÖØ-öø-ÿ]*){" . this.SearchOccurrence . "}\K([^A-Za-zÀ-ÖØ-öø-ÿ]|$)")
               right := StrLen(DetectionStr) - pos
-              SendInput +{right %right%}
+              send +{right %right%}
             } else if StrLen(StrAfter) < StrLen(StrBefore) {
               DetectionStr := StrReverse(StrBefore)
               pos := RegExMatch(DetectionStr, "^(?:[^A-Za-zÀ-ÖØ-öø-ÿ]*[A-Za-zÀ-ÖØ-öø-ÿ]*){" . this.SearchOccurrence . "}\K([^A-Za-zÀ-ÖØ-öø-ÿ]|$)")
@@ -344,7 +344,7 @@
                   if NextOccurrence
                     left := NextOccurrence - 1
                 }
-                SendInput +{left %left%}
+                send +{left %left%}
               }
             }
           } else {
@@ -356,7 +356,7 @@
             }
             DetectionStr := StrReverse(DetectionStr)
             pos := RegExMatch(DetectionStr, "^(?:[^A-Za-zÀ-ÖØ-öø-ÿ]*[A-Za-zÀ-ÖØ-öø-ÿ]*){" . this.SearchOccurrence . "}\K([^A-Za-zÀ-ÖØ-öø-ÿ]|$)")
-            SendInput {right}{left %pos%}
+            send {right}{left %pos%}
           }
         } else if (this.shift == 1) && !ForceNoShift {
           StrBefore := ""
@@ -388,8 +388,8 @@
                   left := StrLen(DetectionStr) - NextOccurrence + 1
               }
             }
-            ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-            SendInput +{left %left%}
+            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            send +{left %left%}
           } else if (StrLen(StrAfter) < StrLen(StrBefore)) {
             DetectionStr := StrBefore
             pos := RegExMatch(DetectionStr, "^(?:[^A-Za-zÀ-ÖØ-öø-ÿ]*[A-Za-zÀ-ÖØ-öø-ÿ]*){" . this.SearchOccurrence . "}\K([^A-Za-zÀ-ÖØ-öø-ÿ]|$)")
@@ -403,8 +403,8 @@
                 else
                   right := 0
               }
-              ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-              SendInput +{right %right%}
+              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              send +{right %right%}
             }
           }
         } else {
@@ -429,7 +429,7 @@
           } else {
             right := 0
           }
-          SendInput {left}{right %right%}
+          send {left}{right %right%}
         }
       } else if (key == "b") {
         if (this.shift == 1) && !ForceNoShift {
@@ -459,8 +459,8 @@
             DetectionStr := SubStr(StrAfter, starting_pos)  ; what's selected after +end
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)  ; find in what's selected after
             left := StrLen(DetectionStr) - pos  ; goes back
-            ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-            SendInput +{left %left%}
+            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            send +{left %left%}
           } else if (StrLen(StrAfter) < StrLen(StrBefore)) {
             DetectionStr := StrBefore
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)  ; find in what's selected after
@@ -472,8 +472,8 @@
                 if NextOccurrence
                   right := NextOccurrence - 1
               }
-              ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-              SendInput +{right %right%}
+              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              send +{right %right%}
             }
           }
         } else {
@@ -498,7 +498,7 @@
           } else {
             right := 0
           }
-          SendInput {left}{right %right%}
+          send {left}{right %right%}
         }
       } else if (key == "t") {
         if (this.shift == 1) && !ForceNoShift {
@@ -531,8 +531,8 @@
                   left := StrLen(DetectionStr) - NextOccurrence + 1
               }
             }
-            ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-            SendInput +{left %left%}
+            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            send +{left %left%}
           } else if (StrLen(StrAfter) < StrLen(StrBefore)) {
             DetectionStr := StrBefore
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
@@ -546,8 +546,8 @@
                 else
                   right := 0
               }
-              ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-              SendInput +{right %right%}
+              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              send +{right %right%}
             }
           }
         } else {
@@ -572,7 +572,7 @@
           } else {
             right := 0
           }
-          SendInput {left}{right %right%}
+          send {left}{right %right%}
         }
       } else if (key == "+f") {
         if (this.shift == 1) && !ForceNoShift {
@@ -594,8 +594,8 @@
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
             right := StrLen(DetectionStr) - pos
-            ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-            SendInput +{right %right%}
+            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            send +{right %right%}
           } else if StrLen(StrAfter) < StrLen(StrBefore) {
             DetectionStr := StrReverse(StrBefore)
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
@@ -607,8 +607,8 @@
                 if NextOccurrence
                   left := NextOccurrence - 1
               }
-              ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-              SendInput +{left %left%}
+              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              send +{left %left%}
             }
           }
         } else {
@@ -620,7 +620,7 @@
           }
           DetectionStr := StrReverse(DetectionStr)
           pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
-          SendInput {right}{left %pos%}
+          send {right}{left %pos%}
         }
       } else if (key == "+t") {
         if (this.shift == 1) && !ForceNoShift {
@@ -651,8 +651,8 @@
                   right := StrLen(DetectionStr) - NextOccurrence + 1
               }
             }
-            ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-            SendInput +{right %right%}
+            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            send +{right %right%}
           } else if StrLen(StrAfter) < StrLen(StrBefore) {
             DetectionStr := StrReverse(StrBefore)
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
@@ -672,8 +672,8 @@
                   left := 0
                 }
               }
-              ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-              SendInput +{left %left%}
+              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              send +{left %left%}
             }
           }
         } else {
@@ -696,7 +696,7 @@
           } else {
             left := 0
           }
-          SendInput {right}{left %left%}
+          send {right}{left %left%}
         }
       } else if (key == ")") {  ; like "f" but search for ". "
         if (this.shift == 1) && !ForceNoShift {
@@ -724,7 +724,7 @@
             if !pos && (InStr(DetectionStr, ".", true,, this.SearchOccurrence) == Strlen(DetectionStr))  ; try to search if there's a last dot
               send +{right}  ; if there is a last dot, move to start of next paragraph
             else
-              SendInput +{left %left%}
+              send +{left %left%}
           } else if StrLen(StrAfter) < StrLen(StrBefore) {  ; search in selected text
             pos := InStr(StrBefore, ". ", true,, this.SearchOccurrence)
             right := pos
@@ -737,7 +737,7 @@
                   right := pos + 1
               }
             }
-            SendInput +{right %right%}
+            send +{right %right%}
           }
             } else {
           this.SelectParagraphDown()
@@ -755,7 +755,7 @@
           pos := InStr(DetectionStr, ". ", true,, this.SearchOccurrence)
           if pos {
             right := pos + 1
-            SendInput {left}{right %right%}
+            send {left}{right %right%}
           } else
             send {right}
         }
@@ -781,7 +781,7 @@
                   left := NextOccurrence - 1
               }
             }
-            SendInput +{left %left%}
+            send +{left %left%}
           } else if (StrLen(StrAfter) < StrLen(StrBefore)) || !StrBefore {
             this.SelectParagraphUp()
             StrAfter := this.Vim.ParseLineBreaks(clip())
@@ -809,7 +809,7 @@
             if ret
               ret := false
             else
-              SendInput +{right %right%}
+              send +{right %right%}
           }
             } else {
           this.SelectParagraphUp()
@@ -837,7 +837,7 @@
             send {left}
             ret := false
           } else
-            SendInput {right}{left %left%}
+            send {right}{left %left%}
         }
       } else if (key == "s") {
         if (this.shift == 1) && !ForceNoShift {
@@ -870,8 +870,8 @@
                   left := StrLen(DetectionStr) - NextOccurrence + 1
               }
             }
-            ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-            SendInput +{left %left%}
+            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            send +{left %left%}
           } else if (StrLen(StrAfter) < StrLen(StrBefore)) {
             DetectionStr := StrBefore
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
@@ -885,8 +885,8 @@
                 else
                   right := 0
               }
-              ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-              SendInput +{right %right%}
+              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              send +{right %right%}
             }
           }
         } else {
@@ -910,7 +910,7 @@
             }
           } else
             right := 0
-          SendInput {left}{right %right%}
+          send {left}{right %right%}
         }
       } else if (key == "+s") {
         this.FtsChar := StrReverse(this.FtsChar)
@@ -933,8 +933,8 @@
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
             right := StrLen(DetectionStr) - pos - 1
-            ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-            SendInput +{right %right%}
+            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            send +{right %right%}
           } else if (StrLen(StrAfter) < StrLen(StrBefore)) {
             DetectionStr := StrReverse(StrBefore)
             pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
@@ -946,8 +946,8 @@
                 if NextOccurrence
                   left := NextOccurrence + 1
               }
-              ReleaseKey("shift")  ; keys that need shift (like "(") would mess up the shift below
-              SendInput +{left %left%}
+              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              send +{left %left%}
             }
           }
         } else {
@@ -960,7 +960,7 @@
           DetectionStr := StrReverse(DetectionStr)
           pos := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
           pos := pos ? pos + 1 : 0
-          SendInput {right}{left %pos%}
+          send {right}{left %pos%}
         }
       } else if (key == "/") {
         WinGet, hwnd, ID, A
@@ -1011,11 +1011,11 @@
             if NextOccurrence
               left := StrLen(DetectionStr) - NextOccurrence + 1
           }
-          SendInput +{left %left%}
+          send +{left %left%}
         } else if (StrLen(StrAfter) < StrLen(StrBefore)) {
           pos := InStr(StrBefore, UserInput, true)
           pos -= pos ? 1 : 0
-          SendInput +{right %pos%}
+          send +{right %pos%}
         }
       } else if (key == "?") {
         WinGet, hwnd, ID, A
@@ -1049,7 +1049,7 @@
         if (StrLen(StrAfter) > StrLen(StrBefore)) {
           pos := InStr(StrReverse(StrBefore), StrReverse(UserInput), true)
           pos += pos ? StrLen(UserInput) - 2 : 0
-          SendInput +{left %pos%}
+          send +{left %pos%}
         } else if (StrLen(StrAfter) < StrLen(StrBefore)) || !StrBefore {
           this.SelectParagraphUp()
           StrAfter := this.Vim.ParseLineBreaks(clip())
@@ -1062,7 +1062,7 @@
           DetectionStr := SubStr(StrReverse(StrAfter), starting_pos)
           pos := InStr(DetectionStr, StrReverse(UserInput), true,, this.SearchOccurrence)
           right := StrLen(DetectionStr) - pos - StrLen(UserInput) + 1
-          SendInput +{right %right%}
+          send +{right %right%}
         }
       }
     }
@@ -1080,7 +1080,7 @@
       }
     } else if (key == "^e") {
       if (WinActive("ahk_exe WINWORD.exe")) {
-        ReleaseKey("ctrl")
+        KeyWait ctrl
         send {WheelDown}{CtrlDown}
       } else {
         SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A ; scroll down
@@ -1098,7 +1098,7 @@
       }
     } else if (key == "^y") {
       if (WinActive("ahk_exe WINWORD.exe")) {
-        ReleaseKey("ctrl")
+        KeyWait ctrl
         send {WheelUp}{CtrlDown}
       } else {
         SendMessage, 0x0115, 0, 0, % ControlGetFocus(), A
@@ -1147,7 +1147,7 @@
         } else if (WinActive("ahk_class TBrowser")) {
 					ClickDPIAdjusted(638, 46)
         }
-        SendInput ^{home}{down %line%}
+        send ^{home}{down %line%}
         if (WinActive("ahk_class TContents")) {
 					ClickDPIAdjusted(295, 50)
         } else if (WinActive("ahk_class TBrowser")) {
@@ -1164,7 +1164,7 @@
         send ^{Home}
       }
     } else if (key == "+g") {
-        ReleaseKey("shift")
+        KeyWait shift
         if (this.Vim.State.n > 0) {
           line := this.Vim.State.n - 1
           this.Vim.State.n := 0
@@ -1182,7 +1182,7 @@
           } else {
             send ^{home}
           }
-          SendInput {down %line%}
+          send {down %line%}
           if (WinActive("ahk_class TContents")) {
             ClickDPIAdjusted(295, 50)
           } else if (WinActive("ahk_class TBrowser")) {
@@ -1247,7 +1247,7 @@
       if (this.Vim.State.n > 0 && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         paragraph := this.Vim.State.n - 1
         this.Vim.State.n := 0
-        ReleaseKey("shift")
+        KeyWait shift
         this.Vim.SM.ClickTop()
         this.Vim.SM.WaitTextFocus()
         this.ParagraphDown(paragraph)

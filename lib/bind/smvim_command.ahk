@@ -32,11 +32,10 @@ SMCleanHTML:
   Vim.State.SetMode("Vim_Normal")
   if (Vim.SM.IsEditingPlainText())
     return
+  ContinueLearning := false
   if (Vim.SM.IsLearning()) {
     ContinueLearning := true
     send !g  ; cancel learning
-  } else {
-    ContinueLearning := false
   }
 	send ^{f7}  ; save read point
   if (!Vim.SM.IsEditingHTML()) {
@@ -196,7 +195,7 @@ s::  ; turn active language item to passive (*s*witch)
 return
 
 +s::
-  ReleaseKey("shift")
+  KeyWait shift
   Vim.State.SetMode("Vim_Normal")
   WinClip.Snap(ClipData)
   Vim.SM.DeselectAllComponents()
@@ -233,7 +232,8 @@ SMHyperLinkToTopic:
     send ^t{f9}{enter}  ; opens script editor
     WinWaitActive, ahk_class TScriptEditor,, 0
     script := "url " . Clipboard
-    if (Vim.Browser.VidTime) {
+    sec := ""
+    if (Vim.Browser.VidTime && !Vim.SM.GetCollectionName() = "music") {
       sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
       if (InStr(Vim.Browser.url, "youtube.com")) {
         script .= "&t=" . sec . "s"
@@ -252,7 +252,7 @@ r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.PostMsg(961, true)
 SMSetLinkFromClipboard:
-  WinWaitActive, ahk_class TInputDlg,, 1
+  WinWaitActive, ahk_class TInputDlg,, 3
   ControlGetText, OldRef, TMemo1
   NewLink := "`n#Link: " . Clipboard . "`n"
   if (InStr(OldRef, "#Link")) {
@@ -284,6 +284,7 @@ SMSetLinkFromClipboard:
       NewRef .= NewDate
     }
   }
+  NewRef := StrReplace(NewRef, "#Comment: References will be downloaded in a separate thread")
   if (Vim.Browser.comment) {
     NewComment := "`n#Comment: " . Vim.Browser.comment . "`n"
     if (InStr(NewRef, "#Comment")) {
@@ -295,7 +296,7 @@ SMSetLinkFromClipboard:
   ControlSetText, TMemo1, % NewRef
   send !{enter}
   WinWaitActive, ahk_class TElWind,, 1
-  if (Vim.Browser.title && WinActive("ahk_class TElWind") && WinGetTitle() != Vim.Browser.title)
+  if (Vim.Browser.title && WinActive("ahk_class TElWind"))
     Vim.SM.SetTitle(Vim.Browser.title)
   if (A_ThisLabel != "SMSetLinkFromClipboard")
     Vim.Browser.Clear()
@@ -303,13 +304,11 @@ return
 
 m::  ; co*m*ment current element "audio"
   Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.IsLearning()) {
+  ContinueLearning := false
+  if (Vim.SM.IsLearning())
     ContinueLearning := true
-  } else {
-    ContinueLearning := false
-  }
   send ^+p^a  ; open element parameter and choose everything
-  SendInput {raw}audio
+  send {text}audio
   send {enter}
   if (ContinueLearning)
     send {enter}
@@ -318,15 +317,17 @@ return
 d::  ; learn all elements with the comment "au*d*io"
   Vim.State.SetMode("Vim_Normal")
   send !{home}{esc 4}  ; escape potential hidden window
-  Vim.SM.PostMsg(169)  ; Comment registry
+  send !soc  ; Comment registry
+  ; Vim.SM.PostMsg(169)  ; somehow the window would disappear again
   WinWaitActive, ahk_class TRegistryForm,, 0
-  send a  ; search for audio
+  send {text}a  ; search for audio
   send !b  ; browse all elements
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10
   WinWaitActive, ahk_class TBrowser,, 0
-  send {AppsKey}co  ; outstanding
+  send {AppsKey}
+  send {text}co  ; outstanding
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox,, 10

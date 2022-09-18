@@ -22,7 +22,8 @@ class VimHTML {
     ; zzz in case you used f6 in SuperMemo to remove format before,
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
     ; Str := RegExReplace(Str, "is)( zzz| )style=(""|')BACKGROUND-IMAGE: url.*?(""|')")
-    Str := RegExReplace(Str, "( zzz| )style=(""|').*?(""|')")
+    Str := RegExReplace(Str, "( zzz| )style="".*?""")
+    Str := RegExReplace(Str, "( zzz| )style='.*?'")
     Str := RegExReplace(Str, "ism)<\/{0,1}(zzz|)font.*?>")
     Str := RegExReplace(Str, "i)<P[^>]?+>(<BR>)+<\/P>")
     ; Str := RegExReplace(Str, "is)<BR", "<P")

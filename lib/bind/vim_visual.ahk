@@ -110,7 +110,7 @@ c::
 Return
 
 *::
-  ReleaseKey("shift")
+  KeyWait shift
   WinClip.Snap(ClipData)
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^c
@@ -160,7 +160,7 @@ Return
 ; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
 InvertCase:
 ~::
-  ReleaseKey("shift")
+  KeyWait shift
   selection := clip()
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(selection) {
@@ -189,11 +189,11 @@ o::  ; move to other end of marked area; not perfect with line breaks
   if (SelectionLen < SelectionRightLen)
       || (SelectionLen == SelectionRightLen && StrLen(selection) < StrLen(SelectionRight)) {  ; moving point of selection is on the right
     send {right}
-    SendInput % "{shift down}{left " SelectionLen "}{shift up}"
+    send % "{shift down}{left " SelectionLen "}{shift up}"
   } else if (SelectionLen > SelectionRightLen)
              || (SelectionLen == SelectionRightLen && StrLen(selection) > StrLen(SelectionRight)) {
     send {left}
-    SendInput % "{shift down}{right " SelectionLen "}{shift up}"
+    send % "{shift down}{right " SelectionLen "}{shift up}"
   }
   WinClip.Restore(ClipData)
 return

@@ -9,7 +9,7 @@ u::Send,^z
 
 ; Change case
 ~::
-  ReleaseKey("shift")
+  KeyWait shift
   Send +{Right}
   Selection := Clip()
   if Selection is lower

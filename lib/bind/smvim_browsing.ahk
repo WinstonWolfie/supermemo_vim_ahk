@@ -60,7 +60,7 @@ Return
 ; Element window / browser
 #if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TBrowser")) && !Vim.SM.IsEditingText() and (Vim.State.g)
 +u::  ; gU: click source button
-	ReleaseKey("shift")
+	KeyWait shift
   if (WinActive("ahk_class TElWind")) {
     ControlClickWinCoord(555, 66)
   } else if (WinActive("ahk_class TBrowser")) {
@@ -107,13 +107,11 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::  ; reload
+  ContinueGrading := ContinueLearning := false
   if (Vim.SM.IsGrading()) {
     ContinueGrading := true
   } else if (Vim.SM.IsLearning()) {
     ContinueLearning := true
-  } else {
-    ContinueGrading := false
-    ContinueLearning := false
   }
   send !{home}
   if (ContinueLearning) {
@@ -123,10 +121,7 @@ r::  ; reload
     ControlTextWait("TBitBtn3", "Show answer")
     ControlSend, TBitBtn3, {enter}
   } else {
-    ; If your topmost element has something in it (e.g. an html component),
-    ; then the delay is necessary
-    ; 100ms is sufficient for the content in the home element to load
-    sleep 100
+    Vim.SM.WaitFileLoad()
     if (WinActive("ahk_class Internet Explorer_TridentDlgFrame"))  ; sometimes could happen on YT videos
       send {esc}
     send !{left}
@@ -334,12 +329,12 @@ SearchButtonSearch:
     pos := InStr(clip(), UserInput, true,, n)
     if (pos) {
       pos -= 1
-      SendInput {left}{right %pos%}
+      send {left}{right %pos%}
       input_len := StrLen(UserInput)
       if (RShiftState) {
-        SendInput {right %input_len%}
+        send {right %input_len%}
       } else if (CtrlState || AltState) {
-        SendInput +{right %input_len%}
+        send +{right %input_len%}
         if (CtrlState) {
           Vim.State.SetMode("Vim_VisualFirst")
         } else if (AltState) {

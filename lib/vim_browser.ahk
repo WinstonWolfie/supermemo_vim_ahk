@@ -26,8 +26,7 @@ class VimBrowser {
   ParseUrl(url) {
     url := RegExReplace(url, "#(.*)$")
     if (InStr(url, "youtube.com") && InStr(url, "v=")) {
-      RegExMatch(url, "v=\K[\w\-]+", YTLink)
-      url := "https://www.youtube.com/watch?v=" . YTLink
+      url := RegExReplace(url, "&.*")
     } else if (InStr(url, "bilibili.com/video")) {
       url := RegExReplace(url, "(\?|&).*")
     } else if (InStr(url, "netflix.com/watch")) {
@@ -77,22 +76,26 @@ class VimBrowser {
       this.source := "YouTube"
       this.title := StrReplace(this.title, " - YouTube")
       if (!SkipCopying) {
+        sleep 20
         global WinClip
         WinClip.Clear()
         send ^a^c
-        ClipWait 1
+        ClipWait 3
         send {esc}
-        this.date := this.MatchYTDate(Clipboard)
-        this.source .= ": " . this.MatchYTSource(Clipboard)
+        if (Clipboard) {
+          this.date := this.MatchYTDate(Clipboard)
+          this.source .= ": " . this.MatchYTSource(Clipboard)
+        }
       }
     } else if (InStr(this.Title, "_哔哩哔哩_bilibili")) {
       this.Source := "哔哩哔哩"
       this.Title := StrReplace(this.Title, "_哔哩哔哩_bilibili")
       if (!SkipCopying) {
+        sleep 20
         global WinClip
         WinClip.Clear()
         send ^a^c
-        ClipWait 1
+        ClipWait 3
         send {esc}
         this.date := this.MatchBLDate(Clipboard)
       }
@@ -128,16 +131,20 @@ class VimBrowser {
     return (TimeArray[1] + TimeArray[2] * 60 + TimeArray[3] * 3600)
   }
 
-  GetChromeUrl(hwnd:="") {
+  GetBrowserUrl(hwnd:="", browser:="chrome") {
     if (!hwnd)
       WinGet, hwnd, ID, A
-    accAddressBar := Acc_Get("Object", "4.1.1.2.1.2.5.3",, "ahk_id " . hwnd)
+    if (browser = "chrome" || WinActive("ahk_exe chrome.exe")) {
+      accAddressBar := Acc_Get("Object", "4.1.1.2.1.2.5.3",, "ahk_id " . hwnd)
+    } else if (browser = "edge" || WinActive("ahk_exe msedge.exe")) {
+      accAddressBar := Acc_Get("Object", "4.1.1.4.1.2.5.4",, "ahk_id " . hwnd)
+    }
     return (accAddressBar.accValue(0))
   }
 
   GetVidTime(site:="", NoRestore:=false) {
     if (!site) {
-      CurrUrl := this.GetChromeUrl()
+      CurrUrl := this.GetBrowserUrl()
       if (InStr(CurrUrl, "youtube.com")) {
         site := "yt"
       } else if (InStr(CurrUrl, "bilibili.com")) {
@@ -173,27 +180,19 @@ class VimBrowser {
     if (!NoRestore)
       WinClip.Snap(ClipData)
     WinClip.Clear()
-    CurrTick := A_TickCount
+    StartTime := A_TickCount
     send {f6}^l  ; for moronic websites that use ctrl+L as a shortcut (I'm looking at you, paratranz)
     while (!Clipboard) {
       send ^l^c
-      if (A_TickCount := CurrTick + 500)
+      ClipWait 0.1
+      if (A_TickCount - StartTime > 500)
         return
     }
-    this.FocusToText()
+    send {esc}
     Clipboard := this.url := this.ParseUrl(Clipboard)
     if (!NoRestore)
       WinClip.Restore(ClipData)
-    return (url)
-  }
-
-  FocusToText() {
-    send {f6}^l  ; for moronic websites that use ctrl+L as a shortcut (I'm looking at you, paratranz)
-    if (WinActive("ahk_exe msedge.exe")) {
-      send {f6}
-    } else {
-      send +{f6}
-    }
+    return url
   }
 
   MatchYTTime(text) {
@@ -207,7 +206,7 @@ class VimBrowser {
   }
 
   MatchYTDate(text) {
-    RegExMatch(text, " views\K.*", date)
+    RegExMatch(text, " views((Streamed live|Premiered) on )?\K.*", date)
     return date
   }
 

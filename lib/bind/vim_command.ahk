@@ -34,7 +34,7 @@ Return
 ; Commander, can be launched anywhere as long as the script is enabled
 #if (Vim.State.Vim.Enabled && !Vim.State.IsCurrentVimMode("Command"))
 ^`;::
-  ReleaseKey("ctrl")
+  KeyWait ctrl
   WinGet, hwnd, ID, A
   gui, VimCommander:Add, Text,, &Command:
   list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search"
@@ -260,7 +260,7 @@ DiscordGoLive:
 return
 
 CopyCurrentWindowsTitle:
-  Clipboard := WinGetTitle("A")
+  Clipboard := WinGetTitle()
   ToolTip("Copied " . Clipboard)
 return
 
@@ -425,11 +425,10 @@ return
 
 ReformatScriptComponent:
   WinClip.Snap(ClipData)
+  ContinueLearning := false
   if (Vim.SM.IsLearning()) {
     send !g
     ContinueLearning := true
-  } else {
-    ContinueLearning := false
   }
   Vim.SM.DeselectAllComponents()
   WinClip.Clear()
@@ -453,7 +452,8 @@ ReformatScriptComponent:
   } else {
     Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
   }
-  WinClip.SetText(Vim.Browser.url)
+  Clipboard := Vim.Browser.url
+  ClipWait 1
   ; Somehow PostMessage doesn't work reliably here
   send !{f10}fe  ; open registry editor
   gosub SMSetLinkFromClipboard

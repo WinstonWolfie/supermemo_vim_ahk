@@ -1,19 +1,19 @@
 ﻿; Editing text only
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
 +h::  ; move to top of screen
-  ReleaseKey("shift")  ; to avoid clicking becomes selecting
+  KeyWait shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickTop()
   send {shift}
 Return
 
 +m::  ; move to middle of screen
-  ReleaseKey("shift")  ; to avoid clicking becomes selecting
+  KeyWait shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickMid()
   send {shift}
 Return
 
 +l::  ; move to bottom of screen
-  ReleaseKey("shift")  ; to avoid clicking becomes selecting
+  KeyWait shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickBottom()
   send {shift}
 Return
@@ -25,7 +25,7 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
 +x::
 x::  ; open hyperlink in current caret position (Open in *n*ew window)
-  ReleaseKey("shift")
+  KeyWait shift
   Shift := InStr(A_ThisHotkey, "+")
   WinClip.Snap(ClipData)
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
@@ -72,11 +72,9 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
 return
 
 s::
-  if (Vim.SM.IsLearning()) {
+  ContinueLearning := false
+  if (Vim.SM.IsLearning())
     ContinueLearning := true
-  } else {
-    ContinueLearning := false
-  }
   WinGet, hwnd, ID, A
   send ^{f7}
   Vim.SM.SaveHTML()
@@ -88,7 +86,7 @@ s::
   if (ContinueLearning) {
     ControlSend, TBitBtn2, {enter}, ahk_class TElWind
   } else {
-    sleep 100
+    Vim.SM.WaitFileLoad()
     send !{left}
   }
   Vim.State.SetMode()

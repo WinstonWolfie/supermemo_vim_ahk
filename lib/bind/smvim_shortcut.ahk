@@ -1,6 +1,6 @@
 ﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
-  ReleaseKey("ctrl")
+  KeyWait ctrl
   Vim.SM.DeselectAllComponents()
   send q
   Vim.SM.WaitTextFocus()
@@ -10,7 +10,7 @@
     pos := InStr(clip(), "[...]")
     if pos {
       pos += 4
-      SendInput {left}{right %pos%}
+      send {left}{right %pos%}
     } else {
       ToolTip("Not found.")
       Vim.State.SetNormal()
@@ -49,7 +49,7 @@
 return
 
 ^!c::  ; change default *c*oncept group
-	ReleaseKey("ctrl")
+	KeyWait ctrl
   ControlClickWinCoord(723, 67)
   Vim.State.SetMode("Vim_Normal")
 Return
@@ -61,8 +61,8 @@ return
 
 >!>+bs::  ; for laptop
 >^>+bs::  ; for processing pending queue Advanced English 2018: delete element and keep learning
-  ReleaseKey("Ctrl")
-  ReleaseKey("Shift")
+  KeyWait ctrl
+  KeyWait shift
   WinGetTitle, CurrTitle, A
   send ^+{del}
   WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
@@ -78,8 +78,8 @@ return
 
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
-  ReleaseKey("Ctrl")
-  ReleaseKey("Shift")
+  KeyWait ctrl
+  KeyWait shift
   WinGetTitle, CurrTitle, A
   send ^+{enter}
   WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the collection?"
@@ -116,11 +116,9 @@ return
 ~^enter::SetDefaultKeyboard(0x0409)  ; english-US	
 
 ^!p::  ; convert to a *p*lain-text template
-  if (Vim.SM.IsLearning()) {
+  ContinueLearning := false
+  if (Vim.SM.IsLearning())
     ContinueLearning := true
-  } else {
-    ContinueLearning := false
-  }
   send ^+p!t  ; much faster than ^+m
   send {text}cl  ; my plain-text template name is classic
   send {enter}
@@ -135,33 +133,22 @@ SMCtrlN:
   if (InStr(Clipboard, "youtube.com")) {
     WinGetTitle, CurrTitle, A
     send ^n
-    WinWaitTitleChange(CurrTitle)
-    StartTime := A_TickCount
-    loop {
-      if (ControlGet("hwnd",, "Internet Explorer_Server1")) {
-        break
-      } else if (A_TickCount - StartTime > 8000) {
-        return
-      }
-    }
-    sleep 2000
-    ; Somehow PostMessage doesn't work reliably here
+    Vim.SM.WaitYTLoad()
     send !{f10}fe  ; open registry editor
     gosub SMSetLinkFromClipboard
-    send ^+m
-    WinWaitActive, ahk_class TRegistryForm,, 0
-    send {text}yo  ; YouTube
-    send {enter}
-    WinWaitActive, ahk_class TElWind,, 2
+    WinWaitActive, ahk_class TElWind,, 3
     send q
-    Vim.SM.WaitTextFocus()
-    Vim.SM.MoveAboveRef()
-    send !\\
-    WinWaitNotActive, ahk_class TElWind,, 0
-    if (!ErrorLevel)
-      send {enter}
-    WinWaitActive, ahk_class TElWind,, 0
-    send {esc}
+    Vim.SM.WaitTextFocus(2000)
+    send ^+{down}{bs}{esc}
+    Vim.SM.WaitTextExit()
+    send ^+p!t
+    send {text}y  ; YouTube
+    send {enter}
+    sleep 20
+    ; Wait for the YT component to exist
+    ControlWait("Internet Explorer_Server2", "ahk_class TElWind",,,, 2000)
+    sleep 700
+    send {enter}
   } else {
     send ^n
   }
@@ -171,7 +158,7 @@ return
 ; 1. Go to the element you want to link to and press ctrl+alt+g
 ; 2. Go to the element you want to have the hyperlink, select text and press ctrl+alt+k
 ^!g::
-  WinClip.Snap(ClipDataElemLink)
+  WinClip.Snap(ClipDataLinking)
   send ^g^c{esc}
   Vim.State.SetNormal()
 return
@@ -191,16 +178,16 @@ return
   WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2  ; a bit more delay since everybody knows how slow IE can be
   clip(link)
   send {enter}
-  if (ClipDataElemLink) {
-    WinClip.Restore(ClipDataElemLink)
-    ClipDataElemLink := ""
+  if (ClipDataLinking) {
+    WinClip.Restore(ClipDataLinking)
+    ClipDataLinking := ""
   }
   Vim.State.SetNormal()
   Vim.Caret.SwitchToSameWindow()  ; refresh caret
 return
 
 ^!l::
-  ReleaseKey("ctrl")
+  KeyWait ctrl
   KeyWait alt
   FormatTime, CurrTimeDisplay,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
@@ -210,7 +197,7 @@ return
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   If (Vim.HTML.ClipboardGet_HTML(Data)) {
-    ; To do: detect selection contents
+    ; To do: Detecting selection contents
     ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
       ; ToolTip("Please select text or image only.")
       ; WinClip.Restore(ClipData)
@@ -219,16 +206,17 @@ return
     if (!InStr(data, "<IMG")) {  ; text only
       send {bs}^{f7}  ; set read point
       WinGetText, VisibleText, ahk_class TElWind
-      RegExMatch(VisibleText, "(?<=\r\n)(.*?)(?= \(SuperMemo)", CollectionName)
-      RegExMatch(VisibleText, "(?<= \(SuperMemo 18: )(.*)(?=\)\r\n)", CollectionPath)
+      CollectionName := Vim.SM.GetCollectionName(VisibleText)
+      CollectionPath := Vim.SM.GetCollectionPath(VisibleText)
       LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
       LatexFormula := Enc_Uri(LatexFormula)
       LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
-      LatexFolderPath := CollectionPath . CollectionName . "\LaTeX"
+      LatexFolderPath := CollectionPath . CollectionName . "\elements\LaTeX"
       LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
+      InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
       SetTimer, DownloadLatex, -1
       FileCreateDir % LatexFolderPath
-      ImgHTML = <img alt="%Clipboard%" src="%LatexPath%">
+      ImgHTML = <img alt="%Clipboard%" src="%InsideHTMLPath%">
       clip(ImgHTML, true, true)
       send ^+1
       Vim.SM.SaveHTML()
@@ -253,7 +241,7 @@ return
         FileDelete % HTMLPath
         FileAppend, % NewHTML, % HTMLPath
         send !{home}
-        sleep 100
+        Vim.SM.WaitFileLoad()
         send !{left}
       } else {  ; first time conversion
         NewHTML := HTML . "`n" . fuck_lexicon
@@ -272,6 +260,7 @@ return
     } else {  ; image only
       RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", LatexFormula)  ; getting formula from alt=""
       RegExMatch(data, "src=""file:\/\/\/\K[^""]+", LatexPath)  ; getting path from src=""
+      LatexPath := StrReplace(LatexPath, "[PrimaryStorage]", Vim.SM.GetCollectionPath() . "\elements\")
       if (InStr(LatexFormula, "{\displaystyle")) {  ; from wikipedia, wikibooks, etc
         LatexFormula := StrReplace(LatexFormula, "{\displaystyle")
         LatexFormula := RegExReplace(LatexFormula, "}$")
@@ -486,6 +475,8 @@ return
       send {esc 2}
       EditRef := true
     }
+    if (Vim.SM.GetCollectionName() = "music" && InStr(A_ThisHotkey, "``"))
+      replacement := sec := ""
     if (!EditRef) {  ; time in script component
       if (RegExMatch(script, match)) {
         ControlSetText, TMemo1, % RegExReplace(script, match, replacement)

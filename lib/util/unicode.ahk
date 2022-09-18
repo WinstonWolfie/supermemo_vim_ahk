@@ -1607,17 +1607,17 @@ Suspend
 
 #if EmacsCase() && EmacsEnabled
 ::\lbrack::
-SendInput ^x8{Enter}5b{Enter}
+send ^x8{Enter}5b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lbrack::
-SendInput ^+u5b{Enter}
+send ^+u5b{Enter}
 return
 
 #if OtherCase()
 ::\lbrack::
-SendInput {U+005B}
+send {U+005B}
 return
 
 
@@ -1625,17 +1625,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\\::
-SendInput ^x8{Enter}5c{Enter}
+send ^x8{Enter}5c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\\::
-SendInput ^+u5c{Enter}
+send ^+u5c{Enter}
 return
 
 #if OtherCase()
 ::\\::
-SendInput {U+005C}
+send {U+005C}
 return
 
 
@@ -1643,17 +1643,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\backslash::
-SendInput ^x8{Enter}5c{Enter}
+send ^x8{Enter}5c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\backslash::
-SendInput ^+u5c{Enter}
+send ^+u5c{Enter}
 return
 
 #if OtherCase()
 ::\backslash::
-SendInput {U+005C}
+send {U+005C}
 return
 
 
@@ -1661,17 +1661,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rbrack::
-SendInput ^x8{Enter}5d{Enter}
+send ^x8{Enter}5d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rbrack::
-SendInput ^+u5d{Enter}
+send ^+u5d{Enter}
 return
 
 #if OtherCase()
 ::\rbrack::
-SendInput {U+005D}
+send {U+005D}
 return
 
 
@@ -1679,17 +1679,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lbrace::
-SendInput ^x8{Enter}7b{Enter}
+send ^x8{Enter}7b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lbrace::
-SendInput ^+u7b{Enter}
+send ^+u7b{Enter}
 return
 
 #if OtherCase()
 ::\lbrace::
-SendInput {U+007B}
+send {U+007B}
 return
 
 
@@ -1697,17 +1697,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vert::
-SendInput ^x8{Enter}7c{Enter}
+send ^x8{Enter}7c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vert::
-SendInput ^+u7c{Enter}
+send ^+u7c{Enter}
 return
 
 #if OtherCase()
 ::\vert::
-SendInput {U+007C}
+send {U+007C}
 return
 
 
@@ -1715,17 +1715,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rbrace::
-SendInput ^x8{Enter}7d{Enter}
+send ^x8{Enter}7d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rbrace::
-SendInput ^+u7d{Enter}
+send ^+u7d{Enter}
 return
 
 #if OtherCase()
 ::\rbrace::
-SendInput {U+007D}
+send {U+007D}
 return
 
 
@@ -1733,17 +1733,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::!``::
-SendInput ^x8{Enter}a1{Enter}
+send ^x8{Enter}a1{Enter}
 return
 
 #if GtkApplicationCase()
 ::!``::
-SendInput ^+ua1{Enter}
+send ^+ua1{Enter}
 return
 
 #if OtherCase()
 ::!``::
-SendInput {U+00A1}
+send {U+00A1}
 return
 
 
@@ -1751,17 +1751,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cent::
-SendInput ^x8{Enter}a2{Enter}
+send ^x8{Enter}a2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cent::
-SendInput ^+ua2{Enter}
+send ^+ua2{Enter}
 return
 
 #if OtherCase()
 ::\cent::
-SendInput {U+00A2}
+send {U+00A2}
 return
 
 
@@ -1769,17 +1769,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\pound::
-SendInput ^x8{Enter}a3{Enter}
+send ^x8{Enter}a3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\pound::
-SendInput ^+ua3{Enter}
+send ^+ua3{Enter}
 return
 
 #if OtherCase()
 ::\pound::
-SendInput {U+00A3}
+send {U+00A3}
 return
 
 
@@ -1787,17 +1787,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\pounds::
-SendInput ^x8{Enter}a3{Enter}
+send ^x8{Enter}a3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\pounds::
-SendInput ^+ua3{Enter}
+send ^+ua3{Enter}
 return
 
 #if OtherCase()
 ::\pounds::
-SendInput {U+00A3}
+send {U+00A3}
 return
 
 
@@ -1805,17 +1805,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\currency::
-SendInput ^x8{Enter}a4{Enter}
+send ^x8{Enter}a4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\currency::
-SendInput ^+ua4{Enter}
+send ^+ua4{Enter}
 return
 
 #if OtherCase()
 ::\currency::
-SendInput {U+00A4}
+send {U+00A4}
 return
 
 
@@ -1823,17 +1823,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\yen::
-SendInput ^x8{Enter}a5{Enter}
+send ^x8{Enter}a5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\yen::
-SendInput ^+ua5{Enter}
+send ^+ua5{Enter}
 return
 
 #if OtherCase()
 ::\yen::
-SendInput {U+00A5}
+send {U+00A5}
 return
 
 
@@ -1841,17 +1841,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\S::
-SendInput ^x8{Enter}a7{Enter}
+send ^x8{Enter}a7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\S::
-SendInput ^+ua7{Enter}
+send ^+ua7{Enter}
 return
 
 #if OtherCase()
 ::\S::
-SendInput {U+00A7}
+send {U+00A7}
 return
 
 
@@ -1859,17 +1859,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\section::
-SendInput ^x8{Enter}a7{Enter}
+send ^x8{Enter}a7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\section::
-SendInput ^+ua7{Enter}
+send ^+ua7{Enter}
 return
 
 #if OtherCase()
 ::\section::
-SendInput {U+00A7}
+send {U+00A7}
 return
 
 
@@ -1877,17 +1877,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{}::
-SendInput ^x8{Enter}a8{Enter}
+send ^x8{Enter}a8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{}::
-SendInput ^+ua8{Enter}
+send ^+ua8{Enter}
 return
 
 #if OtherCase()
 ::\"{}::
-SendInput {U+00A8}
+send {U+00A8}
 return
 
 
@@ -1895,17 +1895,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\copyright::
-SendInput ^x8{Enter}a9{Enter}
+send ^x8{Enter}a9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\copyright::
-SendInput ^+ua9{Enter}
+send ^+ua9{Enter}
 return
 
 #if OtherCase()
 ::\copyright::
-SendInput {U+00A9}
+send {U+00A9}
 return
 
 
@@ -1913,17 +1913,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$^a$::
-SendInput ^x8{Enter}aa{Enter}
+send ^x8{Enter}aa{Enter}
 return
 
 #if GtkApplicationCase()
 ::$^a$::
-SendInput ^+uaa{Enter}
+send ^+uaa{Enter}
 return
 
 #if OtherCase()
 ::$^a$::
-SendInput {U+00AA}
+send {U+00AA}
 return
 
 
@@ -1931,17 +1931,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ordfeminine::
-SendInput ^x8{Enter}aa{Enter}
+send ^x8{Enter}aa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ordfeminine::
-SendInput ^+uaa{Enter}
+send ^+uaa{Enter}
 return
 
 #if OtherCase()
 ::\ordfeminine::
-SendInput {U+00AA}
+send {U+00AA}
 return
 
 
@@ -1949,17 +1949,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"<::
-SendInput ^x8{Enter}ab{Enter}
+send ^x8{Enter}ab{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"<::
-SendInput ^+uab{Enter}
+send ^+uab{Enter}
 return
 
 #if OtherCase()
 ::\"<::
-SendInput {U+00AB}
+send {U+00AB}
 return
 
 
@@ -1967,17 +1967,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\flqq::
-SendInput ^x8{Enter}ab{Enter}
+send ^x8{Enter}ab{Enter}
 return
 
 #if GtkApplicationCase()
 ::\flqq::
-SendInput ^+uab{Enter}
+send ^+uab{Enter}
 return
 
 #if OtherCase()
 ::\flqq::
-SendInput {U+00AB}
+send {U+00AB}
 return
 
 
@@ -1985,17 +1985,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lnot::
-SendInput ^x8{Enter}ac{Enter}
+send ^x8{Enter}ac{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lnot::
-SendInput ^+uac{Enter}
+send ^+uac{Enter}
 return
 
 #if OtherCase()
 ::\lnot::
-SendInput {U+00AC}
+send {U+00AC}
 return
 
 
@@ -2003,17 +2003,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\neg::
-SendInput ^x8{Enter}ac{Enter}
+send ^x8{Enter}ac{Enter}
 return
 
 #if GtkApplicationCase()
 ::\neg::
-SendInput ^+uac{Enter}
+send ^+uac{Enter}
 return
 
 #if OtherCase()
 ::\neg::
-SendInput {U+00AC}
+send {U+00AC}
 return
 
 
@@ -2021,17 +2021,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\-::
-SendInput ^x8{Enter}ad{Enter}
+send ^x8{Enter}ad{Enter}
 return
 
 #if GtkApplicationCase()
 ::\-::
-SendInput ^+uad{Enter}
+send ^+uad{Enter}
 return
 
 #if OtherCase()
 ::\-::
-SendInput {U+00AD}
+send {U+00AD}
 return
 
 
@@ -2039,17 +2039,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circledR::
-SendInput ^x8{Enter}ae{Enter}
+send ^x8{Enter}ae{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circledR::
-SendInput ^+uae{Enter}
+send ^+uae{Enter}
 return
 
 #if OtherCase()
 ::\circledR::
-SendInput {U+00AE}
+send {U+00AE}
 return
 
 
@@ -2057,17 +2057,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\registered::
-SendInput ^x8{Enter}ae{Enter}
+send ^x8{Enter}ae{Enter}
 return
 
 #if GtkApplicationCase()
 ::\registered::
-SendInput ^+uae{Enter}
+send ^+uae{Enter}
 return
 
 #if OtherCase()
 ::\registered::
-SendInput {U+00AE}
+send {U+00AE}
 return
 
 
@@ -2075,17 +2075,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={}::
-SendInput ^x8{Enter}af{Enter}
+send ^x8{Enter}af{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={}::
-SendInput ^+uaf{Enter}
+send ^+uaf{Enter}
 return
 
 #if OtherCase()
 ::\={}::
-SendInput {U+00AF}
+send {U+00AF}
 return
 
 
@@ -2093,17 +2093,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\degree::
-SendInput ^x8{Enter}b0{Enter}
+send ^x8{Enter}b0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\degree::
-SendInput ^+ub0{Enter}
+send ^+ub0{Enter}
 return
 
 #if OtherCase()
 ::\degree::
-SendInput {U+00B0}
+send {U+00B0}
 return
 
 
@@ -2111,17 +2111,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$\pm$::
-SendInput ^x8{Enter}b1{Enter}
+send ^x8{Enter}b1{Enter}
 return
 
 #if GtkApplicationCase()
 ::$\pm$::
-SendInput ^+ub1{Enter}
+send ^+ub1{Enter}
 return
 
 #if OtherCase()
 ::$\pm$::
-SendInput {U+00B1}
+send {U+00B1}
 return
 
 
@@ -2129,17 +2129,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\pm::
-SendInput ^x8{Enter}b1{Enter}
+send ^x8{Enter}b1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\pm::
-SendInput ^+ub1{Enter}
+send ^+ub1{Enter}
 return
 
 #if OtherCase()
 ::\pm::
-SendInput {U+00B1}
+send {U+00B1}
 return
 
 
@@ -2147,17 +2147,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$^2$::
-SendInput ^x8{Enter}b2{Enter}
+send ^x8{Enter}b2{Enter}
 return
 
 #if GtkApplicationCase()
 ::$^2$::
-SendInput ^+ub2{Enter}
+send ^+ub2{Enter}
 return
 
 #if OtherCase()
 ::$^2$::
-SendInput {U+00B2}
+send {U+00B2}
 return
 
 
@@ -2165,17 +2165,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^2::
-SendInput ^x8{Enter}b2{Enter}
+send ^x8{Enter}b2{Enter}
 return
 
 #if GtkApplicationCase()
 ::^2::
-SendInput ^+ub2{Enter}
+send ^+ub2{Enter}
 return
 
 #if OtherCase()
 ::^2::
-SendInput {U+00B2}
+send {U+00B2}
 return
 
 
@@ -2183,17 +2183,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$^3$::
-SendInput ^x8{Enter}b3{Enter}
+send ^x8{Enter}b3{Enter}
 return
 
 #if GtkApplicationCase()
 ::$^3$::
-SendInput ^+ub3{Enter}
+send ^+ub3{Enter}
 return
 
 #if OtherCase()
 ::$^3$::
-SendInput {U+00B3}
+send {U+00B3}
 return
 
 
@@ -2201,17 +2201,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^3::
-SendInput ^x8{Enter}b3{Enter}
+send ^x8{Enter}b3{Enter}
 return
 
 #if GtkApplicationCase()
 ::^3::
-SendInput ^+ub3{Enter}
+send ^+ub3{Enter}
 return
 
 #if OtherCase()
 ::^3::
-SendInput {U+00B3}
+send {U+00B3}
 return
 
 
@@ -2219,17 +2219,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{}::
-SendInput ^x8{Enter}b4{Enter}
+send ^x8{Enter}b4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{}::
-SendInput ^+ub4{Enter}
+send ^+ub4{Enter}
 return
 
 #if OtherCase()
 ::\'{}::
-SendInput {U+00B4}
+send {U+00B4}
 return
 
 
@@ -2237,17 +2237,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\micro::
-SendInput ^x8{Enter}b5{Enter}
+send ^x8{Enter}b5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\micro::
-SendInput ^+ub5{Enter}
+send ^+ub5{Enter}
 return
 
 #if OtherCase()
 ::\micro::
-SendInput {U+00B5}
+send {U+00B5}
 return
 
 
@@ -2255,17 +2255,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textmu::
-SendInput ^x8{Enter}b5{Enter}
+send ^x8{Enter}b5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textmu::
-SendInput ^+ub5{Enter}
+send ^+ub5{Enter}
 return
 
 #if OtherCase()
 ::\textmu::
-SendInput {U+00B5}
+send {U+00B5}
 return
 
 
@@ -2273,17 +2273,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\P::
-SendInput ^x8{Enter}b6{Enter}
+send ^x8{Enter}b6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\P::
-SendInput ^+ub6{Enter}
+send ^+ub6{Enter}
 return
 
 #if OtherCase()
 ::\P::
-SendInput {U+00B6}
+send {U+00B6}
 return
 
 
@@ -2291,17 +2291,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\paragraph::
-SendInput ^x8{Enter}b6{Enter}
+send ^x8{Enter}b6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\paragraph::
-SendInput ^+ub6{Enter}
+send ^+ub6{Enter}
 return
 
 #if OtherCase()
 ::\paragraph::
-SendInput {U+00B6}
+send {U+00B6}
 return
 
 
@@ -2309,17 +2309,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\pilcrow::
-SendInput ^x8{Enter}b6{Enter}
+send ^x8{Enter}b6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\pilcrow::
-SendInput ^+ub6{Enter}
+send ^+ub6{Enter}
 return
 
 #if OtherCase()
 ::\pilcrow::
-SendInput {U+00B6}
+send {U+00B6}
 return
 
 
@@ -2327,17 +2327,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$\cdot$::
-SendInput ^x8{Enter}b7{Enter}
+send ^x8{Enter}b7{Enter}
 return
 
 #if GtkApplicationCase()
 ::$\cdot$::
-SendInput ^+ub7{Enter}
+send ^+ub7{Enter}
 return
 
 #if OtherCase()
 ::$\cdot$::
-SendInput {U+00B7}
+send {U+00B7}
 return
 
 
@@ -2345,17 +2345,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cdot::
-SendInput ^x8{Enter}b7{Enter}
+send ^x8{Enter}b7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cdot::
-SendInput ^+ub7{Enter}
+send ^+ub7{Enter}
 return
 
 #if OtherCase()
 ::\cdot::
-SendInput {U+00B7}
+send {U+00B7}
 return
 
 
@@ -2363,17 +2363,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\centerdot::
-SendInput ^x8{Enter}b7{Enter}
+send ^x8{Enter}b7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\centerdot::
-SendInput ^+ub7{Enter}
+send ^+ub7{Enter}
 return
 
 #if OtherCase()
 ::\centerdot::
-SendInput {U+00B7}
+send {U+00B7}
 return
 
 
@@ -2381,17 +2381,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{}::
-SendInput ^x8{Enter}b8{Enter}
+send ^x8{Enter}b8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{}::
-SendInput ^+ub8{Enter}
+send ^+ub8{Enter}
 return
 
 #if OtherCase()
 ::\c{}::
-SendInput {U+00B8}
+send {U+00B8}
 return
 
 
@@ -2399,17 +2399,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$^1$::
-SendInput ^x8{Enter}b9{Enter}
+send ^x8{Enter}b9{Enter}
 return
 
 #if GtkApplicationCase()
 ::$^1$::
-SendInput ^+ub9{Enter}
+send ^+ub9{Enter}
 return
 
 #if OtherCase()
 ::$^1$::
-SendInput {U+00B9}
+send {U+00B9}
 return
 
 
@@ -2417,17 +2417,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^1::
-SendInput ^x8{Enter}b9{Enter}
+send ^x8{Enter}b9{Enter}
 return
 
 #if GtkApplicationCase()
 ::^1::
-SendInput ^+ub9{Enter}
+send ^+ub9{Enter}
 return
 
 #if OtherCase()
 ::^1::
-SendInput {U+00B9}
+send {U+00B9}
 return
 
 
@@ -2435,17 +2435,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$^o$::
-SendInput ^x8{Enter}ba{Enter}
+send ^x8{Enter}ba{Enter}
 return
 
 #if GtkApplicationCase()
 ::$^o$::
-SendInput ^+uba{Enter}
+send ^+uba{Enter}
 return
 
 #if OtherCase()
 ::$^o$::
-SendInput {U+00BA}
+send {U+00BA}
 return
 
 
@@ -2453,17 +2453,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ordmasculine::
-SendInput ^x8{Enter}ba{Enter}
+send ^x8{Enter}ba{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ordmasculine::
-SendInput ^+uba{Enter}
+send ^+uba{Enter}
 return
 
 #if OtherCase()
 ::\ordmasculine::
-SendInput {U+00BA}
+send {U+00BA}
 return
 
 
@@ -2471,17 +2471,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^o_::
-SendInput ^x8{Enter}ba{Enter}
+send ^x8{Enter}ba{Enter}
 return
 
 #if GtkApplicationCase()
 ::^o_::
-SendInput ^+uba{Enter}
+send ^+uba{Enter}
 return
 
 #if OtherCase()
 ::^o_::
-SendInput {U+00BA}
+send {U+00BA}
 return
 
 
@@ -2489,17 +2489,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\">::
-SendInput ^x8{Enter}bb{Enter}
+send ^x8{Enter}bb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\">::
-SendInput ^+ubb{Enter}
+send ^+ubb{Enter}
 return
 
 #if OtherCase()
 ::\">::
-SendInput {U+00BB}
+send {U+00BB}
 return
 
 
@@ -2507,17 +2507,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frqq::
-SendInput ^x8{Enter}bb{Enter}
+send ^x8{Enter}bb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frqq::
-SendInput ^+ubb{Enter}
+send ^+ubb{Enter}
 return
 
 #if OtherCase()
 ::\frqq::
-SendInput {U+00BB}
+send {U+00BB}
 return
 
 
@@ -2525,17 +2525,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac14::
-SendInput ^x8{Enter}bc{Enter}
+send ^x8{Enter}bc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac14::
-SendInput ^+ubc{Enter}
+send ^+ubc{Enter}
 return
 
 #if OtherCase()
 ::\frac14::
-SendInput {U+00BC}
+send {U+00BC}
 return
 
 
@@ -2543,17 +2543,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac12::
-SendInput ^x8{Enter}bd{Enter}
+send ^x8{Enter}bd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac12::
-SendInput ^+ubd{Enter}
+send ^+ubd{Enter}
 return
 
 #if OtherCase()
 ::\frac12::
-SendInput {U+00BD}
+send {U+00BD}
 return
 
 
@@ -2561,17 +2561,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac34::
-SendInput ^x8{Enter}be{Enter}
+send ^x8{Enter}be{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac34::
-SendInput ^+ube{Enter}
+send ^+ube{Enter}
 return
 
 #if OtherCase()
 ::\frac34::
-SendInput {U+00BE}
+send {U+00BE}
 return
 
 
@@ -2579,17 +2579,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::?``::
-SendInput ^x8{Enter}bf{Enter}
+send ^x8{Enter}bf{Enter}
 return
 
 #if GtkApplicationCase()
 ::?``::
-SendInput ^+ubf{Enter}
+send ^+ubf{Enter}
 return
 
 #if OtherCase()
 ::?``::
-SendInput {U+00BF}
+send {U+00BF}
 return
 
 
@@ -2597,17 +2597,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``A::
-SendInput ^x8{Enter}c0{Enter}
+send ^x8{Enter}c0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``A::
-SendInput ^+uc0{Enter}
+send ^+uc0{Enter}
 return
 
 #if OtherCase()
 ::\``A::
-SendInput {U+00C0}
+send {U+00C0}
 return
 
 
@@ -2615,17 +2615,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{A}::
-SendInput ^x8{Enter}c0{Enter}
+send ^x8{Enter}c0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{A}::
-SendInput ^+uc0{Enter}
+send ^+uc0{Enter}
 return
 
 #if OtherCase()
 ::\``{A}::
-SendInput {U+00C0}
+send {U+00C0}
 return
 
 
@@ -2633,17 +2633,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'A::
-SendInput ^x8{Enter}c1{Enter}
+send ^x8{Enter}c1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'A::
-SendInput ^+uc1{Enter}
+send ^+uc1{Enter}
 return
 
 #if OtherCase()
 ::\'A::
-SendInput {U+00C1}
+send {U+00C1}
 return
 
 
@@ -2651,17 +2651,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{A}::
-SendInput ^x8{Enter}c1{Enter}
+send ^x8{Enter}c1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{A}::
-SendInput ^+uc1{Enter}
+send ^+uc1{Enter}
 return
 
 #if OtherCase()
 ::\'{A}::
-SendInput {U+00C1}
+send {U+00C1}
 return
 
 
@@ -2669,17 +2669,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^A::
-SendInput ^x8{Enter}c2{Enter}
+send ^x8{Enter}c2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^A::
-SendInput ^+uc2{Enter}
+send ^+uc2{Enter}
 return
 
 #if OtherCase()
 ::\^A::
-SendInput {U+00C2}
+send {U+00C2}
 return
 
 
@@ -2687,17 +2687,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{A}::
-SendInput ^x8{Enter}c2{Enter}
+send ^x8{Enter}c2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{A}::
-SendInput ^+uc2{Enter}
+send ^+uc2{Enter}
 return
 
 #if OtherCase()
 ::\^{A}::
-SendInput {U+00C2}
+send {U+00C2}
 return
 
 
@@ -2705,17 +2705,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~A::
-SendInput ^x8{Enter}c3{Enter}
+send ^x8{Enter}c3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~A::
-SendInput ^+uc3{Enter}
+send ^+uc3{Enter}
 return
 
 #if OtherCase()
 ::\~A::
-SendInput {U+00C3}
+send {U+00C3}
 return
 
 
@@ -2723,17 +2723,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{A}::
-SendInput ^x8{Enter}c3{Enter}
+send ^x8{Enter}c3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{A}::
-SendInput ^+uc3{Enter}
+send ^+uc3{Enter}
 return
 
 #if OtherCase()
 ::\~{A}::
-SendInput {U+00C3}
+send {U+00C3}
 return
 
 
@@ -2741,17 +2741,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"A::
-SendInput ^x8{Enter}c4{Enter}
+send ^x8{Enter}c4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"A::
-SendInput ^+uc4{Enter}
+send ^+uc4{Enter}
 return
 
 #if OtherCase()
 ::\"A::
-SendInput {U+00C4}
+send {U+00C4}
 return
 
 
@@ -2759,17 +2759,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{A}::
-SendInput ^x8{Enter}c4{Enter}
+send ^x8{Enter}c4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{A}::
-SendInput ^+uc4{Enter}
+send ^+uc4{Enter}
 return
 
 #if OtherCase()
 ::\"{A}::
-SendInput {U+00C4}
+send {U+00C4}
 return
 
 
@@ -2777,17 +2777,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\AA::
-SendInput ^x8{Enter}c5{Enter}
+send ^x8{Enter}c5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\AA::
-SendInput ^+uc5{Enter}
+send ^+uc5{Enter}
 return
 
 #if OtherCase()
 ::\AA::
-SendInput {U+00C5}
+send {U+00C5}
 return
 
 
@@ -2795,17 +2795,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\AE::
-SendInput ^x8{Enter}c6{Enter}
+send ^x8{Enter}c6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\AE::
-SendInput ^+uc6{Enter}
+send ^+uc6{Enter}
 return
 
 #if OtherCase()
 ::\AE::
-SendInput {U+00C6}
+send {U+00C6}
 return
 
 
@@ -2813,17 +2813,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cC::
-SendInput ^x8{Enter}c7{Enter}
+send ^x8{Enter}c7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cC::
-SendInput ^+uc7{Enter}
+send ^+uc7{Enter}
 return
 
 #if OtherCase()
 ::\cC::
-SendInput {U+00C7}
+send {U+00C7}
 return
 
 
@@ -2831,17 +2831,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{C}::
-SendInput ^x8{Enter}c7{Enter}
+send ^x8{Enter}c7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{C}::
-SendInput ^+uc7{Enter}
+send ^+uc7{Enter}
 return
 
 #if OtherCase()
 ::\c{C}::
-SendInput {U+00C7}
+send {U+00C7}
 return
 
 
@@ -2849,17 +2849,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``E::
-SendInput ^x8{Enter}c8{Enter}
+send ^x8{Enter}c8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``E::
-SendInput ^+uc8{Enter}
+send ^+uc8{Enter}
 return
 
 #if OtherCase()
 ::\``E::
-SendInput {U+00C8}
+send {U+00C8}
 return
 
 
@@ -2867,17 +2867,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{E}::
-SendInput ^x8{Enter}c8{Enter}
+send ^x8{Enter}c8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{E}::
-SendInput ^+uc8{Enter}
+send ^+uc8{Enter}
 return
 
 #if OtherCase()
 ::\``{E}::
-SendInput {U+00C8}
+send {U+00C8}
 return
 
 
@@ -2885,17 +2885,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'E::
-SendInput ^x8{Enter}c9{Enter}
+send ^x8{Enter}c9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'E::
-SendInput ^+uc9{Enter}
+send ^+uc9{Enter}
 return
 
 #if OtherCase()
 ::\'E::
-SendInput {U+00C9}
+send {U+00C9}
 return
 
 
@@ -2903,17 +2903,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{E}::
-SendInput ^x8{Enter}c9{Enter}
+send ^x8{Enter}c9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{E}::
-SendInput ^+uc9{Enter}
+send ^+uc9{Enter}
 return
 
 #if OtherCase()
 ::\'{E}::
-SendInput {U+00C9}
+send {U+00C9}
 return
 
 
@@ -2921,17 +2921,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^E::
-SendInput ^x8{Enter}ca{Enter}
+send ^x8{Enter}ca{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^E::
-SendInput ^+uca{Enter}
+send ^+uca{Enter}
 return
 
 #if OtherCase()
 ::\^E::
-SendInput {U+00CA}
+send {U+00CA}
 return
 
 
@@ -2939,17 +2939,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{E}::
-SendInput ^x8{Enter}ca{Enter}
+send ^x8{Enter}ca{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{E}::
-SendInput ^+uca{Enter}
+send ^+uca{Enter}
 return
 
 #if OtherCase()
 ::\^{E}::
-SendInput {U+00CA}
+send {U+00CA}
 return
 
 
@@ -2957,17 +2957,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"E::
-SendInput ^x8{Enter}cb{Enter}
+send ^x8{Enter}cb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"E::
-SendInput ^+ucb{Enter}
+send ^+ucb{Enter}
 return
 
 #if OtherCase()
 ::\"E::
-SendInput {U+00CB}
+send {U+00CB}
 return
 
 
@@ -2975,17 +2975,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{E}::
-SendInput ^x8{Enter}cb{Enter}
+send ^x8{Enter}cb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{E}::
-SendInput ^+ucb{Enter}
+send ^+ucb{Enter}
 return
 
 #if OtherCase()
 ::\"{E}::
-SendInput {U+00CB}
+send {U+00CB}
 return
 
 
@@ -2993,17 +2993,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``I::
-SendInput ^x8{Enter}cc{Enter}
+send ^x8{Enter}cc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``I::
-SendInput ^+ucc{Enter}
+send ^+ucc{Enter}
 return
 
 #if OtherCase()
 ::\``I::
-SendInput {U+00CC}
+send {U+00CC}
 return
 
 
@@ -3011,17 +3011,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{I}::
-SendInput ^x8{Enter}cc{Enter}
+send ^x8{Enter}cc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{I}::
-SendInput ^+ucc{Enter}
+send ^+ucc{Enter}
 return
 
 #if OtherCase()
 ::\``{I}::
-SendInput {U+00CC}
+send {U+00CC}
 return
 
 
@@ -3029,17 +3029,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'I::
-SendInput ^x8{Enter}cd{Enter}
+send ^x8{Enter}cd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'I::
-SendInput ^+ucd{Enter}
+send ^+ucd{Enter}
 return
 
 #if OtherCase()
 ::\'I::
-SendInput {U+00CD}
+send {U+00CD}
 return
 
 
@@ -3047,17 +3047,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{I}::
-SendInput ^x8{Enter}cd{Enter}
+send ^x8{Enter}cd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{I}::
-SendInput ^+ucd{Enter}
+send ^+ucd{Enter}
 return
 
 #if OtherCase()
 ::\'{I}::
-SendInput {U+00CD}
+send {U+00CD}
 return
 
 
@@ -3065,17 +3065,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^I::
-SendInput ^x8{Enter}ce{Enter}
+send ^x8{Enter}ce{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^I::
-SendInput ^+uce{Enter}
+send ^+uce{Enter}
 return
 
 #if OtherCase()
 ::\^I::
-SendInput {U+00CE}
+send {U+00CE}
 return
 
 
@@ -3083,17 +3083,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{I}::
-SendInput ^x8{Enter}ce{Enter}
+send ^x8{Enter}ce{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{I}::
-SendInput ^+uce{Enter}
+send ^+uce{Enter}
 return
 
 #if OtherCase()
 ::\^{I}::
-SendInput {U+00CE}
+send {U+00CE}
 return
 
 
@@ -3101,17 +3101,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"I::
-SendInput ^x8{Enter}cf{Enter}
+send ^x8{Enter}cf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"I::
-SendInput ^+ucf{Enter}
+send ^+ucf{Enter}
 return
 
 #if OtherCase()
 ::\"I::
-SendInput {U+00CF}
+send {U+00CF}
 return
 
 
@@ -3119,17 +3119,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{I}::
-SendInput ^x8{Enter}cf{Enter}
+send ^x8{Enter}cf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{I}::
-SendInput ^+ucf{Enter}
+send ^+ucf{Enter}
 return
 
 #if OtherCase()
 ::\"{I}::
-SendInput {U+00CF}
+send {U+00CF}
 return
 
 
@@ -3137,17 +3137,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\DH::
-SendInput ^x8{Enter}d0{Enter}
+send ^x8{Enter}d0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\DH::
-SendInput ^+ud0{Enter}
+send ^+ud0{Enter}
 return
 
 #if OtherCase()
 ::\DH::
-SendInput {U+00D0}
+send {U+00D0}
 return
 
 
@@ -3155,17 +3155,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~N::
-SendInput ^x8{Enter}d1{Enter}
+send ^x8{Enter}d1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~N::
-SendInput ^+ud1{Enter}
+send ^+ud1{Enter}
 return
 
 #if OtherCase()
 ::\~N::
-SendInput {U+00D1}
+send {U+00D1}
 return
 
 
@@ -3173,17 +3173,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{N}::
-SendInput ^x8{Enter}d1{Enter}
+send ^x8{Enter}d1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{N}::
-SendInput ^+ud1{Enter}
+send ^+ud1{Enter}
 return
 
 #if OtherCase()
 ::\~{N}::
-SendInput {U+00D1}
+send {U+00D1}
 return
 
 
@@ -3191,17 +3191,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``O::
-SendInput ^x8{Enter}d2{Enter}
+send ^x8{Enter}d2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``O::
-SendInput ^+ud2{Enter}
+send ^+ud2{Enter}
 return
 
 #if OtherCase()
 ::\``O::
-SendInput {U+00D2}
+send {U+00D2}
 return
 
 
@@ -3209,17 +3209,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{O}::
-SendInput ^x8{Enter}d2{Enter}
+send ^x8{Enter}d2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{O}::
-SendInput ^+ud2{Enter}
+send ^+ud2{Enter}
 return
 
 #if OtherCase()
 ::\``{O}::
-SendInput {U+00D2}
+send {U+00D2}
 return
 
 
@@ -3227,17 +3227,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'O::
-SendInput ^x8{Enter}d3{Enter}
+send ^x8{Enter}d3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'O::
-SendInput ^+ud3{Enter}
+send ^+ud3{Enter}
 return
 
 #if OtherCase()
 ::\'O::
-SendInput {U+00D3}
+send {U+00D3}
 return
 
 
@@ -3245,17 +3245,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{O}::
-SendInput ^x8{Enter}d3{Enter}
+send ^x8{Enter}d3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{O}::
-SendInput ^+ud3{Enter}
+send ^+ud3{Enter}
 return
 
 #if OtherCase()
 ::\'{O}::
-SendInput {U+00D3}
+send {U+00D3}
 return
 
 
@@ -3263,17 +3263,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^O::
-SendInput ^x8{Enter}d4{Enter}
+send ^x8{Enter}d4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^O::
-SendInput ^+ud4{Enter}
+send ^+ud4{Enter}
 return
 
 #if OtherCase()
 ::\^O::
-SendInput {U+00D4}
+send {U+00D4}
 return
 
 
@@ -3281,17 +3281,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{O}::
-SendInput ^x8{Enter}d4{Enter}
+send ^x8{Enter}d4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{O}::
-SendInput ^+ud4{Enter}
+send ^+ud4{Enter}
 return
 
 #if OtherCase()
 ::\^{O}::
-SendInput {U+00D4}
+send {U+00D4}
 return
 
 
@@ -3299,17 +3299,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~O::
-SendInput ^x8{Enter}d5{Enter}
+send ^x8{Enter}d5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~O::
-SendInput ^+ud5{Enter}
+send ^+ud5{Enter}
 return
 
 #if OtherCase()
 ::\~O::
-SendInput {U+00D5}
+send {U+00D5}
 return
 
 
@@ -3317,17 +3317,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{O}::
-SendInput ^x8{Enter}d5{Enter}
+send ^x8{Enter}d5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{O}::
-SendInput ^+ud5{Enter}
+send ^+ud5{Enter}
 return
 
 #if OtherCase()
 ::\~{O}::
-SendInput {U+00D5}
+send {U+00D5}
 return
 
 
@@ -3335,17 +3335,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"O::
-SendInput ^x8{Enter}d6{Enter}
+send ^x8{Enter}d6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"O::
-SendInput ^+ud6{Enter}
+send ^+ud6{Enter}
 return
 
 #if OtherCase()
 ::\"O::
-SendInput {U+00D6}
+send {U+00D6}
 return
 
 
@@ -3353,17 +3353,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{O}::
-SendInput ^x8{Enter}d6{Enter}
+send ^x8{Enter}d6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{O}::
-SendInput ^+ud6{Enter}
+send ^+ud6{Enter}
 return
 
 #if OtherCase()
 ::\"{O}::
-SendInput {U+00D6}
+send {U+00D6}
 return
 
 
@@ -3371,17 +3371,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$\times$::
-SendInput ^x8{Enter}d7{Enter}
+send ^x8{Enter}d7{Enter}
 return
 
 #if GtkApplicationCase()
 ::$\times$::
-SendInput ^+ud7{Enter}
+send ^+ud7{Enter}
 return
 
 #if OtherCase()
 ::$\times$::
-SendInput {U+00D7}
+send {U+00D7}
 return
 
 
@@ -3389,17 +3389,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\multiplication::
-SendInput ^x8{Enter}d7{Enter}
+send ^x8{Enter}d7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\multiplication::
-SendInput ^+ud7{Enter}
+send ^+ud7{Enter}
 return
 
 #if OtherCase()
 ::\multiplication::
-SendInput {U+00D7}
+send {U+00D7}
 return
 
 
@@ -3407,17 +3407,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\times::
-SendInput ^x8{Enter}d7{Enter}
+send ^x8{Enter}d7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\times::
-SendInput ^+ud7{Enter}
+send ^+ud7{Enter}
 return
 
 #if OtherCase()
 ::\times::
-SendInput {U+00D7}
+send {U+00D7}
 return
 
 
@@ -3425,17 +3425,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\O::
-SendInput ^x8{Enter}d8{Enter}
+send ^x8{Enter}d8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\O::
-SendInput ^+ud8{Enter}
+send ^+ud8{Enter}
 return
 
 #if OtherCase()
 ::\O::
-SendInput {U+00D8}
+send {U+00D8}
 return
 
 
@@ -3443,17 +3443,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``U::
-SendInput ^x8{Enter}d9{Enter}
+send ^x8{Enter}d9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``U::
-SendInput ^+ud9{Enter}
+send ^+ud9{Enter}
 return
 
 #if OtherCase()
 ::\``U::
-SendInput {U+00D9}
+send {U+00D9}
 return
 
 
@@ -3461,17 +3461,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{U}::
-SendInput ^x8{Enter}d9{Enter}
+send ^x8{Enter}d9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{U}::
-SendInput ^+ud9{Enter}
+send ^+ud9{Enter}
 return
 
 #if OtherCase()
 ::\``{U}::
-SendInput {U+00D9}
+send {U+00D9}
 return
 
 
@@ -3479,17 +3479,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'U::
-SendInput ^x8{Enter}da{Enter}
+send ^x8{Enter}da{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'U::
-SendInput ^+uda{Enter}
+send ^+uda{Enter}
 return
 
 #if OtherCase()
 ::\'U::
-SendInput {U+00DA}
+send {U+00DA}
 return
 
 
@@ -3497,17 +3497,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{U}::
-SendInput ^x8{Enter}da{Enter}
+send ^x8{Enter}da{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{U}::
-SendInput ^+uda{Enter}
+send ^+uda{Enter}
 return
 
 #if OtherCase()
 ::\'{U}::
-SendInput {U+00DA}
+send {U+00DA}
 return
 
 
@@ -3515,17 +3515,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^U::
-SendInput ^x8{Enter}db{Enter}
+send ^x8{Enter}db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^U::
-SendInput ^+udb{Enter}
+send ^+udb{Enter}
 return
 
 #if OtherCase()
 ::\^U::
-SendInput {U+00DB}
+send {U+00DB}
 return
 
 
@@ -3533,17 +3533,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{U}::
-SendInput ^x8{Enter}db{Enter}
+send ^x8{Enter}db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{U}::
-SendInput ^+udb{Enter}
+send ^+udb{Enter}
 return
 
 #if OtherCase()
 ::\^{U}::
-SendInput {U+00DB}
+send {U+00DB}
 return
 
 
@@ -3551,17 +3551,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"U::
-SendInput ^x8{Enter}dc{Enter}
+send ^x8{Enter}dc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"U::
-SendInput ^+udc{Enter}
+send ^+udc{Enter}
 return
 
 #if OtherCase()
 ::\"U::
-SendInput {U+00DC}
+send {U+00DC}
 return
 
 
@@ -3569,17 +3569,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{U}::
-SendInput ^x8{Enter}dc{Enter}
+send ^x8{Enter}dc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{U}::
-SendInput ^+udc{Enter}
+send ^+udc{Enter}
 return
 
 #if OtherCase()
 ::\"{U}::
-SendInput {U+00DC}
+send {U+00DC}
 return
 
 
@@ -3587,17 +3587,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'Y::
-SendInput ^x8{Enter}dd{Enter}
+send ^x8{Enter}dd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'Y::
-SendInput ^+udd{Enter}
+send ^+udd{Enter}
 return
 
 #if OtherCase()
 ::\'Y::
-SendInput {U+00DD}
+send {U+00DD}
 return
 
 
@@ -3605,17 +3605,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{Y}::
-SendInput ^x8{Enter}dd{Enter}
+send ^x8{Enter}dd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{Y}::
-SendInput ^+udd{Enter}
+send ^+udd{Enter}
 return
 
 #if OtherCase()
 ::\'{Y}::
-SendInput {U+00DD}
+send {U+00DD}
 return
 
 
@@ -3623,17 +3623,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\TH::
-SendInput ^x8{Enter}de{Enter}
+send ^x8{Enter}de{Enter}
 return
 
 #if GtkApplicationCase()
 ::\TH::
-SendInput ^+ude{Enter}
+send ^+ude{Enter}
 return
 
 #if OtherCase()
 ::\TH::
-SendInput {U+00DE}
+send {U+00DE}
 return
 
 
@@ -3641,17 +3641,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ss::
-SendInput ^x8{Enter}df{Enter}
+send ^x8{Enter}df{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ss::
-SendInput ^+udf{Enter}
+send ^+udf{Enter}
 return
 
 #if OtherCase()
 ::\ss::
-SendInput {U+00DF}
+send {U+00DF}
 return
 
 
@@ -3659,17 +3659,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``a::
-SendInput ^x8{Enter}e0{Enter}
+send ^x8{Enter}e0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``a::
-SendInput ^+ue0{Enter}
+send ^+ue0{Enter}
 return
 
 #if OtherCase()
 ::\``a::
-SendInput {U+00E0}
+send {U+00E0}
 return
 
 
@@ -3677,17 +3677,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{a}::
-SendInput ^x8{Enter}e0{Enter}
+send ^x8{Enter}e0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{a}::
-SendInput ^+ue0{Enter}
+send ^+ue0{Enter}
 return
 
 #if OtherCase()
 ::\``{a}::
-SendInput {U+00E0}
+send {U+00E0}
 return
 
 
@@ -3695,17 +3695,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'a::
-SendInput ^x8{Enter}e1{Enter}
+send ^x8{Enter}e1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'a::
-SendInput ^+ue1{Enter}
+send ^+ue1{Enter}
 return
 
 #if OtherCase()
 ::\'a::
-SendInput {U+00E1}
+send {U+00E1}
 return
 
 
@@ -3713,17 +3713,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{a}::
-SendInput ^x8{Enter}e1{Enter}
+send ^x8{Enter}e1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{a}::
-SendInput ^+ue1{Enter}
+send ^+ue1{Enter}
 return
 
 #if OtherCase()
 ::\'{a}::
-SendInput {U+00E1}
+send {U+00E1}
 return
 
 
@@ -3731,17 +3731,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^a::
-SendInput ^x8{Enter}e2{Enter}
+send ^x8{Enter}e2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^a::
-SendInput ^+ue2{Enter}
+send ^+ue2{Enter}
 return
 
 #if OtherCase()
 ::\^a::
-SendInput {U+00E2}
+send {U+00E2}
 return
 
 
@@ -3749,17 +3749,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{a}::
-SendInput ^x8{Enter}e2{Enter}
+send ^x8{Enter}e2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{a}::
-SendInput ^+ue2{Enter}
+send ^+ue2{Enter}
 return
 
 #if OtherCase()
 ::\^{a}::
-SendInput {U+00E2}
+send {U+00E2}
 return
 
 
@@ -3767,17 +3767,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~a::
-SendInput ^x8{Enter}e3{Enter}
+send ^x8{Enter}e3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~a::
-SendInput ^+ue3{Enter}
+send ^+ue3{Enter}
 return
 
 #if OtherCase()
 ::\~a::
-SendInput {U+00E3}
+send {U+00E3}
 return
 
 
@@ -3785,17 +3785,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{a}::
-SendInput ^x8{Enter}e3{Enter}
+send ^x8{Enter}e3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{a}::
-SendInput ^+ue3{Enter}
+send ^+ue3{Enter}
 return
 
 #if OtherCase()
 ::\~{a}::
-SendInput {U+00E3}
+send {U+00E3}
 return
 
 
@@ -3803,17 +3803,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"a::
-SendInput ^x8{Enter}e4{Enter}
+send ^x8{Enter}e4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"a::
-SendInput ^+ue4{Enter}
+send ^+ue4{Enter}
 return
 
 #if OtherCase()
 ::\"a::
-SendInput {U+00E4}
+send {U+00E4}
 return
 
 
@@ -3821,17 +3821,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{a}::
-SendInput ^x8{Enter}e4{Enter}
+send ^x8{Enter}e4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{a}::
-SendInput ^+ue4{Enter}
+send ^+ue4{Enter}
 return
 
 #if OtherCase()
 ::\"{a}::
-SendInput {U+00E4}
+send {U+00E4}
 return
 
 
@@ -3839,17 +3839,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\aa::
-SendInput ^x8{Enter}e5{Enter}
+send ^x8{Enter}e5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\aa::
-SendInput ^+ue5{Enter}
+send ^+ue5{Enter}
 return
 
 #if OtherCase()
 ::\aa::
-SendInput {U+00E5}
+send {U+00E5}
 return
 
 
@@ -3857,17 +3857,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ae::
-SendInput ^x8{Enter}e6{Enter}
+send ^x8{Enter}e6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ae::
-SendInput ^+ue6{Enter}
+send ^+ue6{Enter}
 return
 
 #if OtherCase()
 ::\ae::
-SendInput {U+00E6}
+send {U+00E6}
 return
 
 
@@ -3875,17 +3875,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cc::
-SendInput ^x8{Enter}e7{Enter}
+send ^x8{Enter}e7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cc::
-SendInput ^+ue7{Enter}
+send ^+ue7{Enter}
 return
 
 #if OtherCase()
 ::\cc::
-SendInput {U+00E7}
+send {U+00E7}
 return
 
 
@@ -3893,17 +3893,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{c}::
-SendInput ^x8{Enter}e7{Enter}
+send ^x8{Enter}e7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{c}::
-SendInput ^+ue7{Enter}
+send ^+ue7{Enter}
 return
 
 #if OtherCase()
 ::\c{c}::
-SendInput {U+00E7}
+send {U+00E7}
 return
 
 
@@ -3911,17 +3911,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``e::
-SendInput ^x8{Enter}e8{Enter}
+send ^x8{Enter}e8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``e::
-SendInput ^+ue8{Enter}
+send ^+ue8{Enter}
 return
 
 #if OtherCase()
 ::\``e::
-SendInput {U+00E8}
+send {U+00E8}
 return
 
 
@@ -3929,17 +3929,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{e}::
-SendInput ^x8{Enter}e8{Enter}
+send ^x8{Enter}e8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{e}::
-SendInput ^+ue8{Enter}
+send ^+ue8{Enter}
 return
 
 #if OtherCase()
 ::\``{e}::
-SendInput {U+00E8}
+send {U+00E8}
 return
 
 
@@ -3947,17 +3947,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'e::
-SendInput ^x8{Enter}e9{Enter}
+send ^x8{Enter}e9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'e::
-SendInput ^+ue9{Enter}
+send ^+ue9{Enter}
 return
 
 #if OtherCase()
 ::\'e::
-SendInput {U+00E9}
+send {U+00E9}
 return
 
 
@@ -3965,17 +3965,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{e}::
-SendInput ^x8{Enter}e9{Enter}
+send ^x8{Enter}e9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{e}::
-SendInput ^+ue9{Enter}
+send ^+ue9{Enter}
 return
 
 #if OtherCase()
 ::\'{e}::
-SendInput {U+00E9}
+send {U+00E9}
 return
 
 
@@ -3983,17 +3983,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^e::
-SendInput ^x8{Enter}ea{Enter}
+send ^x8{Enter}ea{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^e::
-SendInput ^+uea{Enter}
+send ^+uea{Enter}
 return
 
 #if OtherCase()
 ::\^e::
-SendInput {U+00EA}
+send {U+00EA}
 return
 
 
@@ -4001,17 +4001,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{e}::
-SendInput ^x8{Enter}ea{Enter}
+send ^x8{Enter}ea{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{e}::
-SendInput ^+uea{Enter}
+send ^+uea{Enter}
 return
 
 #if OtherCase()
 ::\^{e}::
-SendInput {U+00EA}
+send {U+00EA}
 return
 
 
@@ -4019,17 +4019,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"e::
-SendInput ^x8{Enter}eb{Enter}
+send ^x8{Enter}eb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"e::
-SendInput ^+ueb{Enter}
+send ^+ueb{Enter}
 return
 
 #if OtherCase()
 ::\"e::
-SendInput {U+00EB}
+send {U+00EB}
 return
 
 
@@ -4037,17 +4037,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{e}::
-SendInput ^x8{Enter}eb{Enter}
+send ^x8{Enter}eb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{e}::
-SendInput ^+ueb{Enter}
+send ^+ueb{Enter}
 return
 
 #if OtherCase()
 ::\"{e}::
-SendInput {U+00EB}
+send {U+00EB}
 return
 
 
@@ -4055,17 +4055,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``i::
-SendInput ^x8{Enter}ec{Enter}
+send ^x8{Enter}ec{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``i::
-SendInput ^+uec{Enter}
+send ^+uec{Enter}
 return
 
 #if OtherCase()
 ::\``i::
-SendInput {U+00EC}
+send {U+00EC}
 return
 
 
@@ -4073,17 +4073,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{i}::
-SendInput ^x8{Enter}ec{Enter}
+send ^x8{Enter}ec{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{i}::
-SendInput ^+uec{Enter}
+send ^+uec{Enter}
 return
 
 #if OtherCase()
 ::\``{i}::
-SendInput {U+00EC}
+send {U+00EC}
 return
 
 
@@ -4091,17 +4091,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'i::
-SendInput ^x8{Enter}ed{Enter}
+send ^x8{Enter}ed{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'i::
-SendInput ^+ued{Enter}
+send ^+ued{Enter}
 return
 
 #if OtherCase()
 ::\'i::
-SendInput {U+00ED}
+send {U+00ED}
 return
 
 
@@ -4109,17 +4109,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{i}::
-SendInput ^x8{Enter}ed{Enter}
+send ^x8{Enter}ed{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{i}::
-SendInput ^+ued{Enter}
+send ^+ued{Enter}
 return
 
 #if OtherCase()
 ::\'{i}::
-SendInput {U+00ED}
+send {U+00ED}
 return
 
 
@@ -4127,17 +4127,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^i::
-SendInput ^x8{Enter}ee{Enter}
+send ^x8{Enter}ee{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^i::
-SendInput ^+uee{Enter}
+send ^+uee{Enter}
 return
 
 #if OtherCase()
 ::\^i::
-SendInput {U+00EE}
+send {U+00EE}
 return
 
 
@@ -4145,17 +4145,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{i}::
-SendInput ^x8{Enter}ee{Enter}
+send ^x8{Enter}ee{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{i}::
-SendInput ^+uee{Enter}
+send ^+uee{Enter}
 return
 
 #if OtherCase()
 ::\^{i}::
-SendInput {U+00EE}
+send {U+00EE}
 return
 
 
@@ -4163,17 +4163,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"i::
-SendInput ^x8{Enter}ef{Enter}
+send ^x8{Enter}ef{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"i::
-SendInput ^+uef{Enter}
+send ^+uef{Enter}
 return
 
 #if OtherCase()
 ::\"i::
-SendInput {U+00EF}
+send {U+00EF}
 return
 
 
@@ -4181,17 +4181,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{i}::
-SendInput ^x8{Enter}ef{Enter}
+send ^x8{Enter}ef{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{i}::
-SendInput ^+uef{Enter}
+send ^+uef{Enter}
 return
 
 #if OtherCase()
 ::\"{i}::
-SendInput {U+00EF}
+send {U+00EF}
 return
 
 
@@ -4199,17 +4199,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\dh::
-SendInput ^x8{Enter}f0{Enter}
+send ^x8{Enter}f0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\dh::
-SendInput ^+uf0{Enter}
+send ^+uf0{Enter}
 return
 
 #if OtherCase()
 ::\dh::
-SendInput {U+00F0}
+send {U+00F0}
 return
 
 
@@ -4217,17 +4217,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~n::
-SendInput ^x8{Enter}f1{Enter}
+send ^x8{Enter}f1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~n::
-SendInput ^+uf1{Enter}
+send ^+uf1{Enter}
 return
 
 #if OtherCase()
 ::\~n::
-SendInput {U+00F1}
+send {U+00F1}
 return
 
 
@@ -4235,17 +4235,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{n}::
-SendInput ^x8{Enter}f1{Enter}
+send ^x8{Enter}f1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{n}::
-SendInput ^+uf1{Enter}
+send ^+uf1{Enter}
 return
 
 #if OtherCase()
 ::\~{n}::
-SendInput {U+00F1}
+send {U+00F1}
 return
 
 
@@ -4253,17 +4253,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``o::
-SendInput ^x8{Enter}f2{Enter}
+send ^x8{Enter}f2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``o::
-SendInput ^+uf2{Enter}
+send ^+uf2{Enter}
 return
 
 #if OtherCase()
 ::\``o::
-SendInput {U+00F2}
+send {U+00F2}
 return
 
 
@@ -4271,17 +4271,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{o}::
-SendInput ^x8{Enter}f2{Enter}
+send ^x8{Enter}f2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{o}::
-SendInput ^+uf2{Enter}
+send ^+uf2{Enter}
 return
 
 #if OtherCase()
 ::\``{o}::
-SendInput {U+00F2}
+send {U+00F2}
 return
 
 
@@ -4289,17 +4289,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'o::
-SendInput ^x8{Enter}f3{Enter}
+send ^x8{Enter}f3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'o::
-SendInput ^+uf3{Enter}
+send ^+uf3{Enter}
 return
 
 #if OtherCase()
 ::\'o::
-SendInput {U+00F3}
+send {U+00F3}
 return
 
 
@@ -4307,17 +4307,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{o}::
-SendInput ^x8{Enter}f3{Enter}
+send ^x8{Enter}f3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{o}::
-SendInput ^+uf3{Enter}
+send ^+uf3{Enter}
 return
 
 #if OtherCase()
 ::\'{o}::
-SendInput {U+00F3}
+send {U+00F3}
 return
 
 
@@ -4325,17 +4325,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^o::
-SendInput ^x8{Enter}f4{Enter}
+send ^x8{Enter}f4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^o::
-SendInput ^+uf4{Enter}
+send ^+uf4{Enter}
 return
 
 #if OtherCase()
 ::\^o::
-SendInput {U+00F4}
+send {U+00F4}
 return
 
 
@@ -4343,17 +4343,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{o}::
-SendInput ^x8{Enter}f4{Enter}
+send ^x8{Enter}f4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{o}::
-SendInput ^+uf4{Enter}
+send ^+uf4{Enter}
 return
 
 #if OtherCase()
 ::\^{o}::
-SendInput {U+00F4}
+send {U+00F4}
 return
 
 
@@ -4361,17 +4361,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~o::
-SendInput ^x8{Enter}f5{Enter}
+send ^x8{Enter}f5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~o::
-SendInput ^+uf5{Enter}
+send ^+uf5{Enter}
 return
 
 #if OtherCase()
 ::\~o::
-SendInput {U+00F5}
+send {U+00F5}
 return
 
 
@@ -4379,17 +4379,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{o}::
-SendInput ^x8{Enter}f5{Enter}
+send ^x8{Enter}f5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{o}::
-SendInput ^+uf5{Enter}
+send ^+uf5{Enter}
 return
 
 #if OtherCase()
 ::\~{o}::
-SendInput {U+00F5}
+send {U+00F5}
 return
 
 
@@ -4397,17 +4397,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"o::
-SendInput ^x8{Enter}f6{Enter}
+send ^x8{Enter}f6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"o::
-SendInput ^+uf6{Enter}
+send ^+uf6{Enter}
 return
 
 #if OtherCase()
 ::\"o::
-SendInput {U+00F6}
+send {U+00F6}
 return
 
 
@@ -4415,17 +4415,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{o}::
-SendInput ^x8{Enter}f6{Enter}
+send ^x8{Enter}f6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{o}::
-SendInput ^+uf6{Enter}
+send ^+uf6{Enter}
 return
 
 #if OtherCase()
 ::\"{o}::
-SendInput {U+00F6}
+send {U+00F6}
 return
 
 
@@ -4433,17 +4433,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::$\div$::
-SendInput ^x8{Enter}f7{Enter}
+send ^x8{Enter}f7{Enter}
 return
 
 #if GtkApplicationCase()
 ::$\div$::
-SendInput ^+uf7{Enter}
+send ^+uf7{Enter}
 return
 
 #if OtherCase()
 ::$\div$::
-SendInput {U+00F7}
+send {U+00F7}
 return
 
 
@@ -4451,17 +4451,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\div::
-SendInput ^x8{Enter}f7{Enter}
+send ^x8{Enter}f7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\div::
-SendInput ^+uf7{Enter}
+send ^+uf7{Enter}
 return
 
 #if OtherCase()
 ::\div::
-SendInput {U+00F7}
+send {U+00F7}
 return
 
 
@@ -4469,17 +4469,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\division::
-SendInput ^x8{Enter}f7{Enter}
+send ^x8{Enter}f7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\division::
-SendInput ^+uf7{Enter}
+send ^+uf7{Enter}
 return
 
 #if OtherCase()
 ::\division::
-SendInput {U+00F7}
+send {U+00F7}
 return
 
 
@@ -4487,17 +4487,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\o::
-SendInput ^x8{Enter}f8{Enter}
+send ^x8{Enter}f8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\o::
-SendInput ^+uf8{Enter}
+send ^+uf8{Enter}
 return
 
 #if OtherCase()
 ::\o::
-SendInput {U+00F8}
+send {U+00F8}
 return
 
 
@@ -4505,17 +4505,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``u::
-SendInput ^x8{Enter}f9{Enter}
+send ^x8{Enter}f9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``u::
-SendInput ^+uf9{Enter}
+send ^+uf9{Enter}
 return
 
 #if OtherCase()
 ::\``u::
-SendInput {U+00F9}
+send {U+00F9}
 return
 
 
@@ -4523,17 +4523,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{u}::
-SendInput ^x8{Enter}f9{Enter}
+send ^x8{Enter}f9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{u}::
-SendInput ^+uf9{Enter}
+send ^+uf9{Enter}
 return
 
 #if OtherCase()
 ::\``{u}::
-SendInput {U+00F9}
+send {U+00F9}
 return
 
 
@@ -4541,17 +4541,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'u::
-SendInput ^x8{Enter}fa{Enter}
+send ^x8{Enter}fa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'u::
-SendInput ^+ufa{Enter}
+send ^+ufa{Enter}
 return
 
 #if OtherCase()
 ::\'u::
-SendInput {U+00FA}
+send {U+00FA}
 return
 
 
@@ -4559,17 +4559,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{u}::
-SendInput ^x8{Enter}fa{Enter}
+send ^x8{Enter}fa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{u}::
-SendInput ^+ufa{Enter}
+send ^+ufa{Enter}
 return
 
 #if OtherCase()
 ::\'{u}::
-SendInput {U+00FA}
+send {U+00FA}
 return
 
 
@@ -4577,17 +4577,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^u::
-SendInput ^x8{Enter}fb{Enter}
+send ^x8{Enter}fb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^u::
-SendInput ^+ufb{Enter}
+send ^+ufb{Enter}
 return
 
 #if OtherCase()
 ::\^u::
-SendInput {U+00FB}
+send {U+00FB}
 return
 
 
@@ -4595,17 +4595,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{u}::
-SendInput ^x8{Enter}fb{Enter}
+send ^x8{Enter}fb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{u}::
-SendInput ^+ufb{Enter}
+send ^+ufb{Enter}
 return
 
 #if OtherCase()
 ::\^{u}::
-SendInput {U+00FB}
+send {U+00FB}
 return
 
 
@@ -4613,17 +4613,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"u::
-SendInput ^x8{Enter}fc{Enter}
+send ^x8{Enter}fc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"u::
-SendInput ^+ufc{Enter}
+send ^+ufc{Enter}
 return
 
 #if OtherCase()
 ::\"u::
-SendInput {U+00FC}
+send {U+00FC}
 return
 
 
@@ -4631,17 +4631,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{u}::
-SendInput ^x8{Enter}fc{Enter}
+send ^x8{Enter}fc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{u}::
-SendInput ^+ufc{Enter}
+send ^+ufc{Enter}
 return
 
 #if OtherCase()
 ::\"{u}::
-SendInput {U+00FC}
+send {U+00FC}
 return
 
 
@@ -4649,17 +4649,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'y::
-SendInput ^x8{Enter}fd{Enter}
+send ^x8{Enter}fd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'y::
-SendInput ^+ufd{Enter}
+send ^+ufd{Enter}
 return
 
 #if OtherCase()
 ::\'y::
-SendInput {U+00FD}
+send {U+00FD}
 return
 
 
@@ -4667,17 +4667,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{y}::
-SendInput ^x8{Enter}fd{Enter}
+send ^x8{Enter}fd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{y}::
-SendInput ^+ufd{Enter}
+send ^+ufd{Enter}
 return
 
 #if OtherCase()
 ::\'{y}::
-SendInput {U+00FD}
+send {U+00FD}
 return
 
 
@@ -4685,17 +4685,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\th::
-SendInput ^x8{Enter}fe{Enter}
+send ^x8{Enter}fe{Enter}
 return
 
 #if GtkApplicationCase()
 ::\th::
-SendInput ^+ufe{Enter}
+send ^+ufe{Enter}
 return
 
 #if OtherCase()
 ::\th::
-SendInput {U+00FE}
+send {U+00FE}
 return
 
 
@@ -4703,17 +4703,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"y::
-SendInput ^x8{Enter}ff{Enter}
+send ^x8{Enter}ff{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"y::
-SendInput ^+uff{Enter}
+send ^+uff{Enter}
 return
 
 #if OtherCase()
 ::\"y::
-SendInput {U+00FF}
+send {U+00FF}
 return
 
 
@@ -4721,17 +4721,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{y}::
-SendInput ^x8{Enter}ff{Enter}
+send ^x8{Enter}ff{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{y}::
-SendInput ^+uff{Enter}
+send ^+uff{Enter}
 return
 
 #if OtherCase()
 ::\"{y}::
-SendInput {U+00FF}
+send {U+00FF}
 return
 
 
@@ -4739,17 +4739,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=A::
-SendInput ^x8{Enter}100{Enter}
+send ^x8{Enter}100{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=A::
-SendInput ^+u100{Enter}
+send ^+u100{Enter}
 return
 
 #if OtherCase()
 ::\=A::
-SendInput {U+0100}
+send {U+0100}
 return
 
 
@@ -4757,17 +4757,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={A}::
-SendInput ^x8{Enter}100{Enter}
+send ^x8{Enter}100{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={A}::
-SendInput ^+u100{Enter}
+send ^+u100{Enter}
 return
 
 #if OtherCase()
 ::\={A}::
-SendInput {U+0100}
+send {U+0100}
 return
 
 
@@ -4775,17 +4775,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=a::
-SendInput ^x8{Enter}101{Enter}
+send ^x8{Enter}101{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=a::
-SendInput ^+u101{Enter}
+send ^+u101{Enter}
 return
 
 #if OtherCase()
 ::\=a::
-SendInput {U+0101}
+send {U+0101}
 return
 
 
@@ -4793,17 +4793,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={a}::
-SendInput ^x8{Enter}101{Enter}
+send ^x8{Enter}101{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={a}::
-SendInput ^+u101{Enter}
+send ^+u101{Enter}
 return
 
 #if OtherCase()
 ::\={a}::
-SendInput {U+0101}
+send {U+0101}
 return
 
 
@@ -4811,17 +4811,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uA::
-SendInput ^x8{Enter}102{Enter}
+send ^x8{Enter}102{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uA::
-SendInput ^+u102{Enter}
+send ^+u102{Enter}
 return
 
 #if OtherCase()
 ::\uA::
-SendInput {U+0102}
+send {U+0102}
 return
 
 
@@ -4829,17 +4829,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{A}::
-SendInput ^x8{Enter}102{Enter}
+send ^x8{Enter}102{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{A}::
-SendInput ^+u102{Enter}
+send ^+u102{Enter}
 return
 
 #if OtherCase()
 ::\u{A}::
-SendInput {U+0102}
+send {U+0102}
 return
 
 
@@ -4847,17 +4847,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ua::
-SendInput ^x8{Enter}103{Enter}
+send ^x8{Enter}103{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ua::
-SendInput ^+u103{Enter}
+send ^+u103{Enter}
 return
 
 #if OtherCase()
 ::\ua::
-SendInput {U+0103}
+send {U+0103}
 return
 
 
@@ -4865,17 +4865,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{a}::
-SendInput ^x8{Enter}103{Enter}
+send ^x8{Enter}103{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{a}::
-SendInput ^+u103{Enter}
+send ^+u103{Enter}
 return
 
 #if OtherCase()
 ::\u{a}::
-SendInput {U+0103}
+send {U+0103}
 return
 
 
@@ -4883,17 +4883,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\kA::
-SendInput ^x8{Enter}104{Enter}
+send ^x8{Enter}104{Enter}
 return
 
 #if GtkApplicationCase()
 ::\kA::
-SendInput ^+u104{Enter}
+send ^+u104{Enter}
 return
 
 #if OtherCase()
 ::\kA::
-SendInput {U+0104}
+send {U+0104}
 return
 
 
@@ -4901,17 +4901,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{A}::
-SendInput ^x8{Enter}104{Enter}
+send ^x8{Enter}104{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{A}::
-SendInput ^+u104{Enter}
+send ^+u104{Enter}
 return
 
 #if OtherCase()
 ::\k{A}::
-SendInput {U+0104}
+send {U+0104}
 return
 
 
@@ -4919,17 +4919,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ka::
-SendInput ^x8{Enter}105{Enter}
+send ^x8{Enter}105{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ka::
-SendInput ^+u105{Enter}
+send ^+u105{Enter}
 return
 
 #if OtherCase()
 ::\ka::
-SendInput {U+0105}
+send {U+0105}
 return
 
 
@@ -4937,17 +4937,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{a}::
-SendInput ^x8{Enter}105{Enter}
+send ^x8{Enter}105{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{a}::
-SendInput ^+u105{Enter}
+send ^+u105{Enter}
 return
 
 #if OtherCase()
 ::\k{a}::
-SendInput {U+0105}
+send {U+0105}
 return
 
 
@@ -4955,17 +4955,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'C::
-SendInput ^x8{Enter}106{Enter}
+send ^x8{Enter}106{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'C::
-SendInput ^+u106{Enter}
+send ^+u106{Enter}
 return
 
 #if OtherCase()
 ::\'C::
-SendInput {U+0106}
+send {U+0106}
 return
 
 
@@ -4973,17 +4973,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{C}::
-SendInput ^x8{Enter}106{Enter}
+send ^x8{Enter}106{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{C}::
-SendInput ^+u106{Enter}
+send ^+u106{Enter}
 return
 
 #if OtherCase()
 ::\'{C}::
-SendInput {U+0106}
+send {U+0106}
 return
 
 
@@ -4991,17 +4991,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'c::
-SendInput ^x8{Enter}107{Enter}
+send ^x8{Enter}107{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'c::
-SendInput ^+u107{Enter}
+send ^+u107{Enter}
 return
 
 #if OtherCase()
 ::\'c::
-SendInput {U+0107}
+send {U+0107}
 return
 
 
@@ -5009,17 +5009,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{c}::
-SendInput ^x8{Enter}107{Enter}
+send ^x8{Enter}107{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{c}::
-SendInput ^+u107{Enter}
+send ^+u107{Enter}
 return
 
 #if OtherCase()
 ::\'{c}::
-SendInput {U+0107}
+send {U+0107}
 return
 
 
@@ -5027,17 +5027,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^C::
-SendInput ^x8{Enter}108{Enter}
+send ^x8{Enter}108{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^C::
-SendInput ^+u108{Enter}
+send ^+u108{Enter}
 return
 
 #if OtherCase()
 ::\^C::
-SendInput {U+0108}
+send {U+0108}
 return
 
 
@@ -5045,17 +5045,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{C}::
-SendInput ^x8{Enter}108{Enter}
+send ^x8{Enter}108{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{C}::
-SendInput ^+u108{Enter}
+send ^+u108{Enter}
 return
 
 #if OtherCase()
 ::\^{C}::
-SendInput {U+0108}
+send {U+0108}
 return
 
 
@@ -5063,17 +5063,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^c::
-SendInput ^x8{Enter}109{Enter}
+send ^x8{Enter}109{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^c::
-SendInput ^+u109{Enter}
+send ^+u109{Enter}
 return
 
 #if OtherCase()
 ::\^c::
-SendInput {U+0109}
+send {U+0109}
 return
 
 
@@ -5081,17 +5081,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{c}::
-SendInput ^x8{Enter}109{Enter}
+send ^x8{Enter}109{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{c}::
-SendInput ^+u109{Enter}
+send ^+u109{Enter}
 return
 
 #if OtherCase()
 ::\^{c}::
-SendInput {U+0109}
+send {U+0109}
 return
 
 
@@ -5099,17 +5099,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.C::
-SendInput ^x8{Enter}10a{Enter}
+send ^x8{Enter}10a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.C::
-SendInput ^+u10a{Enter}
+send ^+u10a{Enter}
 return
 
 #if OtherCase()
 ::\.C::
-SendInput {U+010A}
+send {U+010A}
 return
 
 
@@ -5117,17 +5117,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{C}::
-SendInput ^x8{Enter}10a{Enter}
+send ^x8{Enter}10a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{C}::
-SendInput ^+u10a{Enter}
+send ^+u10a{Enter}
 return
 
 #if OtherCase()
 ::\.{C}::
-SendInput {U+010A}
+send {U+010A}
 return
 
 
@@ -5135,17 +5135,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.c::
-SendInput ^x8{Enter}10b{Enter}
+send ^x8{Enter}10b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.c::
-SendInput ^+u10b{Enter}
+send ^+u10b{Enter}
 return
 
 #if OtherCase()
 ::\.c::
-SendInput {U+010B}
+send {U+010B}
 return
 
 
@@ -5153,17 +5153,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{c}::
-SendInput ^x8{Enter}10b{Enter}
+send ^x8{Enter}10b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{c}::
-SendInput ^+u10b{Enter}
+send ^+u10b{Enter}
 return
 
 #if OtherCase()
 ::\.{c}::
-SendInput {U+010B}
+send {U+010B}
 return
 
 
@@ -5171,17 +5171,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vC::
-SendInput ^x8{Enter}10c{Enter}
+send ^x8{Enter}10c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vC::
-SendInput ^+u10c{Enter}
+send ^+u10c{Enter}
 return
 
 #if OtherCase()
 ::\vC::
-SendInput {U+010C}
+send {U+010C}
 return
 
 
@@ -5189,17 +5189,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{C}::
-SendInput ^x8{Enter}10c{Enter}
+send ^x8{Enter}10c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{C}::
-SendInput ^+u10c{Enter}
+send ^+u10c{Enter}
 return
 
 #if OtherCase()
 ::\v{C}::
-SendInput {U+010C}
+send {U+010C}
 return
 
 
@@ -5207,17 +5207,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vc::
-SendInput ^x8{Enter}10d{Enter}
+send ^x8{Enter}10d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vc::
-SendInput ^+u10d{Enter}
+send ^+u10d{Enter}
 return
 
 #if OtherCase()
 ::\vc::
-SendInput {U+010D}
+send {U+010D}
 return
 
 
@@ -5225,17 +5225,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{c}::
-SendInput ^x8{Enter}10d{Enter}
+send ^x8{Enter}10d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{c}::
-SendInput ^+u10d{Enter}
+send ^+u10d{Enter}
 return
 
 #if OtherCase()
 ::\v{c}::
-SendInput {U+010D}
+send {U+010D}
 return
 
 
@@ -5243,17 +5243,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vD::
-SendInput ^x8{Enter}10e{Enter}
+send ^x8{Enter}10e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vD::
-SendInput ^+u10e{Enter}
+send ^+u10e{Enter}
 return
 
 #if OtherCase()
 ::\vD::
-SendInput {U+010E}
+send {U+010E}
 return
 
 
@@ -5261,17 +5261,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{D}::
-SendInput ^x8{Enter}10e{Enter}
+send ^x8{Enter}10e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{D}::
-SendInput ^+u10e{Enter}
+send ^+u10e{Enter}
 return
 
 #if OtherCase()
 ::\v{D}::
-SendInput {U+010E}
+send {U+010E}
 return
 
 
@@ -5279,17 +5279,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vd::
-SendInput ^x8{Enter}10f{Enter}
+send ^x8{Enter}10f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vd::
-SendInput ^+u10f{Enter}
+send ^+u10f{Enter}
 return
 
 #if OtherCase()
 ::\vd::
-SendInput {U+010F}
+send {U+010F}
 return
 
 
@@ -5297,17 +5297,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{d}::
-SendInput ^x8{Enter}10f{Enter}
+send ^x8{Enter}10f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{d}::
-SendInput ^+u10f{Enter}
+send ^+u10f{Enter}
 return
 
 #if OtherCase()
 ::\v{d}::
-SendInput {U+010F}
+send {U+010F}
 return
 
 
@@ -5315,17 +5315,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=E::
-SendInput ^x8{Enter}112{Enter}
+send ^x8{Enter}112{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=E::
-SendInput ^+u112{Enter}
+send ^+u112{Enter}
 return
 
 #if OtherCase()
 ::\=E::
-SendInput {U+0112}
+send {U+0112}
 return
 
 
@@ -5333,17 +5333,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={E}::
-SendInput ^x8{Enter}112{Enter}
+send ^x8{Enter}112{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={E}::
-SendInput ^+u112{Enter}
+send ^+u112{Enter}
 return
 
 #if OtherCase()
 ::\={E}::
-SendInput {U+0112}
+send {U+0112}
 return
 
 
@@ -5351,17 +5351,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=e::
-SendInput ^x8{Enter}113{Enter}
+send ^x8{Enter}113{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=e::
-SendInput ^+u113{Enter}
+send ^+u113{Enter}
 return
 
 #if OtherCase()
 ::\=e::
-SendInput {U+0113}
+send {U+0113}
 return
 
 
@@ -5369,17 +5369,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={e}::
-SendInput ^x8{Enter}113{Enter}
+send ^x8{Enter}113{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={e}::
-SendInput ^+u113{Enter}
+send ^+u113{Enter}
 return
 
 #if OtherCase()
 ::\={e}::
-SendInput {U+0113}
+send {U+0113}
 return
 
 
@@ -5387,17 +5387,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uE::
-SendInput ^x8{Enter}114{Enter}
+send ^x8{Enter}114{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uE::
-SendInput ^+u114{Enter}
+send ^+u114{Enter}
 return
 
 #if OtherCase()
 ::\uE::
-SendInput {U+0114}
+send {U+0114}
 return
 
 
@@ -5405,17 +5405,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{E}::
-SendInput ^x8{Enter}114{Enter}
+send ^x8{Enter}114{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{E}::
-SendInput ^+u114{Enter}
+send ^+u114{Enter}
 return
 
 #if OtherCase()
 ::\u{E}::
-SendInput {U+0114}
+send {U+0114}
 return
 
 
@@ -5423,17 +5423,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ue::
-SendInput ^x8{Enter}115{Enter}
+send ^x8{Enter}115{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ue::
-SendInput ^+u115{Enter}
+send ^+u115{Enter}
 return
 
 #if OtherCase()
 ::\ue::
-SendInput {U+0115}
+send {U+0115}
 return
 
 
@@ -5441,17 +5441,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{e}::
-SendInput ^x8{Enter}115{Enter}
+send ^x8{Enter}115{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{e}::
-SendInput ^+u115{Enter}
+send ^+u115{Enter}
 return
 
 #if OtherCase()
 ::\u{e}::
-SendInput {U+0115}
+send {U+0115}
 return
 
 
@@ -5459,17 +5459,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.E::
-SendInput ^x8{Enter}116{Enter}
+send ^x8{Enter}116{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.E::
-SendInput ^+u116{Enter}
+send ^+u116{Enter}
 return
 
 #if OtherCase()
 ::\.E::
-SendInput {U+0116}
+send {U+0116}
 return
 
 
@@ -5477,17 +5477,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{E}::
-SendInput ^x8{Enter}116{Enter}
+send ^x8{Enter}116{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{E}::
-SendInput ^+u116{Enter}
+send ^+u116{Enter}
 return
 
 #if OtherCase()
 ::\.{E}::
-SendInput {U+0116}
+send {U+0116}
 return
 
 
@@ -5495,17 +5495,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.e::
-SendInput ^x8{Enter}117{Enter}
+send ^x8{Enter}117{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.e::
-SendInput ^+u117{Enter}
+send ^+u117{Enter}
 return
 
 #if OtherCase()
 ::\.e::
-SendInput {U+0117}
+send {U+0117}
 return
 
 
@@ -5513,17 +5513,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{e}::
-SendInput ^x8{Enter}117{Enter}
+send ^x8{Enter}117{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{e}::
-SendInput ^+u117{Enter}
+send ^+u117{Enter}
 return
 
 #if OtherCase()
 ::\.{e}::
-SendInput {U+0117}
+send {U+0117}
 return
 
 
@@ -5531,17 +5531,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\kE::
-SendInput ^x8{Enter}118{Enter}
+send ^x8{Enter}118{Enter}
 return
 
 #if GtkApplicationCase()
 ::\kE::
-SendInput ^+u118{Enter}
+send ^+u118{Enter}
 return
 
 #if OtherCase()
 ::\kE::
-SendInput {U+0118}
+send {U+0118}
 return
 
 
@@ -5549,17 +5549,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{E}::
-SendInput ^x8{Enter}118{Enter}
+send ^x8{Enter}118{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{E}::
-SendInput ^+u118{Enter}
+send ^+u118{Enter}
 return
 
 #if OtherCase()
 ::\k{E}::
-SendInput {U+0118}
+send {U+0118}
 return
 
 
@@ -5567,17 +5567,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ke::
-SendInput ^x8{Enter}119{Enter}
+send ^x8{Enter}119{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ke::
-SendInput ^+u119{Enter}
+send ^+u119{Enter}
 return
 
 #if OtherCase()
 ::\ke::
-SendInput {U+0119}
+send {U+0119}
 return
 
 
@@ -5585,17 +5585,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{e}::
-SendInput ^x8{Enter}119{Enter}
+send ^x8{Enter}119{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{e}::
-SendInput ^+u119{Enter}
+send ^+u119{Enter}
 return
 
 #if OtherCase()
 ::\k{e}::
-SendInput {U+0119}
+send {U+0119}
 return
 
 
@@ -5603,17 +5603,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vE::
-SendInput ^x8{Enter}11a{Enter}
+send ^x8{Enter}11a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vE::
-SendInput ^+u11a{Enter}
+send ^+u11a{Enter}
 return
 
 #if OtherCase()
 ::\vE::
-SendInput {U+011A}
+send {U+011A}
 return
 
 
@@ -5621,17 +5621,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{E}::
-SendInput ^x8{Enter}11a{Enter}
+send ^x8{Enter}11a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{E}::
-SendInput ^+u11a{Enter}
+send ^+u11a{Enter}
 return
 
 #if OtherCase()
 ::\v{E}::
-SendInput {U+011A}
+send {U+011A}
 return
 
 
@@ -5639,17 +5639,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ve::
-SendInput ^x8{Enter}11b{Enter}
+send ^x8{Enter}11b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ve::
-SendInput ^+u11b{Enter}
+send ^+u11b{Enter}
 return
 
 #if OtherCase()
 ::\ve::
-SendInput {U+011B}
+send {U+011B}
 return
 
 
@@ -5657,17 +5657,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{e}::
-SendInput ^x8{Enter}11b{Enter}
+send ^x8{Enter}11b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{e}::
-SendInput ^+u11b{Enter}
+send ^+u11b{Enter}
 return
 
 #if OtherCase()
 ::\v{e}::
-SendInput {U+011B}
+send {U+011B}
 return
 
 
@@ -5675,17 +5675,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^G::
-SendInput ^x8{Enter}11c{Enter}
+send ^x8{Enter}11c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^G::
-SendInput ^+u11c{Enter}
+send ^+u11c{Enter}
 return
 
 #if OtherCase()
 ::\^G::
-SendInput {U+011C}
+send {U+011C}
 return
 
 
@@ -5693,17 +5693,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{G}::
-SendInput ^x8{Enter}11c{Enter}
+send ^x8{Enter}11c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{G}::
-SendInput ^+u11c{Enter}
+send ^+u11c{Enter}
 return
 
 #if OtherCase()
 ::\^{G}::
-SendInput {U+011C}
+send {U+011C}
 return
 
 
@@ -5711,17 +5711,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^g::
-SendInput ^x8{Enter}11d{Enter}
+send ^x8{Enter}11d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^g::
-SendInput ^+u11d{Enter}
+send ^+u11d{Enter}
 return
 
 #if OtherCase()
 ::\^g::
-SendInput {U+011D}
+send {U+011D}
 return
 
 
@@ -5729,17 +5729,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{g}::
-SendInput ^x8{Enter}11d{Enter}
+send ^x8{Enter}11d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{g}::
-SendInput ^+u11d{Enter}
+send ^+u11d{Enter}
 return
 
 #if OtherCase()
 ::\^{g}::
-SendInput {U+011D}
+send {U+011D}
 return
 
 
@@ -5747,17 +5747,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uG::
-SendInput ^x8{Enter}11e{Enter}
+send ^x8{Enter}11e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uG::
-SendInput ^+u11e{Enter}
+send ^+u11e{Enter}
 return
 
 #if OtherCase()
 ::\uG::
-SendInput {U+011E}
+send {U+011E}
 return
 
 
@@ -5765,17 +5765,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{G}::
-SendInput ^x8{Enter}11e{Enter}
+send ^x8{Enter}11e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{G}::
-SendInput ^+u11e{Enter}
+send ^+u11e{Enter}
 return
 
 #if OtherCase()
 ::\u{G}::
-SendInput {U+011E}
+send {U+011E}
 return
 
 
@@ -5783,17 +5783,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ug::
-SendInput ^x8{Enter}11f{Enter}
+send ^x8{Enter}11f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ug::
-SendInput ^+u11f{Enter}
+send ^+u11f{Enter}
 return
 
 #if OtherCase()
 ::\ug::
-SendInput {U+011F}
+send {U+011F}
 return
 
 
@@ -5801,17 +5801,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{g}::
-SendInput ^x8{Enter}11f{Enter}
+send ^x8{Enter}11f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{g}::
-SendInput ^+u11f{Enter}
+send ^+u11f{Enter}
 return
 
 #if OtherCase()
 ::\u{g}::
-SendInput {U+011F}
+send {U+011F}
 return
 
 
@@ -5819,17 +5819,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.G::
-SendInput ^x8{Enter}120{Enter}
+send ^x8{Enter}120{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.G::
-SendInput ^+u120{Enter}
+send ^+u120{Enter}
 return
 
 #if OtherCase()
 ::\.G::
-SendInput {U+0120}
+send {U+0120}
 return
 
 
@@ -5837,17 +5837,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{G}::
-SendInput ^x8{Enter}120{Enter}
+send ^x8{Enter}120{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{G}::
-SendInput ^+u120{Enter}
+send ^+u120{Enter}
 return
 
 #if OtherCase()
 ::\.{G}::
-SendInput {U+0120}
+send {U+0120}
 return
 
 
@@ -5855,17 +5855,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.g::
-SendInput ^x8{Enter}121{Enter}
+send ^x8{Enter}121{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.g::
-SendInput ^+u121{Enter}
+send ^+u121{Enter}
 return
 
 #if OtherCase()
 ::\.g::
-SendInput {U+0121}
+send {U+0121}
 return
 
 
@@ -5873,17 +5873,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{g}::
-SendInput ^x8{Enter}121{Enter}
+send ^x8{Enter}121{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{g}::
-SendInput ^+u121{Enter}
+send ^+u121{Enter}
 return
 
 #if OtherCase()
 ::\.{g}::
-SendInput {U+0121}
+send {U+0121}
 return
 
 
@@ -5891,17 +5891,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cG::
-SendInput ^x8{Enter}122{Enter}
+send ^x8{Enter}122{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cG::
-SendInput ^+u122{Enter}
+send ^+u122{Enter}
 return
 
 #if OtherCase()
 ::\cG::
-SendInput {U+0122}
+send {U+0122}
 return
 
 
@@ -5909,17 +5909,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{G}::
-SendInput ^x8{Enter}122{Enter}
+send ^x8{Enter}122{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{G}::
-SendInput ^+u122{Enter}
+send ^+u122{Enter}
 return
 
 #if OtherCase()
 ::\c{G}::
-SendInput {U+0122}
+send {U+0122}
 return
 
 
@@ -5927,17 +5927,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cg::
-SendInput ^x8{Enter}123{Enter}
+send ^x8{Enter}123{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cg::
-SendInput ^+u123{Enter}
+send ^+u123{Enter}
 return
 
 #if OtherCase()
 ::\cg::
-SendInput {U+0123}
+send {U+0123}
 return
 
 
@@ -5945,17 +5945,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{g}::
-SendInput ^x8{Enter}123{Enter}
+send ^x8{Enter}123{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{g}::
-SendInput ^+u123{Enter}
+send ^+u123{Enter}
 return
 
 #if OtherCase()
 ::\c{g}::
-SendInput {U+0123}
+send {U+0123}
 return
 
 
@@ -5963,17 +5963,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^H::
-SendInput ^x8{Enter}124{Enter}
+send ^x8{Enter}124{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^H::
-SendInput ^+u124{Enter}
+send ^+u124{Enter}
 return
 
 #if OtherCase()
 ::\^H::
-SendInput {U+0124}
+send {U+0124}
 return
 
 
@@ -5981,17 +5981,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{H}::
-SendInput ^x8{Enter}124{Enter}
+send ^x8{Enter}124{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{H}::
-SendInput ^+u124{Enter}
+send ^+u124{Enter}
 return
 
 #if OtherCase()
 ::\^{H}::
-SendInput {U+0124}
+send {U+0124}
 return
 
 
@@ -5999,17 +5999,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^h::
-SendInput ^x8{Enter}125{Enter}
+send ^x8{Enter}125{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^h::
-SendInput ^+u125{Enter}
+send ^+u125{Enter}
 return
 
 #if OtherCase()
 ::\^h::
-SendInput {U+0125}
+send {U+0125}
 return
 
 
@@ -6017,17 +6017,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{h}::
-SendInput ^x8{Enter}125{Enter}
+send ^x8{Enter}125{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{h}::
-SendInput ^+u125{Enter}
+send ^+u125{Enter}
 return
 
 #if OtherCase()
 ::\^{h}::
-SendInput {U+0125}
+send {U+0125}
 return
 
 
@@ -6035,17 +6035,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~I::
-SendInput ^x8{Enter}128{Enter}
+send ^x8{Enter}128{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~I::
-SendInput ^+u128{Enter}
+send ^+u128{Enter}
 return
 
 #if OtherCase()
 ::\~I::
-SendInput {U+0128}
+send {U+0128}
 return
 
 
@@ -6053,17 +6053,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{I}::
-SendInput ^x8{Enter}128{Enter}
+send ^x8{Enter}128{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{I}::
-SendInput ^+u128{Enter}
+send ^+u128{Enter}
 return
 
 #if OtherCase()
 ::\~{I}::
-SendInput {U+0128}
+send {U+0128}
 return
 
 
@@ -6071,17 +6071,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~i::
-SendInput ^x8{Enter}129{Enter}
+send ^x8{Enter}129{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~i::
-SendInput ^+u129{Enter}
+send ^+u129{Enter}
 return
 
 #if OtherCase()
 ::\~i::
-SendInput {U+0129}
+send {U+0129}
 return
 
 
@@ -6089,17 +6089,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{\i}::
-SendInput ^x8{Enter}129{Enter}
+send ^x8{Enter}129{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{\i}::
-SendInput ^+u129{Enter}
+send ^+u129{Enter}
 return
 
 #if OtherCase()
 ::\~{\i}::
-SendInput {U+0129}
+send {U+0129}
 return
 
 
@@ -6107,17 +6107,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{i}::
-SendInput ^x8{Enter}129{Enter}
+send ^x8{Enter}129{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{i}::
-SendInput ^+u129{Enter}
+send ^+u129{Enter}
 return
 
 #if OtherCase()
 ::\~{i}::
-SendInput {U+0129}
+send {U+0129}
 return
 
 
@@ -6125,17 +6125,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=I::
-SendInput ^x8{Enter}12a{Enter}
+send ^x8{Enter}12a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=I::
-SendInput ^+u12a{Enter}
+send ^+u12a{Enter}
 return
 
 #if OtherCase()
 ::\=I::
-SendInput {U+012A}
+send {U+012A}
 return
 
 
@@ -6143,17 +6143,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={I}::
-SendInput ^x8{Enter}12a{Enter}
+send ^x8{Enter}12a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={I}::
-SendInput ^+u12a{Enter}
+send ^+u12a{Enter}
 return
 
 #if OtherCase()
 ::\={I}::
-SendInput {U+012A}
+send {U+012A}
 return
 
 
@@ -6161,17 +6161,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=i::
-SendInput ^x8{Enter}12b{Enter}
+send ^x8{Enter}12b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=i::
-SendInput ^+u12b{Enter}
+send ^+u12b{Enter}
 return
 
 #if OtherCase()
 ::\=i::
-SendInput {U+012B}
+send {U+012B}
 return
 
 
@@ -6179,17 +6179,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={\i}::
-SendInput ^x8{Enter}12b{Enter}
+send ^x8{Enter}12b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={\i}::
-SendInput ^+u12b{Enter}
+send ^+u12b{Enter}
 return
 
 #if OtherCase()
 ::\={\i}::
-SendInput {U+012B}
+send {U+012B}
 return
 
 
@@ -6197,17 +6197,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={i}::
-SendInput ^x8{Enter}12b{Enter}
+send ^x8{Enter}12b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={i}::
-SendInput ^+u12b{Enter}
+send ^+u12b{Enter}
 return
 
 #if OtherCase()
 ::\={i}::
-SendInput {U+012B}
+send {U+012B}
 return
 
 
@@ -6215,17 +6215,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uI::
-SendInput ^x8{Enter}12c{Enter}
+send ^x8{Enter}12c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uI::
-SendInput ^+u12c{Enter}
+send ^+u12c{Enter}
 return
 
 #if OtherCase()
 ::\uI::
-SendInput {U+012C}
+send {U+012C}
 return
 
 
@@ -6233,17 +6233,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{I}::
-SendInput ^x8{Enter}12c{Enter}
+send ^x8{Enter}12c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{I}::
-SendInput ^+u12c{Enter}
+send ^+u12c{Enter}
 return
 
 #if OtherCase()
 ::\u{I}::
-SendInput {U+012C}
+send {U+012C}
 return
 
 
@@ -6251,17 +6251,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ui::
-SendInput ^x8{Enter}12d{Enter}
+send ^x8{Enter}12d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ui::
-SendInput ^+u12d{Enter}
+send ^+u12d{Enter}
 return
 
 #if OtherCase()
 ::\ui::
-SendInput {U+012D}
+send {U+012D}
 return
 
 
@@ -6269,17 +6269,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{\i}::
-SendInput ^x8{Enter}12d{Enter}
+send ^x8{Enter}12d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{\i}::
-SendInput ^+u12d{Enter}
+send ^+u12d{Enter}
 return
 
 #if OtherCase()
 ::\u{\i}::
-SendInput {U+012D}
+send {U+012D}
 return
 
 
@@ -6287,17 +6287,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{i}::
-SendInput ^x8{Enter}12d{Enter}
+send ^x8{Enter}12d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{i}::
-SendInput ^+u12d{Enter}
+send ^+u12d{Enter}
 return
 
 #if OtherCase()
 ::\u{i}::
-SendInput {U+012D}
+send {U+012D}
 return
 
 
@@ -6305,17 +6305,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\kI::
-SendInput ^x8{Enter}12e{Enter}
+send ^x8{Enter}12e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\kI::
-SendInput ^+u12e{Enter}
+send ^+u12e{Enter}
 return
 
 #if OtherCase()
 ::\kI::
-SendInput {U+012E}
+send {U+012E}
 return
 
 
@@ -6323,17 +6323,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{I}::
-SendInput ^x8{Enter}12e{Enter}
+send ^x8{Enter}12e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{I}::
-SendInput ^+u12e{Enter}
+send ^+u12e{Enter}
 return
 
 #if OtherCase()
 ::\k{I}::
-SendInput {U+012E}
+send {U+012E}
 return
 
 
@@ -6341,17 +6341,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ki::
-SendInput ^x8{Enter}12f{Enter}
+send ^x8{Enter}12f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ki::
-SendInput ^+u12f{Enter}
+send ^+u12f{Enter}
 return
 
 #if OtherCase()
 ::\ki::
-SendInput {U+012F}
+send {U+012F}
 return
 
 
@@ -6359,17 +6359,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{i}::
-SendInput ^x8{Enter}12f{Enter}
+send ^x8{Enter}12f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{i}::
-SendInput ^+u12f{Enter}
+send ^+u12f{Enter}
 return
 
 #if OtherCase()
 ::\k{i}::
-SendInput {U+012F}
+send {U+012F}
 return
 
 
@@ -6377,17 +6377,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.I::
-SendInput ^x8{Enter}130{Enter}
+send ^x8{Enter}130{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.I::
-SendInput ^+u130{Enter}
+send ^+u130{Enter}
 return
 
 #if OtherCase()
 ::\.I::
-SendInput {U+0130}
+send {U+0130}
 return
 
 
@@ -6395,17 +6395,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{I}::
-SendInput ^x8{Enter}130{Enter}
+send ^x8{Enter}130{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{I}::
-SendInput ^+u130{Enter}
+send ^+u130{Enter}
 return
 
 #if OtherCase()
 ::\.{I}::
-SendInput {U+0130}
+send {U+0130}
 return
 
 
@@ -6413,17 +6413,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\i::
-SendInput ^x8{Enter}131{Enter}
+send ^x8{Enter}131{Enter}
 return
 
 #if GtkApplicationCase()
 ::\i::
-SendInput ^+u131{Enter}
+send ^+u131{Enter}
 return
 
 #if OtherCase()
 ::\i::
-SendInput {U+0131}
+send {U+0131}
 return
 
 
@@ -6431,17 +6431,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\imath::
-SendInput ^x8{Enter}131{Enter}
+send ^x8{Enter}131{Enter}
 return
 
 #if GtkApplicationCase()
 ::\imath::
-SendInput ^+u131{Enter}
+send ^+u131{Enter}
 return
 
 #if OtherCase()
 ::\imath::
-SendInput {U+0131}
+send {U+0131}
 return
 
 
@@ -6449,17 +6449,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^J::
-SendInput ^x8{Enter}134{Enter}
+send ^x8{Enter}134{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^J::
-SendInput ^+u134{Enter}
+send ^+u134{Enter}
 return
 
 #if OtherCase()
 ::\^J::
-SendInput {U+0134}
+send {U+0134}
 return
 
 
@@ -6467,17 +6467,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{J}::
-SendInput ^x8{Enter}134{Enter}
+send ^x8{Enter}134{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{J}::
-SendInput ^+u134{Enter}
+send ^+u134{Enter}
 return
 
 #if OtherCase()
 ::\^{J}::
-SendInput {U+0134}
+send {U+0134}
 return
 
 
@@ -6485,17 +6485,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^j::
-SendInput ^x8{Enter}135{Enter}
+send ^x8{Enter}135{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^j::
-SendInput ^+u135{Enter}
+send ^+u135{Enter}
 return
 
 #if OtherCase()
 ::\^j::
-SendInput {U+0135}
+send {U+0135}
 return
 
 
@@ -6503,17 +6503,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{\j}::
-SendInput ^x8{Enter}135{Enter}
+send ^x8{Enter}135{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{\j}::
-SendInput ^+u135{Enter}
+send ^+u135{Enter}
 return
 
 #if OtherCase()
 ::\^{\j}::
-SendInput {U+0135}
+send {U+0135}
 return
 
 
@@ -6521,17 +6521,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{j}::
-SendInput ^x8{Enter}135{Enter}
+send ^x8{Enter}135{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{j}::
-SendInput ^+u135{Enter}
+send ^+u135{Enter}
 return
 
 #if OtherCase()
 ::\^{j}::
-SendInput {U+0135}
+send {U+0135}
 return
 
 
@@ -6539,17 +6539,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cK::
-SendInput ^x8{Enter}136{Enter}
+send ^x8{Enter}136{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cK::
-SendInput ^+u136{Enter}
+send ^+u136{Enter}
 return
 
 #if OtherCase()
 ::\cK::
-SendInput {U+0136}
+send {U+0136}
 return
 
 
@@ -6557,17 +6557,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{K}::
-SendInput ^x8{Enter}136{Enter}
+send ^x8{Enter}136{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{K}::
-SendInput ^+u136{Enter}
+send ^+u136{Enter}
 return
 
 #if OtherCase()
 ::\c{K}::
-SendInput {U+0136}
+send {U+0136}
 return
 
 
@@ -6575,17 +6575,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ck::
-SendInput ^x8{Enter}137{Enter}
+send ^x8{Enter}137{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ck::
-SendInput ^+u137{Enter}
+send ^+u137{Enter}
 return
 
 #if OtherCase()
 ::\ck::
-SendInput {U+0137}
+send {U+0137}
 return
 
 
@@ -6593,17 +6593,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{k}::
-SendInput ^x8{Enter}137{Enter}
+send ^x8{Enter}137{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{k}::
-SendInput ^+u137{Enter}
+send ^+u137{Enter}
 return
 
 #if OtherCase()
 ::\c{k}::
-SendInput {U+0137}
+send {U+0137}
 return
 
 
@@ -6611,17 +6611,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'L::
-SendInput ^x8{Enter}139{Enter}
+send ^x8{Enter}139{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'L::
-SendInput ^+u139{Enter}
+send ^+u139{Enter}
 return
 
 #if OtherCase()
 ::\'L::
-SendInput {U+0139}
+send {U+0139}
 return
 
 
@@ -6629,17 +6629,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{L}::
-SendInput ^x8{Enter}139{Enter}
+send ^x8{Enter}139{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{L}::
-SendInput ^+u139{Enter}
+send ^+u139{Enter}
 return
 
 #if OtherCase()
 ::\'{L}::
-SendInput {U+0139}
+send {U+0139}
 return
 
 
@@ -6647,17 +6647,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'l::
-SendInput ^x8{Enter}13a{Enter}
+send ^x8{Enter}13a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'l::
-SendInput ^+u13a{Enter}
+send ^+u13a{Enter}
 return
 
 #if OtherCase()
 ::\'l::
-SendInput {U+013A}
+send {U+013A}
 return
 
 
@@ -6665,17 +6665,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{l}::
-SendInput ^x8{Enter}13a{Enter}
+send ^x8{Enter}13a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{l}::
-SendInput ^+u13a{Enter}
+send ^+u13a{Enter}
 return
 
 #if OtherCase()
 ::\'{l}::
-SendInput {U+013A}
+send {U+013A}
 return
 
 
@@ -6683,17 +6683,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cL::
-SendInput ^x8{Enter}13b{Enter}
+send ^x8{Enter}13b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cL::
-SendInput ^+u13b{Enter}
+send ^+u13b{Enter}
 return
 
 #if OtherCase()
 ::\cL::
-SendInput {U+013B}
+send {U+013B}
 return
 
 
@@ -6701,17 +6701,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{L}::
-SendInput ^x8{Enter}13b{Enter}
+send ^x8{Enter}13b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{L}::
-SendInput ^+u13b{Enter}
+send ^+u13b{Enter}
 return
 
 #if OtherCase()
 ::\c{L}::
-SendInput {U+013B}
+send {U+013B}
 return
 
 
@@ -6719,17 +6719,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cl::
-SendInput ^x8{Enter}13c{Enter}
+send ^x8{Enter}13c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cl::
-SendInput ^+u13c{Enter}
+send ^+u13c{Enter}
 return
 
 #if OtherCase()
 ::\cl::
-SendInput {U+013C}
+send {U+013C}
 return
 
 
@@ -6737,17 +6737,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{l}::
-SendInput ^x8{Enter}13c{Enter}
+send ^x8{Enter}13c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{l}::
-SendInput ^+u13c{Enter}
+send ^+u13c{Enter}
 return
 
 #if OtherCase()
 ::\c{l}::
-SendInput {U+013C}
+send {U+013C}
 return
 
 
@@ -6755,17 +6755,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vL::
-SendInput ^x8{Enter}13d{Enter}
+send ^x8{Enter}13d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vL::
-SendInput ^+u13d{Enter}
+send ^+u13d{Enter}
 return
 
 #if OtherCase()
 ::\vL::
-SendInput {U+013D}
+send {U+013D}
 return
 
 
@@ -6773,17 +6773,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{L}::
-SendInput ^x8{Enter}13d{Enter}
+send ^x8{Enter}13d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{L}::
-SendInput ^+u13d{Enter}
+send ^+u13d{Enter}
 return
 
 #if OtherCase()
 ::\v{L}::
-SendInput {U+013D}
+send {U+013D}
 return
 
 
@@ -6791,17 +6791,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vl::
-SendInput ^x8{Enter}13e{Enter}
+send ^x8{Enter}13e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vl::
-SendInput ^+u13e{Enter}
+send ^+u13e{Enter}
 return
 
 #if OtherCase()
 ::\vl::
-SendInput {U+013E}
+send {U+013E}
 return
 
 
@@ -6809,17 +6809,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{l}::
-SendInput ^x8{Enter}13e{Enter}
+send ^x8{Enter}13e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{l}::
-SendInput ^+u13e{Enter}
+send ^+u13e{Enter}
 return
 
 #if OtherCase()
 ::\v{l}::
-SendInput {U+013E}
+send {U+013E}
 return
 
 
@@ -6827,17 +6827,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\L::
-SendInput ^x8{Enter}141{Enter}
+send ^x8{Enter}141{Enter}
 return
 
 #if GtkApplicationCase()
 ::\L::
-SendInput ^+u141{Enter}
+send ^+u141{Enter}
 return
 
 #if OtherCase()
 ::\L::
-SendInput {U+0141}
+send {U+0141}
 return
 
 
@@ -6845,17 +6845,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\l::
-SendInput ^x8{Enter}142{Enter}
+send ^x8{Enter}142{Enter}
 return
 
 #if GtkApplicationCase()
 ::\l::
-SendInput ^+u142{Enter}
+send ^+u142{Enter}
 return
 
 #if OtherCase()
 ::\l::
-SendInput {U+0142}
+send {U+0142}
 return
 
 
@@ -6863,17 +6863,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'N::
-SendInput ^x8{Enter}143{Enter}
+send ^x8{Enter}143{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'N::
-SendInput ^+u143{Enter}
+send ^+u143{Enter}
 return
 
 #if OtherCase()
 ::\'N::
-SendInput {U+0143}
+send {U+0143}
 return
 
 
@@ -6881,17 +6881,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{N}::
-SendInput ^x8{Enter}143{Enter}
+send ^x8{Enter}143{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{N}::
-SendInput ^+u143{Enter}
+send ^+u143{Enter}
 return
 
 #if OtherCase()
 ::\'{N}::
-SendInput {U+0143}
+send {U+0143}
 return
 
 
@@ -6899,17 +6899,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'n::
-SendInput ^x8{Enter}144{Enter}
+send ^x8{Enter}144{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'n::
-SendInput ^+u144{Enter}
+send ^+u144{Enter}
 return
 
 #if OtherCase()
 ::\'n::
-SendInput {U+0144}
+send {U+0144}
 return
 
 
@@ -6917,17 +6917,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{n}::
-SendInput ^x8{Enter}144{Enter}
+send ^x8{Enter}144{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{n}::
-SendInput ^+u144{Enter}
+send ^+u144{Enter}
 return
 
 #if OtherCase()
 ::\'{n}::
-SendInput {U+0144}
+send {U+0144}
 return
 
 
@@ -6935,17 +6935,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cN::
-SendInput ^x8{Enter}145{Enter}
+send ^x8{Enter}145{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cN::
-SendInput ^+u145{Enter}
+send ^+u145{Enter}
 return
 
 #if OtherCase()
 ::\cN::
-SendInput {U+0145}
+send {U+0145}
 return
 
 
@@ -6953,17 +6953,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{N}::
-SendInput ^x8{Enter}145{Enter}
+send ^x8{Enter}145{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{N}::
-SendInput ^+u145{Enter}
+send ^+u145{Enter}
 return
 
 #if OtherCase()
 ::\c{N}::
-SendInput {U+0145}
+send {U+0145}
 return
 
 
@@ -6971,17 +6971,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cn::
-SendInput ^x8{Enter}146{Enter}
+send ^x8{Enter}146{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cn::
-SendInput ^+u146{Enter}
+send ^+u146{Enter}
 return
 
 #if OtherCase()
 ::\cn::
-SendInput {U+0146}
+send {U+0146}
 return
 
 
@@ -6989,17 +6989,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{n}::
-SendInput ^x8{Enter}146{Enter}
+send ^x8{Enter}146{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{n}::
-SendInput ^+u146{Enter}
+send ^+u146{Enter}
 return
 
 #if OtherCase()
 ::\c{n}::
-SendInput {U+0146}
+send {U+0146}
 return
 
 
@@ -7007,17 +7007,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vN::
-SendInput ^x8{Enter}147{Enter}
+send ^x8{Enter}147{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vN::
-SendInput ^+u147{Enter}
+send ^+u147{Enter}
 return
 
 #if OtherCase()
 ::\vN::
-SendInput {U+0147}
+send {U+0147}
 return
 
 
@@ -7025,17 +7025,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{N}::
-SendInput ^x8{Enter}147{Enter}
+send ^x8{Enter}147{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{N}::
-SendInput ^+u147{Enter}
+send ^+u147{Enter}
 return
 
 #if OtherCase()
 ::\v{N}::
-SendInput {U+0147}
+send {U+0147}
 return
 
 
@@ -7043,17 +7043,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vn::
-SendInput ^x8{Enter}148{Enter}
+send ^x8{Enter}148{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vn::
-SendInput ^+u148{Enter}
+send ^+u148{Enter}
 return
 
 #if OtherCase()
 ::\vn::
-SendInput {U+0148}
+send {U+0148}
 return
 
 
@@ -7061,17 +7061,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{n}::
-SendInput ^x8{Enter}148{Enter}
+send ^x8{Enter}148{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{n}::
-SendInput ^+u148{Enter}
+send ^+u148{Enter}
 return
 
 #if OtherCase()
 ::\v{n}::
-SendInput {U+0148}
+send {U+0148}
 return
 
 
@@ -7079,17 +7079,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=O::
-SendInput ^x8{Enter}14c{Enter}
+send ^x8{Enter}14c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=O::
-SendInput ^+u14c{Enter}
+send ^+u14c{Enter}
 return
 
 #if OtherCase()
 ::\=O::
-SendInput {U+014C}
+send {U+014C}
 return
 
 
@@ -7097,17 +7097,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={O}::
-SendInput ^x8{Enter}14c{Enter}
+send ^x8{Enter}14c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={O}::
-SendInput ^+u14c{Enter}
+send ^+u14c{Enter}
 return
 
 #if OtherCase()
 ::\={O}::
-SendInput {U+014C}
+send {U+014C}
 return
 
 
@@ -7115,17 +7115,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=o::
-SendInput ^x8{Enter}14d{Enter}
+send ^x8{Enter}14d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=o::
-SendInput ^+u14d{Enter}
+send ^+u14d{Enter}
 return
 
 #if OtherCase()
 ::\=o::
-SendInput {U+014D}
+send {U+014D}
 return
 
 
@@ -7133,17 +7133,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={o}::
-SendInput ^x8{Enter}14d{Enter}
+send ^x8{Enter}14d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={o}::
-SendInput ^+u14d{Enter}
+send ^+u14d{Enter}
 return
 
 #if OtherCase()
 ::\={o}::
-SendInput {U+014D}
+send {U+014D}
 return
 
 
@@ -7151,17 +7151,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uO::
-SendInput ^x8{Enter}14e{Enter}
+send ^x8{Enter}14e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uO::
-SendInput ^+u14e{Enter}
+send ^+u14e{Enter}
 return
 
 #if OtherCase()
 ::\uO::
-SendInput {U+014E}
+send {U+014E}
 return
 
 
@@ -7169,17 +7169,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{O}::
-SendInput ^x8{Enter}14e{Enter}
+send ^x8{Enter}14e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{O}::
-SendInput ^+u14e{Enter}
+send ^+u14e{Enter}
 return
 
 #if OtherCase()
 ::\u{O}::
-SendInput {U+014E}
+send {U+014E}
 return
 
 
@@ -7187,17 +7187,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uo::
-SendInput ^x8{Enter}14f{Enter}
+send ^x8{Enter}14f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uo::
-SendInput ^+u14f{Enter}
+send ^+u14f{Enter}
 return
 
 #if OtherCase()
 ::\uo::
-SendInput {U+014F}
+send {U+014F}
 return
 
 
@@ -7205,17 +7205,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{o}::
-SendInput ^x8{Enter}14f{Enter}
+send ^x8{Enter}14f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{o}::
-SendInput ^+u14f{Enter}
+send ^+u14f{Enter}
 return
 
 #if OtherCase()
 ::\u{o}::
-SendInput {U+014F}
+send {U+014F}
 return
 
 
@@ -7223,17 +7223,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\HO::
-SendInput ^x8{Enter}150{Enter}
+send ^x8{Enter}150{Enter}
 return
 
 #if GtkApplicationCase()
 ::\HO::
-SendInput ^+u150{Enter}
+send ^+u150{Enter}
 return
 
 #if OtherCase()
 ::\HO::
-SendInput {U+0150}
+send {U+0150}
 return
 
 
@@ -7241,17 +7241,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\H{O}::
-SendInput ^x8{Enter}150{Enter}
+send ^x8{Enter}150{Enter}
 return
 
 #if GtkApplicationCase()
 ::\H{O}::
-SendInput ^+u150{Enter}
+send ^+u150{Enter}
 return
 
 #if OtherCase()
 ::\H{O}::
-SendInput {U+0150}
+send {U+0150}
 return
 
 
@@ -7259,17 +7259,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Ho::
-SendInput ^x8{Enter}151{Enter}
+send ^x8{Enter}151{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Ho::
-SendInput ^+u151{Enter}
+send ^+u151{Enter}
 return
 
 #if OtherCase()
 ::\Ho::
-SendInput {U+0151}
+send {U+0151}
 return
 
 
@@ -7277,17 +7277,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\H{o}::
-SendInput ^x8{Enter}151{Enter}
+send ^x8{Enter}151{Enter}
 return
 
 #if GtkApplicationCase()
 ::\H{o}::
-SendInput ^+u151{Enter}
+send ^+u151{Enter}
 return
 
 #if OtherCase()
 ::\H{o}::
-SendInput {U+0151}
+send {U+0151}
 return
 
 
@@ -7295,17 +7295,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Uo::
-SendInput ^x8{Enter}151{Enter}
+send ^x8{Enter}151{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Uo::
-SendInput ^+u151{Enter}
+send ^+u151{Enter}
 return
 
 #if OtherCase()
 ::\Uo::
-SendInput {U+0151}
+send {U+0151}
 return
 
 
@@ -7313,17 +7313,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\U{o}::
-SendInput ^x8{Enter}151{Enter}
+send ^x8{Enter}151{Enter}
 return
 
 #if GtkApplicationCase()
 ::\U{o}::
-SendInput ^+u151{Enter}
+send ^+u151{Enter}
 return
 
 #if OtherCase()
 ::\U{o}::
-SendInput {U+0151}
+send {U+0151}
 return
 
 
@@ -7331,17 +7331,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\OE::
-SendInput ^x8{Enter}152{Enter}
+send ^x8{Enter}152{Enter}
 return
 
 #if GtkApplicationCase()
 ::\OE::
-SendInput ^+u152{Enter}
+send ^+u152{Enter}
 return
 
 #if OtherCase()
 ::\OE::
-SendInput {U+0152}
+send {U+0152}
 return
 
 
@@ -7349,17 +7349,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\oe::
-SendInput ^x8{Enter}153{Enter}
+send ^x8{Enter}153{Enter}
 return
 
 #if GtkApplicationCase()
 ::\oe::
-SendInput ^+u153{Enter}
+send ^+u153{Enter}
 return
 
 #if OtherCase()
 ::\oe::
-SendInput {U+0153}
+send {U+0153}
 return
 
 
@@ -7367,17 +7367,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'R::
-SendInput ^x8{Enter}154{Enter}
+send ^x8{Enter}154{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'R::
-SendInput ^+u154{Enter}
+send ^+u154{Enter}
 return
 
 #if OtherCase()
 ::\'R::
-SendInput {U+0154}
+send {U+0154}
 return
 
 
@@ -7385,17 +7385,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{R}::
-SendInput ^x8{Enter}154{Enter}
+send ^x8{Enter}154{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{R}::
-SendInput ^+u154{Enter}
+send ^+u154{Enter}
 return
 
 #if OtherCase()
 ::\'{R}::
-SendInput {U+0154}
+send {U+0154}
 return
 
 
@@ -7403,17 +7403,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'r::
-SendInput ^x8{Enter}155{Enter}
+send ^x8{Enter}155{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'r::
-SendInput ^+u155{Enter}
+send ^+u155{Enter}
 return
 
 #if OtherCase()
 ::\'r::
-SendInput {U+0155}
+send {U+0155}
 return
 
 
@@ -7421,17 +7421,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{r}::
-SendInput ^x8{Enter}155{Enter}
+send ^x8{Enter}155{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{r}::
-SendInput ^+u155{Enter}
+send ^+u155{Enter}
 return
 
 #if OtherCase()
 ::\'{r}::
-SendInput {U+0155}
+send {U+0155}
 return
 
 
@@ -7439,17 +7439,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cR::
-SendInput ^x8{Enter}156{Enter}
+send ^x8{Enter}156{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cR::
-SendInput ^+u156{Enter}
+send ^+u156{Enter}
 return
 
 #if OtherCase()
 ::\cR::
-SendInput {U+0156}
+send {U+0156}
 return
 
 
@@ -7457,17 +7457,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{R}::
-SendInput ^x8{Enter}156{Enter}
+send ^x8{Enter}156{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{R}::
-SendInput ^+u156{Enter}
+send ^+u156{Enter}
 return
 
 #if OtherCase()
 ::\c{R}::
-SendInput {U+0156}
+send {U+0156}
 return
 
 
@@ -7475,17 +7475,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cr::
-SendInput ^x8{Enter}157{Enter}
+send ^x8{Enter}157{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cr::
-SendInput ^+u157{Enter}
+send ^+u157{Enter}
 return
 
 #if OtherCase()
 ::\cr::
-SendInput {U+0157}
+send {U+0157}
 return
 
 
@@ -7493,17 +7493,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{r}::
-SendInput ^x8{Enter}157{Enter}
+send ^x8{Enter}157{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{r}::
-SendInput ^+u157{Enter}
+send ^+u157{Enter}
 return
 
 #if OtherCase()
 ::\c{r}::
-SendInput {U+0157}
+send {U+0157}
 return
 
 
@@ -7511,17 +7511,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vR::
-SendInput ^x8{Enter}158{Enter}
+send ^x8{Enter}158{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vR::
-SendInput ^+u158{Enter}
+send ^+u158{Enter}
 return
 
 #if OtherCase()
 ::\vR::
-SendInput {U+0158}
+send {U+0158}
 return
 
 
@@ -7529,17 +7529,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{R}::
-SendInput ^x8{Enter}158{Enter}
+send ^x8{Enter}158{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{R}::
-SendInput ^+u158{Enter}
+send ^+u158{Enter}
 return
 
 #if OtherCase()
 ::\v{R}::
-SendInput {U+0158}
+send {U+0158}
 return
 
 
@@ -7547,17 +7547,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vr::
-SendInput ^x8{Enter}159{Enter}
+send ^x8{Enter}159{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vr::
-SendInput ^+u159{Enter}
+send ^+u159{Enter}
 return
 
 #if OtherCase()
 ::\vr::
-SendInput {U+0159}
+send {U+0159}
 return
 
 
@@ -7565,17 +7565,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{r}::
-SendInput ^x8{Enter}159{Enter}
+send ^x8{Enter}159{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{r}::
-SendInput ^+u159{Enter}
+send ^+u159{Enter}
 return
 
 #if OtherCase()
 ::\v{r}::
-SendInput {U+0159}
+send {U+0159}
 return
 
 
@@ -7583,17 +7583,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'S::
-SendInput ^x8{Enter}15a{Enter}
+send ^x8{Enter}15a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'S::
-SendInput ^+u15a{Enter}
+send ^+u15a{Enter}
 return
 
 #if OtherCase()
 ::\'S::
-SendInput {U+015A}
+send {U+015A}
 return
 
 
@@ -7601,17 +7601,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{S}::
-SendInput ^x8{Enter}15a{Enter}
+send ^x8{Enter}15a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{S}::
-SendInput ^+u15a{Enter}
+send ^+u15a{Enter}
 return
 
 #if OtherCase()
 ::\'{S}::
-SendInput {U+015A}
+send {U+015A}
 return
 
 
@@ -7619,17 +7619,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'s::
-SendInput ^x8{Enter}15b{Enter}
+send ^x8{Enter}15b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'s::
-SendInput ^+u15b{Enter}
+send ^+u15b{Enter}
 return
 
 #if OtherCase()
 ::\'s::
-SendInput {U+015B}
+send {U+015B}
 return
 
 
@@ -7637,17 +7637,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{s}::
-SendInput ^x8{Enter}15b{Enter}
+send ^x8{Enter}15b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{s}::
-SendInput ^+u15b{Enter}
+send ^+u15b{Enter}
 return
 
 #if OtherCase()
 ::\'{s}::
-SendInput {U+015B}
+send {U+015B}
 return
 
 
@@ -7655,17 +7655,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^S::
-SendInput ^x8{Enter}15c{Enter}
+send ^x8{Enter}15c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^S::
-SendInput ^+u15c{Enter}
+send ^+u15c{Enter}
 return
 
 #if OtherCase()
 ::\^S::
-SendInput {U+015C}
+send {U+015C}
 return
 
 
@@ -7673,17 +7673,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{S}::
-SendInput ^x8{Enter}15c{Enter}
+send ^x8{Enter}15c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{S}::
-SendInput ^+u15c{Enter}
+send ^+u15c{Enter}
 return
 
 #if OtherCase()
 ::\^{S}::
-SendInput {U+015C}
+send {U+015C}
 return
 
 
@@ -7691,17 +7691,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^s::
-SendInput ^x8{Enter}15d{Enter}
+send ^x8{Enter}15d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^s::
-SendInput ^+u15d{Enter}
+send ^+u15d{Enter}
 return
 
 #if OtherCase()
 ::\^s::
-SendInput {U+015D}
+send {U+015D}
 return
 
 
@@ -7709,17 +7709,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{s}::
-SendInput ^x8{Enter}15d{Enter}
+send ^x8{Enter}15d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{s}::
-SendInput ^+u15d{Enter}
+send ^+u15d{Enter}
 return
 
 #if OtherCase()
 ::\^{s}::
-SendInput {U+015D}
+send {U+015D}
 return
 
 
@@ -7727,17 +7727,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cS::
-SendInput ^x8{Enter}15e{Enter}
+send ^x8{Enter}15e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cS::
-SendInput ^+u15e{Enter}
+send ^+u15e{Enter}
 return
 
 #if OtherCase()
 ::\cS::
-SendInput {U+015E}
+send {U+015E}
 return
 
 
@@ -7745,17 +7745,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{S}::
-SendInput ^x8{Enter}15e{Enter}
+send ^x8{Enter}15e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{S}::
-SendInput ^+u15e{Enter}
+send ^+u15e{Enter}
 return
 
 #if OtherCase()
 ::\c{S}::
-SendInput {U+015E}
+send {U+015E}
 return
 
 
@@ -7763,17 +7763,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cs::
-SendInput ^x8{Enter}15f{Enter}
+send ^x8{Enter}15f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cs::
-SendInput ^+u15f{Enter}
+send ^+u15f{Enter}
 return
 
 #if OtherCase()
 ::\cs::
-SendInput {U+015F}
+send {U+015F}
 return
 
 
@@ -7781,17 +7781,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{s}::
-SendInput ^x8{Enter}15f{Enter}
+send ^x8{Enter}15f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{s}::
-SendInput ^+u15f{Enter}
+send ^+u15f{Enter}
 return
 
 #if OtherCase()
 ::\c{s}::
-SendInput {U+015F}
+send {U+015F}
 return
 
 
@@ -7799,17 +7799,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vS::
-SendInput ^x8{Enter}160{Enter}
+send ^x8{Enter}160{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vS::
-SendInput ^+u160{Enter}
+send ^+u160{Enter}
 return
 
 #if OtherCase()
 ::\vS::
-SendInput {U+0160}
+send {U+0160}
 return
 
 
@@ -7817,17 +7817,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{S}::
-SendInput ^x8{Enter}160{Enter}
+send ^x8{Enter}160{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{S}::
-SendInput ^+u160{Enter}
+send ^+u160{Enter}
 return
 
 #if OtherCase()
 ::\v{S}::
-SendInput {U+0160}
+send {U+0160}
 return
 
 
@@ -7835,17 +7835,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vs::
-SendInput ^x8{Enter}161{Enter}
+send ^x8{Enter}161{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vs::
-SendInput ^+u161{Enter}
+send ^+u161{Enter}
 return
 
 #if OtherCase()
 ::\vs::
-SendInput {U+0161}
+send {U+0161}
 return
 
 
@@ -7853,17 +7853,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{s}::
-SendInput ^x8{Enter}161{Enter}
+send ^x8{Enter}161{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{s}::
-SendInput ^+u161{Enter}
+send ^+u161{Enter}
 return
 
 #if OtherCase()
 ::\v{s}::
-SendInput {U+0161}
+send {U+0161}
 return
 
 
@@ -7871,17 +7871,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cT::
-SendInput ^x8{Enter}162{Enter}
+send ^x8{Enter}162{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cT::
-SendInput ^+u162{Enter}
+send ^+u162{Enter}
 return
 
 #if OtherCase()
 ::\cT::
-SendInput {U+0162}
+send {U+0162}
 return
 
 
@@ -7889,17 +7889,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{T}::
-SendInput ^x8{Enter}162{Enter}
+send ^x8{Enter}162{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{T}::
-SendInput ^+u162{Enter}
+send ^+u162{Enter}
 return
 
 #if OtherCase()
 ::\c{T}::
-SendInput {U+0162}
+send {U+0162}
 return
 
 
@@ -7907,17 +7907,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ct::
-SendInput ^x8{Enter}163{Enter}
+send ^x8{Enter}163{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ct::
-SendInput ^+u163{Enter}
+send ^+u163{Enter}
 return
 
 #if OtherCase()
 ::\ct::
-SendInput {U+0163}
+send {U+0163}
 return
 
 
@@ -7925,17 +7925,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{t}::
-SendInput ^x8{Enter}163{Enter}
+send ^x8{Enter}163{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{t}::
-SendInput ^+u163{Enter}
+send ^+u163{Enter}
 return
 
 #if OtherCase()
 ::\c{t}::
-SendInput {U+0163}
+send {U+0163}
 return
 
 
@@ -7943,17 +7943,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vT::
-SendInput ^x8{Enter}164{Enter}
+send ^x8{Enter}164{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vT::
-SendInput ^+u164{Enter}
+send ^+u164{Enter}
 return
 
 #if OtherCase()
 ::\vT::
-SendInput {U+0164}
+send {U+0164}
 return
 
 
@@ -7961,17 +7961,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{T}::
-SendInput ^x8{Enter}164{Enter}
+send ^x8{Enter}164{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{T}::
-SendInput ^+u164{Enter}
+send ^+u164{Enter}
 return
 
 #if OtherCase()
 ::\v{T}::
-SendInput {U+0164}
+send {U+0164}
 return
 
 
@@ -7979,17 +7979,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vt::
-SendInput ^x8{Enter}165{Enter}
+send ^x8{Enter}165{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vt::
-SendInput ^+u165{Enter}
+send ^+u165{Enter}
 return
 
 #if OtherCase()
 ::\vt::
-SendInput {U+0165}
+send {U+0165}
 return
 
 
@@ -7997,17 +7997,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{t}::
-SendInput ^x8{Enter}165{Enter}
+send ^x8{Enter}165{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{t}::
-SendInput ^+u165{Enter}
+send ^+u165{Enter}
 return
 
 #if OtherCase()
 ::\v{t}::
-SendInput {U+0165}
+send {U+0165}
 return
 
 
@@ -8015,17 +8015,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~U::
-SendInput ^x8{Enter}168{Enter}
+send ^x8{Enter}168{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~U::
-SendInput ^+u168{Enter}
+send ^+u168{Enter}
 return
 
 #if OtherCase()
 ::\~U::
-SendInput {U+0168}
+send {U+0168}
 return
 
 
@@ -8033,17 +8033,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{U}::
-SendInput ^x8{Enter}168{Enter}
+send ^x8{Enter}168{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{U}::
-SendInput ^+u168{Enter}
+send ^+u168{Enter}
 return
 
 #if OtherCase()
 ::\~{U}::
-SendInput {U+0168}
+send {U+0168}
 return
 
 
@@ -8051,17 +8051,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~u::
-SendInput ^x8{Enter}169{Enter}
+send ^x8{Enter}169{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~u::
-SendInput ^+u169{Enter}
+send ^+u169{Enter}
 return
 
 #if OtherCase()
 ::\~u::
-SendInput {U+0169}
+send {U+0169}
 return
 
 
@@ -8069,17 +8069,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{u}::
-SendInput ^x8{Enter}169{Enter}
+send ^x8{Enter}169{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{u}::
-SendInput ^+u169{Enter}
+send ^+u169{Enter}
 return
 
 #if OtherCase()
 ::\~{u}::
-SendInput {U+0169}
+send {U+0169}
 return
 
 
@@ -8087,17 +8087,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=U::
-SendInput ^x8{Enter}16a{Enter}
+send ^x8{Enter}16a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=U::
-SendInput ^+u16a{Enter}
+send ^+u16a{Enter}
 return
 
 #if OtherCase()
 ::\=U::
-SendInput {U+016A}
+send {U+016A}
 return
 
 
@@ -8105,17 +8105,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={U}::
-SendInput ^x8{Enter}16a{Enter}
+send ^x8{Enter}16a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={U}::
-SendInput ^+u16a{Enter}
+send ^+u16a{Enter}
 return
 
 #if OtherCase()
 ::\={U}::
-SendInput {U+016A}
+send {U+016A}
 return
 
 
@@ -8123,17 +8123,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=u::
-SendInput ^x8{Enter}16b{Enter}
+send ^x8{Enter}16b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=u::
-SendInput ^+u16b{Enter}
+send ^+u16b{Enter}
 return
 
 #if OtherCase()
 ::\=u::
-SendInput {U+016B}
+send {U+016B}
 return
 
 
@@ -8141,17 +8141,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={u}::
-SendInput ^x8{Enter}16b{Enter}
+send ^x8{Enter}16b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={u}::
-SendInput ^+u16b{Enter}
+send ^+u16b{Enter}
 return
 
 #if OtherCase()
 ::\={u}::
-SendInput {U+016B}
+send {U+016B}
 return
 
 
@@ -8159,17 +8159,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uU::
-SendInput ^x8{Enter}16c{Enter}
+send ^x8{Enter}16c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uU::
-SendInput ^+u16c{Enter}
+send ^+u16c{Enter}
 return
 
 #if OtherCase()
 ::\uU::
-SendInput {U+016C}
+send {U+016C}
 return
 
 
@@ -8177,17 +8177,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{U}::
-SendInput ^x8{Enter}16c{Enter}
+send ^x8{Enter}16c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{U}::
-SendInput ^+u16c{Enter}
+send ^+u16c{Enter}
 return
 
 #if OtherCase()
 ::\u{U}::
-SendInput {U+016C}
+send {U+016C}
 return
 
 
@@ -8195,17 +8195,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uu::
-SendInput ^x8{Enter}16d{Enter}
+send ^x8{Enter}16d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uu::
-SendInput ^+u16d{Enter}
+send ^+u16d{Enter}
 return
 
 #if OtherCase()
 ::\uu::
-SendInput {U+016D}
+send {U+016D}
 return
 
 
@@ -8213,17 +8213,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{u}::
-SendInput ^x8{Enter}16d{Enter}
+send ^x8{Enter}16d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{u}::
-SendInput ^+u16d{Enter}
+send ^+u16d{Enter}
 return
 
 #if OtherCase()
 ::\u{u}::
-SendInput {U+016D}
+send {U+016D}
 return
 
 
@@ -8231,17 +8231,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\HU::
-SendInput ^x8{Enter}170{Enter}
+send ^x8{Enter}170{Enter}
 return
 
 #if GtkApplicationCase()
 ::\HU::
-SendInput ^+u170{Enter}
+send ^+u170{Enter}
 return
 
 #if OtherCase()
 ::\HU::
-SendInput {U+0170}
+send {U+0170}
 return
 
 
@@ -8249,17 +8249,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\H{U}::
-SendInput ^x8{Enter}170{Enter}
+send ^x8{Enter}170{Enter}
 return
 
 #if GtkApplicationCase()
 ::\H{U}::
-SendInput ^+u170{Enter}
+send ^+u170{Enter}
 return
 
 #if OtherCase()
 ::\H{U}::
-SendInput {U+0170}
+send {U+0170}
 return
 
 
@@ -8267,17 +8267,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Hu::
-SendInput ^x8{Enter}171{Enter}
+send ^x8{Enter}171{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Hu::
-SendInput ^+u171{Enter}
+send ^+u171{Enter}
 return
 
 #if OtherCase()
 ::\Hu::
-SendInput {U+0171}
+send {U+0171}
 return
 
 
@@ -8285,17 +8285,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\H{u}::
-SendInput ^x8{Enter}171{Enter}
+send ^x8{Enter}171{Enter}
 return
 
 #if GtkApplicationCase()
 ::\H{u}::
-SendInput ^+u171{Enter}
+send ^+u171{Enter}
 return
 
 #if OtherCase()
 ::\H{u}::
-SendInput {U+0171}
+send {U+0171}
 return
 
 
@@ -8303,17 +8303,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\kU::
-SendInput ^x8{Enter}172{Enter}
+send ^x8{Enter}172{Enter}
 return
 
 #if GtkApplicationCase()
 ::\kU::
-SendInput ^+u172{Enter}
+send ^+u172{Enter}
 return
 
 #if OtherCase()
 ::\kU::
-SendInput {U+0172}
+send {U+0172}
 return
 
 
@@ -8321,17 +8321,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{U}::
-SendInput ^x8{Enter}172{Enter}
+send ^x8{Enter}172{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{U}::
-SendInput ^+u172{Enter}
+send ^+u172{Enter}
 return
 
 #if OtherCase()
 ::\k{U}::
-SendInput {U+0172}
+send {U+0172}
 return
 
 
@@ -8339,17 +8339,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ku::
-SendInput ^x8{Enter}173{Enter}
+send ^x8{Enter}173{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ku::
-SendInput ^+u173{Enter}
+send ^+u173{Enter}
 return
 
 #if OtherCase()
 ::\ku::
-SendInput {U+0173}
+send {U+0173}
 return
 
 
@@ -8357,17 +8357,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{u}::
-SendInput ^x8{Enter}173{Enter}
+send ^x8{Enter}173{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{u}::
-SendInput ^+u173{Enter}
+send ^+u173{Enter}
 return
 
 #if OtherCase()
 ::\k{u}::
-SendInput {U+0173}
+send {U+0173}
 return
 
 
@@ -8375,17 +8375,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^W::
-SendInput ^x8{Enter}174{Enter}
+send ^x8{Enter}174{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^W::
-SendInput ^+u174{Enter}
+send ^+u174{Enter}
 return
 
 #if OtherCase()
 ::\^W::
-SendInput {U+0174}
+send {U+0174}
 return
 
 
@@ -8393,17 +8393,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{W}::
-SendInput ^x8{Enter}174{Enter}
+send ^x8{Enter}174{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{W}::
-SendInput ^+u174{Enter}
+send ^+u174{Enter}
 return
 
 #if OtherCase()
 ::\^{W}::
-SendInput {U+0174}
+send {U+0174}
 return
 
 
@@ -8411,17 +8411,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^w::
-SendInput ^x8{Enter}175{Enter}
+send ^x8{Enter}175{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^w::
-SendInput ^+u175{Enter}
+send ^+u175{Enter}
 return
 
 #if OtherCase()
 ::\^w::
-SendInput {U+0175}
+send {U+0175}
 return
 
 
@@ -8429,17 +8429,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{w}::
-SendInput ^x8{Enter}175{Enter}
+send ^x8{Enter}175{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{w}::
-SendInput ^+u175{Enter}
+send ^+u175{Enter}
 return
 
 #if OtherCase()
 ::\^{w}::
-SendInput {U+0175}
+send {U+0175}
 return
 
 
@@ -8447,17 +8447,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^Y::
-SendInput ^x8{Enter}176{Enter}
+send ^x8{Enter}176{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^Y::
-SendInput ^+u176{Enter}
+send ^+u176{Enter}
 return
 
 #if OtherCase()
 ::\^Y::
-SendInput {U+0176}
+send {U+0176}
 return
 
 
@@ -8465,17 +8465,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{Y}::
-SendInput ^x8{Enter}176{Enter}
+send ^x8{Enter}176{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{Y}::
-SendInput ^+u176{Enter}
+send ^+u176{Enter}
 return
 
 #if OtherCase()
 ::\^{Y}::
-SendInput {U+0176}
+send {U+0176}
 return
 
 
@@ -8483,17 +8483,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^y::
-SendInput ^x8{Enter}177{Enter}
+send ^x8{Enter}177{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^y::
-SendInput ^+u177{Enter}
+send ^+u177{Enter}
 return
 
 #if OtherCase()
 ::\^y::
-SendInput {U+0177}
+send {U+0177}
 return
 
 
@@ -8501,17 +8501,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{y}::
-SendInput ^x8{Enter}177{Enter}
+send ^x8{Enter}177{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{y}::
-SendInput ^+u177{Enter}
+send ^+u177{Enter}
 return
 
 #if OtherCase()
 ::\^{y}::
-SendInput {U+0177}
+send {U+0177}
 return
 
 
@@ -8519,17 +8519,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"Y::
-SendInput ^x8{Enter}178{Enter}
+send ^x8{Enter}178{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"Y::
-SendInput ^+u178{Enter}
+send ^+u178{Enter}
 return
 
 #if OtherCase()
 ::\"Y::
-SendInput {U+0178}
+send {U+0178}
 return
 
 
@@ -8537,17 +8537,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{Y}::
-SendInput ^x8{Enter}178{Enter}
+send ^x8{Enter}178{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{Y}::
-SendInput ^+u178{Enter}
+send ^+u178{Enter}
 return
 
 #if OtherCase()
 ::\"{Y}::
-SendInput {U+0178}
+send {U+0178}
 return
 
 
@@ -8555,17 +8555,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'Z::
-SendInput ^x8{Enter}179{Enter}
+send ^x8{Enter}179{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'Z::
-SendInput ^+u179{Enter}
+send ^+u179{Enter}
 return
 
 #if OtherCase()
 ::\'Z::
-SendInput {U+0179}
+send {U+0179}
 return
 
 
@@ -8573,17 +8573,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{Z}::
-SendInput ^x8{Enter}179{Enter}
+send ^x8{Enter}179{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{Z}::
-SendInput ^+u179{Enter}
+send ^+u179{Enter}
 return
 
 #if OtherCase()
 ::\'{Z}::
-SendInput {U+0179}
+send {U+0179}
 return
 
 
@@ -8591,17 +8591,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'z::
-SendInput ^x8{Enter}17a{Enter}
+send ^x8{Enter}17a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'z::
-SendInput ^+u17a{Enter}
+send ^+u17a{Enter}
 return
 
 #if OtherCase()
 ::\'z::
-SendInput {U+017A}
+send {U+017A}
 return
 
 
@@ -8609,17 +8609,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{z}::
-SendInput ^x8{Enter}17a{Enter}
+send ^x8{Enter}17a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{z}::
-SendInput ^+u17a{Enter}
+send ^+u17a{Enter}
 return
 
 #if OtherCase()
 ::\'{z}::
-SendInput {U+017A}
+send {U+017A}
 return
 
 
@@ -8627,17 +8627,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.Z::
-SendInput ^x8{Enter}17b{Enter}
+send ^x8{Enter}17b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.Z::
-SendInput ^+u17b{Enter}
+send ^+u17b{Enter}
 return
 
 #if OtherCase()
 ::\.Z::
-SendInput {U+017B}
+send {U+017B}
 return
 
 
@@ -8645,17 +8645,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{Z}::
-SendInput ^x8{Enter}17b{Enter}
+send ^x8{Enter}17b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{Z}::
-SendInput ^+u17b{Enter}
+send ^+u17b{Enter}
 return
 
 #if OtherCase()
 ::\.{Z}::
-SendInput {U+017B}
+send {U+017B}
 return
 
 
@@ -8663,17 +8663,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.z::
-SendInput ^x8{Enter}17c{Enter}
+send ^x8{Enter}17c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.z::
-SendInput ^+u17c{Enter}
+send ^+u17c{Enter}
 return
 
 #if OtherCase()
 ::\.z::
-SendInput {U+017C}
+send {U+017C}
 return
 
 
@@ -8681,17 +8681,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{z}::
-SendInput ^x8{Enter}17c{Enter}
+send ^x8{Enter}17c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{z}::
-SendInput ^+u17c{Enter}
+send ^+u17c{Enter}
 return
 
 #if OtherCase()
 ::\.{z}::
-SendInput {U+017C}
+send {U+017C}
 return
 
 
@@ -8699,17 +8699,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vZ::
-SendInput ^x8{Enter}17d{Enter}
+send ^x8{Enter}17d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vZ::
-SendInput ^+u17d{Enter}
+send ^+u17d{Enter}
 return
 
 #if OtherCase()
 ::\vZ::
-SendInput {U+017D}
+send {U+017D}
 return
 
 
@@ -8717,17 +8717,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{Z}::
-SendInput ^x8{Enter}17d{Enter}
+send ^x8{Enter}17d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{Z}::
-SendInput ^+u17d{Enter}
+send ^+u17d{Enter}
 return
 
 #if OtherCase()
 ::\v{Z}::
-SendInput {U+017D}
+send {U+017D}
 return
 
 
@@ -8735,17 +8735,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vz::
-SendInput ^x8{Enter}17e{Enter}
+send ^x8{Enter}17e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vz::
-SendInput ^+u17e{Enter}
+send ^+u17e{Enter}
 return
 
 #if OtherCase()
 ::\vz::
-SendInput {U+017E}
+send {U+017E}
 return
 
 
@@ -8753,17 +8753,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{z}::
-SendInput ^x8{Enter}17e{Enter}
+send ^x8{Enter}17e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{z}::
-SendInput ^+u17e{Enter}
+send ^+u17e{Enter}
 return
 
 #if OtherCase()
 ::\v{z}::
-SendInput {U+017E}
+send {U+017E}
 return
 
 
@@ -8771,17 +8771,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lambdabar::
-SendInput ^x8{Enter}19b{Enter}
+send ^x8{Enter}19b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lambdabar::
-SendInput ^+u19b{Enter}
+send ^+u19b{Enter}
 return
 
 #if OtherCase()
 ::\lambdabar::
-SendInput {U+019B}
+send {U+019B}
 return
 
 
@@ -8789,17 +8789,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vA::
-SendInput ^x8{Enter}1cd{Enter}
+send ^x8{Enter}1cd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vA::
-SendInput ^+u1cd{Enter}
+send ^+u1cd{Enter}
 return
 
 #if OtherCase()
 ::\vA::
-SendInput {U+01CD}
+send {U+01CD}
 return
 
 
@@ -8807,17 +8807,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{A}::
-SendInput ^x8{Enter}1cd{Enter}
+send ^x8{Enter}1cd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{A}::
-SendInput ^+u1cd{Enter}
+send ^+u1cd{Enter}
 return
 
 #if OtherCase()
 ::\v{A}::
-SendInput {U+01CD}
+send {U+01CD}
 return
 
 
@@ -8825,17 +8825,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\va::
-SendInput ^x8{Enter}1ce{Enter}
+send ^x8{Enter}1ce{Enter}
 return
 
 #if GtkApplicationCase()
 ::\va::
-SendInput ^+u1ce{Enter}
+send ^+u1ce{Enter}
 return
 
 #if OtherCase()
 ::\va::
-SendInput {U+01CE}
+send {U+01CE}
 return
 
 
@@ -8843,17 +8843,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{a}::
-SendInput ^x8{Enter}1ce{Enter}
+send ^x8{Enter}1ce{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{a}::
-SendInput ^+u1ce{Enter}
+send ^+u1ce{Enter}
 return
 
 #if OtherCase()
 ::\v{a}::
-SendInput {U+01CE}
+send {U+01CE}
 return
 
 
@@ -8861,17 +8861,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vI::
-SendInput ^x8{Enter}1cf{Enter}
+send ^x8{Enter}1cf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vI::
-SendInput ^+u1cf{Enter}
+send ^+u1cf{Enter}
 return
 
 #if OtherCase()
 ::\vI::
-SendInput {U+01CF}
+send {U+01CF}
 return
 
 
@@ -8879,17 +8879,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{I}::
-SendInput ^x8{Enter}1cf{Enter}
+send ^x8{Enter}1cf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{I}::
-SendInput ^+u1cf{Enter}
+send ^+u1cf{Enter}
 return
 
 #if OtherCase()
 ::\v{I}::
-SendInput {U+01CF}
+send {U+01CF}
 return
 
 
@@ -8897,17 +8897,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vi::
-SendInput ^x8{Enter}1d0{Enter}
+send ^x8{Enter}1d0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vi::
-SendInput ^+u1d0{Enter}
+send ^+u1d0{Enter}
 return
 
 #if OtherCase()
 ::\vi::
-SendInput {U+01D0}
+send {U+01D0}
 return
 
 
@@ -8915,17 +8915,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{\i}::
-SendInput ^x8{Enter}1d0{Enter}
+send ^x8{Enter}1d0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{\i}::
-SendInput ^+u1d0{Enter}
+send ^+u1d0{Enter}
 return
 
 #if OtherCase()
 ::\v{\i}::
-SendInput {U+01D0}
+send {U+01D0}
 return
 
 
@@ -8933,17 +8933,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{i}::
-SendInput ^x8{Enter}1d0{Enter}
+send ^x8{Enter}1d0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{i}::
-SendInput ^+u1d0{Enter}
+send ^+u1d0{Enter}
 return
 
 #if OtherCase()
 ::\v{i}::
-SendInput {U+01D0}
+send {U+01D0}
 return
 
 
@@ -8951,17 +8951,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vO::
-SendInput ^x8{Enter}1d1{Enter}
+send ^x8{Enter}1d1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vO::
-SendInput ^+u1d1{Enter}
+send ^+u1d1{Enter}
 return
 
 #if OtherCase()
 ::\vO::
-SendInput {U+01D1}
+send {U+01D1}
 return
 
 
@@ -8969,17 +8969,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{O}::
-SendInput ^x8{Enter}1d1{Enter}
+send ^x8{Enter}1d1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{O}::
-SendInput ^+u1d1{Enter}
+send ^+u1d1{Enter}
 return
 
 #if OtherCase()
 ::\v{O}::
-SendInput {U+01D1}
+send {U+01D1}
 return
 
 
@@ -8987,17 +8987,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vo::
-SendInput ^x8{Enter}1d2{Enter}
+send ^x8{Enter}1d2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vo::
-SendInput ^+u1d2{Enter}
+send ^+u1d2{Enter}
 return
 
 #if OtherCase()
 ::\vo::
-SendInput {U+01D2}
+send {U+01D2}
 return
 
 
@@ -9005,17 +9005,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{o}::
-SendInput ^x8{Enter}1d2{Enter}
+send ^x8{Enter}1d2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{o}::
-SendInput ^+u1d2{Enter}
+send ^+u1d2{Enter}
 return
 
 #if OtherCase()
 ::\v{o}::
-SendInput {U+01D2}
+send {U+01D2}
 return
 
 
@@ -9023,17 +9023,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vU::
-SendInput ^x8{Enter}1d3{Enter}
+send ^x8{Enter}1d3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vU::
-SendInput ^+u1d3{Enter}
+send ^+u1d3{Enter}
 return
 
 #if OtherCase()
 ::\vU::
-SendInput {U+01D3}
+send {U+01D3}
 return
 
 
@@ -9041,17 +9041,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{U}::
-SendInput ^x8{Enter}1d3{Enter}
+send ^x8{Enter}1d3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{U}::
-SendInput ^+u1d3{Enter}
+send ^+u1d3{Enter}
 return
 
 #if OtherCase()
 ::\v{U}::
-SendInput {U+01D3}
+send {U+01D3}
 return
 
 
@@ -9059,17 +9059,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vu::
-SendInput ^x8{Enter}1d4{Enter}
+send ^x8{Enter}1d4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vu::
-SendInput ^+u1d4{Enter}
+send ^+u1d4{Enter}
 return
 
 #if OtherCase()
 ::\vu::
-SendInput {U+01D4}
+send {U+01D4}
 return
 
 
@@ -9077,17 +9077,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{u}::
-SendInput ^x8{Enter}1d4{Enter}
+send ^x8{Enter}1d4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{u}::
-SendInput ^+u1d4{Enter}
+send ^+u1d4{Enter}
 return
 
 #if OtherCase()
 ::\v{u}::
-SendInput {U+01D4}
+send {U+01D4}
 return
 
 
@@ -9095,17 +9095,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\=U::
-SendInput ^x8{Enter}1d5{Enter}
+send ^x8{Enter}1d5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\=U::
-SendInput ^+u1d5{Enter}
+send ^+u1d5{Enter}
 return
 
 #if OtherCase()
 ::\"\=U::
-SendInput {U+01D5}
+send {U+01D5}
 return
 
 
@@ -9113,17 +9113,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\={U}::
-SendInput ^x8{Enter}1d5{Enter}
+send ^x8{Enter}1d5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\={U}::
-SendInput ^+u1d5{Enter}
+send ^+u1d5{Enter}
 return
 
 #if OtherCase()
 ::\"\={U}::
-SendInput {U+01D5}
+send {U+01D5}
 return
 
 
@@ -9131,17 +9131,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\=u::
-SendInput ^x8{Enter}1d6{Enter}
+send ^x8{Enter}1d6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\=u::
-SendInput ^+u1d6{Enter}
+send ^+u1d6{Enter}
 return
 
 #if OtherCase()
 ::\"\=u::
-SendInput {U+01D6}
+send {U+01D6}
 return
 
 
@@ -9149,17 +9149,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\={u}::
-SendInput ^x8{Enter}1d6{Enter}
+send ^x8{Enter}1d6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\={u}::
-SendInput ^+u1d6{Enter}
+send ^+u1d6{Enter}
 return
 
 #if OtherCase()
 ::\"\={u}::
-SendInput {U+01D6}
+send {U+01D6}
 return
 
 
@@ -9167,17 +9167,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\'U::
-SendInput ^x8{Enter}1d7{Enter}
+send ^x8{Enter}1d7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\'U::
-SendInput ^+u1d7{Enter}
+send ^+u1d7{Enter}
 return
 
 #if OtherCase()
 ::\"\'U::
-SendInput {U+01D7}
+send {U+01D7}
 return
 
 
@@ -9185,17 +9185,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\'{U}::
-SendInput ^x8{Enter}1d7{Enter}
+send ^x8{Enter}1d7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\'{U}::
-SendInput ^+u1d7{Enter}
+send ^+u1d7{Enter}
 return
 
 #if OtherCase()
 ::\"\'{U}::
-SendInput {U+01D7}
+send {U+01D7}
 return
 
 
@@ -9203,17 +9203,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\'u::
-SendInput ^x8{Enter}1d8{Enter}
+send ^x8{Enter}1d8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\'u::
-SendInput ^+u1d8{Enter}
+send ^+u1d8{Enter}
 return
 
 #if OtherCase()
 ::\"\'u::
-SendInput {U+01D8}
+send {U+01D8}
 return
 
 
@@ -9221,17 +9221,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\'{u}::
-SendInput ^x8{Enter}1d8{Enter}
+send ^x8{Enter}1d8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\'{u}::
-SendInput ^+u1d8{Enter}
+send ^+u1d8{Enter}
 return
 
 #if OtherCase()
 ::\"\'{u}::
-SendInput {U+01D8}
+send {U+01D8}
 return
 
 
@@ -9239,17 +9239,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\vU::
-SendInput ^x8{Enter}1d9{Enter}
+send ^x8{Enter}1d9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\vU::
-SendInput ^+u1d9{Enter}
+send ^+u1d9{Enter}
 return
 
 #if OtherCase()
 ::\"\vU::
-SendInput {U+01D9}
+send {U+01D9}
 return
 
 
@@ -9257,17 +9257,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\v{U}::
-SendInput ^x8{Enter}1d9{Enter}
+send ^x8{Enter}1d9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\v{U}::
-SendInput ^+u1d9{Enter}
+send ^+u1d9{Enter}
 return
 
 #if OtherCase()
 ::\"\v{U}::
-SendInput {U+01D9}
+send {U+01D9}
 return
 
 
@@ -9275,17 +9275,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\vu::
-SendInput ^x8{Enter}1da{Enter}
+send ^x8{Enter}1da{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\vu::
-SendInput ^+u1da{Enter}
+send ^+u1da{Enter}
 return
 
 #if OtherCase()
 ::\"\vu::
-SendInput {U+01DA}
+send {U+01DA}
 return
 
 
@@ -9293,17 +9293,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\v{u}::
-SendInput ^x8{Enter}1da{Enter}
+send ^x8{Enter}1da{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\v{u}::
-SendInput ^+u1da{Enter}
+send ^+u1da{Enter}
 return
 
 #if OtherCase()
 ::\"\v{u}::
-SendInput {U+01DA}
+send {U+01DA}
 return
 
 
@@ -9311,17 +9311,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\``U::
-SendInput ^x8{Enter}1db{Enter}
+send ^x8{Enter}1db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\``U::
-SendInput ^+u1db{Enter}
+send ^+u1db{Enter}
 return
 
 #if OtherCase()
 ::\"\``U::
-SendInput {U+01DB}
+send {U+01DB}
 return
 
 
@@ -9329,17 +9329,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\``{U}::
-SendInput ^x8{Enter}1db{Enter}
+send ^x8{Enter}1db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\``{U}::
-SendInput ^+u1db{Enter}
+send ^+u1db{Enter}
 return
 
 #if OtherCase()
 ::\"\``{U}::
-SendInput {U+01DB}
+send {U+01DB}
 return
 
 
@@ -9347,17 +9347,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\``u::
-SendInput ^x8{Enter}1dc{Enter}
+send ^x8{Enter}1dc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\``u::
-SendInput ^+u1dc{Enter}
+send ^+u1dc{Enter}
 return
 
 #if OtherCase()
 ::\"\``u::
-SendInput {U+01DC}
+send {U+01DC}
 return
 
 
@@ -9365,17 +9365,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\``{u}::
-SendInput ^x8{Enter}1dc{Enter}
+send ^x8{Enter}1dc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\``{u}::
-SendInput ^+u1dc{Enter}
+send ^+u1dc{Enter}
 return
 
 #if OtherCase()
 ::\"\``{u}::
-SendInput {U+01DC}
+send {U+01DC}
 return
 
 
@@ -9383,17 +9383,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\=A::
-SendInput ^x8{Enter}1de{Enter}
+send ^x8{Enter}1de{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\=A::
-SendInput ^+u1de{Enter}
+send ^+u1de{Enter}
 return
 
 #if OtherCase()
 ::\"\=A::
-SendInput {U+01DE}
+send {U+01DE}
 return
 
 
@@ -9401,17 +9401,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\={A}::
-SendInput ^x8{Enter}1de{Enter}
+send ^x8{Enter}1de{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\={A}::
-SendInput ^+u1de{Enter}
+send ^+u1de{Enter}
 return
 
 #if OtherCase()
 ::\"\={A}::
-SendInput {U+01DE}
+send {U+01DE}
 return
 
 
@@ -9419,17 +9419,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\=a::
-SendInput ^x8{Enter}1df{Enter}
+send ^x8{Enter}1df{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\=a::
-SendInput ^+u1df{Enter}
+send ^+u1df{Enter}
 return
 
 #if OtherCase()
 ::\"\=a::
-SendInput {U+01DF}
+send {U+01DF}
 return
 
 
@@ -9437,17 +9437,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\={a}::
-SendInput ^x8{Enter}1df{Enter}
+send ^x8{Enter}1df{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\={a}::
-SendInput ^+u1df{Enter}
+send ^+u1df{Enter}
 return
 
 #if OtherCase()
 ::\"\={a}::
-SendInput {U+01DF}
+send {U+01DF}
 return
 
 
@@ -9455,17 +9455,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.\=A::
-SendInput ^x8{Enter}1e0{Enter}
+send ^x8{Enter}1e0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.\=A::
-SendInput ^+u1e0{Enter}
+send ^+u1e0{Enter}
 return
 
 #if OtherCase()
 ::\.\=A::
-SendInput {U+01E0}
+send {U+01E0}
 return
 
 
@@ -9473,17 +9473,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.\={A}::
-SendInput ^x8{Enter}1e0{Enter}
+send ^x8{Enter}1e0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.\={A}::
-SendInput ^+u1e0{Enter}
+send ^+u1e0{Enter}
 return
 
 #if OtherCase()
 ::\.\={A}::
-SendInput {U+01E0}
+send {U+01E0}
 return
 
 
@@ -9491,17 +9491,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.\=a::
-SendInput ^x8{Enter}1e1{Enter}
+send ^x8{Enter}1e1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.\=a::
-SendInput ^+u1e1{Enter}
+send ^+u1e1{Enter}
 return
 
 #if OtherCase()
 ::\.\=a::
-SendInput {U+01E1}
+send {U+01E1}
 return
 
 
@@ -9509,17 +9509,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.\={a}::
-SendInput ^x8{Enter}1e1{Enter}
+send ^x8{Enter}1e1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.\={a}::
-SendInput ^+u1e1{Enter}
+send ^+u1e1{Enter}
 return
 
 #if OtherCase()
 ::\.\={a}::
-SendInput {U+01E1}
+send {U+01E1}
 return
 
 
@@ -9527,17 +9527,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\AE::
-SendInput ^x8{Enter}1e2{Enter}
+send ^x8{Enter}1e2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\AE::
-SendInput ^+u1e2{Enter}
+send ^+u1e2{Enter}
 return
 
 #if OtherCase()
 ::\=\AE::
-SendInput {U+01E2}
+send {U+01E2}
 return
 
 
@@ -9545,17 +9545,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={\AE}::
-SendInput ^x8{Enter}1e2{Enter}
+send ^x8{Enter}1e2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={\AE}::
-SendInput ^+u1e2{Enter}
+send ^+u1e2{Enter}
 return
 
 #if OtherCase()
 ::\={\AE}::
-SendInput {U+01E2}
+send {U+01E2}
 return
 
 
@@ -9563,17 +9563,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\ae::
-SendInput ^x8{Enter}1e3{Enter}
+send ^x8{Enter}1e3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\ae::
-SendInput ^+u1e3{Enter}
+send ^+u1e3{Enter}
 return
 
 #if OtherCase()
 ::\=\ae::
-SendInput {U+01E3}
+send {U+01E3}
 return
 
 
@@ -9581,17 +9581,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={\ae}::
-SendInput ^x8{Enter}1e3{Enter}
+send ^x8{Enter}1e3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={\ae}::
-SendInput ^+u1e3{Enter}
+send ^+u1e3{Enter}
 return
 
 #if OtherCase()
 ::\={\ae}::
-SendInput {U+01E3}
+send {U+01E3}
 return
 
 
@@ -9599,17 +9599,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vG::
-SendInput ^x8{Enter}1e6{Enter}
+send ^x8{Enter}1e6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vG::
-SendInput ^+u1e6{Enter}
+send ^+u1e6{Enter}
 return
 
 #if OtherCase()
 ::\vG::
-SendInput {U+01E6}
+send {U+01E6}
 return
 
 
@@ -9617,17 +9617,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{G}::
-SendInput ^x8{Enter}1e6{Enter}
+send ^x8{Enter}1e6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{G}::
-SendInput ^+u1e6{Enter}
+send ^+u1e6{Enter}
 return
 
 #if OtherCase()
 ::\v{G}::
-SendInput {U+01E6}
+send {U+01E6}
 return
 
 
@@ -9635,17 +9635,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vg::
-SendInput ^x8{Enter}1e7{Enter}
+send ^x8{Enter}1e7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vg::
-SendInput ^+u1e7{Enter}
+send ^+u1e7{Enter}
 return
 
 #if OtherCase()
 ::\vg::
-SendInput {U+01E7}
+send {U+01E7}
 return
 
 
@@ -9653,17 +9653,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{g}::
-SendInput ^x8{Enter}1e7{Enter}
+send ^x8{Enter}1e7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{g}::
-SendInput ^+u1e7{Enter}
+send ^+u1e7{Enter}
 return
 
 #if OtherCase()
 ::\v{g}::
-SendInput {U+01E7}
+send {U+01E7}
 return
 
 
@@ -9671,17 +9671,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vK::
-SendInput ^x8{Enter}1e8{Enter}
+send ^x8{Enter}1e8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vK::
-SendInput ^+u1e8{Enter}
+send ^+u1e8{Enter}
 return
 
 #if OtherCase()
 ::\vK::
-SendInput {U+01E8}
+send {U+01E8}
 return
 
 
@@ -9689,17 +9689,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{K}::
-SendInput ^x8{Enter}1e8{Enter}
+send ^x8{Enter}1e8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{K}::
-SendInput ^+u1e8{Enter}
+send ^+u1e8{Enter}
 return
 
 #if OtherCase()
 ::\v{K}::
-SendInput {U+01E8}
+send {U+01E8}
 return
 
 
@@ -9707,17 +9707,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vk::
-SendInput ^x8{Enter}1e9{Enter}
+send ^x8{Enter}1e9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vk::
-SendInput ^+u1e9{Enter}
+send ^+u1e9{Enter}
 return
 
 #if OtherCase()
 ::\vk::
-SendInput {U+01E9}
+send {U+01E9}
 return
 
 
@@ -9725,17 +9725,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{k}::
-SendInput ^x8{Enter}1e9{Enter}
+send ^x8{Enter}1e9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{k}::
-SendInput ^+u1e9{Enter}
+send ^+u1e9{Enter}
 return
 
 #if OtherCase()
 ::\v{k}::
-SendInput {U+01E9}
+send {U+01E9}
 return
 
 
@@ -9743,17 +9743,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\kO::
-SendInput ^x8{Enter}1ea{Enter}
+send ^x8{Enter}1ea{Enter}
 return
 
 #if GtkApplicationCase()
 ::\kO::
-SendInput ^+u1ea{Enter}
+send ^+u1ea{Enter}
 return
 
 #if OtherCase()
 ::\kO::
-SendInput {U+01EA}
+send {U+01EA}
 return
 
 
@@ -9761,17 +9761,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{O}::
-SendInput ^x8{Enter}1ea{Enter}
+send ^x8{Enter}1ea{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{O}::
-SendInput ^+u1ea{Enter}
+send ^+u1ea{Enter}
 return
 
 #if OtherCase()
 ::\k{O}::
-SendInput {U+01EA}
+send {U+01EA}
 return
 
 
@@ -9779,17 +9779,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ko::
-SendInput ^x8{Enter}1eb{Enter}
+send ^x8{Enter}1eb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ko::
-SendInput ^+u1eb{Enter}
+send ^+u1eb{Enter}
 return
 
 #if OtherCase()
 ::\ko::
-SendInput {U+01EB}
+send {U+01EB}
 return
 
 
@@ -9797,17 +9797,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{o}::
-SendInput ^x8{Enter}1eb{Enter}
+send ^x8{Enter}1eb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{o}::
-SendInput ^+u1eb{Enter}
+send ^+u1eb{Enter}
 return
 
 #if OtherCase()
 ::\k{o}::
-SendInput {U+01EB}
+send {U+01EB}
 return
 
 
@@ -9815,17 +9815,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k\=O::
-SendInput ^x8{Enter}1ec{Enter}
+send ^x8{Enter}1ec{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k\=O::
-SendInput ^+u1ec{Enter}
+send ^+u1ec{Enter}
 return
 
 #if OtherCase()
 ::\k\=O::
-SendInput {U+01EC}
+send {U+01EC}
 return
 
 
@@ -9833,17 +9833,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k\={O}::
-SendInput ^x8{Enter}1ec{Enter}
+send ^x8{Enter}1ec{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k\={O}::
-SendInput ^+u1ec{Enter}
+send ^+u1ec{Enter}
 return
 
 #if OtherCase()
 ::\k\={O}::
-SendInput {U+01EC}
+send {U+01EC}
 return
 
 
@@ -9851,17 +9851,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k\=o::
-SendInput ^x8{Enter}1ed{Enter}
+send ^x8{Enter}1ed{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k\=o::
-SendInput ^+u1ed{Enter}
+send ^+u1ed{Enter}
 return
 
 #if OtherCase()
 ::\k\=o::
-SendInput {U+01ED}
+send {U+01ED}
 return
 
 
@@ -9869,17 +9869,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k\={o}::
-SendInput ^x8{Enter}1ed{Enter}
+send ^x8{Enter}1ed{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k\={o}::
-SendInput ^+u1ed{Enter}
+send ^+u1ed{Enter}
 return
 
 #if OtherCase()
 ::\k\={o}::
-SendInput {U+01ED}
+send {U+01ED}
 return
 
 
@@ -9887,17 +9887,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vj::
-SendInput ^x8{Enter}1f0{Enter}
+send ^x8{Enter}1f0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vj::
-SendInput ^+u1f0{Enter}
+send ^+u1f0{Enter}
 return
 
 #if OtherCase()
 ::\vj::
-SendInput {U+01F0}
+send {U+01F0}
 return
 
 
@@ -9905,17 +9905,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{\j}::
-SendInput ^x8{Enter}1f0{Enter}
+send ^x8{Enter}1f0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{\j}::
-SendInput ^+u1f0{Enter}
+send ^+u1f0{Enter}
 return
 
 #if OtherCase()
 ::\v{\j}::
-SendInput {U+01F0}
+send {U+01F0}
 return
 
 
@@ -9923,17 +9923,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{j}::
-SendInput ^x8{Enter}1f0{Enter}
+send ^x8{Enter}1f0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{j}::
-SendInput ^+u1f0{Enter}
+send ^+u1f0{Enter}
 return
 
 #if OtherCase()
 ::\v{j}::
-SendInput {U+01F0}
+send {U+01F0}
 return
 
 
@@ -9941,17 +9941,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'G::
-SendInput ^x8{Enter}1f4{Enter}
+send ^x8{Enter}1f4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'G::
-SendInput ^+u1f4{Enter}
+send ^+u1f4{Enter}
 return
 
 #if OtherCase()
 ::\'G::
-SendInput {U+01F4}
+send {U+01F4}
 return
 
 
@@ -9959,17 +9959,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{G}::
-SendInput ^x8{Enter}1f4{Enter}
+send ^x8{Enter}1f4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{G}::
-SendInput ^+u1f4{Enter}
+send ^+u1f4{Enter}
 return
 
 #if OtherCase()
 ::\'{G}::
-SendInput {U+01F4}
+send {U+01F4}
 return
 
 
@@ -9977,17 +9977,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'g::
-SendInput ^x8{Enter}1f5{Enter}
+send ^x8{Enter}1f5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'g::
-SendInput ^+u1f5{Enter}
+send ^+u1f5{Enter}
 return
 
 #if OtherCase()
 ::\'g::
-SendInput {U+01F5}
+send {U+01F5}
 return
 
 
@@ -9995,17 +9995,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{g}::
-SendInput ^x8{Enter}1f5{Enter}
+send ^x8{Enter}1f5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{g}::
-SendInput ^+u1f5{Enter}
+send ^+u1f5{Enter}
 return
 
 #if OtherCase()
 ::\'{g}::
-SendInput {U+01F5}
+send {U+01F5}
 return
 
 
@@ -10013,17 +10013,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``N::
-SendInput ^x8{Enter}1f8{Enter}
+send ^x8{Enter}1f8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``N::
-SendInput ^+u1f8{Enter}
+send ^+u1f8{Enter}
 return
 
 #if OtherCase()
 ::\``N::
-SendInput {U+01F8}
+send {U+01F8}
 return
 
 
@@ -10031,17 +10031,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{N}::
-SendInput ^x8{Enter}1f8{Enter}
+send ^x8{Enter}1f8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{N}::
-SendInput ^+u1f8{Enter}
+send ^+u1f8{Enter}
 return
 
 #if OtherCase()
 ::\``{N}::
-SendInput {U+01F8}
+send {U+01F8}
 return
 
 
@@ -10049,17 +10049,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``n::
-SendInput ^x8{Enter}1f9{Enter}
+send ^x8{Enter}1f9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``n::
-SendInput ^+u1f9{Enter}
+send ^+u1f9{Enter}
 return
 
 #if OtherCase()
 ::\``n::
-SendInput {U+01F9}
+send {U+01F9}
 return
 
 
@@ -10067,17 +10067,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{n}::
-SendInput ^x8{Enter}1f9{Enter}
+send ^x8{Enter}1f9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{n}::
-SendInput ^+u1f9{Enter}
+send ^+u1f9{Enter}
 return
 
 #if OtherCase()
 ::\``{n}::
-SendInput {U+01F9}
+send {U+01F9}
 return
 
 
@@ -10085,17 +10085,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'\AE::
-SendInput ^x8{Enter}1fc{Enter}
+send ^x8{Enter}1fc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'\AE::
-SendInput ^+u1fc{Enter}
+send ^+u1fc{Enter}
 return
 
 #if OtherCase()
 ::\'\AE::
-SendInput {U+01FC}
+send {U+01FC}
 return
 
 
@@ -10103,17 +10103,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{\AE}::
-SendInput ^x8{Enter}1fc{Enter}
+send ^x8{Enter}1fc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{\AE}::
-SendInput ^+u1fc{Enter}
+send ^+u1fc{Enter}
 return
 
 #if OtherCase()
 ::\'{\AE}::
-SendInput {U+01FC}
+send {U+01FC}
 return
 
 
@@ -10121,17 +10121,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'\ae::
-SendInput ^x8{Enter}1fd{Enter}
+send ^x8{Enter}1fd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'\ae::
-SendInput ^+u1fd{Enter}
+send ^+u1fd{Enter}
 return
 
 #if OtherCase()
 ::\'\ae::
-SendInput {U+01FD}
+send {U+01FD}
 return
 
 
@@ -10139,17 +10139,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{\ae}::
-SendInput ^x8{Enter}1fd{Enter}
+send ^x8{Enter}1fd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{\ae}::
-SendInput ^+u1fd{Enter}
+send ^+u1fd{Enter}
 return
 
 #if OtherCase()
 ::\'{\ae}::
-SendInput {U+01FD}
+send {U+01FD}
 return
 
 
@@ -10157,17 +10157,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'\O::
-SendInput ^x8{Enter}1fe{Enter}
+send ^x8{Enter}1fe{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'\O::
-SendInput ^+u1fe{Enter}
+send ^+u1fe{Enter}
 return
 
 #if OtherCase()
 ::\'\O::
-SendInput {U+01FE}
+send {U+01FE}
 return
 
 
@@ -10175,17 +10175,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{\O}::
-SendInput ^x8{Enter}1fe{Enter}
+send ^x8{Enter}1fe{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{\O}::
-SendInput ^+u1fe{Enter}
+send ^+u1fe{Enter}
 return
 
 #if OtherCase()
 ::\'{\O}::
-SendInput {U+01FE}
+send {U+01FE}
 return
 
 
@@ -10193,17 +10193,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'\o::
-SendInput ^x8{Enter}1ff{Enter}
+send ^x8{Enter}1ff{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'\o::
-SendInput ^+u1ff{Enter}
+send ^+u1ff{Enter}
 return
 
 #if OtherCase()
 ::\'\o::
-SendInput {U+01FF}
+send {U+01FF}
 return
 
 
@@ -10211,17 +10211,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{\o}::
-SendInput ^x8{Enter}1ff{Enter}
+send ^x8{Enter}1ff{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{\o}::
-SendInput ^+u1ff{Enter}
+send ^+u1ff{Enter}
 return
 
 #if OtherCase()
 ::\'{\o}::
-SendInput {U+01FF}
+send {U+01FF}
 return
 
 
@@ -10229,17 +10229,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vH::
-SendInput ^x8{Enter}21e{Enter}
+send ^x8{Enter}21e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vH::
-SendInput ^+u21e{Enter}
+send ^+u21e{Enter}
 return
 
 #if OtherCase()
 ::\vH::
-SendInput {U+021E}
+send {U+021E}
 return
 
 
@@ -10247,17 +10247,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{H}::
-SendInput ^x8{Enter}21e{Enter}
+send ^x8{Enter}21e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{H}::
-SendInput ^+u21e{Enter}
+send ^+u21e{Enter}
 return
 
 #if OtherCase()
 ::\v{H}::
-SendInput {U+021E}
+send {U+021E}
 return
 
 
@@ -10265,17 +10265,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vh::
-SendInput ^x8{Enter}21f{Enter}
+send ^x8{Enter}21f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vh::
-SendInput ^+u21f{Enter}
+send ^+u21f{Enter}
 return
 
 #if OtherCase()
 ::\vh::
-SendInput {U+021F}
+send {U+021F}
 return
 
 
@@ -10283,17 +10283,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{h}::
-SendInput ^x8{Enter}21f{Enter}
+send ^x8{Enter}21f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{h}::
-SendInput ^+u21f{Enter}
+send ^+u21f{Enter}
 return
 
 #if OtherCase()
 ::\v{h}::
-SendInput {U+021F}
+send {U+021F}
 return
 
 
@@ -10301,17 +10301,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.A::
-SendInput ^x8{Enter}226{Enter}
+send ^x8{Enter}226{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.A::
-SendInput ^+u226{Enter}
+send ^+u226{Enter}
 return
 
 #if OtherCase()
 ::\.A::
-SendInput {U+0226}
+send {U+0226}
 return
 
 
@@ -10319,17 +10319,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{A}::
-SendInput ^x8{Enter}226{Enter}
+send ^x8{Enter}226{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{A}::
-SendInput ^+u226{Enter}
+send ^+u226{Enter}
 return
 
 #if OtherCase()
 ::\.{A}::
-SendInput {U+0226}
+send {U+0226}
 return
 
 
@@ -10337,17 +10337,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.a::
-SendInput ^x8{Enter}227{Enter}
+send ^x8{Enter}227{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.a::
-SendInput ^+u227{Enter}
+send ^+u227{Enter}
 return
 
 #if OtherCase()
 ::\.a::
-SendInput {U+0227}
+send {U+0227}
 return
 
 
@@ -10355,17 +10355,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{a}::
-SendInput ^x8{Enter}227{Enter}
+send ^x8{Enter}227{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{a}::
-SendInput ^+u227{Enter}
+send ^+u227{Enter}
 return
 
 #if OtherCase()
 ::\.{a}::
-SendInput {U+0227}
+send {U+0227}
 return
 
 
@@ -10373,17 +10373,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cE::
-SendInput ^x8{Enter}228{Enter}
+send ^x8{Enter}228{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cE::
-SendInput ^+u228{Enter}
+send ^+u228{Enter}
 return
 
 #if OtherCase()
 ::\cE::
-SendInput {U+0228}
+send {U+0228}
 return
 
 
@@ -10391,17 +10391,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{E}::
-SendInput ^x8{Enter}228{Enter}
+send ^x8{Enter}228{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{E}::
-SendInput ^+u228{Enter}
+send ^+u228{Enter}
 return
 
 #if OtherCase()
 ::\c{E}::
-SendInput {U+0228}
+send {U+0228}
 return
 
 
@@ -10409,17 +10409,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ce::
-SendInput ^x8{Enter}229{Enter}
+send ^x8{Enter}229{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ce::
-SendInput ^+u229{Enter}
+send ^+u229{Enter}
 return
 
 #if OtherCase()
 ::\ce::
-SendInput {U+0229}
+send {U+0229}
 return
 
 
@@ -10427,17 +10427,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{e}::
-SendInput ^x8{Enter}229{Enter}
+send ^x8{Enter}229{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{e}::
-SendInput ^+u229{Enter}
+send ^+u229{Enter}
 return
 
 #if OtherCase()
 ::\c{e}::
-SendInput {U+0229}
+send {U+0229}
 return
 
 
@@ -10445,17 +10445,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\=O::
-SendInput ^x8{Enter}22a{Enter}
+send ^x8{Enter}22a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\=O::
-SendInput ^+u22a{Enter}
+send ^+u22a{Enter}
 return
 
 #if OtherCase()
 ::\"\=O::
-SendInput {U+022A}
+send {U+022A}
 return
 
 
@@ -10463,17 +10463,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\={O}::
-SendInput ^x8{Enter}22a{Enter}
+send ^x8{Enter}22a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\={O}::
-SendInput ^+u22a{Enter}
+send ^+u22a{Enter}
 return
 
 #if OtherCase()
 ::\"\={O}::
-SendInput {U+022A}
+send {U+022A}
 return
 
 
@@ -10481,17 +10481,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\=o::
-SendInput ^x8{Enter}22b{Enter}
+send ^x8{Enter}22b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\=o::
-SendInput ^+u22b{Enter}
+send ^+u22b{Enter}
 return
 
 #if OtherCase()
 ::\"\=o::
-SendInput {U+022B}
+send {U+022B}
 return
 
 
@@ -10499,17 +10499,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\={o}::
-SendInput ^x8{Enter}22b{Enter}
+send ^x8{Enter}22b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\={o}::
-SendInput ^+u22b{Enter}
+send ^+u22b{Enter}
 return
 
 #if OtherCase()
 ::\"\={o}::
-SendInput {U+022B}
+send {U+022B}
 return
 
 
@@ -10517,17 +10517,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\=O::
-SendInput ^x8{Enter}22c{Enter}
+send ^x8{Enter}22c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\=O::
-SendInput ^+u22c{Enter}
+send ^+u22c{Enter}
 return
 
 #if OtherCase()
 ::\~\=O::
-SendInput {U+022C}
+send {U+022C}
 return
 
 
@@ -10535,17 +10535,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\={O}::
-SendInput ^x8{Enter}22c{Enter}
+send ^x8{Enter}22c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\={O}::
-SendInput ^+u22c{Enter}
+send ^+u22c{Enter}
 return
 
 #if OtherCase()
 ::\~\={O}::
-SendInput {U+022C}
+send {U+022C}
 return
 
 
@@ -10553,17 +10553,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\=o::
-SendInput ^x8{Enter}22d{Enter}
+send ^x8{Enter}22d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\=o::
-SendInput ^+u22d{Enter}
+send ^+u22d{Enter}
 return
 
 #if OtherCase()
 ::\~\=o::
-SendInput {U+022D}
+send {U+022D}
 return
 
 
@@ -10571,17 +10571,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\={o}::
-SendInput ^x8{Enter}22d{Enter}
+send ^x8{Enter}22d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\={o}::
-SendInput ^+u22d{Enter}
+send ^+u22d{Enter}
 return
 
 #if OtherCase()
 ::\~\={o}::
-SendInput {U+022D}
+send {U+022D}
 return
 
 
@@ -10589,17 +10589,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.O::
-SendInput ^x8{Enter}22e{Enter}
+send ^x8{Enter}22e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.O::
-SendInput ^+u22e{Enter}
+send ^+u22e{Enter}
 return
 
 #if OtherCase()
 ::\.O::
-SendInput {U+022E}
+send {U+022E}
 return
 
 
@@ -10607,17 +10607,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{O}::
-SendInput ^x8{Enter}22e{Enter}
+send ^x8{Enter}22e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{O}::
-SendInput ^+u22e{Enter}
+send ^+u22e{Enter}
 return
 
 #if OtherCase()
 ::\.{O}::
-SendInput {U+022E}
+send {U+022E}
 return
 
 
@@ -10625,17 +10625,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.o::
-SendInput ^x8{Enter}22f{Enter}
+send ^x8{Enter}22f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.o::
-SendInput ^+u22f{Enter}
+send ^+u22f{Enter}
 return
 
 #if OtherCase()
 ::\.o::
-SendInput {U+022F}
+send {U+022F}
 return
 
 
@@ -10643,17 +10643,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{o}::
-SendInput ^x8{Enter}22f{Enter}
+send ^x8{Enter}22f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{o}::
-SendInput ^+u22f{Enter}
+send ^+u22f{Enter}
 return
 
 #if OtherCase()
 ::\.{o}::
-SendInput {U+022F}
+send {U+022F}
 return
 
 
@@ -10661,17 +10661,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.\=O::
-SendInput ^x8{Enter}230{Enter}
+send ^x8{Enter}230{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.\=O::
-SendInput ^+u230{Enter}
+send ^+u230{Enter}
 return
 
 #if OtherCase()
 ::\.\=O::
-SendInput {U+0230}
+send {U+0230}
 return
 
 
@@ -10679,17 +10679,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.\={O}::
-SendInput ^x8{Enter}230{Enter}
+send ^x8{Enter}230{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.\={O}::
-SendInput ^+u230{Enter}
+send ^+u230{Enter}
 return
 
 #if OtherCase()
 ::\.\={O}::
-SendInput {U+0230}
+send {U+0230}
 return
 
 
@@ -10697,17 +10697,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.\=o::
-SendInput ^x8{Enter}231{Enter}
+send ^x8{Enter}231{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.\=o::
-SendInput ^+u231{Enter}
+send ^+u231{Enter}
 return
 
 #if OtherCase()
 ::\.\=o::
-SendInput {U+0231}
+send {U+0231}
 return
 
 
@@ -10715,17 +10715,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.\={o}::
-SendInput ^x8{Enter}231{Enter}
+send ^x8{Enter}231{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.\={o}::
-SendInput ^+u231{Enter}
+send ^+u231{Enter}
 return
 
 #if OtherCase()
 ::\.\={o}::
-SendInput {U+0231}
+send {U+0231}
 return
 
 
@@ -10733,17 +10733,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=Y::
-SendInput ^x8{Enter}232{Enter}
+send ^x8{Enter}232{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=Y::
-SendInput ^+u232{Enter}
+send ^+u232{Enter}
 return
 
 #if OtherCase()
 ::\=Y::
-SendInput {U+0232}
+send {U+0232}
 return
 
 
@@ -10751,17 +10751,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={Y}::
-SendInput ^x8{Enter}232{Enter}
+send ^x8{Enter}232{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={Y}::
-SendInput ^+u232{Enter}
+send ^+u232{Enter}
 return
 
 #if OtherCase()
 ::\={Y}::
-SendInput {U+0232}
+send {U+0232}
 return
 
 
@@ -10769,17 +10769,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=y::
-SendInput ^x8{Enter}233{Enter}
+send ^x8{Enter}233{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=y::
-SendInput ^+u233{Enter}
+send ^+u233{Enter}
 return
 
 #if OtherCase()
 ::\=y::
-SendInput {U+0233}
+send {U+0233}
 return
 
 
@@ -10787,17 +10787,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={y}::
-SendInput ^x8{Enter}233{Enter}
+send ^x8{Enter}233{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={y}::
-SendInput ^+u233{Enter}
+send ^+u233{Enter}
 return
 
 #if OtherCase()
 ::\={y}::
-SendInput {U+0233}
+send {U+0233}
 return
 
 
@@ -10805,17 +10805,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^h::
-SendInput ^x8{Enter}2b0{Enter}
+send ^x8{Enter}2b0{Enter}
 return
 
 #if GtkApplicationCase()
 ::^h::
-SendInput ^+u2b0{Enter}
+send ^+u2b0{Enter}
 return
 
 #if OtherCase()
 ::^h::
-SendInput {U+02B0}
+send {U+02B0}
 return
 
 
@@ -10823,17 +10823,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\h hook::
-SendInput ^x8{Enter}2b1{Enter}
+send ^x8{Enter}2b1{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\h hook::
-SendInput ^+u2b1{Enter}
+send ^+u2b1{Enter}
 return
 
 #if OtherCase()
 ::^\h hook::
-SendInput {U+02B1}
+send {U+02B1}
 return
 
 
@@ -10841,17 +10841,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\h with hook::
-SendInput ^x8{Enter}2b1{Enter}
+send ^x8{Enter}2b1{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\h with hook::
-SendInput ^+u2b1{Enter}
+send ^+u2b1{Enter}
 return
 
 #if OtherCase()
 ::^\h with hook::
-SendInput {U+02B1}
+send {U+02B1}
 return
 
 
@@ -10859,17 +10859,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^j::
-SendInput ^x8{Enter}2b2{Enter}
+send ^x8{Enter}2b2{Enter}
 return
 
 #if GtkApplicationCase()
 ::^j::
-SendInput ^+u2b2{Enter}
+send ^+u2b2{Enter}
 return
 
 #if OtherCase()
 ::^j::
-SendInput {U+02B2}
+send {U+02B2}
 return
 
 
@@ -10877,17 +10877,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^r::
-SendInput ^x8{Enter}2b3{Enter}
+send ^x8{Enter}2b3{Enter}
 return
 
 #if GtkApplicationCase()
 ::^r::
-SendInput ^+u2b3{Enter}
+send ^+u2b3{Enter}
 return
 
 #if OtherCase()
 ::^r::
-SendInput {U+02B3}
+send {U+02B3}
 return
 
 
@@ -10895,17 +10895,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned r::
-SendInput ^x8{Enter}2b4{Enter}
+send ^x8{Enter}2b4{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned r::
-SendInput ^+u2b4{Enter}
+send ^+u2b4{Enter}
 return
 
 #if OtherCase()
 ::^\turned r::
-SendInput {U+02B4}
+send {U+02B4}
 return
 
 
@@ -10913,17 +10913,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned r hook::
-SendInput ^x8{Enter}2b5{Enter}
+send ^x8{Enter}2b5{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned r hook::
-SendInput ^+u2b5{Enter}
+send ^+u2b5{Enter}
 return
 
 #if OtherCase()
 ::^\turned r hook::
-SendInput {U+02B5}
+send {U+02B5}
 return
 
 
@@ -10931,17 +10931,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned r with hook::
-SendInput ^x8{Enter}2b5{Enter}
+send ^x8{Enter}2b5{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned r with hook::
-SendInput ^+u2b5{Enter}
+send ^+u2b5{Enter}
 return
 
 #if OtherCase()
 ::^\turned r with hook::
-SendInput {U+02B5}
+send {U+02B5}
 return
 
 
@@ -10949,17 +10949,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\capital inverted r::
-SendInput ^x8{Enter}2b6{Enter}
+send ^x8{Enter}2b6{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\capital inverted r::
-SendInput ^+u2b6{Enter}
+send ^+u2b6{Enter}
 return
 
 #if OtherCase()
 ::^\capital inverted r::
-SendInput {U+02B6}
+send {U+02B6}
 return
 
 
@@ -10967,17 +10967,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^w::
-SendInput ^x8{Enter}2b7{Enter}
+send ^x8{Enter}2b7{Enter}
 return
 
 #if GtkApplicationCase()
 ::^w::
-SendInput ^+u2b7{Enter}
+send ^+u2b7{Enter}
 return
 
 #if OtherCase()
 ::^w::
-SendInput {U+02B7}
+send {U+02B7}
 return
 
 
@@ -10985,17 +10985,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^y::
-SendInput ^x8{Enter}2b8{Enter}
+send ^x8{Enter}2b8{Enter}
 return
 
 #if GtkApplicationCase()
 ::^y::
-SendInput ^+u2b8{Enter}
+send ^+u2b8{Enter}
 return
 
 #if OtherCase()
 ::^y::
-SendInput {U+02B8}
+send {U+02B8}
 return
 
 
@@ -11003,17 +11003,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v{}::
-SendInput ^x8{Enter}2c7{Enter}
+send ^x8{Enter}2c7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v{}::
-SendInput ^+u2c7{Enter}
+send ^+u2c7{Enter}
 return
 
 #if OtherCase()
 ::\v{}::
-SendInput {U+02C7}
+send {U+02C7}
 return
 
 
@@ -11021,17 +11021,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u{}::
-SendInput ^x8{Enter}2d8{Enter}
+send ^x8{Enter}2d8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u{}::
-SendInput ^+u2d8{Enter}
+send ^+u2d8{Enter}
 return
 
 #if OtherCase()
 ::\u{}::
-SendInput {U+02D8}
+send {U+02D8}
 return
 
 
@@ -11039,17 +11039,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{}::
-SendInput ^x8{Enter}2d9{Enter}
+send ^x8{Enter}2d9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{}::
-SendInput ^+u2d9{Enter}
+send ^+u2d9{Enter}
 return
 
 #if OtherCase()
 ::\.{}::
-SendInput {U+02D9}
+send {U+02D9}
 return
 
 
@@ -11057,17 +11057,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k{}::
-SendInput ^x8{Enter}2db{Enter}
+send ^x8{Enter}2db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k{}::
-SendInput ^+u2db{Enter}
+send ^+u2db{Enter}
 return
 
 #if OtherCase()
 ::\k{}::
-SendInput {U+02DB}
+send {U+02DB}
 return
 
 
@@ -11075,17 +11075,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{}::
-SendInput ^x8{Enter}2dc{Enter}
+send ^x8{Enter}2dc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{}::
-SendInput ^+u2dc{Enter}
+send ^+u2dc{Enter}
 return
 
 #if OtherCase()
 ::\~{}::
-SendInput {U+02DC}
+send {U+02DC}
 return
 
 
@@ -11093,17 +11093,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\H{}::
-SendInput ^x8{Enter}2dd{Enter}
+send ^x8{Enter}2dd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\H{}::
-SendInput ^+u2dd{Enter}
+send ^+u2dd{Enter}
 return
 
 #if OtherCase()
 ::\H{}::
-SendInput {U+02DD}
+send {U+02DD}
 return
 
 
@@ -11111,17 +11111,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\gamma::
-SendInput ^x8{Enter}2e0{Enter}
+send ^x8{Enter}2e0{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\gamma::
-SendInput ^+u2e0{Enter}
+send ^+u2e0{Enter}
 return
 
 #if OtherCase()
 ::^\gamma::
-SendInput {U+02E0}
+send {U+02E0}
 return
 
 
@@ -11129,17 +11129,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^l::
-SendInput ^x8{Enter}2e1{Enter}
+send ^x8{Enter}2e1{Enter}
 return
 
 #if GtkApplicationCase()
 ::^l::
-SendInput ^+u2e1{Enter}
+send ^+u2e1{Enter}
 return
 
 #if OtherCase()
 ::^l::
-SendInput {U+02E1}
+send {U+02E1}
 return
 
 
@@ -11147,17 +11147,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^s::
-SendInput ^x8{Enter}2e2{Enter}
+send ^x8{Enter}2e2{Enter}
 return
 
 #if GtkApplicationCase()
 ::^s::
-SendInput ^+u2e2{Enter}
+send ^+u2e2{Enter}
 return
 
 #if OtherCase()
 ::^s::
-SendInput {U+02E2}
+send {U+02E2}
 return
 
 
@@ -11165,17 +11165,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^x::
-SendInput ^x8{Enter}2e3{Enter}
+send ^x8{Enter}2e3{Enter}
 return
 
 #if GtkApplicationCase()
 ::^x::
-SendInput ^+u2e3{Enter}
+send ^+u2e3{Enter}
 return
 
 #if OtherCase()
 ::^x::
-SendInput {U+02E3}
+send {U+02E3}
 return
 
 
@@ -11183,17 +11183,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\reversed glottal stop::
-SendInput ^x8{Enter}2e4{Enter}
+send ^x8{Enter}2e4{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\reversed glottal stop::
-SendInput ^+u2e4{Enter}
+send ^+u2e4{Enter}
 return
 
 #if OtherCase()
 ::^\reversed glottal stop::
-SendInput {U+02E4}
+send {U+02E4}
 return
 
 
@@ -11201,17 +11201,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``::
-SendInput ^x8{Enter}300{Enter}
+send ^x8{Enter}300{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``::
-SendInput ^+u300{Enter}
+send ^+u300{Enter}
 return
 
 #if OtherCase()
 ::\``::
-SendInput {U+0300}
+send {U+0300}
 return
 
 
@@ -11219,17 +11219,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'::
-SendInput ^x8{Enter}301{Enter}
+send ^x8{Enter}301{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'::
-SendInput ^+u301{Enter}
+send ^+u301{Enter}
 return
 
 #if OtherCase()
 ::\'::
-SendInput {U+0301}
+send {U+0301}
 return
 
 
@@ -11237,17 +11237,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^::
-SendInput ^x8{Enter}302{Enter}
+send ^x8{Enter}302{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^::
-SendInput ^+u302{Enter}
+send ^+u302{Enter}
 return
 
 #if OtherCase()
 ::\^::
-SendInput {U+0302}
+send {U+0302}
 return
 
 
@@ -11255,17 +11255,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~::
-SendInput ^x8{Enter}303{Enter}
+send ^x8{Enter}303{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~::
-SendInput ^+u303{Enter}
+send ^+u303{Enter}
 return
 
 #if OtherCase()
 ::\~::
-SendInput {U+0303}
+send {U+0303}
 return
 
 
@@ -11273,17 +11273,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=::
-SendInput ^x8{Enter}304{Enter}
+send ^x8{Enter}304{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=::
-SendInput ^+u304{Enter}
+send ^+u304{Enter}
 return
 
 #if OtherCase()
 ::\=::
-SendInput {U+0304}
+send {U+0304}
 return
 
 
@@ -11291,17 +11291,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u::
-SendInput ^x8{Enter}306{Enter}
+send ^x8{Enter}306{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u::
-SendInput ^+u306{Enter}
+send ^+u306{Enter}
 return
 
 #if OtherCase()
 ::\u::
-SendInput {U+0306}
+send {U+0306}
 return
 
 
@@ -11309,17 +11309,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.::
-SendInput ^x8{Enter}307{Enter}
+send ^x8{Enter}307{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.::
-SendInput ^+u307{Enter}
+send ^+u307{Enter}
 return
 
 #if OtherCase()
 ::\.::
-SendInput {U+0307}
+send {U+0307}
 return
 
 
@@ -11327,17 +11327,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"::
-SendInput ^x8{Enter}308{Enter}
+send ^x8{Enter}308{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"::
-SendInput ^+u308{Enter}
+send ^+u308{Enter}
 return
 
 #if OtherCase()
 ::\"::
-SendInput {U+0308}
+send {U+0308}
 return
 
 
@@ -11345,17 +11345,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\H::
-SendInput ^x8{Enter}30b{Enter}
+send ^x8{Enter}30b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\H::
-SendInput ^+u30b{Enter}
+send ^+u30b{Enter}
 return
 
 #if OtherCase()
 ::\H::
-SendInput {U+030B}
+send {U+030B}
 return
 
 
@@ -11363,17 +11363,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v::
-SendInput ^x8{Enter}30c{Enter}
+send ^x8{Enter}30c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v::
-SendInput ^+u30c{Enter}
+send ^+u30c{Enter}
 return
 
 #if OtherCase()
 ::\v::
-SendInput {U+030C}
+send {U+030C}
 return
 
 
@@ -11381,17 +11381,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d::
-SendInput ^x8{Enter}323{Enter}
+send ^x8{Enter}323{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d::
-SendInput ^+u323{Enter}
+send ^+u323{Enter}
 return
 
 #if OtherCase()
 ::\d::
-SendInput {U+0323}
+send {U+0323}
 return
 
 
@@ -11399,17 +11399,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c::
-SendInput ^x8{Enter}327{Enter}
+send ^x8{Enter}327{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c::
-SendInput ^+u327{Enter}
+send ^+u327{Enter}
 return
 
 #if OtherCase()
 ::\c::
-SendInput {U+0327}
+send {U+0327}
 return
 
 
@@ -11417,17 +11417,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\k::
-SendInput ^x8{Enter}328{Enter}
+send ^x8{Enter}328{Enter}
 return
 
 #if GtkApplicationCase()
 ::\k::
-SendInput ^+u328{Enter}
+send ^+u328{Enter}
 return
 
 #if OtherCase()
 ::\k::
-SendInput {U+0328}
+send {U+0328}
 return
 
 
@@ -11435,17 +11435,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\b::
-SendInput ^x8{Enter}331{Enter}
+send ^x8{Enter}331{Enter}
 return
 
 #if GtkApplicationCase()
 ::\b::
-SendInput ^+u331{Enter}
+send ^+u331{Enter}
 return
 
 #if OtherCase()
 ::\b::
-SendInput {U+0331}
+send {U+0331}
 return
 
 
@@ -11453,17 +11453,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\not::
-SendInput ^x8{Enter}338{Enter}
+send ^x8{Enter}338{Enter}
 return
 
 #if GtkApplicationCase()
 ::\not::
-SendInput ^+u338{Enter}
+send ^+u338{Enter}
 return
 
 #if OtherCase()
 ::\not::
-SendInput {U+0338}
+send {U+0338}
 return
 
 
@@ -11471,17 +11471,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Heta::
-SendInput ^x8{Enter}370{Enter}
+send ^x8{Enter}370{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Heta::
-SendInput ^+u370{Enter}
+send ^+u370{Enter}
 return
 
 #if OtherCase()
 ::\Heta::
-SendInput {U+0370}
+send {U+0370}
 return
 
 
@@ -11489,17 +11489,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\heta::
-SendInput ^x8{Enter}371{Enter}
+send ^x8{Enter}371{Enter}
 return
 
 #if GtkApplicationCase()
 ::\heta::
-SendInput ^+u371{Enter}
+send ^+u371{Enter}
 return
 
 #if OtherCase()
 ::\heta::
-SendInput {U+0371}
+send {U+0371}
 return
 
 
@@ -11507,17 +11507,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Yot::
-SendInput ^x8{Enter}37f{Enter}
+send ^x8{Enter}37f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Yot::
-SendInput ^+u37f{Enter}
+send ^+u37f{Enter}
 return
 
 #if OtherCase()
 ::\Yot::
-SendInput {U+037F}
+send {U+037F}
 return
 
 
@@ -11525,17 +11525,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Alpha::
-SendInput ^x8{Enter}391{Enter}
+send ^x8{Enter}391{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Alpha::
-SendInput ^+u391{Enter}
+send ^+u391{Enter}
 return
 
 #if OtherCase()
 ::\Alpha::
-SendInput {U+0391}
+send {U+0391}
 return
 
 
@@ -11543,17 +11543,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Beta::
-SendInput ^x8{Enter}392{Enter}
+send ^x8{Enter}392{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Beta::
-SendInput ^+u392{Enter}
+send ^+u392{Enter}
 return
 
 #if OtherCase()
 ::\Beta::
-SendInput {U+0392}
+send {U+0392}
 return
 
 
@@ -11561,17 +11561,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Gamma::
-SendInput ^x8{Enter}393{Enter}
+send ^x8{Enter}393{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Gamma::
-SendInput ^+u393{Enter}
+send ^+u393{Enter}
 return
 
 #if OtherCase()
 ::\Gamma::
-SendInput {U+0393}
+send {U+0393}
 return
 
 
@@ -11579,17 +11579,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Delta::
-SendInput ^x8{Enter}394{Enter}
+send ^x8{Enter}394{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Delta::
-SendInput ^+u394{Enter}
+send ^+u394{Enter}
 return
 
 #if OtherCase()
 ::\Delta::
-SendInput {U+0394}
+send {U+0394}
 return
 
 
@@ -11597,17 +11597,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Epsilon::
-SendInput ^x8{Enter}395{Enter}
+send ^x8{Enter}395{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Epsilon::
-SendInput ^+u395{Enter}
+send ^+u395{Enter}
 return
 
 #if OtherCase()
 ::\Epsilon::
-SendInput {U+0395}
+send {U+0395}
 return
 
 
@@ -11615,17 +11615,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Zeta::
-SendInput ^x8{Enter}396{Enter}
+send ^x8{Enter}396{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Zeta::
-SendInput ^+u396{Enter}
+send ^+u396{Enter}
 return
 
 #if OtherCase()
 ::\Zeta::
-SendInput {U+0396}
+send {U+0396}
 return
 
 
@@ -11633,17 +11633,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Eta::
-SendInput ^x8{Enter}397{Enter}
+send ^x8{Enter}397{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Eta::
-SendInput ^+u397{Enter}
+send ^+u397{Enter}
 return
 
 #if OtherCase()
 ::\Eta::
-SendInput {U+0397}
+send {U+0397}
 return
 
 
@@ -11651,17 +11651,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Theta::
-SendInput ^x8{Enter}398{Enter}
+send ^x8{Enter}398{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Theta::
-SendInput ^+u398{Enter}
+send ^+u398{Enter}
 return
 
 #if OtherCase()
 ::\Theta::
-SendInput {U+0398}
+send {U+0398}
 return
 
 
@@ -11669,17 +11669,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Iota::
-SendInput ^x8{Enter}399{Enter}
+send ^x8{Enter}399{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Iota::
-SendInput ^+u399{Enter}
+send ^+u399{Enter}
 return
 
 #if OtherCase()
 ::\Iota::
-SendInput {U+0399}
+send {U+0399}
 return
 
 
@@ -11687,17 +11687,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Kappa::
-SendInput ^x8{Enter}39a{Enter}
+send ^x8{Enter}39a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Kappa::
-SendInput ^+u39a{Enter}
+send ^+u39a{Enter}
 return
 
 #if OtherCase()
 ::\Kappa::
-SendInput {U+039A}
+send {U+039A}
 return
 
 
@@ -11705,17 +11705,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Lambda::
-SendInput ^x8{Enter}39b{Enter}
+send ^x8{Enter}39b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Lambda::
-SendInput ^+u39b{Enter}
+send ^+u39b{Enter}
 return
 
 #if OtherCase()
 ::\Lambda::
-SendInput {U+039B}
+send {U+039B}
 return
 
 
@@ -11723,17 +11723,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Lamda::
-SendInput ^x8{Enter}39b{Enter}
+send ^x8{Enter}39b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Lamda::
-SendInput ^+u39b{Enter}
+send ^+u39b{Enter}
 return
 
 #if OtherCase()
 ::\Lamda::
-SendInput {U+039B}
+send {U+039B}
 return
 
 
@@ -11741,17 +11741,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Mu::
-SendInput ^x8{Enter}39c{Enter}
+send ^x8{Enter}39c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Mu::
-SendInput ^+u39c{Enter}
+send ^+u39c{Enter}
 return
 
 #if OtherCase()
 ::\Mu::
-SendInput {U+039C}
+send {U+039C}
 return
 
 
@@ -11759,17 +11759,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Nu::
-SendInput ^x8{Enter}39d{Enter}
+send ^x8{Enter}39d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Nu::
-SendInput ^+u39d{Enter}
+send ^+u39d{Enter}
 return
 
 #if OtherCase()
 ::\Nu::
-SendInput {U+039D}
+send {U+039D}
 return
 
 
@@ -11777,17 +11777,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Xi::
-SendInput ^x8{Enter}39e{Enter}
+send ^x8{Enter}39e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Xi::
-SendInput ^+u39e{Enter}
+send ^+u39e{Enter}
 return
 
 #if OtherCase()
 ::\Xi::
-SendInput {U+039E}
+send {U+039E}
 return
 
 
@@ -11795,17 +11795,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Omicron::
-SendInput ^x8{Enter}39f{Enter}
+send ^x8{Enter}39f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Omicron::
-SendInput ^+u39f{Enter}
+send ^+u39f{Enter}
 return
 
 #if OtherCase()
 ::\Omicron::
-SendInput {U+039F}
+send {U+039F}
 return
 
 
@@ -11813,17 +11813,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Pi::
-SendInput ^x8{Enter}3a0{Enter}
+send ^x8{Enter}3a0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Pi::
-SendInput ^+u3a0{Enter}
+send ^+u3a0{Enter}
 return
 
 #if OtherCase()
 ::\Pi::
-SendInput {U+03A0}
+send {U+03A0}
 return
 
 
@@ -11831,17 +11831,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Rho::
-SendInput ^x8{Enter}3a1{Enter}
+send ^x8{Enter}3a1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Rho::
-SendInput ^+u3a1{Enter}
+send ^+u3a1{Enter}
 return
 
 #if OtherCase()
 ::\Rho::
-SendInput {U+03A1}
+send {U+03A1}
 return
 
 
@@ -11849,17 +11849,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Sigma::
-SendInput ^x8{Enter}3a3{Enter}
+send ^x8{Enter}3a3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Sigma::
-SendInput ^+u3a3{Enter}
+send ^+u3a3{Enter}
 return
 
 #if OtherCase()
 ::\Sigma::
-SendInput {U+03A3}
+send {U+03A3}
 return
 
 
@@ -11867,17 +11867,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Tau::
-SendInput ^x8{Enter}3a4{Enter}
+send ^x8{Enter}3a4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Tau::
-SendInput ^+u3a4{Enter}
+send ^+u3a4{Enter}
 return
 
 #if OtherCase()
 ::\Tau::
-SendInput {U+03A4}
+send {U+03A4}
 return
 
 
@@ -11885,17 +11885,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Upsilon::
-SendInput ^x8{Enter}3a5{Enter}
+send ^x8{Enter}3a5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Upsilon::
-SendInput ^+u3a5{Enter}
+send ^+u3a5{Enter}
 return
 
 #if OtherCase()
 ::\Upsilon::
-SendInput {U+03A5}
+send {U+03A5}
 return
 
 
@@ -11903,17 +11903,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Phi::
-SendInput ^x8{Enter}3a6{Enter}
+send ^x8{Enter}3a6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Phi::
-SendInput ^+u3a6{Enter}
+send ^+u3a6{Enter}
 return
 
 #if OtherCase()
 ::\Phi::
-SendInput {U+03A6}
+send {U+03A6}
 return
 
 
@@ -11921,17 +11921,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Chi::
-SendInput ^x8{Enter}3a7{Enter}
+send ^x8{Enter}3a7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Chi::
-SendInput ^+u3a7{Enter}
+send ^+u3a7{Enter}
 return
 
 #if OtherCase()
 ::\Chi::
-SendInput {U+03A7}
+send {U+03A7}
 return
 
 
@@ -11939,17 +11939,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Psi::
-SendInput ^x8{Enter}3a8{Enter}
+send ^x8{Enter}3a8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Psi::
-SendInput ^+u3a8{Enter}
+send ^+u3a8{Enter}
 return
 
 #if OtherCase()
 ::\Psi::
-SendInput {U+03A8}
+send {U+03A8}
 return
 
 
@@ -11957,17 +11957,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Omega::
-SendInput ^x8{Enter}3a9{Enter}
+send ^x8{Enter}3a9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Omega::
-SendInput ^+u3a9{Enter}
+send ^+u3a9{Enter}
 return
 
 #if OtherCase()
 ::\Omega::
-SendInput {U+03A9}
+send {U+03A9}
 return
 
 
@@ -11975,17 +11975,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\alpha::
-SendInput ^x8{Enter}3b1{Enter}
+send ^x8{Enter}3b1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\alpha::
-SendInput ^+u3b1{Enter}
+send ^+u3b1{Enter}
 return
 
 #if OtherCase()
 ::\alpha::
-SendInput {U+03B1}
+send {U+03B1}
 return
 
 
@@ -11993,17 +11993,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\beta::
-SendInput ^x8{Enter}3b2{Enter}
+send ^x8{Enter}3b2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\beta::
-SendInput ^+u3b2{Enter}
+send ^+u3b2{Enter}
 return
 
 #if OtherCase()
 ::\beta::
-SendInput {U+03B2}
+send {U+03B2}
 return
 
 
@@ -12011,17 +12011,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gamma::
-SendInput ^x8{Enter}3b3{Enter}
+send ^x8{Enter}3b3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gamma::
-SendInput ^+u3b3{Enter}
+send ^+u3b3{Enter}
 return
 
 #if OtherCase()
 ::\gamma::
-SendInput {U+03B3}
+send {U+03B3}
 return
 
 
@@ -12029,17 +12029,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\delta::
-SendInput ^x8{Enter}3b4{Enter}
+send ^x8{Enter}3b4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\delta::
-SendInput ^+u3b4{Enter}
+send ^+u3b4{Enter}
 return
 
 #if OtherCase()
 ::\delta::
-SendInput {U+03B4}
+send {U+03B4}
 return
 
 
@@ -12047,17 +12047,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varepsilon::
-SendInput ^x8{Enter}3b5{Enter}
+send ^x8{Enter}3b5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varepsilon::
-SendInput ^+u3b5{Enter}
+send ^+u3b5{Enter}
 return
 
 #if OtherCase()
 ::\varepsilon::
-SendInput {U+03B5}
+send {U+03B5}
 return
 
 
@@ -12065,17 +12065,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\zeta::
-SendInput ^x8{Enter}3b6{Enter}
+send ^x8{Enter}3b6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\zeta::
-SendInput ^+u3b6{Enter}
+send ^+u3b6{Enter}
 return
 
 #if OtherCase()
 ::\zeta::
-SendInput {U+03B6}
+send {U+03B6}
 return
 
 
@@ -12083,17 +12083,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\eta::
-SendInput ^x8{Enter}3b7{Enter}
+send ^x8{Enter}3b7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\eta::
-SendInput ^+u3b7{Enter}
+send ^+u3b7{Enter}
 return
 
 #if OtherCase()
 ::\eta::
-SendInput {U+03B7}
+send {U+03B7}
 return
 
 
@@ -12101,17 +12101,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\theta::
-SendInput ^x8{Enter}3b8{Enter}
+send ^x8{Enter}3b8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\theta::
-SendInput ^+u3b8{Enter}
+send ^+u3b8{Enter}
 return
 
 #if OtherCase()
 ::\theta::
-SendInput {U+03B8}
+send {U+03B8}
 return
 
 
@@ -12119,17 +12119,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\iota::
-SendInput ^x8{Enter}3b9{Enter}
+send ^x8{Enter}3b9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\iota::
-SendInput ^+u3b9{Enter}
+send ^+u3b9{Enter}
 return
 
 #if OtherCase()
 ::\iota::
-SendInput {U+03B9}
+send {U+03B9}
 return
 
 
@@ -12137,17 +12137,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\kappa::
-SendInput ^x8{Enter}3ba{Enter}
+send ^x8{Enter}3ba{Enter}
 return
 
 #if GtkApplicationCase()
 ::\kappa::
-SendInput ^+u3ba{Enter}
+send ^+u3ba{Enter}
 return
 
 #if OtherCase()
 ::\kappa::
-SendInput {U+03BA}
+send {U+03BA}
 return
 
 
@@ -12155,17 +12155,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lambda::
-SendInput ^x8{Enter}3bb{Enter}
+send ^x8{Enter}3bb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lambda::
-SendInput ^+u3bb{Enter}
+send ^+u3bb{Enter}
 return
 
 #if OtherCase()
 ::\lambda::
-SendInput {U+03BB}
+send {U+03BB}
 return
 
 
@@ -12173,17 +12173,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lamda::
-SendInput ^x8{Enter}3bb{Enter}
+send ^x8{Enter}3bb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lamda::
-SendInput ^+u3bb{Enter}
+send ^+u3bb{Enter}
 return
 
 #if OtherCase()
 ::\lamda::
-SendInput {U+03BB}
+send {U+03BB}
 return
 
 
@@ -12191,17 +12191,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\mu::
-SendInput ^x8{Enter}3bc{Enter}
+send ^x8{Enter}3bc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\mu::
-SendInput ^+u3bc{Enter}
+send ^+u3bc{Enter}
 return
 
 #if OtherCase()
 ::\mu::
-SendInput {U+03BC}
+send {U+03BC}
 return
 
 
@@ -12209,17 +12209,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nu::
-SendInput ^x8{Enter}3bd{Enter}
+send ^x8{Enter}3bd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nu::
-SendInput ^+u3bd{Enter}
+send ^+u3bd{Enter}
 return
 
 #if OtherCase()
 ::\nu::
-SendInput {U+03BD}
+send {U+03BD}
 return
 
 
@@ -12227,17 +12227,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\xi::
-SendInput ^x8{Enter}3be{Enter}
+send ^x8{Enter}3be{Enter}
 return
 
 #if GtkApplicationCase()
 ::\xi::
-SendInput ^+u3be{Enter}
+send ^+u3be{Enter}
 return
 
 #if OtherCase()
 ::\xi::
-SendInput {U+03BE}
+send {U+03BE}
 return
 
 
@@ -12245,17 +12245,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\omicron::
-SendInput ^x8{Enter}3bf{Enter}
+send ^x8{Enter}3bf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\omicron::
-SendInput ^+u3bf{Enter}
+send ^+u3bf{Enter}
 return
 
 #if OtherCase()
 ::\omicron::
-SendInput {U+03BF}
+send {U+03BF}
 return
 
 
@@ -12263,17 +12263,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\pi::
-SendInput ^x8{Enter}3c0{Enter}
+send ^x8{Enter}3c0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\pi::
-SendInput ^+u3c0{Enter}
+send ^+u3c0{Enter}
 return
 
 #if OtherCase()
 ::\pi::
-SendInput {U+03C0}
+send {U+03C0}
 return
 
 
@@ -12281,17 +12281,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rho::
-SendInput ^x8{Enter}3c1{Enter}
+send ^x8{Enter}3c1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rho::
-SendInput ^+u3c1{Enter}
+send ^+u3c1{Enter}
 return
 
 #if OtherCase()
 ::\rho::
-SendInput {U+03C1}
+send {U+03C1}
 return
 
 
@@ -12299,17 +12299,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varsigma::
-SendInput ^x8{Enter}3c2{Enter}
+send ^x8{Enter}3c2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varsigma::
-SendInput ^+u3c2{Enter}
+send ^+u3c2{Enter}
 return
 
 #if OtherCase()
 ::\varsigma::
-SendInput {U+03C2}
+send {U+03C2}
 return
 
 
@@ -12317,17 +12317,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sigma::
-SendInput ^x8{Enter}3c3{Enter}
+send ^x8{Enter}3c3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sigma::
-SendInput ^+u3c3{Enter}
+send ^+u3c3{Enter}
 return
 
 #if OtherCase()
 ::\sigma::
-SendInput {U+03C3}
+send {U+03C3}
 return
 
 
@@ -12335,17 +12335,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\tau::
-SendInput ^x8{Enter}3c4{Enter}
+send ^x8{Enter}3c4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\tau::
-SendInput ^+u3c4{Enter}
+send ^+u3c4{Enter}
 return
 
 #if OtherCase()
 ::\tau::
-SendInput {U+03C4}
+send {U+03C4}
 return
 
 
@@ -12353,17 +12353,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\upsilon::
-SendInput ^x8{Enter}3c5{Enter}
+send ^x8{Enter}3c5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\upsilon::
-SendInput ^+u3c5{Enter}
+send ^+u3c5{Enter}
 return
 
 #if OtherCase()
 ::\upsilon::
-SendInput {U+03C5}
+send {U+03C5}
 return
 
 
@@ -12371,17 +12371,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\phi::
-SendInput ^x8{Enter}3c6{Enter}
+send ^x8{Enter}3c6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\phi::
-SendInput ^+u3c6{Enter}
+send ^+u3c6{Enter}
 return
 
 #if OtherCase()
 ::\phi::
-SendInput {U+03C6}
+send {U+03C6}
 return
 
 
@@ -12389,17 +12389,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\straightphi::
-SendInput ^x8{Enter}3c6{Enter}
+send ^x8{Enter}3c6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\straightphi::
-SendInput ^+u3c6{Enter}
+send ^+u3c6{Enter}
 return
 
 #if OtherCase()
 ::\straightphi::
-SendInput {U+03C6}
+send {U+03C6}
 return
 
 
@@ -12407,17 +12407,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\chi::
-SendInput ^x8{Enter}3c7{Enter}
+send ^x8{Enter}3c7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\chi::
-SendInput ^+u3c7{Enter}
+send ^+u3c7{Enter}
 return
 
 #if OtherCase()
 ::\chi::
-SendInput {U+03C7}
+send {U+03C7}
 return
 
 
@@ -12425,17 +12425,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\psi::
-SendInput ^x8{Enter}3c8{Enter}
+send ^x8{Enter}3c8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\psi::
-SendInput ^+u3c8{Enter}
+send ^+u3c8{Enter}
 return
 
 #if OtherCase()
 ::\psi::
-SendInput {U+03C8}
+send {U+03C8}
 return
 
 
@@ -12443,17 +12443,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\omega::
-SendInput ^x8{Enter}3c9{Enter}
+send ^x8{Enter}3c9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\omega::
-SendInput ^+u3c9{Enter}
+send ^+u3c9{Enter}
 return
 
 #if OtherCase()
 ::\omega::
-SendInput {U+03C9}
+send {U+03C9}
 return
 
 
@@ -12461,17 +12461,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varbeta::
-SendInput ^x8{Enter}3d0{Enter}
+send ^x8{Enter}3d0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varbeta::
-SendInput ^+u3d0{Enter}
+send ^+u3d0{Enter}
 return
 
 #if OtherCase()
 ::\varbeta::
-SendInput {U+03D0}
+send {U+03D0}
 return
 
 
@@ -12479,17 +12479,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vartheta::
-SendInput ^x8{Enter}3d1{Enter}
+send ^x8{Enter}3d1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vartheta::
-SendInput ^+u3d1{Enter}
+send ^+u3d1{Enter}
 return
 
 #if OtherCase()
 ::\vartheta::
-SendInput {U+03D1}
+send {U+03D1}
 return
 
 
@@ -12497,17 +12497,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varphi::
-SendInput ^x8{Enter}3d5{Enter}
+send ^x8{Enter}3d5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varphi::
-SendInput ^+u3d5{Enter}
+send ^+u3d5{Enter}
 return
 
 #if OtherCase()
 ::\varphi::
-SendInput {U+03D5}
+send {U+03D5}
 return
 
 
@@ -12515,17 +12515,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varpi::
-SendInput ^x8{Enter}3d6{Enter}
+send ^x8{Enter}3d6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varpi::
-SendInput ^+u3d6{Enter}
+send ^+u3d6{Enter}
 return
 
 #if OtherCase()
 ::\varpi::
-SendInput {U+03D6}
+send {U+03D6}
 return
 
 
@@ -12533,17 +12533,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varkai::
-SendInput ^x8{Enter}3d7{Enter}
+send ^x8{Enter}3d7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varkai::
-SendInput ^+u3d7{Enter}
+send ^+u3d7{Enter}
 return
 
 #if OtherCase()
 ::\varkai::
-SendInput {U+03D7}
+send {U+03D7}
 return
 
 
@@ -12551,17 +12551,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Stigma::
-SendInput ^x8{Enter}3da{Enter}
+send ^x8{Enter}3da{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Stigma::
-SendInput ^+u3da{Enter}
+send ^+u3da{Enter}
 return
 
 #if OtherCase()
 ::\Stigma::
-SendInput {U+03DA}
+send {U+03DA}
 return
 
 
@@ -12569,17 +12569,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\stigma::
-SendInput ^x8{Enter}3db{Enter}
+send ^x8{Enter}3db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\stigma::
-SendInput ^+u3db{Enter}
+send ^+u3db{Enter}
 return
 
 #if OtherCase()
 ::\stigma::
-SendInput {U+03DB}
+send {U+03DB}
 return
 
 
@@ -12587,17 +12587,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Digamma::
-SendInput ^x8{Enter}3dc{Enter}
+send ^x8{Enter}3dc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Digamma::
-SendInput ^+u3dc{Enter}
+send ^+u3dc{Enter}
 return
 
 #if OtherCase()
 ::\Digamma::
-SendInput {U+03DC}
+send {U+03DC}
 return
 
 
@@ -12605,17 +12605,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\digamma::
-SendInput ^x8{Enter}3dd{Enter}
+send ^x8{Enter}3dd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\digamma::
-SendInput ^+u3dd{Enter}
+send ^+u3dd{Enter}
 return
 
 #if OtherCase()
 ::\digamma::
-SendInput {U+03DD}
+send {U+03DD}
 return
 
 
@@ -12623,17 +12623,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Koppa::
-SendInput ^x8{Enter}3de{Enter}
+send ^x8{Enter}3de{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Koppa::
-SendInput ^+u3de{Enter}
+send ^+u3de{Enter}
 return
 
 #if OtherCase()
 ::\Koppa::
-SendInput {U+03DE}
+send {U+03DE}
 return
 
 
@@ -12641,17 +12641,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\koppa::
-SendInput ^x8{Enter}3df{Enter}
+send ^x8{Enter}3df{Enter}
 return
 
 #if GtkApplicationCase()
 ::\koppa::
-SendInput ^+u3df{Enter}
+send ^+u3df{Enter}
 return
 
 #if OtherCase()
 ::\koppa::
-SendInput {U+03DF}
+send {U+03DF}
 return
 
 
@@ -12659,17 +12659,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Sampi::
-SendInput ^x8{Enter}3e0{Enter}
+send ^x8{Enter}3e0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Sampi::
-SendInput ^+u3e0{Enter}
+send ^+u3e0{Enter}
 return
 
 #if OtherCase()
 ::\Sampi::
-SendInput {U+03E0}
+send {U+03E0}
 return
 
 
@@ -12677,17 +12677,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sampi::
-SendInput ^x8{Enter}3e1{Enter}
+send ^x8{Enter}3e1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sampi::
-SendInput ^+u3e1{Enter}
+send ^+u3e1{Enter}
 return
 
 #if OtherCase()
 ::\sampi::
-SendInput {U+03E1}
+send {U+03E1}
 return
 
 
@@ -12695,17 +12695,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Shei::
-SendInput ^x8{Enter}3e2{Enter}
+send ^x8{Enter}3e2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Shei::
-SendInput ^+u3e2{Enter}
+send ^+u3e2{Enter}
 return
 
 #if OtherCase()
 ::\Shei::
-SendInput {U+03E2}
+send {U+03E2}
 return
 
 
@@ -12713,17 +12713,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\shei::
-SendInput ^x8{Enter}3e3{Enter}
+send ^x8{Enter}3e3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\shei::
-SendInput ^+u3e3{Enter}
+send ^+u3e3{Enter}
 return
 
 #if OtherCase()
 ::\shei::
-SendInput {U+03E3}
+send {U+03E3}
 return
 
 
@@ -12731,17 +12731,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Fei::
-SendInput ^x8{Enter}3e4{Enter}
+send ^x8{Enter}3e4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Fei::
-SendInput ^+u3e4{Enter}
+send ^+u3e4{Enter}
 return
 
 #if OtherCase()
 ::\Fei::
-SendInput {U+03E4}
+send {U+03E4}
 return
 
 
@@ -12749,17 +12749,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\fei::
-SendInput ^x8{Enter}3e5{Enter}
+send ^x8{Enter}3e5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\fei::
-SendInput ^+u3e5{Enter}
+send ^+u3e5{Enter}
 return
 
 #if OtherCase()
 ::\fei::
-SendInput {U+03E5}
+send {U+03E5}
 return
 
 
@@ -12767,17 +12767,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Khei::
-SendInput ^x8{Enter}3e6{Enter}
+send ^x8{Enter}3e6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Khei::
-SendInput ^+u3e6{Enter}
+send ^+u3e6{Enter}
 return
 
 #if OtherCase()
 ::\Khei::
-SendInput {U+03E6}
+send {U+03E6}
 return
 
 
@@ -12785,17 +12785,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\khei::
-SendInput ^x8{Enter}3e7{Enter}
+send ^x8{Enter}3e7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\khei::
-SendInput ^+u3e7{Enter}
+send ^+u3e7{Enter}
 return
 
 #if OtherCase()
 ::\khei::
-SendInput {U+03E7}
+send {U+03E7}
 return
 
 
@@ -12803,17 +12803,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Hori::
-SendInput ^x8{Enter}3e8{Enter}
+send ^x8{Enter}3e8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Hori::
-SendInput ^+u3e8{Enter}
+send ^+u3e8{Enter}
 return
 
 #if OtherCase()
 ::\Hori::
-SendInput {U+03E8}
+send {U+03E8}
 return
 
 
@@ -12821,17 +12821,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\hori::
-SendInput ^x8{Enter}3e9{Enter}
+send ^x8{Enter}3e9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\hori::
-SendInput ^+u3e9{Enter}
+send ^+u3e9{Enter}
 return
 
 #if OtherCase()
 ::\hori::
-SendInput {U+03E9}
+send {U+03E9}
 return
 
 
@@ -12839,17 +12839,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Gangia::
-SendInput ^x8{Enter}3ea{Enter}
+send ^x8{Enter}3ea{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Gangia::
-SendInput ^+u3ea{Enter}
+send ^+u3ea{Enter}
 return
 
 #if OtherCase()
 ::\Gangia::
-SendInput {U+03EA}
+send {U+03EA}
 return
 
 
@@ -12857,17 +12857,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gangia::
-SendInput ^x8{Enter}3eb{Enter}
+send ^x8{Enter}3eb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gangia::
-SendInput ^+u3eb{Enter}
+send ^+u3eb{Enter}
 return
 
 #if OtherCase()
 ::\gangia::
-SendInput {U+03EB}
+send {U+03EB}
 return
 
 
@@ -12875,17 +12875,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Shima::
-SendInput ^x8{Enter}3ec{Enter}
+send ^x8{Enter}3ec{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Shima::
-SendInput ^+u3ec{Enter}
+send ^+u3ec{Enter}
 return
 
 #if OtherCase()
 ::\Shima::
-SendInput {U+03EC}
+send {U+03EC}
 return
 
 
@@ -12893,17 +12893,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\shima::
-SendInput ^x8{Enter}3ed{Enter}
+send ^x8{Enter}3ed{Enter}
 return
 
 #if GtkApplicationCase()
 ::\shima::
-SendInput ^+u3ed{Enter}
+send ^+u3ed{Enter}
 return
 
 #if OtherCase()
 ::\shima::
-SendInput {U+03ED}
+send {U+03ED}
 return
 
 
@@ -12911,17 +12911,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Dei::
-SendInput ^x8{Enter}3ee{Enter}
+send ^x8{Enter}3ee{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Dei::
-SendInput ^+u3ee{Enter}
+send ^+u3ee{Enter}
 return
 
 #if OtherCase()
 ::\Dei::
-SendInput {U+03EE}
+send {U+03EE}
 return
 
 
@@ -12929,17 +12929,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\dei::
-SendInput ^x8{Enter}3ef{Enter}
+send ^x8{Enter}3ef{Enter}
 return
 
 #if GtkApplicationCase()
 ::\dei::
-SendInput ^+u3ef{Enter}
+send ^+u3ef{Enter}
 return
 
 #if OtherCase()
 ::\dei::
-SendInput {U+03EF}
+send {U+03EF}
 return
 
 
@@ -12947,17 +12947,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varkappa::
-SendInput ^x8{Enter}3f0{Enter}
+send ^x8{Enter}3f0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varkappa::
-SendInput ^+u3f0{Enter}
+send ^+u3f0{Enter}
 return
 
 #if OtherCase()
 ::\varkappa::
-SendInput {U+03F0}
+send {U+03F0}
 return
 
 
@@ -12965,17 +12965,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varrho::
-SendInput ^x8{Enter}3f1{Enter}
+send ^x8{Enter}3f1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varrho::
-SendInput ^+u3f1{Enter}
+send ^+u3f1{Enter}
 return
 
 #if OtherCase()
 ::\varrho::
-SendInput {U+03F1}
+send {U+03F1}
 return
 
 
@@ -12983,17 +12983,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\epsilon::
-SendInput ^x8{Enter}3f5{Enter}
+send ^x8{Enter}3f5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\epsilon::
-SendInput ^+u3f5{Enter}
+send ^+u3f5{Enter}
 return
 
 #if OtherCase()
 ::\epsilon::
-SendInput {U+03F5}
+send {U+03F5}
 return
 
 
@@ -13001,17 +13001,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Sho::
-SendInput ^x8{Enter}3f7{Enter}
+send ^x8{Enter}3f7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Sho::
-SendInput ^+u3f7{Enter}
+send ^+u3f7{Enter}
 return
 
 #if OtherCase()
 ::\Sho::
-SendInput {U+03F7}
+send {U+03F7}
 return
 
 
@@ -13019,17 +13019,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sho::
-SendInput ^x8{Enter}3f8{Enter}
+send ^x8{Enter}3f8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sho::
-SendInput ^+u3f8{Enter}
+send ^+u3f8{Enter}
 return
 
 #if OtherCase()
 ::\sho::
-SendInput {U+03F8}
+send {U+03F8}
 return
 
 
@@ -13037,17 +13037,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\San::
-SendInput ^x8{Enter}3fa{Enter}
+send ^x8{Enter}3fa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\San::
-SendInput ^+u3fa{Enter}
+send ^+u3fa{Enter}
 return
 
 #if OtherCase()
 ::\San::
-SendInput {U+03FA}
+send {U+03FA}
 return
 
 
@@ -13055,17 +13055,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\san::
-SendInput ^x8{Enter}3fb{Enter}
+send ^x8{Enter}3fb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\san::
-SendInput ^+u3fb{Enter}
+send ^+u3fb{Enter}
 return
 
 #if OtherCase()
 ::\san::
-SendInput {U+03FB}
+send {U+03FB}
 return
 
 
@@ -13073,17 +13073,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\afghani::
-SendInput ^x8{Enter}60b{Enter}
+send ^x8{Enter}60b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\afghani::
-SendInput ^+u60b{Enter}
+send ^+u60b{Enter}
 return
 
 #if OtherCase()
 ::\afghani::
-SendInput {U+060B}
+send {U+060B}
 return
 
 
@@ -13091,17 +13091,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textbaht::
-SendInput ^x8{Enter}e3f{Enter}
+send ^x8{Enter}e3f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textbaht::
-SendInput ^+ue3f{Enter}
+send ^+ue3f{Enter}
 return
 
 #if OtherCase()
 ::\textbaht::
-SendInput {U+0E3F}
+send {U+0E3F}
 return
 
 
@@ -13109,17 +13109,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^A::
-SendInput ^x8{Enter}1d2c{Enter}
+send ^x8{Enter}1d2c{Enter}
 return
 
 #if GtkApplicationCase()
 ::^A::
-SendInput ^+u1d2c{Enter}
+send ^+u1d2c{Enter}
 return
 
 #if OtherCase()
 ::^A::
-SendInput {U+1D2C}
+send {U+1D2C}
 return
 
 
@@ -13127,17 +13127,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\Ae::
-SendInput ^x8{Enter}1d2d{Enter}
+send ^x8{Enter}1d2d{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\Ae::
-SendInput ^+u1d2d{Enter}
+send ^+u1d2d{Enter}
 return
 
 #if OtherCase()
 ::^\Ae::
-SendInput {U+1D2D}
+send {U+1D2D}
 return
 
 
@@ -13145,17 +13145,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^B::
-SendInput ^x8{Enter}1d2e{Enter}
+send ^x8{Enter}1d2e{Enter}
 return
 
 #if GtkApplicationCase()
 ::^B::
-SendInput ^+u1d2e{Enter}
+send ^+u1d2e{Enter}
 return
 
 #if OtherCase()
 ::^B::
-SendInput {U+1D2E}
+send {U+1D2E}
 return
 
 
@@ -13163,17 +13163,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\Barred B::
-SendInput ^x8{Enter}1d2f{Enter}
+send ^x8{Enter}1d2f{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\Barred B::
-SendInput ^+u1d2f{Enter}
+send ^+u1d2f{Enter}
 return
 
 #if OtherCase()
 ::^\Barred B::
-SendInput {U+1D2F}
+send {U+1D2F}
 return
 
 
@@ -13181,17 +13181,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^D::
-SendInput ^x8{Enter}1d30{Enter}
+send ^x8{Enter}1d30{Enter}
 return
 
 #if GtkApplicationCase()
 ::^D::
-SendInput ^+u1d30{Enter}
+send ^+u1d30{Enter}
 return
 
 #if OtherCase()
 ::^D::
-SendInput {U+1D30}
+send {U+1D30}
 return
 
 
@@ -13199,17 +13199,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^E::
-SendInput ^x8{Enter}1d31{Enter}
+send ^x8{Enter}1d31{Enter}
 return
 
 #if GtkApplicationCase()
 ::^E::
-SendInput ^+u1d31{Enter}
+send ^+u1d31{Enter}
 return
 
 #if OtherCase()
 ::^E::
-SendInput {U+1D31}
+send {U+1D31}
 return
 
 
@@ -13217,17 +13217,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\Reversed E::
-SendInput ^x8{Enter}1d32{Enter}
+send ^x8{Enter}1d32{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\Reversed E::
-SendInput ^+u1d32{Enter}
+send ^+u1d32{Enter}
 return
 
 #if OtherCase()
 ::^\Reversed E::
-SendInput {U+1D32}
+send {U+1D32}
 return
 
 
@@ -13235,17 +13235,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^G::
-SendInput ^x8{Enter}1d33{Enter}
+send ^x8{Enter}1d33{Enter}
 return
 
 #if GtkApplicationCase()
 ::^G::
-SendInput ^+u1d33{Enter}
+send ^+u1d33{Enter}
 return
 
 #if OtherCase()
 ::^G::
-SendInput {U+1D33}
+send {U+1D33}
 return
 
 
@@ -13253,17 +13253,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^H::
-SendInput ^x8{Enter}1d34{Enter}
+send ^x8{Enter}1d34{Enter}
 return
 
 #if GtkApplicationCase()
 ::^H::
-SendInput ^+u1d34{Enter}
+send ^+u1d34{Enter}
 return
 
 #if OtherCase()
 ::^H::
-SendInput {U+1D34}
+send {U+1D34}
 return
 
 
@@ -13271,17 +13271,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^I::
-SendInput ^x8{Enter}1d35{Enter}
+send ^x8{Enter}1d35{Enter}
 return
 
 #if GtkApplicationCase()
 ::^I::
-SendInput ^+u1d35{Enter}
+send ^+u1d35{Enter}
 return
 
 #if OtherCase()
 ::^I::
-SendInput {U+1D35}
+send {U+1D35}
 return
 
 
@@ -13289,17 +13289,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^J::
-SendInput ^x8{Enter}1d36{Enter}
+send ^x8{Enter}1d36{Enter}
 return
 
 #if GtkApplicationCase()
 ::^J::
-SendInput ^+u1d36{Enter}
+send ^+u1d36{Enter}
 return
 
 #if OtherCase()
 ::^J::
-SendInput {U+1D36}
+send {U+1D36}
 return
 
 
@@ -13307,17 +13307,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^K::
-SendInput ^x8{Enter}1d37{Enter}
+send ^x8{Enter}1d37{Enter}
 return
 
 #if GtkApplicationCase()
 ::^K::
-SendInput ^+u1d37{Enter}
+send ^+u1d37{Enter}
 return
 
 #if OtherCase()
 ::^K::
-SendInput {U+1D37}
+send {U+1D37}
 return
 
 
@@ -13325,17 +13325,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^L::
-SendInput ^x8{Enter}1d38{Enter}
+send ^x8{Enter}1d38{Enter}
 return
 
 #if GtkApplicationCase()
 ::^L::
-SendInput ^+u1d38{Enter}
+send ^+u1d38{Enter}
 return
 
 #if OtherCase()
 ::^L::
-SendInput {U+1D38}
+send {U+1D38}
 return
 
 
@@ -13343,17 +13343,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^M::
-SendInput ^x8{Enter}1d39{Enter}
+send ^x8{Enter}1d39{Enter}
 return
 
 #if GtkApplicationCase()
 ::^M::
-SendInput ^+u1d39{Enter}
+send ^+u1d39{Enter}
 return
 
 #if OtherCase()
 ::^M::
-SendInput {U+1D39}
+send {U+1D39}
 return
 
 
@@ -13361,17 +13361,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^N::
-SendInput ^x8{Enter}1d3a{Enter}
+send ^x8{Enter}1d3a{Enter}
 return
 
 #if GtkApplicationCase()
 ::^N::
-SendInput ^+u1d3a{Enter}
+send ^+u1d3a{Enter}
 return
 
 #if OtherCase()
 ::^N::
-SendInput {U+1D3A}
+send {U+1D3A}
 return
 
 
@@ -13379,17 +13379,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\Reversed N::
-SendInput ^x8{Enter}1d3b{Enter}
+send ^x8{Enter}1d3b{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\Reversed N::
-SendInput ^+u1d3b{Enter}
+send ^+u1d3b{Enter}
 return
 
 #if OtherCase()
 ::^\Reversed N::
-SendInput {U+1D3B}
+send {U+1D3B}
 return
 
 
@@ -13397,17 +13397,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^O::
-SendInput ^x8{Enter}1d3c{Enter}
+send ^x8{Enter}1d3c{Enter}
 return
 
 #if GtkApplicationCase()
 ::^O::
-SendInput ^+u1d3c{Enter}
+send ^+u1d3c{Enter}
 return
 
 #if OtherCase()
 ::^O::
-SendInput {U+1D3C}
+send {U+1D3C}
 return
 
 
@@ -13415,17 +13415,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\Ou::
-SendInput ^x8{Enter}1d3d{Enter}
+send ^x8{Enter}1d3d{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\Ou::
-SendInput ^+u1d3d{Enter}
+send ^+u1d3d{Enter}
 return
 
 #if OtherCase()
 ::^\Ou::
-SendInput {U+1D3D}
+send {U+1D3D}
 return
 
 
@@ -13433,17 +13433,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^P::
-SendInput ^x8{Enter}1d3e{Enter}
+send ^x8{Enter}1d3e{Enter}
 return
 
 #if GtkApplicationCase()
 ::^P::
-SendInput ^+u1d3e{Enter}
+send ^+u1d3e{Enter}
 return
 
 #if OtherCase()
 ::^P::
-SendInput {U+1D3E}
+send {U+1D3E}
 return
 
 
@@ -13451,17 +13451,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^R::
-SendInput ^x8{Enter}1d3f{Enter}
+send ^x8{Enter}1d3f{Enter}
 return
 
 #if GtkApplicationCase()
 ::^R::
-SendInput ^+u1d3f{Enter}
+send ^+u1d3f{Enter}
 return
 
 #if OtherCase()
 ::^R::
-SendInput {U+1D3F}
+send {U+1D3F}
 return
 
 
@@ -13469,17 +13469,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^T::
-SendInput ^x8{Enter}1d40{Enter}
+send ^x8{Enter}1d40{Enter}
 return
 
 #if GtkApplicationCase()
 ::^T::
-SendInput ^+u1d40{Enter}
+send ^+u1d40{Enter}
 return
 
 #if OtherCase()
 ::^T::
-SendInput {U+1D40}
+send {U+1D40}
 return
 
 
@@ -13487,17 +13487,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^U::
-SendInput ^x8{Enter}1d41{Enter}
+send ^x8{Enter}1d41{Enter}
 return
 
 #if GtkApplicationCase()
 ::^U::
-SendInput ^+u1d41{Enter}
+send ^+u1d41{Enter}
 return
 
 #if OtherCase()
 ::^U::
-SendInput {U+1D41}
+send {U+1D41}
 return
 
 
@@ -13505,17 +13505,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^W::
-SendInput ^x8{Enter}1d42{Enter}
+send ^x8{Enter}1d42{Enter}
 return
 
 #if GtkApplicationCase()
 ::^W::
-SendInput ^+u1d42{Enter}
+send ^+u1d42{Enter}
 return
 
 #if OtherCase()
 ::^W::
-SendInput {U+1D42}
+send {U+1D42}
 return
 
 
@@ -13523,17 +13523,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^a::
-SendInput ^x8{Enter}1d43{Enter}
+send ^x8{Enter}1d43{Enter}
 return
 
 #if GtkApplicationCase()
 ::^a::
-SendInput ^+u1d43{Enter}
+send ^+u1d43{Enter}
 return
 
 #if OtherCase()
 ::^a::
-SendInput {U+1D43}
+send {U+1D43}
 return
 
 
@@ -13541,17 +13541,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned a::
-SendInput ^x8{Enter}1d44{Enter}
+send ^x8{Enter}1d44{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned a::
-SendInput ^+u1d44{Enter}
+send ^+u1d44{Enter}
 return
 
 #if OtherCase()
 ::^\turned a::
-SendInput {U+1D44}
+send {U+1D44}
 return
 
 
@@ -13559,17 +13559,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\alpha::
-SendInput ^x8{Enter}1d45{Enter}
+send ^x8{Enter}1d45{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\alpha::
-SendInput ^+u1d45{Enter}
+send ^+u1d45{Enter}
 return
 
 #if OtherCase()
 ::^\alpha::
-SendInput {U+1D45}
+send {U+1D45}
 return
 
 
@@ -13577,17 +13577,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned ae::
-SendInput ^x8{Enter}1d46{Enter}
+send ^x8{Enter}1d46{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned ae::
-SendInput ^+u1d46{Enter}
+send ^+u1d46{Enter}
 return
 
 #if OtherCase()
 ::^\turned ae::
-SendInput {U+1D46}
+send {U+1D46}
 return
 
 
@@ -13595,17 +13595,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^b::
-SendInput ^x8{Enter}1d47{Enter}
+send ^x8{Enter}1d47{Enter}
 return
 
 #if GtkApplicationCase()
 ::^b::
-SendInput ^+u1d47{Enter}
+send ^+u1d47{Enter}
 return
 
 #if OtherCase()
 ::^b::
-SendInput {U+1D47}
+send {U+1D47}
 return
 
 
@@ -13613,17 +13613,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^d::
-SendInput ^x8{Enter}1d48{Enter}
+send ^x8{Enter}1d48{Enter}
 return
 
 #if GtkApplicationCase()
 ::^d::
-SendInput ^+u1d48{Enter}
+send ^+u1d48{Enter}
 return
 
 #if OtherCase()
 ::^d::
-SendInput {U+1D48}
+send {U+1D48}
 return
 
 
@@ -13631,17 +13631,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^e::
-SendInput ^x8{Enter}1d49{Enter}
+send ^x8{Enter}1d49{Enter}
 return
 
 #if GtkApplicationCase()
 ::^e::
-SendInput ^+u1d49{Enter}
+send ^+u1d49{Enter}
 return
 
 #if OtherCase()
 ::^e::
-SendInput {U+1D49}
+send {U+1D49}
 return
 
 
@@ -13649,17 +13649,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\schwa::
-SendInput ^x8{Enter}1d4a{Enter}
+send ^x8{Enter}1d4a{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\schwa::
-SendInput ^+u1d4a{Enter}
+send ^+u1d4a{Enter}
 return
 
 #if OtherCase()
 ::^\schwa::
-SendInput {U+1D4A}
+send {U+1D4A}
 return
 
 
@@ -13667,17 +13667,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\open e::
-SendInput ^x8{Enter}1d4b{Enter}
+send ^x8{Enter}1d4b{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\open e::
-SendInput ^+u1d4b{Enter}
+send ^+u1d4b{Enter}
 return
 
 #if OtherCase()
 ::^\open e::
-SendInput {U+1D4B}
+send {U+1D4B}
 return
 
 
@@ -13685,17 +13685,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned open e::
-SendInput ^x8{Enter}1d4c{Enter}
+send ^x8{Enter}1d4c{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned open e::
-SendInput ^+u1d4c{Enter}
+send ^+u1d4c{Enter}
 return
 
 #if OtherCase()
 ::^\turned open e::
-SendInput {U+1D4C}
+send {U+1D4C}
 return
 
 
@@ -13703,17 +13703,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^g::
-SendInput ^x8{Enter}1d4d{Enter}
+send ^x8{Enter}1d4d{Enter}
 return
 
 #if GtkApplicationCase()
 ::^g::
-SendInput ^+u1d4d{Enter}
+send ^+u1d4d{Enter}
 return
 
 #if OtherCase()
 ::^g::
-SendInput {U+1D4D}
+send {U+1D4D}
 return
 
 
@@ -13721,17 +13721,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned i::
-SendInput ^x8{Enter}1d4e{Enter}
+send ^x8{Enter}1d4e{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned i::
-SendInput ^+u1d4e{Enter}
+send ^+u1d4e{Enter}
 return
 
 #if OtherCase()
 ::^\turned i::
-SendInput {U+1D4E}
+send {U+1D4E}
 return
 
 
@@ -13739,17 +13739,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^k::
-SendInput ^x8{Enter}1d4f{Enter}
+send ^x8{Enter}1d4f{Enter}
 return
 
 #if GtkApplicationCase()
 ::^k::
-SendInput ^+u1d4f{Enter}
+send ^+u1d4f{Enter}
 return
 
 #if OtherCase()
 ::^k::
-SendInput {U+1D4F}
+send {U+1D4F}
 return
 
 
@@ -13757,17 +13757,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^m::
-SendInput ^x8{Enter}1d50{Enter}
+send ^x8{Enter}1d50{Enter}
 return
 
 #if GtkApplicationCase()
 ::^m::
-SendInput ^+u1d50{Enter}
+send ^+u1d50{Enter}
 return
 
 #if OtherCase()
 ::^m::
-SendInput {U+1D50}
+send {U+1D50}
 return
 
 
@@ -13775,17 +13775,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\eng::
-SendInput ^x8{Enter}1d51{Enter}
+send ^x8{Enter}1d51{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\eng::
-SendInput ^+u1d51{Enter}
+send ^+u1d51{Enter}
 return
 
 #if OtherCase()
 ::^\eng::
-SendInput {U+1D51}
+send {U+1D51}
 return
 
 
@@ -13793,17 +13793,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^o::
-SendInput ^x8{Enter}1d52{Enter}
+send ^x8{Enter}1d52{Enter}
 return
 
 #if GtkApplicationCase()
 ::^o::
-SendInput ^+u1d52{Enter}
+send ^+u1d52{Enter}
 return
 
 #if OtherCase()
 ::^o::
-SendInput {U+1D52}
+send {U+1D52}
 return
 
 
@@ -13811,17 +13811,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\open o::
-SendInput ^x8{Enter}1d53{Enter}
+send ^x8{Enter}1d53{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\open o::
-SendInput ^+u1d53{Enter}
+send ^+u1d53{Enter}
 return
 
 #if OtherCase()
 ::^\open o::
-SendInput {U+1D53}
+send {U+1D53}
 return
 
 
@@ -13829,17 +13829,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\top half o::
-SendInput ^x8{Enter}1d54{Enter}
+send ^x8{Enter}1d54{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\top half o::
-SendInput ^+u1d54{Enter}
+send ^+u1d54{Enter}
 return
 
 #if OtherCase()
 ::^\top half o::
-SendInput {U+1D54}
+send {U+1D54}
 return
 
 
@@ -13847,17 +13847,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\bottom half o::
-SendInput ^x8{Enter}1d55{Enter}
+send ^x8{Enter}1d55{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\bottom half o::
-SendInput ^+u1d55{Enter}
+send ^+u1d55{Enter}
 return
 
 #if OtherCase()
 ::^\bottom half o::
-SendInput {U+1D55}
+send {U+1D55}
 return
 
 
@@ -13865,17 +13865,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^p::
-SendInput ^x8{Enter}1d56{Enter}
+send ^x8{Enter}1d56{Enter}
 return
 
 #if GtkApplicationCase()
 ::^p::
-SendInput ^+u1d56{Enter}
+send ^+u1d56{Enter}
 return
 
 #if OtherCase()
 ::^p::
-SendInput {U+1D56}
+send {U+1D56}
 return
 
 
@@ -13883,17 +13883,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^t::
-SendInput ^x8{Enter}1d57{Enter}
+send ^x8{Enter}1d57{Enter}
 return
 
 #if GtkApplicationCase()
 ::^t::
-SendInput ^+u1d57{Enter}
+send ^+u1d57{Enter}
 return
 
 #if OtherCase()
 ::^t::
-SendInput {U+1D57}
+send {U+1D57}
 return
 
 
@@ -13901,17 +13901,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^u::
-SendInput ^x8{Enter}1d58{Enter}
+send ^x8{Enter}1d58{Enter}
 return
 
 #if GtkApplicationCase()
 ::^u::
-SendInput ^+u1d58{Enter}
+send ^+u1d58{Enter}
 return
 
 #if OtherCase()
 ::^u::
-SendInput {U+1D58}
+send {U+1D58}
 return
 
 
@@ -13919,17 +13919,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\sideways u::
-SendInput ^x8{Enter}1d59{Enter}
+send ^x8{Enter}1d59{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\sideways u::
-SendInput ^+u1d59{Enter}
+send ^+u1d59{Enter}
 return
 
 #if OtherCase()
 ::^\sideways u::
-SendInput {U+1D59}
+send {U+1D59}
 return
 
 
@@ -13937,17 +13937,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned m::
-SendInput ^x8{Enter}1d5a{Enter}
+send ^x8{Enter}1d5a{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned m::
-SendInput ^+u1d5a{Enter}
+send ^+u1d5a{Enter}
 return
 
 #if OtherCase()
 ::^\turned m::
-SendInput {U+1D5A}
+send {U+1D5A}
 return
 
 
@@ -13955,17 +13955,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^v::
-SendInput ^x8{Enter}1d5b{Enter}
+send ^x8{Enter}1d5b{Enter}
 return
 
 #if GtkApplicationCase()
 ::^v::
-SendInput ^+u1d5b{Enter}
+send ^+u1d5b{Enter}
 return
 
 #if OtherCase()
 ::^v::
-SendInput {U+1D5B}
+send {U+1D5B}
 return
 
 
@@ -13973,17 +13973,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\ain::
-SendInput ^x8{Enter}1d5c{Enter}
+send ^x8{Enter}1d5c{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\ain::
-SendInput ^+u1d5c{Enter}
+send ^+u1d5c{Enter}
 return
 
 #if OtherCase()
 ::^\ain::
-SendInput {U+1D5C}
+send {U+1D5C}
 return
 
 
@@ -13991,17 +13991,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\beta::
-SendInput ^x8{Enter}1d5d{Enter}
+send ^x8{Enter}1d5d{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\beta::
-SendInput ^+u1d5d{Enter}
+send ^+u1d5d{Enter}
 return
 
 #if OtherCase()
 ::^\beta::
-SendInput {U+1D5D}
+send {U+1D5D}
 return
 
 
@@ -14009,17 +14009,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\greek gamma::
-SendInput ^x8{Enter}1d5e{Enter}
+send ^x8{Enter}1d5e{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\greek gamma::
-SendInput ^+u1d5e{Enter}
+send ^+u1d5e{Enter}
 return
 
 #if OtherCase()
 ::^\greek gamma::
-SendInput {U+1D5E}
+send {U+1D5E}
 return
 
 
@@ -14027,17 +14027,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\delta::
-SendInput ^x8{Enter}1d5f{Enter}
+send ^x8{Enter}1d5f{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\delta::
-SendInput ^+u1d5f{Enter}
+send ^+u1d5f{Enter}
 return
 
 #if OtherCase()
 ::^\delta::
-SendInput {U+1D5F}
+send {U+1D5F}
 return
 
 
@@ -14045,17 +14045,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\greek phi::
-SendInput ^x8{Enter}1d60{Enter}
+send ^x8{Enter}1d60{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\greek phi::
-SendInput ^+u1d60{Enter}
+send ^+u1d60{Enter}
 return
 
 #if OtherCase()
 ::^\greek phi::
-SendInput {U+1D60}
+send {U+1D60}
 return
 
 
@@ -14063,17 +14063,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\chi::
-SendInput ^x8{Enter}1d61{Enter}
+send ^x8{Enter}1d61{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\chi::
-SendInput ^+u1d61{Enter}
+send ^+u1d61{Enter}
 return
 
 #if OtherCase()
 ::^\chi::
-SendInput {U+1D61}
+send {U+1D61}
 return
 
 
@@ -14081,17 +14081,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_i::
-SendInput ^x8{Enter}1d62{Enter}
+send ^x8{Enter}1d62{Enter}
 return
 
 #if GtkApplicationCase()
 ::_i::
-SendInput ^+u1d62{Enter}
+send ^+u1d62{Enter}
 return
 
 #if OtherCase()
 ::_i::
-SendInput {U+1D62}
+send {U+1D62}
 return
 
 
@@ -14099,17 +14099,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_r::
-SendInput ^x8{Enter}1d63{Enter}
+send ^x8{Enter}1d63{Enter}
 return
 
 #if GtkApplicationCase()
 ::_r::
-SendInput ^+u1d63{Enter}
+send ^+u1d63{Enter}
 return
 
 #if OtherCase()
 ::_r::
-SendInput {U+1D63}
+send {U+1D63}
 return
 
 
@@ -14117,17 +14117,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_u::
-SendInput ^x8{Enter}1d64{Enter}
+send ^x8{Enter}1d64{Enter}
 return
 
 #if GtkApplicationCase()
 ::_u::
-SendInput ^+u1d64{Enter}
+send ^+u1d64{Enter}
 return
 
 #if OtherCase()
 ::_u::
-SendInput {U+1D64}
+send {U+1D64}
 return
 
 
@@ -14135,17 +14135,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_v::
-SendInput ^x8{Enter}1d65{Enter}
+send ^x8{Enter}1d65{Enter}
 return
 
 #if GtkApplicationCase()
 ::_v::
-SendInput ^+u1d65{Enter}
+send ^+u1d65{Enter}
 return
 
 #if OtherCase()
 ::_v::
-SendInput {U+1D65}
+send {U+1D65}
 return
 
 
@@ -14153,17 +14153,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned alpha::
-SendInput ^x8{Enter}1d9b{Enter}
+send ^x8{Enter}1d9b{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned alpha::
-SendInput ^+u1d9b{Enter}
+send ^+u1d9b{Enter}
 return
 
 #if OtherCase()
 ::^\turned alpha::
-SendInput {U+1D9B}
+send {U+1D9B}
 return
 
 
@@ -14171,17 +14171,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^c::
-SendInput ^x8{Enter}1d9c{Enter}
+send ^x8{Enter}1d9c{Enter}
 return
 
 #if GtkApplicationCase()
 ::^c::
-SendInput ^+u1d9c{Enter}
+send ^+u1d9c{Enter}
 return
 
 #if OtherCase()
 ::^c::
-SendInput {U+1D9C}
+send {U+1D9C}
 return
 
 
@@ -14189,17 +14189,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\c with curl::
-SendInput ^x8{Enter}1d9d{Enter}
+send ^x8{Enter}1d9d{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\c with curl::
-SendInput ^+u1d9d{Enter}
+send ^+u1d9d{Enter}
 return
 
 #if OtherCase()
 ::^\c with curl::
-SendInput {U+1D9D}
+send {U+1D9D}
 return
 
 
@@ -14207,17 +14207,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\eth::
-SendInput ^x8{Enter}1d9e{Enter}
+send ^x8{Enter}1d9e{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\eth::
-SendInput ^+u1d9e{Enter}
+send ^+u1d9e{Enter}
 return
 
 #if OtherCase()
 ::^\eth::
-SendInput {U+1D9E}
+send {U+1D9E}
 return
 
 
@@ -14225,17 +14225,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\reversed open e::
-SendInput ^x8{Enter}1d9f{Enter}
+send ^x8{Enter}1d9f{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\reversed open e::
-SendInput ^+u1d9f{Enter}
+send ^+u1d9f{Enter}
 return
 
 #if OtherCase()
 ::^\reversed open e::
-SendInput {U+1D9F}
+send {U+1D9F}
 return
 
 
@@ -14243,17 +14243,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^f::
-SendInput ^x8{Enter}1da0{Enter}
+send ^x8{Enter}1da0{Enter}
 return
 
 #if GtkApplicationCase()
 ::^f::
-SendInput ^+u1da0{Enter}
+send ^+u1da0{Enter}
 return
 
 #if OtherCase()
 ::^f::
-SendInput {U+1DA0}
+send {U+1DA0}
 return
 
 
@@ -14261,17 +14261,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\dotless j with stroke::
-SendInput ^x8{Enter}1da1{Enter}
+send ^x8{Enter}1da1{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\dotless j with stroke::
-SendInput ^+u1da1{Enter}
+send ^+u1da1{Enter}
 return
 
 #if OtherCase()
 ::^\dotless j with stroke::
-SendInput {U+1DA1}
+send {U+1DA1}
 return
 
 
@@ -14279,17 +14279,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\script g::
-SendInput ^x8{Enter}1da2{Enter}
+send ^x8{Enter}1da2{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\script g::
-SendInput ^+u1da2{Enter}
+send ^+u1da2{Enter}
 return
 
 #if OtherCase()
 ::^\script g::
-SendInput {U+1DA2}
+send {U+1DA2}
 return
 
 
@@ -14297,17 +14297,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned h::
-SendInput ^x8{Enter}1da3{Enter}
+send ^x8{Enter}1da3{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned h::
-SendInput ^+u1da3{Enter}
+send ^+u1da3{Enter}
 return
 
 #if OtherCase()
 ::^\turned h::
-SendInput {U+1DA3}
+send {U+1DA3}
 return
 
 
@@ -14315,17 +14315,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\i with stroke::
-SendInput ^x8{Enter}1da4{Enter}
+send ^x8{Enter}1da4{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\i with stroke::
-SendInput ^+u1da4{Enter}
+send ^+u1da4{Enter}
 return
 
 #if OtherCase()
 ::^\i with stroke::
-SendInput {U+1DA4}
+send {U+1DA4}
 return
 
 
@@ -14333,17 +14333,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\iota::
-SendInput ^x8{Enter}1da5{Enter}
+send ^x8{Enter}1da5{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\iota::
-SendInput ^+u1da5{Enter}
+send ^+u1da5{Enter}
 return
 
 #if OtherCase()
 ::^\iota::
-SendInput {U+1DA5}
+send {U+1DA5}
 return
 
 
@@ -14351,17 +14351,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\capital i::
-SendInput ^x8{Enter}1da6{Enter}
+send ^x8{Enter}1da6{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\capital i::
-SendInput ^+u1da6{Enter}
+send ^+u1da6{Enter}
 return
 
 #if OtherCase()
 ::^\capital i::
-SendInput {U+1DA6}
+send {U+1DA6}
 return
 
 
@@ -14369,17 +14369,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\capital i with stroke::
-SendInput ^x8{Enter}1da7{Enter}
+send ^x8{Enter}1da7{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\capital i with stroke::
-SendInput ^+u1da7{Enter}
+send ^+u1da7{Enter}
 return
 
 #if OtherCase()
 ::^\capital i with stroke::
-SendInput {U+1DA7}
+send {U+1DA7}
 return
 
 
@@ -14387,17 +14387,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\j with crossed-tail::
-SendInput ^x8{Enter}1da8{Enter}
+send ^x8{Enter}1da8{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\j with crossed-tail::
-SendInput ^+u1da8{Enter}
+send ^+u1da8{Enter}
 return
 
 #if OtherCase()
 ::^\j with crossed-tail::
-SendInput {U+1DA8}
+send {U+1DA8}
 return
 
 
@@ -14405,17 +14405,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\l with retroflex hook::
-SendInput ^x8{Enter}1da9{Enter}
+send ^x8{Enter}1da9{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\l with retroflex hook::
-SendInput ^+u1da9{Enter}
+send ^+u1da9{Enter}
 return
 
 #if OtherCase()
 ::^\l with retroflex hook::
-SendInput {U+1DA9}
+send {U+1DA9}
 return
 
 
@@ -14423,17 +14423,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\l with palatal hook::
-SendInput ^x8{Enter}1daa{Enter}
+send ^x8{Enter}1daa{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\l with palatal hook::
-SendInput ^+u1daa{Enter}
+send ^+u1daa{Enter}
 return
 
 #if OtherCase()
 ::^\l with palatal hook::
-SendInput {U+1DAA}
+send {U+1DAA}
 return
 
 
@@ -14441,17 +14441,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\capital l::
-SendInput ^x8{Enter}1dab{Enter}
+send ^x8{Enter}1dab{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\capital l::
-SendInput ^+u1dab{Enter}
+send ^+u1dab{Enter}
 return
 
 #if OtherCase()
 ::^\capital l::
-SendInput {U+1DAB}
+send {U+1DAB}
 return
 
 
@@ -14459,17 +14459,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\m with hook::
-SendInput ^x8{Enter}1dac{Enter}
+send ^x8{Enter}1dac{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\m with hook::
-SendInput ^+u1dac{Enter}
+send ^+u1dac{Enter}
 return
 
 #if OtherCase()
 ::^\m with hook::
-SendInput {U+1DAC}
+send {U+1DAC}
 return
 
 
@@ -14477,17 +14477,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned m with long leg::
-SendInput ^x8{Enter}1dad{Enter}
+send ^x8{Enter}1dad{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned m with long leg::
-SendInput ^+u1dad{Enter}
+send ^+u1dad{Enter}
 return
 
 #if OtherCase()
 ::^\turned m with long leg::
-SendInput {U+1DAD}
+send {U+1DAD}
 return
 
 
@@ -14495,17 +14495,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\n with left hook::
-SendInput ^x8{Enter}1dae{Enter}
+send ^x8{Enter}1dae{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\n with left hook::
-SendInput ^+u1dae{Enter}
+send ^+u1dae{Enter}
 return
 
 #if OtherCase()
 ::^\n with left hook::
-SendInput {U+1DAE}
+send {U+1DAE}
 return
 
 
@@ -14513,17 +14513,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\n with retroflex hook::
-SendInput ^x8{Enter}1daf{Enter}
+send ^x8{Enter}1daf{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\n with retroflex hook::
-SendInput ^+u1daf{Enter}
+send ^+u1daf{Enter}
 return
 
 #if OtherCase()
 ::^\n with retroflex hook::
-SendInput {U+1DAF}
+send {U+1DAF}
 return
 
 
@@ -14531,17 +14531,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\capital n::
-SendInput ^x8{Enter}1db0{Enter}
+send ^x8{Enter}1db0{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\capital n::
-SendInput ^+u1db0{Enter}
+send ^+u1db0{Enter}
 return
 
 #if OtherCase()
 ::^\capital n::
-SendInput {U+1DB0}
+send {U+1DB0}
 return
 
 
@@ -14549,17 +14549,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\barred o::
-SendInput ^x8{Enter}1db1{Enter}
+send ^x8{Enter}1db1{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\barred o::
-SendInput ^+u1db1{Enter}
+send ^+u1db1{Enter}
 return
 
 #if OtherCase()
 ::^\barred o::
-SendInput {U+1DB1}
+send {U+1DB1}
 return
 
 
@@ -14567,17 +14567,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\phi::
-SendInput ^x8{Enter}1db2{Enter}
+send ^x8{Enter}1db2{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\phi::
-SendInput ^+u1db2{Enter}
+send ^+u1db2{Enter}
 return
 
 #if OtherCase()
 ::^\phi::
-SendInput {U+1DB2}
+send {U+1DB2}
 return
 
 
@@ -14585,17 +14585,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\s with hook::
-SendInput ^x8{Enter}1db3{Enter}
+send ^x8{Enter}1db3{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\s with hook::
-SendInput ^+u1db3{Enter}
+send ^+u1db3{Enter}
 return
 
 #if OtherCase()
 ::^\s with hook::
-SendInput {U+1DB3}
+send {U+1DB3}
 return
 
 
@@ -14603,17 +14603,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\esh::
-SendInput ^x8{Enter}1db4{Enter}
+send ^x8{Enter}1db4{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\esh::
-SendInput ^+u1db4{Enter}
+send ^+u1db4{Enter}
 return
 
 #if OtherCase()
 ::^\esh::
-SendInput {U+1DB4}
+send {U+1DB4}
 return
 
 
@@ -14621,17 +14621,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\t with palatal hook::
-SendInput ^x8{Enter}1db5{Enter}
+send ^x8{Enter}1db5{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\t with palatal hook::
-SendInput ^+u1db5{Enter}
+send ^+u1db5{Enter}
 return
 
 #if OtherCase()
 ::^\t with palatal hook::
-SendInput {U+1DB5}
+send {U+1DB5}
 return
 
 
@@ -14639,17 +14639,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\u bar::
-SendInput ^x8{Enter}1db6{Enter}
+send ^x8{Enter}1db6{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\u bar::
-SendInput ^+u1db6{Enter}
+send ^+u1db6{Enter}
 return
 
 #if OtherCase()
 ::^\u bar::
-SendInput {U+1DB6}
+send {U+1DB6}
 return
 
 
@@ -14657,17 +14657,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\upsilon::
-SendInput ^x8{Enter}1db7{Enter}
+send ^x8{Enter}1db7{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\upsilon::
-SendInput ^+u1db7{Enter}
+send ^+u1db7{Enter}
 return
 
 #if OtherCase()
 ::^\upsilon::
-SendInput {U+1DB7}
+send {U+1DB7}
 return
 
 
@@ -14675,17 +14675,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\capital u::
-SendInput ^x8{Enter}1db8{Enter}
+send ^x8{Enter}1db8{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\capital u::
-SendInput ^+u1db8{Enter}
+send ^+u1db8{Enter}
 return
 
 #if OtherCase()
 ::^\capital u::
-SendInput {U+1DB8}
+send {U+1DB8}
 return
 
 
@@ -14693,17 +14693,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\v with hook::
-SendInput ^x8{Enter}1db9{Enter}
+send ^x8{Enter}1db9{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\v with hook::
-SendInput ^+u1db9{Enter}
+send ^+u1db9{Enter}
 return
 
 #if OtherCase()
 ::^\v with hook::
-SendInput {U+1DB9}
+send {U+1DB9}
 return
 
 
@@ -14711,17 +14711,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\turned v::
-SendInput ^x8{Enter}1dba{Enter}
+send ^x8{Enter}1dba{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\turned v::
-SendInput ^+u1dba{Enter}
+send ^+u1dba{Enter}
 return
 
 #if OtherCase()
 ::^\turned v::
-SendInput {U+1DBA}
+send {U+1DBA}
 return
 
 
@@ -14729,17 +14729,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^z::
-SendInput ^x8{Enter}1dbb{Enter}
+send ^x8{Enter}1dbb{Enter}
 return
 
 #if GtkApplicationCase()
 ::^z::
-SendInput ^+u1dbb{Enter}
+send ^+u1dbb{Enter}
 return
 
 #if OtherCase()
 ::^z::
-SendInput {U+1DBB}
+send {U+1DBB}
 return
 
 
@@ -14747,17 +14747,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\z with retroflex hook::
-SendInput ^x8{Enter}1dbc{Enter}
+send ^x8{Enter}1dbc{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\z with retroflex hook::
-SendInput ^+u1dbc{Enter}
+send ^+u1dbc{Enter}
 return
 
 #if OtherCase()
 ::^\z with retroflex hook::
-SendInput {U+1DBC}
+send {U+1DBC}
 return
 
 
@@ -14765,17 +14765,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\z with curl::
-SendInput ^x8{Enter}1dbd{Enter}
+send ^x8{Enter}1dbd{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\z with curl::
-SendInput ^+u1dbd{Enter}
+send ^+u1dbd{Enter}
 return
 
 #if OtherCase()
 ::^\z with curl::
-SendInput {U+1DBD}
+send {U+1DBD}
 return
 
 
@@ -14783,17 +14783,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\ezh::
-SendInput ^x8{Enter}1dbe{Enter}
+send ^x8{Enter}1dbe{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\ezh::
-SendInput ^+u1dbe{Enter}
+send ^+u1dbe{Enter}
 return
 
 #if OtherCase()
 ::^\ezh::
-SendInput {U+1DBE}
+send {U+1DBE}
 return
 
 
@@ -14801,17 +14801,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\theta::
-SendInput ^x8{Enter}1dbf{Enter}
+send ^x8{Enter}1dbf{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\theta::
-SendInput ^+u1dbf{Enter}
+send ^+u1dbf{Enter}
 return
 
 #if OtherCase()
 ::^\theta::
-SendInput {U+1DBF}
+send {U+1DBF}
 return
 
 
@@ -14819,17 +14819,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.B::
-SendInput ^x8{Enter}1e02{Enter}
+send ^x8{Enter}1e02{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.B::
-SendInput ^+u1e02{Enter}
+send ^+u1e02{Enter}
 return
 
 #if OtherCase()
 ::\.B::
-SendInput {U+1E02}
+send {U+1E02}
 return
 
 
@@ -14837,17 +14837,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{B}::
-SendInput ^x8{Enter}1e02{Enter}
+send ^x8{Enter}1e02{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{B}::
-SendInput ^+u1e02{Enter}
+send ^+u1e02{Enter}
 return
 
 #if OtherCase()
 ::\.{B}::
-SendInput {U+1E02}
+send {U+1E02}
 return
 
 
@@ -14855,17 +14855,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.b::
-SendInput ^x8{Enter}1e03{Enter}
+send ^x8{Enter}1e03{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.b::
-SendInput ^+u1e03{Enter}
+send ^+u1e03{Enter}
 return
 
 #if OtherCase()
 ::\.b::
-SendInput {U+1E03}
+send {U+1E03}
 return
 
 
@@ -14873,17 +14873,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{b}::
-SendInput ^x8{Enter}1e03{Enter}
+send ^x8{Enter}1e03{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{b}::
-SendInput ^+u1e03{Enter}
+send ^+u1e03{Enter}
 return
 
 #if OtherCase()
 ::\.{b}::
-SendInput {U+1E03}
+send {U+1E03}
 return
 
 
@@ -14891,17 +14891,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{B}::
-SendInput ^x8{Enter}1e04{Enter}
+send ^x8{Enter}1e04{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{B}::
-SendInput ^+u1e04{Enter}
+send ^+u1e04{Enter}
 return
 
 #if OtherCase()
 ::\d{B}::
-SendInput {U+1E04}
+send {U+1E04}
 return
 
 
@@ -14909,17 +14909,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{b}::
-SendInput ^x8{Enter}1e05{Enter}
+send ^x8{Enter}1e05{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{b}::
-SendInput ^+u1e05{Enter}
+send ^+u1e05{Enter}
 return
 
 #if OtherCase()
 ::\d{b}::
-SendInput {U+1E05}
+send {U+1E05}
 return
 
 
@@ -14927,17 +14927,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c\'C::
-SendInput ^x8{Enter}1e08{Enter}
+send ^x8{Enter}1e08{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c\'C::
-SendInput ^+u1e08{Enter}
+send ^+u1e08{Enter}
 return
 
 #if OtherCase()
 ::\c\'C::
-SendInput {U+1E08}
+send {U+1E08}
 return
 
 
@@ -14945,17 +14945,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c\'{C}::
-SendInput ^x8{Enter}1e08{Enter}
+send ^x8{Enter}1e08{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c\'{C}::
-SendInput ^+u1e08{Enter}
+send ^+u1e08{Enter}
 return
 
 #if OtherCase()
 ::\c\'{C}::
-SendInput {U+1E08}
+send {U+1E08}
 return
 
 
@@ -14963,17 +14963,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c\'c::
-SendInput ^x8{Enter}1e09{Enter}
+send ^x8{Enter}1e09{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c\'c::
-SendInput ^+u1e09{Enter}
+send ^+u1e09{Enter}
 return
 
 #if OtherCase()
 ::\c\'c::
-SendInput {U+1E09}
+send {U+1E09}
 return
 
 
@@ -14981,17 +14981,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c\'{c}::
-SendInput ^x8{Enter}1e09{Enter}
+send ^x8{Enter}1e09{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c\'{c}::
-SendInput ^+u1e09{Enter}
+send ^+u1e09{Enter}
 return
 
 #if OtherCase()
 ::\c\'{c}::
-SendInput {U+1E09}
+send {U+1E09}
 return
 
 
@@ -14999,17 +14999,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.D::
-SendInput ^x8{Enter}1e0a{Enter}
+send ^x8{Enter}1e0a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.D::
-SendInput ^+u1e0a{Enter}
+send ^+u1e0a{Enter}
 return
 
 #if OtherCase()
 ::\.D::
-SendInput {U+1E0A}
+send {U+1E0A}
 return
 
 
@@ -15017,17 +15017,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{D}::
-SendInput ^x8{Enter}1e0a{Enter}
+send ^x8{Enter}1e0a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{D}::
-SendInput ^+u1e0a{Enter}
+send ^+u1e0a{Enter}
 return
 
 #if OtherCase()
 ::\.{D}::
-SendInput {U+1E0A}
+send {U+1E0A}
 return
 
 
@@ -15035,17 +15035,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.d::
-SendInput ^x8{Enter}1e0b{Enter}
+send ^x8{Enter}1e0b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.d::
-SendInput ^+u1e0b{Enter}
+send ^+u1e0b{Enter}
 return
 
 #if OtherCase()
 ::\.d::
-SendInput {U+1E0B}
+send {U+1E0B}
 return
 
 
@@ -15053,17 +15053,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{d}::
-SendInput ^x8{Enter}1e0b{Enter}
+send ^x8{Enter}1e0b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{d}::
-SendInput ^+u1e0b{Enter}
+send ^+u1e0b{Enter}
 return
 
 #if OtherCase()
 ::\.{d}::
-SendInput {U+1E0B}
+send {U+1E0B}
 return
 
 
@@ -15071,17 +15071,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{D}::
-SendInput ^x8{Enter}1e0c{Enter}
+send ^x8{Enter}1e0c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{D}::
-SendInput ^+u1e0c{Enter}
+send ^+u1e0c{Enter}
 return
 
 #if OtherCase()
 ::\d{D}::
-SendInput {U+1E0C}
+send {U+1E0C}
 return
 
 
@@ -15089,17 +15089,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{d}::
-SendInput ^x8{Enter}1e0d{Enter}
+send ^x8{Enter}1e0d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{d}::
-SendInput ^+u1e0d{Enter}
+send ^+u1e0d{Enter}
 return
 
 #if OtherCase()
 ::\d{d}::
-SendInput {U+1E0D}
+send {U+1E0D}
 return
 
 
@@ -15107,17 +15107,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cD::
-SendInput ^x8{Enter}1e10{Enter}
+send ^x8{Enter}1e10{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cD::
-SendInput ^+u1e10{Enter}
+send ^+u1e10{Enter}
 return
 
 #if OtherCase()
 ::\cD::
-SendInput {U+1E10}
+send {U+1E10}
 return
 
 
@@ -15125,17 +15125,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{D}::
-SendInput ^x8{Enter}1e10{Enter}
+send ^x8{Enter}1e10{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{D}::
-SendInput ^+u1e10{Enter}
+send ^+u1e10{Enter}
 return
 
 #if OtherCase()
 ::\c{D}::
-SendInput {U+1E10}
+send {U+1E10}
 return
 
 
@@ -15143,17 +15143,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cd::
-SendInput ^x8{Enter}1e11{Enter}
+send ^x8{Enter}1e11{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cd::
-SendInput ^+u1e11{Enter}
+send ^+u1e11{Enter}
 return
 
 #if OtherCase()
 ::\cd::
-SendInput {U+1E11}
+send {U+1E11}
 return
 
 
@@ -15161,17 +15161,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{d}::
-SendInput ^x8{Enter}1e11{Enter}
+send ^x8{Enter}1e11{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{d}::
-SendInput ^+u1e11{Enter}
+send ^+u1e11{Enter}
 return
 
 #if OtherCase()
 ::\c{d}::
-SendInput {U+1E11}
+send {U+1E11}
 return
 
 
@@ -15179,17 +15179,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\``E::
-SendInput ^x8{Enter}1e14{Enter}
+send ^x8{Enter}1e14{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\``E::
-SendInput ^+u1e14{Enter}
+send ^+u1e14{Enter}
 return
 
 #if OtherCase()
 ::\=\``E::
-SendInput {U+1E14}
+send {U+1E14}
 return
 
 
@@ -15197,17 +15197,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\``{E}::
-SendInput ^x8{Enter}1e14{Enter}
+send ^x8{Enter}1e14{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\``{E}::
-SendInput ^+u1e14{Enter}
+send ^+u1e14{Enter}
 return
 
 #if OtherCase()
 ::\=\``{E}::
-SendInput {U+1E14}
+send {U+1E14}
 return
 
 
@@ -15215,17 +15215,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\``e::
-SendInput ^x8{Enter}1e15{Enter}
+send ^x8{Enter}1e15{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\``e::
-SendInput ^+u1e15{Enter}
+send ^+u1e15{Enter}
 return
 
 #if OtherCase()
 ::\=\``e::
-SendInput {U+1E15}
+send {U+1E15}
 return
 
 
@@ -15233,17 +15233,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\``{e}::
-SendInput ^x8{Enter}1e15{Enter}
+send ^x8{Enter}1e15{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\``{e}::
-SendInput ^+u1e15{Enter}
+send ^+u1e15{Enter}
 return
 
 #if OtherCase()
 ::\=\``{e}::
-SendInput {U+1E15}
+send {U+1E15}
 return
 
 
@@ -15251,17 +15251,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\'E::
-SendInput ^x8{Enter}1e16{Enter}
+send ^x8{Enter}1e16{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\'E::
-SendInput ^+u1e16{Enter}
+send ^+u1e16{Enter}
 return
 
 #if OtherCase()
 ::\=\'E::
-SendInput {U+1E16}
+send {U+1E16}
 return
 
 
@@ -15269,17 +15269,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\'{E}::
-SendInput ^x8{Enter}1e16{Enter}
+send ^x8{Enter}1e16{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\'{E}::
-SendInput ^+u1e16{Enter}
+send ^+u1e16{Enter}
 return
 
 #if OtherCase()
 ::\=\'{E}::
-SendInput {U+1E16}
+send {U+1E16}
 return
 
 
@@ -15287,17 +15287,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\'e::
-SendInput ^x8{Enter}1e17{Enter}
+send ^x8{Enter}1e17{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\'e::
-SendInput ^+u1e17{Enter}
+send ^+u1e17{Enter}
 return
 
 #if OtherCase()
 ::\=\'e::
-SendInput {U+1E17}
+send {U+1E17}
 return
 
 
@@ -15305,17 +15305,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\'{e}::
-SendInput ^x8{Enter}1e17{Enter}
+send ^x8{Enter}1e17{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\'{e}::
-SendInput ^+u1e17{Enter}
+send ^+u1e17{Enter}
 return
 
 #if OtherCase()
 ::\=\'{e}::
-SendInput {U+1E17}
+send {U+1E17}
 return
 
 
@@ -15323,17 +15323,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c\uE::
-SendInput ^x8{Enter}1e1c{Enter}
+send ^x8{Enter}1e1c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c\uE::
-SendInput ^+u1e1c{Enter}
+send ^+u1e1c{Enter}
 return
 
 #if OtherCase()
 ::\c\uE::
-SendInput {U+1E1C}
+send {U+1E1C}
 return
 
 
@@ -15341,17 +15341,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c\u{E}::
-SendInput ^x8{Enter}1e1c{Enter}
+send ^x8{Enter}1e1c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c\u{E}::
-SendInput ^+u1e1c{Enter}
+send ^+u1e1c{Enter}
 return
 
 #if OtherCase()
 ::\c\u{E}::
-SendInput {U+1E1C}
+send {U+1E1C}
 return
 
 
@@ -15359,17 +15359,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c\ue::
-SendInput ^x8{Enter}1e1d{Enter}
+send ^x8{Enter}1e1d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c\ue::
-SendInput ^+u1e1d{Enter}
+send ^+u1e1d{Enter}
 return
 
 #if OtherCase()
 ::\c\ue::
-SendInput {U+1E1D}
+send {U+1E1D}
 return
 
 
@@ -15377,17 +15377,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c\u{e}::
-SendInput ^x8{Enter}1e1d{Enter}
+send ^x8{Enter}1e1d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c\u{e}::
-SendInput ^+u1e1d{Enter}
+send ^+u1e1d{Enter}
 return
 
 #if OtherCase()
 ::\c\u{e}::
-SendInput {U+1E1D}
+send {U+1E1D}
 return
 
 
@@ -15395,17 +15395,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.F::
-SendInput ^x8{Enter}1e1e{Enter}
+send ^x8{Enter}1e1e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.F::
-SendInput ^+u1e1e{Enter}
+send ^+u1e1e{Enter}
 return
 
 #if OtherCase()
 ::\.F::
-SendInput {U+1E1E}
+send {U+1E1E}
 return
 
 
@@ -15413,17 +15413,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{F}::
-SendInput ^x8{Enter}1e1e{Enter}
+send ^x8{Enter}1e1e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{F}::
-SendInput ^+u1e1e{Enter}
+send ^+u1e1e{Enter}
 return
 
 #if OtherCase()
 ::\.{F}::
-SendInput {U+1E1E}
+send {U+1E1E}
 return
 
 
@@ -15431,17 +15431,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.f::
-SendInput ^x8{Enter}1e1f{Enter}
+send ^x8{Enter}1e1f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.f::
-SendInput ^+u1e1f{Enter}
+send ^+u1e1f{Enter}
 return
 
 #if OtherCase()
 ::\.f::
-SendInput {U+1E1F}
+send {U+1E1F}
 return
 
 
@@ -15449,17 +15449,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{f}::
-SendInput ^x8{Enter}1e1f{Enter}
+send ^x8{Enter}1e1f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{f}::
-SendInput ^+u1e1f{Enter}
+send ^+u1e1f{Enter}
 return
 
 #if OtherCase()
 ::\.{f}::
-SendInput {U+1E1F}
+send {U+1E1F}
 return
 
 
@@ -15467,17 +15467,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=G::
-SendInput ^x8{Enter}1e20{Enter}
+send ^x8{Enter}1e20{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=G::
-SendInput ^+u1e20{Enter}
+send ^+u1e20{Enter}
 return
 
 #if OtherCase()
 ::\=G::
-SendInput {U+1E20}
+send {U+1E20}
 return
 
 
@@ -15485,17 +15485,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={G}::
-SendInput ^x8{Enter}1e20{Enter}
+send ^x8{Enter}1e20{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={G}::
-SendInput ^+u1e20{Enter}
+send ^+u1e20{Enter}
 return
 
 #if OtherCase()
 ::\={G}::
-SendInput {U+1E20}
+send {U+1E20}
 return
 
 
@@ -15503,17 +15503,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=g::
-SendInput ^x8{Enter}1e21{Enter}
+send ^x8{Enter}1e21{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=g::
-SendInput ^+u1e21{Enter}
+send ^+u1e21{Enter}
 return
 
 #if OtherCase()
 ::\=g::
-SendInput {U+1E21}
+send {U+1E21}
 return
 
 
@@ -15521,17 +15521,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\={g}::
-SendInput ^x8{Enter}1e21{Enter}
+send ^x8{Enter}1e21{Enter}
 return
 
 #if GtkApplicationCase()
 ::\={g}::
-SendInput ^+u1e21{Enter}
+send ^+u1e21{Enter}
 return
 
 #if OtherCase()
 ::\={g}::
-SendInput {U+1E21}
+send {U+1E21}
 return
 
 
@@ -15539,17 +15539,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.H::
-SendInput ^x8{Enter}1e22{Enter}
+send ^x8{Enter}1e22{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.H::
-SendInput ^+u1e22{Enter}
+send ^+u1e22{Enter}
 return
 
 #if OtherCase()
 ::\.H::
-SendInput {U+1E22}
+send {U+1E22}
 return
 
 
@@ -15557,17 +15557,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{H}::
-SendInput ^x8{Enter}1e22{Enter}
+send ^x8{Enter}1e22{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{H}::
-SendInput ^+u1e22{Enter}
+send ^+u1e22{Enter}
 return
 
 #if OtherCase()
 ::\.{H}::
-SendInput {U+1E22}
+send {U+1E22}
 return
 
 
@@ -15575,17 +15575,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.h::
-SendInput ^x8{Enter}1e23{Enter}
+send ^x8{Enter}1e23{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.h::
-SendInput ^+u1e23{Enter}
+send ^+u1e23{Enter}
 return
 
 #if OtherCase()
 ::\.h::
-SendInput {U+1E23}
+send {U+1E23}
 return
 
 
@@ -15593,17 +15593,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{h}::
-SendInput ^x8{Enter}1e23{Enter}
+send ^x8{Enter}1e23{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{h}::
-SendInput ^+u1e23{Enter}
+send ^+u1e23{Enter}
 return
 
 #if OtherCase()
 ::\.{h}::
-SendInput {U+1E23}
+send {U+1E23}
 return
 
 
@@ -15611,17 +15611,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{H}::
-SendInput ^x8{Enter}1e24{Enter}
+send ^x8{Enter}1e24{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{H}::
-SendInput ^+u1e24{Enter}
+send ^+u1e24{Enter}
 return
 
 #if OtherCase()
 ::\d{H}::
-SendInput {U+1E24}
+send {U+1E24}
 return
 
 
@@ -15629,17 +15629,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{h}::
-SendInput ^x8{Enter}1e25{Enter}
+send ^x8{Enter}1e25{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{h}::
-SendInput ^+u1e25{Enter}
+send ^+u1e25{Enter}
 return
 
 #if OtherCase()
 ::\d{h}::
-SendInput {U+1E25}
+send {U+1E25}
 return
 
 
@@ -15647,17 +15647,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"H::
-SendInput ^x8{Enter}1e26{Enter}
+send ^x8{Enter}1e26{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"H::
-SendInput ^+u1e26{Enter}
+send ^+u1e26{Enter}
 return
 
 #if OtherCase()
 ::\"H::
-SendInput {U+1E26}
+send {U+1E26}
 return
 
 
@@ -15665,17 +15665,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{H}::
-SendInput ^x8{Enter}1e26{Enter}
+send ^x8{Enter}1e26{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{H}::
-SendInput ^+u1e26{Enter}
+send ^+u1e26{Enter}
 return
 
 #if OtherCase()
 ::\"{H}::
-SendInput {U+1E26}
+send {U+1E26}
 return
 
 
@@ -15683,17 +15683,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"h::
-SendInput ^x8{Enter}1e27{Enter}
+send ^x8{Enter}1e27{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"h::
-SendInput ^+u1e27{Enter}
+send ^+u1e27{Enter}
 return
 
 #if OtherCase()
 ::\"h::
-SendInput {U+1E27}
+send {U+1E27}
 return
 
 
@@ -15701,17 +15701,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{h}::
-SendInput ^x8{Enter}1e27{Enter}
+send ^x8{Enter}1e27{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{h}::
-SendInput ^+u1e27{Enter}
+send ^+u1e27{Enter}
 return
 
 #if OtherCase()
 ::\"{h}::
-SendInput {U+1E27}
+send {U+1E27}
 return
 
 
@@ -15719,17 +15719,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cH::
-SendInput ^x8{Enter}1e28{Enter}
+send ^x8{Enter}1e28{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cH::
-SendInput ^+u1e28{Enter}
+send ^+u1e28{Enter}
 return
 
 #if OtherCase()
 ::\cH::
-SendInput {U+1E28}
+send {U+1E28}
 return
 
 
@@ -15737,17 +15737,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{H}::
-SendInput ^x8{Enter}1e28{Enter}
+send ^x8{Enter}1e28{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{H}::
-SendInput ^+u1e28{Enter}
+send ^+u1e28{Enter}
 return
 
 #if OtherCase()
 ::\c{H}::
-SendInput {U+1E28}
+send {U+1E28}
 return
 
 
@@ -15755,17 +15755,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ch::
-SendInput ^x8{Enter}1e29{Enter}
+send ^x8{Enter}1e29{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ch::
-SendInput ^+u1e29{Enter}
+send ^+u1e29{Enter}
 return
 
 #if OtherCase()
 ::\ch::
-SendInput {U+1E29}
+send {U+1E29}
 return
 
 
@@ -15773,17 +15773,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\c{h}::
-SendInput ^x8{Enter}1e29{Enter}
+send ^x8{Enter}1e29{Enter}
 return
 
 #if GtkApplicationCase()
 ::\c{h}::
-SendInput ^+u1e29{Enter}
+send ^+u1e29{Enter}
 return
 
 #if OtherCase()
 ::\c{h}::
-SendInput {U+1E29}
+send {U+1E29}
 return
 
 
@@ -15791,17 +15791,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\'I::
-SendInput ^x8{Enter}1e2e{Enter}
+send ^x8{Enter}1e2e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\'I::
-SendInput ^+u1e2e{Enter}
+send ^+u1e2e{Enter}
 return
 
 #if OtherCase()
 ::\"\'I::
-SendInput {U+1E2E}
+send {U+1E2E}
 return
 
 
@@ -15809,17 +15809,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\'{I}::
-SendInput ^x8{Enter}1e2e{Enter}
+send ^x8{Enter}1e2e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\'{I}::
-SendInput ^+u1e2e{Enter}
+send ^+u1e2e{Enter}
 return
 
 #if OtherCase()
 ::\"\'{I}::
-SendInput {U+1E2E}
+send {U+1E2E}
 return
 
 
@@ -15827,17 +15827,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\'i::
-SendInput ^x8{Enter}1e2f{Enter}
+send ^x8{Enter}1e2f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\'i::
-SendInput ^+u1e2f{Enter}
+send ^+u1e2f{Enter}
 return
 
 #if OtherCase()
 ::\"\'i::
-SendInput {U+1E2F}
+send {U+1E2F}
 return
 
 
@@ -15845,17 +15845,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"\'{i}::
-SendInput ^x8{Enter}1e2f{Enter}
+send ^x8{Enter}1e2f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"\'{i}::
-SendInput ^+u1e2f{Enter}
+send ^+u1e2f{Enter}
 return
 
 #if OtherCase()
 ::\"\'{i}::
-SendInput {U+1E2F}
+send {U+1E2F}
 return
 
 
@@ -15863,17 +15863,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'K::
-SendInput ^x8{Enter}1e30{Enter}
+send ^x8{Enter}1e30{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'K::
-SendInput ^+u1e30{Enter}
+send ^+u1e30{Enter}
 return
 
 #if OtherCase()
 ::\'K::
-SendInput {U+1E30}
+send {U+1E30}
 return
 
 
@@ -15881,17 +15881,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{K}::
-SendInput ^x8{Enter}1e30{Enter}
+send ^x8{Enter}1e30{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{K}::
-SendInput ^+u1e30{Enter}
+send ^+u1e30{Enter}
 return
 
 #if OtherCase()
 ::\'{K}::
-SendInput {U+1E30}
+send {U+1E30}
 return
 
 
@@ -15899,17 +15899,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'k::
-SendInput ^x8{Enter}1e31{Enter}
+send ^x8{Enter}1e31{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'k::
-SendInput ^+u1e31{Enter}
+send ^+u1e31{Enter}
 return
 
 #if OtherCase()
 ::\'k::
-SendInput {U+1E31}
+send {U+1E31}
 return
 
 
@@ -15917,17 +15917,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{k}::
-SendInput ^x8{Enter}1e31{Enter}
+send ^x8{Enter}1e31{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{k}::
-SendInput ^+u1e31{Enter}
+send ^+u1e31{Enter}
 return
 
 #if OtherCase()
 ::\'{k}::
-SendInput {U+1E31}
+send {U+1E31}
 return
 
 
@@ -15935,17 +15935,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{K}::
-SendInput ^x8{Enter}1e32{Enter}
+send ^x8{Enter}1e32{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{K}::
-SendInput ^+u1e32{Enter}
+send ^+u1e32{Enter}
 return
 
 #if OtherCase()
 ::\d{K}::
-SendInput {U+1E32}
+send {U+1E32}
 return
 
 
@@ -15953,17 +15953,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{k}::
-SendInput ^x8{Enter}1e33{Enter}
+send ^x8{Enter}1e33{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{k}::
-SendInput ^+u1e33{Enter}
+send ^+u1e33{Enter}
 return
 
 #if OtherCase()
 ::\d{k}::
-SendInput {U+1E33}
+send {U+1E33}
 return
 
 
@@ -15971,17 +15971,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{L}::
-SendInput ^x8{Enter}1e36{Enter}
+send ^x8{Enter}1e36{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{L}::
-SendInput ^+u1e36{Enter}
+send ^+u1e36{Enter}
 return
 
 #if OtherCase()
 ::\d{L}::
-SendInput {U+1E36}
+send {U+1E36}
 return
 
 
@@ -15989,17 +15989,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{l}::
-SendInput ^x8{Enter}1e37{Enter}
+send ^x8{Enter}1e37{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{l}::
-SendInput ^+u1e37{Enter}
+send ^+u1e37{Enter}
 return
 
 #if OtherCase()
 ::\d{l}::
-SendInput {U+1E37}
+send {U+1E37}
 return
 
 
@@ -16007,17 +16007,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\=L::
-SendInput ^x8{Enter}1e38{Enter}
+send ^x8{Enter}1e38{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\=L::
-SendInput ^+u1e38{Enter}
+send ^+u1e38{Enter}
 return
 
 #if OtherCase()
 ::\d\=L::
-SendInput {U+1E38}
+send {U+1E38}
 return
 
 
@@ -16025,17 +16025,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\={L}::
-SendInput ^x8{Enter}1e38{Enter}
+send ^x8{Enter}1e38{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\={L}::
-SendInput ^+u1e38{Enter}
+send ^+u1e38{Enter}
 return
 
 #if OtherCase()
 ::\d\={L}::
-SendInput {U+1E38}
+send {U+1E38}
 return
 
 
@@ -16043,17 +16043,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\=l::
-SendInput ^x8{Enter}1e39{Enter}
+send ^x8{Enter}1e39{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\=l::
-SendInput ^+u1e39{Enter}
+send ^+u1e39{Enter}
 return
 
 #if OtherCase()
 ::\d\=l::
-SendInput {U+1E39}
+send {U+1E39}
 return
 
 
@@ -16061,17 +16061,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\={l}::
-SendInput ^x8{Enter}1e39{Enter}
+send ^x8{Enter}1e39{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\={l}::
-SendInput ^+u1e39{Enter}
+send ^+u1e39{Enter}
 return
 
 #if OtherCase()
 ::\d\={l}::
-SendInput {U+1E39}
+send {U+1E39}
 return
 
 
@@ -16079,17 +16079,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'M::
-SendInput ^x8{Enter}1e3e{Enter}
+send ^x8{Enter}1e3e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'M::
-SendInput ^+u1e3e{Enter}
+send ^+u1e3e{Enter}
 return
 
 #if OtherCase()
 ::\'M::
-SendInput {U+1E3E}
+send {U+1E3E}
 return
 
 
@@ -16097,17 +16097,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{M}::
-SendInput ^x8{Enter}1e3e{Enter}
+send ^x8{Enter}1e3e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{M}::
-SendInput ^+u1e3e{Enter}
+send ^+u1e3e{Enter}
 return
 
 #if OtherCase()
 ::\'{M}::
-SendInput {U+1E3E}
+send {U+1E3E}
 return
 
 
@@ -16115,17 +16115,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'m::
-SendInput ^x8{Enter}1e3f{Enter}
+send ^x8{Enter}1e3f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'m::
-SendInput ^+u1e3f{Enter}
+send ^+u1e3f{Enter}
 return
 
 #if OtherCase()
 ::\'m::
-SendInput {U+1E3F}
+send {U+1E3F}
 return
 
 
@@ -16133,17 +16133,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{m}::
-SendInput ^x8{Enter}1e3f{Enter}
+send ^x8{Enter}1e3f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{m}::
-SendInput ^+u1e3f{Enter}
+send ^+u1e3f{Enter}
 return
 
 #if OtherCase()
 ::\'{m}::
-SendInput {U+1E3F}
+send {U+1E3F}
 return
 
 
@@ -16151,17 +16151,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.M::
-SendInput ^x8{Enter}1e40{Enter}
+send ^x8{Enter}1e40{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.M::
-SendInput ^+u1e40{Enter}
+send ^+u1e40{Enter}
 return
 
 #if OtherCase()
 ::\.M::
-SendInput {U+1E40}
+send {U+1E40}
 return
 
 
@@ -16169,17 +16169,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{M}::
-SendInput ^x8{Enter}1e40{Enter}
+send ^x8{Enter}1e40{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{M}::
-SendInput ^+u1e40{Enter}
+send ^+u1e40{Enter}
 return
 
 #if OtherCase()
 ::\.{M}::
-SendInput {U+1E40}
+send {U+1E40}
 return
 
 
@@ -16187,17 +16187,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.m::
-SendInput ^x8{Enter}1e41{Enter}
+send ^x8{Enter}1e41{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.m::
-SendInput ^+u1e41{Enter}
+send ^+u1e41{Enter}
 return
 
 #if OtherCase()
 ::\.m::
-SendInput {U+1E41}
+send {U+1E41}
 return
 
 
@@ -16205,17 +16205,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{m}::
-SendInput ^x8{Enter}1e41{Enter}
+send ^x8{Enter}1e41{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{m}::
-SendInput ^+u1e41{Enter}
+send ^+u1e41{Enter}
 return
 
 #if OtherCase()
 ::\.{m}::
-SendInput {U+1E41}
+send {U+1E41}
 return
 
 
@@ -16223,17 +16223,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{M}::
-SendInput ^x8{Enter}1e42{Enter}
+send ^x8{Enter}1e42{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{M}::
-SendInput ^+u1e42{Enter}
+send ^+u1e42{Enter}
 return
 
 #if OtherCase()
 ::\d{M}::
-SendInput {U+1E42}
+send {U+1E42}
 return
 
 
@@ -16241,17 +16241,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{m}::
-SendInput ^x8{Enter}1e43{Enter}
+send ^x8{Enter}1e43{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{m}::
-SendInput ^+u1e43{Enter}
+send ^+u1e43{Enter}
 return
 
 #if OtherCase()
 ::\d{m}::
-SendInput {U+1E43}
+send {U+1E43}
 return
 
 
@@ -16259,17 +16259,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.N::
-SendInput ^x8{Enter}1e44{Enter}
+send ^x8{Enter}1e44{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.N::
-SendInput ^+u1e44{Enter}
+send ^+u1e44{Enter}
 return
 
 #if OtherCase()
 ::\.N::
-SendInput {U+1E44}
+send {U+1E44}
 return
 
 
@@ -16277,17 +16277,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{N}::
-SendInput ^x8{Enter}1e44{Enter}
+send ^x8{Enter}1e44{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{N}::
-SendInput ^+u1e44{Enter}
+send ^+u1e44{Enter}
 return
 
 #if OtherCase()
 ::\.{N}::
-SendInput {U+1E44}
+send {U+1E44}
 return
 
 
@@ -16295,17 +16295,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.n::
-SendInput ^x8{Enter}1e45{Enter}
+send ^x8{Enter}1e45{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.n::
-SendInput ^+u1e45{Enter}
+send ^+u1e45{Enter}
 return
 
 #if OtherCase()
 ::\.n::
-SendInput {U+1E45}
+send {U+1E45}
 return
 
 
@@ -16313,17 +16313,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{n}::
-SendInput ^x8{Enter}1e45{Enter}
+send ^x8{Enter}1e45{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{n}::
-SendInput ^+u1e45{Enter}
+send ^+u1e45{Enter}
 return
 
 #if OtherCase()
 ::\.{n}::
-SendInput {U+1E45}
+send {U+1E45}
 return
 
 
@@ -16331,17 +16331,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{N}::
-SendInput ^x8{Enter}1e46{Enter}
+send ^x8{Enter}1e46{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{N}::
-SendInput ^+u1e46{Enter}
+send ^+u1e46{Enter}
 return
 
 #if OtherCase()
 ::\d{N}::
-SendInput {U+1E46}
+send {U+1E46}
 return
 
 
@@ -16349,17 +16349,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{n}::
-SendInput ^x8{Enter}1e47{Enter}
+send ^x8{Enter}1e47{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{n}::
-SendInput ^+u1e47{Enter}
+send ^+u1e47{Enter}
 return
 
 #if OtherCase()
 ::\d{n}::
-SendInput {U+1E47}
+send {U+1E47}
 return
 
 
@@ -16367,17 +16367,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\'O::
-SendInput ^x8{Enter}1e4c{Enter}
+send ^x8{Enter}1e4c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\'O::
-SendInput ^+u1e4c{Enter}
+send ^+u1e4c{Enter}
 return
 
 #if OtherCase()
 ::\~\'O::
-SendInput {U+1E4C}
+send {U+1E4C}
 return
 
 
@@ -16385,17 +16385,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\'{O}::
-SendInput ^x8{Enter}1e4c{Enter}
+send ^x8{Enter}1e4c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\'{O}::
-SendInput ^+u1e4c{Enter}
+send ^+u1e4c{Enter}
 return
 
 #if OtherCase()
 ::\~\'{O}::
-SendInput {U+1E4C}
+send {U+1E4C}
 return
 
 
@@ -16403,17 +16403,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\'o::
-SendInput ^x8{Enter}1e4d{Enter}
+send ^x8{Enter}1e4d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\'o::
-SendInput ^+u1e4d{Enter}
+send ^+u1e4d{Enter}
 return
 
 #if OtherCase()
 ::\~\'o::
-SendInput {U+1E4D}
+send {U+1E4D}
 return
 
 
@@ -16421,17 +16421,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\'{o}::
-SendInput ^x8{Enter}1e4d{Enter}
+send ^x8{Enter}1e4d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\'{o}::
-SendInput ^+u1e4d{Enter}
+send ^+u1e4d{Enter}
 return
 
 #if OtherCase()
 ::\~\'{o}::
-SendInput {U+1E4D}
+send {U+1E4D}
 return
 
 
@@ -16439,17 +16439,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\"O::
-SendInput ^x8{Enter}1e4e{Enter}
+send ^x8{Enter}1e4e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\"O::
-SendInput ^+u1e4e{Enter}
+send ^+u1e4e{Enter}
 return
 
 #if OtherCase()
 ::\~\"O::
-SendInput {U+1E4E}
+send {U+1E4E}
 return
 
 
@@ -16457,17 +16457,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\"{O}::
-SendInput ^x8{Enter}1e4e{Enter}
+send ^x8{Enter}1e4e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\"{O}::
-SendInput ^+u1e4e{Enter}
+send ^+u1e4e{Enter}
 return
 
 #if OtherCase()
 ::\~\"{O}::
-SendInput {U+1E4E}
+send {U+1E4E}
 return
 
 
@@ -16475,17 +16475,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\"o::
-SendInput ^x8{Enter}1e4f{Enter}
+send ^x8{Enter}1e4f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\"o::
-SendInput ^+u1e4f{Enter}
+send ^+u1e4f{Enter}
 return
 
 #if OtherCase()
 ::\~\"o::
-SendInput {U+1E4F}
+send {U+1E4F}
 return
 
 
@@ -16493,17 +16493,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\"{o}::
-SendInput ^x8{Enter}1e4f{Enter}
+send ^x8{Enter}1e4f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\"{o}::
-SendInput ^+u1e4f{Enter}
+send ^+u1e4f{Enter}
 return
 
 #if OtherCase()
 ::\~\"{o}::
-SendInput {U+1E4F}
+send {U+1E4F}
 return
 
 
@@ -16511,17 +16511,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\``O::
-SendInput ^x8{Enter}1e50{Enter}
+send ^x8{Enter}1e50{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\``O::
-SendInput ^+u1e50{Enter}
+send ^+u1e50{Enter}
 return
 
 #if OtherCase()
 ::\=\``O::
-SendInput {U+1E50}
+send {U+1E50}
 return
 
 
@@ -16529,17 +16529,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\``{O}::
-SendInput ^x8{Enter}1e50{Enter}
+send ^x8{Enter}1e50{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\``{O}::
-SendInput ^+u1e50{Enter}
+send ^+u1e50{Enter}
 return
 
 #if OtherCase()
 ::\=\``{O}::
-SendInput {U+1E50}
+send {U+1E50}
 return
 
 
@@ -16547,17 +16547,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\``o::
-SendInput ^x8{Enter}1e51{Enter}
+send ^x8{Enter}1e51{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\``o::
-SendInput ^+u1e51{Enter}
+send ^+u1e51{Enter}
 return
 
 #if OtherCase()
 ::\=\``o::
-SendInput {U+1E51}
+send {U+1E51}
 return
 
 
@@ -16565,17 +16565,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\``{o}::
-SendInput ^x8{Enter}1e51{Enter}
+send ^x8{Enter}1e51{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\``{o}::
-SendInput ^+u1e51{Enter}
+send ^+u1e51{Enter}
 return
 
 #if OtherCase()
 ::\=\``{o}::
-SendInput {U+1E51}
+send {U+1E51}
 return
 
 
@@ -16583,17 +16583,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\'O::
-SendInput ^x8{Enter}1e52{Enter}
+send ^x8{Enter}1e52{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\'O::
-SendInput ^+u1e52{Enter}
+send ^+u1e52{Enter}
 return
 
 #if OtherCase()
 ::\=\'O::
-SendInput {U+1E52}
+send {U+1E52}
 return
 
 
@@ -16601,17 +16601,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\'{O}::
-SendInput ^x8{Enter}1e52{Enter}
+send ^x8{Enter}1e52{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\'{O}::
-SendInput ^+u1e52{Enter}
+send ^+u1e52{Enter}
 return
 
 #if OtherCase()
 ::\=\'{O}::
-SendInput {U+1E52}
+send {U+1E52}
 return
 
 
@@ -16619,17 +16619,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\'o::
-SendInput ^x8{Enter}1e53{Enter}
+send ^x8{Enter}1e53{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\'o::
-SendInput ^+u1e53{Enter}
+send ^+u1e53{Enter}
 return
 
 #if OtherCase()
 ::\=\'o::
-SendInput {U+1E53}
+send {U+1E53}
 return
 
 
@@ -16637,17 +16637,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\'{o}::
-SendInput ^x8{Enter}1e53{Enter}
+send ^x8{Enter}1e53{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\'{o}::
-SendInput ^+u1e53{Enter}
+send ^+u1e53{Enter}
 return
 
 #if OtherCase()
 ::\=\'{o}::
-SendInput {U+1E53}
+send {U+1E53}
 return
 
 
@@ -16655,17 +16655,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'P::
-SendInput ^x8{Enter}1e54{Enter}
+send ^x8{Enter}1e54{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'P::
-SendInput ^+u1e54{Enter}
+send ^+u1e54{Enter}
 return
 
 #if OtherCase()
 ::\'P::
-SendInput {U+1E54}
+send {U+1E54}
 return
 
 
@@ -16673,17 +16673,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{P}::
-SendInput ^x8{Enter}1e54{Enter}
+send ^x8{Enter}1e54{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{P}::
-SendInput ^+u1e54{Enter}
+send ^+u1e54{Enter}
 return
 
 #if OtherCase()
 ::\'{P}::
-SendInput {U+1E54}
+send {U+1E54}
 return
 
 
@@ -16691,17 +16691,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'p::
-SendInput ^x8{Enter}1e55{Enter}
+send ^x8{Enter}1e55{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'p::
-SendInput ^+u1e55{Enter}
+send ^+u1e55{Enter}
 return
 
 #if OtherCase()
 ::\'p::
-SendInput {U+1E55}
+send {U+1E55}
 return
 
 
@@ -16709,17 +16709,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{p}::
-SendInput ^x8{Enter}1e55{Enter}
+send ^x8{Enter}1e55{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{p}::
-SendInput ^+u1e55{Enter}
+send ^+u1e55{Enter}
 return
 
 #if OtherCase()
 ::\'{p}::
-SendInput {U+1E55}
+send {U+1E55}
 return
 
 
@@ -16727,17 +16727,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.P::
-SendInput ^x8{Enter}1e56{Enter}
+send ^x8{Enter}1e56{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.P::
-SendInput ^+u1e56{Enter}
+send ^+u1e56{Enter}
 return
 
 #if OtherCase()
 ::\.P::
-SendInput {U+1E56}
+send {U+1E56}
 return
 
 
@@ -16745,17 +16745,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{P}::
-SendInput ^x8{Enter}1e56{Enter}
+send ^x8{Enter}1e56{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{P}::
-SendInput ^+u1e56{Enter}
+send ^+u1e56{Enter}
 return
 
 #if OtherCase()
 ::\.{P}::
-SendInput {U+1E56}
+send {U+1E56}
 return
 
 
@@ -16763,17 +16763,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.p::
-SendInput ^x8{Enter}1e57{Enter}
+send ^x8{Enter}1e57{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.p::
-SendInput ^+u1e57{Enter}
+send ^+u1e57{Enter}
 return
 
 #if OtherCase()
 ::\.p::
-SendInput {U+1E57}
+send {U+1E57}
 return
 
 
@@ -16781,17 +16781,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{p}::
-SendInput ^x8{Enter}1e57{Enter}
+send ^x8{Enter}1e57{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{p}::
-SendInput ^+u1e57{Enter}
+send ^+u1e57{Enter}
 return
 
 #if OtherCase()
 ::\.{p}::
-SendInput {U+1E57}
+send {U+1E57}
 return
 
 
@@ -16799,17 +16799,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.R::
-SendInput ^x8{Enter}1e58{Enter}
+send ^x8{Enter}1e58{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.R::
-SendInput ^+u1e58{Enter}
+send ^+u1e58{Enter}
 return
 
 #if OtherCase()
 ::\.R::
-SendInput {U+1E58}
+send {U+1E58}
 return
 
 
@@ -16817,17 +16817,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{R}::
-SendInput ^x8{Enter}1e58{Enter}
+send ^x8{Enter}1e58{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{R}::
-SendInput ^+u1e58{Enter}
+send ^+u1e58{Enter}
 return
 
 #if OtherCase()
 ::\.{R}::
-SendInput {U+1E58}
+send {U+1E58}
 return
 
 
@@ -16835,17 +16835,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.r::
-SendInput ^x8{Enter}1e59{Enter}
+send ^x8{Enter}1e59{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.r::
-SendInput ^+u1e59{Enter}
+send ^+u1e59{Enter}
 return
 
 #if OtherCase()
 ::\.r::
-SendInput {U+1E59}
+send {U+1E59}
 return
 
 
@@ -16853,17 +16853,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{r}::
-SendInput ^x8{Enter}1e59{Enter}
+send ^x8{Enter}1e59{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{r}::
-SendInput ^+u1e59{Enter}
+send ^+u1e59{Enter}
 return
 
 #if OtherCase()
 ::\.{r}::
-SendInput {U+1E59}
+send {U+1E59}
 return
 
 
@@ -16871,17 +16871,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{R}::
-SendInput ^x8{Enter}1e5a{Enter}
+send ^x8{Enter}1e5a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{R}::
-SendInput ^+u1e5a{Enter}
+send ^+u1e5a{Enter}
 return
 
 #if OtherCase()
 ::\d{R}::
-SendInput {U+1E5A}
+send {U+1E5A}
 return
 
 
@@ -16889,17 +16889,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{r}::
-SendInput ^x8{Enter}1e5b{Enter}
+send ^x8{Enter}1e5b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{r}::
-SendInput ^+u1e5b{Enter}
+send ^+u1e5b{Enter}
 return
 
 #if OtherCase()
 ::\d{r}::
-SendInput {U+1E5B}
+send {U+1E5B}
 return
 
 
@@ -16907,17 +16907,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\=R::
-SendInput ^x8{Enter}1e5c{Enter}
+send ^x8{Enter}1e5c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\=R::
-SendInput ^+u1e5c{Enter}
+send ^+u1e5c{Enter}
 return
 
 #if OtherCase()
 ::\d\=R::
-SendInput {U+1E5C}
+send {U+1E5C}
 return
 
 
@@ -16925,17 +16925,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\={R}::
-SendInput ^x8{Enter}1e5c{Enter}
+send ^x8{Enter}1e5c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\={R}::
-SendInput ^+u1e5c{Enter}
+send ^+u1e5c{Enter}
 return
 
 #if OtherCase()
 ::\d\={R}::
-SendInput {U+1E5C}
+send {U+1E5C}
 return
 
 
@@ -16943,17 +16943,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\=r::
-SendInput ^x8{Enter}1e5d{Enter}
+send ^x8{Enter}1e5d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\=r::
-SendInput ^+u1e5d{Enter}
+send ^+u1e5d{Enter}
 return
 
 #if OtherCase()
 ::\d\=r::
-SendInput {U+1E5D}
+send {U+1E5D}
 return
 
 
@@ -16961,17 +16961,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\={r}::
-SendInput ^x8{Enter}1e5d{Enter}
+send ^x8{Enter}1e5d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\={r}::
-SendInput ^+u1e5d{Enter}
+send ^+u1e5d{Enter}
 return
 
 #if OtherCase()
 ::\d\={r}::
-SendInput {U+1E5D}
+send {U+1E5D}
 return
 
 
@@ -16979,17 +16979,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.S::
-SendInput ^x8{Enter}1e60{Enter}
+send ^x8{Enter}1e60{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.S::
-SendInput ^+u1e60{Enter}
+send ^+u1e60{Enter}
 return
 
 #if OtherCase()
 ::\.S::
-SendInput {U+1E60}
+send {U+1E60}
 return
 
 
@@ -16997,17 +16997,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{S}::
-SendInput ^x8{Enter}1e60{Enter}
+send ^x8{Enter}1e60{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{S}::
-SendInput ^+u1e60{Enter}
+send ^+u1e60{Enter}
 return
 
 #if OtherCase()
 ::\.{S}::
-SendInput {U+1E60}
+send {U+1E60}
 return
 
 
@@ -17015,17 +17015,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.s::
-SendInput ^x8{Enter}1e61{Enter}
+send ^x8{Enter}1e61{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.s::
-SendInput ^+u1e61{Enter}
+send ^+u1e61{Enter}
 return
 
 #if OtherCase()
 ::\.s::
-SendInput {U+1E61}
+send {U+1E61}
 return
 
 
@@ -17033,17 +17033,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{s}::
-SendInput ^x8{Enter}1e61{Enter}
+send ^x8{Enter}1e61{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{s}::
-SendInput ^+u1e61{Enter}
+send ^+u1e61{Enter}
 return
 
 #if OtherCase()
 ::\.{s}::
-SendInput {U+1E61}
+send {U+1E61}
 return
 
 
@@ -17051,17 +17051,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{S}::
-SendInput ^x8{Enter}1e62{Enter}
+send ^x8{Enter}1e62{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{S}::
-SendInput ^+u1e62{Enter}
+send ^+u1e62{Enter}
 return
 
 #if OtherCase()
 ::\d{S}::
-SendInput {U+1E62}
+send {U+1E62}
 return
 
 
@@ -17069,17 +17069,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{s}::
-SendInput ^x8{Enter}1e63{Enter}
+send ^x8{Enter}1e63{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{s}::
-SendInput ^+u1e63{Enter}
+send ^+u1e63{Enter}
 return
 
 #if OtherCase()
 ::\d{s}::
-SendInput {U+1E63}
+send {U+1E63}
 return
 
 
@@ -17087,17 +17087,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'\.S::
-SendInput ^x8{Enter}1e64{Enter}
+send ^x8{Enter}1e64{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'\.S::
-SendInput ^+u1e64{Enter}
+send ^+u1e64{Enter}
 return
 
 #if OtherCase()
 ::\'\.S::
-SendInput {U+1E64}
+send {U+1E64}
 return
 
 
@@ -17105,17 +17105,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'\.{S}::
-SendInput ^x8{Enter}1e64{Enter}
+send ^x8{Enter}1e64{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'\.{S}::
-SendInput ^+u1e64{Enter}
+send ^+u1e64{Enter}
 return
 
 #if OtherCase()
 ::\'\.{S}::
-SendInput {U+1E64}
+send {U+1E64}
 return
 
 
@@ -17123,17 +17123,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'\.s::
-SendInput ^x8{Enter}1e65{Enter}
+send ^x8{Enter}1e65{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'\.s::
-SendInput ^+u1e65{Enter}
+send ^+u1e65{Enter}
 return
 
 #if OtherCase()
 ::\'\.s::
-SendInput {U+1E65}
+send {U+1E65}
 return
 
 
@@ -17141,17 +17141,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'\.{s}::
-SendInput ^x8{Enter}1e65{Enter}
+send ^x8{Enter}1e65{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'\.{s}::
-SendInput ^+u1e65{Enter}
+send ^+u1e65{Enter}
 return
 
 #if OtherCase()
 ::\'\.{s}::
-SendInput {U+1E65}
+send {U+1E65}
 return
 
 
@@ -17159,17 +17159,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v\.S::
-SendInput ^x8{Enter}1e66{Enter}
+send ^x8{Enter}1e66{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v\.S::
-SendInput ^+u1e66{Enter}
+send ^+u1e66{Enter}
 return
 
 #if OtherCase()
 ::\v\.S::
-SendInput {U+1E66}
+send {U+1E66}
 return
 
 
@@ -17177,17 +17177,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v\.{S}::
-SendInput ^x8{Enter}1e66{Enter}
+send ^x8{Enter}1e66{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v\.{S}::
-SendInput ^+u1e66{Enter}
+send ^+u1e66{Enter}
 return
 
 #if OtherCase()
 ::\v\.{S}::
-SendInput {U+1E66}
+send {U+1E66}
 return
 
 
@@ -17195,17 +17195,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v\.s::
-SendInput ^x8{Enter}1e67{Enter}
+send ^x8{Enter}1e67{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v\.s::
-SendInput ^+u1e67{Enter}
+send ^+u1e67{Enter}
 return
 
 #if OtherCase()
 ::\v\.s::
-SendInput {U+1E67}
+send {U+1E67}
 return
 
 
@@ -17213,17 +17213,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\v\.{s}::
-SendInput ^x8{Enter}1e67{Enter}
+send ^x8{Enter}1e67{Enter}
 return
 
 #if GtkApplicationCase()
 ::\v\.{s}::
-SendInput ^+u1e67{Enter}
+send ^+u1e67{Enter}
 return
 
 #if OtherCase()
 ::\v\.{s}::
-SendInput {U+1E67}
+send {U+1E67}
 return
 
 
@@ -17231,17 +17231,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\.S::
-SendInput ^x8{Enter}1e68{Enter}
+send ^x8{Enter}1e68{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\.S::
-SendInput ^+u1e68{Enter}
+send ^+u1e68{Enter}
 return
 
 #if OtherCase()
 ::\d\.S::
-SendInput {U+1E68}
+send {U+1E68}
 return
 
 
@@ -17249,17 +17249,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\.{S}::
-SendInput ^x8{Enter}1e68{Enter}
+send ^x8{Enter}1e68{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\.{S}::
-SendInput ^+u1e68{Enter}
+send ^+u1e68{Enter}
 return
 
 #if OtherCase()
 ::\d\.{S}::
-SendInput {U+1E68}
+send {U+1E68}
 return
 
 
@@ -17267,17 +17267,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\.s::
-SendInput ^x8{Enter}1e69{Enter}
+send ^x8{Enter}1e69{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\.s::
-SendInput ^+u1e69{Enter}
+send ^+u1e69{Enter}
 return
 
 #if OtherCase()
 ::\d\.s::
-SendInput {U+1E69}
+send {U+1E69}
 return
 
 
@@ -17285,17 +17285,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d\.{s}::
-SendInput ^x8{Enter}1e69{Enter}
+send ^x8{Enter}1e69{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d\.{s}::
-SendInput ^+u1e69{Enter}
+send ^+u1e69{Enter}
 return
 
 #if OtherCase()
 ::\d\.{s}::
-SendInput {U+1E69}
+send {U+1E69}
 return
 
 
@@ -17303,17 +17303,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.T::
-SendInput ^x8{Enter}1e6a{Enter}
+send ^x8{Enter}1e6a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.T::
-SendInput ^+u1e6a{Enter}
+send ^+u1e6a{Enter}
 return
 
 #if OtherCase()
 ::\.T::
-SendInput {U+1E6A}
+send {U+1E6A}
 return
 
 
@@ -17321,17 +17321,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{T}::
-SendInput ^x8{Enter}1e6a{Enter}
+send ^x8{Enter}1e6a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{T}::
-SendInput ^+u1e6a{Enter}
+send ^+u1e6a{Enter}
 return
 
 #if OtherCase()
 ::\.{T}::
-SendInput {U+1E6A}
+send {U+1E6A}
 return
 
 
@@ -17339,17 +17339,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.t::
-SendInput ^x8{Enter}1e6b{Enter}
+send ^x8{Enter}1e6b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.t::
-SendInput ^+u1e6b{Enter}
+send ^+u1e6b{Enter}
 return
 
 #if OtherCase()
 ::\.t::
-SendInput {U+1E6B}
+send {U+1E6B}
 return
 
 
@@ -17357,17 +17357,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{t}::
-SendInput ^x8{Enter}1e6b{Enter}
+send ^x8{Enter}1e6b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{t}::
-SendInput ^+u1e6b{Enter}
+send ^+u1e6b{Enter}
 return
 
 #if OtherCase()
 ::\.{t}::
-SendInput {U+1E6B}
+send {U+1E6B}
 return
 
 
@@ -17375,17 +17375,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{T}::
-SendInput ^x8{Enter}1e6c{Enter}
+send ^x8{Enter}1e6c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{T}::
-SendInput ^+u1e6c{Enter}
+send ^+u1e6c{Enter}
 return
 
 #if OtherCase()
 ::\d{T}::
-SendInput {U+1E6C}
+send {U+1E6C}
 return
 
 
@@ -17393,17 +17393,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{t}::
-SendInput ^x8{Enter}1e6d{Enter}
+send ^x8{Enter}1e6d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{t}::
-SendInput ^+u1e6d{Enter}
+send ^+u1e6d{Enter}
 return
 
 #if OtherCase()
 ::\d{t}::
-SendInput {U+1E6D}
+send {U+1E6D}
 return
 
 
@@ -17411,17 +17411,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\'U::
-SendInput ^x8{Enter}1e78{Enter}
+send ^x8{Enter}1e78{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\'U::
-SendInput ^+u1e78{Enter}
+send ^+u1e78{Enter}
 return
 
 #if OtherCase()
 ::\~\'U::
-SendInput {U+1E78}
+send {U+1E78}
 return
 
 
@@ -17429,17 +17429,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\'{U}::
-SendInput ^x8{Enter}1e78{Enter}
+send ^x8{Enter}1e78{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\'{U}::
-SendInput ^+u1e78{Enter}
+send ^+u1e78{Enter}
 return
 
 #if OtherCase()
 ::\~\'{U}::
-SendInput {U+1E78}
+send {U+1E78}
 return
 
 
@@ -17447,17 +17447,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\'u::
-SendInput ^x8{Enter}1e79{Enter}
+send ^x8{Enter}1e79{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\'u::
-SendInput ^+u1e79{Enter}
+send ^+u1e79{Enter}
 return
 
 #if OtherCase()
 ::\~\'u::
-SendInput {U+1E79}
+send {U+1E79}
 return
 
 
@@ -17465,17 +17465,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~\'{u}::
-SendInput ^x8{Enter}1e79{Enter}
+send ^x8{Enter}1e79{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~\'{u}::
-SendInput ^+u1e79{Enter}
+send ^+u1e79{Enter}
 return
 
 #if OtherCase()
 ::\~\'{u}::
-SendInput {U+1E79}
+send {U+1E79}
 return
 
 
@@ -17483,17 +17483,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\"U::
-SendInput ^x8{Enter}1e7a{Enter}
+send ^x8{Enter}1e7a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\"U::
-SendInput ^+u1e7a{Enter}
+send ^+u1e7a{Enter}
 return
 
 #if OtherCase()
 ::\=\"U::
-SendInput {U+1E7A}
+send {U+1E7A}
 return
 
 
@@ -17501,17 +17501,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\"{U}::
-SendInput ^x8{Enter}1e7a{Enter}
+send ^x8{Enter}1e7a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\"{U}::
-SendInput ^+u1e7a{Enter}
+send ^+u1e7a{Enter}
 return
 
 #if OtherCase()
 ::\=\"{U}::
-SendInput {U+1E7A}
+send {U+1E7A}
 return
 
 
@@ -17519,17 +17519,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\"u::
-SendInput ^x8{Enter}1e7b{Enter}
+send ^x8{Enter}1e7b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\"u::
-SendInput ^+u1e7b{Enter}
+send ^+u1e7b{Enter}
 return
 
 #if OtherCase()
 ::\=\"u::
-SendInput {U+1E7B}
+send {U+1E7B}
 return
 
 
@@ -17537,17 +17537,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\=\"{u}::
-SendInput ^x8{Enter}1e7b{Enter}
+send ^x8{Enter}1e7b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\=\"{u}::
-SendInput ^+u1e7b{Enter}
+send ^+u1e7b{Enter}
 return
 
 #if OtherCase()
 ::\=\"{u}::
-SendInput {U+1E7B}
+send {U+1E7B}
 return
 
 
@@ -17555,17 +17555,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~V::
-SendInput ^x8{Enter}1e7c{Enter}
+send ^x8{Enter}1e7c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~V::
-SendInput ^+u1e7c{Enter}
+send ^+u1e7c{Enter}
 return
 
 #if OtherCase()
 ::\~V::
-SendInput {U+1E7C}
+send {U+1E7C}
 return
 
 
@@ -17573,17 +17573,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{V}::
-SendInput ^x8{Enter}1e7c{Enter}
+send ^x8{Enter}1e7c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{V}::
-SendInput ^+u1e7c{Enter}
+send ^+u1e7c{Enter}
 return
 
 #if OtherCase()
 ::\~{V}::
-SendInput {U+1E7C}
+send {U+1E7C}
 return
 
 
@@ -17591,17 +17591,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~v::
-SendInput ^x8{Enter}1e7d{Enter}
+send ^x8{Enter}1e7d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~v::
-SendInput ^+u1e7d{Enter}
+send ^+u1e7d{Enter}
 return
 
 #if OtherCase()
 ::\~v::
-SendInput {U+1E7D}
+send {U+1E7D}
 return
 
 
@@ -17609,17 +17609,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{v}::
-SendInput ^x8{Enter}1e7d{Enter}
+send ^x8{Enter}1e7d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{v}::
-SendInput ^+u1e7d{Enter}
+send ^+u1e7d{Enter}
 return
 
 #if OtherCase()
 ::\~{v}::
-SendInput {U+1E7D}
+send {U+1E7D}
 return
 
 
@@ -17627,17 +17627,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{V}::
-SendInput ^x8{Enter}1e7e{Enter}
+send ^x8{Enter}1e7e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{V}::
-SendInput ^+u1e7e{Enter}
+send ^+u1e7e{Enter}
 return
 
 #if OtherCase()
 ::\d{V}::
-SendInput {U+1E7E}
+send {U+1E7E}
 return
 
 
@@ -17645,17 +17645,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{v}::
-SendInput ^x8{Enter}1e7f{Enter}
+send ^x8{Enter}1e7f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{v}::
-SendInput ^+u1e7f{Enter}
+send ^+u1e7f{Enter}
 return
 
 #if OtherCase()
 ::\d{v}::
-SendInput {U+1E7F}
+send {U+1E7F}
 return
 
 
@@ -17663,17 +17663,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``W::
-SendInput ^x8{Enter}1e80{Enter}
+send ^x8{Enter}1e80{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``W::
-SendInput ^+u1e80{Enter}
+send ^+u1e80{Enter}
 return
 
 #if OtherCase()
 ::\``W::
-SendInput {U+1E80}
+send {U+1E80}
 return
 
 
@@ -17681,17 +17681,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{W}::
-SendInput ^x8{Enter}1e80{Enter}
+send ^x8{Enter}1e80{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{W}::
-SendInput ^+u1e80{Enter}
+send ^+u1e80{Enter}
 return
 
 #if OtherCase()
 ::\``{W}::
-SendInput {U+1E80}
+send {U+1E80}
 return
 
 
@@ -17699,17 +17699,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``w::
-SendInput ^x8{Enter}1e81{Enter}
+send ^x8{Enter}1e81{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``w::
-SendInput ^+u1e81{Enter}
+send ^+u1e81{Enter}
 return
 
 #if OtherCase()
 ::\``w::
-SendInput {U+1E81}
+send {U+1E81}
 return
 
 
@@ -17717,17 +17717,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{w}::
-SendInput ^x8{Enter}1e81{Enter}
+send ^x8{Enter}1e81{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{w}::
-SendInput ^+u1e81{Enter}
+send ^+u1e81{Enter}
 return
 
 #if OtherCase()
 ::\``{w}::
-SendInput {U+1E81}
+send {U+1E81}
 return
 
 
@@ -17735,17 +17735,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'W::
-SendInput ^x8{Enter}1e82{Enter}
+send ^x8{Enter}1e82{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'W::
-SendInput ^+u1e82{Enter}
+send ^+u1e82{Enter}
 return
 
 #if OtherCase()
 ::\'W::
-SendInput {U+1E82}
+send {U+1E82}
 return
 
 
@@ -17753,17 +17753,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{W}::
-SendInput ^x8{Enter}1e82{Enter}
+send ^x8{Enter}1e82{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{W}::
-SendInput ^+u1e82{Enter}
+send ^+u1e82{Enter}
 return
 
 #if OtherCase()
 ::\'{W}::
-SendInput {U+1E82}
+send {U+1E82}
 return
 
 
@@ -17771,17 +17771,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'w::
-SendInput ^x8{Enter}1e83{Enter}
+send ^x8{Enter}1e83{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'w::
-SendInput ^+u1e83{Enter}
+send ^+u1e83{Enter}
 return
 
 #if OtherCase()
 ::\'w::
-SendInput {U+1E83}
+send {U+1E83}
 return
 
 
@@ -17789,17 +17789,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\'{w}::
-SendInput ^x8{Enter}1e83{Enter}
+send ^x8{Enter}1e83{Enter}
 return
 
 #if GtkApplicationCase()
 ::\'{w}::
-SendInput ^+u1e83{Enter}
+send ^+u1e83{Enter}
 return
 
 #if OtherCase()
 ::\'{w}::
-SendInput {U+1E83}
+send {U+1E83}
 return
 
 
@@ -17807,17 +17807,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"W::
-SendInput ^x8{Enter}1e84{Enter}
+send ^x8{Enter}1e84{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"W::
-SendInput ^+u1e84{Enter}
+send ^+u1e84{Enter}
 return
 
 #if OtherCase()
 ::\"W::
-SendInput {U+1E84}
+send {U+1E84}
 return
 
 
@@ -17825,17 +17825,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{W}::
-SendInput ^x8{Enter}1e84{Enter}
+send ^x8{Enter}1e84{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{W}::
-SendInput ^+u1e84{Enter}
+send ^+u1e84{Enter}
 return
 
 #if OtherCase()
 ::\"{W}::
-SendInput {U+1E84}
+send {U+1E84}
 return
 
 
@@ -17843,17 +17843,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"w::
-SendInput ^x8{Enter}1e85{Enter}
+send ^x8{Enter}1e85{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"w::
-SendInput ^+u1e85{Enter}
+send ^+u1e85{Enter}
 return
 
 #if OtherCase()
 ::\"w::
-SendInput {U+1E85}
+send {U+1E85}
 return
 
 
@@ -17861,17 +17861,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{w}::
-SendInput ^x8{Enter}1e85{Enter}
+send ^x8{Enter}1e85{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{w}::
-SendInput ^+u1e85{Enter}
+send ^+u1e85{Enter}
 return
 
 #if OtherCase()
 ::\"{w}::
-SendInput {U+1E85}
+send {U+1E85}
 return
 
 
@@ -17879,17 +17879,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.W::
-SendInput ^x8{Enter}1e86{Enter}
+send ^x8{Enter}1e86{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.W::
-SendInput ^+u1e86{Enter}
+send ^+u1e86{Enter}
 return
 
 #if OtherCase()
 ::\.W::
-SendInput {U+1E86}
+send {U+1E86}
 return
 
 
@@ -17897,17 +17897,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{W}::
-SendInput ^x8{Enter}1e86{Enter}
+send ^x8{Enter}1e86{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{W}::
-SendInput ^+u1e86{Enter}
+send ^+u1e86{Enter}
 return
 
 #if OtherCase()
 ::\.{W}::
-SendInput {U+1E86}
+send {U+1E86}
 return
 
 
@@ -17915,17 +17915,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.w::
-SendInput ^x8{Enter}1e87{Enter}
+send ^x8{Enter}1e87{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.w::
-SendInput ^+u1e87{Enter}
+send ^+u1e87{Enter}
 return
 
 #if OtherCase()
 ::\.w::
-SendInput {U+1E87}
+send {U+1E87}
 return
 
 
@@ -17933,17 +17933,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{w}::
-SendInput ^x8{Enter}1e87{Enter}
+send ^x8{Enter}1e87{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{w}::
-SendInput ^+u1e87{Enter}
+send ^+u1e87{Enter}
 return
 
 #if OtherCase()
 ::\.{w}::
-SendInput {U+1E87}
+send {U+1E87}
 return
 
 
@@ -17951,17 +17951,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{W}::
-SendInput ^x8{Enter}1e88{Enter}
+send ^x8{Enter}1e88{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{W}::
-SendInput ^+u1e88{Enter}
+send ^+u1e88{Enter}
 return
 
 #if OtherCase()
 ::\d{W}::
-SendInput {U+1E88}
+send {U+1E88}
 return
 
 
@@ -17969,17 +17969,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{w}::
-SendInput ^x8{Enter}1e89{Enter}
+send ^x8{Enter}1e89{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{w}::
-SendInput ^+u1e89{Enter}
+send ^+u1e89{Enter}
 return
 
 #if OtherCase()
 ::\d{w}::
-SendInput {U+1E89}
+send {U+1E89}
 return
 
 
@@ -17987,17 +17987,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.X::
-SendInput ^x8{Enter}1e8a{Enter}
+send ^x8{Enter}1e8a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.X::
-SendInput ^+u1e8a{Enter}
+send ^+u1e8a{Enter}
 return
 
 #if OtherCase()
 ::\.X::
-SendInput {U+1E8A}
+send {U+1E8A}
 return
 
 
@@ -18005,17 +18005,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{X}::
-SendInput ^x8{Enter}1e8a{Enter}
+send ^x8{Enter}1e8a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{X}::
-SendInput ^+u1e8a{Enter}
+send ^+u1e8a{Enter}
 return
 
 #if OtherCase()
 ::\.{X}::
-SendInput {U+1E8A}
+send {U+1E8A}
 return
 
 
@@ -18023,17 +18023,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.x::
-SendInput ^x8{Enter}1e8b{Enter}
+send ^x8{Enter}1e8b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.x::
-SendInput ^+u1e8b{Enter}
+send ^+u1e8b{Enter}
 return
 
 #if OtherCase()
 ::\.x::
-SendInput {U+1E8B}
+send {U+1E8B}
 return
 
 
@@ -18041,17 +18041,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{x}::
-SendInput ^x8{Enter}1e8b{Enter}
+send ^x8{Enter}1e8b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{x}::
-SendInput ^+u1e8b{Enter}
+send ^+u1e8b{Enter}
 return
 
 #if OtherCase()
 ::\.{x}::
-SendInput {U+1E8B}
+send {U+1E8B}
 return
 
 
@@ -18059,17 +18059,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"X::
-SendInput ^x8{Enter}1e8c{Enter}
+send ^x8{Enter}1e8c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"X::
-SendInput ^+u1e8c{Enter}
+send ^+u1e8c{Enter}
 return
 
 #if OtherCase()
 ::\"X::
-SendInput {U+1E8C}
+send {U+1E8C}
 return
 
 
@@ -18077,17 +18077,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{X}::
-SendInput ^x8{Enter}1e8c{Enter}
+send ^x8{Enter}1e8c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{X}::
-SendInput ^+u1e8c{Enter}
+send ^+u1e8c{Enter}
 return
 
 #if OtherCase()
 ::\"{X}::
-SendInput {U+1E8C}
+send {U+1E8C}
 return
 
 
@@ -18095,17 +18095,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"x::
-SendInput ^x8{Enter}1e8d{Enter}
+send ^x8{Enter}1e8d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"x::
-SendInput ^+u1e8d{Enter}
+send ^+u1e8d{Enter}
 return
 
 #if OtherCase()
 ::\"x::
-SendInput {U+1E8D}
+send {U+1E8D}
 return
 
 
@@ -18113,17 +18113,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{x}::
-SendInput ^x8{Enter}1e8d{Enter}
+send ^x8{Enter}1e8d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{x}::
-SendInput ^+u1e8d{Enter}
+send ^+u1e8d{Enter}
 return
 
 #if OtherCase()
 ::\"{x}::
-SendInput {U+1E8D}
+send {U+1E8D}
 return
 
 
@@ -18131,17 +18131,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.Y::
-SendInput ^x8{Enter}1e8e{Enter}
+send ^x8{Enter}1e8e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.Y::
-SendInput ^+u1e8e{Enter}
+send ^+u1e8e{Enter}
 return
 
 #if OtherCase()
 ::\.Y::
-SendInput {U+1E8E}
+send {U+1E8E}
 return
 
 
@@ -18149,17 +18149,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{Y}::
-SendInput ^x8{Enter}1e8e{Enter}
+send ^x8{Enter}1e8e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{Y}::
-SendInput ^+u1e8e{Enter}
+send ^+u1e8e{Enter}
 return
 
 #if OtherCase()
 ::\.{Y}::
-SendInput {U+1E8E}
+send {U+1E8E}
 return
 
 
@@ -18167,17 +18167,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.y::
-SendInput ^x8{Enter}1e8f{Enter}
+send ^x8{Enter}1e8f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.y::
-SendInput ^+u1e8f{Enter}
+send ^+u1e8f{Enter}
 return
 
 #if OtherCase()
 ::\.y::
-SendInput {U+1E8F}
+send {U+1E8F}
 return
 
 
@@ -18185,17 +18185,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\.{y}::
-SendInput ^x8{Enter}1e8f{Enter}
+send ^x8{Enter}1e8f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\.{y}::
-SendInput ^+u1e8f{Enter}
+send ^+u1e8f{Enter}
 return
 
 #if OtherCase()
 ::\.{y}::
-SendInput {U+1E8F}
+send {U+1E8F}
 return
 
 
@@ -18203,17 +18203,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^Z::
-SendInput ^x8{Enter}1e90{Enter}
+send ^x8{Enter}1e90{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^Z::
-SendInput ^+u1e90{Enter}
+send ^+u1e90{Enter}
 return
 
 #if OtherCase()
 ::\^Z::
-SendInput {U+1E90}
+send {U+1E90}
 return
 
 
@@ -18221,17 +18221,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{Z}::
-SendInput ^x8{Enter}1e90{Enter}
+send ^x8{Enter}1e90{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{Z}::
-SendInput ^+u1e90{Enter}
+send ^+u1e90{Enter}
 return
 
 #if OtherCase()
 ::\^{Z}::
-SendInput {U+1E90}
+send {U+1E90}
 return
 
 
@@ -18239,17 +18239,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^z::
-SendInput ^x8{Enter}1e91{Enter}
+send ^x8{Enter}1e91{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^z::
-SendInput ^+u1e91{Enter}
+send ^+u1e91{Enter}
 return
 
 #if OtherCase()
 ::\^z::
-SendInput {U+1E91}
+send {U+1E91}
 return
 
 
@@ -18257,17 +18257,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^{z}::
-SendInput ^x8{Enter}1e91{Enter}
+send ^x8{Enter}1e91{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^{z}::
-SendInput ^+u1e91{Enter}
+send ^+u1e91{Enter}
 return
 
 #if OtherCase()
 ::\^{z}::
-SendInput {U+1E91}
+send {U+1E91}
 return
 
 
@@ -18275,17 +18275,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{Z}::
-SendInput ^x8{Enter}1e92{Enter}
+send ^x8{Enter}1e92{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{Z}::
-SendInput ^+u1e92{Enter}
+send ^+u1e92{Enter}
 return
 
 #if OtherCase()
 ::\d{Z}::
-SendInput {U+1E92}
+send {U+1E92}
 return
 
 
@@ -18293,17 +18293,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{z}::
-SendInput ^x8{Enter}1e93{Enter}
+send ^x8{Enter}1e93{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{z}::
-SendInput ^+u1e93{Enter}
+send ^+u1e93{Enter}
 return
 
 #if OtherCase()
 ::\d{z}::
-SendInput {U+1E93}
+send {U+1E93}
 return
 
 
@@ -18311,17 +18311,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"t::
-SendInput ^x8{Enter}1e97{Enter}
+send ^x8{Enter}1e97{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"t::
-SendInput ^+u1e97{Enter}
+send ^+u1e97{Enter}
 return
 
 #if OtherCase()
 ::\"t::
-SendInput {U+1E97}
+send {U+1E97}
 return
 
 
@@ -18329,17 +18329,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"{t}::
-SendInput ^x8{Enter}1e97{Enter}
+send ^x8{Enter}1e97{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"{t}::
-SendInput ^+u1e97{Enter}
+send ^+u1e97{Enter}
 return
 
 #if OtherCase()
 ::\"{t}::
-SendInput {U+1E97}
+send {U+1E97}
 return
 
 
@@ -18347,17 +18347,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{A}::
-SendInput ^x8{Enter}1ea0{Enter}
+send ^x8{Enter}1ea0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{A}::
-SendInput ^+u1ea0{Enter}
+send ^+u1ea0{Enter}
 return
 
 #if OtherCase()
 ::\d{A}::
-SendInput {U+1EA0}
+send {U+1EA0}
 return
 
 
@@ -18365,17 +18365,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{a}::
-SendInput ^x8{Enter}1ea1{Enter}
+send ^x8{Enter}1ea1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{a}::
-SendInput ^+u1ea1{Enter}
+send ^+u1ea1{Enter}
 return
 
 #if OtherCase()
 ::\d{a}::
-SendInput {U+1EA1}
+send {U+1EA1}
 return
 
 
@@ -18383,17 +18383,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'A::
-SendInput ^x8{Enter}1ea4{Enter}
+send ^x8{Enter}1ea4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'A::
-SendInput ^+u1ea4{Enter}
+send ^+u1ea4{Enter}
 return
 
 #if OtherCase()
 ::\^\'A::
-SendInput {U+1EA4}
+send {U+1EA4}
 return
 
 
@@ -18401,17 +18401,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'{A}::
-SendInput ^x8{Enter}1ea4{Enter}
+send ^x8{Enter}1ea4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'{A}::
-SendInput ^+u1ea4{Enter}
+send ^+u1ea4{Enter}
 return
 
 #if OtherCase()
 ::\^\'{A}::
-SendInput {U+1EA4}
+send {U+1EA4}
 return
 
 
@@ -18419,17 +18419,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'a::
-SendInput ^x8{Enter}1ea5{Enter}
+send ^x8{Enter}1ea5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'a::
-SendInput ^+u1ea5{Enter}
+send ^+u1ea5{Enter}
 return
 
 #if OtherCase()
 ::\^\'a::
-SendInput {U+1EA5}
+send {U+1EA5}
 return
 
 
@@ -18437,17 +18437,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'{a}::
-SendInput ^x8{Enter}1ea5{Enter}
+send ^x8{Enter}1ea5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'{a}::
-SendInput ^+u1ea5{Enter}
+send ^+u1ea5{Enter}
 return
 
 #if OtherCase()
 ::\^\'{a}::
-SendInput {U+1EA5}
+send {U+1EA5}
 return
 
 
@@ -18455,17 +18455,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``A::
-SendInput ^x8{Enter}1ea6{Enter}
+send ^x8{Enter}1ea6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``A::
-SendInput ^+u1ea6{Enter}
+send ^+u1ea6{Enter}
 return
 
 #if OtherCase()
 ::\^\``A::
-SendInput {U+1EA6}
+send {U+1EA6}
 return
 
 
@@ -18473,17 +18473,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``{A}::
-SendInput ^x8{Enter}1ea6{Enter}
+send ^x8{Enter}1ea6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``{A}::
-SendInput ^+u1ea6{Enter}
+send ^+u1ea6{Enter}
 return
 
 #if OtherCase()
 ::\^\``{A}::
-SendInput {U+1EA6}
+send {U+1EA6}
 return
 
 
@@ -18491,17 +18491,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``a::
-SendInput ^x8{Enter}1ea7{Enter}
+send ^x8{Enter}1ea7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``a::
-SendInput ^+u1ea7{Enter}
+send ^+u1ea7{Enter}
 return
 
 #if OtherCase()
 ::\^\``a::
-SendInput {U+1EA7}
+send {U+1EA7}
 return
 
 
@@ -18509,17 +18509,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``{a}::
-SendInput ^x8{Enter}1ea7{Enter}
+send ^x8{Enter}1ea7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``{a}::
-SendInput ^+u1ea7{Enter}
+send ^+u1ea7{Enter}
 return
 
 #if OtherCase()
 ::\^\``{a}::
-SendInput {U+1EA7}
+send {U+1EA7}
 return
 
 
@@ -18527,17 +18527,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~A::
-SendInput ^x8{Enter}1eaa{Enter}
+send ^x8{Enter}1eaa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~A::
-SendInput ^+u1eaa{Enter}
+send ^+u1eaa{Enter}
 return
 
 #if OtherCase()
 ::\^\~A::
-SendInput {U+1EAA}
+send {U+1EAA}
 return
 
 
@@ -18545,17 +18545,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~{A}::
-SendInput ^x8{Enter}1eaa{Enter}
+send ^x8{Enter}1eaa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~{A}::
-SendInput ^+u1eaa{Enter}
+send ^+u1eaa{Enter}
 return
 
 #if OtherCase()
 ::\^\~{A}::
-SendInput {U+1EAA}
+send {U+1EAA}
 return
 
 
@@ -18563,17 +18563,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~a::
-SendInput ^x8{Enter}1eab{Enter}
+send ^x8{Enter}1eab{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~a::
-SendInput ^+u1eab{Enter}
+send ^+u1eab{Enter}
 return
 
 #if OtherCase()
 ::\^\~a::
-SendInput {U+1EAB}
+send {U+1EAB}
 return
 
 
@@ -18581,17 +18581,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~{a}::
-SendInput ^x8{Enter}1eab{Enter}
+send ^x8{Enter}1eab{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~{a}::
-SendInput ^+u1eab{Enter}
+send ^+u1eab{Enter}
 return
 
 #if OtherCase()
 ::\^\~{a}::
-SendInput {U+1EAB}
+send {U+1EAB}
 return
 
 
@@ -18599,17 +18599,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\d{A}::
-SendInput ^x8{Enter}1eac{Enter}
+send ^x8{Enter}1eac{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\d{A}::
-SendInput ^+u1eac{Enter}
+send ^+u1eac{Enter}
 return
 
 #if OtherCase()
 ::\^\d{A}::
-SendInput {U+1EAC}
+send {U+1EAC}
 return
 
 
@@ -18617,17 +18617,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\d{a}::
-SendInput ^x8{Enter}1ead{Enter}
+send ^x8{Enter}1ead{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\d{a}::
-SendInput ^+u1ead{Enter}
+send ^+u1ead{Enter}
 return
 
 #if OtherCase()
 ::\^\d{a}::
-SendInput {U+1EAD}
+send {U+1EAD}
 return
 
 
@@ -18635,17 +18635,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\'A::
-SendInput ^x8{Enter}1eae{Enter}
+send ^x8{Enter}1eae{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\'A::
-SendInput ^+u1eae{Enter}
+send ^+u1eae{Enter}
 return
 
 #if OtherCase()
 ::\u\'A::
-SendInput {U+1EAE}
+send {U+1EAE}
 return
 
 
@@ -18653,17 +18653,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\'{A}::
-SendInput ^x8{Enter}1eae{Enter}
+send ^x8{Enter}1eae{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\'{A}::
-SendInput ^+u1eae{Enter}
+send ^+u1eae{Enter}
 return
 
 #if OtherCase()
 ::\u\'{A}::
-SendInput {U+1EAE}
+send {U+1EAE}
 return
 
 
@@ -18671,17 +18671,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\'a::
-SendInput ^x8{Enter}1eaf{Enter}
+send ^x8{Enter}1eaf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\'a::
-SendInput ^+u1eaf{Enter}
+send ^+u1eaf{Enter}
 return
 
 #if OtherCase()
 ::\u\'a::
-SendInput {U+1EAF}
+send {U+1EAF}
 return
 
 
@@ -18689,17 +18689,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\'{a}::
-SendInput ^x8{Enter}1eaf{Enter}
+send ^x8{Enter}1eaf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\'{a}::
-SendInput ^+u1eaf{Enter}
+send ^+u1eaf{Enter}
 return
 
 #if OtherCase()
 ::\u\'{a}::
-SendInput {U+1EAF}
+send {U+1EAF}
 return
 
 
@@ -18707,17 +18707,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\``A::
-SendInput ^x8{Enter}1eb0{Enter}
+send ^x8{Enter}1eb0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\``A::
-SendInput ^+u1eb0{Enter}
+send ^+u1eb0{Enter}
 return
 
 #if OtherCase()
 ::\u\``A::
-SendInput {U+1EB0}
+send {U+1EB0}
 return
 
 
@@ -18725,17 +18725,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\``{A}::
-SendInput ^x8{Enter}1eb0{Enter}
+send ^x8{Enter}1eb0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\``{A}::
-SendInput ^+u1eb0{Enter}
+send ^+u1eb0{Enter}
 return
 
 #if OtherCase()
 ::\u\``{A}::
-SendInput {U+1EB0}
+send {U+1EB0}
 return
 
 
@@ -18743,17 +18743,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\``a::
-SendInput ^x8{Enter}1eb1{Enter}
+send ^x8{Enter}1eb1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\``a::
-SendInput ^+u1eb1{Enter}
+send ^+u1eb1{Enter}
 return
 
 #if OtherCase()
 ::\u\``a::
-SendInput {U+1EB1}
+send {U+1EB1}
 return
 
 
@@ -18761,17 +18761,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\``{a}::
-SendInput ^x8{Enter}1eb1{Enter}
+send ^x8{Enter}1eb1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\``{a}::
-SendInput ^+u1eb1{Enter}
+send ^+u1eb1{Enter}
 return
 
 #if OtherCase()
 ::\u\``{a}::
-SendInput {U+1EB1}
+send {U+1EB1}
 return
 
 
@@ -18779,17 +18779,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\~A::
-SendInput ^x8{Enter}1eb4{Enter}
+send ^x8{Enter}1eb4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\~A::
-SendInput ^+u1eb4{Enter}
+send ^+u1eb4{Enter}
 return
 
 #if OtherCase()
 ::\u\~A::
-SendInput {U+1EB4}
+send {U+1EB4}
 return
 
 
@@ -18797,17 +18797,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\~{A}::
-SendInput ^x8{Enter}1eb4{Enter}
+send ^x8{Enter}1eb4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\~{A}::
-SendInput ^+u1eb4{Enter}
+send ^+u1eb4{Enter}
 return
 
 #if OtherCase()
 ::\u\~{A}::
-SendInput {U+1EB4}
+send {U+1EB4}
 return
 
 
@@ -18815,17 +18815,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\~a::
-SendInput ^x8{Enter}1eb5{Enter}
+send ^x8{Enter}1eb5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\~a::
-SendInput ^+u1eb5{Enter}
+send ^+u1eb5{Enter}
 return
 
 #if OtherCase()
 ::\u\~a::
-SendInput {U+1EB5}
+send {U+1EB5}
 return
 
 
@@ -18833,17 +18833,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\~{a}::
-SendInput ^x8{Enter}1eb5{Enter}
+send ^x8{Enter}1eb5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\~{a}::
-SendInput ^+u1eb5{Enter}
+send ^+u1eb5{Enter}
 return
 
 #if OtherCase()
 ::\u\~{a}::
-SendInput {U+1EB5}
+send {U+1EB5}
 return
 
 
@@ -18851,17 +18851,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\d{A}::
-SendInput ^x8{Enter}1eb6{Enter}
+send ^x8{Enter}1eb6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\d{A}::
-SendInput ^+u1eb6{Enter}
+send ^+u1eb6{Enter}
 return
 
 #if OtherCase()
 ::\u\d{A}::
-SendInput {U+1EB6}
+send {U+1EB6}
 return
 
 
@@ -18869,17 +18869,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\u\d{a}::
-SendInput ^x8{Enter}1eb7{Enter}
+send ^x8{Enter}1eb7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\u\d{a}::
-SendInput ^+u1eb7{Enter}
+send ^+u1eb7{Enter}
 return
 
 #if OtherCase()
 ::\u\d{a}::
-SendInput {U+1EB7}
+send {U+1EB7}
 return
 
 
@@ -18887,17 +18887,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{E}::
-SendInput ^x8{Enter}1eb8{Enter}
+send ^x8{Enter}1eb8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{E}::
-SendInput ^+u1eb8{Enter}
+send ^+u1eb8{Enter}
 return
 
 #if OtherCase()
 ::\d{E}::
-SendInput {U+1EB8}
+send {U+1EB8}
 return
 
 
@@ -18905,17 +18905,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{e}::
-SendInput ^x8{Enter}1eb9{Enter}
+send ^x8{Enter}1eb9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{e}::
-SendInput ^+u1eb9{Enter}
+send ^+u1eb9{Enter}
 return
 
 #if OtherCase()
 ::\d{e}::
-SendInput {U+1EB9}
+send {U+1EB9}
 return
 
 
@@ -18923,17 +18923,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~E::
-SendInput ^x8{Enter}1ebc{Enter}
+send ^x8{Enter}1ebc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~E::
-SendInput ^+u1ebc{Enter}
+send ^+u1ebc{Enter}
 return
 
 #if OtherCase()
 ::\~E::
-SendInput {U+1EBC}
+send {U+1EBC}
 return
 
 
@@ -18941,17 +18941,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{E}::
-SendInput ^x8{Enter}1ebc{Enter}
+send ^x8{Enter}1ebc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{E}::
-SendInput ^+u1ebc{Enter}
+send ^+u1ebc{Enter}
 return
 
 #if OtherCase()
 ::\~{E}::
-SendInput {U+1EBC}
+send {U+1EBC}
 return
 
 
@@ -18959,17 +18959,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~e::
-SendInput ^x8{Enter}1ebd{Enter}
+send ^x8{Enter}1ebd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~e::
-SendInput ^+u1ebd{Enter}
+send ^+u1ebd{Enter}
 return
 
 #if OtherCase()
 ::\~e::
-SendInput {U+1EBD}
+send {U+1EBD}
 return
 
 
@@ -18977,17 +18977,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{e}::
-SendInput ^x8{Enter}1ebd{Enter}
+send ^x8{Enter}1ebd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{e}::
-SendInput ^+u1ebd{Enter}
+send ^+u1ebd{Enter}
 return
 
 #if OtherCase()
 ::\~{e}::
-SendInput {U+1EBD}
+send {U+1EBD}
 return
 
 
@@ -18995,17 +18995,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'E::
-SendInput ^x8{Enter}1ebe{Enter}
+send ^x8{Enter}1ebe{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'E::
-SendInput ^+u1ebe{Enter}
+send ^+u1ebe{Enter}
 return
 
 #if OtherCase()
 ::\^\'E::
-SendInput {U+1EBE}
+send {U+1EBE}
 return
 
 
@@ -19013,17 +19013,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'{E}::
-SendInput ^x8{Enter}1ebe{Enter}
+send ^x8{Enter}1ebe{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'{E}::
-SendInput ^+u1ebe{Enter}
+send ^+u1ebe{Enter}
 return
 
 #if OtherCase()
 ::\^\'{E}::
-SendInput {U+1EBE}
+send {U+1EBE}
 return
 
 
@@ -19031,17 +19031,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'e::
-SendInput ^x8{Enter}1ebf{Enter}
+send ^x8{Enter}1ebf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'e::
-SendInput ^+u1ebf{Enter}
+send ^+u1ebf{Enter}
 return
 
 #if OtherCase()
 ::\^\'e::
-SendInput {U+1EBF}
+send {U+1EBF}
 return
 
 
@@ -19049,17 +19049,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'{e}::
-SendInput ^x8{Enter}1ebf{Enter}
+send ^x8{Enter}1ebf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'{e}::
-SendInput ^+u1ebf{Enter}
+send ^+u1ebf{Enter}
 return
 
 #if OtherCase()
 ::\^\'{e}::
-SendInput {U+1EBF}
+send {U+1EBF}
 return
 
 
@@ -19067,17 +19067,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``E::
-SendInput ^x8{Enter}1ec0{Enter}
+send ^x8{Enter}1ec0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``E::
-SendInput ^+u1ec0{Enter}
+send ^+u1ec0{Enter}
 return
 
 #if OtherCase()
 ::\^\``E::
-SendInput {U+1EC0}
+send {U+1EC0}
 return
 
 
@@ -19085,17 +19085,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``{E}::
-SendInput ^x8{Enter}1ec0{Enter}
+send ^x8{Enter}1ec0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``{E}::
-SendInput ^+u1ec0{Enter}
+send ^+u1ec0{Enter}
 return
 
 #if OtherCase()
 ::\^\``{E}::
-SendInput {U+1EC0}
+send {U+1EC0}
 return
 
 
@@ -19103,17 +19103,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``e::
-SendInput ^x8{Enter}1ec1{Enter}
+send ^x8{Enter}1ec1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``e::
-SendInput ^+u1ec1{Enter}
+send ^+u1ec1{Enter}
 return
 
 #if OtherCase()
 ::\^\``e::
-SendInput {U+1EC1}
+send {U+1EC1}
 return
 
 
@@ -19121,17 +19121,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``{e}::
-SendInput ^x8{Enter}1ec1{Enter}
+send ^x8{Enter}1ec1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``{e}::
-SendInput ^+u1ec1{Enter}
+send ^+u1ec1{Enter}
 return
 
 #if OtherCase()
 ::\^\``{e}::
-SendInput {U+1EC1}
+send {U+1EC1}
 return
 
 
@@ -19139,17 +19139,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~E::
-SendInput ^x8{Enter}1ec4{Enter}
+send ^x8{Enter}1ec4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~E::
-SendInput ^+u1ec4{Enter}
+send ^+u1ec4{Enter}
 return
 
 #if OtherCase()
 ::\^\~E::
-SendInput {U+1EC4}
+send {U+1EC4}
 return
 
 
@@ -19157,17 +19157,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~{E}::
-SendInput ^x8{Enter}1ec4{Enter}
+send ^x8{Enter}1ec4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~{E}::
-SendInput ^+u1ec4{Enter}
+send ^+u1ec4{Enter}
 return
 
 #if OtherCase()
 ::\^\~{E}::
-SendInput {U+1EC4}
+send {U+1EC4}
 return
 
 
@@ -19175,17 +19175,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~e::
-SendInput ^x8{Enter}1ec5{Enter}
+send ^x8{Enter}1ec5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~e::
-SendInput ^+u1ec5{Enter}
+send ^+u1ec5{Enter}
 return
 
 #if OtherCase()
 ::\^\~e::
-SendInput {U+1EC5}
+send {U+1EC5}
 return
 
 
@@ -19193,17 +19193,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~{e}::
-SendInput ^x8{Enter}1ec5{Enter}
+send ^x8{Enter}1ec5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~{e}::
-SendInput ^+u1ec5{Enter}
+send ^+u1ec5{Enter}
 return
 
 #if OtherCase()
 ::\^\~{e}::
-SendInput {U+1EC5}
+send {U+1EC5}
 return
 
 
@@ -19211,17 +19211,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\d{E}::
-SendInput ^x8{Enter}1ec6{Enter}
+send ^x8{Enter}1ec6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\d{E}::
-SendInput ^+u1ec6{Enter}
+send ^+u1ec6{Enter}
 return
 
 #if OtherCase()
 ::\^\d{E}::
-SendInput {U+1EC6}
+send {U+1EC6}
 return
 
 
@@ -19229,17 +19229,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\d{e}::
-SendInput ^x8{Enter}1ec7{Enter}
+send ^x8{Enter}1ec7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\d{e}::
-SendInput ^+u1ec7{Enter}
+send ^+u1ec7{Enter}
 return
 
 #if OtherCase()
 ::\^\d{e}::
-SendInput {U+1EC7}
+send {U+1EC7}
 return
 
 
@@ -19247,17 +19247,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{I}::
-SendInput ^x8{Enter}1eca{Enter}
+send ^x8{Enter}1eca{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{I}::
-SendInput ^+u1eca{Enter}
+send ^+u1eca{Enter}
 return
 
 #if OtherCase()
 ::\d{I}::
-SendInput {U+1ECA}
+send {U+1ECA}
 return
 
 
@@ -19265,17 +19265,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{i}::
-SendInput ^x8{Enter}1ecb{Enter}
+send ^x8{Enter}1ecb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{i}::
-SendInput ^+u1ecb{Enter}
+send ^+u1ecb{Enter}
 return
 
 #if OtherCase()
 ::\d{i}::
-SendInput {U+1ECB}
+send {U+1ECB}
 return
 
 
@@ -19283,17 +19283,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{O}::
-SendInput ^x8{Enter}1ecc{Enter}
+send ^x8{Enter}1ecc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{O}::
-SendInput ^+u1ecc{Enter}
+send ^+u1ecc{Enter}
 return
 
 #if OtherCase()
 ::\d{O}::
-SendInput {U+1ECC}
+send {U+1ECC}
 return
 
 
@@ -19301,17 +19301,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{o}::
-SendInput ^x8{Enter}1ecd{Enter}
+send ^x8{Enter}1ecd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{o}::
-SendInput ^+u1ecd{Enter}
+send ^+u1ecd{Enter}
 return
 
 #if OtherCase()
 ::\d{o}::
-SendInput {U+1ECD}
+send {U+1ECD}
 return
 
 
@@ -19319,17 +19319,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'O::
-SendInput ^x8{Enter}1ed0{Enter}
+send ^x8{Enter}1ed0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'O::
-SendInput ^+u1ed0{Enter}
+send ^+u1ed0{Enter}
 return
 
 #if OtherCase()
 ::\^\'O::
-SendInput {U+1ED0}
+send {U+1ED0}
 return
 
 
@@ -19337,17 +19337,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'{O}::
-SendInput ^x8{Enter}1ed0{Enter}
+send ^x8{Enter}1ed0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'{O}::
-SendInput ^+u1ed0{Enter}
+send ^+u1ed0{Enter}
 return
 
 #if OtherCase()
 ::\^\'{O}::
-SendInput {U+1ED0}
+send {U+1ED0}
 return
 
 
@@ -19355,17 +19355,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'o::
-SendInput ^x8{Enter}1ed1{Enter}
+send ^x8{Enter}1ed1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'o::
-SendInput ^+u1ed1{Enter}
+send ^+u1ed1{Enter}
 return
 
 #if OtherCase()
 ::\^\'o::
-SendInput {U+1ED1}
+send {U+1ED1}
 return
 
 
@@ -19373,17 +19373,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\'{o}::
-SendInput ^x8{Enter}1ed1{Enter}
+send ^x8{Enter}1ed1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\'{o}::
-SendInput ^+u1ed1{Enter}
+send ^+u1ed1{Enter}
 return
 
 #if OtherCase()
 ::\^\'{o}::
-SendInput {U+1ED1}
+send {U+1ED1}
 return
 
 
@@ -19391,17 +19391,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``O::
-SendInput ^x8{Enter}1ed2{Enter}
+send ^x8{Enter}1ed2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``O::
-SendInput ^+u1ed2{Enter}
+send ^+u1ed2{Enter}
 return
 
 #if OtherCase()
 ::\^\``O::
-SendInput {U+1ED2}
+send {U+1ED2}
 return
 
 
@@ -19409,17 +19409,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``{O}::
-SendInput ^x8{Enter}1ed2{Enter}
+send ^x8{Enter}1ed2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``{O}::
-SendInput ^+u1ed2{Enter}
+send ^+u1ed2{Enter}
 return
 
 #if OtherCase()
 ::\^\``{O}::
-SendInput {U+1ED2}
+send {U+1ED2}
 return
 
 
@@ -19427,17 +19427,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``o::
-SendInput ^x8{Enter}1ed3{Enter}
+send ^x8{Enter}1ed3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``o::
-SendInput ^+u1ed3{Enter}
+send ^+u1ed3{Enter}
 return
 
 #if OtherCase()
 ::\^\``o::
-SendInput {U+1ED3}
+send {U+1ED3}
 return
 
 
@@ -19445,17 +19445,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\``{o}::
-SendInput ^x8{Enter}1ed3{Enter}
+send ^x8{Enter}1ed3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\``{o}::
-SendInput ^+u1ed3{Enter}
+send ^+u1ed3{Enter}
 return
 
 #if OtherCase()
 ::\^\``{o}::
-SendInput {U+1ED3}
+send {U+1ED3}
 return
 
 
@@ -19463,17 +19463,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~O::
-SendInput ^x8{Enter}1ed6{Enter}
+send ^x8{Enter}1ed6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~O::
-SendInput ^+u1ed6{Enter}
+send ^+u1ed6{Enter}
 return
 
 #if OtherCase()
 ::\^\~O::
-SendInput {U+1ED6}
+send {U+1ED6}
 return
 
 
@@ -19481,17 +19481,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~{O}::
-SendInput ^x8{Enter}1ed6{Enter}
+send ^x8{Enter}1ed6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~{O}::
-SendInput ^+u1ed6{Enter}
+send ^+u1ed6{Enter}
 return
 
 #if OtherCase()
 ::\^\~{O}::
-SendInput {U+1ED6}
+send {U+1ED6}
 return
 
 
@@ -19499,17 +19499,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~o::
-SendInput ^x8{Enter}1ed7{Enter}
+send ^x8{Enter}1ed7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~o::
-SendInput ^+u1ed7{Enter}
+send ^+u1ed7{Enter}
 return
 
 #if OtherCase()
 ::\^\~o::
-SendInput {U+1ED7}
+send {U+1ED7}
 return
 
 
@@ -19517,17 +19517,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\~{o}::
-SendInput ^x8{Enter}1ed7{Enter}
+send ^x8{Enter}1ed7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\~{o}::
-SendInput ^+u1ed7{Enter}
+send ^+u1ed7{Enter}
 return
 
 #if OtherCase()
 ::\^\~{o}::
-SendInput {U+1ED7}
+send {U+1ED7}
 return
 
 
@@ -19535,17 +19535,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\d{O}::
-SendInput ^x8{Enter}1ed8{Enter}
+send ^x8{Enter}1ed8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\d{O}::
-SendInput ^+u1ed8{Enter}
+send ^+u1ed8{Enter}
 return
 
 #if OtherCase()
 ::\^\d{O}::
-SendInput {U+1ED8}
+send {U+1ED8}
 return
 
 
@@ -19553,17 +19553,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\^\d{o}::
-SendInput ^x8{Enter}1ed9{Enter}
+send ^x8{Enter}1ed9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\^\d{o}::
-SendInput ^+u1ed9{Enter}
+send ^+u1ed9{Enter}
 return
 
 #if OtherCase()
 ::\^\d{o}::
-SendInput {U+1ED9}
+send {U+1ED9}
 return
 
 
@@ -19571,17 +19571,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{U}::
-SendInput ^x8{Enter}1ee4{Enter}
+send ^x8{Enter}1ee4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{U}::
-SendInput ^+u1ee4{Enter}
+send ^+u1ee4{Enter}
 return
 
 #if OtherCase()
 ::\d{U}::
-SendInput {U+1EE4}
+send {U+1EE4}
 return
 
 
@@ -19589,17 +19589,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{u}::
-SendInput ^x8{Enter}1ee5{Enter}
+send ^x8{Enter}1ee5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{u}::
-SendInput ^+u1ee5{Enter}
+send ^+u1ee5{Enter}
 return
 
 #if OtherCase()
 ::\d{u}::
-SendInput {U+1EE5}
+send {U+1EE5}
 return
 
 
@@ -19607,17 +19607,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``Y::
-SendInput ^x8{Enter}1ef2{Enter}
+send ^x8{Enter}1ef2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``Y::
-SendInput ^+u1ef2{Enter}
+send ^+u1ef2{Enter}
 return
 
 #if OtherCase()
 ::\``Y::
-SendInput {U+1EF2}
+send {U+1EF2}
 return
 
 
@@ -19625,17 +19625,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{Y}::
-SendInput ^x8{Enter}1ef2{Enter}
+send ^x8{Enter}1ef2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{Y}::
-SendInput ^+u1ef2{Enter}
+send ^+u1ef2{Enter}
 return
 
 #if OtherCase()
 ::\``{Y}::
-SendInput {U+1EF2}
+send {U+1EF2}
 return
 
 
@@ -19643,17 +19643,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``y::
-SendInput ^x8{Enter}1ef3{Enter}
+send ^x8{Enter}1ef3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``y::
-SendInput ^+u1ef3{Enter}
+send ^+u1ef3{Enter}
 return
 
 #if OtherCase()
 ::\``y::
-SendInput {U+1EF3}
+send {U+1EF3}
 return
 
 
@@ -19661,17 +19661,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\``{y}::
-SendInput ^x8{Enter}1ef3{Enter}
+send ^x8{Enter}1ef3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\``{y}::
-SendInput ^+u1ef3{Enter}
+send ^+u1ef3{Enter}
 return
 
 #if OtherCase()
 ::\``{y}::
-SendInput {U+1EF3}
+send {U+1EF3}
 return
 
 
@@ -19679,17 +19679,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{Y}::
-SendInput ^x8{Enter}1ef4{Enter}
+send ^x8{Enter}1ef4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{Y}::
-SendInput ^+u1ef4{Enter}
+send ^+u1ef4{Enter}
 return
 
 #if OtherCase()
 ::\d{Y}::
-SendInput {U+1EF4}
+send {U+1EF4}
 return
 
 
@@ -19697,17 +19697,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\d{y}::
-SendInput ^x8{Enter}1ef5{Enter}
+send ^x8{Enter}1ef5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\d{y}::
-SendInput ^+u1ef5{Enter}
+send ^+u1ef5{Enter}
 return
 
 #if OtherCase()
 ::\d{y}::
-SendInput {U+1EF5}
+send {U+1EF5}
 return
 
 
@@ -19715,17 +19715,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~Y::
-SendInput ^x8{Enter}1ef8{Enter}
+send ^x8{Enter}1ef8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~Y::
-SendInput ^+u1ef8{Enter}
+send ^+u1ef8{Enter}
 return
 
 #if OtherCase()
 ::\~Y::
-SendInput {U+1EF8}
+send {U+1EF8}
 return
 
 
@@ -19733,17 +19733,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{Y}::
-SendInput ^x8{Enter}1ef8{Enter}
+send ^x8{Enter}1ef8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{Y}::
-SendInput ^+u1ef8{Enter}
+send ^+u1ef8{Enter}
 return
 
 #if OtherCase()
 ::\~{Y}::
-SendInput {U+1EF8}
+send {U+1EF8}
 return
 
 
@@ -19751,17 +19751,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~y::
-SendInput ^x8{Enter}1ef9{Enter}
+send ^x8{Enter}1ef9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~y::
-SendInput ^+u1ef9{Enter}
+send ^+u1ef9{Enter}
 return
 
 #if OtherCase()
 ::\~y::
-SendInput {U+1EF9}
+send {U+1EF9}
 return
 
 
@@ -19769,17 +19769,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\~{y}::
-SendInput ^x8{Enter}1ef9{Enter}
+send ^x8{Enter}1ef9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\~{y}::
-SendInput ^+u1ef9{Enter}
+send ^+u1ef9{Enter}
 return
 
 #if OtherCase()
 ::\~{y}::
-SendInput {U+1EF9}
+send {U+1EF9}
 return
 
 
@@ -19787,17 +19787,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\quad::
-SendInput ^x8{Enter}2001{Enter}
+send ^x8{Enter}2001{Enter}
 return
 
 #if GtkApplicationCase()
 ::\quad::
-SendInput ^+u2001{Enter}
+send ^+u2001{Enter}
 return
 
 #if OtherCase()
 ::\quad::
-SendInput {U+2001}
+send {U+2001}
 return
 
 
@@ -19805,17 +19805,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\/::
-SendInput ^x8{Enter}200c{Enter}
+send ^x8{Enter}200c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\/::
-SendInput ^+u200c{Enter}
+send ^+u200c{Enter}
 return
 
 #if OtherCase()
 ::\/::
-SendInput {U+200C}
+send {U+200C}
 return
 
 
@@ -19823,17 +19823,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::--::
-SendInput ^x8{Enter}2013{Enter}
+send ^x8{Enter}2013{Enter}
 return
 
 #if GtkApplicationCase()
 ::--::
-SendInput ^+u2013{Enter}
+send ^+u2013{Enter}
 return
 
 #if OtherCase()
 ::--::
-SendInput {U+2013}
+send {U+2013}
 return
 
 
@@ -19841,17 +19841,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::---::
-SendInput ^x8{Enter}2014{Enter}
+send ^x8{Enter}2014{Enter}
 return
 
 #if GtkApplicationCase()
 ::---::
-SendInput ^+u2014{Enter}
+send ^+u2014{Enter}
 return
 
 #if OtherCase()
 ::---::
-SendInput {U+2014}
+send {U+2014}
 return
 
 
@@ -19859,17 +19859,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Vert::
-SendInput ^x8{Enter}2016{Enter}
+send ^x8{Enter}2016{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Vert::
-SendInput ^+u2016{Enter}
+send ^+u2016{Enter}
 return
 
 #if OtherCase()
 ::\Vert::
-SendInput {U+2016}
+send {U+2016}
 return
 
 
@@ -19877,17 +19877,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\grq::
-SendInput ^x8{Enter}2018{Enter}
+send ^x8{Enter}2018{Enter}
 return
 
 #if GtkApplicationCase()
 ::\grq::
-SendInput ^+u2018{Enter}
+send ^+u2018{Enter}
 return
 
 #if OtherCase()
 ::\grq::
-SendInput {U+2018}
+send {U+2018}
 return
 
 
@@ -19895,17 +19895,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lq::
-SendInput ^x8{Enter}2018{Enter}
+send ^x8{Enter}2018{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lq::
-SendInput ^+u2018{Enter}
+send ^+u2018{Enter}
 return
 
 #if OtherCase()
 ::\lq::
-SendInput {U+2018}
+send {U+2018}
 return
 
 
@@ -19913,17 +19913,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rq::
-SendInput ^x8{Enter}2019{Enter}
+send ^x8{Enter}2019{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rq::
-SendInput ^+u2019{Enter}
+send ^+u2019{Enter}
 return
 
 #if OtherCase()
 ::\rq::
-SendInput {U+2019}
+send {U+2019}
 return
 
 
@@ -19931,17 +19931,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\glq::
-SendInput ^x8{Enter}201a{Enter}
+send ^x8{Enter}201a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\glq::
-SendInput ^+u201a{Enter}
+send ^+u201a{Enter}
 return
 
 #if OtherCase()
 ::\glq::
-SendInput {U+201A}
+send {U+201A}
 return
 
 
@@ -19949,17 +19949,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"'::
-SendInput ^x8{Enter}201c{Enter}
+send ^x8{Enter}201c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"'::
-SendInput ^+u201c{Enter}
+send ^+u201c{Enter}
 return
 
 #if OtherCase()
 ::\"'::
-SendInput {U+201C}
+send {U+201C}
 return
 
 
@@ -19967,17 +19967,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\grqq::
-SendInput ^x8{Enter}201c{Enter}
+send ^x8{Enter}201c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\grqq::
-SendInput ^+u201c{Enter}
+send ^+u201c{Enter}
 return
 
 #if OtherCase()
 ::\grqq::
-SendInput {U+201C}
+send {U+201C}
 return
 
 
@@ -19985,17 +19985,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ldq::
-SendInput ^x8{Enter}201c{Enter}
+send ^x8{Enter}201c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ldq::
-SendInput ^+u201c{Enter}
+send ^+u201c{Enter}
 return
 
 #if OtherCase()
 ::\ldq::
-SendInput {U+201C}
+send {U+201C}
 return
 
 
@@ -20003,17 +20003,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rdq::
-SendInput ^x8{Enter}201d{Enter}
+send ^x8{Enter}201d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rdq::
-SendInput ^+u201d{Enter}
+send ^+u201d{Enter}
 return
 
 #if OtherCase()
 ::\rdq::
-SendInput {U+201D}
+send {U+201D}
 return
 
 
@@ -20021,17 +20021,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\"``::
-SendInput ^x8{Enter}201e{Enter}
+send ^x8{Enter}201e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\"``::
-SendInput ^+u201e{Enter}
+send ^+u201e{Enter}
 return
 
 #if OtherCase()
 ::\"``::
-SendInput {U+201E}
+send {U+201E}
 return
 
 
@@ -20039,17 +20039,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\glqq::
-SendInput ^x8{Enter}201e{Enter}
+send ^x8{Enter}201e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\glqq::
-SendInput ^+u201e{Enter}
+send ^+u201e{Enter}
 return
 
 #if OtherCase()
 ::\glqq::
-SendInput {U+201E}
+send {U+201E}
 return
 
 
@@ -20057,17 +20057,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\dag::
-SendInput ^x8{Enter}2020{Enter}
+send ^x8{Enter}2020{Enter}
 return
 
 #if GtkApplicationCase()
 ::\dag::
-SendInput ^+u2020{Enter}
+send ^+u2020{Enter}
 return
 
 #if OtherCase()
 ::\dag::
-SendInput {U+2020}
+send {U+2020}
 return
 
 
@@ -20075,17 +20075,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\dagger::
-SendInput ^x8{Enter}2020{Enter}
+send ^x8{Enter}2020{Enter}
 return
 
 #if GtkApplicationCase()
 ::\dagger::
-SendInput ^+u2020{Enter}
+send ^+u2020{Enter}
 return
 
 #if OtherCase()
 ::\dagger::
-SendInput {U+2020}
+send {U+2020}
 return
 
 
@@ -20093,17 +20093,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ddag::
-SendInput ^x8{Enter}2021{Enter}
+send ^x8{Enter}2021{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ddag::
-SendInput ^+u2021{Enter}
+send ^+u2021{Enter}
 return
 
 #if OtherCase()
 ::\ddag::
-SendInput {U+2021}
+send {U+2021}
 return
 
 
@@ -20111,17 +20111,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ddagger::
-SendInput ^x8{Enter}2021{Enter}
+send ^x8{Enter}2021{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ddagger::
-SendInput ^+u2021{Enter}
+send ^+u2021{Enter}
 return
 
 #if OtherCase()
 ::\ddagger::
-SendInput {U+2021}
+send {U+2021}
 return
 
 
@@ -20129,17 +20129,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bullet::
-SendInput ^x8{Enter}2022{Enter}
+send ^x8{Enter}2022{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bullet::
-SendInput ^+u2022{Enter}
+send ^+u2022{Enter}
 return
 
 #if OtherCase()
 ::\bullet::
-SendInput {U+2022}
+send {U+2022}
 return
 
 
@@ -20147,17 +20147,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ldots::
-SendInput ^x8{Enter}2026{Enter}
+send ^x8{Enter}2026{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ldots::
-SendInput ^+u2026{Enter}
+send ^+u2026{Enter}
 return
 
 #if OtherCase()
 ::\ldots::
-SendInput {U+2026}
+send {U+2026}
 return
 
 
@@ -20165,17 +20165,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\newline::
-SendInput ^x8{Enter}2028{Enter}
+send ^x8{Enter}2028{Enter}
 return
 
 #if GtkApplicationCase()
 ::\newline::
-SendInput ^+u2028{Enter}
+send ^+u2028{Enter}
 return
 
 #if OtherCase()
 ::\newline::
-SendInput {U+2028}
+send {U+2028}
 return
 
 
@@ -20183,17 +20183,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\par::
-SendInput ^x8{Enter}2029{Enter}
+send ^x8{Enter}2029{Enter}
 return
 
 #if GtkApplicationCase()
 ::\par::
-SendInput ^+u2029{Enter}
+send ^+u2029{Enter}
 return
 
 #if OtherCase()
 ::\par::
-SendInput {U+2029}
+send {U+2029}
 return
 
 
@@ -20201,17 +20201,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\`,::
-SendInput ^x8{Enter}202f{Enter}
+send ^x8{Enter}202f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\`,::
-SendInput ^+u202f{Enter}
+send ^+u202f{Enter}
 return
 
 #if OtherCase()
 ::\`,::
-SendInput {U+202F}
+send {U+202F}
 return
 
 
@@ -20219,17 +20219,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\permil::
-SendInput ^x8{Enter}2030{Enter}
+send ^x8{Enter}2030{Enter}
 return
 
 #if GtkApplicationCase()
 ::\permil::
-SendInput ^+u2030{Enter}
+send ^+u2030{Enter}
 return
 
 #if OtherCase()
 ::\permil::
-SendInput {U+2030}
+send {U+2030}
 return
 
 
@@ -20237,17 +20237,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textpertenthousand::
-SendInput ^x8{Enter}2031{Enter}
+send ^x8{Enter}2031{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textpertenthousand::
-SendInput ^+u2031{Enter}
+send ^+u2031{Enter}
 return
 
 #if OtherCase()
 ::\textpertenthousand::
-SendInput {U+2031}
+send {U+2031}
 return
 
 
@@ -20255,17 +20255,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\prime::
-SendInput ^x8{Enter}2032{Enter}
+send ^x8{Enter}2032{Enter}
 return
 
 #if GtkApplicationCase()
 ::\prime::
-SendInput ^+u2032{Enter}
+send ^+u2032{Enter}
 return
 
 #if OtherCase()
 ::\prime::
-SendInput {U+2032}
+send {U+2032}
 return
 
 
@@ -20273,17 +20273,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varprime::
-SendInput ^x8{Enter}2032{Enter}
+send ^x8{Enter}2032{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varprime::
-SendInput ^+u2032{Enter}
+send ^+u2032{Enter}
 return
 
 #if OtherCase()
 ::\varprime::
-SendInput {U+2032}
+send {U+2032}
 return
 
 
@@ -20291,17 +20291,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\backprime::
-SendInput ^x8{Enter}2035{Enter}
+send ^x8{Enter}2035{Enter}
 return
 
 #if GtkApplicationCase()
 ::\backprime::
-SendInput ^+u2035{Enter}
+send ^+u2035{Enter}
 return
 
 #if OtherCase()
 ::\backprime::
-SendInput {U+2035}
+send {U+2035}
 return
 
 
@@ -20309,17 +20309,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\flq::
-SendInput ^x8{Enter}2039{Enter}
+send ^x8{Enter}2039{Enter}
 return
 
 #if GtkApplicationCase()
 ::\flq::
-SendInput ^+u2039{Enter}
+send ^+u2039{Enter}
 return
 
 #if OtherCase()
 ::\flq::
-SendInput {U+2039}
+send {U+2039}
 return
 
 
@@ -20327,17 +20327,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frq::
-SendInput ^x8{Enter}203a{Enter}
+send ^x8{Enter}203a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frq::
-SendInput ^+u203a{Enter}
+send ^+u203a{Enter}
 return
 
 #if OtherCase()
 ::\frq::
-SendInput {U+203A}
+send {U+203A}
 return
 
 
@@ -20345,17 +20345,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textreferencemark::
-SendInput ^x8{Enter}203b{Enter}
+send ^x8{Enter}203b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textreferencemark::
-SendInput ^+u203b{Enter}
+send ^+u203b{Enter}
 return
 
 #if OtherCase()
 ::\textreferencemark::
-SendInput {U+203B}
+send {U+203B}
 return
 
 
@@ -20363,17 +20363,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textinterrobang::
-SendInput ^x8{Enter}203d{Enter}
+send ^x8{Enter}203d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textinterrobang::
-SendInput ^+u203d{Enter}
+send ^+u203d{Enter}
 return
 
 #if OtherCase()
 ::\textinterrobang::
-SendInput {U+203D}
+send {U+203D}
 return
 
 
@@ -20381,17 +20381,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textfractionsolidus::
-SendInput ^x8{Enter}2044{Enter}
+send ^x8{Enter}2044{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textfractionsolidus::
-SendInput ^+u2044{Enter}
+send ^+u2044{Enter}
 return
 
 #if OtherCase()
 ::\textfractionsolidus::
-SendInput {U+2044}
+send {U+2044}
 return
 
 
@@ -20399,17 +20399,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textlquill::
-SendInput ^x8{Enter}2045{Enter}
+send ^x8{Enter}2045{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textlquill::
-SendInput ^+u2045{Enter}
+send ^+u2045{Enter}
 return
 
 #if OtherCase()
 ::\textlquill::
-SendInput {U+2045}
+send {U+2045}
 return
 
 
@@ -20417,17 +20417,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textrquill::
-SendInput ^x8{Enter}2046{Enter}
+send ^x8{Enter}2046{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textrquill::
-SendInput ^+u2046{Enter}
+send ^+u2046{Enter}
 return
 
 #if OtherCase()
 ::\textrquill::
-SendInput {U+2046}
+send {U+2046}
 return
 
 
@@ -20435,17 +20435,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textdiscount::
-SendInput ^x8{Enter}2052{Enter}
+send ^x8{Enter}2052{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textdiscount::
-SendInput ^+u2052{Enter}
+send ^+u2052{Enter}
 return
 
 #if OtherCase()
 ::\textdiscount::
-SendInput {U+2052}
+send {U+2052}
 return
 
 
@@ -20453,17 +20453,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^0::
-SendInput ^x8{Enter}2070{Enter}
+send ^x8{Enter}2070{Enter}
 return
 
 #if GtkApplicationCase()
 ::^0::
-SendInput ^+u2070{Enter}
+send ^+u2070{Enter}
 return
 
 #if OtherCase()
 ::^0::
-SendInput {U+2070}
+send {U+2070}
 return
 
 
@@ -20471,17 +20471,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^i::
-SendInput ^x8{Enter}2071{Enter}
+send ^x8{Enter}2071{Enter}
 return
 
 #if GtkApplicationCase()
 ::^i::
-SendInput ^+u2071{Enter}
+send ^+u2071{Enter}
 return
 
 #if OtherCase()
 ::^i::
-SendInput {U+2071}
+send {U+2071}
 return
 
 
@@ -20489,17 +20489,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^4::
-SendInput ^x8{Enter}2074{Enter}
+send ^x8{Enter}2074{Enter}
 return
 
 #if GtkApplicationCase()
 ::^4::
-SendInput ^+u2074{Enter}
+send ^+u2074{Enter}
 return
 
 #if OtherCase()
 ::^4::
-SendInput {U+2074}
+send {U+2074}
 return
 
 
@@ -20507,17 +20507,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^5::
-SendInput ^x8{Enter}2075{Enter}
+send ^x8{Enter}2075{Enter}
 return
 
 #if GtkApplicationCase()
 ::^5::
-SendInput ^+u2075{Enter}
+send ^+u2075{Enter}
 return
 
 #if OtherCase()
 ::^5::
-SendInput {U+2075}
+send {U+2075}
 return
 
 
@@ -20525,17 +20525,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^6::
-SendInput ^x8{Enter}2076{Enter}
+send ^x8{Enter}2076{Enter}
 return
 
 #if GtkApplicationCase()
 ::^6::
-SendInput ^+u2076{Enter}
+send ^+u2076{Enter}
 return
 
 #if OtherCase()
 ::^6::
-SendInput {U+2076}
+send {U+2076}
 return
 
 
@@ -20543,17 +20543,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^7::
-SendInput ^x8{Enter}2077{Enter}
+send ^x8{Enter}2077{Enter}
 return
 
 #if GtkApplicationCase()
 ::^7::
-SendInput ^+u2077{Enter}
+send ^+u2077{Enter}
 return
 
 #if OtherCase()
 ::^7::
-SendInput {U+2077}
+send {U+2077}
 return
 
 
@@ -20561,17 +20561,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^8::
-SendInput ^x8{Enter}2078{Enter}
+send ^x8{Enter}2078{Enter}
 return
 
 #if GtkApplicationCase()
 ::^8::
-SendInput ^+u2078{Enter}
+send ^+u2078{Enter}
 return
 
 #if OtherCase()
 ::^8::
-SendInput {U+2078}
+send {U+2078}
 return
 
 
@@ -20579,17 +20579,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^9::
-SendInput ^x8{Enter}2079{Enter}
+send ^x8{Enter}2079{Enter}
 return
 
 #if GtkApplicationCase()
 ::^9::
-SendInput ^+u2079{Enter}
+send ^+u2079{Enter}
 return
 
 #if OtherCase()
 ::^9::
-SendInput {U+2079}
+send {U+2079}
 return
 
 
@@ -20597,17 +20597,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^+::
-SendInput ^x8{Enter}207a{Enter}
+send ^x8{Enter}207a{Enter}
 return
 
 #if GtkApplicationCase()
 ::^+::
-SendInput ^+u207a{Enter}
+send ^+u207a{Enter}
 return
 
 #if OtherCase()
 ::^+::
-SendInput {U+207A}
+send {U+207A}
 return
 
 
@@ -20615,17 +20615,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^-::
-SendInput ^x8{Enter}207b{Enter}
+send ^x8{Enter}207b{Enter}
 return
 
 #if GtkApplicationCase()
 ::^-::
-SendInput ^+u207b{Enter}
+send ^+u207b{Enter}
 return
 
 #if OtherCase()
 ::^-::
-SendInput {U+207B}
+send {U+207B}
 return
 
 
@@ -20633,17 +20633,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^=::
-SendInput ^x8{Enter}207c{Enter}
+send ^x8{Enter}207c{Enter}
 return
 
 #if GtkApplicationCase()
 ::^=::
-SendInput ^+u207c{Enter}
+send ^+u207c{Enter}
 return
 
 #if OtherCase()
 ::^=::
-SendInput {U+207C}
+send {U+207C}
 return
 
 
@@ -20651,17 +20651,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^(::
-SendInput ^x8{Enter}207d{Enter}
+send ^x8{Enter}207d{Enter}
 return
 
 #if GtkApplicationCase()
 ::^(::
-SendInput ^+u207d{Enter}
+send ^+u207d{Enter}
 return
 
 #if OtherCase()
 ::^(::
-SendInput {U+207D}
+send {U+207D}
 return
 
 
@@ -20669,17 +20669,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^)::
-SendInput ^x8{Enter}207e{Enter}
+send ^x8{Enter}207e{Enter}
 return
 
 #if GtkApplicationCase()
 ::^)::
-SendInput ^+u207e{Enter}
+send ^+u207e{Enter}
 return
 
 #if OtherCase()
 ::^)::
-SendInput {U+207E}
+send {U+207E}
 return
 
 
@@ -20687,17 +20687,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^n::
-SendInput ^x8{Enter}207f{Enter}
+send ^x8{Enter}207f{Enter}
 return
 
 #if GtkApplicationCase()
 ::^n::
-SendInput ^+u207f{Enter}
+send ^+u207f{Enter}
 return
 
 #if OtherCase()
 ::^n::
-SendInput {U+207F}
+send {U+207F}
 return
 
 
@@ -20705,17 +20705,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_0::
-SendInput ^x8{Enter}2080{Enter}
+send ^x8{Enter}2080{Enter}
 return
 
 #if GtkApplicationCase()
 ::_0::
-SendInput ^+u2080{Enter}
+send ^+u2080{Enter}
 return
 
 #if OtherCase()
 ::_0::
-SendInput {U+2080}
+send {U+2080}
 return
 
 
@@ -20723,17 +20723,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_1::
-SendInput ^x8{Enter}2081{Enter}
+send ^x8{Enter}2081{Enter}
 return
 
 #if GtkApplicationCase()
 ::_1::
-SendInput ^+u2081{Enter}
+send ^+u2081{Enter}
 return
 
 #if OtherCase()
 ::_1::
-SendInput {U+2081}
+send {U+2081}
 return
 
 
@@ -20741,17 +20741,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_2::
-SendInput ^x8{Enter}2082{Enter}
+send ^x8{Enter}2082{Enter}
 return
 
 #if GtkApplicationCase()
 ::_2::
-SendInput ^+u2082{Enter}
+send ^+u2082{Enter}
 return
 
 #if OtherCase()
 ::_2::
-SendInput {U+2082}
+send {U+2082}
 return
 
 
@@ -20759,17 +20759,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_3::
-SendInput ^x8{Enter}2083{Enter}
+send ^x8{Enter}2083{Enter}
 return
 
 #if GtkApplicationCase()
 ::_3::
-SendInput ^+u2083{Enter}
+send ^+u2083{Enter}
 return
 
 #if OtherCase()
 ::_3::
-SendInput {U+2083}
+send {U+2083}
 return
 
 
@@ -20777,17 +20777,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_4::
-SendInput ^x8{Enter}2084{Enter}
+send ^x8{Enter}2084{Enter}
 return
 
 #if GtkApplicationCase()
 ::_4::
-SendInput ^+u2084{Enter}
+send ^+u2084{Enter}
 return
 
 #if OtherCase()
 ::_4::
-SendInput {U+2084}
+send {U+2084}
 return
 
 
@@ -20795,17 +20795,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_5::
-SendInput ^x8{Enter}2085{Enter}
+send ^x8{Enter}2085{Enter}
 return
 
 #if GtkApplicationCase()
 ::_5::
-SendInput ^+u2085{Enter}
+send ^+u2085{Enter}
 return
 
 #if OtherCase()
 ::_5::
-SendInput {U+2085}
+send {U+2085}
 return
 
 
@@ -20813,17 +20813,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_6::
-SendInput ^x8{Enter}2086{Enter}
+send ^x8{Enter}2086{Enter}
 return
 
 #if GtkApplicationCase()
 ::_6::
-SendInput ^+u2086{Enter}
+send ^+u2086{Enter}
 return
 
 #if OtherCase()
 ::_6::
-SendInput {U+2086}
+send {U+2086}
 return
 
 
@@ -20831,17 +20831,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_7::
-SendInput ^x8{Enter}2087{Enter}
+send ^x8{Enter}2087{Enter}
 return
 
 #if GtkApplicationCase()
 ::_7::
-SendInput ^+u2087{Enter}
+send ^+u2087{Enter}
 return
 
 #if OtherCase()
 ::_7::
-SendInput {U+2087}
+send {U+2087}
 return
 
 
@@ -20849,17 +20849,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_8::
-SendInput ^x8{Enter}2088{Enter}
+send ^x8{Enter}2088{Enter}
 return
 
 #if GtkApplicationCase()
 ::_8::
-SendInput ^+u2088{Enter}
+send ^+u2088{Enter}
 return
 
 #if OtherCase()
 ::_8::
-SendInput {U+2088}
+send {U+2088}
 return
 
 
@@ -20867,17 +20867,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_9::
-SendInput ^x8{Enter}2089{Enter}
+send ^x8{Enter}2089{Enter}
 return
 
 #if GtkApplicationCase()
 ::_9::
-SendInput ^+u2089{Enter}
+send ^+u2089{Enter}
 return
 
 #if OtherCase()
 ::_9::
-SendInput {U+2089}
+send {U+2089}
 return
 
 
@@ -20885,17 +20885,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_+::
-SendInput ^x8{Enter}208a{Enter}
+send ^x8{Enter}208a{Enter}
 return
 
 #if GtkApplicationCase()
 ::_+::
-SendInput ^+u208a{Enter}
+send ^+u208a{Enter}
 return
 
 #if OtherCase()
 ::_+::
-SendInput {U+208A}
+send {U+208A}
 return
 
 
@@ -20903,17 +20903,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_-::
-SendInput ^x8{Enter}208b{Enter}
+send ^x8{Enter}208b{Enter}
 return
 
 #if GtkApplicationCase()
 ::_-::
-SendInput ^+u208b{Enter}
+send ^+u208b{Enter}
 return
 
 #if OtherCase()
 ::_-::
-SendInput {U+208B}
+send {U+208B}
 return
 
 
@@ -20921,17 +20921,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_=::
-SendInput ^x8{Enter}208c{Enter}
+send ^x8{Enter}208c{Enter}
 return
 
 #if GtkApplicationCase()
 ::_=::
-SendInput ^+u208c{Enter}
+send ^+u208c{Enter}
 return
 
 #if OtherCase()
 ::_=::
-SendInput {U+208C}
+send {U+208C}
 return
 
 
@@ -20939,17 +20939,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_(::
-SendInput ^x8{Enter}208d{Enter}
+send ^x8{Enter}208d{Enter}
 return
 
 #if GtkApplicationCase()
 ::_(::
-SendInput ^+u208d{Enter}
+send ^+u208d{Enter}
 return
 
 #if OtherCase()
 ::_(::
-SendInput {U+208D}
+send {U+208D}
 return
 
 
@@ -20957,17 +20957,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_)::
-SendInput ^x8{Enter}208e{Enter}
+send ^x8{Enter}208e{Enter}
 return
 
 #if GtkApplicationCase()
 ::_)::
-SendInput ^+u208e{Enter}
+send ^+u208e{Enter}
 return
 
 #if OtherCase()
 ::_)::
-SendInput {U+208E}
+send {U+208E}
 return
 
 
@@ -20975,17 +20975,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_a::
-SendInput ^x8{Enter}2090{Enter}
+send ^x8{Enter}2090{Enter}
 return
 
 #if GtkApplicationCase()
 ::_a::
-SendInput ^+u2090{Enter}
+send ^+u2090{Enter}
 return
 
 #if OtherCase()
 ::_a::
-SendInput {U+2090}
+send {U+2090}
 return
 
 
@@ -20993,17 +20993,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_e::
-SendInput ^x8{Enter}2091{Enter}
+send ^x8{Enter}2091{Enter}
 return
 
 #if GtkApplicationCase()
 ::_e::
-SendInput ^+u2091{Enter}
+send ^+u2091{Enter}
 return
 
 #if OtherCase()
 ::_e::
-SendInput {U+2091}
+send {U+2091}
 return
 
 
@@ -21011,17 +21011,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_o::
-SendInput ^x8{Enter}2092{Enter}
+send ^x8{Enter}2092{Enter}
 return
 
 #if GtkApplicationCase()
 ::_o::
-SendInput ^+u2092{Enter}
+send ^+u2092{Enter}
 return
 
 #if OtherCase()
 ::_o::
-SendInput {U+2092}
+send {U+2092}
 return
 
 
@@ -21029,17 +21029,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_x::
-SendInput ^x8{Enter}2093{Enter}
+send ^x8{Enter}2093{Enter}
 return
 
 #if GtkApplicationCase()
 ::_x::
-SendInput ^+u2093{Enter}
+send ^+u2093{Enter}
 return
 
 #if OtherCase()
 ::_x::
-SendInput {U+2093}
+send {U+2093}
 return
 
 
@@ -21047,17 +21047,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_h::
-SendInput ^x8{Enter}2095{Enter}
+send ^x8{Enter}2095{Enter}
 return
 
 #if GtkApplicationCase()
 ::_h::
-SendInput ^+u2095{Enter}
+send ^+u2095{Enter}
 return
 
 #if OtherCase()
 ::_h::
-SendInput {U+2095}
+send {U+2095}
 return
 
 
@@ -21065,17 +21065,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_k::
-SendInput ^x8{Enter}2096{Enter}
+send ^x8{Enter}2096{Enter}
 return
 
 #if GtkApplicationCase()
 ::_k::
-SendInput ^+u2096{Enter}
+send ^+u2096{Enter}
 return
 
 #if OtherCase()
 ::_k::
-SendInput {U+2096}
+send {U+2096}
 return
 
 
@@ -21083,17 +21083,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_l::
-SendInput ^x8{Enter}2097{Enter}
+send ^x8{Enter}2097{Enter}
 return
 
 #if GtkApplicationCase()
 ::_l::
-SendInput ^+u2097{Enter}
+send ^+u2097{Enter}
 return
 
 #if OtherCase()
 ::_l::
-SendInput {U+2097}
+send {U+2097}
 return
 
 
@@ -21101,17 +21101,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_m::
-SendInput ^x8{Enter}2098{Enter}
+send ^x8{Enter}2098{Enter}
 return
 
 #if GtkApplicationCase()
 ::_m::
-SendInput ^+u2098{Enter}
+send ^+u2098{Enter}
 return
 
 #if OtherCase()
 ::_m::
-SendInput {U+2098}
+send {U+2098}
 return
 
 
@@ -21119,17 +21119,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_n::
-SendInput ^x8{Enter}2099{Enter}
+send ^x8{Enter}2099{Enter}
 return
 
 #if GtkApplicationCase()
 ::_n::
-SendInput ^+u2099{Enter}
+send ^+u2099{Enter}
 return
 
 #if OtherCase()
 ::_n::
-SendInput {U+2099}
+send {U+2099}
 return
 
 
@@ -21137,17 +21137,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_p::
-SendInput ^x8{Enter}209a{Enter}
+send ^x8{Enter}209a{Enter}
 return
 
 #if GtkApplicationCase()
 ::_p::
-SendInput ^+u209a{Enter}
+send ^+u209a{Enter}
 return
 
 #if OtherCase()
 ::_p::
-SendInput {U+209A}
+send {U+209A}
 return
 
 
@@ -21155,17 +21155,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_s::
-SendInput ^x8{Enter}209b{Enter}
+send ^x8{Enter}209b{Enter}
 return
 
 #if GtkApplicationCase()
 ::_s::
-SendInput ^+u209b{Enter}
+send ^+u209b{Enter}
 return
 
 #if OtherCase()
 ::_s::
-SendInput {U+209B}
+send {U+209B}
 return
 
 
@@ -21173,17 +21173,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_t::
-SendInput ^x8{Enter}209c{Enter}
+send ^x8{Enter}209c{Enter}
 return
 
 #if GtkApplicationCase()
 ::_t::
-SendInput ^+u209c{Enter}
+send ^+u209c{Enter}
 return
 
 #if OtherCase()
 ::_t::
-SendInput {U+209C}
+send {U+209C}
 return
 
 
@@ -21191,17 +21191,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\colon::
-SendInput ^x8{Enter}20a1{Enter}
+send ^x8{Enter}20a1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\colon::
-SendInput ^+u20a1{Enter}
+send ^+u20a1{Enter}
 return
 
 #if OtherCase()
 ::\colon::
-SendInput {U+20A1}
+send {U+20A1}
 return
 
 
@@ -21209,17 +21209,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textcolonmonetary::
-SendInput ^x8{Enter}20a1{Enter}
+send ^x8{Enter}20a1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textcolonmonetary::
-SendInput ^+u20a1{Enter}
+send ^+u20a1{Enter}
 return
 
 #if OtherCase()
 ::\textcolonmonetary::
-SendInput {U+20A1}
+send {U+20A1}
 return
 
 
@@ -21227,17 +21227,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cruzeiro::
-SendInput ^x8{Enter}20a2{Enter}
+send ^x8{Enter}20a2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cruzeiro::
-SendInput ^+u20a2{Enter}
+send ^+u20a2{Enter}
 return
 
 #if OtherCase()
 ::\cruzeiro::
-SendInput {U+20A2}
+send {U+20A2}
 return
 
 
@@ -21245,17 +21245,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lira::
-SendInput ^x8{Enter}20a4{Enter}
+send ^x8{Enter}20a4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lira::
-SendInput ^+u20a4{Enter}
+send ^+u20a4{Enter}
 return
 
 #if OtherCase()
 ::\lira::
-SendInput {U+20A4}
+send {U+20A4}
 return
 
 
@@ -21263,17 +21263,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textlira::
-SendInput ^x8{Enter}20a4{Enter}
+send ^x8{Enter}20a4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textlira::
-SendInput ^+u20a4{Enter}
+send ^+u20a4{Enter}
 return
 
 #if OtherCase()
 ::\textlira::
-SendInput {U+20A4}
+send {U+20A4}
 return
 
 
@@ -21281,17 +21281,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\mill::
-SendInput ^x8{Enter}20a5{Enter}
+send ^x8{Enter}20a5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\mill::
-SendInput ^+u20a5{Enter}
+send ^+u20a5{Enter}
 return
 
 #if OtherCase()
 ::\mill::
-SendInput {U+20A5}
+send {U+20A5}
 return
 
 
@@ -21299,17 +21299,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\naira::
-SendInput ^x8{Enter}20a6{Enter}
+send ^x8{Enter}20a6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\naira::
-SendInput ^+u20a6{Enter}
+send ^+u20a6{Enter}
 return
 
 #if OtherCase()
 ::\naira::
-SendInput {U+20A6}
+send {U+20A6}
 return
 
 
@@ -21317,17 +21317,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textnaira::
-SendInput ^x8{Enter}20a6{Enter}
+send ^x8{Enter}20a6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textnaira::
-SendInput ^+u20a6{Enter}
+send ^+u20a6{Enter}
 return
 
 #if OtherCase()
 ::\textnaira::
-SendInput {U+20A6}
+send {U+20A6}
 return
 
 
@@ -21335,17 +21335,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\peseta::
-SendInput ^x8{Enter}20a7{Enter}
+send ^x8{Enter}20a7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\peseta::
-SendInput ^+u20a7{Enter}
+send ^+u20a7{Enter}
 return
 
 #if OtherCase()
 ::\peseta::
-SendInput {U+20A7}
+send {U+20A7}
 return
 
 
@@ -21353,17 +21353,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rupee::
-SendInput ^x8{Enter}20a8{Enter}
+send ^x8{Enter}20a8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rupee::
-SendInput ^+u20a8{Enter}
+send ^+u20a8{Enter}
 return
 
 #if OtherCase()
 ::\rupee::
-SendInput {U+20A8}
+send {U+20A8}
 return
 
 
@@ -21371,17 +21371,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textwon::
-SendInput ^x8{Enter}20a9{Enter}
+send ^x8{Enter}20a9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textwon::
-SendInput ^+u20a9{Enter}
+send ^+u20a9{Enter}
 return
 
 #if OtherCase()
 ::\textwon::
-SendInput {U+20A9}
+send {U+20A9}
 return
 
 
@@ -21389,17 +21389,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\won::
-SendInput ^x8{Enter}20a9{Enter}
+send ^x8{Enter}20a9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\won::
-SendInput ^+u20a9{Enter}
+send ^+u20a9{Enter}
 return
 
 #if OtherCase()
 ::\won::
-SendInput {U+20A9}
+send {U+20A9}
 return
 
 
@@ -21407,17 +21407,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\dong::
-SendInput ^x8{Enter}20ab{Enter}
+send ^x8{Enter}20ab{Enter}
 return
 
 #if GtkApplicationCase()
 ::\dong::
-SendInput ^+u20ab{Enter}
+send ^+u20ab{Enter}
 return
 
 #if OtherCase()
 ::\dong::
-SendInput {U+20AB}
+send {U+20AB}
 return
 
 
@@ -21425,17 +21425,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\euro::
-SendInput ^x8{Enter}20ac{Enter}
+send ^x8{Enter}20ac{Enter}
 return
 
 #if GtkApplicationCase()
 ::\euro::
-SendInput ^+u20ac{Enter}
+send ^+u20ac{Enter}
 return
 
 #if OtherCase()
 ::\euro::
-SendInput {U+20AC}
+send {U+20AC}
 return
 
 
@@ -21443,17 +21443,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\kip::
-SendInput ^x8{Enter}20ad{Enter}
+send ^x8{Enter}20ad{Enter}
 return
 
 #if GtkApplicationCase()
 ::\kip::
-SendInput ^+u20ad{Enter}
+send ^+u20ad{Enter}
 return
 
 #if OtherCase()
 ::\kip::
-SendInput {U+20AD}
+send {U+20AD}
 return
 
 
@@ -21461,17 +21461,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\tugrik::
-SendInput ^x8{Enter}20ae{Enter}
+send ^x8{Enter}20ae{Enter}
 return
 
 #if GtkApplicationCase()
 ::\tugrik::
-SendInput ^+u20ae{Enter}
+send ^+u20ae{Enter}
 return
 
 #if OtherCase()
 ::\tugrik::
-SendInput {U+20AE}
+send {U+20AE}
 return
 
 
@@ -21479,17 +21479,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\drachma::
-SendInput ^x8{Enter}20af{Enter}
+send ^x8{Enter}20af{Enter}
 return
 
 #if GtkApplicationCase()
 ::\drachma::
-SendInput ^+u20af{Enter}
+send ^+u20af{Enter}
 return
 
 #if OtherCase()
 ::\drachma::
-SendInput {U+20AF}
+send {U+20AF}
 return
 
 
@@ -21497,17 +21497,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\peso::
-SendInput ^x8{Enter}20b1{Enter}
+send ^x8{Enter}20b1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\peso::
-SendInput ^+u20b1{Enter}
+send ^+u20b1{Enter}
 return
 
 #if OtherCase()
 ::\peso::
-SendInput {U+20B1}
+send {U+20B1}
 return
 
 
@@ -21515,17 +21515,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textpeso::
-SendInput ^x8{Enter}20b1{Enter}
+send ^x8{Enter}20b1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textpeso::
-SendInput ^+u20b1{Enter}
+send ^+u20b1{Enter}
 return
 
 #if OtherCase()
 ::\textpeso::
-SendInput {U+20B1}
+send {U+20B1}
 return
 
 
@@ -21533,17 +21533,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\guarani::
-SendInput ^x8{Enter}20b2{Enter}
+send ^x8{Enter}20b2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\guarani::
-SendInput ^+u20b2{Enter}
+send ^+u20b2{Enter}
 return
 
 #if OtherCase()
 ::\guarani::
-SendInput {U+20B2}
+send {U+20B2}
 return
 
 
@@ -21551,17 +21551,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\austral::
-SendInput ^x8{Enter}20b3{Enter}
+send ^x8{Enter}20b3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\austral::
-SendInput ^+u20b3{Enter}
+send ^+u20b3{Enter}
 return
 
 #if OtherCase()
 ::\austral::
-SendInput {U+20B3}
+send {U+20B3}
 return
 
 
@@ -21569,17 +21569,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\hryvnia::
-SendInput ^x8{Enter}20b4{Enter}
+send ^x8{Enter}20b4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\hryvnia::
-SendInput ^+u20b4{Enter}
+send ^+u20b4{Enter}
 return
 
 #if OtherCase()
 ::\hryvnia::
-SendInput {U+20B4}
+send {U+20B4}
 return
 
 
@@ -21587,17 +21587,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cedi::
-SendInput ^x8{Enter}20b5{Enter}
+send ^x8{Enter}20b5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cedi::
-SendInput ^+u20b5{Enter}
+send ^+u20b5{Enter}
 return
 
 #if OtherCase()
 ::\cedi::
-SendInput {U+20B5}
+send {U+20B5}
 return
 
 
@@ -21605,17 +21605,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\spesmilo::
-SendInput ^x8{Enter}20b7{Enter}
+send ^x8{Enter}20b7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\spesmilo::
-SendInput ^+u20b7{Enter}
+send ^+u20b7{Enter}
 return
 
 #if OtherCase()
 ::\spesmilo::
-SendInput {U+20B7}
+send {U+20B7}
 return
 
 
@@ -21623,17 +21623,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\tenge::
-SendInput ^x8{Enter}20b8{Enter}
+send ^x8{Enter}20b8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\tenge::
-SendInput ^+u20b8{Enter}
+send ^+u20b8{Enter}
 return
 
 #if OtherCase()
 ::\tenge::
-SendInput {U+20B8}
+send {U+20B8}
 return
 
 
@@ -21641,17 +21641,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\manat::
-SendInput ^x8{Enter}20bc{Enter}
+send ^x8{Enter}20bc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\manat::
-SendInput ^+u20bc{Enter}
+send ^+u20bc{Enter}
 return
 
 #if OtherCase()
 ::\manat::
-SendInput {U+20BC}
+send {U+20BC}
 return
 
 
@@ -21659,17 +21659,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ruble::
-SendInput ^x8{Enter}20bd{Enter}
+send ^x8{Enter}20bd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ruble::
-SendInput ^+u20bd{Enter}
+send ^+u20bd{Enter}
 return
 
 #if OtherCase()
 ::\ruble::
-SendInput {U+20BD}
+send {U+20BD}
 return
 
 
@@ -21677,17 +21677,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lari::
-SendInput ^x8{Enter}20be{Enter}
+send ^x8{Enter}20be{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lari::
-SendInput ^+u20be{Enter}
+send ^+u20be{Enter}
 return
 
 #if OtherCase()
 ::\lari::
-SendInput {U+20BE}
+send {U+20BE}
 return
 
 
@@ -21695,17 +21695,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vec::
-SendInput ^x8{Enter}20d7{Enter}
+send ^x8{Enter}20d7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vec::
-SendInput ^+u20d7{Enter}
+send ^+u20d7{Enter}
 return
 
 #if OtherCase()
 ::\vec::
-SendInput {U+20D7}
+send {U+20D7}
 return
 
 
@@ -21713,17 +21713,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textbigcircle::
-SendInput ^x8{Enter}20dd{Enter}
+send ^x8{Enter}20dd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textbigcircle::
-SendInput ^+u20dd{Enter}
+send ^+u20dd{Enter}
 return
 
 #if OtherCase()
 ::\textbigcircle::
-SendInput {U+20DD}
+send {U+20DD}
 return
 
 
@@ -21731,17 +21731,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\celsius::
-SendInput ^x8{Enter}2103{Enter}
+send ^x8{Enter}2103{Enter}
 return
 
 #if GtkApplicationCase()
 ::\celsius::
-SendInput ^+u2103{Enter}
+send ^+u2103{Enter}
 return
 
 #if OtherCase()
 ::\celsius::
-SendInput {U+2103}
+send {U+2103}
 return
 
 
@@ -21749,17 +21749,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\hbar::
-SendInput ^x8{Enter}210f{Enter}
+send ^x8{Enter}210f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\hbar::
-SendInput ^+u210f{Enter}
+send ^+u210f{Enter}
 return
 
 #if OtherCase()
 ::\hbar::
-SendInput {U+210F}
+send {U+210F}
 return
 
 
@@ -21767,17 +21767,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\mathscr{I}::
-SendInput ^x8{Enter}2110{Enter}
+send ^x8{Enter}2110{Enter}
 return
 
 #if GtkApplicationCase()
 ::\mathscr{I}::
-SendInput ^+u2110{Enter}
+send ^+u2110{Enter}
 return
 
 #if OtherCase()
 ::\mathscr{I}::
-SendInput {U+2110}
+send {U+2110}
 return
 
 
@@ -21785,17 +21785,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Im::
-SendInput ^x8{Enter}2111{Enter}
+send ^x8{Enter}2111{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Im::
-SendInput ^+u2111{Enter}
+send ^+u2111{Enter}
 return
 
 #if OtherCase()
 ::\Im::
-SendInput {U+2111}
+send {U+2111}
 return
 
 
@@ -21803,17 +21803,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ell::
-SendInput ^x8{Enter}2113{Enter}
+send ^x8{Enter}2113{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ell::
-SendInput ^+u2113{Enter}
+send ^+u2113{Enter}
 return
 
 #if OtherCase()
 ::\ell::
-SendInput {U+2113}
+send {U+2113}
 return
 
 
@@ -21821,17 +21821,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Bbb{N}::
-SendInput ^x8{Enter}2115{Enter}
+send ^x8{Enter}2115{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Bbb{N}::
-SendInput ^+u2115{Enter}
+send ^+u2115{Enter}
 return
 
 #if OtherCase()
 ::\Bbb{N}::
-SendInput {U+2115}
+send {U+2115}
 return
 
 
@@ -21839,17 +21839,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\numero::
-SendInput ^x8{Enter}2116{Enter}
+send ^x8{Enter}2116{Enter}
 return
 
 #if GtkApplicationCase()
 ::\numero::
-SendInput ^+u2116{Enter}
+send ^+u2116{Enter}
 return
 
 #if OtherCase()
 ::\numero::
-SendInput {U+2116}
+send {U+2116}
 return
 
 
@@ -21857,17 +21857,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textnumero::
-SendInput ^x8{Enter}2116{Enter}
+send ^x8{Enter}2116{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textnumero::
-SendInput ^+u2116{Enter}
+send ^+u2116{Enter}
 return
 
 #if OtherCase()
 ::\textnumero::
-SendInput {U+2116}
+send {U+2116}
 return
 
 
@@ -21875,17 +21875,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textcircledP::
-SendInput ^x8{Enter}2117{Enter}
+send ^x8{Enter}2117{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textcircledP::
-SendInput ^+u2117{Enter}
+send ^+u2117{Enter}
 return
 
 #if OtherCase()
 ::\textcircledP::
-SendInput {U+2117}
+send {U+2117}
 return
 
 
@@ -21893,17 +21893,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\wp::
-SendInput ^x8{Enter}2118{Enter}
+send ^x8{Enter}2118{Enter}
 return
 
 #if GtkApplicationCase()
 ::\wp::
-SendInput ^+u2118{Enter}
+send ^+u2118{Enter}
 return
 
 #if OtherCase()
 ::\wp::
-SendInput {U+2118}
+send {U+2118}
 return
 
 
@@ -21911,17 +21911,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Bbb{P}::
-SendInput ^x8{Enter}2119{Enter}
+send ^x8{Enter}2119{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Bbb{P}::
-SendInput ^+u2119{Enter}
+send ^+u2119{Enter}
 return
 
 #if OtherCase()
 ::\Bbb{P}::
-SendInput {U+2119}
+send {U+2119}
 return
 
 
@@ -21929,17 +21929,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Re::
-SendInput ^x8{Enter}211c{Enter}
+send ^x8{Enter}211c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Re::
-SendInput ^+u211c{Enter}
+send ^+u211c{Enter}
 return
 
 #if OtherCase()
 ::\Re::
-SendInput {U+211C}
+send {U+211C}
 return
 
 
@@ -21947,17 +21947,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Bbb{R}::
-SendInput ^x8{Enter}211d{Enter}
+send ^x8{Enter}211d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Bbb{R}::
-SendInput ^+u211d{Enter}
+send ^+u211d{Enter}
 return
 
 #if OtherCase()
 ::\Bbb{R}::
-SendInput {U+211D}
+send {U+211D}
 return
 
 
@@ -21965,17 +21965,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textrecipe::
-SendInput ^x8{Enter}211e{Enter}
+send ^x8{Enter}211e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textrecipe::
-SendInput ^+u211e{Enter}
+send ^+u211e{Enter}
 return
 
 #if OtherCase()
 ::\textrecipe::
-SendInput {U+211E}
+send {U+211E}
 return
 
 
@@ -21983,17 +21983,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^{SM}::
-SendInput ^x8{Enter}2120{Enter}
+send ^x8{Enter}2120{Enter}
 return
 
 #if GtkApplicationCase()
 ::^{SM}::
-SendInput ^+u2120{Enter}
+send ^+u2120{Enter}
 return
 
 #if OtherCase()
 ::^{SM}::
-SendInput {U+2120}
+send {U+2120}
 return
 
 
@@ -22001,17 +22001,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\telephone::
-SendInput ^x8{Enter}2121{Enter}
+send ^x8{Enter}2121{Enter}
 return
 
 #if GtkApplicationCase()
 ::\telephone::
-SendInput ^+u2121{Enter}
+send ^+u2121{Enter}
 return
 
 #if OtherCase()
 ::\telephone::
-SendInput {U+2121}
+send {U+2121}
 return
 
 
@@ -22019,17 +22019,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^{TEL}::
-SendInput ^x8{Enter}2121{Enter}
+send ^x8{Enter}2121{Enter}
 return
 
 #if GtkApplicationCase()
 ::^{TEL}::
-SendInput ^+u2121{Enter}
+send ^+u2121{Enter}
 return
 
 #if OtherCase()
 ::^{TEL}::
-SendInput {U+2121}
+send {U+2121}
 return
 
 
@@ -22037,17 +22037,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^{TM}::
-SendInput ^x8{Enter}2122{Enter}
+send ^x8{Enter}2122{Enter}
 return
 
 #if GtkApplicationCase()
 ::^{TM}::
-SendInput ^+u2122{Enter}
+send ^+u2122{Enter}
 return
 
 #if OtherCase()
 ::^{TM}::
-SendInput {U+2122}
+send {U+2122}
 return
 
 
@@ -22055,17 +22055,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Bbb{Z}::
-SendInput ^x8{Enter}2124{Enter}
+send ^x8{Enter}2124{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Bbb{Z}::
-SendInput ^+u2124{Enter}
+send ^+u2124{Enter}
 return
 
 #if OtherCase()
 ::\Bbb{Z}::
-SendInput {U+2124}
+send {U+2124}
 return
 
 
@@ -22073,17 +22073,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ounce::
-SendInput ^x8{Enter}2125{Enter}
+send ^x8{Enter}2125{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ounce::
-SendInput ^+u2125{Enter}
+send ^+u2125{Enter}
 return
 
 #if OtherCase()
 ::\ounce::
-SendInput {U+2125}
+send {U+2125}
 return
 
 
@@ -22091,17 +22091,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ohm::
-SendInput ^x8{Enter}2126{Enter}
+send ^x8{Enter}2126{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ohm::
-SendInput ^+u2126{Enter}
+send ^+u2126{Enter}
 return
 
 #if OtherCase()
 ::\ohm::
-SendInput {U+2126}
+send {U+2126}
 return
 
 
@@ -22109,17 +22109,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\mho::
-SendInput ^x8{Enter}2127{Enter}
+send ^x8{Enter}2127{Enter}
 return
 
 #if GtkApplicationCase()
 ::\mho::
-SendInput ^+u2127{Enter}
+send ^+u2127{Enter}
 return
 
 #if OtherCase()
 ::\mho::
-SendInput {U+2127}
+send {U+2127}
 return
 
 
@@ -22127,17 +22127,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\kelvin::
-SendInput ^x8{Enter}212a{Enter}
+send ^x8{Enter}212a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\kelvin::
-SendInput ^+u212a{Enter}
+send ^+u212a{Enter}
 return
 
 #if OtherCase()
 ::\kelvin::
-SendInput {U+212A}
+send {U+212A}
 return
 
 
@@ -22145,17 +22145,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\angstrom::
-SendInput ^x8{Enter}212b{Enter}
+send ^x8{Enter}212b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\angstrom::
-SendInput ^+u212b{Enter}
+send ^+u212b{Enter}
 return
 
 #if OtherCase()
 ::\angstrom::
-SendInput {U+212B}
+send {U+212B}
 return
 
 
@@ -22163,17 +22163,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textestimated::
-SendInput ^x8{Enter}212e{Enter}
+send ^x8{Enter}212e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textestimated::
-SendInput ^+u212e{Enter}
+send ^+u212e{Enter}
 return
 
 #if OtherCase()
 ::\textestimated::
-SendInput {U+212E}
+send {U+212E}
 return
 
 
@@ -22181,17 +22181,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\aleph::
-SendInput ^x8{Enter}2135{Enter}
+send ^x8{Enter}2135{Enter}
 return
 
 #if GtkApplicationCase()
 ::\aleph::
-SendInput ^+u2135{Enter}
+send ^+u2135{Enter}
 return
 
 #if OtherCase()
 ::\aleph::
-SendInput {U+2135}
+send {U+2135}
 return
 
 
@@ -22199,17 +22199,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\beth::
-SendInput ^x8{Enter}2136{Enter}
+send ^x8{Enter}2136{Enter}
 return
 
 #if GtkApplicationCase()
 ::\beth::
-SendInput ^+u2136{Enter}
+send ^+u2136{Enter}
 return
 
 #if OtherCase()
 ::\beth::
-SendInput {U+2136}
+send {U+2136}
 return
 
 
@@ -22217,17 +22217,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gimel::
-SendInput ^x8{Enter}2137{Enter}
+send ^x8{Enter}2137{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gimel::
-SendInput ^+u2137{Enter}
+send ^+u2137{Enter}
 return
 
 #if OtherCase()
 ::\gimel::
-SendInput {U+2137}
+send {U+2137}
 return
 
 
@@ -22235,17 +22235,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\daleth::
-SendInput ^x8{Enter}2138{Enter}
+send ^x8{Enter}2138{Enter}
 return
 
 #if GtkApplicationCase()
 ::\daleth::
-SendInput ^+u2138{Enter}
+send ^+u2138{Enter}
 return
 
 #if OtherCase()
 ::\daleth::
-SendInput {U+2138}
+send {U+2138}
 return
 
 
@@ -22253,17 +22253,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\facsimile::
-SendInput ^x8{Enter}213b{Enter}
+send ^x8{Enter}213b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\facsimile::
-SendInput ^+u213b{Enter}
+send ^+u213b{Enter}
 return
 
 #if OtherCase()
 ::\facsimile::
-SendInput {U+213B}
+send {U+213B}
 return
 
 
@@ -22271,17 +22271,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\per::
-SendInput ^x8{Enter}214c{Enter}
+send ^x8{Enter}214c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\per::
-SendInput ^+u214c{Enter}
+send ^+u214c{Enter}
 return
 
 #if OtherCase()
 ::\per::
-SendInput {U+214C}
+send {U+214C}
 return
 
 
@@ -22289,17 +22289,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac13::
-SendInput ^x8{Enter}2153{Enter}
+send ^x8{Enter}2153{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac13::
-SendInput ^+u2153{Enter}
+send ^+u2153{Enter}
 return
 
 #if OtherCase()
 ::\frac13::
-SendInput {U+2153}
+send {U+2153}
 return
 
 
@@ -22307,17 +22307,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac23::
-SendInput ^x8{Enter}2154{Enter}
+send ^x8{Enter}2154{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac23::
-SendInput ^+u2154{Enter}
+send ^+u2154{Enter}
 return
 
 #if OtherCase()
 ::\frac23::
-SendInput {U+2154}
+send {U+2154}
 return
 
 
@@ -22325,17 +22325,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac15::
-SendInput ^x8{Enter}2155{Enter}
+send ^x8{Enter}2155{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac15::
-SendInput ^+u2155{Enter}
+send ^+u2155{Enter}
 return
 
 #if OtherCase()
 ::\frac15::
-SendInput {U+2155}
+send {U+2155}
 return
 
 
@@ -22343,17 +22343,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac25::
-SendInput ^x8{Enter}2156{Enter}
+send ^x8{Enter}2156{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac25::
-SendInput ^+u2156{Enter}
+send ^+u2156{Enter}
 return
 
 #if OtherCase()
 ::\frac25::
-SendInput {U+2156}
+send {U+2156}
 return
 
 
@@ -22361,17 +22361,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac35::
-SendInput ^x8{Enter}2157{Enter}
+send ^x8{Enter}2157{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac35::
-SendInput ^+u2157{Enter}
+send ^+u2157{Enter}
 return
 
 #if OtherCase()
 ::\frac35::
-SendInput {U+2157}
+send {U+2157}
 return
 
 
@@ -22379,17 +22379,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac45::
-SendInput ^x8{Enter}2158{Enter}
+send ^x8{Enter}2158{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac45::
-SendInput ^+u2158{Enter}
+send ^+u2158{Enter}
 return
 
 #if OtherCase()
 ::\frac45::
-SendInput {U+2158}
+send {U+2158}
 return
 
 
@@ -22397,17 +22397,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac16::
-SendInput ^x8{Enter}2159{Enter}
+send ^x8{Enter}2159{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac16::
-SendInput ^+u2159{Enter}
+send ^+u2159{Enter}
 return
 
 #if OtherCase()
 ::\frac16::
-SendInput {U+2159}
+send {U+2159}
 return
 
 
@@ -22415,17 +22415,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac56::
-SendInput ^x8{Enter}215a{Enter}
+send ^x8{Enter}215a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac56::
-SendInput ^+u215a{Enter}
+send ^+u215a{Enter}
 return
 
 #if OtherCase()
 ::\frac56::
-SendInput {U+215A}
+send {U+215A}
 return
 
 
@@ -22433,17 +22433,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac18::
-SendInput ^x8{Enter}215b{Enter}
+send ^x8{Enter}215b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac18::
-SendInput ^+u215b{Enter}
+send ^+u215b{Enter}
 return
 
 #if OtherCase()
 ::\frac18::
-SendInput {U+215B}
+send {U+215B}
 return
 
 
@@ -22451,17 +22451,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac38::
-SendInput ^x8{Enter}215c{Enter}
+send ^x8{Enter}215c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac38::
-SendInput ^+u215c{Enter}
+send ^+u215c{Enter}
 return
 
 #if OtherCase()
 ::\frac38::
-SendInput {U+215C}
+send {U+215C}
 return
 
 
@@ -22469,17 +22469,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac58::
-SendInput ^x8{Enter}215d{Enter}
+send ^x8{Enter}215d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac58::
-SendInput ^+u215d{Enter}
+send ^+u215d{Enter}
 return
 
 #if OtherCase()
 ::\frac58::
-SendInput {U+215D}
+send {U+215D}
 return
 
 
@@ -22487,17 +22487,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac78::
-SendInput ^x8{Enter}215e{Enter}
+send ^x8{Enter}215e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac78::
-SendInput ^+u215e{Enter}
+send ^+u215e{Enter}
 return
 
 #if OtherCase()
 ::\frac78::
-SendInput {U+215E}
+send {U+215E}
 return
 
 
@@ -22505,17 +22505,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frac1::
-SendInput ^x8{Enter}215f{Enter}
+send ^x8{Enter}215f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frac1::
-SendInput ^+u215f{Enter}
+send ^+u215f{Enter}
 return
 
 #if OtherCase()
 ::\frac1::
-SendInput {U+215F}
+send {U+215F}
 return
 
 
@@ -22523,17 +22523,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gets::
-SendInput ^x8{Enter}2190{Enter}
+send ^x8{Enter}2190{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gets::
-SendInput ^+u2190{Enter}
+send ^+u2190{Enter}
 return
 
 #if OtherCase()
 ::\gets::
-SendInput {U+2190}
+send {U+2190}
 return
 
 
@@ -22541,17 +22541,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftarrow::
-SendInput ^x8{Enter}2190{Enter}
+send ^x8{Enter}2190{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftarrow::
-SendInput ^+u2190{Enter}
+send ^+u2190{Enter}
 return
 
 #if OtherCase()
 ::\leftarrow::
-SendInput {U+2190}
+send {U+2190}
 return
 
 
@@ -22559,17 +22559,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\longleftarrow::
-SendInput ^x8{Enter}2190{Enter}
+send ^x8{Enter}2190{Enter}
 return
 
 #if GtkApplicationCase()
 ::\longleftarrow::
-SendInput ^+u2190{Enter}
+send ^+u2190{Enter}
 return
 
 #if OtherCase()
 ::\longleftarrow::
-SendInput {U+2190}
+send {U+2190}
 return
 
 
@@ -22577,17 +22577,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uparrow::
-SendInput ^x8{Enter}2191{Enter}
+send ^x8{Enter}2191{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uparrow::
-SendInput ^+u2191{Enter}
+send ^+u2191{Enter}
 return
 
 #if OtherCase()
 ::\uparrow::
-SendInput {U+2191}
+send {U+2191}
 return
 
 
@@ -22595,17 +22595,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\longrightarrow::
-SendInput ^x8{Enter}2192{Enter}
+send ^x8{Enter}2192{Enter}
 return
 
 #if GtkApplicationCase()
 ::\longrightarrow::
-SendInput ^+u2192{Enter}
+send ^+u2192{Enter}
 return
 
 #if OtherCase()
 ::\longrightarrow::
-SendInput {U+2192}
+send {U+2192}
 return
 
 
@@ -22613,17 +22613,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rightarrow::
-SendInput ^x8{Enter}2192{Enter}
+send ^x8{Enter}2192{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rightarrow::
-SendInput ^+u2192{Enter}
+send ^+u2192{Enter}
 return
 
 #if OtherCase()
 ::\rightarrow::
-SendInput {U+2192}
+send {U+2192}
 return
 
 
@@ -22631,17 +22631,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\to::
-SendInput ^x8{Enter}2192{Enter}
+send ^x8{Enter}2192{Enter}
 return
 
 #if GtkApplicationCase()
 ::\to::
-SendInput ^+u2192{Enter}
+send ^+u2192{Enter}
 return
 
 #if OtherCase()
 ::\to::
-SendInput {U+2192}
+send {U+2192}
 return
 
 
@@ -22649,17 +22649,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\downarrow::
-SendInput ^x8{Enter}2193{Enter}
+send ^x8{Enter}2193{Enter}
 return
 
 #if GtkApplicationCase()
 ::\downarrow::
-SendInput ^+u2193{Enter}
+send ^+u2193{Enter}
 return
 
 #if OtherCase()
 ::\downarrow::
-SendInput {U+2193}
+send {U+2193}
 return
 
 
@@ -22667,17 +22667,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftrightarrow::
-SendInput ^x8{Enter}2194{Enter}
+send ^x8{Enter}2194{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftrightarrow::
-SendInput ^+u2194{Enter}
+send ^+u2194{Enter}
 return
 
 #if OtherCase()
 ::\leftrightarrow::
-SendInput {U+2194}
+send {U+2194}
 return
 
 
@@ -22685,17 +22685,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\longleftrightarrow::
-SendInput ^x8{Enter}2194{Enter}
+send ^x8{Enter}2194{Enter}
 return
 
 #if GtkApplicationCase()
 ::\longleftrightarrow::
-SendInput ^+u2194{Enter}
+send ^+u2194{Enter}
 return
 
 #if OtherCase()
 ::\longleftrightarrow::
-SendInput {U+2194}
+send {U+2194}
 return
 
 
@@ -22703,17 +22703,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\updownarrow::
-SendInput ^x8{Enter}2195{Enter}
+send ^x8{Enter}2195{Enter}
 return
 
 #if GtkApplicationCase()
 ::\updownarrow::
-SendInput ^+u2195{Enter}
+send ^+u2195{Enter}
 return
 
 #if OtherCase()
 ::\updownarrow::
-SendInput {U+2195}
+send {U+2195}
 return
 
 
@@ -22721,17 +22721,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nwarrow::
-SendInput ^x8{Enter}2196{Enter}
+send ^x8{Enter}2196{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nwarrow::
-SendInput ^+u2196{Enter}
+send ^+u2196{Enter}
 return
 
 #if OtherCase()
 ::\nwarrow::
-SendInput {U+2196}
+send {U+2196}
 return
 
 
@@ -22739,17 +22739,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nearrow::
-SendInput ^x8{Enter}2197{Enter}
+send ^x8{Enter}2197{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nearrow::
-SendInput ^+u2197{Enter}
+send ^+u2197{Enter}
 return
 
 #if OtherCase()
 ::\nearrow::
-SendInput {U+2197}
+send {U+2197}
 return
 
 
@@ -22757,17 +22757,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\searrow::
-SendInput ^x8{Enter}2198{Enter}
+send ^x8{Enter}2198{Enter}
 return
 
 #if GtkApplicationCase()
 ::\searrow::
-SendInput ^+u2198{Enter}
+send ^+u2198{Enter}
 return
 
 #if OtherCase()
 ::\searrow::
-SendInput {U+2198}
+send {U+2198}
 return
 
 
@@ -22775,17 +22775,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\swarrow::
-SendInput ^x8{Enter}2199{Enter}
+send ^x8{Enter}2199{Enter}
 return
 
 #if GtkApplicationCase()
 ::\swarrow::
-SendInput ^+u2199{Enter}
+send ^+u2199{Enter}
 return
 
 #if OtherCase()
 ::\swarrow::
-SendInput {U+2199}
+send {U+2199}
 return
 
 
@@ -22793,17 +22793,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nleftarrow::
-SendInput ^x8{Enter}219a{Enter}
+send ^x8{Enter}219a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nleftarrow::
-SendInput ^+u219a{Enter}
+send ^+u219a{Enter}
 return
 
 #if OtherCase()
 ::\nleftarrow::
-SendInput {U+219A}
+send {U+219A}
 return
 
 
@@ -22811,17 +22811,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nrightarrow::
-SendInput ^x8{Enter}219b{Enter}
+send ^x8{Enter}219b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nrightarrow::
-SendInput ^+u219b{Enter}
+send ^+u219b{Enter}
 return
 
 #if OtherCase()
 ::\nrightarrow::
-SendInput {U+219B}
+send {U+219B}
 return
 
 
@@ -22829,17 +22829,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leadsto::
-SendInput ^x8{Enter}219d{Enter}
+send ^x8{Enter}219d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leadsto::
-SendInput ^+u219d{Enter}
+send ^+u219d{Enter}
 return
 
 #if OtherCase()
 ::\leadsto::
-SendInput {U+219D}
+send {U+219D}
 return
 
 
@@ -22847,17 +22847,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\twoheadleftarrow::
-SendInput ^x8{Enter}219e{Enter}
+send ^x8{Enter}219e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\twoheadleftarrow::
-SendInput ^+u219e{Enter}
+send ^+u219e{Enter}
 return
 
 #if OtherCase()
 ::\twoheadleftarrow::
-SendInput {U+219E}
+send {U+219E}
 return
 
 
@@ -22865,17 +22865,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\twoheadrightarrow::
-SendInput ^x8{Enter}21a0{Enter}
+send ^x8{Enter}21a0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\twoheadrightarrow::
-SendInput ^+u21a0{Enter}
+send ^+u21a0{Enter}
 return
 
 #if OtherCase()
 ::\twoheadrightarrow::
-SendInput {U+21A0}
+send {U+21A0}
 return
 
 
@@ -22883,17 +22883,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftarrowtail::
-SendInput ^x8{Enter}21a2{Enter}
+send ^x8{Enter}21a2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftarrowtail::
-SendInput ^+u21a2{Enter}
+send ^+u21a2{Enter}
 return
 
 #if OtherCase()
 ::\leftarrowtail::
-SendInput {U+21A2}
+send {U+21A2}
 return
 
 
@@ -22901,17 +22901,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rightarrowtail::
-SendInput ^x8{Enter}21a3{Enter}
+send ^x8{Enter}21a3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rightarrowtail::
-SendInput ^+u21a3{Enter}
+send ^+u21a3{Enter}
 return
 
 #if OtherCase()
 ::\rightarrowtail::
-SendInput {U+21A3}
+send {U+21A3}
 return
 
 
@@ -22919,17 +22919,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\longmapsto::
-SendInput ^x8{Enter}21a6{Enter}
+send ^x8{Enter}21a6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\longmapsto::
-SendInput ^+u21a6{Enter}
+send ^+u21a6{Enter}
 return
 
 #if OtherCase()
 ::\longmapsto::
-SendInput {U+21A6}
+send {U+21A6}
 return
 
 
@@ -22937,17 +22937,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\mapsto::
-SendInput ^x8{Enter}21a6{Enter}
+send ^x8{Enter}21a6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\mapsto::
-SendInput ^+u21a6{Enter}
+send ^+u21a6{Enter}
 return
 
 #if OtherCase()
 ::\mapsto::
-SendInput {U+21A6}
+send {U+21A6}
 return
 
 
@@ -22955,17 +22955,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\hookleftarrow::
-SendInput ^x8{Enter}21a9{Enter}
+send ^x8{Enter}21a9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\hookleftarrow::
-SendInput ^+u21a9{Enter}
+send ^+u21a9{Enter}
 return
 
 #if OtherCase()
 ::\hookleftarrow::
-SendInput {U+21A9}
+send {U+21A9}
 return
 
 
@@ -22973,17 +22973,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\hookrightarrow::
-SendInput ^x8{Enter}21aa{Enter}
+send ^x8{Enter}21aa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\hookrightarrow::
-SendInput ^+u21aa{Enter}
+send ^+u21aa{Enter}
 return
 
 #if OtherCase()
 ::\hookrightarrow::
-SendInput {U+21AA}
+send {U+21AA}
 return
 
 
@@ -22991,17 +22991,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\looparrowleft::
-SendInput ^x8{Enter}21ab{Enter}
+send ^x8{Enter}21ab{Enter}
 return
 
 #if GtkApplicationCase()
 ::\looparrowleft::
-SendInput ^+u21ab{Enter}
+send ^+u21ab{Enter}
 return
 
 #if OtherCase()
 ::\looparrowleft::
-SendInput {U+21AB}
+send {U+21AB}
 return
 
 
@@ -23009,17 +23009,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\looparrowright::
-SendInput ^x8{Enter}21ac{Enter}
+send ^x8{Enter}21ac{Enter}
 return
 
 #if GtkApplicationCase()
 ::\looparrowright::
-SendInput ^+u21ac{Enter}
+send ^+u21ac{Enter}
 return
 
 #if OtherCase()
 ::\looparrowright::
-SendInput {U+21AC}
+send {U+21AC}
 return
 
 
@@ -23027,17 +23027,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftrightsquigarrow::
-SendInput ^x8{Enter}21ad{Enter}
+send ^x8{Enter}21ad{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftrightsquigarrow::
-SendInput ^+u21ad{Enter}
+send ^+u21ad{Enter}
 return
 
 #if OtherCase()
 ::\leftrightsquigarrow::
-SendInput {U+21AD}
+send {U+21AD}
 return
 
 
@@ -23045,17 +23045,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nleftrightarrow::
-SendInput ^x8{Enter}21ae{Enter}
+send ^x8{Enter}21ae{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nleftrightarrow::
-SendInput ^+u21ae{Enter}
+send ^+u21ae{Enter}
 return
 
 #if OtherCase()
 ::\nleftrightarrow::
-SendInput {U+21AE}
+send {U+21AE}
 return
 
 
@@ -23063,17 +23063,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Lsh::
-SendInput ^x8{Enter}21b0{Enter}
+send ^x8{Enter}21b0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Lsh::
-SendInput ^+u21b0{Enter}
+send ^+u21b0{Enter}
 return
 
 #if OtherCase()
 ::\Lsh::
-SendInput {U+21B0}
+send {U+21B0}
 return
 
 
@@ -23081,17 +23081,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Rsh::
-SendInput ^x8{Enter}21b1{Enter}
+send ^x8{Enter}21b1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Rsh::
-SendInput ^+u21b1{Enter}
+send ^+u21b1{Enter}
 return
 
 #if OtherCase()
 ::\Rsh::
-SendInput {U+21B1}
+send {U+21B1}
 return
 
 
@@ -23099,17 +23099,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\curvearrowleft::
-SendInput ^x8{Enter}21b6{Enter}
+send ^x8{Enter}21b6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\curvearrowleft::
-SendInput ^+u21b6{Enter}
+send ^+u21b6{Enter}
 return
 
 #if OtherCase()
 ::\curvearrowleft::
-SendInput {U+21B6}
+send {U+21B6}
 return
 
 
@@ -23117,17 +23117,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\curvearrowright::
-SendInput ^x8{Enter}21b7{Enter}
+send ^x8{Enter}21b7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\curvearrowright::
-SendInput ^+u21b7{Enter}
+send ^+u21b7{Enter}
 return
 
 #if OtherCase()
 ::\curvearrowright::
-SendInput {U+21B7}
+send {U+21B7}
 return
 
 
@@ -23135,17 +23135,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circlearrowleft::
-SendInput ^x8{Enter}21ba{Enter}
+send ^x8{Enter}21ba{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circlearrowleft::
-SendInput ^+u21ba{Enter}
+send ^+u21ba{Enter}
 return
 
 #if OtherCase()
 ::\circlearrowleft::
-SendInput {U+21BA}
+send {U+21BA}
 return
 
 
@@ -23153,17 +23153,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circlearrowright::
-SendInput ^x8{Enter}21bb{Enter}
+send ^x8{Enter}21bb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circlearrowright::
-SendInput ^+u21bb{Enter}
+send ^+u21bb{Enter}
 return
 
 #if OtherCase()
 ::\circlearrowright::
-SendInput {U+21BB}
+send {U+21BB}
 return
 
 
@@ -23171,17 +23171,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftharpoonup::
-SendInput ^x8{Enter}21bc{Enter}
+send ^x8{Enter}21bc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftharpoonup::
-SendInput ^+u21bc{Enter}
+send ^+u21bc{Enter}
 return
 
 #if OtherCase()
 ::\leftharpoonup::
-SendInput {U+21BC}
+send {U+21BC}
 return
 
 
@@ -23189,17 +23189,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftharpoondown::
-SendInput ^x8{Enter}21bd{Enter}
+send ^x8{Enter}21bd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftharpoondown::
-SendInput ^+u21bd{Enter}
+send ^+u21bd{Enter}
 return
 
 #if OtherCase()
 ::\leftharpoondown::
-SendInput {U+21BD}
+send {U+21BD}
 return
 
 
@@ -23207,17 +23207,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uprightharpoon::
-SendInput ^x8{Enter}21be{Enter}
+send ^x8{Enter}21be{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uprightharpoon::
-SendInput ^+u21be{Enter}
+send ^+u21be{Enter}
 return
 
 #if OtherCase()
 ::\uprightharpoon::
-SendInput {U+21BE}
+send {U+21BE}
 return
 
 
@@ -23225,17 +23225,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\upleftharpoon::
-SendInput ^x8{Enter}21bf{Enter}
+send ^x8{Enter}21bf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\upleftharpoon::
-SendInput ^+u21bf{Enter}
+send ^+u21bf{Enter}
 return
 
 #if OtherCase()
 ::\upleftharpoon::
-SendInput {U+21BF}
+send {U+21BF}
 return
 
 
@@ -23243,17 +23243,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rightharpoonup::
-SendInput ^x8{Enter}21c0{Enter}
+send ^x8{Enter}21c0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rightharpoonup::
-SendInput ^+u21c0{Enter}
+send ^+u21c0{Enter}
 return
 
 #if OtherCase()
 ::\rightharpoonup::
-SendInput {U+21C0}
+send {U+21C0}
 return
 
 
@@ -23261,17 +23261,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rightharpoondown::
-SendInput ^x8{Enter}21c1{Enter}
+send ^x8{Enter}21c1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rightharpoondown::
-SendInput ^+u21c1{Enter}
+send ^+u21c1{Enter}
 return
 
 #if OtherCase()
 ::\rightharpoondown::
-SendInput {U+21C1}
+send {U+21C1}
 return
 
 
@@ -23279,17 +23279,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\downrightharpoon::
-SendInput ^x8{Enter}21c2{Enter}
+send ^x8{Enter}21c2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\downrightharpoon::
-SendInput ^+u21c2{Enter}
+send ^+u21c2{Enter}
 return
 
 #if OtherCase()
 ::\downrightharpoon::
-SendInput {U+21C2}
+send {U+21C2}
 return
 
 
@@ -23297,17 +23297,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\downleftharpoon::
-SendInput ^x8{Enter}21c3{Enter}
+send ^x8{Enter}21c3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\downleftharpoon::
-SendInput ^+u21c3{Enter}
+send ^+u21c3{Enter}
 return
 
 #if OtherCase()
 ::\downleftharpoon::
-SendInput {U+21C3}
+send {U+21C3}
 return
 
 
@@ -23315,17 +23315,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rightleftarrows::
-SendInput ^x8{Enter}21c4{Enter}
+send ^x8{Enter}21c4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rightleftarrows::
-SendInput ^+u21c4{Enter}
+send ^+u21c4{Enter}
 return
 
 #if OtherCase()
 ::\rightleftarrows::
-SendInput {U+21C4}
+send {U+21C4}
 return
 
 
@@ -23333,17 +23333,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftrightarrows::
-SendInput ^x8{Enter}21c6{Enter}
+send ^x8{Enter}21c6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftrightarrows::
-SendInput ^+u21c6{Enter}
+send ^+u21c6{Enter}
 return
 
 #if OtherCase()
 ::\leftrightarrows::
-SendInput {U+21C6}
+send {U+21C6}
 return
 
 
@@ -23351,17 +23351,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftleftarrows::
-SendInput ^x8{Enter}21c7{Enter}
+send ^x8{Enter}21c7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftleftarrows::
-SendInput ^+u21c7{Enter}
+send ^+u21c7{Enter}
 return
 
 #if OtherCase()
 ::\leftleftarrows::
-SendInput {U+21C7}
+send {U+21C7}
 return
 
 
@@ -23369,17 +23369,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\upuparrows::
-SendInput ^x8{Enter}21c8{Enter}
+send ^x8{Enter}21c8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\upuparrows::
-SendInput ^+u21c8{Enter}
+send ^+u21c8{Enter}
 return
 
 #if OtherCase()
 ::\upuparrows::
-SendInput {U+21C8}
+send {U+21C8}
 return
 
 
@@ -23387,17 +23387,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rightrightarrows::
-SendInput ^x8{Enter}21c9{Enter}
+send ^x8{Enter}21c9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rightrightarrows::
-SendInput ^+u21c9{Enter}
+send ^+u21c9{Enter}
 return
 
 #if OtherCase()
 ::\rightrightarrows::
-SendInput {U+21C9}
+send {U+21C9}
 return
 
 
@@ -23405,17 +23405,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\downdownarrows::
-SendInput ^x8{Enter}21ca{Enter}
+send ^x8{Enter}21ca{Enter}
 return
 
 #if GtkApplicationCase()
 ::\downdownarrows::
-SendInput ^+u21ca{Enter}
+send ^+u21ca{Enter}
 return
 
 #if OtherCase()
 ::\downdownarrows::
-SendInput {U+21CA}
+send {U+21CA}
 return
 
 
@@ -23423,17 +23423,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftrightharpoons::
-SendInput ^x8{Enter}21cb{Enter}
+send ^x8{Enter}21cb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftrightharpoons::
-SendInput ^+u21cb{Enter}
+send ^+u21cb{Enter}
 return
 
 #if OtherCase()
 ::\leftrightharpoons::
-SendInput {U+21CB}
+send {U+21CB}
 return
 
 
@@ -23441,17 +23441,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rightleftharpoons::
-SendInput ^x8{Enter}21cc{Enter}
+send ^x8{Enter}21cc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rightleftharpoons::
-SendInput ^+u21cc{Enter}
+send ^+u21cc{Enter}
 return
 
 #if OtherCase()
 ::\rightleftharpoons::
-SendInput {U+21CC}
+send {U+21CC}
 return
 
 
@@ -23459,17 +23459,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nLeftarrow::
-SendInput ^x8{Enter}21cd{Enter}
+send ^x8{Enter}21cd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nLeftarrow::
-SendInput ^+u21cd{Enter}
+send ^+u21cd{Enter}
 return
 
 #if OtherCase()
 ::\nLeftarrow::
-SendInput {U+21CD}
+send {U+21CD}
 return
 
 
@@ -23477,17 +23477,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nLeftrightarrow::
-SendInput ^x8{Enter}21ce{Enter}
+send ^x8{Enter}21ce{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nLeftrightarrow::
-SendInput ^+u21ce{Enter}
+send ^+u21ce{Enter}
 return
 
 #if OtherCase()
 ::\nLeftrightarrow::
-SendInput {U+21CE}
+send {U+21CE}
 return
 
 
@@ -23495,17 +23495,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nRightarrow::
-SendInput ^x8{Enter}21cf{Enter}
+send ^x8{Enter}21cf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nRightarrow::
-SendInput ^+u21cf{Enter}
+send ^+u21cf{Enter}
 return
 
 #if OtherCase()
 ::\nRightarrow::
-SendInput {U+21CF}
+send {U+21CF}
 return
 
 
@@ -23513,17 +23513,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Leftarrow::
-SendInput ^x8{Enter}21d0{Enter}
+send ^x8{Enter}21d0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Leftarrow::
-SendInput ^+u21d0{Enter}
+send ^+u21d0{Enter}
 return
 
 #if OtherCase()
 ::\Leftarrow::
-SendInput {U+21D0}
+send {U+21D0}
 return
 
 
@@ -23531,17 +23531,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Longleftarrow::
-SendInput ^x8{Enter}21d0{Enter}
+send ^x8{Enter}21d0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Longleftarrow::
-SendInput ^+u21d0{Enter}
+send ^+u21d0{Enter}
 return
 
 #if OtherCase()
 ::\Longleftarrow::
-SendInput {U+21D0}
+send {U+21D0}
 return
 
 
@@ -23549,17 +23549,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Uparrow::
-SendInput ^x8{Enter}21d1{Enter}
+send ^x8{Enter}21d1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Uparrow::
-SendInput ^+u21d1{Enter}
+send ^+u21d1{Enter}
 return
 
 #if OtherCase()
 ::\Uparrow::
-SendInput {U+21D1}
+send {U+21D1}
 return
 
 
@@ -23567,17 +23567,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Longrightarrow::
-SendInput ^x8{Enter}21d2{Enter}
+send ^x8{Enter}21d2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Longrightarrow::
-SendInput ^+u21d2{Enter}
+send ^+u21d2{Enter}
 return
 
 #if OtherCase()
 ::\Longrightarrow::
-SendInput {U+21D2}
+send {U+21D2}
 return
 
 
@@ -23585,17 +23585,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Rightarrow::
-SendInput ^x8{Enter}21d2{Enter}
+send ^x8{Enter}21d2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Rightarrow::
-SendInput ^+u21d2{Enter}
+send ^+u21d2{Enter}
 return
 
 #if OtherCase()
 ::\Rightarrow::
-SendInput {U+21D2}
+send {U+21D2}
 return
 
 
@@ -23603,17 +23603,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Downarrow::
-SendInput ^x8{Enter}21d3{Enter}
+send ^x8{Enter}21d3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Downarrow::
-SendInput ^+u21d3{Enter}
+send ^+u21d3{Enter}
 return
 
 #if OtherCase()
 ::\Downarrow::
-SendInput {U+21D3}
+send {U+21D3}
 return
 
 
@@ -23621,17 +23621,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Leftrightarrow::
-SendInput ^x8{Enter}21d4{Enter}
+send ^x8{Enter}21d4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Leftrightarrow::
-SendInput ^+u21d4{Enter}
+send ^+u21d4{Enter}
 return
 
 #if OtherCase()
 ::\Leftrightarrow::
-SendInput {U+21D4}
+send {U+21D4}
 return
 
 
@@ -23639,17 +23639,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Longleftrightarrow::
-SendInput ^x8{Enter}21d4{Enter}
+send ^x8{Enter}21d4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Longleftrightarrow::
-SendInput ^+u21d4{Enter}
+send ^+u21d4{Enter}
 return
 
 #if OtherCase()
 ::\Longleftrightarrow::
-SendInput {U+21D4}
+send {U+21D4}
 return
 
 
@@ -23657,17 +23657,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\iff::
-SendInput ^x8{Enter}21d4{Enter}
+send ^x8{Enter}21d4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\iff::
-SendInput ^+u21d4{Enter}
+send ^+u21d4{Enter}
 return
 
 #if OtherCase()
 ::\iff::
-SendInput {U+21D4}
+send {U+21D4}
 return
 
 
@@ -23675,17 +23675,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Updownarrow::
-SendInput ^x8{Enter}21d5{Enter}
+send ^x8{Enter}21d5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Updownarrow::
-SendInput ^+u21d5{Enter}
+send ^+u21d5{Enter}
 return
 
 #if OtherCase()
 ::\Updownarrow::
-SendInput {U+21D5}
+send {U+21D5}
 return
 
 
@@ -23693,17 +23693,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Lleftarrow::
-SendInput ^x8{Enter}21da{Enter}
+send ^x8{Enter}21da{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Lleftarrow::
-SendInput ^+u21da{Enter}
+send ^+u21da{Enter}
 return
 
 #if OtherCase()
 ::\Lleftarrow::
-SendInput {U+21DA}
+send {U+21DA}
 return
 
 
@@ -23711,17 +23711,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Rrightarrow::
-SendInput ^x8{Enter}21db{Enter}
+send ^x8{Enter}21db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Rrightarrow::
-SendInput ^+u21db{Enter}
+send ^+u21db{Enter}
 return
 
 #if OtherCase()
 ::\Rrightarrow::
-SendInput {U+21DB}
+send {U+21DB}
 return
 
 
@@ -23729,17 +23729,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\squigarrowright::
-SendInput ^x8{Enter}21dd{Enter}
+send ^x8{Enter}21dd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\squigarrowright::
-SendInput ^+u21dd{Enter}
+send ^+u21dd{Enter}
 return
 
 #if OtherCase()
 ::\squigarrowright::
-SendInput {U+21DD}
+send {U+21DD}
 return
 
 
@@ -23747,17 +23747,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\forall::
-SendInput ^x8{Enter}2200{Enter}
+send ^x8{Enter}2200{Enter}
 return
 
 #if GtkApplicationCase()
 ::\forall::
-SendInput ^+u2200{Enter}
+send ^+u2200{Enter}
 return
 
 #if OtherCase()
 ::\forall::
-SendInput {U+2200}
+send {U+2200}
 return
 
 
@@ -23765,17 +23765,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\complement::
-SendInput ^x8{Enter}2201{Enter}
+send ^x8{Enter}2201{Enter}
 return
 
 #if GtkApplicationCase()
 ::\complement::
-SendInput ^+u2201{Enter}
+send ^+u2201{Enter}
 return
 
 #if OtherCase()
 ::\complement::
-SendInput {U+2201}
+send {U+2201}
 return
 
 
@@ -23783,17 +23783,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\partial::
-SendInput ^x8{Enter}2202{Enter}
+send ^x8{Enter}2202{Enter}
 return
 
 #if GtkApplicationCase()
 ::\partial::
-SendInput ^+u2202{Enter}
+send ^+u2202{Enter}
 return
 
 #if OtherCase()
 ::\partial::
-SendInput {U+2202}
+send {U+2202}
 return
 
 
@@ -23801,17 +23801,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\exists::
-SendInput ^x8{Enter}2203{Enter}
+send ^x8{Enter}2203{Enter}
 return
 
 #if GtkApplicationCase()
 ::\exists::
-SendInput ^+u2203{Enter}
+send ^+u2203{Enter}
 return
 
 #if OtherCase()
 ::\exists::
-SendInput {U+2203}
+send {U+2203}
 return
 
 
@@ -23819,17 +23819,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nexists::
-SendInput ^x8{Enter}2204{Enter}
+send ^x8{Enter}2204{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nexists::
-SendInput ^+u2204{Enter}
+send ^+u2204{Enter}
 return
 
 #if OtherCase()
 ::\nexists::
-SendInput {U+2204}
+send {U+2204}
 return
 
 
@@ -23837,17 +23837,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\emptyset::
-SendInput ^x8{Enter}2205{Enter}
+send ^x8{Enter}2205{Enter}
 return
 
 #if GtkApplicationCase()
 ::\emptyset::
-SendInput ^+u2205{Enter}
+send ^+u2205{Enter}
 return
 
 #if OtherCase()
 ::\emptyset::
-SendInput {U+2205}
+send {U+2205}
 return
 
 
@@ -23855,17 +23855,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nabla::
-SendInput ^x8{Enter}2207{Enter}
+send ^x8{Enter}2207{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nabla::
-SendInput ^+u2207{Enter}
+send ^+u2207{Enter}
 return
 
 #if OtherCase()
 ::\nabla::
-SendInput {U+2207}
+send {U+2207}
 return
 
 
@@ -23873,17 +23873,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\in::
-SendInput ^x8{Enter}2208{Enter}
+send ^x8{Enter}2208{Enter}
 return
 
 #if GtkApplicationCase()
 ::\in::
-SendInput ^+u2208{Enter}
+send ^+u2208{Enter}
 return
 
 #if OtherCase()
 ::\in::
-SendInput {U+2208}
+send {U+2208}
 return
 
 
@@ -23891,17 +23891,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\notin::
-SendInput ^x8{Enter}2209{Enter}
+send ^x8{Enter}2209{Enter}
 return
 
 #if GtkApplicationCase()
 ::\notin::
-SendInput ^+u2209{Enter}
+send ^+u2209{Enter}
 return
 
 #if OtherCase()
 ::\notin::
-SendInput {U+2209}
+send {U+2209}
 return
 
 
@@ -23909,17 +23909,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ni::
-SendInput ^x8{Enter}220b{Enter}
+send ^x8{Enter}220b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ni::
-SendInput ^+u220b{Enter}
+send ^+u220b{Enter}
 return
 
 #if OtherCase()
 ::\ni::
-SendInput {U+220B}
+send {U+220B}
 return
 
 
@@ -23927,17 +23927,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\backepsilon::
-SendInput ^x8{Enter}220d{Enter}
+send ^x8{Enter}220d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\backepsilon::
-SendInput ^+u220d{Enter}
+send ^+u220d{Enter}
 return
 
 #if OtherCase()
 ::\backepsilon::
-SendInput {U+220D}
+send {U+220D}
 return
 
 
@@ -23945,17 +23945,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\qed::
-SendInput ^x8{Enter}220e{Enter}
+send ^x8{Enter}220e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\qed::
-SendInput ^+u220e{Enter}
+send ^+u220e{Enter}
 return
 
 #if OtherCase()
 ::\qed::
-SendInput {U+220E}
+send {U+220E}
 return
 
 
@@ -23963,17 +23963,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\prod::
-SendInput ^x8{Enter}220f{Enter}
+send ^x8{Enter}220f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\prod::
-SendInput ^+u220f{Enter}
+send ^+u220f{Enter}
 return
 
 #if OtherCase()
 ::\prod::
-SendInput {U+220F}
+send {U+220F}
 return
 
 
@@ -23981,17 +23981,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\amalg::
-SendInput ^x8{Enter}2210{Enter}
+send ^x8{Enter}2210{Enter}
 return
 
 #if GtkApplicationCase()
 ::\amalg::
-SendInput ^+u2210{Enter}
+send ^+u2210{Enter}
 return
 
 #if OtherCase()
 ::\amalg::
-SendInput {U+2210}
+send {U+2210}
 return
 
 
@@ -23999,17 +23999,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\coprod::
-SendInput ^x8{Enter}2210{Enter}
+send ^x8{Enter}2210{Enter}
 return
 
 #if GtkApplicationCase()
 ::\coprod::
-SendInput ^+u2210{Enter}
+send ^+u2210{Enter}
 return
 
 #if OtherCase()
 ::\coprod::
-SendInput {U+2210}
+send {U+2210}
 return
 
 
@@ -24017,17 +24017,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\smallamalg::
-SendInput ^x8{Enter}2210{Enter}
+send ^x8{Enter}2210{Enter}
 return
 
 #if GtkApplicationCase()
 ::\smallamalg::
-SendInput ^+u2210{Enter}
+send ^+u2210{Enter}
 return
 
 #if OtherCase()
 ::\smallamalg::
-SendInput {U+2210}
+send {U+2210}
 return
 
 
@@ -24035,17 +24035,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sum::
-SendInput ^x8{Enter}2211{Enter}
+send ^x8{Enter}2211{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sum::
-SendInput ^+u2211{Enter}
+send ^+u2211{Enter}
 return
 
 #if OtherCase()
 ::\sum::
-SendInput {U+2211}
+send {U+2211}
 return
 
 
@@ -24053,17 +24053,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\minus::
-SendInput ^x8{Enter}2212{Enter}
+send ^x8{Enter}2212{Enter}
 return
 
 #if GtkApplicationCase()
 ::\minus::
-SendInput ^+u2212{Enter}
+send ^+u2212{Enter}
 return
 
 #if OtherCase()
 ::\minus::
-SendInput {U+2212}
+send {U+2212}
 return
 
 
@@ -24071,17 +24071,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\mp::
-SendInput ^x8{Enter}2213{Enter}
+send ^x8{Enter}2213{Enter}
 return
 
 #if GtkApplicationCase()
 ::\mp::
-SendInput ^+u2213{Enter}
+send ^+u2213{Enter}
 return
 
 #if OtherCase()
 ::\mp::
-SendInput {U+2213}
+send {U+2213}
 return
 
 
@@ -24089,17 +24089,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\dotplus::
-SendInput ^x8{Enter}2214{Enter}
+send ^x8{Enter}2214{Enter}
 return
 
 #if GtkApplicationCase()
 ::\dotplus::
-SendInput ^+u2214{Enter}
+send ^+u2214{Enter}
 return
 
 #if OtherCase()
 ::\dotplus::
-SendInput {U+2214}
+send {U+2214}
 return
 
 
@@ -24107,17 +24107,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\setminus::
-SendInput ^x8{Enter}2216{Enter}
+send ^x8{Enter}2216{Enter}
 return
 
 #if GtkApplicationCase()
 ::\setminus::
-SendInput ^+u2216{Enter}
+send ^+u2216{Enter}
 return
 
 #if OtherCase()
 ::\setminus::
-SendInput {U+2216}
+send {U+2216}
 return
 
 
@@ -24125,17 +24125,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\smallsetminus::
-SendInput ^x8{Enter}2216{Enter}
+send ^x8{Enter}2216{Enter}
 return
 
 #if GtkApplicationCase()
 ::\smallsetminus::
-SendInput ^+u2216{Enter}
+send ^+u2216{Enter}
 return
 
 #if OtherCase()
 ::\smallsetminus::
-SendInput {U+2216}
+send {U+2216}
 return
 
 
@@ -24143,17 +24143,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ast::
-SendInput ^x8{Enter}2217{Enter}
+send ^x8{Enter}2217{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ast::
-SendInput ^+u2217{Enter}
+send ^+u2217{Enter}
 return
 
 #if OtherCase()
 ::\ast::
-SendInput {U+2217}
+send {U+2217}
 return
 
 
@@ -24161,17 +24161,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circ::
-SendInput ^x8{Enter}2218{Enter}
+send ^x8{Enter}2218{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circ::
-SendInput ^+u2218{Enter}
+send ^+u2218{Enter}
 return
 
 #if OtherCase()
 ::\circ::
-SendInput {U+2218}
+send {U+2218}
 return
 
 
@@ -24179,17 +24179,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\surd::
-SendInput ^x8{Enter}221a{Enter}
+send ^x8{Enter}221a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\surd::
-SendInput ^+u221a{Enter}
+send ^+u221a{Enter}
 return
 
 #if OtherCase()
 ::\surd::
-SendInput {U+221A}
+send {U+221A}
 return
 
 
@@ -24197,17 +24197,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\propto::
-SendInput ^x8{Enter}221d{Enter}
+send ^x8{Enter}221d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\propto::
-SendInput ^+u221d{Enter}
+send ^+u221d{Enter}
 return
 
 #if OtherCase()
 ::\propto::
-SendInput {U+221D}
+send {U+221D}
 return
 
 
@@ -24215,17 +24215,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\varpropto::
-SendInput ^x8{Enter}221d{Enter}
+send ^x8{Enter}221d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\varpropto::
-SendInput ^+u221d{Enter}
+send ^+u221d{Enter}
 return
 
 #if OtherCase()
 ::\varpropto::
-SendInput {U+221D}
+send {U+221D}
 return
 
 
@@ -24233,17 +24233,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\infty::
-SendInput ^x8{Enter}221e{Enter}
+send ^x8{Enter}221e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\infty::
-SendInput ^+u221e{Enter}
+send ^+u221e{Enter}
 return
 
 #if OtherCase()
 ::\infty::
-SendInput {U+221E}
+send {U+221E}
 return
 
 
@@ -24251,17 +24251,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\angle::
-SendInput ^x8{Enter}2220{Enter}
+send ^x8{Enter}2220{Enter}
 return
 
 #if GtkApplicationCase()
 ::\angle::
-SendInput ^+u2220{Enter}
+send ^+u2220{Enter}
 return
 
 #if OtherCase()
 ::\angle::
-SendInput {U+2220}
+send {U+2220}
 return
 
 
@@ -24269,17 +24269,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\measuredangle::
-SendInput ^x8{Enter}2221{Enter}
+send ^x8{Enter}2221{Enter}
 return
 
 #if GtkApplicationCase()
 ::\measuredangle::
-SendInput ^+u2221{Enter}
+send ^+u2221{Enter}
 return
 
 #if OtherCase()
 ::\measuredangle::
-SendInput {U+2221}
+send {U+2221}
 return
 
 
@@ -24287,17 +24287,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sphericalangle::
-SendInput ^x8{Enter}2222{Enter}
+send ^x8{Enter}2222{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sphericalangle::
-SendInput ^+u2222{Enter}
+send ^+u2222{Enter}
 return
 
 #if OtherCase()
 ::\sphericalangle::
-SendInput {U+2222}
+send {U+2222}
 return
 
 
@@ -24305,17 +24305,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\mid::
-SendInput ^x8{Enter}2223{Enter}
+send ^x8{Enter}2223{Enter}
 return
 
 #if GtkApplicationCase()
 ::\mid::
-SendInput ^+u2223{Enter}
+send ^+u2223{Enter}
 return
 
 #if OtherCase()
 ::\mid::
-SendInput {U+2223}
+send {U+2223}
 return
 
 
@@ -24323,17 +24323,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\shortmid::
-SendInput ^x8{Enter}2223{Enter}
+send ^x8{Enter}2223{Enter}
 return
 
 #if GtkApplicationCase()
 ::\shortmid::
-SendInput ^+u2223{Enter}
+send ^+u2223{Enter}
 return
 
 #if OtherCase()
 ::\shortmid::
-SendInput {U+2223}
+send {U+2223}
 return
 
 
@@ -24341,17 +24341,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nmid::
-SendInput ^x8{Enter}2224{Enter}
+send ^x8{Enter}2224{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nmid::
-SendInput ^+u2224{Enter}
+send ^+u2224{Enter}
 return
 
 #if OtherCase()
 ::\nmid::
-SendInput {U+2224}
+send {U+2224}
 return
 
 
@@ -24359,17 +24359,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nshortmid::
-SendInput ^x8{Enter}2224{Enter}
+send ^x8{Enter}2224{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nshortmid::
-SendInput ^+u2224{Enter}
+send ^+u2224{Enter}
 return
 
 #if OtherCase()
 ::\nshortmid::
-SendInput {U+2224}
+send {U+2224}
 return
 
 
@@ -24377,17 +24377,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\parallel::
-SendInput ^x8{Enter}2225{Enter}
+send ^x8{Enter}2225{Enter}
 return
 
 #if GtkApplicationCase()
 ::\parallel::
-SendInput ^+u2225{Enter}
+send ^+u2225{Enter}
 return
 
 #if OtherCase()
 ::\parallel::
-SendInput {U+2225}
+send {U+2225}
 return
 
 
@@ -24395,17 +24395,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\shortparallel::
-SendInput ^x8{Enter}2225{Enter}
+send ^x8{Enter}2225{Enter}
 return
 
 #if GtkApplicationCase()
 ::\shortparallel::
-SendInput ^+u2225{Enter}
+send ^+u2225{Enter}
 return
 
 #if OtherCase()
 ::\shortparallel::
-SendInput {U+2225}
+send {U+2225}
 return
 
 
@@ -24413,17 +24413,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nparallel::
-SendInput ^x8{Enter}2226{Enter}
+send ^x8{Enter}2226{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nparallel::
-SendInput ^+u2226{Enter}
+send ^+u2226{Enter}
 return
 
 #if OtherCase()
 ::\nparallel::
-SendInput {U+2226}
+send {U+2226}
 return
 
 
@@ -24431,17 +24431,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nshortparallel::
-SendInput ^x8{Enter}2226{Enter}
+send ^x8{Enter}2226{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nshortparallel::
-SendInput ^+u2226{Enter}
+send ^+u2226{Enter}
 return
 
 #if OtherCase()
 ::\nshortparallel::
-SendInput {U+2226}
+send {U+2226}
 return
 
 
@@ -24449,17 +24449,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\wedge::
-SendInput ^x8{Enter}2227{Enter}
+send ^x8{Enter}2227{Enter}
 return
 
 #if GtkApplicationCase()
 ::\wedge::
-SendInput ^+u2227{Enter}
+send ^+u2227{Enter}
 return
 
 #if OtherCase()
 ::\wedge::
-SendInput {U+2227}
+send {U+2227}
 return
 
 
@@ -24467,17 +24467,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vee::
-SendInput ^x8{Enter}2228{Enter}
+send ^x8{Enter}2228{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vee::
-SendInput ^+u2228{Enter}
+send ^+u2228{Enter}
 return
 
 #if OtherCase()
 ::\vee::
-SendInput {U+2228}
+send {U+2228}
 return
 
 
@@ -24485,17 +24485,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cap::
-SendInput ^x8{Enter}2229{Enter}
+send ^x8{Enter}2229{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cap::
-SendInput ^+u2229{Enter}
+send ^+u2229{Enter}
 return
 
 #if OtherCase()
 ::\cap::
-SendInput {U+2229}
+send {U+2229}
 return
 
 
@@ -24503,17 +24503,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cup::
-SendInput ^x8{Enter}222a{Enter}
+send ^x8{Enter}222a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cup::
-SendInput ^+u222a{Enter}
+send ^+u222a{Enter}
 return
 
 #if OtherCase()
 ::\cup::
-SendInput {U+222A}
+send {U+222A}
 return
 
 
@@ -24521,17 +24521,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\int::
-SendInput ^x8{Enter}222b{Enter}
+send ^x8{Enter}222b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\int::
-SendInput ^+u222b{Enter}
+send ^+u222b{Enter}
 return
 
 #if OtherCase()
 ::\int::
-SendInput {U+222B}
+send {U+222B}
 return
 
 
@@ -24539,17 +24539,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\oint::
-SendInput ^x8{Enter}222e{Enter}
+send ^x8{Enter}222e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\oint::
-SendInput ^+u222e{Enter}
+send ^+u222e{Enter}
 return
 
 #if OtherCase()
 ::\oint::
-SendInput {U+222E}
+send {U+222E}
 return
 
 
@@ -24557,17 +24557,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\therefore::
-SendInput ^x8{Enter}2234{Enter}
+send ^x8{Enter}2234{Enter}
 return
 
 #if GtkApplicationCase()
 ::\therefore::
-SendInput ^+u2234{Enter}
+send ^+u2234{Enter}
 return
 
 #if OtherCase()
 ::\therefore::
-SendInput {U+2234}
+send {U+2234}
 return
 
 
@@ -24575,17 +24575,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\because::
-SendInput ^x8{Enter}2235{Enter}
+send ^x8{Enter}2235{Enter}
 return
 
 #if GtkApplicationCase()
 ::\because::
-SendInput ^+u2235{Enter}
+send ^+u2235{Enter}
 return
 
 #if OtherCase()
 ::\because::
-SendInput {U+2235}
+send {U+2235}
 return
 
 
@@ -24593,17 +24593,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sim::
-SendInput ^x8{Enter}223c{Enter}
+send ^x8{Enter}223c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sim::
-SendInput ^+u223c{Enter}
+send ^+u223c{Enter}
 return
 
 #if OtherCase()
 ::\sim::
-SendInput {U+223C}
+send {U+223C}
 return
 
 
@@ -24611,17 +24611,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\thicksim::
-SendInput ^x8{Enter}223c{Enter}
+send ^x8{Enter}223c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\thicksim::
-SendInput ^+u223c{Enter}
+send ^+u223c{Enter}
 return
 
 #if OtherCase()
 ::\thicksim::
-SendInput {U+223C}
+send {U+223C}
 return
 
 
@@ -24629,17 +24629,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\backsim::
-SendInput ^x8{Enter}223d{Enter}
+send ^x8{Enter}223d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\backsim::
-SendInput ^+u223d{Enter}
+send ^+u223d{Enter}
 return
 
 #if OtherCase()
 ::\backsim::
-SendInput {U+223D}
+send {U+223D}
 return
 
 
@@ -24647,17 +24647,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\wr::
-SendInput ^x8{Enter}2240{Enter}
+send ^x8{Enter}2240{Enter}
 return
 
 #if GtkApplicationCase()
 ::\wr::
-SendInput ^+u2240{Enter}
+send ^+u2240{Enter}
 return
 
 #if OtherCase()
 ::\wr::
-SendInput {U+2240}
+send {U+2240}
 return
 
 
@@ -24665,17 +24665,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsim::
-SendInput ^x8{Enter}2241{Enter}
+send ^x8{Enter}2241{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsim::
-SendInput ^+u2241{Enter}
+send ^+u2241{Enter}
 return
 
 #if OtherCase()
 ::\nsim::
-SendInput {U+2241}
+send {U+2241}
 return
 
 
@@ -24683,17 +24683,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\simeq::
-SendInput ^x8{Enter}2243{Enter}
+send ^x8{Enter}2243{Enter}
 return
 
 #if GtkApplicationCase()
 ::\simeq::
-SendInput ^+u2243{Enter}
+send ^+u2243{Enter}
 return
 
 #if OtherCase()
 ::\simeq::
-SendInput {U+2243}
+send {U+2243}
 return
 
 
@@ -24701,17 +24701,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsimeq::
-SendInput ^x8{Enter}2244{Enter}
+send ^x8{Enter}2244{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsimeq::
-SendInput ^+u2244{Enter}
+send ^+u2244{Enter}
 return
 
 #if OtherCase()
 ::\nsimeq::
-SendInput {U+2244}
+send {U+2244}
 return
 
 
@@ -24719,17 +24719,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cong::
-SendInput ^x8{Enter}2245{Enter}
+send ^x8{Enter}2245{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cong::
-SendInput ^+u2245{Enter}
+send ^+u2245{Enter}
 return
 
 #if OtherCase()
 ::\cong::
-SendInput {U+2245}
+send {U+2245}
 return
 
 
@@ -24737,17 +24737,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ncong::
-SendInput ^x8{Enter}2247{Enter}
+send ^x8{Enter}2247{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ncong::
-SendInput ^+u2247{Enter}
+send ^+u2247{Enter}
 return
 
 #if OtherCase()
 ::\ncong::
-SendInput {U+2247}
+send {U+2247}
 return
 
 
@@ -24755,17 +24755,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\approx::
-SendInput ^x8{Enter}2248{Enter}
+send ^x8{Enter}2248{Enter}
 return
 
 #if GtkApplicationCase()
 ::\approx::
-SendInput ^+u2248{Enter}
+send ^+u2248{Enter}
 return
 
 #if OtherCase()
 ::\approx::
-SendInput {U+2248}
+send {U+2248}
 return
 
 
@@ -24773,17 +24773,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\thickapprox::
-SendInput ^x8{Enter}2248{Enter}
+send ^x8{Enter}2248{Enter}
 return
 
 #if GtkApplicationCase()
 ::\thickapprox::
-SendInput ^+u2248{Enter}
+send ^+u2248{Enter}
 return
 
 #if OtherCase()
 ::\thickapprox::
-SendInput {U+2248}
+send {U+2248}
 return
 
 
@@ -24791,17 +24791,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\napprox::
-SendInput ^x8{Enter}2249{Enter}
+send ^x8{Enter}2249{Enter}
 return
 
 #if GtkApplicationCase()
 ::\napprox::
-SendInput ^+u2249{Enter}
+send ^+u2249{Enter}
 return
 
 #if OtherCase()
 ::\napprox::
-SendInput {U+2249}
+send {U+2249}
 return
 
 
@@ -24809,17 +24809,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\approxeq::
-SendInput ^x8{Enter}224a{Enter}
+send ^x8{Enter}224a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\approxeq::
-SendInput ^+u224a{Enter}
+send ^+u224a{Enter}
 return
 
 #if OtherCase()
 ::\approxeq::
-SendInput {U+224A}
+send {U+224A}
 return
 
 
@@ -24827,17 +24827,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\backcong::
-SendInput ^x8{Enter}224c{Enter}
+send ^x8{Enter}224c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\backcong::
-SendInput ^+u224c{Enter}
+send ^+u224c{Enter}
 return
 
 #if OtherCase()
 ::\backcong::
-SendInput {U+224C}
+send {U+224C}
 return
 
 
@@ -24845,17 +24845,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\asymp::
-SendInput ^x8{Enter}224d{Enter}
+send ^x8{Enter}224d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\asymp::
-SendInput ^+u224d{Enter}
+send ^+u224d{Enter}
 return
 
 #if OtherCase()
 ::\asymp::
-SendInput {U+224D}
+send {U+224D}
 return
 
 
@@ -24863,17 +24863,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Bumpeq::
-SendInput ^x8{Enter}224e{Enter}
+send ^x8{Enter}224e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Bumpeq::
-SendInput ^+u224e{Enter}
+send ^+u224e{Enter}
 return
 
 #if OtherCase()
 ::\Bumpeq::
-SendInput {U+224E}
+send {U+224E}
 return
 
 
@@ -24881,17 +24881,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bumpeq::
-SendInput ^x8{Enter}224f{Enter}
+send ^x8{Enter}224f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bumpeq::
-SendInput ^+u224f{Enter}
+send ^+u224f{Enter}
 return
 
 #if OtherCase()
 ::\bumpeq::
-SendInput {U+224F}
+send {U+224F}
 return
 
 
@@ -24899,17 +24899,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\doteq::
-SendInput ^x8{Enter}2250{Enter}
+send ^x8{Enter}2250{Enter}
 return
 
 #if GtkApplicationCase()
 ::\doteq::
-SendInput ^+u2250{Enter}
+send ^+u2250{Enter}
 return
 
 #if OtherCase()
 ::\doteq::
-SendInput {U+2250}
+send {U+2250}
 return
 
 
@@ -24917,17 +24917,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\doteqdot::
-SendInput ^x8{Enter}2251{Enter}
+send ^x8{Enter}2251{Enter}
 return
 
 #if GtkApplicationCase()
 ::\doteqdot::
-SendInput ^+u2251{Enter}
+send ^+u2251{Enter}
 return
 
 #if OtherCase()
 ::\doteqdot::
-SendInput {U+2251}
+send {U+2251}
 return
 
 
@@ -24935,17 +24935,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\fallingdotseq::
-SendInput ^x8{Enter}2252{Enter}
+send ^x8{Enter}2252{Enter}
 return
 
 #if GtkApplicationCase()
 ::\fallingdotseq::
-SendInput ^+u2252{Enter}
+send ^+u2252{Enter}
 return
 
 #if OtherCase()
 ::\fallingdotseq::
-SendInput {U+2252}
+send {U+2252}
 return
 
 
@@ -24953,17 +24953,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\risingdotseq::
-SendInput ^x8{Enter}2253{Enter}
+send ^x8{Enter}2253{Enter}
 return
 
 #if GtkApplicationCase()
 ::\risingdotseq::
-SendInput ^+u2253{Enter}
+send ^+u2253{Enter}
 return
 
 #if OtherCase()
 ::\risingdotseq::
-SendInput {U+2253}
+send {U+2253}
 return
 
 
@@ -24971,17 +24971,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\coloneq::
-SendInput ^x8{Enter}2254{Enter}
+send ^x8{Enter}2254{Enter}
 return
 
 #if GtkApplicationCase()
 ::\coloneq::
-SendInput ^+u2254{Enter}
+send ^+u2254{Enter}
 return
 
 #if OtherCase()
 ::\coloneq::
-SendInput {U+2254}
+send {U+2254}
 return
 
 
@@ -24989,17 +24989,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\eqcolon::
-SendInput ^x8{Enter}2255{Enter}
+send ^x8{Enter}2255{Enter}
 return
 
 #if GtkApplicationCase()
 ::\eqcolon::
-SendInput ^+u2255{Enter}
+send ^+u2255{Enter}
 return
 
 #if OtherCase()
 ::\eqcolon::
-SendInput {U+2255}
+send {U+2255}
 return
 
 
@@ -25007,17 +25007,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\eqcirc::
-SendInput ^x8{Enter}2256{Enter}
+send ^x8{Enter}2256{Enter}
 return
 
 #if GtkApplicationCase()
 ::\eqcirc::
-SendInput ^+u2256{Enter}
+send ^+u2256{Enter}
 return
 
 #if OtherCase()
 ::\eqcirc::
-SendInput {U+2256}
+send {U+2256}
 return
 
 
@@ -25025,17 +25025,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circeq::
-SendInput ^x8{Enter}2257{Enter}
+send ^x8{Enter}2257{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circeq::
-SendInput ^+u2257{Enter}
+send ^+u2257{Enter}
 return
 
 #if OtherCase()
 ::\circeq::
-SendInput {U+2257}
+send {U+2257}
 return
 
 
@@ -25043,17 +25043,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\defs::
-SendInput ^x8{Enter}2259{Enter}
+send ^x8{Enter}2259{Enter}
 return
 
 #if GtkApplicationCase()
 ::\defs::
-SendInput ^+u2259{Enter}
+send ^+u2259{Enter}
 return
 
 #if OtherCase()
 ::\defs::
-SendInput {U+2259}
+send {U+2259}
 return
 
 
@@ -25061,17 +25061,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\triangleq::
-SendInput ^x8{Enter}225c{Enter}
+send ^x8{Enter}225c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\triangleq::
-SendInput ^+u225c{Enter}
+send ^+u225c{Enter}
 return
 
 #if OtherCase()
 ::\triangleq::
-SendInput {U+225C}
+send {U+225C}
 return
 
 
@@ -25079,17 +25079,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ne::
-SendInput ^x8{Enter}2260{Enter}
+send ^x8{Enter}2260{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ne::
-SendInput ^+u2260{Enter}
+send ^+u2260{Enter}
 return
 
 #if OtherCase()
 ::\ne::
-SendInput {U+2260}
+send {U+2260}
 return
 
 
@@ -25097,17 +25097,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\neq::
-SendInput ^x8{Enter}2260{Enter}
+send ^x8{Enter}2260{Enter}
 return
 
 #if GtkApplicationCase()
 ::\neq::
-SendInput ^+u2260{Enter}
+send ^+u2260{Enter}
 return
 
 #if OtherCase()
 ::\neq::
-SendInput {U+2260}
+send {U+2260}
 return
 
 
@@ -25115,17 +25115,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\equiv::
-SendInput ^x8{Enter}2261{Enter}
+send ^x8{Enter}2261{Enter}
 return
 
 #if GtkApplicationCase()
 ::\equiv::
-SendInput ^+u2261{Enter}
+send ^+u2261{Enter}
 return
 
 #if OtherCase()
 ::\equiv::
-SendInput {U+2261}
+send {U+2261}
 return
 
 
@@ -25133,17 +25133,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nequiv::
-SendInput ^x8{Enter}2262{Enter}
+send ^x8{Enter}2262{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nequiv::
-SendInput ^+u2262{Enter}
+send ^+u2262{Enter}
 return
 
 #if OtherCase()
 ::\nequiv::
-SendInput {U+2262}
+send {U+2262}
 return
 
 
@@ -25151,17 +25151,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\le::
-SendInput ^x8{Enter}2264{Enter}
+send ^x8{Enter}2264{Enter}
 return
 
 #if GtkApplicationCase()
 ::\le::
-SendInput ^+u2264{Enter}
+send ^+u2264{Enter}
 return
 
 #if OtherCase()
 ::\le::
-SendInput {U+2264}
+send {U+2264}
 return
 
 
@@ -25169,17 +25169,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leq::
-SendInput ^x8{Enter}2264{Enter}
+send ^x8{Enter}2264{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leq::
-SendInput ^+u2264{Enter}
+send ^+u2264{Enter}
 return
 
 #if OtherCase()
 ::\leq::
-SendInput {U+2264}
+send {U+2264}
 return
 
 
@@ -25187,17 +25187,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leqslant::
-SendInput ^x8{Enter}2264{Enter}
+send ^x8{Enter}2264{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leqslant::
-SendInput ^+u2264{Enter}
+send ^+u2264{Enter}
 return
 
 #if OtherCase()
 ::\leqslant::
-SendInput {U+2264}
+send {U+2264}
 return
 
 
@@ -25205,17 +25205,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ge::
-SendInput ^x8{Enter}2265{Enter}
+send ^x8{Enter}2265{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ge::
-SendInput ^+u2265{Enter}
+send ^+u2265{Enter}
 return
 
 #if OtherCase()
 ::\ge::
-SendInput {U+2265}
+send {U+2265}
 return
 
 
@@ -25223,17 +25223,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\geq::
-SendInput ^x8{Enter}2265{Enter}
+send ^x8{Enter}2265{Enter}
 return
 
 #if GtkApplicationCase()
 ::\geq::
-SendInput ^+u2265{Enter}
+send ^+u2265{Enter}
 return
 
 #if OtherCase()
 ::\geq::
-SendInput {U+2265}
+send {U+2265}
 return
 
 
@@ -25241,17 +25241,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\geqslant::
-SendInput ^x8{Enter}2265{Enter}
+send ^x8{Enter}2265{Enter}
 return
 
 #if GtkApplicationCase()
 ::\geqslant::
-SendInput ^+u2265{Enter}
+send ^+u2265{Enter}
 return
 
 #if OtherCase()
 ::\geqslant::
-SendInput {U+2265}
+send {U+2265}
 return
 
 
@@ -25259,17 +25259,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leqq::
-SendInput ^x8{Enter}2266{Enter}
+send ^x8{Enter}2266{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leqq::
-SendInput ^+u2266{Enter}
+send ^+u2266{Enter}
 return
 
 #if OtherCase()
 ::\leqq::
-SendInput {U+2266}
+send {U+2266}
 return
 
 
@@ -25277,17 +25277,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\geqq::
-SendInput ^x8{Enter}2267{Enter}
+send ^x8{Enter}2267{Enter}
 return
 
 #if GtkApplicationCase()
 ::\geqq::
-SendInput ^+u2267{Enter}
+send ^+u2267{Enter}
 return
 
 #if OtherCase()
 ::\geqq::
-SendInput {U+2267}
+send {U+2267}
 return
 
 
@@ -25295,17 +25295,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lneq::
-SendInput ^x8{Enter}2268{Enter}
+send ^x8{Enter}2268{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lneq::
-SendInput ^+u2268{Enter}
+send ^+u2268{Enter}
 return
 
 #if OtherCase()
 ::\lneq::
-SendInput {U+2268}
+send {U+2268}
 return
 
 
@@ -25313,17 +25313,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lneqq::
-SendInput ^x8{Enter}2268{Enter}
+send ^x8{Enter}2268{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lneqq::
-SendInput ^+u2268{Enter}
+send ^+u2268{Enter}
 return
 
 #if OtherCase()
 ::\lneqq::
-SendInput {U+2268}
+send {U+2268}
 return
 
 
@@ -25331,17 +25331,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lvertneqq::
-SendInput ^x8{Enter}2268{Enter}
+send ^x8{Enter}2268{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lvertneqq::
-SendInput ^+u2268{Enter}
+send ^+u2268{Enter}
 return
 
 #if OtherCase()
 ::\lvertneqq::
-SendInput {U+2268}
+send {U+2268}
 return
 
 
@@ -25349,17 +25349,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gneq::
-SendInput ^x8{Enter}2269{Enter}
+send ^x8{Enter}2269{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gneq::
-SendInput ^+u2269{Enter}
+send ^+u2269{Enter}
 return
 
 #if OtherCase()
 ::\gneq::
-SendInput {U+2269}
+send {U+2269}
 return
 
 
@@ -25367,17 +25367,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gneqq::
-SendInput ^x8{Enter}2269{Enter}
+send ^x8{Enter}2269{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gneqq::
-SendInput ^+u2269{Enter}
+send ^+u2269{Enter}
 return
 
 #if OtherCase()
 ::\gneqq::
-SendInput {U+2269}
+send {U+2269}
 return
 
 
@@ -25385,17 +25385,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gvertneqq::
-SendInput ^x8{Enter}2269{Enter}
+send ^x8{Enter}2269{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gvertneqq::
-SendInput ^+u2269{Enter}
+send ^+u2269{Enter}
 return
 
 #if OtherCase()
 ::\gvertneqq::
-SendInput {U+2269}
+send {U+2269}
 return
 
 
@@ -25403,17 +25403,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ll::
-SendInput ^x8{Enter}226a{Enter}
+send ^x8{Enter}226a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ll::
-SendInput ^+u226a{Enter}
+send ^+u226a{Enter}
 return
 
 #if OtherCase()
 ::\ll::
-SendInput {U+226A}
+send {U+226A}
 return
 
 
@@ -25421,17 +25421,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gg::
-SendInput ^x8{Enter}226b{Enter}
+send ^x8{Enter}226b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gg::
-SendInput ^+u226b{Enter}
+send ^+u226b{Enter}
 return
 
 #if OtherCase()
 ::\gg::
-SendInput {U+226B}
+send {U+226B}
 return
 
 
@@ -25439,17 +25439,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\between::
-SendInput ^x8{Enter}226c{Enter}
+send ^x8{Enter}226c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\between::
-SendInput ^+u226c{Enter}
+send ^+u226c{Enter}
 return
 
 #if OtherCase()
 ::\between::
-SendInput {U+226C}
+send {U+226C}
 return
 
 
@@ -25457,17 +25457,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nless::
-SendInput ^x8{Enter}226e{Enter}
+send ^x8{Enter}226e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nless::
-SendInput ^+u226e{Enter}
+send ^+u226e{Enter}
 return
 
 #if OtherCase()
 ::\nless::
-SendInput {U+226E}
+send {U+226E}
 return
 
 
@@ -25475,17 +25475,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ngtr::
-SendInput ^x8{Enter}226f{Enter}
+send ^x8{Enter}226f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ngtr::
-SendInput ^+u226f{Enter}
+send ^+u226f{Enter}
 return
 
 #if OtherCase()
 ::\ngtr::
-SendInput {U+226F}
+send {U+226F}
 return
 
 
@@ -25493,17 +25493,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nleq::
-SendInput ^x8{Enter}2270{Enter}
+send ^x8{Enter}2270{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nleq::
-SendInput ^+u2270{Enter}
+send ^+u2270{Enter}
 return
 
 #if OtherCase()
 ::\nleq::
-SendInput {U+2270}
+send {U+2270}
 return
 
 
@@ -25511,17 +25511,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nleqq::
-SendInput ^x8{Enter}2270{Enter}
+send ^x8{Enter}2270{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nleqq::
-SendInput ^+u2270{Enter}
+send ^+u2270{Enter}
 return
 
 #if OtherCase()
 ::\nleqq::
-SendInput {U+2270}
+send {U+2270}
 return
 
 
@@ -25529,17 +25529,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nleqslant::
-SendInput ^x8{Enter}2270{Enter}
+send ^x8{Enter}2270{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nleqslant::
-SendInput ^+u2270{Enter}
+send ^+u2270{Enter}
 return
 
 #if OtherCase()
 ::\nleqslant::
-SendInput {U+2270}
+send {U+2270}
 return
 
 
@@ -25547,17 +25547,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ngeq::
-SendInput ^x8{Enter}2271{Enter}
+send ^x8{Enter}2271{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ngeq::
-SendInput ^+u2271{Enter}
+send ^+u2271{Enter}
 return
 
 #if OtherCase()
 ::\ngeq::
-SendInput {U+2271}
+send {U+2271}
 return
 
 
@@ -25565,17 +25565,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ngeqq::
-SendInput ^x8{Enter}2271{Enter}
+send ^x8{Enter}2271{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ngeqq::
-SendInput ^+u2271{Enter}
+send ^+u2271{Enter}
 return
 
 #if OtherCase()
 ::\ngeqq::
-SendInput {U+2271}
+send {U+2271}
 return
 
 
@@ -25583,17 +25583,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ngeqslant::
-SendInput ^x8{Enter}2271{Enter}
+send ^x8{Enter}2271{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ngeqslant::
-SendInput ^+u2271{Enter}
+send ^+u2271{Enter}
 return
 
 #if OtherCase()
 ::\ngeqslant::
-SendInput {U+2271}
+send {U+2271}
 return
 
 
@@ -25601,17 +25601,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lessapprox::
-SendInput ^x8{Enter}2272{Enter}
+send ^x8{Enter}2272{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lessapprox::
-SendInput ^+u2272{Enter}
+send ^+u2272{Enter}
 return
 
 #if OtherCase()
 ::\lessapprox::
-SendInput {U+2272}
+send {U+2272}
 return
 
 
@@ -25619,17 +25619,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lesssim::
-SendInput ^x8{Enter}2272{Enter}
+send ^x8{Enter}2272{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lesssim::
-SendInput ^+u2272{Enter}
+send ^+u2272{Enter}
 return
 
 #if OtherCase()
 ::\lesssim::
-SendInput {U+2272}
+send {U+2272}
 return
 
 
@@ -25637,17 +25637,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gtrapprox::
-SendInput ^x8{Enter}2273{Enter}
+send ^x8{Enter}2273{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gtrapprox::
-SendInput ^+u2273{Enter}
+send ^+u2273{Enter}
 return
 
 #if OtherCase()
 ::\gtrapprox::
-SendInput {U+2273}
+send {U+2273}
 return
 
 
@@ -25655,17 +25655,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gtrsim::
-SendInput ^x8{Enter}2273{Enter}
+send ^x8{Enter}2273{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gtrsim::
-SendInput ^+u2273{Enter}
+send ^+u2273{Enter}
 return
 
 #if OtherCase()
 ::\gtrsim::
-SendInput {U+2273}
+send {U+2273}
 return
 
 
@@ -25673,17 +25673,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lessgtr::
-SendInput ^x8{Enter}2276{Enter}
+send ^x8{Enter}2276{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lessgtr::
-SendInput ^+u2276{Enter}
+send ^+u2276{Enter}
 return
 
 #if OtherCase()
 ::\lessgtr::
-SendInput {U+2276}
+send {U+2276}
 return
 
 
@@ -25691,17 +25691,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gtrless::
-SendInput ^x8{Enter}2277{Enter}
+send ^x8{Enter}2277{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gtrless::
-SendInput ^+u2277{Enter}
+send ^+u2277{Enter}
 return
 
 #if OtherCase()
 ::\gtrless::
-SendInput {U+2277}
+send {U+2277}
 return
 
 
@@ -25709,17 +25709,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\prec::
-SendInput ^x8{Enter}227a{Enter}
+send ^x8{Enter}227a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\prec::
-SendInput ^+u227a{Enter}
+send ^+u227a{Enter}
 return
 
 #if OtherCase()
 ::\prec::
-SendInput {U+227A}
+send {U+227A}
 return
 
 
@@ -25727,17 +25727,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\succ::
-SendInput ^x8{Enter}227b{Enter}
+send ^x8{Enter}227b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\succ::
-SendInput ^+u227b{Enter}
+send ^+u227b{Enter}
 return
 
 #if OtherCase()
 ::\succ::
-SendInput {U+227B}
+send {U+227B}
 return
 
 
@@ -25745,17 +25745,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\curlypreceq::
-SendInput ^x8{Enter}227c{Enter}
+send ^x8{Enter}227c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\curlypreceq::
-SendInput ^+u227c{Enter}
+send ^+u227c{Enter}
 return
 
 #if OtherCase()
 ::\curlypreceq::
-SendInput {U+227C}
+send {U+227C}
 return
 
 
@@ -25763,17 +25763,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\preceq::
-SendInput ^x8{Enter}227c{Enter}
+send ^x8{Enter}227c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\preceq::
-SendInput ^+u227c{Enter}
+send ^+u227c{Enter}
 return
 
 #if OtherCase()
 ::\preceq::
-SendInput {U+227C}
+send {U+227C}
 return
 
 
@@ -25781,17 +25781,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\succcurlyeq::
-SendInput ^x8{Enter}227d{Enter}
+send ^x8{Enter}227d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\succcurlyeq::
-SendInput ^+u227d{Enter}
+send ^+u227d{Enter}
 return
 
 #if OtherCase()
 ::\succcurlyeq::
-SendInput {U+227D}
+send {U+227D}
 return
 
 
@@ -25799,17 +25799,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\succeq::
-SendInput ^x8{Enter}227d{Enter}
+send ^x8{Enter}227d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\succeq::
-SendInput ^+u227d{Enter}
+send ^+u227d{Enter}
 return
 
 #if OtherCase()
 ::\succeq::
-SendInput {U+227D}
+send {U+227D}
 return
 
 
@@ -25817,17 +25817,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\precapprox::
-SendInput ^x8{Enter}227e{Enter}
+send ^x8{Enter}227e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\precapprox::
-SendInput ^+u227e{Enter}
+send ^+u227e{Enter}
 return
 
 #if OtherCase()
 ::\precapprox::
-SendInput {U+227E}
+send {U+227E}
 return
 
 
@@ -25835,17 +25835,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\precsim::
-SendInput ^x8{Enter}227e{Enter}
+send ^x8{Enter}227e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\precsim::
-SendInput ^+u227e{Enter}
+send ^+u227e{Enter}
 return
 
 #if OtherCase()
 ::\precsim::
-SendInput {U+227E}
+send {U+227E}
 return
 
 
@@ -25853,17 +25853,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\succapprox::
-SendInput ^x8{Enter}227f{Enter}
+send ^x8{Enter}227f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\succapprox::
-SendInput ^+u227f{Enter}
+send ^+u227f{Enter}
 return
 
 #if OtherCase()
 ::\succapprox::
-SendInput {U+227F}
+send {U+227F}
 return
 
 
@@ -25871,17 +25871,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\succsim::
-SendInput ^x8{Enter}227f{Enter}
+send ^x8{Enter}227f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\succsim::
-SendInput ^+u227f{Enter}
+send ^+u227f{Enter}
 return
 
 #if OtherCase()
 ::\succsim::
-SendInput {U+227F}
+send {U+227F}
 return
 
 
@@ -25889,17 +25889,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nprec::
-SendInput ^x8{Enter}2280{Enter}
+send ^x8{Enter}2280{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nprec::
-SendInput ^+u2280{Enter}
+send ^+u2280{Enter}
 return
 
 #if OtherCase()
 ::\nprec::
-SendInput {U+2280}
+send {U+2280}
 return
 
 
@@ -25907,17 +25907,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsucc::
-SendInput ^x8{Enter}2281{Enter}
+send ^x8{Enter}2281{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsucc::
-SendInput ^+u2281{Enter}
+send ^+u2281{Enter}
 return
 
 #if OtherCase()
 ::\nsucc::
-SendInput {U+2281}
+send {U+2281}
 return
 
 
@@ -25925,17 +25925,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\subset::
-SendInput ^x8{Enter}2282{Enter}
+send ^x8{Enter}2282{Enter}
 return
 
 #if GtkApplicationCase()
 ::\subset::
-SendInput ^+u2282{Enter}
+send ^+u2282{Enter}
 return
 
 #if OtherCase()
 ::\subset::
-SendInput {U+2282}
+send {U+2282}
 return
 
 
@@ -25943,17 +25943,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\supset::
-SendInput ^x8{Enter}2283{Enter}
+send ^x8{Enter}2283{Enter}
 return
 
 #if GtkApplicationCase()
 ::\supset::
-SendInput ^+u2283{Enter}
+send ^+u2283{Enter}
 return
 
 #if OtherCase()
 ::\supset::
-SendInput {U+2283}
+send {U+2283}
 return
 
 
@@ -25961,17 +25961,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsubset::
-SendInput ^x8{Enter}2284{Enter}
+send ^x8{Enter}2284{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsubset::
-SendInput ^+u2284{Enter}
+send ^+u2284{Enter}
 return
 
 #if OtherCase()
 ::\nsubset::
-SendInput {U+2284}
+send {U+2284}
 return
 
 
@@ -25979,17 +25979,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsupset::
-SendInput ^x8{Enter}2285{Enter}
+send ^x8{Enter}2285{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsupset::
-SendInput ^+u2285{Enter}
+send ^+u2285{Enter}
 return
 
 #if OtherCase()
 ::\nsupset::
-SendInput {U+2285}
+send {U+2285}
 return
 
 
@@ -25997,17 +25997,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\subseteq::
-SendInput ^x8{Enter}2286{Enter}
+send ^x8{Enter}2286{Enter}
 return
 
 #if GtkApplicationCase()
 ::\subseteq::
-SendInput ^+u2286{Enter}
+send ^+u2286{Enter}
 return
 
 #if OtherCase()
 ::\subseteq::
-SendInput {U+2286}
+send {U+2286}
 return
 
 
@@ -26015,17 +26015,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\subseteqq::
-SendInput ^x8{Enter}2286{Enter}
+send ^x8{Enter}2286{Enter}
 return
 
 #if GtkApplicationCase()
 ::\subseteqq::
-SendInput ^+u2286{Enter}
+send ^+u2286{Enter}
 return
 
 #if OtherCase()
 ::\subseteqq::
-SendInput {U+2286}
+send {U+2286}
 return
 
 
@@ -26033,17 +26033,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\supseteq::
-SendInput ^x8{Enter}2287{Enter}
+send ^x8{Enter}2287{Enter}
 return
 
 #if GtkApplicationCase()
 ::\supseteq::
-SendInput ^+u2287{Enter}
+send ^+u2287{Enter}
 return
 
 #if OtherCase()
 ::\supseteq::
-SendInput {U+2287}
+send {U+2287}
 return
 
 
@@ -26051,17 +26051,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\supseteqq::
-SendInput ^x8{Enter}2287{Enter}
+send ^x8{Enter}2287{Enter}
 return
 
 #if GtkApplicationCase()
 ::\supseteqq::
-SendInput ^+u2287{Enter}
+send ^+u2287{Enter}
 return
 
 #if OtherCase()
 ::\supseteqq::
-SendInput {U+2287}
+send {U+2287}
 return
 
 
@@ -26069,17 +26069,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsubseteq::
-SendInput ^x8{Enter}2288{Enter}
+send ^x8{Enter}2288{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsubseteq::
-SendInput ^+u2288{Enter}
+send ^+u2288{Enter}
 return
 
 #if OtherCase()
 ::\nsubseteq::
-SendInput {U+2288}
+send {U+2288}
 return
 
 
@@ -26087,17 +26087,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsubseteqq::
-SendInput ^x8{Enter}2288{Enter}
+send ^x8{Enter}2288{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsubseteqq::
-SendInput ^+u2288{Enter}
+send ^+u2288{Enter}
 return
 
 #if OtherCase()
 ::\nsubseteqq::
-SendInput {U+2288}
+send {U+2288}
 return
 
 
@@ -26105,17 +26105,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsupseteq::
-SendInput ^x8{Enter}2289{Enter}
+send ^x8{Enter}2289{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsupseteq::
-SendInput ^+u2289{Enter}
+send ^+u2289{Enter}
 return
 
 #if OtherCase()
 ::\nsupseteq::
-SendInput {U+2289}
+send {U+2289}
 return
 
 
@@ -26123,17 +26123,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsupseteqq::
-SendInput ^x8{Enter}2289{Enter}
+send ^x8{Enter}2289{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsupseteqq::
-SendInput ^+u2289{Enter}
+send ^+u2289{Enter}
 return
 
 #if OtherCase()
 ::\nsupseteqq::
-SendInput {U+2289}
+send {U+2289}
 return
 
 
@@ -26141,17 +26141,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\subsetneq::
-SendInput ^x8{Enter}228a{Enter}
+send ^x8{Enter}228a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\subsetneq::
-SendInput ^+u228a{Enter}
+send ^+u228a{Enter}
 return
 
 #if OtherCase()
 ::\subsetneq::
-SendInput {U+228A}
+send {U+228A}
 return
 
 
@@ -26159,17 +26159,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\subsetneqq::
-SendInput ^x8{Enter}228a{Enter}
+send ^x8{Enter}228a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\subsetneqq::
-SendInput ^+u228a{Enter}
+send ^+u228a{Enter}
 return
 
 #if OtherCase()
 ::\subsetneqq::
-SendInput {U+228A}
+send {U+228A}
 return
 
 
@@ -26177,17 +26177,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\supsetneq::
-SendInput ^x8{Enter}228b{Enter}
+send ^x8{Enter}228b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\supsetneq::
-SendInput ^+u228b{Enter}
+send ^+u228b{Enter}
 return
 
 #if OtherCase()
 ::\supsetneq::
-SendInput {U+228B}
+send {U+228B}
 return
 
 
@@ -26195,17 +26195,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\supsetneqq::
-SendInput ^x8{Enter}228b{Enter}
+send ^x8{Enter}228b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\supsetneqq::
-SendInput ^+u228b{Enter}
+send ^+u228b{Enter}
 return
 
 #if OtherCase()
 ::\supsetneqq::
-SendInput {U+228B}
+send {U+228B}
 return
 
 
@@ -26213,17 +26213,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uplus::
-SendInput ^x8{Enter}228e{Enter}
+send ^x8{Enter}228e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uplus::
-SendInput ^+u228e{Enter}
+send ^+u228e{Enter}
 return
 
 #if OtherCase()
 ::\uplus::
-SendInput {U+228E}
+send {U+228E}
 return
 
 
@@ -26231,17 +26231,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sqsubset::
-SendInput ^x8{Enter}228f{Enter}
+send ^x8{Enter}228f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sqsubset::
-SendInput ^+u228f{Enter}
+send ^+u228f{Enter}
 return
 
 #if OtherCase()
 ::\sqsubset::
-SendInput {U+228F}
+send {U+228F}
 return
 
 
@@ -26249,17 +26249,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sqsupset::
-SendInput ^x8{Enter}2290{Enter}
+send ^x8{Enter}2290{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sqsupset::
-SendInput ^+u2290{Enter}
+send ^+u2290{Enter}
 return
 
 #if OtherCase()
 ::\sqsupset::
-SendInput {U+2290}
+send {U+2290}
 return
 
 
@@ -26267,17 +26267,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sqsubseteq::
-SendInput ^x8{Enter}2291{Enter}
+send ^x8{Enter}2291{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sqsubseteq::
-SendInput ^+u2291{Enter}
+send ^+u2291{Enter}
 return
 
 #if OtherCase()
 ::\sqsubseteq::
-SendInput {U+2291}
+send {U+2291}
 return
 
 
@@ -26285,17 +26285,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sqsupseteq::
-SendInput ^x8{Enter}2292{Enter}
+send ^x8{Enter}2292{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sqsupseteq::
-SendInput ^+u2292{Enter}
+send ^+u2292{Enter}
 return
 
 #if OtherCase()
 ::\sqsupseteq::
-SendInput {U+2292}
+send {U+2292}
 return
 
 
@@ -26303,17 +26303,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sqcap::
-SendInput ^x8{Enter}2293{Enter}
+send ^x8{Enter}2293{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sqcap::
-SendInput ^+u2293{Enter}
+send ^+u2293{Enter}
 return
 
 #if OtherCase()
 ::\sqcap::
-SendInput {U+2293}
+send {U+2293}
 return
 
 
@@ -26321,17 +26321,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sqcup::
-SendInput ^x8{Enter}2294{Enter}
+send ^x8{Enter}2294{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sqcup::
-SendInput ^+u2294{Enter}
+send ^+u2294{Enter}
 return
 
 #if OtherCase()
 ::\sqcup::
-SendInput {U+2294}
+send {U+2294}
 return
 
 
@@ -26339,17 +26339,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\oplus::
-SendInput ^x8{Enter}2295{Enter}
+send ^x8{Enter}2295{Enter}
 return
 
 #if GtkApplicationCase()
 ::\oplus::
-SendInput ^+u2295{Enter}
+send ^+u2295{Enter}
 return
 
 #if OtherCase()
 ::\oplus::
-SendInput {U+2295}
+send {U+2295}
 return
 
 
@@ -26357,17 +26357,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ominus::
-SendInput ^x8{Enter}2296{Enter}
+send ^x8{Enter}2296{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ominus::
-SendInput ^+u2296{Enter}
+send ^+u2296{Enter}
 return
 
 #if OtherCase()
 ::\ominus::
-SendInput {U+2296}
+send {U+2296}
 return
 
 
@@ -26375,17 +26375,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\otimes::
-SendInput ^x8{Enter}2297{Enter}
+send ^x8{Enter}2297{Enter}
 return
 
 #if GtkApplicationCase()
 ::\otimes::
-SendInput ^+u2297{Enter}
+send ^+u2297{Enter}
 return
 
 #if OtherCase()
 ::\otimes::
-SendInput {U+2297}
+send {U+2297}
 return
 
 
@@ -26393,17 +26393,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\oslash::
-SendInput ^x8{Enter}2298{Enter}
+send ^x8{Enter}2298{Enter}
 return
 
 #if GtkApplicationCase()
 ::\oslash::
-SendInput ^+u2298{Enter}
+send ^+u2298{Enter}
 return
 
 #if OtherCase()
 ::\oslash::
-SendInput {U+2298}
+send {U+2298}
 return
 
 
@@ -26411,17 +26411,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\odot::
-SendInput ^x8{Enter}2299{Enter}
+send ^x8{Enter}2299{Enter}
 return
 
 #if GtkApplicationCase()
 ::\odot::
-SendInput ^+u2299{Enter}
+send ^+u2299{Enter}
 return
 
 #if OtherCase()
 ::\odot::
-SendInput {U+2299}
+send {U+2299}
 return
 
 
@@ -26429,17 +26429,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circledcirc::
-SendInput ^x8{Enter}229a{Enter}
+send ^x8{Enter}229a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circledcirc::
-SendInput ^+u229a{Enter}
+send ^+u229a{Enter}
 return
 
 #if OtherCase()
 ::\circledcirc::
-SendInput {U+229A}
+send {U+229A}
 return
 
 
@@ -26447,17 +26447,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circledast::
-SendInput ^x8{Enter}229b{Enter}
+send ^x8{Enter}229b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circledast::
-SendInput ^+u229b{Enter}
+send ^+u229b{Enter}
 return
 
 #if OtherCase()
 ::\circledast::
-SendInput {U+229B}
+send {U+229B}
 return
 
 
@@ -26465,17 +26465,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circleddash::
-SendInput ^x8{Enter}229d{Enter}
+send ^x8{Enter}229d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circleddash::
-SendInput ^+u229d{Enter}
+send ^+u229d{Enter}
 return
 
 #if OtherCase()
 ::\circleddash::
-SendInput {U+229D}
+send {U+229D}
 return
 
 
@@ -26483,17 +26483,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\boxplus::
-SendInput ^x8{Enter}229e{Enter}
+send ^x8{Enter}229e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\boxplus::
-SendInput ^+u229e{Enter}
+send ^+u229e{Enter}
 return
 
 #if OtherCase()
 ::\boxplus::
-SendInput {U+229E}
+send {U+229E}
 return
 
 
@@ -26501,17 +26501,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\boxminus::
-SendInput ^x8{Enter}229f{Enter}
+send ^x8{Enter}229f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\boxminus::
-SendInput ^+u229f{Enter}
+send ^+u229f{Enter}
 return
 
 #if OtherCase()
 ::\boxminus::
-SendInput {U+229F}
+send {U+229F}
 return
 
 
@@ -26519,17 +26519,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\boxtimes::
-SendInput ^x8{Enter}22a0{Enter}
+send ^x8{Enter}22a0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\boxtimes::
-SendInput ^+u22a0{Enter}
+send ^+u22a0{Enter}
 return
 
 #if OtherCase()
 ::\boxtimes::
-SendInput {U+22A0}
+send {U+22A0}
 return
 
 
@@ -26537,17 +26537,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\dotsquare::
-SendInput ^x8{Enter}22a1{Enter}
+send ^x8{Enter}22a1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\dotsquare::
-SendInput ^+u22a1{Enter}
+send ^+u22a1{Enter}
 return
 
 #if OtherCase()
 ::\dotsquare::
-SendInput {U+22A1}
+send {U+22A1}
 return
 
 
@@ -26555,17 +26555,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vdash::
-SendInput ^x8{Enter}22a2{Enter}
+send ^x8{Enter}22a2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vdash::
-SendInput ^+u22a2{Enter}
+send ^+u22a2{Enter}
 return
 
 #if OtherCase()
 ::\vdash::
-SendInput {U+22A2}
+send {U+22A2}
 return
 
 
@@ -26573,17 +26573,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\dashv::
-SendInput ^x8{Enter}22a3{Enter}
+send ^x8{Enter}22a3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\dashv::
-SendInput ^+u22a3{Enter}
+send ^+u22a3{Enter}
 return
 
 #if OtherCase()
 ::\dashv::
-SendInput {U+22A3}
+send {U+22A3}
 return
 
 
@@ -26591,17 +26591,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\top::
-SendInput ^x8{Enter}22a4{Enter}
+send ^x8{Enter}22a4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\top::
-SendInput ^+u22a4{Enter}
+send ^+u22a4{Enter}
 return
 
 #if OtherCase()
 ::\top::
-SendInput {U+22A4}
+send {U+22A4}
 return
 
 
@@ -26609,17 +26609,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bot::
-SendInput ^x8{Enter}22a5{Enter}
+send ^x8{Enter}22a5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bot::
-SendInput ^+u22a5{Enter}
+send ^+u22a5{Enter}
 return
 
 #if OtherCase()
 ::\bot::
-SendInput {U+22A5}
+send {U+22A5}
 return
 
 
@@ -26627,17 +26627,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\perp::
-SendInput ^x8{Enter}22a5{Enter}
+send ^x8{Enter}22a5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\perp::
-SendInput ^+u22a5{Enter}
+send ^+u22a5{Enter}
 return
 
 #if OtherCase()
 ::\perp::
-SendInput {U+22A5}
+send {U+22A5}
 return
 
 
@@ -26645,17 +26645,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\models::
-SendInput ^x8{Enter}22a7{Enter}
+send ^x8{Enter}22a7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\models::
-SendInput ^+u22a7{Enter}
+send ^+u22a7{Enter}
 return
 
 #if OtherCase()
 ::\models::
-SendInput {U+22A7}
+send {U+22A7}
 return
 
 
@@ -26663,17 +26663,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vDash::
-SendInput ^x8{Enter}22a8{Enter}
+send ^x8{Enter}22a8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vDash::
-SendInput ^+u22a8{Enter}
+send ^+u22a8{Enter}
 return
 
 #if OtherCase()
 ::\vDash::
-SendInput {U+22A8}
+send {U+22A8}
 return
 
 
@@ -26681,17 +26681,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Vdash::
-SendInput ^x8{Enter}22a9{Enter}
+send ^x8{Enter}22a9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Vdash::
-SendInput ^+u22a9{Enter}
+send ^+u22a9{Enter}
 return
 
 #if OtherCase()
 ::\Vdash::
-SendInput {U+22A9}
+send {U+22A9}
 return
 
 
@@ -26699,17 +26699,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Vvdash::
-SendInput ^x8{Enter}22aa{Enter}
+send ^x8{Enter}22aa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Vvdash::
-SendInput ^+u22aa{Enter}
+send ^+u22aa{Enter}
 return
 
 #if OtherCase()
 ::\Vvdash::
-SendInput {U+22AA}
+send {U+22AA}
 return
 
 
@@ -26717,17 +26717,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nvdash::
-SendInput ^x8{Enter}22ac{Enter}
+send ^x8{Enter}22ac{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nvdash::
-SendInput ^+u22ac{Enter}
+send ^+u22ac{Enter}
 return
 
 #if OtherCase()
 ::\nvdash::
-SendInput {U+22AC}
+send {U+22AC}
 return
 
 
@@ -26735,17 +26735,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nvDash::
-SendInput ^x8{Enter}22ad{Enter}
+send ^x8{Enter}22ad{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nvDash::
-SendInput ^+u22ad{Enter}
+send ^+u22ad{Enter}
 return
 
 #if OtherCase()
 ::\nvDash::
-SendInput {U+22AD}
+send {U+22AD}
 return
 
 
@@ -26753,17 +26753,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nVdash::
-SendInput ^x8{Enter}22ae{Enter}
+send ^x8{Enter}22ae{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nVdash::
-SendInput ^+u22ae{Enter}
+send ^+u22ae{Enter}
 return
 
 #if OtherCase()
 ::\nVdash::
-SendInput {U+22AE}
+send {U+22AE}
 return
 
 
@@ -26771,17 +26771,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nVDash::
-SendInput ^x8{Enter}22af{Enter}
+send ^x8{Enter}22af{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nVDash::
-SendInput ^+u22af{Enter}
+send ^+u22af{Enter}
 return
 
 #if OtherCase()
 ::\nVDash::
-SendInput {U+22AF}
+send {U+22AF}
 return
 
 
@@ -26789,17 +26789,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vartriangleleft::
-SendInput ^x8{Enter}22b2{Enter}
+send ^x8{Enter}22b2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vartriangleleft::
-SendInput ^+u22b2{Enter}
+send ^+u22b2{Enter}
 return
 
 #if OtherCase()
 ::\vartriangleleft::
-SendInput {U+22B2}
+send {U+22B2}
 return
 
 
@@ -26807,17 +26807,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vartriangleright::
-SendInput ^x8{Enter}22b3{Enter}
+send ^x8{Enter}22b3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vartriangleright::
-SendInput ^+u22b3{Enter}
+send ^+u22b3{Enter}
 return
 
 #if OtherCase()
 ::\vartriangleright::
-SendInput {U+22B3}
+send {U+22B3}
 return
 
 
@@ -26825,17 +26825,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\trianglelefteq::
-SendInput ^x8{Enter}22b4{Enter}
+send ^x8{Enter}22b4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\trianglelefteq::
-SendInput ^+u22b4{Enter}
+send ^+u22b4{Enter}
 return
 
 #if OtherCase()
 ::\trianglelefteq::
-SendInput {U+22B4}
+send {U+22B4}
 return
 
 
@@ -26843,17 +26843,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\trianglerighteq::
-SendInput ^x8{Enter}22b5{Enter}
+send ^x8{Enter}22b5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\trianglerighteq::
-SendInput ^+u22b5{Enter}
+send ^+u22b5{Enter}
 return
 
 #if OtherCase()
 ::\trianglerighteq::
-SendInput {U+22B5}
+send {U+22B5}
 return
 
 
@@ -26861,17 +26861,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\multimap::
-SendInput ^x8{Enter}22b8{Enter}
+send ^x8{Enter}22b8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\multimap::
-SendInput ^+u22b8{Enter}
+send ^+u22b8{Enter}
 return
 
 #if OtherCase()
 ::\multimap::
-SendInput {U+22B8}
+send {U+22B8}
 return
 
 
@@ -26879,17 +26879,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\intercal::
-SendInput ^x8{Enter}22ba{Enter}
+send ^x8{Enter}22ba{Enter}
 return
 
 #if GtkApplicationCase()
 ::\intercal::
-SendInput ^+u22ba{Enter}
+send ^+u22ba{Enter}
 return
 
 #if OtherCase()
 ::\intercal::
-SendInput {U+22BA}
+send {U+22BA}
 return
 
 
@@ -26897,17 +26897,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\veebar::
-SendInput ^x8{Enter}22bb{Enter}
+send ^x8{Enter}22bb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\veebar::
-SendInput ^+u22bb{Enter}
+send ^+u22bb{Enter}
 return
 
 #if OtherCase()
 ::\veebar::
-SendInput {U+22BB}
+send {U+22BB}
 return
 
 
@@ -26915,17 +26915,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\barwedge::
-SendInput ^x8{Enter}22bc{Enter}
+send ^x8{Enter}22bc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\barwedge::
-SendInput ^+u22bc{Enter}
+send ^+u22bc{Enter}
 return
 
 #if OtherCase()
 ::\barwedge::
-SendInput {U+22BC}
+send {U+22BC}
 return
 
 
@@ -26933,17 +26933,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bigwedge::
-SendInput ^x8{Enter}22c0{Enter}
+send ^x8{Enter}22c0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bigwedge::
-SendInput ^+u22c0{Enter}
+send ^+u22c0{Enter}
 return
 
 #if OtherCase()
 ::\bigwedge::
-SendInput {U+22C0}
+send {U+22C0}
 return
 
 
@@ -26951,17 +26951,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bigvee::
-SendInput ^x8{Enter}22c1{Enter}
+send ^x8{Enter}22c1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bigvee::
-SendInput ^+u22c1{Enter}
+send ^+u22c1{Enter}
 return
 
 #if OtherCase()
 ::\bigvee::
-SendInput {U+22C1}
+send {U+22C1}
 return
 
 
@@ -26969,17 +26969,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bigcap::
-SendInput ^x8{Enter}22c2{Enter}
+send ^x8{Enter}22c2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bigcap::
-SendInput ^+u22c2{Enter}
+send ^+u22c2{Enter}
 return
 
 #if OtherCase()
 ::\bigcap::
-SendInput {U+22C2}
+send {U+22C2}
 return
 
 
@@ -26987,17 +26987,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bigcup::
-SendInput ^x8{Enter}22c3{Enter}
+send ^x8{Enter}22c3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bigcup::
-SendInput ^+u22c3{Enter}
+send ^+u22c3{Enter}
 return
 
 #if OtherCase()
 ::\bigcup::
-SendInput {U+22C3}
+send {U+22C3}
 return
 
 
@@ -27005,17 +27005,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\diamond::
-SendInput ^x8{Enter}22c4{Enter}
+send ^x8{Enter}22c4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\diamond::
-SendInput ^+u22c4{Enter}
+send ^+u22c4{Enter}
 return
 
 #if OtherCase()
 ::\diamond::
-SendInput {U+22C4}
+send {U+22C4}
 return
 
 
@@ -27023,17 +27023,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\star::
-SendInput ^x8{Enter}22c6{Enter}
+send ^x8{Enter}22c6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\star::
-SendInput ^+u22c6{Enter}
+send ^+u22c6{Enter}
 return
 
 #if OtherCase()
 ::\star::
-SendInput {U+22C6}
+send {U+22C6}
 return
 
 
@@ -27041,17 +27041,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\divideontimes::
-SendInput ^x8{Enter}22c7{Enter}
+send ^x8{Enter}22c7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\divideontimes::
-SendInput ^+u22c7{Enter}
+send ^+u22c7{Enter}
 return
 
 #if OtherCase()
 ::\divideontimes::
-SendInput {U+22C7}
+send {U+22C7}
 return
 
 
@@ -27059,17 +27059,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Join::
-SendInput ^x8{Enter}22c8{Enter}
+send ^x8{Enter}22c8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Join::
-SendInput ^+u22c8{Enter}
+send ^+u22c8{Enter}
 return
 
 #if OtherCase()
 ::\Join::
-SendInput {U+22C8}
+send {U+22C8}
 return
 
 
@@ -27077,17 +27077,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bowtie::
-SendInput ^x8{Enter}22c8{Enter}
+send ^x8{Enter}22c8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bowtie::
-SendInput ^+u22c8{Enter}
+send ^+u22c8{Enter}
 return
 
 #if OtherCase()
 ::\bowtie::
-SendInput {U+22C8}
+send {U+22C8}
 return
 
 
@@ -27095,17 +27095,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ltimes::
-SendInput ^x8{Enter}22c9{Enter}
+send ^x8{Enter}22c9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ltimes::
-SendInput ^+u22c9{Enter}
+send ^+u22c9{Enter}
 return
 
 #if OtherCase()
 ::\ltimes::
-SendInput {U+22C9}
+send {U+22C9}
 return
 
 
@@ -27113,17 +27113,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rtimes::
-SendInput ^x8{Enter}22ca{Enter}
+send ^x8{Enter}22ca{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rtimes::
-SendInput ^+u22ca{Enter}
+send ^+u22ca{Enter}
 return
 
 #if OtherCase()
 ::\rtimes::
-SendInput {U+22CA}
+send {U+22CA}
 return
 
 
@@ -27131,17 +27131,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\leftthreetimes::
-SendInput ^x8{Enter}22cb{Enter}
+send ^x8{Enter}22cb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\leftthreetimes::
-SendInput ^+u22cb{Enter}
+send ^+u22cb{Enter}
 return
 
 #if OtherCase()
 ::\leftthreetimes::
-SendInput {U+22CB}
+send {U+22CB}
 return
 
 
@@ -27149,17 +27149,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rightthreetimes::
-SendInput ^x8{Enter}22cc{Enter}
+send ^x8{Enter}22cc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rightthreetimes::
-SendInput ^+u22cc{Enter}
+send ^+u22cc{Enter}
 return
 
 #if OtherCase()
 ::\rightthreetimes::
-SendInput {U+22CC}
+send {U+22CC}
 return
 
 
@@ -27167,17 +27167,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\backsimeq::
-SendInput ^x8{Enter}22cd{Enter}
+send ^x8{Enter}22cd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\backsimeq::
-SendInput ^+u22cd{Enter}
+send ^+u22cd{Enter}
 return
 
 #if OtherCase()
 ::\backsimeq::
-SendInput {U+22CD}
+send {U+22CD}
 return
 
 
@@ -27185,17 +27185,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\curlyvee::
-SendInput ^x8{Enter}22ce{Enter}
+send ^x8{Enter}22ce{Enter}
 return
 
 #if GtkApplicationCase()
 ::\curlyvee::
-SendInput ^+u22ce{Enter}
+send ^+u22ce{Enter}
 return
 
 #if OtherCase()
 ::\curlyvee::
-SendInput {U+22CE}
+send {U+22CE}
 return
 
 
@@ -27203,17 +27203,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\curlywedge::
-SendInput ^x8{Enter}22cf{Enter}
+send ^x8{Enter}22cf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\curlywedge::
-SendInput ^+u22cf{Enter}
+send ^+u22cf{Enter}
 return
 
 #if OtherCase()
 ::\curlywedge::
-SendInput {U+22CF}
+send {U+22CF}
 return
 
 
@@ -27221,17 +27221,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Subset::
-SendInput ^x8{Enter}22d0{Enter}
+send ^x8{Enter}22d0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Subset::
-SendInput ^+u22d0{Enter}
+send ^+u22d0{Enter}
 return
 
 #if OtherCase()
 ::\Subset::
-SendInput {U+22D0}
+send {U+22D0}
 return
 
 
@@ -27239,17 +27239,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Supset::
-SendInput ^x8{Enter}22d1{Enter}
+send ^x8{Enter}22d1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Supset::
-SendInput ^+u22d1{Enter}
+send ^+u22d1{Enter}
 return
 
 #if OtherCase()
 ::\Supset::
-SendInput {U+22D1}
+send {U+22D1}
 return
 
 
@@ -27257,17 +27257,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Cap::
-SendInput ^x8{Enter}22d2{Enter}
+send ^x8{Enter}22d2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Cap::
-SendInput ^+u22d2{Enter}
+send ^+u22d2{Enter}
 return
 
 #if OtherCase()
 ::\Cap::
-SendInput {U+22D2}
+send {U+22D2}
 return
 
 
@@ -27275,17 +27275,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Cup::
-SendInput ^x8{Enter}22d3{Enter}
+send ^x8{Enter}22d3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Cup::
-SendInput ^+u22d3{Enter}
+send ^+u22d3{Enter}
 return
 
 #if OtherCase()
 ::\Cup::
-SendInput {U+22D3}
+send {U+22D3}
 return
 
 
@@ -27293,17 +27293,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\pitchfork::
-SendInput ^x8{Enter}22d4{Enter}
+send ^x8{Enter}22d4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\pitchfork::
-SendInput ^+u22d4{Enter}
+send ^+u22d4{Enter}
 return
 
 #if OtherCase()
 ::\pitchfork::
-SendInput {U+22D4}
+send {U+22D4}
 return
 
 
@@ -27311,17 +27311,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lessdot::
-SendInput ^x8{Enter}22d6{Enter}
+send ^x8{Enter}22d6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lessdot::
-SendInput ^+u22d6{Enter}
+send ^+u22d6{Enter}
 return
 
 #if OtherCase()
 ::\lessdot::
-SendInput {U+22D6}
+send {U+22D6}
 return
 
 
@@ -27329,17 +27329,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gtrdot::
-SendInput ^x8{Enter}22d7{Enter}
+send ^x8{Enter}22d7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gtrdot::
-SendInput ^+u22d7{Enter}
+send ^+u22d7{Enter}
 return
 
 #if OtherCase()
 ::\gtrdot::
-SendInput {U+22D7}
+send {U+22D7}
 return
 
 
@@ -27347,17 +27347,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Ll::
-SendInput ^x8{Enter}22d8{Enter}
+send ^x8{Enter}22d8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Ll::
-SendInput ^+u22d8{Enter}
+send ^+u22d8{Enter}
 return
 
 #if OtherCase()
 ::\Ll::
-SendInput {U+22D8}
+send {U+22D8}
 return
 
 
@@ -27365,17 +27365,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ggg::
-SendInput ^x8{Enter}22d9{Enter}
+send ^x8{Enter}22d9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ggg::
-SendInput ^+u22d9{Enter}
+send ^+u22d9{Enter}
 return
 
 #if OtherCase()
 ::\ggg::
-SendInput {U+22D9}
+send {U+22D9}
 return
 
 
@@ -27383,17 +27383,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lesseqgtr::
-SendInput ^x8{Enter}22da{Enter}
+send ^x8{Enter}22da{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lesseqgtr::
-SendInput ^+u22da{Enter}
+send ^+u22da{Enter}
 return
 
 #if OtherCase()
 ::\lesseqgtr::
-SendInput {U+22DA}
+send {U+22DA}
 return
 
 
@@ -27401,17 +27401,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lesseqqgtr::
-SendInput ^x8{Enter}22da{Enter}
+send ^x8{Enter}22da{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lesseqqgtr::
-SendInput ^+u22da{Enter}
+send ^+u22da{Enter}
 return
 
 #if OtherCase()
 ::\lesseqqgtr::
-SendInput {U+22DA}
+send {U+22DA}
 return
 
 
@@ -27419,17 +27419,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gtreqless::
-SendInput ^x8{Enter}22db{Enter}
+send ^x8{Enter}22db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gtreqless::
-SendInput ^+u22db{Enter}
+send ^+u22db{Enter}
 return
 
 #if OtherCase()
 ::\gtreqless::
-SendInput {U+22DB}
+send {U+22DB}
 return
 
 
@@ -27437,17 +27437,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gtreqqless::
-SendInput ^x8{Enter}22db{Enter}
+send ^x8{Enter}22db{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gtreqqless::
-SendInput ^+u22db{Enter}
+send ^+u22db{Enter}
 return
 
 #if OtherCase()
 ::\gtreqqless::
-SendInput {U+22DB}
+send {U+22DB}
 return
 
 
@@ -27455,17 +27455,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\eqslantless::
-SendInput ^x8{Enter}22dc{Enter}
+send ^x8{Enter}22dc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\eqslantless::
-SendInput ^+u22dc{Enter}
+send ^+u22dc{Enter}
 return
 
 #if OtherCase()
 ::\eqslantless::
-SendInput {U+22DC}
+send {U+22DC}
 return
 
 
@@ -27473,17 +27473,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\eqslantgtr::
-SendInput ^x8{Enter}22dd{Enter}
+send ^x8{Enter}22dd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\eqslantgtr::
-SendInput ^+u22dd{Enter}
+send ^+u22dd{Enter}
 return
 
 #if OtherCase()
 ::\eqslantgtr::
-SendInput {U+22DD}
+send {U+22DD}
 return
 
 
@@ -27491,17 +27491,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\curlyeqprec::
-SendInput ^x8{Enter}22de{Enter}
+send ^x8{Enter}22de{Enter}
 return
 
 #if GtkApplicationCase()
 ::\curlyeqprec::
-SendInput ^+u22de{Enter}
+send ^+u22de{Enter}
 return
 
 #if OtherCase()
 ::\curlyeqprec::
-SendInput {U+22DE}
+send {U+22DE}
 return
 
 
@@ -27509,17 +27509,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\curlyeqsucc::
-SendInput ^x8{Enter}22df{Enter}
+send ^x8{Enter}22df{Enter}
 return
 
 #if GtkApplicationCase()
 ::\curlyeqsucc::
-SendInput ^+u22df{Enter}
+send ^+u22df{Enter}
 return
 
 #if OtherCase()
 ::\curlyeqsucc::
-SendInput {U+22DF}
+send {U+22DF}
 return
 
 
@@ -27527,17 +27527,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\npreceq::
-SendInput ^x8{Enter}22e0{Enter}
+send ^x8{Enter}22e0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\npreceq::
-SendInput ^+u22e0{Enter}
+send ^+u22e0{Enter}
 return
 
 #if OtherCase()
 ::\npreceq::
-SendInput {U+22E0}
+send {U+22E0}
 return
 
 
@@ -27545,17 +27545,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nsucceq::
-SendInput ^x8{Enter}22e1{Enter}
+send ^x8{Enter}22e1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nsucceq::
-SendInput ^+u22e1{Enter}
+send ^+u22e1{Enter}
 return
 
 #if OtherCase()
 ::\nsucceq::
-SendInput {U+22E1}
+send {U+22E1}
 return
 
 
@@ -27563,17 +27563,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lnapprox::
-SendInput ^x8{Enter}22e6{Enter}
+send ^x8{Enter}22e6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lnapprox::
-SendInput ^+u22e6{Enter}
+send ^+u22e6{Enter}
 return
 
 #if OtherCase()
 ::\lnapprox::
-SendInput {U+22E6}
+send {U+22E6}
 return
 
 
@@ -27581,17 +27581,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lnsim::
-SendInput ^x8{Enter}22e6{Enter}
+send ^x8{Enter}22e6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lnsim::
-SendInput ^+u22e6{Enter}
+send ^+u22e6{Enter}
 return
 
 #if OtherCase()
 ::\lnsim::
-SendInput {U+22E6}
+send {U+22E6}
 return
 
 
@@ -27599,17 +27599,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gnapprox::
-SendInput ^x8{Enter}22e7{Enter}
+send ^x8{Enter}22e7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gnapprox::
-SendInput ^+u22e7{Enter}
+send ^+u22e7{Enter}
 return
 
 #if OtherCase()
 ::\gnapprox::
-SendInput {U+22E7}
+send {U+22E7}
 return
 
 
@@ -27617,17 +27617,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\gnsim::
-SendInput ^x8{Enter}22e7{Enter}
+send ^x8{Enter}22e7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\gnsim::
-SendInput ^+u22e7{Enter}
+send ^+u22e7{Enter}
 return
 
 #if OtherCase()
 ::\gnsim::
-SendInput {U+22E7}
+send {U+22E7}
 return
 
 
@@ -27635,17 +27635,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\precnapprox::
-SendInput ^x8{Enter}22e8{Enter}
+send ^x8{Enter}22e8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\precnapprox::
-SendInput ^+u22e8{Enter}
+send ^+u22e8{Enter}
 return
 
 #if OtherCase()
 ::\precnapprox::
-SendInput {U+22E8}
+send {U+22E8}
 return
 
 
@@ -27653,17 +27653,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\precnsim::
-SendInput ^x8{Enter}22e8{Enter}
+send ^x8{Enter}22e8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\precnsim::
-SendInput ^+u22e8{Enter}
+send ^+u22e8{Enter}
 return
 
 #if OtherCase()
 ::\precnsim::
-SendInput {U+22E8}
+send {U+22E8}
 return
 
 
@@ -27671,17 +27671,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\succnapprox::
-SendInput ^x8{Enter}22e9{Enter}
+send ^x8{Enter}22e9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\succnapprox::
-SendInput ^+u22e9{Enter}
+send ^+u22e9{Enter}
 return
 
 #if OtherCase()
 ::\succnapprox::
-SendInput {U+22E9}
+send {U+22E9}
 return
 
 
@@ -27689,17 +27689,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\succnsim::
-SendInput ^x8{Enter}22e9{Enter}
+send ^x8{Enter}22e9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\succnsim::
-SendInput ^+u22e9{Enter}
+send ^+u22e9{Enter}
 return
 
 #if OtherCase()
 ::\succnsim::
-SendInput {U+22E9}
+send {U+22E9}
 return
 
 
@@ -27707,17 +27707,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ntriangleleft::
-SendInput ^x8{Enter}22ea{Enter}
+send ^x8{Enter}22ea{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ntriangleleft::
-SendInput ^+u22ea{Enter}
+send ^+u22ea{Enter}
 return
 
 #if OtherCase()
 ::\ntriangleleft::
-SendInput {U+22EA}
+send {U+22EA}
 return
 
 
@@ -27725,17 +27725,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ntriangleright::
-SendInput ^x8{Enter}22eb{Enter}
+send ^x8{Enter}22eb{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ntriangleright::
-SendInput ^+u22eb{Enter}
+send ^+u22eb{Enter}
 return
 
 #if OtherCase()
 ::\ntriangleright::
-SendInput {U+22EB}
+send {U+22EB}
 return
 
 
@@ -27743,17 +27743,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ntrianglelefteq::
-SendInput ^x8{Enter}22ec{Enter}
+send ^x8{Enter}22ec{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ntrianglelefteq::
-SendInput ^+u22ec{Enter}
+send ^+u22ec{Enter}
 return
 
 #if OtherCase()
 ::\ntrianglelefteq::
-SendInput {U+22EC}
+send {U+22EC}
 return
 
 
@@ -27761,17 +27761,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ntrianglerighteq::
-SendInput ^x8{Enter}22ed{Enter}
+send ^x8{Enter}22ed{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ntrianglerighteq::
-SendInput ^+u22ed{Enter}
+send ^+u22ed{Enter}
 return
 
 #if OtherCase()
 ::\ntrianglerighteq::
-SendInput {U+22ED}
+send {U+22ED}
 return
 
 
@@ -27779,17 +27779,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\vdots::
-SendInput ^x8{Enter}22ee{Enter}
+send ^x8{Enter}22ee{Enter}
 return
 
 #if GtkApplicationCase()
 ::\vdots::
-SendInput ^+u22ee{Enter}
+send ^+u22ee{Enter}
 return
 
 #if OtherCase()
 ::\vdots::
-SendInput {U+22EE}
+send {U+22EE}
 return
 
 
@@ -27797,17 +27797,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\cdots::
-SendInput ^x8{Enter}22ef{Enter}
+send ^x8{Enter}22ef{Enter}
 return
 
 #if GtkApplicationCase()
 ::\cdots::
-SendInput ^+u22ef{Enter}
+send ^+u22ef{Enter}
 return
 
 #if OtherCase()
 ::\cdots::
-SendInput {U+22EF}
+send {U+22EF}
 return
 
 
@@ -27815,17 +27815,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ddots::
-SendInput ^x8{Enter}22f1{Enter}
+send ^x8{Enter}22f1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ddots::
-SendInput ^+u22f1{Enter}
+send ^+u22f1{Enter}
 return
 
 #if OtherCase()
 ::\ddots::
-SendInput {U+22F1}
+send {U+22F1}
 return
 
 
@@ -27833,17 +27833,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\diameter::
-SendInput ^x8{Enter}2300{Enter}
+send ^x8{Enter}2300{Enter}
 return
 
 #if GtkApplicationCase()
 ::\diameter::
-SendInput ^+u2300{Enter}
+send ^+u2300{Enter}
 return
 
 #if OtherCase()
 ::\diameter::
-SendInput {U+2300}
+send {U+2300}
 return
 
 
@@ -27851,17 +27851,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lceil::
-SendInput ^x8{Enter}2308{Enter}
+send ^x8{Enter}2308{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lceil::
-SendInput ^+u2308{Enter}
+send ^+u2308{Enter}
 return
 
 #if OtherCase()
 ::\lceil::
-SendInput {U+2308}
+send {U+2308}
 return
 
 
@@ -27869,17 +27869,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rceil::
-SendInput ^x8{Enter}2309{Enter}
+send ^x8{Enter}2309{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rceil::
-SendInput ^+u2309{Enter}
+send ^+u2309{Enter}
 return
 
 #if OtherCase()
 ::\rceil::
-SendInput {U+2309}
+send {U+2309}
 return
 
 
@@ -27887,17 +27887,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lfloor::
-SendInput ^x8{Enter}230a{Enter}
+send ^x8{Enter}230a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lfloor::
-SendInput ^+u230a{Enter}
+send ^+u230a{Enter}
 return
 
 #if OtherCase()
 ::\lfloor::
-SendInput {U+230A}
+send {U+230A}
 return
 
 
@@ -27905,17 +27905,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rfloor::
-SendInput ^x8{Enter}230b{Enter}
+send ^x8{Enter}230b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rfloor::
-SendInput ^+u230b{Enter}
+send ^+u230b{Enter}
 return
 
 #if OtherCase()
 ::\rfloor::
-SendInput {U+230B}
+send {U+230B}
 return
 
 
@@ -27923,17 +27923,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ulcorner::
-SendInput ^x8{Enter}231c{Enter}
+send ^x8{Enter}231c{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ulcorner::
-SendInput ^+u231c{Enter}
+send ^+u231c{Enter}
 return
 
 #if OtherCase()
 ::\ulcorner::
-SendInput {U+231C}
+send {U+231C}
 return
 
 
@@ -27941,17 +27941,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\urcorner::
-SendInput ^x8{Enter}231d{Enter}
+send ^x8{Enter}231d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\urcorner::
-SendInput ^+u231d{Enter}
+send ^+u231d{Enter}
 return
 
 #if OtherCase()
 ::\urcorner::
-SendInput {U+231D}
+send {U+231D}
 return
 
 
@@ -27959,17 +27959,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\llcorner::
-SendInput ^x8{Enter}231e{Enter}
+send ^x8{Enter}231e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\llcorner::
-SendInput ^+u231e{Enter}
+send ^+u231e{Enter}
 return
 
 #if OtherCase()
 ::\llcorner::
-SendInput {U+231E}
+send {U+231E}
 return
 
 
@@ -27977,17 +27977,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lrcorner::
-SendInput ^x8{Enter}231f{Enter}
+send ^x8{Enter}231f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lrcorner::
-SendInput ^+u231f{Enter}
+send ^+u231f{Enter}
 return
 
 #if OtherCase()
 ::\lrcorner::
-SendInput {U+231F}
+send {U+231F}
 return
 
 
@@ -27995,17 +27995,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\frown::
-SendInput ^x8{Enter}2322{Enter}
+send ^x8{Enter}2322{Enter}
 return
 
 #if GtkApplicationCase()
 ::\frown::
-SendInput ^+u2322{Enter}
+send ^+u2322{Enter}
 return
 
 #if OtherCase()
 ::\frown::
-SendInput {U+2322}
+send {U+2322}
 return
 
 
@@ -28013,17 +28013,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\smallsmile::
-SendInput ^x8{Enter}2323{Enter}
+send ^x8{Enter}2323{Enter}
 return
 
 #if GtkApplicationCase()
 ::\smallsmile::
-SendInput ^+u2323{Enter}
+send ^+u2323{Enter}
 return
 
 #if OtherCase()
 ::\smallsmile::
-SendInput {U+2323}
+send {U+2323}
 return
 
 
@@ -28031,17 +28031,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\smile::
-SendInput ^x8{Enter}2323{Enter}
+send ^x8{Enter}2323{Enter}
 return
 
 #if GtkApplicationCase()
 ::\smile::
-SendInput ^+u2323{Enter}
+send ^+u2323{Enter}
 return
 
 #if OtherCase()
 ::\smile::
-SendInput {U+2323}
+send {U+2323}
 return
 
 
@@ -28049,17 +28049,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\circledS::
-SendInput ^x8{Enter}24c8{Enter}
+send ^x8{Enter}24c8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\circledS::
-SendInput ^+u24c8{Enter}
+send ^+u24c8{Enter}
 return
 
 #if OtherCase()
 ::\circledS::
-SendInput {U+24C8}
+send {U+24C8}
 return
 
 
@@ -28067,17 +28067,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Box::
-SendInput ^x8{Enter}25a1{Enter}
+send ^x8{Enter}25a1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Box::
-SendInput ^+u25a1{Enter}
+send ^+u25a1{Enter}
 return
 
 #if OtherCase()
 ::\Box::
-SendInput {U+25A1}
+send {U+25A1}
 return
 
 
@@ -28085,17 +28085,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\square::
-SendInput ^x8{Enter}25a1{Enter}
+send ^x8{Enter}25a1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\square::
-SendInput ^+u25a1{Enter}
+send ^+u25a1{Enter}
 return
 
 #if OtherCase()
 ::\square::
-SendInput {U+25A1}
+send {U+25A1}
 return
 
 
@@ -28103,17 +28103,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\blacksquare::
-SendInput ^x8{Enter}25aa{Enter}
+send ^x8{Enter}25aa{Enter}
 return
 
 #if GtkApplicationCase()
 ::\blacksquare::
-SendInput ^+u25aa{Enter}
+send ^+u25aa{Enter}
 return
 
 #if OtherCase()
 ::\blacksquare::
-SendInput {U+25AA}
+send {U+25AA}
 return
 
 
@@ -28121,17 +28121,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bigtriangleup::
-SendInput ^x8{Enter}25b3{Enter}
+send ^x8{Enter}25b3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bigtriangleup::
-SendInput ^+u25b3{Enter}
+send ^+u25b3{Enter}
 return
 
 #if OtherCase()
 ::\bigtriangleup::
-SendInput {U+25B3}
+send {U+25B3}
 return
 
 
@@ -28139,17 +28139,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\blacktriangle::
-SendInput ^x8{Enter}25b4{Enter}
+send ^x8{Enter}25b4{Enter}
 return
 
 #if GtkApplicationCase()
 ::\blacktriangle::
-SendInput ^+u25b4{Enter}
+send ^+u25b4{Enter}
 return
 
 #if OtherCase()
 ::\blacktriangle::
-SendInput {U+25B4}
+send {U+25B4}
 return
 
 
@@ -28157,17 +28157,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\triangle::
-SendInput ^x8{Enter}25b5{Enter}
+send ^x8{Enter}25b5{Enter}
 return
 
 #if GtkApplicationCase()
 ::\triangle::
-SendInput ^+u25b5{Enter}
+send ^+u25b5{Enter}
 return
 
 #if OtherCase()
 ::\triangle::
-SendInput {U+25B5}
+send {U+25B5}
 return
 
 
@@ -28175,17 +28175,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rhd::
-SendInput ^x8{Enter}25b7{Enter}
+send ^x8{Enter}25b7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rhd::
-SendInput ^+u25b7{Enter}
+send ^+u25b7{Enter}
 return
 
 #if OtherCase()
 ::\rhd::
-SendInput {U+25B7}
+send {U+25B7}
 return
 
 
@@ -28193,17 +28193,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\blacktriangleright::
-SendInput ^x8{Enter}25b8{Enter}
+send ^x8{Enter}25b8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\blacktriangleright::
-SendInput ^+u25b8{Enter}
+send ^+u25b8{Enter}
 return
 
 #if OtherCase()
 ::\blacktriangleright::
-SendInput {U+25B8}
+send {U+25B8}
 return
 
 
@@ -28211,17 +28211,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\triangleright::
-SendInput ^x8{Enter}25b9{Enter}
+send ^x8{Enter}25b9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\triangleright::
-SendInput ^+u25b9{Enter}
+send ^+u25b9{Enter}
 return
 
 #if OtherCase()
 ::\triangleright::
-SendInput {U+25B9}
+send {U+25B9}
 return
 
 
@@ -28229,17 +28229,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bigtriangledown::
-SendInput ^x8{Enter}25bd{Enter}
+send ^x8{Enter}25bd{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bigtriangledown::
-SendInput ^+u25bd{Enter}
+send ^+u25bd{Enter}
 return
 
 #if OtherCase()
 ::\bigtriangledown::
-SendInput {U+25BD}
+send {U+25BD}
 return
 
 
@@ -28247,17 +28247,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\blacktriangledown::
-SendInput ^x8{Enter}25be{Enter}
+send ^x8{Enter}25be{Enter}
 return
 
 #if GtkApplicationCase()
 ::\blacktriangledown::
-SendInput ^+u25be{Enter}
+send ^+u25be{Enter}
 return
 
 #if OtherCase()
 ::\blacktriangledown::
-SendInput {U+25BE}
+send {U+25BE}
 return
 
 
@@ -28265,17 +28265,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\triangledown::
-SendInput ^x8{Enter}25bf{Enter}
+send ^x8{Enter}25bf{Enter}
 return
 
 #if GtkApplicationCase()
 ::\triangledown::
-SendInput ^+u25bf{Enter}
+send ^+u25bf{Enter}
 return
 
 #if OtherCase()
 ::\triangledown::
-SendInput {U+25BF}
+send {U+25BF}
 return
 
 
@@ -28283,17 +28283,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lhd::
-SendInput ^x8{Enter}25c1{Enter}
+send ^x8{Enter}25c1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lhd::
-SendInput ^+u25c1{Enter}
+send ^+u25c1{Enter}
 return
 
 #if OtherCase()
 ::\lhd::
-SendInput {U+25C1}
+send {U+25C1}
 return
 
 
@@ -28301,17 +28301,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\blacktriangleleft::
-SendInput ^x8{Enter}25c2{Enter}
+send ^x8{Enter}25c2{Enter}
 return
 
 #if GtkApplicationCase()
 ::\blacktriangleleft::
-SendInput ^+u25c2{Enter}
+send ^+u25c2{Enter}
 return
 
 #if OtherCase()
 ::\blacktriangleleft::
-SendInput {U+25C2}
+send {U+25C2}
 return
 
 
@@ -28319,17 +28319,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\triangleleft::
-SendInput ^x8{Enter}25c3{Enter}
+send ^x8{Enter}25c3{Enter}
 return
 
 #if GtkApplicationCase()
 ::\triangleleft::
-SendInput ^+u25c3{Enter}
+send ^+u25c3{Enter}
 return
 
 #if OtherCase()
 ::\triangleleft::
-SendInput {U+25C3}
+send {U+25C3}
 return
 
 
@@ -28337,17 +28337,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Diamond::
-SendInput ^x8{Enter}25c7{Enter}
+send ^x8{Enter}25c7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Diamond::
-SendInput ^+u25c7{Enter}
+send ^+u25c7{Enter}
 return
 
 #if OtherCase()
 ::\Diamond::
-SendInput {U+25C7}
+send {U+25C7}
 return
 
 
@@ -28355,17 +28355,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textopenbullet::
-SendInput ^x8{Enter}25e6{Enter}
+send ^x8{Enter}25e6{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textopenbullet::
-SendInput ^+u25e6{Enter}
+send ^+u25e6{Enter}
 return
 
 #if OtherCase()
 ::\textopenbullet::
-SendInput {U+25E6}
+send {U+25E6}
 return
 
 
@@ -28373,17 +28373,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bigcirc::
-SendInput ^x8{Enter}25ef{Enter}
+send ^x8{Enter}25ef{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bigcirc::
-SendInput ^+u25ef{Enter}
+send ^+u25ef{Enter}
 return
 
 #if OtherCase()
 ::\bigcirc::
-SendInput {U+25EF}
+send {U+25EF}
 return
 
 
@@ -28391,17 +28391,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\bigstar::
-SendInput ^x8{Enter}2605{Enter}
+send ^x8{Enter}2605{Enter}
 return
 
 #if GtkApplicationCase()
 ::\bigstar::
-SendInput ^+u2605{Enter}
+send ^+u2605{Enter}
 return
 
 #if OtherCase()
 ::\bigstar::
-SendInput {U+2605}
+send {U+2605}
 return
 
 
@@ -28409,17 +28409,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\caution::
-SendInput ^x8{Enter}2621{Enter}
+send ^x8{Enter}2621{Enter}
 return
 
 #if GtkApplicationCase()
 ::\caution::
-SendInput ^+u2621{Enter}
+send ^+u2621{Enter}
 return
 
 #if OtherCase()
 ::\caution::
-SendInput {U+2621}
+send {U+2621}
 return
 
 
@@ -28427,17 +28427,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\radioactive::
-SendInput ^x8{Enter}2622{Enter}
+send ^x8{Enter}2622{Enter}
 return
 
 #if GtkApplicationCase()
 ::\radioactive::
-SendInput ^+u2622{Enter}
+send ^+u2622{Enter}
 return
 
 #if OtherCase()
 ::\radioactive::
-SendInput {U+2622}
+send {U+2622}
 return
 
 
@@ -28445,17 +28445,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\biohazard::
-SendInput ^x8{Enter}2623{Enter}
+send ^x8{Enter}2623{Enter}
 return
 
 #if GtkApplicationCase()
 ::\biohazard::
-SendInput ^+u2623{Enter}
+send ^+u2623{Enter}
 return
 
 #if OtherCase()
 ::\biohazard::
-SendInput {U+2623}
+send {U+2623}
 return
 
 
@@ -28463,17 +28463,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Frowny::
-SendInput ^x8{Enter}2639{Enter}
+send ^x8{Enter}2639{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Frowny::
-SendInput ^+u2639{Enter}
+send ^+u2639{Enter}
 return
 
 #if OtherCase()
 ::\Frowny::
-SendInput {U+2639}
+send {U+2639}
 return
 
 
@@ -28481,17 +28481,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Smiley::
-SendInput ^x8{Enter}263a{Enter}
+send ^x8{Enter}263a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Smiley::
-SendInput ^+u263a{Enter}
+send ^+u263a{Enter}
 return
 
 #if OtherCase()
 ::\Smiley::
-SendInput {U+263A}
+send {U+263A}
 return
 
 
@@ -28499,17 +28499,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\blacksmiley::
-SendInput ^x8{Enter}263b{Enter}
+send ^x8{Enter}263b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\blacksmiley::
-SendInput ^+u263b{Enter}
+send ^+u263b{Enter}
 return
 
 #if OtherCase()
 ::\blacksmiley::
-SendInput {U+263B}
+send {U+263B}
 return
 
 
@@ -28517,17 +28517,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\female::
-SendInput ^x8{Enter}2640{Enter}
+send ^x8{Enter}2640{Enter}
 return
 
 #if GtkApplicationCase()
 ::\female::
-SendInput ^+u2640{Enter}
+send ^+u2640{Enter}
 return
 
 #if OtherCase()
 ::\female::
-SendInput {U+2640}
+send {U+2640}
 return
 
 
@@ -28535,17 +28535,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\male::
-SendInput ^x8{Enter}2642{Enter}
+send ^x8{Enter}2642{Enter}
 return
 
 #if GtkApplicationCase()
 ::\male::
-SendInput ^+u2642{Enter}
+send ^+u2642{Enter}
 return
 
 #if OtherCase()
 ::\male::
-SendInput {U+2642}
+send {U+2642}
 return
 
 
@@ -28553,17 +28553,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\spadesuit::
-SendInput ^x8{Enter}2660{Enter}
+send ^x8{Enter}2660{Enter}
 return
 
 #if GtkApplicationCase()
 ::\spadesuit::
-SendInput ^+u2660{Enter}
+send ^+u2660{Enter}
 return
 
 #if OtherCase()
 ::\spadesuit::
-SendInput {U+2660}
+send {U+2660}
 return
 
 
@@ -28571,17 +28571,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\diamondsuit::
-SendInput ^x8{Enter}2662{Enter}
+send ^x8{Enter}2662{Enter}
 return
 
 #if GtkApplicationCase()
 ::\diamondsuit::
-SendInput ^+u2662{Enter}
+send ^+u2662{Enter}
 return
 
 #if OtherCase()
 ::\diamondsuit::
-SendInput {U+2662}
+send {U+2662}
 return
 
 
@@ -28589,17 +28589,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\clubsuit::
-SendInput ^x8{Enter}2663{Enter}
+send ^x8{Enter}2663{Enter}
 return
 
 #if GtkApplicationCase()
 ::\clubsuit::
-SendInput ^+u2663{Enter}
+send ^+u2663{Enter}
 return
 
 #if OtherCase()
 ::\clubsuit::
-SendInput {U+2663}
+send {U+2663}
 return
 
 
@@ -28607,17 +28607,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\heartsuit::
-SendInput ^x8{Enter}2665{Enter}
+send ^x8{Enter}2665{Enter}
 return
 
 #if GtkApplicationCase()
 ::\heartsuit::
-SendInput ^+u2665{Enter}
+send ^+u2665{Enter}
 return
 
 #if OtherCase()
 ::\heartsuit::
-SendInput {U+2665}
+send {U+2665}
 return
 
 
@@ -28625,17 +28625,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textmusicalnote::
-SendInput ^x8{Enter}266a{Enter}
+send ^x8{Enter}266a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textmusicalnote::
-SendInput ^+u266a{Enter}
+send ^+u266a{Enter}
 return
 
 #if OtherCase()
 ::\textmusicalnote::
-SendInput {U+266A}
+send {U+266A}
 return
 
 
@@ -28643,17 +28643,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\flat::
-SendInput ^x8{Enter}266d{Enter}
+send ^x8{Enter}266d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\flat::
-SendInput ^+u266d{Enter}
+send ^+u266d{Enter}
 return
 
 #if OtherCase()
 ::\flat::
-SendInput {U+266D}
+send {U+266D}
 return
 
 
@@ -28661,17 +28661,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\natural::
-SendInput ^x8{Enter}266e{Enter}
+send ^x8{Enter}266e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\natural::
-SendInput ^+u266e{Enter}
+send ^+u266e{Enter}
 return
 
 #if OtherCase()
 ::\natural::
-SendInput {U+266E}
+send {U+266E}
 return
 
 
@@ -28679,17 +28679,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sharp::
-SendInput ^x8{Enter}266f{Enter}
+send ^x8{Enter}266f{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sharp::
-SendInput ^+u266f{Enter}
+send ^+u266f{Enter}
 return
 
 #if OtherCase()
 ::\sharp::
-SendInput {U+266F}
+send {U+266F}
 return
 
 
@@ -28697,17 +28697,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\warning::
-SendInput ^x8{Enter}26a0{Enter}
+send ^x8{Enter}26a0{Enter}
 return
 
 #if GtkApplicationCase()
 ::\warning::
-SendInput ^+u26a0{Enter}
+send ^+u26a0{Enter}
 return
 
 #if OtherCase()
 ::\warning::
-SendInput {U+26A0}
+send {U+26A0}
 return
 
 
@@ -28715,17 +28715,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\Letter::
-SendInput ^x8{Enter}2709{Enter}
+send ^x8{Enter}2709{Enter}
 return
 
 #if GtkApplicationCase()
 ::\Letter::
-SendInput ^+u2709{Enter}
+send ^+u2709{Enter}
 return
 
 #if OtherCase()
 ::\Letter::
-SendInput {U+2709}
+send {U+2709}
 return
 
 
@@ -28733,17 +28733,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\checkmark::
-SendInput ^x8{Enter}2713{Enter}
+send ^x8{Enter}2713{Enter}
 return
 
 #if GtkApplicationCase()
 ::\checkmark::
-SendInput ^+u2713{Enter}
+send ^+u2713{Enter}
 return
 
 #if OtherCase()
 ::\checkmark::
-SendInput {U+2713}
+send {U+2713}
 return
 
 
@@ -28751,17 +28751,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\textdied::
-SendInput ^x8{Enter}271d{Enter}
+send ^x8{Enter}271d{Enter}
 return
 
 #if GtkApplicationCase()
 ::\textdied::
-SendInput ^+u271d{Enter}
+send ^+u271d{Enter}
 return
 
 #if OtherCase()
 ::\textdied::
-SendInput {U+271D}
+send {U+271D}
 return
 
 
@@ -28769,17 +28769,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\maltese::
-SendInput ^x8{Enter}2720{Enter}
+send ^x8{Enter}2720{Enter}
 return
 
 #if GtkApplicationCase()
 ::\maltese::
-SendInput ^+u2720{Enter}
+send ^+u2720{Enter}
 return
 
 #if OtherCase()
 ::\maltese::
-SendInput {U+2720}
+send {U+2720}
 return
 
 
@@ -28787,17 +28787,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\blacklozenge::
-SendInput ^x8{Enter}2726{Enter}
+send ^x8{Enter}2726{Enter}
 return
 
 #if GtkApplicationCase()
 ::\blacklozenge::
-SendInput ^+u2726{Enter}
+send ^+u2726{Enter}
 return
 
 #if OtherCase()
 ::\blacklozenge::
-SendInput {U+2726}
+send {U+2726}
 return
 
 
@@ -28805,17 +28805,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\lozenge::
-SendInput ^x8{Enter}2727{Enter}
+send ^x8{Enter}2727{Enter}
 return
 
 #if GtkApplicationCase()
 ::\lozenge::
-SendInput ^+u2727{Enter}
+send ^+u2727{Enter}
 return
 
 #if OtherCase()
 ::\lozenge::
-SendInput {U+2727}
+send {U+2727}
 return
 
 
@@ -28823,17 +28823,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\langle::
-SendInput ^x8{Enter}27e8{Enter}
+send ^x8{Enter}27e8{Enter}
 return
 
 #if GtkApplicationCase()
 ::\langle::
-SendInput ^+u27e8{Enter}
+send ^+u27e8{Enter}
 return
 
 #if OtherCase()
 ::\langle::
-SendInput {U+27E8}
+send {U+27E8}
 return
 
 
@@ -28841,17 +28841,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rangle::
-SendInput ^x8{Enter}27e9{Enter}
+send ^x8{Enter}27e9{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rangle::
-SendInput ^+u27e9{Enter}
+send ^+u27e9{Enter}
 return
 
 #if OtherCase()
 ::\rangle::
-SendInput {U+27E9}
+send {U+27E9}
 return
 
 
@@ -28859,17 +28859,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\uncertainty::
-SendInput ^x8{Enter}2bd1{Enter}
+send ^x8{Enter}2bd1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\uncertainty::
-SendInput ^+u2bd1{Enter}
+send ^+u2bd1{Enter}
 return
 
 #if OtherCase()
 ::\uncertainty::
-SendInput {U+2BD1}
+send {U+2BD1}
 return
 
 
@@ -28877,17 +28877,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::_j::
-SendInput ^x8{Enter}2c7c{Enter}
+send ^x8{Enter}2c7c{Enter}
 return
 
 #if GtkApplicationCase()
 ::_j::
-SendInput ^+u2c7c{Enter}
+send ^+u2c7c{Enter}
 return
 
 #if OtherCase()
 ::_j::
-SendInput {U+2C7C}
+send {U+2C7C}
 return
 
 
@@ -28895,17 +28895,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^V::
-SendInput ^x8{Enter}2c7d{Enter}
+send ^x8{Enter}2c7d{Enter}
 return
 
 #if GtkApplicationCase()
 ::^V::
-SendInput ^+u2c7d{Enter}
+send ^+u2c7d{Enter}
 return
 
 #if OtherCase()
 ::^V::
-SendInput {U+2C7D}
+send {U+2C7D}
 return
 
 
@@ -28913,17 +28913,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\ldata::
-SendInput ^x8{Enter}300a{Enter}
+send ^x8{Enter}300a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\ldata::
-SendInput ^+u300a{Enter}
+send ^+u300a{Enter}
 return
 
 #if OtherCase()
 ::\ldata::
-SendInput {U+300A}
+send {U+300A}
 return
 
 
@@ -28931,17 +28931,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rdata::
-SendInput ^x8{Enter}300b{Enter}
+send ^x8{Enter}300b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rdata::
-SendInput ^+u300b{Enter}
+send ^+u300b{Enter}
 return
 
 #if OtherCase()
 ::\rdata::
-SendInput {U+300B}
+send {U+300B}
 return
 
 
@@ -28949,17 +28949,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\llbracket::
-SendInput ^x8{Enter}301a{Enter}
+send ^x8{Enter}301a{Enter}
 return
 
 #if GtkApplicationCase()
 ::\llbracket::
-SendInput ^+u301a{Enter}
+send ^+u301a{Enter}
 return
 
 #if OtherCase()
 ::\llbracket::
-SendInput {U+301A}
+send {U+301A}
 return
 
 
@@ -28967,17 +28967,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rrbracket::
-SendInput ^x8{Enter}301b{Enter}
+send ^x8{Enter}301b{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rrbracket::
-SendInput ^+u301b{Enter}
+send ^+u301b{Enter}
 return
 
 #if OtherCase()
 ::\rrbracket::
-SendInput {U+301B}
+send {U+301B}
 return
 
 
@@ -28985,17 +28985,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\partnership::
-SendInput ^x8{Enter}3250{Enter}
+send ^x8{Enter}3250{Enter}
 return
 
 #if GtkApplicationCase()
 ::\partnership::
-SendInput ^+u3250{Enter}
+send ^+u3250{Enter}
 return
 
 #if OtherCase()
 ::\partnership::
-SendInput {U+3250}
+send {U+3250}
 return
 
 
@@ -29003,17 +29003,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\H With Stroke::
-SendInput ^x8{Enter}a7f8{Enter}
+send ^x8{Enter}a7f8{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\H With Stroke::
-SendInput ^+ua7f8{Enter}
+send ^+ua7f8{Enter}
 return
 
 #if OtherCase()
 ::^\H With Stroke::
-SendInput {U+A7F8}
+send {U+A7F8}
 return
 
 
@@ -29021,17 +29021,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\ligature oe::
-SendInput ^x8{Enter}a7f9{Enter}
+send ^x8{Enter}a7f9{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\ligature oe::
-SendInput ^+ua7f9{Enter}
+send ^+ua7f9{Enter}
 return
 
 #if OtherCase()
 ::^\ligature oe::
-SendInput {U+A7F9}
+send {U+A7F9}
 return
 
 
@@ -29039,17 +29039,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\heng::
-SendInput ^x8{Enter}ab5c{Enter}
+send ^x8{Enter}ab5c{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\heng::
-SendInput ^+uab5c{Enter}
+send ^+uab5c{Enter}
 return
 
 #if OtherCase()
 ::^\heng::
-SendInput {U+AB5C}
+send {U+AB5C}
 return
 
 
@@ -29057,17 +29057,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\l with inverted lazy s::
-SendInput ^x8{Enter}ab5d{Enter}
+send ^x8{Enter}ab5d{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\l with inverted lazy s::
-SendInput ^+uab5d{Enter}
+send ^+uab5d{Enter}
 return
 
 #if OtherCase()
 ::^\l with inverted lazy s::
-SendInput {U+AB5D}
+send {U+AB5D}
 return
 
 
@@ -29075,17 +29075,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\l with middle tilde::
-SendInput ^x8{Enter}ab5e{Enter}
+send ^x8{Enter}ab5e{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\l with middle tilde::
-SendInput ^+uab5e{Enter}
+send ^+uab5e{Enter}
 return
 
 #if OtherCase()
 ::^\l with middle tilde::
-SendInput {U+AB5E}
+send {U+AB5E}
 return
 
 
@@ -29093,17 +29093,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::^\u with left hook::
-SendInput ^x8{Enter}ab5f{Enter}
+send ^x8{Enter}ab5f{Enter}
 return
 
 #if GtkApplicationCase()
 ::^\u with left hook::
-SendInput ^+uab5f{Enter}
+send ^+uab5f{Enter}
 return
 
 #if OtherCase()
 ::^\u with left hook::
-SendInput {U+AB5F}
+send {U+AB5F}
 return
 
 
@@ -29111,17 +29111,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\rial::
-SendInput ^x8{Enter}fdfc{Enter}
+send ^x8{Enter}fdfc{Enter}
 return
 
 #if GtkApplicationCase()
 ::\rial::
-SendInput ^+ufdfc{Enter}
+send ^+ufdfc{Enter}
 return
 
 #if OtherCase()
 ::\rial::
-SendInput {U+FDFC}
+send {U+FDFC}
 return
 
 
@@ -29129,17 +29129,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\sbs::
-SendInput ^x8{Enter}fe68{Enter}
+send ^x8{Enter}fe68{Enter}
 return
 
 #if GtkApplicationCase()
 ::\sbs::
-SendInput ^+ufe68{Enter}
+send ^+ufe68{Enter}
 return
 
 #if OtherCase()
 ::\sbs::
-SendInput {U+FE68}
+send {U+FE68}
 return
 
 
@@ -29147,17 +29147,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\nomisma::
-SendInput ^x8{Enter}1018e{Enter}
+send ^x8{Enter}1018e{Enter}
 return
 
 #if GtkApplicationCase()
 ::\nomisma::
-SendInput ^+u1018e{Enter}
+send ^+u1018e{Enter}
 return
 
 #if OtherCase()
 ::\nomisma::
-SendInput {U+1018E}
+send {U+1018E}
 return
 
 
@@ -29165,17 +29165,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\construction::
-SendInput ^x8{Enter}1f6a7{Enter}
+send ^x8{Enter}1f6a7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\construction::
-SendInput ^+u1f6a7{Enter}
+send ^+u1f6a7{Enter}
 return
 
 #if OtherCase()
 ::\construction::
-SendInput {U+1F6A7}
+send {U+1F6A7}
 return
 
 
@@ -29183,17 +29183,17 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\prohibited::
-SendInput ^x8{Enter}1f6c7{Enter}
+send ^x8{Enter}1f6c7{Enter}
 return
 
 #if GtkApplicationCase()
 ::\prohibited::
-SendInput ^+u1f6c7{Enter}
+send ^+u1f6c7{Enter}
 return
 
 #if OtherCase()
 ::\prohibited::
-SendInput {U+1F6C7}
+send {U+1F6C7}
 return
 
 
@@ -29201,16 +29201,16 @@ return
 
 #if EmacsCase() && EmacsEnabled
 ::\octagonal::
-SendInput ^x8{Enter}1f6d1{Enter}
+send ^x8{Enter}1f6d1{Enter}
 return
 
 #if GtkApplicationCase()
 ::\octagonal::
-SendInput ^+u1f6d1{Enter}
+send ^+u1f6d1{Enter}
 return
 
 #if OtherCase()
 ::\octagonal::
-SendInput {U+1F6D1}
+send {U+1F6D1}
 return
 

@@ -296,9 +296,9 @@
     this.Snap( data )
     this.Clear()    ;clearing the clipboard
     if( method = 1 )
-      SendInput, ^{Ins}
+      send ^{Ins}
     else
-      SendInput, ^{vk43sc02E} ;ctrl+c
+      send ^{vk43sc02E} ;ctrl+c
     ClipWait,% timeout, 1
     if ( ret := this._isClipEmpty() )
       this.Restore( data )
@@ -311,9 +311,9 @@
     this.Snap( data )
     this.Clear()    ;clearing the clipboard
     if( method = 1 )
-      SendInput, ^{Ins}
+      send ^{Ins}
     else
-      SendInput, ^{vk43sc02E} ;ctrl+c
+      send ^{vk43sc02E} ;ctrl+c
     ClipWait,% timeout, 1
     bytesCopied := 0
     if !this._isClipEmpty()
@@ -336,9 +336,9 @@
       ret := this.SetText( plainText )
     }
     if( method = 1 )
-      SendInput, +{Ins}
+      send +{Ins}
     else
-      SendInput, ^{vk56sc02F} ;ctrl+v
+      send ^{vk56sc02F} ;ctrl+v
     this._waitClipReady( 3000 )
     if ( plainText != "" )
     {
@@ -357,9 +357,9 @@
     if !( bytesRestored := this.iRestore() )
       return 0
     if( method = 1 )
-      SendInput, +{Ins}
+      send +{Ins}
     else
-      SendInput, ^{vk56sc02F} ;ctrl+v
+      send ^{vk56sc02F} ;ctrl+v
     this._waitClipReady( 3000 )
     this.Restore( data )
     return bytesRestored

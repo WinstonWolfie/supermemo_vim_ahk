@@ -344,7 +344,7 @@ class VimAhk {
     tempClip := clipboard
     global WInClip
     WinClip.Clear()
-    SendInput {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
+    send {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
     ClipWait 0.1
     ret := False
     If (clipboard ~= key) {

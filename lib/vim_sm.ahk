@@ -256,9 +256,18 @@ class VimSM {
     WinActivate, ahk_class TElWind
   }
 
-  GetCollectionName() {
-    RegExMatch(WinGetText("ahk_class TElWind"), "(?<=\r\n)(.*?)(?= \(SuperMemo)", CollectionName)
+  GetCollectionName(text:="") {
+    if (!text)
+      WinGetText, text, ahk_class TElWind
+    RegExMatch(text, "(?<=\r\n).*(?= \(SuperMemo)", CollectionName)
     return CollectionName
+  }
+
+  GetCollectionPath(text:="") {
+    if (!text)
+      WinGetText, text, ahk_class TElWind
+    RegExMatch(text, "\(SuperMemo [0-9]+: \K.*(?=\)\r\n)", CollectionPath)
+    return CollectionPath
   }
 
   GetLink(NoRestore:=false) {
@@ -282,7 +291,8 @@ class VimSM {
     if (!NoRestore)
       WinClip.Snap(ClipData)
     WinClip.Clear()
-    this.PostMsg(987, true)
+    send !{f12}fc
+    ; this.PostMsg(987, true)  ; not stable
     ClipWait 1
     path := Clipboard
     if (!NoRestore)
@@ -291,17 +301,19 @@ class VimSM {
   }
 
   SetTitle(title) {
-    send !t
-    GroupAdd, SMAltT, ahk_class TChoicesDlg
-    GroupAdd, SMAltT, ahk_class TTitleEdit
-    WinWaitActive, ahk_group SMAltT,, 2
-    if (WinActive("ahk_class TChoicesDlg")) {
-      send {enter}
-      WinWaitActive, ahk_class TTitleEdit,, 2
-    }
-    if (WinActive("ahk_class TTitleEdit")) {
-      ControlSetText, TMemo1, % title
-      ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
+    if (WinGetTitle() != title) {
+      this.PostMsg(116)  ; edit title
+      GroupAdd, SMAltT, ahk_class TChoicesDlg
+      GroupAdd, SMAltT, ahk_class TTitleEdit
+      WinWait, ahk_group SMAltT,, 3
+      if (WinExist("ahk_class TChoicesDlg")) {
+        ControlSend, TGroupButton3, {enter}, ahk_class TChoicesDlg
+        WinWait, ahk_class TTitleEdit,, 3
+      }
+      if (WinExist("ahk_class TTitleEdit")) {
+        ControlSetText, TMemo1, % title
+        ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
+      }
     }
   }
 
@@ -335,11 +347,34 @@ class VimSM {
     if (!NoRestore)
       WinClip.Snap(ClipData)
     WinClip.Clear()
-    this.PostMsg(693, true)
+    send !{f10}tc
+    ; this.PostMsg(693, true)  ; not stable
     ClipWait 1
     code := Clipboard
     if (!NoRestore)
       WinClip.Restore(ClipData)
     return code
+  }
+
+  WaitFileLoad(timeout:=200) {  ; used for reloading
+    StartTime := A_TickCount
+    loop {
+      if (RegExMatch(WinGetText("ahk_class TStatBar"), "^Priority=")) {
+        return true
+      } else if (timeout && A_TickCount - StartTime > timeout) {
+        return false
+      }
+    }
+  }
+
+  WaitYTLoad(timeout:=10000) {  ; wait for YT video to load
+    StartTime := A_TickCount
+    loop {
+      if (RegExMatch(WinGetText("ahk_class TStatBar"), "^Loading file:")) {
+        return true
+      } else if (timeout && A_TickCount - StartTime > timeout) {
+        return false
+      }
+    }
   }
 }

@@ -47,7 +47,7 @@ b::Vim.Move.Repeat("b")
 ; Sentence
 (::
 )::
-  KeyWait Shift  ; cannot use ReleaseKey("shift"), shift will still get stuck
+  KeyWait Shift  ; cannot use KeyWait shift, shift will still get stuck
   Vim.Move.Move(A_ThisHotkey)
 Return
 

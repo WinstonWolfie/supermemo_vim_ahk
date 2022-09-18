@@ -119,7 +119,7 @@ _::
 .::
 >::
 space::
-  ReleaseKey("shift")
+  KeyWait shift
   Vim.Move.KeyAfterSMAltQ := A_ThisHotkey
   if (SMAltQYdcMove) {
     SMAltQYdcMove := false

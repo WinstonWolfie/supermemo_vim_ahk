@@ -12,7 +12,7 @@ Return
 ~j up::  ; jj: go to Normal mode.
   Input, jout, I T0.1 V L1, j
   if (ErrorLevel == "EndKey:J") {
-    SendInput, {BackSpace 2}
+    send {BackSpace 2}
     Vim.State.SetNormal()
   }
 Return

@@ -6,7 +6,7 @@ Return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 *::
-  ReleaseKey("shift")
+  KeyWait shift
   WinClip.Snap(ClipData)
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
   send ^{Left}+^{Right}^c

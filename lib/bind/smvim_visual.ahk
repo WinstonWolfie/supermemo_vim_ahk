@@ -2,7 +2,7 @@
 ~^+i::Vim.State.SetMode("Vim_Normal")  ; ignore
 
 .::  ; selected text becomes [...]
-  Clip("<span class=""Cloze"">[...]</span>", true)
+  clip("<span class=""Cloze"">[...]</span>", true)
   send ^+1
   Vim.State.SetMode("Vim_Normal")
 return
@@ -48,13 +48,13 @@ HTMLTagButtonAdd:
     EndingTag := "SPAN>"
     tag := ""
   } else if (tag = "ruby") {
-    InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above`, like Pinyin,, 272, 144
+    WinClip.Restore(ClipData)
+    InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above`, like Pinyin,, 272, 160
     if (ErrorLevel || !UserInput)
       return
     clip("<RUBY>" . content . "<RP>(</RP><RT>" . UserInput
-       . "</RT><RP>)</RP></RUBY>", true, true)
+       . "</RT><RP>)</RP></RUBY>", true)
     send ^+1
-    WinClip.Restore(ClipData)
     return
   } else {
     StartingTag := "<" 
@@ -66,7 +66,7 @@ HTMLTagButtonAdd:
 return
 
 m::  ; highlight: *m*ark
-  send {AppsKey}rh  ; highlight
+  Vim.SM.PostMsg(815, true)  ; highlight
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -98,7 +98,7 @@ ExtractStay:
 ^!x::
 #if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^q::  ; extract (*q*uote)
-  ReleaseKey("ctrl")
+  KeyWait ctrl
   send !x
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.WaitProcessing()
@@ -120,7 +120,7 @@ ClozeStay:
 ^!z::
 #if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
 ^z::
-  ReleaseKey("ctrl")
+  KeyWait ctrl
   send !z
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.WaitProcessing()
@@ -147,8 +147,8 @@ ClozeHinter:
   } else {
     CtrlState := InStr(A_ThisHotkey, "^")
   }
-  ReleaseKey("ctrl")
-  ReleaseKey("shift")
+  KeyWait ctrl
+  KeyWait shift
   InitialText := Clip()
   gui, ClozeHinter:Add, Text,, &Hint:
   gui, ClozeHinter:Add, Edit, vHint w196, % InitialText
@@ -215,7 +215,7 @@ ClozeHinterButtonCloze:
 		WinWaitActive, ahk_class TCommanderDlg,, 0
     ControlSetText, TEdit2, h
 		send {enter}q{left}{right}  ; put the caret after the [ of [...]
-		WinClip.Paste(cloze)  ; works slightly better than clip()
+    clip(cloze)
 		send {del 4}  ; delete ...]
 		if (WinExist("ahk_class TMyFindDlg")) ; clears search box window
 			WinClose
@@ -224,7 +224,7 @@ ClozeHinterButtonCloze:
     send !{right}  ; add a ctrl to keep editing the clozed item
   } else {  ; refresh if staying in the cloze item
     send !{home}
-    sleep 100
+    Vim.SM.WaitFileLoad()
     send !{left}
   }
   Gosub RemoveToolTip

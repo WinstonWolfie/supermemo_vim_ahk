@@ -13,9 +13,9 @@
 
 #if (Vim.State.Vim.Enabled)
 ; Testing
-; ^!+t::
-; send t
-; return
+^!+t::
+  msgbox % vim.sm.GetCollectionPath()
+return
 
 ; Shortcuts
 ^!r::reload
@@ -32,8 +32,8 @@ return
 ^#l::send ^#{right}
 
 ^+!p::
-  ReleaseKey("ctrl")
-  ReleaseKey("shift")
+  KeyWait ctrl
+  KeyWait shift
   KeyWait alt
 SMPlan:
   if (!WinExist("ahk_group SuperMemo")) {
@@ -68,15 +68,13 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_group Browsers"))
 ^!w::send ^w!{tab}  ; close tab and switch back
 
-!l::Vim.Browser.FocusToText()
-
 ^!i::  ; open in *I*E
   Vim.Browser.RunInIE(Vim.Browser.ParseUrl(GetActiveBrowserURL()))
   ; run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL())  ; RIP old method
 Return
 
 ^!t::  ; copy title
-	ReleaseKey("ctrl")
+	KeyWait ctrl
   Vim.Browser.GetInfo()
   ToolTip("Copied " . Vim.Browser.Title)
   Clipboard := Vim.Browser.Title
@@ -84,6 +82,8 @@ Return
 return
 
 ^!l::  ; copy link and parse *l*ink if if's from YT
+  KeyWait ctrl
+  KeyWait alt
   Vim.Browser.GetInfo()
   source := Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : ""
   date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
@@ -112,9 +112,9 @@ return
 ; Import current webpage to supermemo
 ^+!a::
 ^!a::
-  SetTimer, GetChromeUrl, -1
-  ReleaseKey("ctrl")
-  ReleaseKey("shift")
+  SetTimer, GetBrowserUrl, -1
+  KeyWait ctrl
+  KeyWait shift
   KeyWait alt
   FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
   WinClip.Snap(ClipData)
@@ -130,21 +130,26 @@ return
       sleep 200
     }
     send ^a^c
-    ClipWait 1
+    ClipWait 3
     send {esc}
+    sleep 20
     if (!Clipboard)
       return
     if (InStr(CurrUrl, "bilibili.com"))
       MouseMove, XSaved, YSaved
+    Vim.Browser.GetInfo("", true)
+  } else {
+    Vim.Browser.GetInfo()
   }
-  Vim.Browser.GetInfo("", true)
   if (InStr(Vim.Browser.url, "youtube.com") && SMImportCtrlA) {
+    sleep 20
     SMVidImport := true
     Vim.Browser.VidTime := Vim.Browser.MatchYTTime(Clipboard)
     Vim.Browser.date := Vim.Browser.MatchYTDate(Clipboard)
     Vim.Browser.source .= ": " . Vim.Browser.MatchYTSource(Clipboard)
     Clipboard := Vim.Browser.url
   } else if (InStr(Vim.Browser.url, "bilibili.com") && SMImportCtrlA) {
+    sleep 20
     SMVidImport := true
     Vim.Browser.VidTime := Vim.Browser.MatchBLTime(Clipboard)
     Vim.Browser.date := Vim.Browser.MatchBLDate(Clipboard)
@@ -215,11 +220,11 @@ SMImportContinue:
     send {enter}
     WinWaitActive, ahk_class TElWind,, 0
     send ^n
-    WinWaitNotActive, ahk_class TElWind,, 2  ; could appear a loading bar
+    WinWaitNotActive, ahk_class TElWind,, 0  ; could appear a loading bar
     if (!ErrorLevel)
       WinWaitActive, ahk_class TElWind,, 5
     send ^a^+1
-    WinWaitNotActive, ahk_class TElWind,, 1.5  ; could appear a loading bar
+    WinWaitNotActive, ahk_class TElWind,, 0  ; could appear a loading bar
     if (!ErrorLevel)
       WinWaitActive, ahk_class TElWind,, 5
     send {esc}
@@ -245,8 +250,8 @@ SMImportContinue:
   WinClip.Restore(ClipData)
 return
 
-GetChromeUrl:
-  CurrUrl := Vim.Browser.GetChromeUrl()
+GetBrowserUrl:
+  CurrUrl := Vim.Browser.GetBrowserUrl()
 return
 
 SMImportGuiEscape:
@@ -288,20 +293,21 @@ return
 return
 
 !+d::  ; check duplicates in SM
-  WinGet, hwnd, ID, A
   KeyWait alt
-  Vim.Browser.GetUrl()
-  WinActivate, ahk_class TElWind
-  send ^f
-  WinWaitActive, ahk_class TMyFindDlg,, 0
-  ControlSetText, TEdit1, % Vim.Browser.url
-  send {enter}
+  url := Vim.Browser.ParseUrl(Vim.Browser.GetBrowserUrl())
+  ControlSend,, {ctrl down}f{ctrl up}, ahk_class TElWind
+  WinWait, ahk_class TMyFindDlg,, 0
+  ControlSetText, TEdit1, % url, ahk_class TMyFindDlg
+  ControlSend,, {enter}, ahk_class TMyFindDlg
   Vim.Browser.Clear()
-  WinWaitActive, ahk_class TMsgDialog,, 10
-  if (!ErrorLevel) {
-    WinClose, ahk_class TMsgDialog
-    ToolTip("No duplicates found.")
-    WinActivate % "ahk_id " . hwnd
+  GroupAdd, SMCtrlF, ahk_class TMsgDialog
+  GroupAdd, SMCtrlF, ahk_class TBrowser
+  WinWait, ahk_group SMCtrlF,, 10
+  if (WinExist("ahk_class TMsgDialog")) {
+    WinClose
+    ToolTip("No duplicates found.",, -1000)
+  } else if (WinExist("ahk_class TBrowser")) {
+    WinActivate
   }
 return
 
@@ -389,8 +395,7 @@ ExtractToSM:
       }
     }
     if (ret) {
-      ret := false
-      SMExtractGoToSource := false
+      ret := SMExtractGoToSource := false
       Clipboard := extract
       ToolTip("Please make sure current element is an empty html topic. Your extract is now on your clipboard.")
       return

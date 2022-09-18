@@ -157,6 +157,6 @@ u::Vim.Move.YDCMove()
 +u::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g~"))
 ~::
-  KeyWait Shift  ; cannot use ReleaseKey("shift"), shift will still get stuck
+  KeyWait Shift  ; cannot use KeyWait shift, shift will still get stuck
   Vim.Move.YDCMove()
 return
