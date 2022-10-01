@@ -6,10 +6,7 @@
 		- Version 1.41 <http://www.autohotkey.net/~polyethene/#functions>
 		- Dedicated to the public domain (CC0 1.0) <http://creativecommons.org/publicdomain/zero/1.0/>
 */
-
-Functions() {
-	Return, true
-}
+; https://github.com/Paris/AutoHotkey-Scripts/blob/master/Functions.ahk
 
 IfBetween(ByRef var, LowerBound, UpperBound) {
 	If var between %LowerBound% and %UpperBound%
@@ -43,8 +40,14 @@ IfIsNot(ByRef var, type) {
 	If var is not %type%
 		Return, true
 }
+IfMsgBox(ByRef ButtonName) {
+	IfMsgBox, % ButtonName
+		return true
+}
 
 ControlGet(Cmd, Value = "", Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+	if (!control)
+		control := ControlGetFocus()
 	ControlGet, v, %Cmd%, %Value%, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
@@ -107,10 +110,6 @@ FormatTime(YYYYMMDDHH24MISS = "", Format = "") {
 	FormatTime, v, %YYYYMMDDHH24MISS%, %Format%
 	Return, v
 }
-; GetKeyState(WhichKey , Mode = "") {
-; 	GetKeyState, v, %WhichKey%, %Mode%
-; 	Return, v
-; }
 GuiControlGet(Subcommand = "", ControlID = "", Param4 = "") {
 	GuiControlGet, v, %Subcommand%, %ControlID%, %Param4%
 	Return, v
@@ -167,40 +166,8 @@ StatusBarGetText(Part = "", WinTitle:="A", WinText = "", ExcludeTitle = "", Excl
 SplitPath(ByRef InputVar, ByRef OutFileName = "", ByRef OutDir = "", ByRef OutExtension = "", ByRef OutNameNoExt = "", ByRef OutDrive = "") {
 	SplitPath, InputVar, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive
 }
-StringGetPos(ByRef InputVar, SearchText, Mode = "", Offset = "") {
-	StringGetPos, v, InputVar, %SearchText%, %Mode%, %Offset%
-	Return, v
-}
-StringLeft(ByRef InputVar, Count) {
-	StringLeft, v, InputVar, %Count%
-	Return, v
-}
-StringLen(ByRef InputVar) {
-	StringLen, v, InputVar
-	Return, v
-}
 StringLower(ByRef InputVar, T = "") {
 	StringLower, v, InputVar, %T%
-	Return, v
-}
-StringMid(ByRef InputVar, StartChar, Count , L = "") {
-	StringMid, v, InputVar, %StartChar%, %Count%, %L%
-	Return, v
-}
-StringReplace(ByRef InputVar, SearchText, ReplaceText = "", All = "") {
-	StringReplace, v, InputVar, %SearchText%, %ReplaceText%, %All%
-	Return, v
-}
-StringRight(ByRef InputVar, Count) {
-	StringRight, v, InputVar, %Count%
-	Return, v
-}
-StringTrimLeft(ByRef InputVar, Count) {
-	StringTrimLeft, v, InputVar, %Count%
-	Return, v
-}
-StringTrimRight(ByRef InputVar, Count) {
-	StringTrimRight, v, InputVar, %Count%
 	Return, v
 }
 StringUpper(ByRef InputVar, T = "") {
@@ -209,10 +176,6 @@ StringUpper(ByRef InputVar, T = "") {
 }
 SysGet(Subcommand, Param3 = "") {
 	SysGet, v, %Subcommand%, %Param3%
-	Return, v
-}
-Transform(Cmd, Value1, Value2 = "") {
-	Transform, v, %Cmd%, %Value1%, %Value2%
 	Return, v
 }
 WinGet(Cmd = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
@@ -243,7 +206,7 @@ WinGetTitle(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
   StartTime := A_TickCount
   Loop {
-    if (ControlGetFocus(%WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%) == Control) {
+    if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) == Control) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False
@@ -254,7 +217,7 @@ ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeT
 ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
   StartTime := A_TickCount
   Loop {
-    if (ControlGet("hwnd",, Control, WinTitle, %WinText%, %ExcludeTitle%, %ExcludeText%)) {
+    if (ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False
@@ -265,7 +228,7 @@ ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:=
 ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
   StartTime := A_TickCount
   Loop {
-    if (ControlGetFocus(%WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%) != Control) {
+    if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) != Control) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False
@@ -276,7 +239,7 @@ ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", Exclu
 ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
   StartTime := A_TickCount
   Loop {
-    if (ControlGetText(%Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%) == text) {
+    if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == text) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False
@@ -314,6 +277,41 @@ Enc_Uri(str)
   SetFormat, Integer, %f%
   Return, pr . str
 }
+
+;#########################################################################################
+;XML encode/decode by infogulch  -  this might be handy for use with xpath by titan
+;About: http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+
+Dec_XML(str)
+{ ;Decode xml required characters, as well as numeric character references
+   Loop
+      If RegexMatch(str, "S)(&#(\d+);)", dec)						; matches:   &#[dec];
+         StringReplace, str, str, %dec1%, % Chr(dec2), All
+      Else If   RegexMatch(str, "Si)(&#x([\da-f]+);)", hex)			; matches:   &#x[hex];
+         StringReplace, str, str, %hex1%, % Chr("0x" . hex2), All
+      Else
+         Break
+   StringReplace, str, str, % " ", %A_Space%, All
+   StringReplace, str, str, ", ", All			;required predefined character entities &"<'>
+   StringReplace, str, str, ', ', All
+   StringReplace, str, str, <,   <, All
+   StringReplace, str, str, >,   >, All
+   StringReplace, str, str, &,  &, All			;do this last so str doesn't resolve to other entities
+   return, str
+}
+
+Enc_XML(str, chars="") 
+{ ;encode required xml characters. and characters listed in Param2 as numeric character references
+   StringReplace, str, str, &, &,  All			;do first so it doesn't re-encode already encoded characters
+   StringReplace, str, str, ", ", All			;required predefined character entities &"<'>
+   StringReplace, str, str, ', ', All
+   StringReplace, str, str, <, <,   All
+   StringReplace, str, str, >, >,   All
+   Loop, Parse, chars         
+      StringReplace, str, str, %A_LoopField%, % "&#" . Asc(A_LoopField) . "`;", All
+   return, str
+}
+
 ;#########################################################################################
 
 html_decode(html) {  
@@ -325,17 +323,28 @@ html_decode(html) {
    return % oHTML.documentElement.innerText 
 }
 
+EncodeDecodeURI(str, encode := true, component := true) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=84825
+   static Doc, JS
+   if !Doc {
+      Doc := ComObjCreate("htmlfile")
+      Doc.write("<meta http-equiv=""X-UA-Compatible"" content=""IE=9"">")
+      JS := Doc.parentWindow
+      ( Doc.documentMode < 9 && JS.execScript() )
+   }
+   Return JS[ (encode ? "en" : "de") . "codeURI" . (component ? "Component" : "") ](str)
+}
+
 StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
   String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
 	return String
 }
 
-WinWaitTitleChange(OriginalTitle:="", TimeOut:=5000) {
+WinWaitTitleChange(OriginalTitle:="", TimeOut:=5000, WinTitle:="A") {
 	if (!OriginalTitle)
-		WinGetTitle, OriginalTitle, A
+		WinGetTitle, OriginalTitle, % WinTitle
 	StartTime := A_TickCount
 	loop {
-		if (WinGetTitle() != OriginalTitle) {
+		if (WinGetTitle(WinTitle) != OriginalTitle) {
 			return true
 		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
 			return false
@@ -362,12 +371,9 @@ ClickDPIAdjusted(XCoord, YCoord) {
 }
 
 ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
-	if (!Wintitle) {
-		WinGet, hwnd, ID, A
-		ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % "ahk_id " hwnd,,,, NA
-	} else {
-		ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
-	}
+	if (!Wintitle)
+		WinTitle := "ahk_id " . WinGet("ID")
+	ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
 }
 
 WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=5000) {

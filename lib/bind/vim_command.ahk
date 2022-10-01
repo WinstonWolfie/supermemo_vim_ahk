@@ -37,21 +37,25 @@ Return
   KeyWait ctrl
   WinGet, hwnd, ID, A
   gui, VimCommander:Add, Text,, &Command:
+
   list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search"
         . "|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE"
         . "|Define (Google)|YT History In IE|Wiktionary|Discord go live"
         . "|Copy current window's title|Copy current window's position"
-        . "|Copy as HTML|Forvo|Pin current window at top"
+        . "|Copy as HTML|Forvo|Pin current window at top|Sci-Hub"
         . "|Acc Viewer|Translate (Google)|Clear clipboard|Forcellini|RAE"
         . "|Show selection as html|Oxford Advanced Learner's Dictionary"
         . "|Alatius: a Latin macronizer|UIA Viewer"
-        . "|Set selection as Vim.Browser.VidTime"
+
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list .= "|Set current element as concept hook|Memorise children of current element"
+    if (WinActive("ahk_class TElWind"))
+      list .= "|Nuke HTML"
     if (Vim.SM.IsEditingText())
       list .= "|Cloze and Done!"
   } else if (WinActive("ahk_class TBrowser")) {
     list .= "|Memorise current browser|Set browser position"
+          . "|Mass replace registry"
   } else if (WinActive("ahk_class CabinetWClass")) {
     list .= "|Mark file as imported"
   }
@@ -266,7 +270,7 @@ return
 
 CopyAsHTML:
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (!Clipboard) {
@@ -373,7 +377,7 @@ return
 
 ShowSelectionAsHTML:
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (Vim.HTML.ClipboardGet_HTML(data)) {
@@ -406,8 +410,7 @@ AlatiusALatinMacronizer:
   }
   run https://alatius.com/macronizer/
   WinWaitActive, ahk_group Browsers,, 10
-  WinGet, BrowserExe, ProcessName, A
-  cUIA := new UIA_Browser("ahk_exe " browserExe) ; Initialize UIA_Browser, which also initializes UIA_Interface
+  cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName")) ; Initialize UIA_Browser, which also initializes UIA_Interface
   cUIA.WaitPageLoad()
   send {tab 2}
   clip(Latin)
@@ -415,12 +418,7 @@ AlatiusALatinMacronizer:
 return
 
 SetBrowserPosition:
-  WinMove, ahk_class TBrowser,, 0, 0, 846, 1034
-return
-
-SetSelectionAsVimBrowserVidTime:
-  Vim.Browser.VidTime := RegExReplace(clip(), "(^\s*|\s*$)")
-  ToolTip("Vim.Browser.VidTime set as " . Vim.Browser.VidTime)
+  WinMove, ahk_class TBrowser,, 0, 0, 846, 1026
 return
 
 ReformatScriptComponent:
@@ -455,7 +453,6 @@ ReformatScriptComponent:
   Clipboard := Vim.Browser.url
   ClipWait 1
   ; Somehow PostMessage doesn't work reliably here
-  send !{f10}fe  ; open registry editor
   gosub SMSetLinkFromClipboard
   send {esc}
   if (ContinueLearning)
@@ -474,4 +471,46 @@ CopyCurrentWindowsPosition:
   Clipboard := "x = " . x . " y = " . y . " w = " . w . " h = " . h
   ClipWait 10
   ToolTip("Copied " . Clipboard)
+return
+
+MassReplaceRegistry:
+  find := ""
+  replacement := ""
+  if (!find && !replacement)
+    return
+  loop {
+    WinActivate, ahk_class TElWind
+    Vim.SM.WaitFileLoad()
+    send !{f10}fe  ; open registry editor
+    WinWaitActive, ahk_class TInputDlg,, 3
+    ControlGetText, ref, TMemo1
+    if (InStr(ref, find)) {
+      ControlSetText, TMemo1, % StrReplace(ref, find, replacement)
+    } else {
+      return
+    }
+    send !{enter}
+    WinWaitActive, ahk_class TChoicesDlg,, 0
+    if (!ErrorLevel)
+      send {down}{enter}
+    WinActivate, ahk_class TBrowser
+    WinGetTitle, ElementTitle, ahk_class TElWind
+    send {down}
+  }
+return
+
+SciHub:
+  text := clip()
+  if (!text) {
+    InputBox, text, Sci-Hub, Enter your search,, 192, 128
+    if (!text || ErrorLevel)
+      return
+  }
+  run https://sci-hub.hkvisa.net/
+  WinWaitActive, ahk_group Browsers,, 10
+  cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName")) ; Initialize UIA_Browser, which also initializes UIA_Interface
+  cUIA.WaitPageLoad()
+  send {tab}+{tab}
+  clip(text)
+  send {enter}
 return

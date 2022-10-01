@@ -313,3 +313,5 @@ CapsLock & g::                                                       ;|
         Vim.State.SetMode("Insert")                                  ;|
 return                                                               ;|
 ;---------------------------------------------------------------------o
+
+CapsLock & tab::send !{tab}

@@ -95,26 +95,26 @@ _::
 >::
 space::
   KeyWait shift
-  CurrentHotkey := A_ThisHotkey
-  if (CurrentHotkey = "space")
-    CurrentHotkey := " "
-  if (StrLen(CurrentHotkey) > 1) {
-    if (InStr(CurrentHotkey, "+")) {
-      CurrentHotkey := StrReplace(CurrentHotkey, "+")
-      StringUpper, CurrentHotkey, CurrentHotkey
+  CurrHotkey := A_ThisHotkey
+  if (CurrHotkey = "space")
+    CurrHotkey := " "
+  if (StrLen(CurrHotkey) > 1) {
+    if (InStr(CurrHotkey, "+")) {
+      CurrHotkey := StrReplace(CurrHotkey, "+")
+      StringUpper, CurrHotkey, CurrHotkey
     }
-    if (InStr(CurrentHotkey, "~"))
-      CurrentHotkey := StrReplace(CurrentHotkey, "~")
+    if (InStr(CurrHotkey, "~"))
+      CurrHotkey := StrReplace(CurrHotkey, "~")
   }
   if (InStr(Vim.State.fts, "s")) {
     if (!Vim.State.FtsChar) {
-      Vim.State.FtsChar := CurrentHotkey
+      Vim.State.FtsChar := CurrHotkey
       Return
     } else {
-      Vim.State.LastFtsChar := Vim.State.FtsChar .= CurrentHotkey
+      Vim.State.LastFtsChar := Vim.State.FtsChar .= CurrHotkey
     }
   } else {
-    Vim.State.LastFtsChar := Vim.State.FtsChar := CurrentHotkey
+    Vim.State.LastFtsChar := Vim.State.FtsChar := CurrHotkey
   }
   Vim.State.LastFts := Vim.State.fts
   Vim.Move.Move(Vim.State.fts)
@@ -135,9 +135,9 @@ Return
 ,::
   Vim.State.FtsChar := Vim.State.LastFtsChar
   if InStr(Vim.State.LastFts, "+") {
-    fts_reversed := StrReplace(Vim.State.LastFts, "+")
+    FtsReversed := StrReplace(Vim.State.LastFts, "+")
   } else {
-    fts_reversed := "+" . Vim.State.LastFts
+    FtsReversed := "+" . Vim.State.LastFts
   }
-  Vim.Move.Move(fts_reversed)
+  Vim.Move.Move(FtsReversed)
 Return

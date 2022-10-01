@@ -18,7 +18,7 @@
     , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
     , "SMVim_ExtractPriorityInner", "Insert_unicode", "SMVim_AltT", "SMVim_AltQ"]
 
-    this.Mode := "Insert"  ; the default mode when vim_ahk opens
+    this.Mode := "Vim_Normal"  ; the default mode when vim_ahk opens
     this.g := 0
     this.n := 0
     this.fts := ""
@@ -147,7 +147,7 @@
       SMVimPlanDraggingPut := false
     } else {
       MouseGetPos,, YCoord
-      MouseMove, IniXCoord, IniYCoord, 0
+      MouseMove, IniXCoord, IniYCoord  ; speed can't be 0 otherwise returning won't work reliably
       click up
       click  ; to uncheck the "fix"
       ControlClickWinCoord(114, YCoord)

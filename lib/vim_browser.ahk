@@ -4,12 +4,7 @@ class VimBrowser {
   }
 
   Clear() {
-    this.title := ""
-    this.url := ""
-    this.source := ""
-    this.date := ""
-    this.VidTime := ""
-    this.comment := ""
+    this.title := this.url := this.source := this.date := this.VidTime := this.comment := ""
   }
 
   GetInfo(NoRestore:=false, SkipCopying:=false) {
@@ -18,37 +13,45 @@ class VimBrowser {
     if (!NoRestore)
       WinClip.Snap(ClipData)
     this.GetUrl(!NoRestore)
-    this.GetTitleSourceDate(SkipCopying)
+    this.GetTitleSourceDate(!NoRestore, SkipCopying)
     if (!NoRestore)
       WinClip.Restore(ClipData)
   }
 
   ParseUrl(url) {
-    url := RegExReplace(url, "#(.*)$")
+    url := RegExReplace(url, "#.*")
     if (InStr(url, "youtube.com") && InStr(url, "v=")) {
       url := RegExReplace(url, "&.*")
     } else if (InStr(url, "bilibili.com/video")) {
-      url := RegExReplace(url, "(\?|&).*")
+      url := RegExReplace(url, "(\/\?p=[0-9]+\K|\?|&).*")
     } else if (InStr(url, "netflix.com/watch")) {
       url := RegExReplace(url, "\?trackId=.*")
+    } else if (InStr(url, "baike.baidu.com")) {
+      url := RegExReplace(url, "\?.*")
     }
     return url
   }
 
-  GetTitleSourceDate(SkipCopying:=false) {
+  GetTitleSourceDate(NoRestore:=false, SkipCopying:=false) {
     WinGetActiveTitle CurrTitle
     this.Title := RegExReplace(CurrTitle, "( - Google Chrome| — Mozilla Firefox|( and [0-9]+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
 
     ; Sites that have source in their title
-    if (InStr(this.Title, "很帅的日报")) {
+    if (RegExMatch(this.Title, "^很帅的日报")) {
       this.Date := StrReplace(this.Title, "很帅的日报 ")
       this.Title := "很帅的日报"
-    } else if (InStr(this.Title, "_百度百科")) {
+    } else if (RegExMatch(this.Title, "_百度百科$")) {
       this.Source := "百度百科"
       this.Title := StrReplace(this.Title, "_百度百科")
-    } else if (InStr(this.Title, "_百度知道")) {
+    } else if (RegExMatch(this.Title, "_百度知道$")) {
       this.Source := "百度知道"
       this.Title := StrReplace(this.Title, "_百度知道")
+    } else if (RegExMatch(this.title, "^Frontiers \| ")) {
+      this.source := "Frontiers"
+      this.title := StrReplace(this.title, "Frontiers | ")
+    } else if (RegExMatch(this.title, ": MedlinePlus Medical Encyclopedia$")) {
+      this.source := "MedlinePlus Medical Encyclopedia"
+      this.title := StrReplace(this.title, ": MedlinePlus Medical Encyclopedia")
     } else if (InStr(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", this.Source)
       this.Title := StrReplace(this.Title, " : " . StrReplace(this.Source, "r/"))
@@ -58,51 +61,46 @@ class VimBrowser {
       this.Source := "Daily Stoic"
     } else if (InStr(this.Url, "healthline.com")) {
       this.Source := "Healthline"
+    } else if (InStr(this.Url, "webmd.com")) {
+      this.Source := "WebMD"
     } else if (InStr(this.Url, "medicalnewstoday.com")) {
       this.Source := "Medical News Today"
     } else if (InStr(this.Url, "investopedia.com")) {
       this.Source := "Investopedia"
     } else if (InStr(this.Url, "github.com")) {
       this.Source := "Github"
+    } else if (InStr(this.Url, "universityhealthnews.com")) {
+      this.source := "University Health News"
+    } else if (InStr(this.url, "verywellmind.com")) {
+      this.source := "Verywell Mind"
 
     ; Sites that should be skipped
     } else if (InStr(this.Url, "mp.weixin.qq.com")) {
       return
-    } else if (InStr(this.Url, "universityhealthnews.com")) {
-      return
 
     ; Sites that require special attention
-    } else if (InStr(this.title, " - YouTube")) {
+    } else if (RegExMatch(this.title, " - YouTube$")) {
       this.source := "YouTube"
       this.title := StrReplace(this.title, " - YouTube")
       if (!SkipCopying) {
         sleep 20
-        global WinClip
-        WinClip.Clear()
-        send ^a^c
-        ClipWait 3
-        send {esc}
-        if (Clipboard) {
-          this.date := this.MatchYTDate(Clipboard)
-          this.source .= ": " . this.MatchYTSource(Clipboard)
+        if (text := this.GetFullPage("", NoRestore)) {
+          this.date := this.MatchYTDate(text)
+          this.source .= ": " . this.MatchYTSource(text)
         }
       }
-    } else if (InStr(this.Title, "_哔哩哔哩_bilibili")) {
+    } else if (RegExMatch(this.Title, "_哔哩哔哩_bilibili$")) {
       this.Source := "哔哩哔哩"
       this.Title := StrReplace(this.Title, "_哔哩哔哩_bilibili")
       if (!SkipCopying) {
         sleep 20
-        global WinClip
-        WinClip.Clear()
-        send ^a^c
-        ClipWait 3
-        send {esc}
-        this.date := this.MatchBLDate(Clipboard)
+        this.date := this.MatchBLDate(this.GetFullPage("bilibili.com", NoRestore))
       }
 
     ; Try to use - or | to find source
     } else {
       ReversedTitle := StrReverse(this.Title)
+      separator := ""
       if (InStr(ReversedTitle, " | ")
        && (!InStr(ReversedTitle, " - ")
         || InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - "))) {  ; used to find source
@@ -111,8 +109,8 @@ class VimBrowser {
         separator := " - "
       } else if (InStr(ReversedTitle, " – ")) {
         separator := " – "  ; websites like BetterExplained
-      } else {
-        separator := ""
+      } else if (InStr(ReversedTitle, " — ")) {
+        separator := " — "
       }
       pos := separator ? InStr(StrReverse(this.Title), separator) : 0
       if (pos) {
@@ -122,6 +120,30 @@ class VimBrowser {
         this.Title := SubStr(this.Title, 1, StrLen(this.Title) - pos - 2)
       }
     }
+  }
+
+  GetFullPage(title:="", NoRestore:=false) {
+    title := title ? title : WinGetActiveTitle()
+    global WinClip
+    if (!NoRestore)
+      WinClip.Snap(ClipData)
+    bl := RegExMatch(title, "_哔哩哔哩_bilibili$")
+    if (bl) {
+      MouseGetPos, XSaved, YSaved
+      MouseMove, % A_ScreenWidth / 2, % A_ScreenHeight / 2, 0
+      sleep 200
+    }
+    WinClip.Clear()
+    send ^a^c
+    ClipWait 1
+    send {esc}
+    sleep 20
+    text := Clipboard
+    if (bl)
+      MouseMove, XSaved, YSaved
+    if (!NoRestore)
+      WinClip.Restore(ClipData)
+    return text
   }
 
   GetSecFromTime(TimeStamp) {
@@ -139,37 +161,25 @@ class VimBrowser {
     } else if (browser = "edge" || WinActive("ahk_exe msedge.exe")) {
       accAddressBar := Acc_Get("Object", "4.1.1.4.1.2.5.4",, "ahk_id " . hwnd)
     }
-    return (accAddressBar.accValue(0))
+    return accAddressBar.accValue(0)
   }
 
-  GetVidTime(site:="", NoRestore:=false) {
-    if (!site) {
-      CurrUrl := this.GetBrowserUrl()
-      if (InStr(CurrUrl, "youtube.com")) {
-        site := "yt"
-      } else if (InStr(CurrUrl, "bilibili.com")) {
-        site := "bl"
-      }
-    }
+  GetVidTime(title:="", FullPageText:="", NoRestore:=false) {
+    title := title ? title : WinGetActiveTitle()
+    title := RegExReplace(title, "( - Google Chrome| — Mozilla Firefox|( and [0-9]+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
+    if (!RegExMatch(title, "( - YouTube|_哔哩哔哩_bilibili)$"))
+      return
     global WinClip
     if (!NoRestore)
       WinClip.Snap(ClipData)
     WinClip.Clear()
-    if (site = "bl") {
-      MouseGetPos, XSaved, YSaved
-      MouseMove, % A_ScreenWidth / 2, % A_ScreenHeight / 2, 0
-      sleep 200
+    if (!FullPageText)
+      FullPageText := this.GetFullPage(title, !NoRestore)
+    if (RegExMatch(title, " - YouTube$")) {
+      VidTime := this.MatchYTTime(FullPageText)
+    } else if (RegExMatch(title, "_哔哩哔哩_bilibili$")) {
+      VidTime := this.MatchBLTime(FullPageText)
     }
-    send ^a^c
-    ClipWait 1
-    send {esc}
-    if (site = "yt") {
-      VidTime := this.MatchYTTime(Clipboard)
-    } else if (site = "bl") {
-      VidTime := this.MatchBLTime(Clipboard)
-    }
-    if (site = "bl")
-      MouseMove, XSaved, YSaved
     if (!NoRestore)
       WinClip.Restore(ClipData)
     return VidTime
@@ -189,6 +199,7 @@ class VimBrowser {
         return
     }
     send {esc}
+    sleep 20
     Clipboard := this.url := this.ParseUrl(Clipboard)
     if (!NoRestore)
       WinClip.Restore(ClipData)

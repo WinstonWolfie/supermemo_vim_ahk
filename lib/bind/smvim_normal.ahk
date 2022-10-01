@@ -20,30 +20,34 @@ Return
 
 ; Editing HTML
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML())
-^c::send {home}>{space}
+^c::send {home}>{space}  ; add comment; useful when replying emails
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
 +x::
 x::  ; open hyperlink in current caret position (Open in *n*ew window)
   KeyWait shift
-  Shift := InStr(A_ThisHotkey, "+")
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send +{right}^c{left}
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  If (clipboard ~= "\s" || !Clipboard) {
+  if (ErrorLevel) {  ; end of line
+    send +{right}^c{right}
+    ClipWait, LongCopy ? 0.6 : 0.2, True
+  } else if (Clipboard ~= "\s") {
+    WinClip.Clear()
     send +{left}^c{right}
     ClipWait, LongCopy ? 0.6 : 0.2, True
   }
+  LinkMatch := "(<A((.|\r\n)*)href="")\K[^""]+"
   If (Vim.HTML.ClipboardGet_HTML(data)) {
-    RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrLink)
+    RegExMatch(data, LinkMatch, CurrLink)
     RunLink := false
     if (!CurrLink) {
       WinClip.Clear()
       send +{left}^c{right}
       ClipWait, LongCopy ? 0.6 : 0.2, True
       If (Vim.HTML.ClipboardGet_HTML(data)) {
-        RegExMatch(data, "(<A((.|\r\n)*)href="")\K[^""]+", CurrLink)
+        RegExMatch(data, LinkMatch, CurrLink)
         if (!CurrLink) {
           ToolTip("No link found.")
         } else {
@@ -58,7 +62,7 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
         RegExMatch(CurrLink, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
         send % "^g" . ElementNumber . "{enter}"
       } else {
-        if (Shift) {
+        if (InStr(A_ThisHotkey, "+")) {
           ; run % "iexplore.exe " . CurrLink  ; RIP IE
           Vim.Browser.RunInIE(CurrLink)
         } else {
@@ -71,26 +75,48 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
   WinClip.Restore(ClipData)
 return
 
-s::
-  ContinueLearning := false
-  if (Vim.SM.IsLearning())
-    ContinueLearning := true
+s::  ; gs: go to source
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
+f::  ; gf: open source file
+  Vim.State.SetMode()
   WinGet, hwnd, ID, A
-  send ^{f7}
-  Vim.SM.SaveHTML()
-  send {esc}  ; leave html
-  run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . Vim.SM.GetFilePath()
+  path := Vim.SM.GetFilePath()
+  SplitPath, path,,, ext
+  if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
+    ContinueLearning := false
+    run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
+  } else {
+    ContinueLearning := Vim.SM.IsLearning()
+    send ^{f7}
+    Vim.SM.SaveHTML()
+    send {esc}  ; leave html
+    run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . path
+  }
   WinWaitNotActive % "ahk_id " . hwnd
   WinWaitActive % "ahk_id " . hwnd
   send !{home}
   if (ContinueLearning) {
-    ControlSend, TBitBtn2, {enter}, ahk_class TElWind
+    Vim.SM.Learn()
   } else {
     Vim.SM.WaitFileLoad()
     send !{left}
   }
-  Vim.State.SetMode()
 return
+
+u::  ; gu: go up
+  send ^{up}
+  Vim.State.SetMode()
+Return
+
++u::  ; gU: click source button
+	KeyWait shift
+  if (WinActive("ahk_class TElWind")) {
+    Vim.SM.ClickElWindSourceBtn()
+  } else if (WinActive("ahk_class TBrowser")) {
+    Vim.SM.ClickBrowserSourceButton()
+  }
+  Vim.State.SetMode()
+Return
 
 #if (Vim.State.Vim.Enabled
   && Vim.State.IsCurrentVimMode("Vim_Normal")

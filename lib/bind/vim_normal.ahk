@@ -9,15 +9,14 @@ u::Send,^z
 
 ; Change case
 ~::
-  KeyWait shift
-  Send +{Right}
-  Selection := Clip()
-  if Selection is lower
-    StringUpper, Selection, Selection
-  else if Selection is upper
-    StringLower, Selection, Selection
-  Send % Selection
-Return
+  send +{right}
+  selection := clip()
+  if selection is lower
+    StringUpper, selection, selection
+  else if selection is upper
+    StringLower, selection, selection
+  send % "{text}" . selection
+return
 
 +z::Vim.State.SetMode("Z")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))

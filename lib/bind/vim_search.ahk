@@ -8,7 +8,7 @@ Return
 *::
   KeyWait shift
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^{Left}+^{Right}^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   send ^f

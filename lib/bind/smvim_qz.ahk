@@ -9,6 +9,11 @@ z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0)
 ^+z::
   Vim.State.SetMode("SMVim_ClozeHinter", 0, -1, 0)
   ClozeHinterCtrlState := InStr(A_ThisHotkey, "^")
+return
+
+CapsLock & z::
+  Vim.State.SetMode("SMVim_ClozeNoBracket", 0, -1, 0)
+  ClozeNoBracketCtrlState := GetKeyState("ctrl")
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText() && Vim.State.g)

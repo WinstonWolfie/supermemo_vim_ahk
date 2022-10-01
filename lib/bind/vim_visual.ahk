@@ -17,6 +17,7 @@ Return
     if (Vim.SM.IsEditingPlainText()) {
       XSaved := A_CaretX, YSaved := A_CaretY
       send {home}+{down}
+      WaitCaretMove(XSaved, YSaved, 50)
       if (A_CaretX == XSaved && A_CaretY == YSaved)  ; didn't move
         send +{end}
     } else {
@@ -112,7 +113,7 @@ Return
 *::
   KeyWait shift
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   WinGet, hwnd, ID, A
@@ -125,16 +126,27 @@ Return
 
 ^p::
 +p::
+^+p::
 p::
-  WinClip.Snap(ClipData)
+  ; WinClip.Snap(PrevClip)
+  PrevClip := ClipboardAll
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+  send ^c
+  ClipWait, LongCopy ? 0.6 : 0.2, True
+  ; WinClip.Snap(NewClip)
+  NewClip := ClipboardAll
+  ; WinClip.Restore(PrevClip)
+  Clipboard := PrevClip
+  ClipWait 10  ; needed for pasting to work
   if (InStr(A_ThisHotkey, "^")) {
-    Clipboard := Clipboard
+    Clipboard := Clipboard  ; convert to plain text
     ClipWait 10
   }
   send ^v
   Vim.State.SetMode("Vim_Normal")
   sleep 20
-  WinClip.Restore(ClipData)
+  ; WinClip.Restore(NewClip)
+  Clipboard := NewClip
 Return
 
 ConvertToLowercase:
@@ -160,8 +172,8 @@ Return
 ; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
 InvertCase:
 ~::
-  KeyWait shift
-  selection := clip()
+  WinClip.Snap(ClipData)
+  selection := clip("",, true)
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(selection) {
     Lab_Invert_Char:= Substr(selection, A_Index, 1)
@@ -172,15 +184,18 @@ InvertCase:
     else
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
-  clip(Lab_Invert_Char_Out)
+  clip(Lab_Invert_Char_Out,, true)
+  WinClip.Restore(ClipData)
   Vim.State.SetMode("Vim_Normal")
 Return
 
 o::  ; move to other end of marked area; not perfect with line breaks
   WinClip.Snap(ClipData)
   selection := clip("",, true)
-  if (!selection)
-    Return
+  if (!selection) {
+    WinClip.Restore(ClipData)
+    return
+  }
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
   SelectionRight := clip("",, true)

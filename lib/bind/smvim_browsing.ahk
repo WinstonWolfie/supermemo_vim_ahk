@@ -31,7 +31,7 @@ s::  ; gs: go to link
 Return
 
 ; Element/content window
-#if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !Vim.SM.IsEditingText() and (Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !Vim.SM.IsEditingText() && Vim.State.g)
 +e::  ; K, gE: go up one *e*lement
   send !{pgup}
   Vim.State.SetMode()
@@ -52,25 +52,10 @@ $::  ; g$: go to last element
   Vim.State.SetMode()
 Return
 
-u::  ; gu: go up
-  send ^{up}
-  Vim.State.SetMode()
-Return
-
 ; Element window / browser
-#if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TBrowser")) && !Vim.SM.IsEditingText() and (Vim.State.g)
-+u::  ; gU: click source button
-	KeyWait shift
-  if (WinActive("ahk_class TElWind")) {
-    ControlClickWinCoord(555, 66)
-  } else if (WinActive("ahk_class TBrowser")) {
-    ControlClickWinCoord(294, 45)
-  }
-  Vim.State.SetMode()
-Return
-
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TBrowser")) && !Vim.SM.IsEditingText() && Vim.State.g)
 ; g state, for both browsing and editing
-#if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 c::  ; gc: go to next *c*omponent
   send ^t
   Vim.State.SetMode()
@@ -82,7 +67,7 @@ Return
 Return
 
 ; Need scrolling bar present
-#if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText()
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && !Vim.State.g)
 ; Scrolling
 h::Vim.Move.Repeat("h")
 l::Vim.Move.Repeat("l")
@@ -95,7 +80,6 @@ u::Vim.Move.Repeat("^u")
 Return
 
 ; "Browsing" mode
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
 ; Unlike Vim, 3gg and 3G work differently
 ; 3gg goes to the 3rd line in the entire document
 ; 3G goes to the 3rd line on screen
@@ -107,17 +91,13 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::  ; reload
-  ContinueGrading := ContinueLearning := false
-  if (Vim.SM.IsGrading()) {
-    ContinueGrading := true
-  } else if (Vim.SM.IsLearning()) {
-    ContinueLearning := true
-  }
+  ContinueGrading := Vim.SM.IsGrading()
+  ContinueLearning := ContinueGrading ? 0 : Vim.SM.IsLearning()
   send !{home}
   if (ContinueLearning) {
-    ControlSend, TBitBtn2, {enter}
+    Vim.SM.Learn()
   } else if (ContinueGrading) {
-    ControlSend, TBitBtn2, {enter}
+    Vim.SM.Learn()
     ControlTextWait("TBitBtn3", "Show answer")
     ControlSend, TBitBtn3, {enter}
   } else {
@@ -186,7 +166,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser"))
 b::WinActivate, ahk_class TBrowser  ; why not
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && !Vim.State.g)
 o::
   Vim.State.SetMode("Insert")
   send ^o  ; favourites
@@ -274,9 +254,16 @@ Return
   RShiftState := InStr(A_ThisHotkey, ">+")  ; caret on the right
   LShiftState := InStr(A_ThisHotkey, "<+")  ; start from top
   AltState := InStr(A_ThisHotkey, "!")  ; followed by a cloze
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (GetKeyState("alt") || GetKeyState("ctrl")))
+CapsLock & /::
+  CapsState := InStr(A_ThisHotkey, "CapsLock")
+  if (A_ThisHotkey == "CapsLock & /") {
+    AltState := GetKeyState("alt")
+    CtrlState := GetKeyState("ctrl")
+  }
   if (!Vim.SM.IsEditingText()) {
     send ^t
-    Vim.SM.WaitTextFocus(1000)  ; make sure CurrentFocus is updated    
+    Vim.SM.WaitTextFocus()  ; make sure CurrFocus is updated    
     if (!Vim.SM.IsEditingText()) {  ; still found no text
       ToolTip("Text not found.")
       Vim.State.SetNormal()
@@ -289,7 +276,7 @@ Return
   }
   if (LShiftState)
     send ^{Home}
-  ControlGetFocus, CurrentFocus, ahk_class TElWind
+  ControlGetFocus, CurrFocus, ahk_class TElWind
   if (AltState) {
     gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
   } else if (CtrlState) {
@@ -318,7 +305,7 @@ SearchButtonSearch:
   ; Previously, UserInput is stored in Vim.Move.LastSearch, but it turned out this would add 000... in floating numbers
   ; i.e. 3.8 would become 3.80000
   WinActivate, ahk_class TElWind
-  if (InStr(CurrentFocus, "TMemo")) {
+  if (InStr(CurrFocus, "TMemo")) {
     send ^a
     if (Vim.State.n) {
       n := Vim.State.n
@@ -359,6 +346,7 @@ SearchButtonSearch:
       if (ErrorLevel)
         return
     }
+    UserInput := trim(UserInput)  ; spaces need to be trimmed otherwise SM might eat the spaces in text
     ControlSetText, TEdit1, % UserInput
     if (WholeWord)
       send !w  ; match whole word
@@ -388,28 +376,34 @@ SearchButtonSearch:
       send {esc}^{enter}
       send {text}h  ; Highlight: Clear
       send {enter}{esc}
-      Return
+      return
     }
-    send h{enter}
+    send {text}h
+    send {enter}
     if WinExist("ahk_class TMyFindDlg")  ; clears search box window
       WinClose
-    if AltState {
-      if !CtrlState && !ShiftState
+    if (AltState) {
+      if (!CtrlState && !ShiftState && !CapsState) {
         send !z
-      else if ShiftState {
-        if CtrlState
+      } else if (ShiftState) {
+        if (CtrlState)
           ClozeHinterCtrlState := 1
         WinWaitActive, ahk_class TElWind,, 0
         gosub ClozeHinter
-      } else if CtrlState
+      } else if (CapsState) {
+        if (CtrlState)
+          ClozeNoBracketCtrlState := 1
+        WinWaitActive, ahk_class TElWind,, 0
+        gosub ClozeNoBracket
+      } else if (CtrlState) {
         gosub ClozeStay
-    } else if !CtrlState  ; alt is up and ctrl is up; shift can be up or down
+      }
+    } else if (!CtrlState) {  ; alt is up and ctrl is up; shift can be up or down
       send {esc}^t  ; to return to the same field
-    else if CtrlState {  ; sometimes SM doesn't focus to anything after the search
+    } else if (CtrlState) {  ; sometimes SM doesn't focus to anything after the search
       WinWaitActive, ahk_class TElWind,, 0
-      ControlGetFocus, CurrentFocusAfter, ahk_class TElWind
-      if !CurrentFocusAfter
-        ControlFocus, %CurrentFocus%, ahk_class TElWind
+      if (!ControlGetFocus())
+        ControlFocus, % CurrFocus, ahk_class TElWind
     }
   }
 return

@@ -236,19 +236,23 @@ class VimAhk {
     }
   }
 
-  SetTwoLetterMap(key1, key2) {
-    EnterNormal := ObjBindMethod(this, "TwoLetterEnterNormal")
-    EmptyReturn := ObjBindMethod(this, "EmptyReturn")
-    Enabled := ObjBindMethod(this, "TwoLetterNormalMapsEnabled")
-    HotKey If, % Enabled
-    HotKey, %key1% & %key2%, % EnterNormal
-    HotKey, %key2% & %key1%, % EnterNormal
-    HotKey, % "~" . key1, % EmptyReturn
-    HotKey, % "~" . key2, % EmptyReturn
-  }
+  ; SetTwoLetterMap(key1, key2) {
+  ;   EnterNormal := ObjBindMethod(this, "TwoLetterEnterNormal")
+  ;   Enabled := ObjBindMethod(this, "TwoLetterNormalMapsEnabled")
+  ;   HotKey If, % Enabled
+  ;   HotKey, %key1% & %key2%, % EnterNormal
+  ;   HotKey, %key2% & %key1%, % EnterNormal
+  ;   HotKey, % "~" . key1, empty
+  ;   HotKey, % "~" . key2, empty
+  ; }
 
   TwoLetterNormalMapsEnabled() {
-    Return (this.IsVimGroup() && (this.State.StrIsInCurrentVimMode("Insert") || this.State.StrIsInCurrentVimMode("Visual") || (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText())) && this.TwoLetterNormalIsSet)
+    Return (this.IsVimGroup()
+         && (this.State.StrIsInCurrentVimMode("Insert")
+          || this.State.StrIsInCurrentVimMode("Visual")
+          || (this.State.IsCurrentVimMode("Vim_Normal")
+           && this.SM.IsEditingText()))
+         && this.TwoLetterNormalIsSet)
   }
 
   TwoLetterEnterNormal() {
@@ -260,10 +264,6 @@ class VimAhk {
       send {up}{esc}
     }
     this.State.SetNormal()
-  }
-
-  EmptyReturn() {
-    return
   }
 
   Setup() {
@@ -285,21 +285,22 @@ class VimAhk {
 
   SetDefaultActiveWindows() {
     DefaultList := ["ahk_exe Evernote.exe"  ; Evernote
-                  , "ahk_exe explorer.exe"  ; Explorer
-                  , "ahk_exe Explorer.exe"  ; Explorer, Explorer became also upper case, but lower case works for this
+                  ; , "ahk_exe explorer.exe"  ; Explorer
+                  ; , "ahk_exe Explorer.exe"  ; Explorer, Explorer became also upper case, but lower case works for this
                   , "ahk_exe notepad.exe"   ; NotePad
                   , "ahk_exe Notepad.exe"   ; NotePad, Changed as upper case since ~2022/1 ??
                   , "OneNote"               ; OneNote at Windows 10
                   , "ahk_exe onenote.exe"   ; OneNote Desktop
-                  , "ahk_exe ApplicationFrameHost.exe"  ; Some Windows applications use this, including OneNote at Windows 10
+                  ; , "ahk_exe ApplicationFrameHost.exe"  ; Some Windows applications use this, including OneNote at Windows 10  ; incl. settings app in win11
                   , "ahk_exe POWERPNT.exe"  ; PowerPoint
                   , "ahk_exe TeraPad.exe"   ; TeraPad
                   , "ahk_exe texstudio.exe"  ; TexStudio
                   , "ahk_exe texworks.exe"  ; TexWork
                   , "Write:"                ; Thunderbird, English
                   , "作成"                  ; Thunderbird, 日本語
-                  ; , "ahk_exe Code.exe"      ; Visual Studio Code  ; Why not use VSCodeVim???
+                  ; , "ahk_exe Code.exe"      ; Visual Studio Code  ; why not use VSCodeVim???
                   , "ahk_exe WINWORD.exe"   ; Word
+                  , "ahk_exe OUTLOOK.EXE"   ; Outlook
                   , "ahk_exe wordpad.exe"   ; WordPad
                   , "ahk_exe Q-Dir_x64.exe"  ; Q-dir
                   , "ahk_exe Q-Dir.exe"     ; Q-dir
@@ -371,18 +372,19 @@ class VimAhk {
     }
   }
   
-  ParseLineBreaks(Str) {
-    if (this.SM.IsEditingHTML()) {  ; not perfect
-      if (StrLen(Str) != InStr(Str, "`r`n") + 1) {  ; first matched `r`n not at the end
-        Str := RegExReplace(Str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
-        Str := RegExReplace(Str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
-        Str := StrReplace(Str, "`r`n`r`n", " ")  ; turn all paragraph tags (<P>) to space
+  ParseLineBreaks(str) {
+    ; Not perfect
+    if (this.SM.IsEditingHTML()) {
+      if (StrLen(str) != InStr(str, "`r`n") + 1) {  ; first matched `r`n not at the end
+        str := RegExReplace(str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
+        str := RegExReplace(str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
+        str := StrReplace(str, "`r`n`r`n", " ")  ; turn all paragraph tags (<P>) to space
       }
-      Str := StrReplace(Str, "`r`n", " ")  ; turn all line breaks (<BR>) to space
+      str := StrReplace(str, "`r`n", " ")  ; turn all line breaks (<BR>) to space
     } else {
-      Str := StrReplace(Str, "`r")
+      str := StrReplace(str, "`r")
     }
-    Return Str
+    return str
   }
   
   IsWhitespaceOnly(str) {
@@ -401,3 +403,6 @@ class VimAhk {
          || !A_CaretX)
   }
 }
+
+Empty:
+return

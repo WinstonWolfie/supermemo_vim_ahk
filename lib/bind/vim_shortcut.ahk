@@ -13,9 +13,13 @@
 
 #if (Vim.State.Vim.Enabled)
 ; Testing
-^!+t::
-  msgbox % vim.sm.GetCollectionPath()
-return
+; ^!+t::
+;   send !{f10}fe  ; open registry editor
+;   WinWaitActive, ahk_class TInputDlg,, 3
+;   ControlGetText, OldRef, TMemo1
+;   RegExMatch(OldRef, "#Title: .*", v)
+;   msgbox % v
+; return
 
 ; Shortcuts
 ^!r::reload
@@ -56,8 +60,8 @@ SMPlan:
       WinClose
     if (WinExist("ahk_class TMsgDialog"))
       WinClose
-    ControlSend, TBitBtn2, {ctrl down}p{ctrl up}, ahk_class TElWind
-		if (A_TickCount := CurrTick + 5000)
+    Vim.SM.PostMsg(243)  ; plan
+		if (A_TickCount - CurrTick > 5000)
 			return
   }
   WinActivate, ahk_class TPlanDlg
@@ -92,76 +96,71 @@ return
 return
 
 ^!d::  ; parse similar and opposite in google *d*efine
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  WinClip.Snap(ClipData)
+  WinClip.Clear()
   send ^c
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  TempClip := RegExReplace(Clipboard, "(?<!(Similar)|(?<![^:])|(?<![^.])|(?<![^""]))\r\n", ", ")
-  TempClip := StrReplace(TempClip, "Similar`r`n", "`r`nsyn: ")
-  TempClip := StrReplace(TempClip, "Similar:`r`n", "`r`nsyn: ")
-  TempClip := StrReplace(TempClip, "Synonymes :`r`n", "`r`nsyn: ")
-  TempClip := StrReplace(TempClip, ", Opposite:`r`n", "`r`n`r`nant: ")
-  TempClip := StrReplace(TempClip, ", Opposite`r`n", "`r`n`r`nant: ")
-  TempClip := StrReplace(TempClip, ", Opuesta`r`n", "`r`n`r`nant: ")
-  TempClip := StrReplace(TempClip, ", Opuesta, ", "`r`n`r`nant: ")
-  TempClip := StrReplace(TempClip, "ant: , ", "ant: ")
-  Clipboard := StrReplace(TempClip, "vulgar slang", "vulgar slang > ")
+  ClipWait 0.6
+  if (ErrorLevel) {
+    ToolTip("Text not found.")
+    WinClip.Restore(ClipData)
+    return
+  }
+  TempClip := RegExReplace(Clipboard, "(Similar|Synonymes).*\r\n", "`r`nsyn: ")
+  TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
+  TempClip := RegExReplace(TempClip, "(?<![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
+  Clipboard := TempClip := StrReplace(TempClip, "vulgar slang", "vulgar slang > ")
   ToolTip("Copied:`n`n" . TempClip)
 return
 
 ; Incremental video: Import current YT video to SM
 ; Import current webpage to supermemo
+; +!x::
+; !x::
 ^+!a::
 ^!a::
-  SetTimer, GetBrowserUrl, -1
+  FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
+  WinClip.Snap(ClipData)
+  WinGet, hwnd, ID, A
   KeyWait ctrl
   KeyWait shift
   KeyWait alt
-  FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
-  WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
-  send ^c
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  SMImportCtrlA := SMVidImport := false
-  if (!Clipboard) {
-    SMImportCtrlA := true
-    if (InStr(CurrUrl, "bilibili.com")) {
-      MouseGetPos, XSaved, YSaved
-      MouseMove, % A_ScreenWidth / 2, % A_ScreenHeight / 2, 0
-      sleep 200
+  Vim.Browser.GetInfo(true, true)
+  sleep 20
+  HTMLText := clip("",, true,, true)
+  SMVidImport := refreshed := false
+  if (!HTMLText && InStr(Vim.Browser.url, "youtube.com")) {
+    sleep 20
+    SMVidImport := true
+    FullPageText := Vim.Browser.GetFullPage("", true)
+    Vim.Browser.VidTime := Vim.Browser.MatchYTTime(FullPageText)
+    Vim.Browser.date := Vim.Browser.MatchYTDate(FullPageText)
+    Vim.Browser.source .= ": " . Vim.Browser.MatchYTSource(FullPageText)
+    Clipboard := Vim.Browser.url
+  } else if (!HTMLText && InStr(Vim.Browser.url, "bilibili.com")) {
+    sleep 20
+    SMVidImport := true
+    FullPageText := Vim.Browser.GetFullPage(Vim.Browser.title, true)
+    Vim.Browser.VidTime := Vim.Browser.MatchBLTime(FullPageText)
+    Vim.Browser.date := Vim.Browser.MatchBLDate(FullPageText)
+    Clipboard := Vim.Browser.url
+  } else {
+    if (!HTMLText) {
+      send ^a
+      HTMLText := clip("",, true,, true)
+      send {esc}
+      if (!HTMLText) {
+        ToolTip("Text not found.")
+        return
+      }
     }
-    send ^a^c
-    ClipWait 3
-    send {esc}
-    sleep 20
-    if (!Clipboard)
-      return
-    if (InStr(CurrUrl, "bilibili.com"))
-      MouseMove, XSaved, YSaved
-    Vim.Browser.GetInfo("", true)
-  } else {
-    Vim.Browser.GetInfo()
-  }
-  if (InStr(Vim.Browser.url, "youtube.com") && SMImportCtrlA) {
-    sleep 20
-    SMVidImport := true
-    Vim.Browser.VidTime := Vim.Browser.MatchYTTime(Clipboard)
-    Vim.Browser.date := Vim.Browser.MatchYTDate(Clipboard)
-    Vim.Browser.source .= ": " . Vim.Browser.MatchYTSource(Clipboard)
-    Clipboard := Vim.Browser.url
-  } else if (InStr(Vim.Browser.url, "bilibili.com") && SMImportCtrlA) {
-    sleep 20
-    SMVidImport := true
-    Vim.Browser.VidTime := Vim.Browser.MatchBLTime(Clipboard)
-    Vim.Browser.date := Vim.Browser.MatchBLDate(Clipboard)
-    Clipboard := Vim.Browser.url
-  } else {
-    if (!Vim.HTML.ClipboardGet_HTML(data))
-      return
-    HTML := Vim.HTML.Clean(data)
+    HTML := Vim.HTML.Clean(HTMLText, true)
     RegExMatch(HTML, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", HTML)
     source := Vim.Browser.Source ? "<br>#Source: " . Vim.Browser.Source : ""
-    date := Vim.Browser.Date ? "<br>#Date: " . Vim.Browser.Date
-                             : "<br>#Date: Imported on " . CurrTime
+    date := ""
+    if (!InStr(A_ThisHotkey, "x")) {
+      date := Vim.Browser.Date ? "<br>#Date: " . Vim.Browser.Date
+                               : "<br>#Date: Imported on " . CurrTime
+    }
     clipboard := HTML
               . "<br>#SuperMemo Reference:"
               . "<br>#Link: " . Vim.Browser.Url
@@ -194,17 +193,19 @@ Title : " . Vim.Browser.Title . "
     return
   }
 SMImportContinue:
+  if (InStr(A_ThisHotkey, "x"))
+    ControlSend,, {alt down}{shift down}h{shift up}{alt up}, % "ahk_id " . hwnd
   WinActivate, ahk_class TElWind
+  ; Clear search highlight, just in case
+  send ^{enter}  ; open commander
+  send {text}h  ; Highlight: Clear
+  send {enter}
   if (concept) {
     ConceptBefore := Vim.SM.GetCurrConcept()
     if (RegExMatch(ConceptBefore, "i)^" . concept)) {
       concept := ""
     } else {
-      ControlClickWinCoord(723, 67)
-      WinWaitActive, ahk_class TRegistryForm,, 3
-      ControlSetText, Edit1, % SubStr(concept, 2)
-      send % SubStr(concept, 1, 1) . "{enter}"  ; needed for updating the template
-      WinWaitActive, ahk_class TElWind,, 3
+      Vim.SM.ChangeDefaultConcept(concept)
     }
   }
   if (SMVidImport) {
@@ -214,37 +215,41 @@ SMImportContinue:
       gosub SMCtrlN
     }
   } else {
-    ; Clear search highlight, just in case
-    send {esc}^{enter}  ; open commander
-    send {text}h  ; Highlight: Clear
-    send {enter}
     WinWaitActive, ahk_class TElWind,, 0
+    ; send !n
+    ; Vim.SM.WaitTextFocus()
+    ; send {AppsKey}xp  ; Paste HTML  ; not reliable
     send ^n
-    WinWaitNotActive, ahk_class TElWind,, 0  ; could appear a loading bar
+    WinWaitNotActive, ahk_class TElWind,, 0.8  ; could appear a loading bar
     if (!ErrorLevel)
       WinWaitActive, ahk_class TElWind,, 5
-    send ^a^+1
-    WinWaitNotActive, ahk_class TElWind,, 0  ; could appear a loading bar
+    send ^a
+    Vim.SM.WaitTextFocus()
+    send ^+1
+    WinWaitNotActive, ahk_class TElWind,, 0.8  ; could appear a loading bar
     if (!ErrorLevel)
       WinWaitActive, ahk_class TElWind,, 5
     send {esc}
-    WinWaitNotActive, ahk_class TElWind,, 0  ; could appear a loading bar
-    if (!ErrorLevel)
-      WinWaitActive, ahk_class TElWind,, 5
-    Vim.SM.SaveHTML(true)
-    Vim.SM.SetTitle(Vim.Browser.title)
+    Vim.SM.WaitTextExit()
+    if (!InStr(A_ThisHotkey, "x"))
+      Vim.SM.SetTitle(Vim.Browser.title)
   }
-  if (prio)
-    send % "!p" . prio . "{enter}"
   if (concept) {
     WinWaitActive, ahk_class TElWind,, 1
-    ControlClickWinCoord(723, 67, "ahk_class TElWind")
-    WinWaitActive, ahk_class TRegistryForm,, 3
-    ControlSetText, Edit1, % SubStr(ConceptBefore, 2)
-    send % SubStr(ConceptBefore, 1, 1) . "{enter}"  ; needed for updating the template
-    WinWaitActive, ahk_class TElWind,, 3
+    Vim.SM.ChangeDefaultConcept(ConceptBefore)
     send !{left}
+    Vim.SM.WaitFileLoad()
+    refreshed := true
   }
+  if (prio) {
+    WinWaitActive, ahk_class TElWind,, 1
+    if (RegExMatch(prio, "^\."))
+      prio := "0" . prio
+    send % "!p" . prio . "{enter}"
+  }
+  WinWaitActive, ahk_class TElWind,, 1
+  if (!refreshed)
+    Vim.SM.reload()
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
   WinClip.Restore(ClipData)
@@ -270,7 +275,7 @@ return
 
 ^!c::  ; copy and save references
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel)
@@ -293,13 +298,16 @@ return
 return
 
 !+d::  ; check duplicates in SM
+  ; Everything in this hotkey runs in the background
   KeyWait alt
-  url := Vim.Browser.ParseUrl(Vim.Browser.GetBrowserUrl())
+  ; This is the function that works. inc_Uri() does not
+  ; (2nd parameter) Encode in case there are Chinese characters in URL
+  ; (3rd parameter) component := false because "/" doesn't need to be encoded
+  url := EncodeDecodeURI(Vim.Browser.ParseUrl(Vim.Browser.GetBrowserUrl()),, false)
   ControlSend,, {ctrl down}f{ctrl up}, ahk_class TElWind
   WinWait, ahk_class TMyFindDlg,, 0
   ControlSetText, TEdit1, % url, ahk_class TMyFindDlg
   ControlSend,, {enter}, ahk_class TMyFindDlg
-  Vim.Browser.Clear()
   GroupAdd, SMCtrlF, ahk_class TMsgDialog
   GroupAdd, SMCtrlF, ahk_class TBrowser
   WinWait, ahk_group SMCtrlF,, 10
@@ -309,6 +317,7 @@ return
   } else if (WinExist("ahk_class TBrowser")) {
     WinActivate
   }
+  Vim.Browser.Clear()
 return
 
 ~^f::
@@ -338,7 +347,7 @@ return
 !x::  ; pdf/epub extract to supermemo
   KeyWait alt
   WinClip.Snap(ClipData)
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent clipwait will need
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c  ; clip() doesn't keep format; nor ClipboardAll can work with functions
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (!Clipboard) {
@@ -347,17 +356,20 @@ return
     return
   } else {
     WinGet, hwnd, ID, A
-    prio := ""
+    prio := IsBrowser := ""
     if (InStr(A_ThisHotkey, "+")) {
       InputBox, prio, Priority, Enter extract priority.,, 196, 128
+      if (RegExMatch(prio, "^\."))
+        prio := "0" . prio
       WinWaitActive, % "ahk_id " . hwnd,, 1
     }
     if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
       send {text}a
     } else if (WinActive("ahk_exe ebook-viewer.exe")) {
-      send {text}q  ; needs to enable this shortcut in settings
+      send {text}q  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_group Browsers")) {
-      send !h
+      ControlSend,, {alt down}{shift down}h{shift up}{alt up}, % "ahk_id " . hwnd  ; need to enable this shortcut in settings
+      IsBrowser := true
     } else if (WinActive("ahk_exe WINWORD.exe")) {
       send ^!h
     }
@@ -385,9 +397,8 @@ ExtractToSM:
       MsgBox, 4,, Go to source and try again?
       IfMsgBox, yes, {
         WinWaitActive, ahk_class TElWind,, 1
-        WinGetTitle, CurrTitle, ahk_class TElWind
-        ControlClickWinCoord(555, 66)
-        WinWaitTitleChange(CurrTitle)
+        Vim.SM.ClickElWindSourceBtn()
+        Vim.SM.WaitFileLoad()
         SMExtractGoToSource := true
         goto ExtractToSM
       } else {
@@ -402,7 +413,15 @@ ExtractToSM:
     }
   }
   send {left}
-  clip(extract,, true)
+  if (!IsBrowser) {
+    clip(extract,, true)
+  } else {
+    Clipboard := extract
+    ClipWait 10
+    Vim.HTML.ClipboardGet_HTML(data)
+    RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
+    clip(Vim.HTML.Clean(data),, true, true)
+  }
   send ^+{home}  ; select everything
   if (prio) {
     send !+x
@@ -417,7 +436,7 @@ ExtractToSM:
     send !x  ; extract
   }
   Vim.SM.WaitProcessing()
-  sleep 20  ; short sleep to make sure the extraction is done
+  sleep 40  ; short sleep to make sure the extraction is done
   Vim.SM.MoveAboveRef(true)
   send !\\
   WinWaitNotActive, ahk_class TElWind,, 2
@@ -442,7 +461,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z") && !A_CaretX && !ControlGetFocus())
 +z::  ; exit and save annotations
   send q
-  WinWaitActive, Unsaved annotations,, 2
+  WinWaitActive, Unsaved annotations,, 0
   if (!ErrorLevel)
     send s
   if (WinExist("ahk_class TElWind"))
@@ -459,18 +478,87 @@ return
   ToolTip("Copied " . Clipboard)
 return
 
-#if (WinActive("ahk_class SUMATRA_PDF_FRAME") && WinExist("ahk_class TElWind"))
+#if ((WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe")) && WinExist("ahk_class TElWind"))
+!+s::
 ^!s::
 ^+!s::
-  PageNumber := "p" . ControlGetText("Edit1")
-  if (InStr(A_ThisHotkey, "+")) {
-    send q
-    WinWaitActive, Unsaved annotations,, 2
-    if (!ErrorLevel)
-      send s
+  WinClip.Snap(ClipData)
+  KeyWait alt
+  marker := PageNumber := ""
+  if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
+    PageNumber := "p" . ControlGetText("Edit1")
+    if (InStr(A_ThisHotkey, "^")) {
+      send q
+      WinWaitActive, Unsaved annotations,, 0
+      if (!ErrorLevel)
+        send s
+    }
+  } else if (WinActive("ahk_exe ebook-viewer.exe")) {
+    marker := clip("",, true)
+    if (!marker) {
+      WinClip.Restore(ClipData)
+      return
+    }
+    if (InStr(A_ThisHotkey, "^"))
+      send !{f4}
   }
   WinActivate, ahk_class TElWind
-  Vim.SM.SetTitle(PageNumber)
+MarkInSMTitle:
+  Vim.SM.DeselectAllComponents()
+  send q
+  Vim.SM.WaitTextFocus()
+  if (!Vim.SM.IsEditingText()) {
+    ToolTip("No text component.")
+    WinClip.Restore(ClipData)
+    return
+  }
+  send ^{home}^+{down}  ; go to top and select first paragraph below
+  if (RegExMatch(clip("",, true), "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
+    send {left}
+    if (SMGoToSource) {
+      ret := true
+    } else {
+      MsgBox, 4,, Go to source and try again?
+      IfMsgBox, yes, {
+        WinWaitActive, ahk_class TElWind,, 1
+        Vim.SM.ClickElWindSourceBtn()
+        Vim.SM.WaitFileLoad()
+        SMGoToSource := true
+        goto MarkInSMTitle
+      } else {
+        ret := true
+      }
+    }
+    if (ret) {
+      ret := SMGoToSource := false
+      ToolTip("No source element found or source element isn't empty.")
+      WinClip.Restore(ClipData)
+      return
+    }
+  }
+  send {left}{esc}
+  Vim.SM.WaitTextExit()
+  Vim.SM.PostMsg(116)  ; edit title
+  GroupAdd, SMAltT, ahk_class TChoicesDlg
+  GroupAdd, SMAltT, ahk_class TTitleEdit
+  WinWait, ahk_group SMAltT,, 3
+  if (WinExist("ahk_class TChoicesDlg")) {
+    ControlSend, TGroupButton3, {enter}, ahk_class TChoicesDlg
+    WinWait, ahk_class TTitleEdit,, 3
+  }
+  if (WinExist("ahk_class TTitleEdit")) {
+    ControlGetText, CurrText, TMemo1, ahk_class TTitleEdit
+    if (PageNumber) {
+      title := RegExReplace(CurrText, "(^p[0-9]+ |^)", PageNumber . " ")
+    } else if (marker) {
+      title := RegExReplace(CurrText, "(^.* \| |^)", marker . " | ")
+    }
+    ControlSetText, TMemo1, % title
+    ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
+  }
+  if (InStr(A_ThisHotkey, "^+!"))
+    Vim.SM.Learn()
+  WinClip.Restore(ClipData)
 return
 
 ; IE

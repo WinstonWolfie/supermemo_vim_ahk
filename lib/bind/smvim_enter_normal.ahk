@@ -14,18 +14,23 @@ Return
 ~!x::  ; extract
 ~!z::  ; cloze
 ~^+a::  ; web import
-~^f4::  ; my DeepL shortcut
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
 ~^s::  ; save
 ~^+a::  ; archive current plan
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would move the caret in some instances
 return
 
-#if (Vim.IsVimGroup() && !Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.StrIsInCurrentVimMode("Command"))  ; SuperMemo element window
+#if (Vim.IsVimGroup() && !Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.StrIsInCurrentVimMode("Command") && Vim.SM.IsEditingHTML())  ; SuperMemo element window
 ^l::  ; learn
-  ControlSend, TBitBtn2, {ctrl down}l{ctrl up}, ahk_class TElWind
+  Vim.SM.PostMsg(180)  ; learn
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.EnterInsertIfSpelling()
+return
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && Vim.SM.IsEditingHTML())  ; SuperMemo element window
+^p::
+  Vim.SM.PostMsg(243)  ; plan
+  Vim.State.SetMode("Vim_Normal")
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TContents"))

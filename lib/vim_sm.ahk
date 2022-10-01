@@ -28,9 +28,9 @@ class VimSM {
 
   ClickMid() {
     if (this.IsEditingText()) {
-      ControlGetFocus, CurrentFocus, ahk_class TElWind
-      ControlGetPos,,,, Height, % CurrentFocus, ahk_class TElWind
-      ControlClick, % CurrentFocus, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
+      ControlGetFocus, CurrFocus, ahk_class TElWind
+      ControlGetPos,,,, Height, % CurrFocus, ahk_class TElWind
+      ControlClick, % CurrFocus, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
     } else {
       ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server2, ahk_class TElWind  ; server2 because question field of items are server2
       if (XCoord) {  ; item
@@ -53,9 +53,9 @@ class VimSM {
 
   ClickBottom() {
     if (this.IsEditingText()) {
-      ControlGetFocus, CurrentFocus, ahk_class TElWind
-      ControlGetPos,,,, Height, % CurrentFocus, ahk_class TElWind
-      ControlClick, % CurrentFocus, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
+      ControlGetFocus, CurrFocus, ahk_class TElWind
+      ControlGetPos,,,, Height, % CurrFocus, ahk_class TElWind
+      ControlClick, % CurrFocus, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
     } else {
       ControlGetPos, XCoord, YCoord, Width, Height, Internet Explorer_Server2, ahk_class TElWind  ; server2 because question field of items are server2
       if (XCoord) {  ; item
@@ -85,20 +85,20 @@ class VimSM {
   }
 
   IsEditingText() {
-    ControlGetFocus, CurrentFocus
-    return (WinActive("ahk_class TElWind") && (InStr(CurrentFocus, "Internet Explorer_Server") || InStr(CurrentFocus, "TMemo")))
+    ControlGetFocus, CurrFocus
+    return (WinActive("ahk_class TElWind") && (InStr(CurrFocus, "Internet Explorer_Server") || InStr(CurrFocus, "TMemo")))
   }
 
   IsGrading() {
-    ControlGetFocus, CurrentFocus
+    ControlGetFocus, CurrFocus
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
     return (WinActive("ahk_class TElWind")
-         && (CurrentFocus == "TBitBtn4"
-          || CurrentFocus == "TBitBtn5"
-          || CurrentFocus == "TBitBtn6"
-          || CurrentFocus == "TBitBtn7"
-          || CurrentFocus == "TBitBtn8"
-          || CurrentFocus == "TBitBtn9"))
+         && (CurrFocus == "TBitBtn4"
+          || CurrFocus == "TBitBtn5"
+          || CurrFocus == "TBitBtn6"
+          || CurrFocus == "TBitBtn7"
+          || CurrFocus == "TBitBtn8"
+          || CurrFocus == "TBitBtn9"))
   }
   
   IsNavigatingPlan() {
@@ -150,12 +150,10 @@ class VimSM {
   WaitTextExit(Timeout:=2000) {
     StartTime := A_TickCount
     Loop {
-      if (WinActive("ahk_class TProgressBox")) {
-        continue
-      } else if (WinActive("ahk_class TElWind") && !this.IsEditingText()) {
-        return True
+      if (WinActive("ahk_class TElWind") && !this.IsEditingText()) {
+        return true
       } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-        return False
+        return false
       }
     }
   }
@@ -164,9 +162,9 @@ class VimSM {
     StartTime := A_TickCount
     loop {
       if (this.IsEditingText()) {
-        return True
+        return true
       } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-        return False
+        return false
       }
     }
   }
@@ -188,7 +186,7 @@ class VimSM {
     Loop {
       sleep 20
       if (A_CaretX) {
-        sleep 20  ; short sleep to improve robustness
+        sleep 70  ; to improve robustness
         return true
       } else if (TimeOut && A_TickCount - StartTime > TimeOut / 2) {
         Return False
@@ -224,8 +222,13 @@ class VimSM {
 
   IsLearning() {
     ControlGetText, CurrText, TBitBtn3
-    return (WinActive("ahk_class TElWind")
-         && (CurrText == "Next repetition" || CurrText == "Show answer"))
+    if (WinActive("ahk_class TElWind")) {
+      if (CurrText == "Next repetition") {
+        return 2
+      } else if (CurrText == "Show answer") {
+        return 1
+      }
+    }
   }
 
   PlayIfCertainCollection() {
@@ -248,8 +251,10 @@ class VimSM {
   }
 
   SaveHTML(pass:=false) {
-    if (this.IsEditingHTML() && !pass)
+    if (this.IsEditingHTML() && !pass) {
       send {esc}
+      Vim.SM.WaitTextExit()
+    }
     send ^+{f6}  ; opens notepad
     WinWaitNotActive, ahk_class TElWind,, 5
     WinClose, ahk_class Notepad
@@ -300,18 +305,24 @@ class VimSM {
     return path
   }
 
-  SetTitle(title) {
-    if (WinGetTitle() != title) {
+  SetTitle(title:="") {
+    if (WinGetTitle("ahk_class TElWind") != title) {
       this.PostMsg(116)  ; edit title
       GroupAdd, SMAltT, ahk_class TChoicesDlg
       GroupAdd, SMAltT, ahk_class TTitleEdit
       WinWait, ahk_group SMAltT,, 3
       if (WinExist("ahk_class TChoicesDlg")) {
-        ControlSend, TGroupButton3, {enter}, ahk_class TChoicesDlg
+        if (title) {
+          send := "{enter}"
+        } else {
+          send := "f{enter}"
+        }
+        ControlSend, TGroupButton3, % send, ahk_class TChoicesDlg
         WinWait, ahk_class TTitleEdit,, 3
       }
       if (WinExist("ahk_class TTitleEdit")) {
-        ControlSetText, TMemo1, % title
+        if (title)
+          ControlSetText, TMemo1, % title
         ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
       }
     }
@@ -324,7 +335,7 @@ class VimSM {
 
   IsPassiveCollection() {
     CollectionName := this.GetCollectionName()
-    return (CollectionName = "passive" || CollectionName = "music" || CollectionName = "bgm")
+    return (IfIn(CollectionName, "passive,music,bgm"))
   }
 
   PostMsg(msg, ContextMenu:=false) {
@@ -356,10 +367,11 @@ class VimSM {
     return code
   }
 
-  WaitFileLoad(timeout:=200) {  ; used for reloading
+  WaitFileLoad(timeout:=150) {  ; used for reloading or waiting for an element to load
     StartTime := A_TickCount
+    match := "^(\s+)?(Priority|Int|Downloading|\([0-9]+ item\(s\))"
     loop {
-      if (RegExMatch(WinGetText("ahk_class TStatBar"), "^Priority=")) {
+      if (RegExMatch(WinGetText("ahk_class TStatBar"), match)) {
         return true
       } else if (timeout && A_TickCount - StartTime > timeout) {
         return false
@@ -367,14 +379,49 @@ class VimSM {
     }
   }
 
-  WaitYTLoad(timeout:=10000) {  ; wait for YT video to load
-    StartTime := A_TickCount
-    loop {
-      if (RegExMatch(WinGetText("ahk_class TStatBar"), "^Loading file:")) {
-        return true
-      } else if (timeout && A_TickCount - StartTime > timeout) {
-        return false
-      }
+  Learn() {
+    if (ControlGetText("TBitBtn2") == "Learn") {
+      ControlSend, TBitBtn2, {enter}, ahk_class TElWind
+    } else if (IfIn(ControlGetText("TBitBtn3"), "Learn,Show answer,Next repetition")) {
+      ControlSend, TBitBtn3, {enter}, ahk_class TElWind
     }
+  }
+
+  Reload() {
+    send !{home}
+    this.WaitFileLoad()
+    send !{left}
+  }
+
+  IsCssClass(text) {
+    PrevStringCaseSense := A_StringCaseSense
+    StringCaseSense off
+    if text in cloze,extract,clozed,hint,note,ignore,headers,refText,reference,highlight,searchHighlight,tableLabel,fuck_lexicon
+    {
+      StringCaseSense % PrevStringCaseSense
+      return true
+    }
+    StringCaseSense % PrevStringCaseSense
+  }
+
+  ChangeDefaultConcept(concept:="") {
+    WinActivate, ahk_class TElWind
+    ControlClickWinCoord(723, 57)
+    if (concept) {
+      WinWaitActive, ahk_class TRegistryForm,, 3
+      ControlSetText, Edit1, % SubStr(concept, 2)
+      send % SubStr(concept, 1, 1) . "{enter}"  ; needed for updating the template
+      WinWaitActive, ahk_class TElWind,, 5
+    }
+  }
+
+  ClickElWindSourceBtn() {
+    WinActivate, ahk_class TElWind
+    ControlClickWinCoord(555, 57)
+  }
+
+  ClickBrowserSourceButton() {
+    WinActivate, ahk_class TBrowser
+    ControlClickWinCoord(294, 45)
   }
 }

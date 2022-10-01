@@ -18,6 +18,11 @@ g::Vim.State.SetMode("", 1, -1)
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
 g::Vim.Move.Move("g")
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("j", "P") && Vim.SM.IsEditingText())
+k::send {up}{esc}
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("k", "P") && Vim.SM.IsEditingText())
+j::send {down}{esc}
+
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_"))
 ; 1 character
 h::Vim.Move.Repeat("h")

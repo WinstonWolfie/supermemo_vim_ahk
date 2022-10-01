@@ -16,13 +16,7 @@ g::
   } else if (A_ThisHotkey == "g") {
     send 5
   }
-  StartTime := A_TickCount
-  Loop {
-    if (ControlGetText("TBitBtn3") == "Next repetition") {
-      ControlSend, TBitBtn3, {enter}
-    } else if (A_TickCount - StartTime > 100) {  ; timeout after 100ms
-      return
-    }
-  }
+  ControlTextWait("TBitBtn3", "Next repetition")
+  ControlSend, TBitBtn3, {enter}
   Vim.SM.EnterInsertIfSpelling()
 return

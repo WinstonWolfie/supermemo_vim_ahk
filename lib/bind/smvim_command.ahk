@@ -25,18 +25,11 @@ f::  ; clean *f*ormat: using f6 (retaining tables)
   send {f6}^arbs{enter}
 return
 
-; "Transcribed" from this quicker script:
-; https://getquicker.net/Sharedaction?code=859bda04-fe78-4385-1b37-08d88a0dba1c
-SMCleanHTML:
+NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
   if (Vim.SM.IsEditingPlainText())
     return
-  ContinueLearning := false
-  if (Vim.SM.IsLearning()) {
-    ContinueLearning := true
-    send !g  ; cancel learning
-  }
 	send ^{f7}  ; save read point
   if (!Vim.SM.IsEditingHTML()) {
     send ^t
@@ -46,19 +39,15 @@ SMCleanHTML:
   }
   send {esc}
   Vim.SM.WaitTextExit()
-  WinWaitActive, ahk_class TElWind,, 0  ; sometimes, if a processing box appears, the next line may not be sent
   HTMLPath := Vim.SM.GetFilePath()
   FileRead, HTML, % HTMLPath
   if (!HTML)
     return
-  NewHTML := Vim.HTML.Clean(HTML)
   FileDelete % HTMLPath
-  FileAppend, % NewHTML, % HTMLPath
+  FileAppend, % Vim.HTML.Clean(HTML, (A_ThisLabel == "NukeHTML")), % HTMLPath
   Vim.SM.SaveHTML()
   Vim.SM.ClickMid()
   send {esc}
-  if (ContinueLearning)
-    ControlSend, TBitBtn2, {enter}
 Return
 
 l::  ; *l*ink concept
@@ -225,15 +214,13 @@ SMHyperLinkToTopic:
   send !n  ; new topic
   if (!Vim.SM.WaitTextFocus())
     return
-  ; Somehow PostMessage doesn't work reliably here
-  send !{f10}fe  ; open registry editor
   gosub SMSetLinkFromClipboard
   if (Vim.SM.IsPassiveCollection()) {
     send ^t{f9}{enter}  ; opens script editor
     WinWaitActive, ahk_class TScriptEditor,, 0
     script := "url " . Clipboard
     sec := ""
-    if (Vim.Browser.VidTime && !Vim.SM.GetCollectionName() = "music") {
+    if (Vim.Browser.VidTime && Vim.SM.GetCollectionName() != "music") {
       sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
       if (InStr(Vim.Browser.url, "youtube.com")) {
         script .= "&t=" . sec . "s"
@@ -250,47 +237,49 @@ return
 
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
-  Vim.SM.PostMsg(961, true)
 SMSetLinkFromClipboard:
+  ; Vim.SM.PostMsg(961, true)
+  ; Somehow PostMessage doesn't work reliably here
+  send !{f10}fe  ; open registry editor
   WinWaitActive, ahk_class TInputDlg,, 3
   ControlGetText, OldRef, TMemo1
-  NewLink := "`n#Link: " . Clipboard . "`n"
+  NewLink := "#Link: " . Clipboard
   if (InStr(OldRef, "#Link")) {
     NewRef := RegExReplace(OldRef, "#Link: .*", NewLink)
   } else {
-    NewRef := OldRef . NewLink
+    NewRef := OldRef . "`r`n" . NewLink
   }
   if (Vim.Browser.title) {
-    NewTitle := "`n#Title: " . Vim.Browser.title . "`n"
+    NewTitle := "#Title: " . Vim.Browser.title
     if (InStr(NewRef, "#Title")) {
       NewRef := RegExReplace(NewRef, "#Title: .*", NewTitle)
     } else {
-      NewRef .= NewTitle
+      NewRef .= "`r`n" . NewTitle
     }
   }
   if (Vim.Browser.source) {
-    NewSource := "`n#Source: " . Vim.Browser.source . "`n"
+    NewSource := "#Source: " . Vim.Browser.source
     if (InStr(NewRef, "#Source")) {
       NewRef := RegExReplace(NewRef, "#Source: .*", NewSource)
     } else {
-      NewRef .= NewSource
+      NewRef .= "`r`n" . NewSource
     }
   }
   if (Vim.Browser.date) {
-    NewDate := "`n#Date: " . Vim.Browser.date . "`n"
+    NewDate := "#Date: " . Vim.Browser.date
     if (InStr(NewRef, "#Date")) {
-      NewRef := RegExReplace(NewRef, "#Date: .*", Vim.Browser.date)
+      NewRef := RegExReplace(NewRef, "#Date: .*", NewDate)
     } else {
-      NewRef .= NewDate
+      NewRef .= "`r`n" . NewDate
     }
   }
   NewRef := StrReplace(NewRef, "#Comment: References will be downloaded in a separate thread")
   if (Vim.Browser.comment) {
-    NewComment := "`n#Comment: " . Vim.Browser.comment . "`n"
+    NewComment := "#Comment: " . Vim.Browser.comment
     if (InStr(NewRef, "#Comment")) {
-      NewRef := RegExReplace(NewRef, "#Comment: .*", Vim.Browser.comment)
+      NewRef := RegExReplace(NewRef, "#Comment: .*$", Vim.Browser.comment)
     } else {
-      NewRef .= NewComment
+      NewRef .= "`r`n" . NewComment
     }
   }
   ControlSetText, TMemo1, % NewRef
@@ -300,53 +289,6 @@ SMSetLinkFromClipboard:
     Vim.SM.SetTitle(Vim.Browser.title)
   if (A_ThisLabel != "SMSetLinkFromClipboard")
     Vim.Browser.Clear()
-return
-
-m::  ; co*m*ment current element "audio"
-  Vim.State.SetMode("Vim_Normal")
-  ContinueLearning := false
-  if (Vim.SM.IsLearning())
-    ContinueLearning := true
-  send ^+p^a  ; open element parameter and choose everything
-  send {text}audio
-  send {enter}
-  if (ContinueLearning)
-    send {enter}
-return
-
-d::  ; learn all elements with the comment "au*d*io"
-  Vim.State.SetMode("Vim_Normal")
-  send !{home}{esc 4}  ; escape potential hidden window
-  send !soc  ; Comment registry
-  ; Vim.SM.PostMsg(169)  ; somehow the window would disappear again
-  WinWaitActive, ahk_class TRegistryForm,, 0
-  send {text}a  ; search for audio
-  send !b  ; browse all elements
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
-  send {AppsKey}
-  send {text}co  ; outstanding
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
-  send ^s  ; sort
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
-  send ^l  ; learn
-  WinWaitActive, ahk_class TElWind,, 1
-  loop {
-    if (Vim.SM.IsLearning()) {
-      send ^{f10}
-      return
-    }
-    if (A_Index > 5)
-      return
-  }
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))

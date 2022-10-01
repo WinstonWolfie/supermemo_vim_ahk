@@ -1,14 +1,14 @@
-﻿#if Vim.IsVimGroup() || (Vim.State.Vim.Enabled && BackToNormal)
+﻿#if (Vim.IsVimGroup() || (Vim.State.Vim.Enabled && BackToNormal))
 CapsLock::
 Esc::
   Vim.State.HandleEsc()
   BackToNormal := 0
 Return
 
-#if Vim.IsVimGroup()
+#if (Vim.IsVimGroup())
 ^[::Vim.State.HandleCtrlBracket()
 
-#if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Insert")) and (Vim.Conf["VimJJ"]["val"] == 1)
+#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("Insert")) && (Vim.Conf["VimJJ"]["val"] == 1))
 ~j up::  ; jj: go to Normal mode.
   Input, jout, I T0.1 V L1, j
   if (ErrorLevel == "EndKey:J") {
@@ -23,3 +23,23 @@ Return
     Vim.State.SetMode("Vim_Normal")
   BackToNormal -= 1
 Return
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert"))
+~j::LastJPressed := A_TickCount
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && A_PriorKey == "j" && A_TickCount - LastJPressed < 1000)
+:*:jk::
+  Vim.State.SetNormal()
+return
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && GetKeyState("j", "P"))
+k::
+  send +{up}{right}
+  Vim.State.SetMode("Vim_Normal")
+return
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && GetKeyState("k", "P"))
+j::
+  send +{down}{left}
+  Vim.State.SetMode("Vim_Normal")
+return

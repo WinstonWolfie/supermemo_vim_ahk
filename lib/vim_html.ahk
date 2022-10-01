@@ -18,21 +18,25 @@ class VimHTML {
    Return dataL ? dataL : 0
   }
 
-  Clean(Str) {
+  ; Semi-"transcribed" from this quicker script:
+  ; https://getquicker.net/Sharedaction?code=859bda04-fe78-4385-1b37-08d88a0dba1c
+  Clean(str, nuke:=false) {
     ; zzz in case you used f6 in SuperMemo to remove format before,
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
-    ; Str := RegExReplace(Str, "is)( zzz| )style=(""|')BACKGROUND-IMAGE: url.*?(""|')")
-    Str := RegExReplace(Str, "( zzz| )style="".*?""")
-    Str := RegExReplace(Str, "( zzz| )style='.*?'")
-    Str := RegExReplace(Str, "ism)<\/{0,1}(zzz|)font.*?>")
-    Str := RegExReplace(Str, "i)<P[^>]?+>(<BR>)+<\/P>")
-    ; Str := RegExReplace(Str, "is)<BR", "<P")
-    Str := RegExReplace(Str, "i)<H5 dir=ltr align=left>")
-    Str := RegExReplace(Str, "s)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
-    Str := RegExReplace(Str, "i)\/svg\/", "/png/")
-    Str := RegExReplace(Str, "i)<P[^>]?+>&nbsp;<\/P>")
-    Str := RegExReplace(Str, "i)<DIV[^>]+>&nbsp;<\/DIV>")
-    Return Str
+    str := RegExReplace(str, "i)(zzz)?style="".*?""")
+    str := RegExReplace(str, "i)(zzz)?style='.*?'")
+    str := RegExReplace(str, "ism)<\/?(zzz)?font.*?>")
+    str := RegExReplace(str, "i)<P( .*?>|>)(<BR>)+<\/P>")
+    str := RegExReplace(str, "s)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
+    str := RegExReplace(str, "i)<P( .*?>|>)(&nbsp;)+<\/P>")
+    str := RegExReplace(str, "i)<DIV( .*?>|>)(&nbsp;)+<\/DIV>")
+    str := RegExReplace(str, "i)<(zzz)?iframe( .*?>|>).*?<\/(zzz)?iframe>")
+    str := RegExReplace(str, "i)<(zzz)?button( .*?>|>).*?<\/(zzz)?button>")
+    if (nuke) {
+      str := RegExReplace(str, "i)class=[^ >]+")
+      str := RegExReplace(str, "i)class=""[^""]+""")
+    }
+    return str
   }
 
   ; https://www.autohotkey.com/boards/viewtopic.php?t=80706
