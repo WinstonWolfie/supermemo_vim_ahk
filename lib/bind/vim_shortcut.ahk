@@ -300,7 +300,7 @@ return
 !+d::  ; check duplicates in SM
   ; Everything in this hotkey runs in the background
   KeyWait alt
-  ; This is the function that works. inc_Uri() does not
+  ; This is the function that works. Enc_Uri() does not
   ; (2nd parameter) Encode in case there are Chinese characters in URL
   ; (3rd parameter) component := false because "/" doesn't need to be encoded
   url := EncodeDecodeURI(Vim.Browser.ParseUrl(Vim.Browser.GetBrowserUrl()),, false)
