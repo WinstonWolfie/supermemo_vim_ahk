@@ -125,11 +125,9 @@ return
   KeyWait shift
   KeyWait alt
   Vim.Browser.GetInfo(true, true)
-  sleep 20
   HTMLText := clip("",, true,, true)
   SMVidImport := refreshed := false
   if (!HTMLText && InStr(Vim.Browser.url, "youtube.com")) {
-    sleep 20
     SMVidImport := true
     FullPageText := Vim.Browser.GetFullPage("", true)
     Vim.Browser.VidTime := Vim.Browser.MatchYTTime(FullPageText)
@@ -137,9 +135,8 @@ return
     Vim.Browser.source .= ": " . Vim.Browser.MatchYTSource(FullPageText)
     Clipboard := Vim.Browser.url
   } else if (!HTMLText && InStr(Vim.Browser.url, "bilibili.com")) {
-    sleep 20
     SMVidImport := true
-    FullPageText := Vim.Browser.GetFullPage(Vim.Browser.title, true)
+    FullPageText := Vim.Browser.GetFullPage("", true)
     Vim.Browser.VidTime := Vim.Browser.MatchBLTime(FullPageText)
     Vim.Browser.date := Vim.Browser.MatchBLDate(FullPageText)
     Clipboard := Vim.Browser.url

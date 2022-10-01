@@ -23,7 +23,7 @@ class VimBrowser {
     if (InStr(url, "youtube.com") && InStr(url, "v=")) {
       url := RegExReplace(url, "&.*")
     } else if (InStr(url, "bilibili.com/video")) {
-      url := RegExReplace(url, "(\/\?p=[0-9]+\K|\?|&).*")
+      url := RegExReplace(url, "(\/\?p=[0-9]+\K|&).*")
     } else if (InStr(url, "netflix.com/watch")) {
       url := RegExReplace(url, "\?trackId=.*")
     } else if (InStr(url, "baike.baidu.com")) {
@@ -82,20 +82,15 @@ class VimBrowser {
     } else if (RegExMatch(this.title, " - YouTube$")) {
       this.source := "YouTube"
       this.title := StrReplace(this.title, " - YouTube")
-      if (!SkipCopying) {
-        sleep 20
-        if (text := this.GetFullPage("", NoRestore)) {
-          this.date := this.MatchYTDate(text)
-          this.source .= ": " . this.MatchYTSource(text)
-        }
+      if (!SkipCopying && text := this.GetFullPage("", NoRestore)) {
+        this.date := this.MatchYTDate(text)
+        this.source .= ": " . this.MatchYTSource(text)
       }
     } else if (RegExMatch(this.Title, "_哔哩哔哩_bilibili$")) {
       this.Source := "哔哩哔哩"
       this.Title := StrReplace(this.Title, "_哔哩哔哩_bilibili")
-      if (!SkipCopying) {
-        sleep 20
+      if (!SkipCopying)
         this.date := this.MatchBLDate(this.GetFullPage("bilibili.com", NoRestore))
-      }
 
     ; Try to use - or | to find source
     } else {
@@ -124,6 +119,7 @@ class VimBrowser {
 
   GetFullPage(title:="", NoRestore:=false) {
     title := title ? title : WinGetActiveTitle()
+    title := RegExReplace(title, "( - Google Chrome| — Mozilla Firefox|( and [0-9]+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
     global WinClip
     if (!NoRestore)
       WinClip.Snap(ClipData)
@@ -131,13 +127,12 @@ class VimBrowser {
     if (bl) {
       MouseGetPos, XSaved, YSaved
       MouseMove, % A_ScreenWidth / 2, % A_ScreenHeight / 2, 0
-      sleep 200
+      sleep 20
     }
     WinClip.Clear()
     send ^a^c
     ClipWait 1
     send {esc}
-    sleep 20
     text := Clipboard
     if (bl)
       MouseMove, XSaved, YSaved
@@ -199,7 +194,7 @@ class VimBrowser {
         return
     }
     send {esc}
-    sleep 20
+    sleep 20  ; short sleep, just in case
     Clipboard := this.url := this.ParseUrl(Clipboard)
     if (!NoRestore)
       WinClip.Restore(ClipData)
