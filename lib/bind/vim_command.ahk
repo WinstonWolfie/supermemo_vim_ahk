@@ -45,7 +45,7 @@ Return
         . "|Copy as HTML|Forvo|Pin current window at top|Sci-Hub"
         . "|Acc Viewer|Translate (Google)|Clear clipboard|Forcellini|RAE"
         . "|Show selection as html|Oxford Advanced Learner's Dictionary"
-        . "|Alatius: a Latin macronizer|UIA Viewer"
+        . "|Alatius: a Latin macronizer|UIA Viewer|YouTube"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list .= "|Set current element as concept hook|Memorise children of current element"
@@ -56,8 +56,6 @@ Return
   } else if (WinActive("ahk_class TBrowser")) {
     list .= "|Memorise current browser|Set browser position"
           . "|Mass replace registry"
-  } else if (WinActive("ahk_class CabinetWClass")) {
-    list .= "|Mark file as imported"
   }
   if (WinExist("ahk_class TElWind") && Vim.SM.IsPassiveCollection()) {
     list .= "|Reformat script component"
@@ -462,10 +460,6 @@ ReformatScriptComponent:
   Vim.State.SetMode("Vim_Normal")
 return
 
-MarkFileAsImported:
-  send {f2}{home}IMPORTED_{enter}
-return
-
 CopyCurrentWindowsPosition:
   WinGetPos, x, y, w, h, A
   Clipboard := "x = " . x . " y = " . y . " w = " . w . " h = " . h
@@ -513,4 +507,14 @@ SciHub:
   send {tab}+{tab}
   clip(text)
   send {enter}
+return
+
+YouTube:
+  text := clip()
+  if (!text) {
+    InputBox, text, YouTube, Enter your search,, 192, 128
+    if (!text || ErrorLevel)
+      return
+  }
+  run % "https://www.youtube.com/results?search_query=" . text
 return

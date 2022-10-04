@@ -139,11 +139,11 @@ TempMenu_CopyCodeParameters:
 	
 	gui, % defaultGui ":Default"
 
-	ToolTip("Copied",,,, 2000)
+	accToolTip("Copied",,,, 2000)
 Return
 
-; ToolTip("Test",,,, 3000)
-ToolTip(Text := "", X := "", Y := "", WhichToolTip := 1, Timeout := "") {
+; accToolTip("Test",,,, 3000)
+accToolTip(Text := "", X := "", Y := "", WhichToolTip := 1, Timeout := "") {
 	ToolTip, % Text, X, Y, WhichToolTip
 
 	If (Timeout) {

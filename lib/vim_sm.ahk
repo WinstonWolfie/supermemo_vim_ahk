@@ -174,23 +174,23 @@ class VimSM {
   WaitProcessing(timeout:=5000) {
     StartTime := A_TickCount
     Loop {
-      sleep 20
       if (!A_CaretX) {
         break
       } else if (TimeOut && A_TickCount - StartTime > TimeOut / 2) {
         Return False
       }
+      sleep 10
     }
     if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items
       Return false
     Loop {
-      sleep 20
       if (A_CaretX) {
         sleep 70  ; to improve robustness
         return true
       } else if (TimeOut && A_TickCount - StartTime > TimeOut / 2) {
         Return False
       }
+      sleep 10
     }
   }
 
@@ -221,12 +221,14 @@ class VimSM {
   }
 
   IsLearning() {
-    ControlGetText, CurrText, TBitBtn3
-    if (WinActive("ahk_class TElWind")) {
-      if (CurrText == "Next repetition") {
-        return 2
-      } else if (CurrText == "Show answer") {
-        return 1
+    if (ControlGetFocus() == "TBitBtn3") {
+      ControlGetText, CurrText, TBitBtn3
+      if (WinActive("ahk_class TElWind")) {
+        if (CurrText == "Next repetition") {
+          return 2
+        } else if (CurrText == "Show answer") {
+          return 1
+        }
       }
     }
   }
@@ -335,7 +337,7 @@ class VimSM {
 
   IsPassiveCollection() {
     CollectionName := this.GetCollectionName()
-    return (IfIn(CollectionName, "passive,music,bgm"))
+    return (IfIn(CollectionName, "passive,singing,piano,calligraphy,drawing,bgm"))
   }
 
   PostMsg(msg, ContextMenu:=false) {
@@ -382,7 +384,7 @@ class VimSM {
   Learn() {
     if (ControlGetText("TBitBtn2") == "Learn") {
       ControlSend, TBitBtn2, {enter}, ahk_class TElWind
-    } else if (IfIn(ControlGetText("TBitBtn3"), "Learn,Show answer,Next repetition")) {
+    } else if (IfIn(ControlGetText("TBitBtn3"), "Learn,Show answer,Next repetition", true)) {
       ControlSend, TBitBtn3, {enter}, ahk_class TElWind
     }
   }
@@ -394,14 +396,8 @@ class VimSM {
   }
 
   IsCssClass(text) {
-    PrevStringCaseSense := A_StringCaseSense
-    StringCaseSense off
-    if text in cloze,extract,clozed,hint,note,ignore,headers,refText,reference,highlight,searchHighlight,tableLabel,fuck_lexicon
-    {
-      StringCaseSense % PrevStringCaseSense
+    if (IfIn(text, "cloze,extract,clozed,hint,note,ignore,headers,refText,reference,highlight,searchHighlight,tableLabel,fuck_lexicon"))
       return true
-    }
-    StringCaseSense % PrevStringCaseSense
   }
 
   ChangeDefaultConcept(concept:="") {

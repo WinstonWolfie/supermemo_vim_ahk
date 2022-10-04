@@ -8,29 +8,83 @@
 */
 ; https://github.com/Paris/AutoHotkey-Scripts/blob/master/Functions.ahk
 
-IfBetween(ByRef var, LowerBound, UpperBound) {
+IfBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
+	PrevStringCaseSense := A_StringCaseSense
+	if (StrCaseSense) {
+		StringCaseSense on
+	} else {
+		StringCaseSense off
+	}
 	If var between %LowerBound% and %UpperBound%
+	{
+		StringCaseSense % PrevStringCaseSense
 		Return, true
+	}
 }
-IfNotBetween(ByRef var, LowerBound, UpperBound) {
+IfNotBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
+	PrevStringCaseSense := A_StringCaseSense
+	if (StrCaseSense) {
+		StringCaseSense on
+	} else {
+		StringCaseSense off
+	}
 	If var not between %LowerBound% and %UpperBound%
+	{
+		StringCaseSense % PrevStringCaseSense
 		Return, true
+	}
 }
-IfIn(ByRef var, MatchList) {
+IfIn(ByRef var, MatchList, StrCaseSense:=false) {
+	PrevStringCaseSense := A_StringCaseSense
+	if (StrCaseSense) {
+		StringCaseSense on
+	} else {
+		StringCaseSense off
+	}
 	If var in %MatchList%
+	{
+		StringCaseSense % PrevStringCaseSense
 		Return, true
+	}
 }
-IfNotIn(ByRef var, MatchList) {
+IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
+	PrevStringCaseSense := A_StringCaseSense
+	if (StrCaseSense) {
+		StringCaseSense on
+	} else {
+		StringCaseSense off
+	}
 	If var not in %MatchList%
+	{
+		StringCaseSense % PrevStringCaseSense
 		Return, true
+	}
 }
-IfContains(ByRef var, MatchList) {
+IfContains(ByRef var, MatchList, StrCaseSense:=false) {
+	PrevStringCaseSense := A_StringCaseSense
+	if (StrCaseSense) {
+		StringCaseSense on
+	} else {
+		StringCaseSense off
+	}
 	If var contains %MatchList%
+	{
+		StringCaseSense % PrevStringCaseSense
 		Return, true
+	}
 }
-IfNotContains(ByRef var, MatchList) {
+IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
+	PrevStringCaseSense := A_StringCaseSense
+	if (StrCaseSense) {
+		StringCaseSense on
+	} else {
+		StringCaseSense off
+	}
 	If var not contains %MatchList%
+	{
+		StringCaseSense % PrevStringCaseSense
 		Return, true
+	}
 }
 IfIs(ByRef var, type) {
 	If var is %type%
@@ -46,8 +100,7 @@ IfMsgBox(ByRef ButtonName) {
 }
 
 ControlGet(Cmd, Value = "", Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
-	if (!control)
-		control := ControlGetFocus()
+	control := control ? control : ControlGetFocus()
 	ControlGet, v, %Cmd%, %Value%, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
@@ -56,6 +109,7 @@ ControlGetFocus(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = ""
 	Return, v
 }
 ControlGetText(Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+	control := control ? control : ControlGetFocus()
 	ControlGetText, v, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }

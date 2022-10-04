@@ -1,9 +1,4 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TElWind"))
-+c::  ; add new concept
-  Vim.SM.PostMsg(126)
-  Vim.State.SetMode("Vim_Normal")
-return
-
 b::  ; remove all text *b*efore cursor
   send !\\
   WinWaitNotActive, ahk_class TElWind,, 0
@@ -220,7 +215,7 @@ SMHyperLinkToTopic:
     WinWaitActive, ahk_class TScriptEditor,, 0
     script := "url " . Clipboard
     sec := ""
-    if (Vim.Browser.VidTime && Vim.SM.GetCollectionName() != "music") {
+    if (Vim.Browser.VidTime) {
       sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
       if (InStr(Vim.Browser.url, "youtube.com")) {
         script .= "&t=" . sec . "s"
@@ -317,15 +312,21 @@ c::  ; learn child
   Vim.SM.PlayIfCertainCollection()
 return
 
++c::  ; add new concept
+  WinActivate, ahk_class TElWind
+  Vim.SM.PostMsg(126)
+  Vim.State.SetMode("Vim_Normal")
+return
+
 #if ((Vim.IsVimGroup()
    && Vim.State.IsCurrentVimMode("Command")
    && (WinActive("ahk_class TElWind")
     || WinActive("ahk_class TContents")
     || WinActive("ahk_class TBrowser")))
-    || Vim.SM.IsLearning()  ; so you can just press numpads when you finished grading
+    || (Vim.SM.IsLearning() || Vim.SM.IsGrading())  ; so you can just press numpads when you finished grading
     || (WinActive("SuperMemo Import") && WinActive("ahk_class AutoHotkeyGUI"))
     || (WinActive("Priority") && WinActive("ahk_class #32770"))
-    || (WinActive("ahk_class TPriorityDlg")))
+    || WinActive("ahk_class TPriorityDlg"))
 ; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
 ; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png

@@ -20,7 +20,8 @@ class VimBrowser {
 
   ParseUrl(url) {
     url := RegExReplace(url, "#.*")
-    if (InStr(url, "youtube.com") && InStr(url, "v=")) {
+    if (InStr(url, "youtube.com/watch")) {
+      url := StrReplace(url, "app=desktop&")
       url := RegExReplace(url, "&.*")
     } else if (InStr(url, "bilibili.com/video")) {
       url := RegExReplace(url, "(\/\?p=[0-9]+\K|&).*")
@@ -46,6 +47,9 @@ class VimBrowser {
     } else if (RegExMatch(this.Title, "_百度知道$")) {
       this.Source := "百度知道"
       this.Title := StrReplace(this.Title, "_百度知道")
+    } else if (RegExMatch(this.Title, "-新华网$")) {
+      this.Source := "新华网"
+      this.Title := StrReplace(this.Title, "-新华网")
     } else if (RegExMatch(this.title, "^Frontiers \| ")) {
       this.source := "Frontiers"
       this.title := StrReplace(this.title, "Frontiers | ")

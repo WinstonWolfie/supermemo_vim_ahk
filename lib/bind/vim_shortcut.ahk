@@ -45,26 +45,19 @@ SMPlan:
     WinWaitActive, ahk_class TElWind,, 10
     if (ErrorLevel)
       return
+    WinWait, ahk_class TMsgDialog,, 0
   }
-  if (WinExist("ahk_class TPlanDlg")) {
-    ; Save first if there's an opened plan window
-    ControlClickWinCoord(466, 46, "ahk_class TPlanDlg")  ; ControlSend doesn't work here in background
+  if (WinExist("ahk_class TMsgDialog"))
     WinClose
-  }
-  ControlGetText, CurrText, TBitBtn3, ahk_class TElWind
-  if (CurrText == "Next repetition" || CurrText == "Show answer")  ; not to spoil answer
+  if (IfIn(ControlGetText("TBitBtn3", "ahk_class TElWind"), "Next repetition,Show answer"))  ; not to spoil answer
     ControlSend, TBitBtn3, {home}, ahk_class TElWind
-	CurrTick := A_TickCount
-  while (!WinExist("ahk_class TPlanDlg")) {
-    if (WinExist("ahk_class TElParamDlg"))  ; ^+!p could trigger this
-      WinClose
-    if (WinExist("ahk_class TMsgDialog"))
-      WinClose
-    Vim.SM.PostMsg(243)  ; plan
-		if (A_TickCount - CurrTick > 5000)
-			return
+  if (WinExist("ahk_class TPlanDlg")) {
+    WinActivate
+  } else {
+    Vim.SM.PostMsg(243)  ; Plan
+    WinWait, ahk_class TPlanDlg,, 0
+    WinActivate, ahk_class TPlanDlg
   }
-  WinActivate, ahk_class TPlanDlg
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -108,8 +101,11 @@ return
   TempClip := RegExReplace(Clipboard, "(Similar|Synonymes).*\r\n", "`r`nsyn: ")
   TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
   TempClip := RegExReplace(TempClip, "(?<![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
+  TempClip := RegExReplace(TempClip, "\.(?=\r\n)")
+  TempClip := RegExReplace(TempClip, "(\r\n\K""|""(\r\n)?(?=\r\n))", "`r`n")
+  TempClip := RegExReplace(TempClip, """$(?!\r\n)")
   Clipboard := TempClip := StrReplace(TempClip, "vulgar slang", "vulgar slang > ")
-  ToolTip("Copied:`n`n" . TempClip)
+  ToolTip("Copied:`n" . TempClip)
 return
 
 ; Incremental video: Import current YT video to SM
@@ -127,6 +123,7 @@ return
   Vim.Browser.GetInfo(true, true)
   HTMLText := clip("",, true,, true)
   SMVidImport := refreshed := false
+
   if (!HTMLText && InStr(Vim.Browser.url, "youtube.com")) {
     SMVidImport := true
     FullPageText := Vim.Browser.GetFullPage("", true)
@@ -136,10 +133,11 @@ return
     Clipboard := Vim.Browser.url
   } else if (!HTMLText && InStr(Vim.Browser.url, "bilibili.com")) {
     SMVidImport := true
-    FullPageText := Vim.Browser.GetFullPage("", true)
+    FullPageText := Vim.Browser.GetFullPage("_哔哩哔哩_bilibili", true)
     Vim.Browser.VidTime := Vim.Browser.MatchBLTime(FullPageText)
     Vim.Browser.date := Vim.Browser.MatchBLDate(FullPageText)
     Clipboard := Vim.Browser.url
+
   } else {
     if (!HTMLText) {
       send ^a
@@ -189,7 +187,9 @@ Title : " . Vim.Browser.Title . "
     gui, SMImport:Show,, SuperMemo Import
     return
   }
+
 SMImportContinue:
+  ToolTip("Import processing...", true)
   if (InStr(A_ThisHotkey, "x"))
     ControlSend,, {alt down}{shift down}h{shift up}{alt up}, % "ahk_id " . hwnd
   WinActivate, ahk_class TElWind
@@ -231,25 +231,29 @@ SMImportContinue:
     if (!InStr(A_ThisHotkey, "x"))
       Vim.SM.SetTitle(Vim.Browser.title)
   }
-  if (concept) {
-    WinWaitActive, ahk_class TElWind,, 1
-    Vim.SM.ChangeDefaultConcept(ConceptBefore)
-    send !{left}
-    Vim.SM.WaitFileLoad()
-    refreshed := true
-  }
   if (prio) {
-    WinWaitActive, ahk_class TElWind,, 1
+    WinWaitActive, ahk_class TElWind,, 0
     if (RegExMatch(prio, "^\."))
       prio := "0" . prio
-    send % "!p" . prio . "{enter}"
+    ; Cannot just send the priority, might send into the wrong window
+    send !p
+    WinWaitActive, ahk_class TPriorityDlg,, 0
+    ControlSetText, TEdit5, % prio
+    send {enter}
   }
-  WinWaitActive, ahk_class TElWind,, 1
-  if (!refreshed)
+  if (concept) {
+    WinWaitActive, ahk_class TElWind,, 0
+    Vim.SM.ChangeDefaultConcept(ConceptBefore)
+    send !{left}
+    refreshed := true
+  }
+  WinWaitActive, ahk_class TElWind,, 0
+  if (!refreshed && !SMVidImport)
     Vim.SM.reload()
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
   WinClip.Restore(ClipData)
+  gosub RemoveToolTip
 return
 
 GetBrowserUrl:
@@ -300,7 +304,9 @@ return
   ; This is the function that works. Enc_Uri() does not
   ; (2nd parameter) Encode in case there are Chinese characters in URL
   ; (3rd parameter) component := false because "/" doesn't need to be encoded
+  ; Additionally, Vim.Browser.GetBrowserUrl() only works in Chrome and MS Edge
   url := EncodeDecodeURI(Vim.Browser.ParseUrl(Vim.Browser.GetBrowserUrl()),, false)
+  url := StrReplace(url, "%253A", ":")  ; ":" appears in url of SuperMemo references
   ControlSend,, {ctrl down}f{ctrl up}, ahk_class TElWind
   WinWait, ahk_class TMyFindDlg,, 0
   ControlSetText, TEdit1, % url, ahk_class TMyFindDlg
@@ -310,7 +316,7 @@ return
   WinWait, ahk_group SMCtrlF,, 10
   if (WinExist("ahk_class TMsgDialog")) {
     WinClose
-    ToolTip("No duplicates found.",, -1000)
+    ToolTip("No duplicates found.",, -3000)
   } else if (WinExist("ahk_class TBrowser")) {
     WinActivate
   }

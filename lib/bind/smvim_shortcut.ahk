@@ -271,7 +271,8 @@ return
   SetDefaultKeyboard(0x0409)  ; english-US	
   gui, PlanInsert:Add, Text,, &Activity:
   list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest"
-        . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Translation|Job|Misc|Out"
+        . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc|Out|Singing"
+        . "|Calligraphy|Drawing"
   gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, % list
   gui, PlanInsert:Add, CheckBox, vNoSplit, &Do not split current activity
   gui, PlanInsert:Add, Button, default, &Insert
@@ -425,6 +426,7 @@ return
 ^+!`::  ; clear time and keep learning
   KeyWait alt
   if (WinActive("ahk_group Browsers") && !Vim.Browser.VidTime) {
+    send {esc 2}
     Vim.Browser.GetTitleSourceDate("", true)
     if (!InStr(A_ThisHotkey, "``")) {
       Vim.Browser.VidTime := Vim.Browser.GetVidtime()
@@ -473,7 +475,7 @@ return
       send {esc 2}
       EditRef := true
     }
-    if (Vim.SM.GetCollectionName() = "music" && InStr(A_ThisHotkey, "``"))
+    if (InStr(A_ThisHotkey, "``"))
       replacement := sec := ""
     if (!EditRef) {  ; time in script component
       if (RegExMatch(script, match)) {
