@@ -57,7 +57,7 @@ Return
     list .= "|Memorise current browser|Set browser position"
           . "|Mass replace registry"
   }
-  if (WinExist("ahk_class TElWind") && Vim.SM.IsPassiveCollection()) {
+  if (WinExist("ahk_class TElWind") && Vim.SM.DoesCollNeedScrComp()) {
     list .= "|Reformat script component"
   }
   gui, VimCommander:Add, Combobox, vCommand gAutoComplete w256, % list
@@ -209,7 +209,7 @@ ClozeAndDone:
   if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items
     return
   send ^+{enter}
-  WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the collection?"
+  WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the Coll?"
   send {enter}
   WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
   send {enter}
@@ -421,38 +421,44 @@ return
 
 ReformatScriptComponent:
   WinClip.Snap(ClipData)
-  ContinueLearning := false
-  if (Vim.SM.IsLearning()) {
+  if (ContinueLearning := Vim.SM.IsLearning())
     send !g
-    ContinueLearning := true
-  }
   Vim.SM.DeselectAllComponents()
-  WinClip.Clear()
-  send ^a^x
-  ClipWait 1
-  ScriptArray := StrSplit(Clipboard, "`n`r")
-  Vim.Browser.url := RegExReplace(ScriptArray[1], "(^\s*|\s*$)")
-  Vim.Browser.title := WinGetTitle()
-  if (InStr(Vim.Browser.url, "youtube.com")) {
-    Vim.Browser.VidTime := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
-    YTTime := ""
-    if (ScriptArray[2])
-      YTTime := "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s"
-    Vim.Browser.source := "YouTube"
-    if (YTTime) {
-      send ^t{f9}  ; opens script editor
-      WinWaitActive, ahk_class TScriptEditor,, 0
-      ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime
-      send !o{esc}  ; close script editor
+  CollName := Vim.SM.GetCollName()
+  if (Vim.SM.IsPassiveColl(CollName)) {
+    WinClip.Clear()
+    send ^a^x
+    ClipWait 1
+    ScriptArray := StrSplit(Clipboard, "`n`r")
+    Vim.Browser.url := RegExReplace(ScriptArray[1], "(^\s*|\s*$)")
+    Vim.Browser.title := WinGetTitle()
+    if (InStr(Vim.Browser.url, "youtube.com")) {
+      Vim.Browser.VidTime := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
+      YTTime := ""
+      if (ScriptArray[2])
+        YTTime := "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s"
+      Vim.Browser.source := "YouTube"
+      if (YTTime) {
+        send ^t{f9}  ; opens script editor
+        WinWaitActive, ahk_class TScriptEditor,, 0
+        ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime
+        send !o{esc}  ; close script editor
+      }
+    } else {
+      Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
     }
-  } else {
-    Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
+    Clipboard := Vim.Browser.url
+    ClipWait 10
+    ; Somehow PostMessage doesn't work reliably here
+    gosub SMSetLinkFromClipboard
+    send {esc}
+  } else if (Vim.SM.IsProblemSolvingColl(CollName)) {
+    send ^+p!ts{enter 2}
+    Clipboard := Vim.SM.GetLink(true)
+    ClipWait 10
+    send ^t
+    gosub SMHyperLinkToCurrTopic
   }
-  Clipboard := Vim.Browser.url
-  ClipWait 1
-  ; Somehow PostMessage doesn't work reliably here
-  gosub SMSetLinkFromClipboard
-  send {esc}
   if (ContinueLearning)
     send {enter}
   WinClip.Restore(ClipData)

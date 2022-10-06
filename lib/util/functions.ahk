@@ -301,6 +301,17 @@ ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", Exc
   }
 }
 
+ControlTextWaitChange(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+  StartTime := A_TickCount
+  Loop {
+    if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
+      Return True
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      Return False
+    }
+  }
+}
+
 ;#########################################################################################
 ;uri encode/decode by Titan
 ;Thread: http://www.autohotkey.com/forum/topic18876.html

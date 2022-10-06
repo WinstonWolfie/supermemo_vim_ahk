@@ -12,8 +12,8 @@ class VimBrowser {
     global WinClip
     if (!NoRestore)
       WinClip.Snap(ClipData)
-    this.GetUrl(!NoRestore)
-    this.GetTitleSourceDate(!NoRestore, SkipCopying)
+    this.GetUrl(true)
+    this.GetTitleSourceDate(true, SkipCopying)
     if (!NoRestore)
       WinClip.Restore(ClipData)
   }
@@ -173,7 +173,7 @@ class VimBrowser {
       WinClip.Snap(ClipData)
     WinClip.Clear()
     if (!FullPageText)
-      FullPageText := this.GetFullPage(title, !NoRestore)
+      FullPageText := this.GetFullPage(title, true)
     if (RegExMatch(title, " - YouTube$")) {
       VidTime := this.MatchYTTime(FullPageText)
     } else if (RegExMatch(title, "_哔哩哔哩_bilibili$")) {

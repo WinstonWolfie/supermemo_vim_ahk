@@ -169,6 +169,17 @@ class VimSM {
     }
   }
 
+  WaitHTMLFocus(Timeout:=2000) {
+    StartTime := A_TickCount
+    loop {
+      if (this.IsEditingHTML()) {
+        return true
+      } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+        return false
+      }
+    }
+  }
+
   ; Wait until cloze/extract is finished
   ; Sometimes it doesn't work, because the A_CaretX was never gone
   WaitProcessing(timeout:=5000) {
@@ -233,8 +244,8 @@ class VimSM {
     }
   }
 
-  PlayIfCertainCollection() {
-    if (this.IsPassiveCollection()) {
+  PlayIfCertainColl() {
+    if (this.IsPassiveColl()) {
       StartTime := A_TickCount
       Loop {
         if (ControlGetText("TBitBtn3") == "Next repetition") {
@@ -244,11 +255,6 @@ class VimSM {
           return false
         }
       }
-    } else if (CollectionName = "gaming") {
-      ControlTextWait("TBitBtn3", "Next repetition")
-      link := this.GetLink()
-      if (link)
-        run % "msedge.exe " . link
     }
   }
 
@@ -263,18 +269,16 @@ class VimSM {
     WinActivate, ahk_class TElWind
   }
 
-  GetCollectionName(text:="") {
-    if (!text)
-      WinGetText, text, ahk_class TElWind
-    RegExMatch(text, "(?<=\r\n).*(?= \(SuperMemo)", CollectionName)
-    return CollectionName
+  GetCollName(text:="") {
+    text := text ? text : WinGetText("ahk_class TElWind")
+    RegExMatch(text, "(?<=\r\n).*(?= \(SuperMemo)", CollName)
+    return CollName
   }
 
-  GetCollectionPath(text:="") {
-    if (!text)
-      WinGetText, text, ahk_class TElWind
-    RegExMatch(text, "\(SuperMemo [0-9]+: \K.*(?=\)\r\n)", CollectionPath)
-    return CollectionPath
+  GetCollPath(text:="") {
+    text := text ? text : WinGetText("ahk_class TElWind")
+    RegExMatch(text, "\(SuperMemo [0-9]+: \K.*(?=\)\r\n)", CollPath)
+    return CollPath
   }
 
   GetLink(NoRestore:=false) {
@@ -330,14 +334,25 @@ class VimSM {
     }
   }
 
-  GetCurrConcept() {
-    RegExMatch(WinGetText("ahk_class TElWind"), "(?<=\)\r\n)(.*?)($|\r\n)", ConceptName)
+  GetCurrConcept(CurrText:="") {
+    CurrText := CurrText ? CurrText : WinGetText("ahk_class TElWind")
+    RegExMatch(CurrText, "(?<=\)\r\n)(.*?)($|\r\n)", ConceptName)
     return ConceptName
   }
 
-  IsPassiveCollection() {
-    CollectionName := this.GetCollectionName()
-    return (IfIn(CollectionName, "passive,singing,piano,calligraphy,drawing,bgm"))
+  IsPassiveColl(CollName:="") {
+    CollName := CollName ? CollName : this.GetCollName()
+    return (IfIn(CollName, "passive,singing,piano,calligraphy,drawing,bgm"))
+  }
+
+  IsProblemSolvingColl(CollName:="") {
+    CollName := CollName ? CollName : this.GetCollName()
+    return (IfIn(CollName, "immigration"))
+  }
+
+  DoesCollNeedScrComp(CollName:="") {
+    CollName := CollName ? CollName : this.GetCollName()
+    return (this.IsPassiveColl(CollName) || this.IsProblemSolvingColl(CollName))
   }
 
   PostMsg(msg, ContextMenu:=false) {
@@ -369,8 +384,10 @@ class VimSM {
     return code
   }
 
-  WaitFileLoad(timeout:=150) {  ; used for reloading or waiting for an element to load
+  WaitFileLoad(timeout:=100) {  ; used for reloading or waiting for an element to load
     StartTime := A_TickCount
+    StatText := WinGetText("ahk_class TStatBar")
+    ControlTextWaitChange("ahk_class TStatBar", StatText,,,,, timeout / 2)
     match := "^(\s+)?(Priority|Int|Downloading|\([0-9]+ item\(s\))"
     loop {
       if (RegExMatch(WinGetText("ahk_class TStatBar"), match)) {
@@ -402,6 +419,7 @@ class VimSM {
 
   ChangeDefaultConcept(concept:="") {
     WinActivate, ahk_class TElWind
+    WinWaitActive, ahk_class TElWind,, 0
     ControlClickWinCoord(723, 57)
     if (concept) {
       WinWaitActive, ahk_class TRegistryForm,, 3
@@ -413,11 +431,13 @@ class VimSM {
 
   ClickElWindSourceBtn() {
     WinActivate, ahk_class TElWind
+    WinWaitActive, ahk_class TElWind,, 0
     ControlClickWinCoord(555, 57)
   }
 
   ClickBrowserSourceButton() {
     WinActivate, ahk_class TBrowser
+    WinWaitActive, ahk_class TBrowser,, 0
     ControlClickWinCoord(294, 45)
   }
 }

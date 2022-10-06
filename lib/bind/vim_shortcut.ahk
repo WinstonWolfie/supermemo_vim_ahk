@@ -14,15 +14,18 @@
 #if (Vim.State.Vim.Enabled)
 ; Testing
 ; ^!+t::
-;   send !{f10}fe  ; open registry editor
-;   WinWaitActive, ahk_class TInputDlg,, 3
-;   ControlGetText, OldRef, TMemo1
-;   RegExMatch(OldRef, "#Title: .*", v)
-;   msgbox % v
+;   WinGetText text
+;   msgbox % text
 ; return
 
 ; Shortcuts
 ^!r::reload
+
+!+v::
+  Clipboard := Clipboard
+  ClipWait 10
+  send ^v
+return
 
 LAlt & RAlt::  ; for laptop
   KeyWait LAlt
@@ -40,14 +43,15 @@ return
   KeyWait shift
   KeyWait alt
 SMPlan:
+  ErrorLevel := 0
   if (!WinExist("ahk_group SuperMemo")) {
     run C:\SuperMemo\systems\all.kno
     WinWaitActive, ahk_class TElWind,, 10
     if (ErrorLevel)
       return
-    WinWait, ahk_class TMsgDialog,, 0
+    WinWait, ahk_class TMsgDialog,, 0.7
   }
-  if (WinExist("ahk_class TMsgDialog"))
+  if (!ErrorLevel && WinExist("ahk_class TMsgDialog"))
     WinClose
   if (IfIn(ControlGetText("TBitBtn3", "ahk_class TElWind"), "Next repetition,Show answer"))  ; not to spoil answer
     ControlSend, TBitBtn3, {home}, ahk_class TElWind
@@ -123,6 +127,8 @@ return
   Vim.Browser.GetInfo(true, true)
   HTMLText := clip("",, true,, true)
   SMVidImport := refreshed := false
+  CurrText := WinGetText("ahk_class TElWind")
+  CollName := Vim.SM.GetCollName(CurrText)
 
   if (!HTMLText && InStr(Vim.Browser.url, "youtube.com")) {
     SMVidImport := true
@@ -131,38 +137,44 @@ return
     Vim.Browser.date := Vim.Browser.MatchYTDate(FullPageText)
     Vim.Browser.source .= ": " . Vim.Browser.MatchYTSource(FullPageText)
     Clipboard := Vim.Browser.url
+    ClipWait 10
   } else if (!HTMLText && InStr(Vim.Browser.url, "bilibili.com")) {
     SMVidImport := true
     FullPageText := Vim.Browser.GetFullPage("_哔哩哔哩_bilibili", true)
     Vim.Browser.VidTime := Vim.Browser.MatchBLTime(FullPageText)
     Vim.Browser.date := Vim.Browser.MatchBLDate(FullPageText)
     Clipboard := Vim.Browser.url
+    ClipWait 10
 
   } else {
-    if (!HTMLText) {
-      send ^a
-      HTMLText := clip("",, true,, true)
-      send {esc}
+    if (!Vim.SM.IsProblemSolvingColl(CollName)) {
       if (!HTMLText) {
-        ToolTip("Text not found.")
-        return
+        send ^a
+        HTMLText := clip("",, true,, true)
+        send {esc}
+        if (!HTMLText) {
+          ToolTip("Text not found.")
+          return
+        }
       }
+      HTML := Vim.HTML.Clean(HTMLText, true)
+      RegExMatch(HTML, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", HTML)
+      source := Vim.Browser.Source ? "<br>#Source: " . Vim.Browser.Source : ""
+      date := ""
+      if (!InStr(A_ThisHotkey, "x")) {
+        date := Vim.Browser.Date ? "<br>#Date: " . Vim.Browser.Date
+                                : "<br>#Date: Imported on " . CurrTime
+      }
+      clipboard := HTML
+                . "<br>#SuperMemo Reference:"
+                . "<br>#Link: " . Vim.Browser.Url
+                . source
+                . date
+                . "<br>#Title: " . Vim.Browser.Title
+      ClipWait 10
+    } else {
+      Clipboard := Vim.browser.url
     }
-    HTML := Vim.HTML.Clean(HTMLText, true)
-    RegExMatch(HTML, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", HTML)
-    source := Vim.Browser.Source ? "<br>#Source: " . Vim.Browser.Source : ""
-    date := ""
-    if (!InStr(A_ThisHotkey, "x")) {
-      date := Vim.Browser.Date ? "<br>#Date: " . Vim.Browser.Date
-                               : "<br>#Date: Imported on " . CurrTime
-    }
-    clipboard := HTML
-              . "<br>#SuperMemo Reference:"
-              . "<br>#Link: " . Vim.Browser.Url
-              . source
-              . date
-              . "<br>#Title: " . Vim.Browser.Title
-    ClipWait 10
   }
   InfoToolTip := "
   (
@@ -198,7 +210,7 @@ SMImportContinue:
   send {text}h  ; Highlight: Clear
   send {enter}
   if (concept) {
-    ConceptBefore := Vim.SM.GetCurrConcept()
+    ConceptBefore := Vim.SM.GetCurrConcept(CurrText)
     if (RegExMatch(ConceptBefore, "i)^" . concept)) {
       concept := ""
     } else {
@@ -206,30 +218,34 @@ SMImportContinue:
     }
   }
   if (SMVidImport) {
-    if (Vim.SM.IsPassiveCollection()) {
+    if (Vim.SM.IsPassiveColl(CollName)) {
       gosub SMHyperLinkToTopic
     } else {
       gosub SMCtrlN
     }
   } else {
-    WinWaitActive, ahk_class TElWind,, 0
-    ; send !n
-    ; Vim.SM.WaitTextFocus()
-    ; send {AppsKey}xp  ; Paste HTML  ; not reliable
-    send ^n
-    WinWaitNotActive, ahk_class TElWind,, 0.8  ; could appear a loading bar
-    if (!ErrorLevel)
-      WinWaitActive, ahk_class TElWind,, 5
-    send ^a
-    Vim.SM.WaitTextFocus()
-    send ^+1
-    WinWaitNotActive, ahk_class TElWind,, 0.8  ; could appear a loading bar
-    if (!ErrorLevel)
-      WinWaitActive, ahk_class TElWind,, 5
-    send {esc}
-    Vim.SM.WaitTextExit()
-    if (!InStr(A_ThisHotkey, "x"))
-      Vim.SM.SetTitle(Vim.Browser.title)
+    if (!Vim.SM.IsProblemSolvingColl(CollName)) {
+      WinActivate, ahk_class TElWind
+      ; send !n
+      ; Vim.SM.WaitFileLoad()
+      ; send {AppsKey}xp  ; Paste HTML  ; not reliable
+      send ^n
+      WinWaitNotActive, ahk_class TElWind,, 0.8  ; could appear a loading bar
+      if (!ErrorLevel)
+        WinWaitActive, ahk_class TElWind,, 5
+      send ^a
+      Vim.SM.WaitTextFocus()
+      send ^+1
+      WinWaitNotActive, ahk_class TElWind,, 0.8  ; could appear a loading bar
+      if (!ErrorLevel)
+        WinWaitActive, ahk_class TElWind,, 5
+      send {esc}
+      Vim.SM.WaitTextExit(5000)
+      if (!InStr(A_ThisHotkey, "x"))
+        Vim.SM.SetTitle(Vim.Browser.title)
+    } else {
+      gosub SMHyperLinkToTopic
+    }
   }
   if (prio) {
     WinWaitActive, ahk_class TElWind,, 0
@@ -248,7 +264,7 @@ SMImportContinue:
     refreshed := true
   }
   WinWaitActive, ahk_class TElWind,, 0
-  if (!refreshed && !SMVidImport)
+  if (!refreshed)
     Vim.SM.reload()
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
@@ -348,12 +364,14 @@ return
 ^!x::
 !+x::
 !x::  ; pdf/epub extract to supermemo
+  KeyWait ctrl
+  KeyWait shift
   KeyWait alt
   WinClip.Snap(ClipData)
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c  ; clip() doesn't keep format; nor ClipboardAll can work with functions
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (!Clipboard) {
+  if (ErrorLevel) {
     ToolTip("Nothing is selected.")
     WinClip.Restore(ClipData)
     return
@@ -417,7 +435,7 @@ ExtractToSM:
   }
   send {left}
   if (!IsBrowser) {
-    clip(extract,, true)
+    clip(extract,, true,,, false)
   } else {
     Clipboard := extract
     ClipWait 10
@@ -572,6 +590,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
 !x::
+  KeyWait ctrl
   KeyWait alt
   FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
   if (A_ThisHotkey == "^!x") {
@@ -611,21 +630,20 @@ return
   send ^a{bs}
   WinActivate, ahk_class TElWind
   send !a  ; new item
-  Vim.SM.WaitTextFocus()
-  ControlGetFocus, QuestionFieldName, A
+  Vim.SM.WaitFileLoad()
+  QuestionFieldName := ControlGetFocus()
   if (Vim.Browser.title) {
-    QuestionField := Vim.Browser.title
-                   . "`n#SuperMemo Reference:"
+    QuestionField := "#SuperMemo Reference:"
                    . "`n#Link: " . Vim.Browser.url
                    . "`n#Title: " . Vim.Browser.title
     if (Vim.Browser.source)
       QuestionField .= "`n#Source: " . Vim.Browser.source
     if (Vim.Browser.date)
-      QuestionField .= "`n#Source: " . Vim.Browser.date
+      QuestionField .= "`n#Date: " . Vim.Browser.date
     clip(QuestionField)
   } else {
     QuestionField := ""
-    send C:
+    send {text}C:
   }
   send {ctrl down}ttq{ctrl up}
   GroupAdd, SMCtrlQ, ahk_class TFileBrowser
@@ -633,9 +651,9 @@ return
   WinWaitActive, ahk_group SMCtrlQ,, 5
   while (!WinActive("ahk_class TFileBrowser")) {
     StartTime := A_TickCount
+    WinWaitActive, ahk_group SMCtrlQ,, 0.1
     if (WinActive("ahk_class TMsgDialog")) {
       send {esc}  ; Directory not found; Create? or MCI error
-      WinWaitActive, ahk_group SMCtrlQ,, 0.1
     } else if (A_TickCount - StartTime > 1000) {
       return
     }
@@ -655,13 +673,11 @@ return
   send n
   WinWaitNotActive, ahk_class TInputDlg,, 0
   send y
-  Vim.SM.PostMsg(992, true)  ; previous component
-  Vim.SM.PostMsg(992, true)
-  ControlFocusWait(QuestionFieldName)
-  if (QuestionField)
-    send ^+{down}{bs}  ; delete text so the question field is empty
-  send ^t
-  ControlWaitNotFocus(QuestionFieldName)
+  WinWaitActive, ahk_class TElWind,, 0
+  Vim.SM.SetTitle(Vim.browser.title)
+  WinWaitActive, ahk_class TElWind,, 0
+  send !{f12}fl  ; previous component
+  Vim.SM.WaitHTMLFocus()
   send ^v  ; paste: text or image
   WinWaitNotActive, ahk_class TElWind,, 5  ; if it's an image
   if (!ErrorLevel) {

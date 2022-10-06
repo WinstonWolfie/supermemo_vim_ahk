@@ -4,7 +4,7 @@
 ~enter::
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
 ~space up::  ; for Learn button
-  Vim.SM.PlayIfCertainCollection()
+  Vim.SM.PlayIfCertainColl()
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would add a {left}
   Vim.SM.EnterInsertIfSpelling()
 Return

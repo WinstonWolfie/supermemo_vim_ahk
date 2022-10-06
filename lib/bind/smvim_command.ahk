@@ -205,16 +205,36 @@ return
 
 p::  ; hyperlink to scri*p*t component
   Vim.State.SetMode("Vim_Normal")
+  CollName := ""
+  ClipSaved := ClipboardAll
+
 SMHyperLinkToTopic:
-  send !n  ; new topic
-  if (!Vim.SM.WaitTextFocus())
-    return
-  gosub SMSetLinkFromClipboard
-  if (Vim.SM.IsPassiveCollection()) {
+  WinActivate, ahk_class TElWind
+  ; send !n  ; new topic
+  ; if (!Vim.SM.WaitFileLoad())
+  ;   return
+  ; gosub SMSetLinkFromClipboard
+  link := Clipboard
+  text := "#SuperMemo Reference:"
+        . "`n#Link: " . Clipboard
+  if (Vim.Browser.title)
+    text .= "`n#Title: " . Vim.Browser.title
+  if (Vim.Browser.source)
+    text .= "`n#Source: " . Vim.Browser.source
+  if (Vim.Browser.date)
+    text .= "`n#Date: " . Vim.Browser.date
+  Clipboard := text
+  ClipWait 10
+  ; send ^n^t  ; doesn't work well
+  send !n
+  Vim.SM.WaitFileLoad()
+  send ^v
+
+SMHyperLinkToCurrTopic:
+  if (Vim.sm.DoesCollNeedScrComp(CollName)) {
     send ^t{f9}{enter}  ; opens script editor
     WinWaitActive, ahk_class TScriptEditor,, 0
-    script := "url " . Clipboard
-    sec := ""
+    script := "url " . link
     if (Vim.Browser.VidTime) {
       sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
       if (InStr(Vim.Browser.url, "youtube.com")) {
@@ -222,10 +242,16 @@ SMHyperLinkToTopic:
       } else if (InStr(Vim.Browser.url, "bilibili.com")) {
         script .= "?&t=" . sec
       }
+      ToolTip("Time stamp in script component set as " . sec . "s")
     }
     ControlSetText, TMemo1, % script
     send !o{esc 2}  ; close script editor
-    ToolTip("Time stamp in script component set as " . sec . "s")
+  }
+  WinWaitActive, ahk_class TElWind,, 0
+  Vim.SM.SetTitle(Vim.browser.title)
+  if (A_ThisHotkey == "p") {
+    Clipboard := ClipSaved
+    Vim.SM.Reload()
   }
   Vim.Browser.Clear()
 return
@@ -233,6 +259,8 @@ return
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
 SMSetLinkFromClipboard:
+  if (Vim.Browser.title)
+    Vim.SM.SetTitle(Vim.Browser.title)
   ; Vim.SM.PostMsg(961, true)
   ; Somehow PostMessage doesn't work reliably here
   send !{f10}fe  ; open registry editor
@@ -268,7 +296,7 @@ SMSetLinkFromClipboard:
       NewRef .= "`r`n" . NewDate
     }
   }
-  NewRef := StrReplace(NewRef, "#Comment: References will be downloaded in a separate thread")
+  ; NewRef := StrReplace(NewRef, "#Comment: References will be downloaded in a separate thread")
   if (Vim.Browser.comment) {
     NewComment := "#Comment: " . Vim.Browser.comment
     if (InStr(NewRef, "#Comment")) {
@@ -279,9 +307,6 @@ SMSetLinkFromClipboard:
   }
   ControlSetText, TMemo1, % NewRef
   send !{enter}
-  WinWaitActive, ahk_class TElWind,, 1
-  if (Vim.Browser.title && WinActive("ahk_class TElWind"))
-    Vim.SM.SetTitle(Vim.Browser.title)
   if (A_ThisLabel != "SMSetLinkFromClipboard")
     Vim.Browser.Clear()
 return
@@ -309,7 +334,7 @@ c::  ; learn child
   WinWaitActive, ahk_class TBrowser,, 0
   send ^l
   WinWaitActive, ahk_class TElWind,, 1
-  Vim.SM.PlayIfCertainCollection()
+  Vim.SM.PlayIfCertainColl()
 return
 
 +c::  ; add new concept
@@ -365,7 +390,7 @@ NumpadHome::Vim.SM.SetPriority(57.7576,70.5578)
 !8::
 Numpad8::
 NumpadUp::Vim.SM.SetPriority(70.5579,90.2474)
-  
+
 !9::
 Numpad9::
 NumpadPgup::Vim.SM.SetPriority(90.2474,99.99)

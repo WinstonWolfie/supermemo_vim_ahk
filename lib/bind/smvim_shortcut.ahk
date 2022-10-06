@@ -52,7 +52,6 @@
 return
 
 ^!c::  ; change default *c*oncept group
-	KeyWait ctrl
   Vim.SM.ChangeDefaultConcept()
   Vim.State.SetMode("Vim_Normal")
 Return
@@ -71,7 +70,7 @@ return
   KeyWait shift
   if (InStr(A_ThisHotkey, "\")) {
     send ^+{enter}
-    WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the collection?"
+    WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the Coll?"
     send {enter}
   } else {
     send ^+{del}
@@ -117,27 +116,45 @@ return
 return
 
 SMCtrlN:
-^n::
+  send ^n
+~^n::
   Vim.State.SetMode("Vim_Normal")
   if (InStr(Clipboard, "youtube.com")) {
-    send ^n
+    if (A_ThisHotkey == "~^n")
+      ClipSaved := ClipboardAll
     Vim.SM.WaitFileLoad(10000)
-    gosub SMSetLinkFromClipboard
-    WinWaitActive, ahk_class TElWind,, 3
+    ; gosub SMSetLinkFromClipboard
+    text := "#SuperMemo Reference:"
+          . "`n#Link: " . Clipboard
+    if (Vim.Browser.title)
+      text .= "`n#Title: " . Vim.Browser.title
+    if (Vim.Browser.source)
+      text .= "`n#Source: " . Vim.Browser.source
+    if (Vim.Browser.date)
+      text .= "`n#Date: " . Vim.Browser.date
+    WinClip.SetText(text)
+    ; WinWaitActive, ahk_class TElWind,, 3
     send q
     Vim.SM.WaitTextFocus(2000)
-    send ^+{down}{bs}{esc}
+    ; send ^+{down}{bs}{esc}
+    send ^a^v{esc}
     Vim.SM.WaitTextExit()
-    send ^+p!t
+    send ^+p
+    WinWaitActive, ahk_class TElParamDlg,, 0
+    ControlSetText, TEdit2, % Vim.Browser.Title
+    send !t
     send {text}y  ; YouTube
     send {enter}
     sleep 20
     ; Wait for the YT component to exist
     ControlWait("Internet Explorer_Server2", "ahk_class TElWind",,,, 2000)
     sleep 800  ; needed for the html component to load
-    send {enter}
-  } else {
-    send ^n
+    ControlFocus, TEdit2
+    send {right}t{bs}{enter}
+    if (A_ThisHotkey == "~^n") {
+      Clipboard := ClipSaved
+      Vim.Browser.Clear()
+    }
   }
 return
 
@@ -192,12 +209,12 @@ return
     if (!InStr(data, "<IMG")) {  ; text only
       send {bs}^{f7}  ; set read point
       WinGetText, VisibleText, ahk_class TElWind
-      CollectionName := Vim.SM.GetCollectionName(VisibleText)
-      CollectionPath := Vim.SM.GetCollectionPath(VisibleText)
+      CollName := Vim.SM.GetCollName(VisibleText)
+      CollPath := Vim.SM.GetCollPath(VisibleText)
       LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
       LatexFormula := Enc_Uri(LatexFormula)
       LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
-      LatexFolderPath := CollectionPath . CollectionName . "\elements\LaTeX"
+      LatexFolderPath := CollPath . CollName . "\elements\LaTeX"
       LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
       InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
       SetTimer, DownloadLatex, -1
@@ -240,7 +257,7 @@ return
     } else {  ; image only
       RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", LatexFormula)  ; getting formula from alt=""
       RegExMatch(data, "src=""file:\/\/\/\K[^""]+", LatexPath)  ; getting path from src=""
-      LatexPath := StrReplace(LatexPath, "[PrimaryStorage]", Vim.SM.GetCollectionPath() . "\elements\")
+      LatexPath := StrReplace(LatexPath, "[PrimaryStorage]", Vim.SM.GetCollPath() . "\elements\")
       if (InStr(LatexFormula, "{\displaystyle")) {  ; from wikipedia, wikibooks, etc
         LatexFormula := StrReplace(LatexFormula, "{\displaystyle")
         LatexFormula := RegExReplace(LatexFormula, "}$")
@@ -456,7 +473,7 @@ return
       return
   }
   ToolTip := EditRef := BL := false
-  if (Vim.SM.IsPassiveCollection()) {
+  if (Vim.SM.IsPassiveColl()) {
     Vim.SM.DeselectAllComponents()
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
     send q^t{f9}
@@ -475,8 +492,6 @@ return
       send {esc 2}
       EditRef := true
     }
-    if (InStr(A_ThisHotkey, "``"))
-      replacement := sec := ""
     if (!EditRef) {  ; time in script component
       if (RegExMatch(script, match)) {
         ControlSetText, TMemo1, % RegExReplace(script, match, replacement)
@@ -507,9 +522,22 @@ return
   WinActivate, ahk_class TElWind
   if (InStr(A_ThisHotkey, "^+!")) {
     Vim.SM.Learn()
-    Vim.SM.PlayIfCertainCollection()
+    Vim.SM.PlayIfCertainColl()
   }
   if (ToolTip)
     ToolTip("Time stamp in script component set as " . sec . "s")
   Vim.Browser.Clear()
+return
+
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
+                      && (title := WinGetActiveTitle())
+                      && (RegExMatch(title, "(?<=^p)[0-9]+(?= )", page) || epub := InStr(title, "|")))
+!s::
+  if (page) {
+    clip := page
+  } else if (epub) {
+    RegExMatch(title, ".*?(?= \|)", clip)
+  }
+  Clipboard := clip
+  ToolTip("Copied " . clip)
 return

@@ -19,11 +19,7 @@ s::  ; gs: go to link
       ; run % "iexplore.exe " . Link  ; RIP IE
       Vim.Browser.RunInIE(link)
     } else {
-      if (Vim.SM.GetCollectionName() = "gaming") {
-        run % "msedge.exe " . link
-      } else {
-        run % Link
-      }
+      run % Link
     }
   } else {
     ToolTip("No link found.")
@@ -120,14 +116,10 @@ x::send {del}  ; delete element/component
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
 p::
-  if (Vim.SM.GetCollectionName() = "gaming") {
-    gosub SMGoToLink
-  } else {
-    send ^{f10}  ; replay auto-play
-    WinWaitActive, ahk_class TMsgDialog,, 0
-    if (!ErrorLevel)
-      send y 
-  }
+  send ^{f10}  ; replay auto-play
+  WinWaitActive, ahk_class TMsgDialog,, 0
+  if (!ErrorLevel)
+    send y 
 return
 
 +p::send ^{t 2}{f9}  ; play video in default system player / edit script component
