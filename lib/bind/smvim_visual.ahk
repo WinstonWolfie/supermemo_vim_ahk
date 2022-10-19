@@ -2,24 +2,29 @@
 ~^+i::Vim.State.SetMode("Vim_Normal")  ; ignore
 
 .::  ; selected text becomes [...]
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+  send ^c
+  ClipWait, LongCopy ? 0.6 : 0.2, True
   clip("<span class=""Cloze"">[...]</span>",,, true)
   Vim.State.SetMode("Vim_Normal")
 return
 
-a::  ; p*a*rse html
-^+1::
+^h::  ; parse *h*tml
   send ^+1
+~^+1::
   Vim.State.SetMode("Vim_Normal")
 return
 
-!a::  ; parse ht*m*l
-  KeyWait alt
+!a::  ; p*a*rse html
   Vim.State.SetMode("Vim_Normal")
   gui, HTMLTag:Add, Text,, &HTML tag:
-  list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|cloze|clozed|extract|sub|sup|blockquote|ruby|hint|note|ignore|headers|refText|reference|highlight|searchHighlight|tableLabel|fuck_lexicon"
+  list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|cloze|clozed|extract|sub"
+        . "|sup|blockquote|ruby|hint|note|ignore|headers|refText|reference|highlight"
+        . "|searchHighlight|tableLabel|AntiMerge"
   gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
   gui, HTMLTag:Add, Button, default, &Add
+  KeyWait alt
   gui, HTMLTag:Show,, Add HTML Tag
 Return
 
@@ -35,16 +40,19 @@ HTMLTagButtonAdd:
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
+  if (ErrorLevel) {
+    WinClip.Restore(ClipData)
+    return
+  }
   if (OriginalHTML) {
-    if (Vim.HTML.ClipboardGet_HTML(data))
-      RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", content)
+    Vim.HTML.ClipboardGet_HTML(data)
+    RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", content)
   } else {
     content := Clipboard
     content := StrReplace(content, "<", "&lt;")
     content := StrReplace(content, ">", "&gt;")
   }
   WinActivate, ahk_class TElWind
-  ; Classes
   if (Vim.SM.IsCssClass(tag)) {
     StartingTag := "<SPAN class=" . tag
     EndingTag := "SPAN>"
@@ -55,13 +63,12 @@ HTMLTagButtonAdd:
     if (ErrorLevel || !UserInput)
       return
     clip("<RUBY>" . content . "<RP>(</RP><RT>" . UserInput
-       . "</RT><RP>)</RP></RUBY>",,, true)
+       . "</RT><RP>)</RP></RUBY>",,, "sm")
     return
   } else {
-    StartingTag := "<" 
-    EndingTag := ">" 
+    StartingTag := "<", EndingTag := ">"
   }
-  clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag,, true, true)
+  clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag,, true, "sm")
   WinClip.Restore(ClipData)
 return
 
@@ -101,7 +108,7 @@ ExtractStay:
   KeyWait ctrl
   send !x
   Vim.State.SetMode("Vim_Normal")
-  Vim.SM.WaitProcessing()
+  Vim.SM.WaitExtractProcessing()
   send !{left}
 return
 
@@ -123,8 +130,7 @@ ClozeStay:
   KeyWait ctrl
   send !z
   Vim.State.SetMode("Vim_Normal")
-  Vim.SM.WaitProcessing()
-  if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items
+  if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send !{left}
 Return
@@ -151,20 +157,26 @@ ClozeHinter:
   if (!InitText)
     return
   inside := true
-  if (IfContains(InitText, "more,less")) {
+  if (RegExMatch(InitText, "\b(more|less)\b")) {
     InitText := "more/less"
-  } else if (IfContains(InitText, "faster,slower")) {
+  } else if (RegExMatch(InitText, "\b(faster|slower)\b")) {
     InitText := "faster/slower"
-  } else if (IfContains(InitText, "fast,slow")) {
+  } else if (RegExMatch(InitText, "\b(fast|slow)\b")) {
     InitText := "fast/slow"
-  } else if (IfContains(InitText, "higher,lower")) {
+  } else if (RegExMatch(InitText, "\b(higher|lower)\b")) {
     InitText := "higher/lower"
-  } else if (IfContains(InitText, "high,low")) {
+  } else if (RegExMatch(InitText, "\b(high|low)\b")) {
     InitText := "high/low"
-  } else if (IfContains(InitText, "increased,decreased")) {
+  } else if (RegExMatch(InitText, "\b(increased|decreased)\b")) {
     InitText := "increased/decreased"
-  } else if (IfContains(InitText, "increase,decrease")) {
+  } else if (RegExMatch(InitText, "\b(increased|reduced)\b")) {
+    InitText := "increased/reduced"
+  } else if (RegExMatch(InitText, "\b(increases|decreases)\b")) {
+    InitText := "increases/decreases"
+  } else if (RegExMatch(InitText, "\b(increase|decrease)\b")) {
     InitText := "increase/decrease"
+  } else if (RegExMatch(InitText, "\b(positive|negative)\b")) {
+    InitText := "positive/negative"
   } else if (!InStr(InitText, "/")) {
     inside := false
   }
@@ -188,90 +200,74 @@ ClozeHinterButtonCloze:
   WinActivate, ahk_class TElWind
 ClozeNoBracket:
 CapsLock & z::  ; delete [...]
+  ClozeNoBracket := (A_ThisLabel == "ClozeNoBracket" || A_ThisHotkey == "CapsLock & z")
   if (A_ThisLabel == "ClozeNoBracket" && ClozeNoBracketCtrlState) {
     CtrlState := 1
     ClozeNoBracketCtrlState := 0
   }
   KeyWait Capslock
-  if (A_ThisHotkey != "CapsLock & z" && A_ThisLabel != "ClozeNoBracket" && !inside && hint && IfContains(hint, "/,／")) {
+  if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/,／")) {
     MsgBox, 4,, You sure you don't want to make the cloze inside square brackets?
     IfMsgBox no
       inside := true
-    WinWaitActive, ahk_class TElWind,, 0
+    WinWaitActive, ahk_class TElWind
   }
   send !z
   Vim.State.SetMode("Vim_Normal")
-  if (A_ThisHotkey != "CapsLock & z" && A_ThisLabel != "ClozeNoBracket" && !hint)  ; entered nothing
+  if (!ClozeNoBracket && !hint)  ; entered nothing
     return
+
   ToolTip("Cloze processing...", true)
   SleepCalc := A_TickCount
-  Vim.SM.WaitProcessing(5000)
-  if (WinActive("ahk_class TMsgDialog"))  ; warning on trying to cloze on items
+  if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send !{left}
   sleep % (A_TickCount - SleepCalc) / 3 * 2
-  Vim.SM.WaitFileLoad(5000)  ; double insurance
-  send q
-  if (A_ThisHotkey != "CapsLock & z" && A_ThisLabel != "ClozeNoBracket" && inside) {
-    if (FullWidthChars)
+  Vim.SM.WaitFileLoad()  ; double insurance
+  send ^t
+  if (!ClozeNoBracket && inside) {
+    if (FullWidthChars) {
       hint := StrReplace(hint, "/", "／")
-    cloze := hint . "]"
+      cloze := "［" . hint . "］"
+    } else {
+      cloze := "[" . hint . "]"
+    }
   } else {
     if (FullWidthChars) {
-      cloze := "...]（" . hint . "）"
+      cloze := "［...］（" . hint . "）"
     } else {
-      cloze := "...](" . hint . ")"
+      cloze := "[...](" . hint . ")"
     }
   }
   Vim.SM.WaitTextFocus()
-  if (Vim.SM.IsEditingPlainText()) {  ; editing plain text
+  if (Vim.SM.IsEditingPlainText()) {
     send ^a
     WinClip.Snap(ClipData)
-    if (A_ThisHotkey != "CapsLock & z" && A_ThisLabel != "ClozeNoBracket") {
-      clip(StrReplace(clip("",, true), "[...]", "[" . cloze),, true)
+    if (!ClozeNoBracket) {
+      clip(StrReplace(copy(true), "[...]", cloze),, true)
     } else {
-      clip(StrReplace(clip("",, true), " [...]"),, true)
+      clip(RegExReplace(copy(true), "\s?[...]"),, true)
     }
     WinClip.Restore(ClipData)
   } else if (Vim.SM.IsEditingHTML()) {
-    send {f3}
-    WinWaitActive, ahk_class TMyFindDlg,, 0
-    if (ErrorLevel) {
-      send {esc}^{enter}  ; open commander
-      send {text}h  ; Highlight: Clear
-      send {enter}{f3}
-      WinWaitActive, ahk_class TMyFindDlg,, 0
-      if (ErrorLevel)
-        return
-    }
+    if (!Vim.SM.HandleF3(1))
+      return
     ControlSetText, TEdit1, [...]
 		send {enter}
-		WinWaitNotActive, ahk_class TMyFindDlg,, 0 ; faster than wait for element window to be active
-		send ^{enter}
-		WinWaitActive, ahk_class TCommanderDlg,, 0
-    ControlSetText, TEdit2, h
-		send {enter}
-    WinWaitActive, ahk_class TElWind,, 0
-    if (!Vim.SM.IsEditingText()) {
-      send q
-      Vim.SM.WaitTextFocus()
-    }
-    if (A_ThisHotkey != "CapsLock & z" && A_ThisLabel != "ClozeNoBracket") {
-      send {left}{right}  ; put the caret after the [ of [...]
-      WinClip.Paste(cloze)  ; much more robust than clip()
-      send {del 4}  ; delete ...]
+		WinWaitNotActive, ahk_class TMyFindDlg ; faster than wait for element window to be active
+    Vim.SM.ClearHighlight()
+    Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
+    if (!ClozeNoBracket) {
+      send +{left}  ; so format is kept
+      clip(cloze)
+      send {del}
     } else {
-      send {bs 2}
+      send {bs}
     }
 		if (WinExist("ahk_class TMyFindDlg")) ; clears search box window
 			WinClose
   }
-  if (!CtrlState) {  ; only goes back to topic if ctrl is up
+  if (!CtrlState)  ; only goes back to topic if ctrl is up
     send !{right}  ; add a ctrl to keep editing the clozed item
-  } else {  ; refresh if staying in the cloze item
-    send !{home}
-    Vim.SM.WaitFileLoad()
-    send !{left}
-  }
-  Gosub RemoveToolTip
+  goto RemoveToolTip
 return

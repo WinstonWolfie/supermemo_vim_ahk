@@ -1,15 +1,14 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
-y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
-d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0)
-c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0)
+y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0,,,-1)
+d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,,-1)
+c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0,,,-1)
 +y::
   Vim.State.SetMode("Vim_ydc_y", 0, 0, 1)
-  Sleep, 150  ; Need to wait (For variable change?)
-  if WinActive("ahk_group VimDoubleHomeGroup") {
+  ; Sleep, 150  ; Need to wait (For variable change?)
+  if WinActive("ahk_group VimDoubleHomeGroup")
     send {Home}
-  }
   send {Home}+{End}
-  if not WinActive("ahk_group VimLBSelectGroup") {
+  if (!WinActive("ahk_group VimLBSelectGroup")) {
     Vim.Move.Move("l")
   } else {
     Vim.Move.Move("")
@@ -19,7 +18,7 @@ Return
 
 +d::
   Vim.State.SetMode("Vim_ydc_d", 0, 0, 0)
-  if not WinActive("ahk_group VimLBSelectGroup") {
+  if (!WinActive("ahk_group VimLBSelectGroup")) {
     Vim.Move.Move("$")
   } else {
     send {Shift Down}{End}{Left}
@@ -29,7 +28,7 @@ Return
 
 +c::
   Vim.State.SetMode("Vim_ydc_c",0,0,0)
-  if not WinActive("ahk_group VimLBSelectGroup") {
+  if (!WinActive("ahk_group VimLBSelectGroup")) {
     Vim.Move.Move("$")
   } else {
     send {Shift Down}{End}{Left}
@@ -51,30 +50,26 @@ c::Vim.Move.YDCMove()
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && Vim.IsNavigating())
 x::
-  if (!Vim.State.n)
-    Vim.State.n := 1
+  Vim.State.n := Vim.State.n ? Vim.State.n : 1
   send % "{del " . Vim.State.n . "}"
   Vim.State.SetMode()
 return
 
 +x::
-  if (!Vim.State.n)
-    Vim.State.n := 1
+  Vim.State.n := Vim.State.n ? Vim.State.n : 1
   send % "{bs " . Vim.State.n . "}"
   Vim.State.SetMode()
 return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
 x::
-  if (!Vim.State.n)
-    Vim.State.n := 1
+  Vim.State.n := Vim.State.n ? Vim.State.n : 1
   send % "+{right " . Vim.State.n . "}^x"
   Vim.State.SetMode()
 return
 
 +x::
-  if (!Vim.State.n)
-    Vim.State.n := 1
+  Vim.State.n := Vim.State.n ? Vim.State.n : 1
   send % "+{left " . Vim.State.n . "}^x"
   Vim.State.SetMode()
 return
@@ -111,7 +106,7 @@ p::
   ;}
   if (InStr(A_ThisHotkey, "^")) {
     Clipboard := Clipboard
-    ClipWait 10
+    ClipWait
   }
   if (Vim.State.LineCopy == 1 && Vim.Move.YdcClipSaved == Clipboard) {
     ; if WinActive("ahk_group VimNoLBCopyGroup") {
@@ -134,7 +129,7 @@ Return
 +p::
   if (InStr(A_ThisHotkey, "^")) {
     Clipboard := Clipboard
-    ClipWait 10
+    ClipWait
   }
   if (Vim.State.LineCopy == 1 && Vim.Move.YdcClipSaved == Clipboard) {
     ; send {Up}{End}{Enter}^v{BS}{Home}

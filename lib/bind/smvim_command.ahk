@@ -29,8 +29,10 @@ NukeHTML:
   if (!Vim.SM.IsEditingHTML()) {
     send ^t
     Vim.SM.WaitTextFocus()
-    if (!Vim.SM.IsEditingHTML())
+    if (!Vim.SM.IsEditingHTML()) {
+      ToolTip("Text not found.")
       return
+    }
   }
   send {esc}
   Vim.SM.WaitTextExit()
@@ -38,6 +40,11 @@ NukeHTML:
   FileRead, HTML, % HTMLPath
   if (!HTML)
     return
+  if (A_ThisLabel == "NukeHTML" && RegExMatch(HTML, "i)<.*?\K class=(extract|clozed?)(?=.*?>)")) {
+    MsgBox, 4,, HTML has SM classes. Continue?
+    IfMsgBox, no
+      return
+  }
   FileDelete % HTMLPath
   FileAppend, % Vim.HTML.Clean(HTML, (A_ThisLabel == "NukeHTML")), % HTMLPath
   Vim.SM.SaveHTML()
@@ -59,8 +66,8 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.State.SetMode("Vim_Normal")
   if (Vim.SM.IsEditingPlainText())
     return
-  ; save read point
-	send !g^{f7}  ; !g in case it's learning
+	send !g  ; in case it's learning
+	send ^{f7}  ; save read point
   if (!Vim.SM.IsEditingHTML()) {
     send ^t
     Vim.SM.WaitTextFocus()
@@ -70,7 +77,8 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.SM.SaveHTML()  ; making sure the html path is correct
   send {esc}
   Vim.SM.WaitTextExit()  ; making changes to the html file requires not editing html in SM
-  link := Vim.SM.GetLink()
+  TemplCode := Vim.SM.GetTemplCode()
+  link := Vim.SM.GetLink(TemplCode)
   if (link) {
     if (!InStr(Link, "wikipedia.org/wiki")) {
       ToolTip("Not Wikipedia!")
@@ -84,25 +92,22 @@ w::  ; prepare *w*ikipedia articles in languages other than English
     ToolTip("No reference.")
     return
   }
-  RegExMatch(Link, "(?<=https:\/\/)(.*?)(?=\/wiki\/)", WikiLink)
-  RegExMatch(clipboard, "HTMFile=\K.*", FilePath)
+  RegExMatch(Link, "(?<=https:\/\/).*?(?=\/wiki\/)", WikiLink)
+  RegExMatch(TemplCode, "HTMFile=\K.*", FilePath)
   FileRead, HTML, % FilePath
   HTML := StrReplace(HTML, "en.wikipedia.org", WikiLink)
   FileDelete % FilePath
   FileAppend, % HTML, % FilePath
   Vim.SM.SaveHTML()
-  if (WikiLink == "zh.wikipedia.org" || WikiLink == "fr.wikipedia.org" || WikiLink == "la.wikipedia.org") {
+  if (RegExMatch(WikiLink, "(zh|fr|la).wikipedia.org")) {
     Vim.SM.WaitTextFocus()
     send ^{home}{end}+{home}!t  ; selecting first line
     WinWaitActive, ahk_class TChoicesDlg,, 2  ; sometimes it could take a really long time for the choice dialogue to pop up
     if (!ErrorLevel)
       send 2{enter}  ; makes selection title
-    send {esc}
-  } else {
-    Vim.SM.ClickMid()
-    send {esc}
   }
-  WinClip.Restore(ClipData)
+  Vim.SM.ClickMid()
+  send {esc}
 return
 
 i::  ; learn outstanding *i*tems only
@@ -111,14 +116,13 @@ i::  ; learn outstanding *i*tems only
   Vim.SM.PostMsg(202)  ; View - Outstanding
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
-  send {AppsKey}
-  send {text}ci
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
+  send {AppsKey}ci
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
   send ^l
 return
 
@@ -127,33 +131,32 @@ return
   send ^{space}
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
-  send {AppsKey}
-  send {text}ci
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
+  send {AppsKey}ci
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
-  send {AppsKey}
-  send {text}co
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
+  send {AppsKey}co
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
   send ^s
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
   send ^+l
 return
 
 o::  ; c*o*mpress images
-  send ^{enter}  ; open commander
+  send ^{enter}^a  ; open commander
   send {text}co  ; Compress images
   send {enter}
-  Vim.State.SetMode("Vim_Normal")
+  Vim.State.SetMode("Insert")
+  Vim.State.BackToNormal := 1
 return
 
 s::  ; turn active language item to passive (*s*witch)
@@ -161,14 +164,15 @@ s::  ; turn active language item to passive (*s*witch)
   Vim.SM.DeselectAllComponents()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
-  WinGetActiveTitle, CurrTitle
+  hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
   send ^+s
-  WinWaitTitleChange(CurrTitle, 1000)
-  sleep 1000  ; for unknown reason this large amount of delay would work, not otherwise
-  send q
-  Vim.SM.WaitTextFocus(1000)
+  ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
+  send ^t
+  Vim.SM.WaitTextFocus()
   ControlGetFocus, CurrControl
-  send ^{home}en:{space}^t
+  send ^{home}
+  send {text}en:
+  send {space}^t
   ControlWaitNotFocus(CurrControl)
   if (Vim.SM.IsEditingHTML()) {
     send ^{home}^{del 2}
@@ -186,74 +190,67 @@ return
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
   send q
-  Vim.SM.WaitTextFocus(1000)
+  Vim.SM.WaitTextFocus()
+  WinClip.Clear()
   if (Vim.SM.IsEditingHTML()) {
     send ^{home}^+{right 2}^x
   } else if (Vim.SM.IsEditingPlainText()) {
     send ^{home}^+{right}^x
   }
+  ClipWait
   send {esc}
   Vim.SM.WaitTextExit()
-  WinGetActiveTitle, CurrTitle
+  hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
   send ^+s
-  WinWaitTitleChange(CurrTitle, 1000)
-  send q
-  Vim.SM.WaitTextFocus(1000)
+  ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
+  send ^t
+  Vim.SM.WaitTextFocus()
   send ^v{left 2}{esc}
   WinClip.Restore(ClipData)
 return
 
++p::
 p::  ; hyperlink to scri*p*t component
   Vim.State.SetMode("Vim_Normal")
   CollName := ""
   ClipSaved := ClipboardAll
-
-SMHyperLinkToTopic:
-  WinActivate, ahk_class TElWind
-  ; send !n  ; new topic
-  ; if (!Vim.SM.WaitFileLoad())
-  ;   return
-  ; gosub SMSetLinkFromClipboard
-  link := Clipboard
-  text := "#SuperMemo Reference:"
-        . "`n#Link: " . Clipboard
-  if (Vim.Browser.title)
-    text .= "`n#Title: " . Vim.Browser.title
-  if (Vim.Browser.source)
-    text .= "`n#Source: " . Vim.Browser.source
-  if (Vim.Browser.date)
-    text .= "`n#Date: " . Vim.Browser.date
-  Clipboard := text
-  ClipWait 10
-  ; send ^n^t  ; doesn't work well
+  Vim.Browser.url := Clipboard
+  WinClip.Clear()
+  WinClip.SetText(Vim.SM.MakeReference())
   send !n
   Vim.SM.WaitFileLoad()
   send ^v
 
-SMHyperLinkToCurrTopic:
-  if (Vim.sm.DoesCollNeedScrComp(CollName)) {
-    send ^t{f9}{enter}  ; opens script editor
-    WinWaitActive, ahk_class TScriptEditor,, 0
-    script := "url " . link
-    if (Vim.Browser.VidTime) {
-      sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-      if (InStr(Vim.Browser.url, "youtube.com")) {
-        script .= "&t=" . sec . "s"
-      } else if (InStr(Vim.Browser.url, "bilibili.com")) {
-        script .= "?&t=" . sec
-      }
-      ToolTip("Time stamp in script component set as " . sec . "s")
+SMHyperLinkToTopic:
+  if (A_ThisLabel == "SMHyperLinkToTopic") {
+    send ^n
+    Vim.SM.WaitFileLoad()
+  }
+
+  send ^t{f9}{enter}  ; opens script editor
+  WinWaitActive, ahk_class TScriptEditor,, 0
+  if (ErrorLevel)
+    return
+  script := "url " . vim.browser.url
+  if (Vim.Browser.VidTime) {
+    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+    if (InStr(Vim.Browser.url, "youtube.com")) {
+      script .= "&t=" . sec . "s"
+    } else if (InStr(Vim.Browser.url, "bilibili.com")) {
+      script .= "?&t=" . sec
     }
-    ControlSetText, TMemo1, % script
-    send !o{esc 2}  ; close script editor
+    ToolTip("Time stamp in script component set as " . sec . "s")
   }
-  WinWaitActive, ahk_class TElWind,, 0
-  Vim.SM.SetTitle(Vim.browser.title)
-  if (A_ThisHotkey == "p") {
-    Clipboard := ClipSaved
-    Vim.SM.Reload()
-  }
+  ControlSetText, TMemo1, % script
+  send !o{esc 2}  ; close script editor
+  WinWaitActive, ahk_class TElWind  ; without this SetTitle() may fail
+  if (A_ThisLabel == "SMHyperLinkToTopic")
+    return
+  if (Vim.Browser.title)
+    Vim.SM.SetTitle(Vim.browser.title)
+  Clipboard := ClipSaved
   Vim.Browser.Clear()
+  Vim.SM.Reload()
 return
 
 r::  ; set *r*eference's link to what's in the clipboard
@@ -262,52 +259,22 @@ SMSetLinkFromClipboard:
   if (Vim.Browser.title)
     Vim.SM.SetTitle(Vim.Browser.title)
   ; Vim.SM.PostMsg(961, true)
-  ; Somehow PostMessage doesn't work reliably here
+  ; Somehow PostMessage doesn't work reliably here???
   send !{f10}fe  ; open registry editor
-  WinWaitActive, ahk_class TInputDlg,, 3
-  ControlGetText, OldRef, TMemo1
-  NewLink := "#Link: " . Clipboard
-  if (InStr(OldRef, "#Link")) {
-    NewRef := RegExReplace(OldRef, "#Link: .*", NewLink)
-  } else {
-    NewRef := OldRef . "`r`n" . NewLink
-  }
-  if (Vim.Browser.title) {
-    NewTitle := "#Title: " . Vim.Browser.title
-    if (InStr(NewRef, "#Title")) {
-      NewRef := RegExReplace(NewRef, "#Title: .*", NewTitle)
-    } else {
-      NewRef .= "`r`n" . NewTitle
-    }
-  }
-  if (Vim.Browser.source) {
-    NewSource := "#Source: " . Vim.Browser.source
-    if (InStr(NewRef, "#Source")) {
-      NewRef := RegExReplace(NewRef, "#Source: .*", NewSource)
-    } else {
-      NewRef .= "`r`n" . NewSource
-    }
-  }
-  if (Vim.Browser.date) {
-    NewDate := "#Date: " . Vim.Browser.date
-    if (InStr(NewRef, "#Date")) {
-      NewRef := RegExReplace(NewRef, "#Date: .*", NewDate)
-    } else {
-      NewRef .= "`r`n" . NewDate
-    }
-  }
-  ; NewRef := StrReplace(NewRef, "#Comment: References will be downloaded in a separate thread")
-  if (Vim.Browser.comment) {
-    NewComment := "#Comment: " . Vim.Browser.comment
-    if (InStr(NewRef, "#Comment")) {
-      NewRef := RegExReplace(NewRef, "#Comment: .*$", Vim.Browser.comment)
-    } else {
-      NewRef .= "`r`n" . NewComment
-    }
-  }
-  ControlSetText, TMemo1, % NewRef
-  send !{enter}
-  if (A_ThisLabel != "SMSetLinkFromClipboard")
+  WinWait, ahk_class TInputDlg
+  ControlGetText, Ref, TMemo1, ahk_class TInputDlg
+  Ref := RegExReplace(Ref, "(#Link: .*|$)", "`r`n#Link: " . Clipboard,, 1)
+  if (Vim.Browser.title)
+    Ref := RegExReplace(Ref, "(#Title: .*|$)", "`r`n#Title: " . Vim.Browser.title,, 1)
+  if (Vim.Browser.Source)
+    Ref := RegExReplace(Ref, "(#Source: .*|$)", "`r`n#Source: " . Vim.Browser.Source,, 1)
+  if (Vim.Browser.Date)
+    Ref := RegExReplace(Ref, "(#Date: .*|$)", "`r`n#Date: " . Vim.Browser.Date,, 1)
+  if (Vim.Browser.Comment)
+    Ref := RegExReplace(Ref, "(#Comment: .*|$)", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
+  ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
+  ControlSend, TMemo1, {ctrl down}{enter}{ctrl up}, ahk_class TInputDlg  ; submit
+  if (A_ThisHotkey == "r")
     Vim.Browser.Clear()
 return
 
@@ -317,30 +284,27 @@ c::  ; learn child
   send ^{space}
   WinWaitActive, ahk_class TProgressBox,, 0
   if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
   send {AppsKey}co
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel) {
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  } else {
-    sleep 300
-  }
-  WinWaitActive, ahk_class TBrowser,, 0
-  send ^s
-  WinWaitActive, ahk_class TProgressBox,, 0
+  WinWaitActive, ahk_class TProgressBox,, 0.75
   if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox,, 10
-  WinWaitActive, ahk_class TBrowser,, 0
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
+  send ^s
+  WinWaitActive, ahk_class TProgressBox,, 0.75
+  if (!ErrorLevel)
+    WinWaitNotActive, ahk_class TProgressBox
+  WinWaitActive, ahk_class TBrowser
   send ^l
-  WinWaitActive, ahk_class TElWind,, 1
-  Vim.SM.PlayIfCertainColl()
+  WinWaitActive, ahk_class TElWind
+  Vim.SM.PlayIfCertainColl("", 500)
 return
 
 +c::  ; add new concept
   WinActivate, ahk_class TElWind
   Vim.SM.PostMsg(126)
-  Vim.State.SetMode("Vim_Normal")
+  Vim.State.SetMode("Insert")
 return
 
 #if ((Vim.IsVimGroup()

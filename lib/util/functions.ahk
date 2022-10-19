@@ -99,7 +99,7 @@ IfMsgBox(ByRef ButtonName) {
 		return true
 }
 
-ControlGet(Cmd, Value = "", Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+ControlGet(Cmd:="hwnd", Value = "", Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	control := control ? control : ControlGetFocus()
 	ControlGet, v, %Cmd%, %Value%, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
@@ -220,11 +220,11 @@ StatusBarGetText(Part = "", WinTitle:="A", WinText = "", ExcludeTitle = "", Excl
 SplitPath(ByRef InputVar, ByRef OutFileName = "", ByRef OutDir = "", ByRef OutExtension = "", ByRef OutNameNoExt = "", ByRef OutDrive = "") {
 	SplitPath, InputVar, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive
 }
-StringLower(ByRef InputVar, T = "") {
+StrLower(ByRef InputVar, T = "") {
 	StringLower, v, InputVar, %T%
 	Return, v
 }
-StringUpper(ByRef InputVar, T = "") {
+StrUpper(ByRef InputVar, T = "") {
 	StringUpper, v, InputVar, %T%
 	Return, v
 }
@@ -232,7 +232,7 @@ SysGet(Subcommand, Param3 = "") {
 	SysGet, v, %Subcommand%, %Param3%
 	Return, v
 }
-WinGet(Cmd = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+WinGet(Cmd:="hwnd", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 	WinGet, v, %Cmd%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
 	Return, v
 }
@@ -257,7 +257,7 @@ WinGetTitle(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
 ; This function wraps a loop that continuously uses ControlGetFocus to test if a particular 
 ; control is active. For more info see ControlGetFocus in the docs.
 ; An optional timeout can be included.
-ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) == Control) {
@@ -268,7 +268,7 @@ ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeT
   }
 }
 
-ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
@@ -279,7 +279,7 @@ ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:=
   }
 }
 
-ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) != Control) {
@@ -290,7 +290,7 @@ ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", Exclu
   }
 }
 
-ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == text) {
@@ -301,10 +301,24 @@ ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", Exc
   }
 }
 
-ControlTextWaitChange(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=500) {
+ControlTextWaitChange(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
+      Return True
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      Return False
+    }
+  }
+}
+
+ControlWaitHwndChange(Control, hwnd:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+	if (!hwnd)
+		hwnd := ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+  StartTime := A_TickCount
+  Loop {
+		NewHwnd := ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+    if (NewHwnd && NewHwnd != hwnd) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False
@@ -404,7 +418,7 @@ StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
 	return String
 }
 
-WinWaitTitleChange(OriginalTitle:="", TimeOut:=5000, WinTitle:="A") {
+WinWaitTitleChange(OriginalTitle:="", TimeOut:=0, WinTitle:="A") {
 	if (!OriginalTitle)
 		WinGetTitle, OriginalTitle, % WinTitle
 	StartTime := A_TickCount
@@ -441,7 +455,15 @@ ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
 	ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
 }
 
-WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=5000) {
+ControlClickDPIAdjusted(XCoord, YCoord, Control:="", WinTitle:="") {
+	if (!Control)
+		Control := ControlGetFocus()
+	if (!Wintitle)
+		WinTitle := "ahk_id " . WinGet("ID")
+	ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
+}
+
+WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=0) {
 	if (!OriginalX)
 		MouseGetPos, OriginalX
 	if (!OriginalY)
@@ -487,4 +509,15 @@ RevArr(arr) {
 	for index, value in arr
 			newarr.InsertAt(1, value)
 	return newarr
+}
+
+WaitVarExists(v, timeout:=0) {
+	StartTime := A_TickCount
+	loop {
+		if (v) {
+			return true
+		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+			return false
+		}
+	}
 }

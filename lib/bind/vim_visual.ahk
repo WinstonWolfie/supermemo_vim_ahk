@@ -10,20 +10,19 @@ v::
   }
 Return
 
+VisualLine:
 +v::
   if (Vim.State.StrIsInCurrentVimMode("VisualLine")) {
     Vim.State.SetNormal()
   } else {
-    if (Vim.SM.IsEditingPlainText()) {
-      XSaved := A_CaretX, YSaved := A_CaretY
-      send {home}+{down}
-      WaitCaretMove(XSaved, YSaved, 50)
-      if (A_CaretX == XSaved && A_CaretY == YSaved)  ; didn't move
-        send +{end}
+    send {home}
+    if (Vim.State.n) {
+      send % "+{down " . Vim.State.n - 1 . "}"
+      Vim.State.SetMode("Vim_VisualLine")
     } else {
-      send {Home}+{Down}
+      Vim.State.SetMode("Vim_VisualLineFirst")
     }
-    Vim.State.SetMode("Vim_VisualLineFirst")
+    send +{end}
   }
 Return
 
@@ -34,11 +33,15 @@ Return
     if (Vim.IsHTML()) {
       Vim.Move.ParagraphDown()
       Vim.Move.ParagraphUp()
-      Vim.Move.SelectParagraphDown()
-      Vim.State.SetMode("Vim_VisualParagraphFirst")
+      if (Vim.State.n) {
+        Vim.Move.SelectParagraphDown(Vim.State.n)
+        Vim.State.SetMode("Vim_VisualParagraph")
+      } else {
+        Vim.Move.SelectParagraphDown()
+        Vim.State.SetMode("Vim_VisualParagraphFirst")
+      }
     } else if (Vim.SM.IsEditingPlainText()) {
-      send {Home}+{Down}
-      Vim.State.SetMode("Vim_VisualLineFirst")
+      gosub VisualLine
     } else {
       if (!WinActive("ahk_exe notepad++.exe"))  ; notepad++ requires alt down
         send ^b
@@ -116,7 +119,7 @@ Return
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  WinGet, hwnd, ID, A
+  hwnd := WinGet("ID")
   send ^f
   WinWaitNotActive, % "ahk_id " . hwnd,, 0.25
   send ^v!f
@@ -128,33 +131,44 @@ Return
 +p::
 ^+p::
 p::
-  ; WinClip.Snap(PrevClip)
-  PrevClip := ClipboardAll
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-  send ^c
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  ; WinClip.Snap(NewClip)
-  NewClip := ClipboardAll
-  ; WinClip.Restore(PrevClip)
-  Clipboard := PrevClip
-  ClipWait 10  ; needed for pasting to work
+  JustPaste := Vim.State.Leader
+  ; Get selection
+  if (!JustPaste) {
+    ; WinClip.Snap(PrevClip)
+    PrevClip := ClipboardAll
+    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+    send ^c
+    ClipWait, LongCopy ? 0.6 : 0.2, True
+    ; WinClip.Snap(NewClip)
+    NewClip := ClipboardAll
+    ; WinClip.Restore(PrevClip)
+    WinClip.Clear()
+    Clipboard := PrevClip
+    ClipWait ; needed for pasting to work
+  }
+
+  ; Paste clipboard
   if (InStr(A_ThisHotkey, "^")) {
     Clipboard := Clipboard  ; convert to plain text
-    ClipWait 10
+    ClipWait
   }
   send ^v
   Vim.State.SetMode("Vim_Normal")
-  sleep 20
-  ; WinClip.Restore(NewClip)
-  Clipboard := NewClip
+
+  if (!JustPaste) {
+    WinClip._waitClipReady(100)
+    ; WinClip.Restore(NewClip)
+    Clipboard := NewClip
+  }
 Return
 
 ConvertToLowercase:
 u::
   WinClip.Snap(ClipData)
-  selection := clip("",, true)
+  html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
+  selection := clip("",, true, html)
   StringLower, selection, selection
-  clip(selection,, true)
+  clip(selection,, true, html)
   WinClip.Restore(ClipData)
   Vim.State.SetMode("Vim_Normal")
 Return
@@ -162,9 +176,10 @@ Return
 ConvertToUppercase:
 +u::
   WinClip.Snap(ClipData)
-  selection := clip("",, true)
+  html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
+  selection := clip("",, true, html)
   StringUpper, selection, selection
-  clip(selection,, true)
+  clip(selection,, true, html)
   WinClip.Restore(ClipData)
   Vim.State.SetMode("Vim_Normal")
 Return
@@ -173,7 +188,8 @@ Return
 InvertCase:
 ~::
   WinClip.Snap(ClipData)
-  selection := clip("",, true)
+  html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
+  selection := clip("",, true, html)
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(selection) {
     Lab_Invert_Char:= Substr(selection, A_Index, 1)
@@ -184,31 +200,31 @@ InvertCase:
     else
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
-  clip(Lab_Invert_Char_Out,, true)
+  clip(Lab_Invert_Char_Out,, true, html)
   WinClip.Restore(ClipData)
   Vim.State.SetMode("Vim_Normal")
 Return
 
 o::  ; move to other end of marked area; not perfect with line breaks
   WinClip.Snap(ClipData)
-  selection := clip("",, true)
+  selection := copy(true)
   if (!selection) {
     WinClip.Restore(ClipData)
     return
   }
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
-  SelectionRight := clip("",, true)
+  SelectionRight := copy(true)
   SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
   send +{left}
-  if (SelectionLen < SelectionRightLen)
-      || (SelectionLen == SelectionRightLen && StrLen(selection) < StrLen(SelectionRight)) {  ; moving point of selection is on the right
-    send {right}
-    send % "{shift down}{left " SelectionLen "}{shift up}"
-  } else if (SelectionLen > SelectionRightLen)
-             || (SelectionLen == SelectionRightLen && StrLen(selection) > StrLen(SelectionRight)) {
-    send {left}
-    send % "{shift down}{right " SelectionLen "}{shift up}"
+  if (SelectionLen < SelectionRightLen
+   || (SelectionLen == SelectionRightLen && StrLen(selection) < StrLen(SelectionRight))) {  ; moving point of selection is on the right
+    send % "{right}+{left " . SelectionLen . "}"
+  } else if (SelectionLen > SelectionRightLen
+          || (SelectionLen == SelectionRightLen && StrLen(selection) > StrLen(SelectionRight))) {
+    send % "+{left}{right " . SelectionLen . "}"
   }
   WinClip.Restore(ClipData)
 return
+
++s::Vim.State.SetMode("",,,,, 1)  ; surround

@@ -6,7 +6,10 @@
 Return
 
 ; Remap
-^+!j::send ^+j  ; shift position in outstanding queue
+^+!j::
+  send ^+j  ; shift position in outstanding queue
+  Vim.State.SetMode("Insert")
+return
+
 ^+!m::send ^m  ; remember
 ^+!k::send ^k  ; hyperlink to element
-Return

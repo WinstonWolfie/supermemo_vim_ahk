@@ -5,10 +5,10 @@
   send q
   Vim.SM.WaitTextFocus()
   ; this is to make sure this finds in the question field
-  if Vim.SM.IsEditingPlainText() {
+  if (Vim.SM.IsEditingPlainText()) {
     send ^a
     pos := InStr(clip(), "[...]")
-    if pos {
+    if (pos) {
       pos += 4
       send {left}{right %pos%}
     } else {
@@ -16,35 +16,16 @@
       Vim.State.SetNormal()
       Return
     }
-  } else if Vim.SM.IsEditingHTML() {
-    send {f3}
-    WinWaitActive, ahk_class TMyFindDlg,, 0
-    if (ErrorLevel) {
-      send {esc}^{enter}  ; open commander
-      send {text}h  ; Highlight: Clear
-      send {enter}{f3}
-      WinWaitActive, ahk_class TMyFindDlg,, 0
-      if (ErrorLevel)
-        return
-    }
+  } else if (Vim.SM.IsEditingHTML()) {
+    if (!Vim.SM.HandleF3(1))
+      return
     ControlSetText, TEdit1, [...]
     send {enter}
-    WinWaitNotActive, ahk_class TMyFindDlg,, 0  ; faster than wait for element window to be active
-    send {right}^{enter}  ; put caret on the right and open commander
-    WinWaitActive, ahk_class TCommanderDlg,, 0
-    if (ErrorLevel) {
-      ToolTip("Not found.")
-      Vim.State.SetNormal()
-      send {esc}^{enter}  ; open commander
-      send {text}h  ; Highlight: Clear
-      send {enter}{esc}
+    WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
+    send {right}  ; put caret on the right
+    if (!Vim.SM.HandleF3(2))
       return
-    }
-    ControlSetText, TEdit2, h  ; Highlight: Clear
-    send {enter}
-    if (WinExist("ahk_class TMyFindDlg"))  ; clears search box window
-      WinClose
-    WinWaitActive, ahk_class TElWind,, 0
+    WinActivate, ahk_class TElWind
     if (!Vim.SM.IsEditingText())
       send q
   }
@@ -70,14 +51,16 @@ return
   KeyWait shift
   if (InStr(A_ThisHotkey, "\")) {
     send ^+{enter}
-    WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the Coll?"
+    WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the Coll?"
     send {enter}
   } else {
     send ^+{del}
   }
-  WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
+  WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?"
   send {enter}
   WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
+  if (ErrorLevel)
+    return
   Vim.SM.WaitFileLoad()
   if (WinActive("ahk_class TElWind"))
     Vim.SM.Learn()
@@ -90,7 +73,14 @@ return
   Vim.State.SetNormal()
 return
 
-^!t::Vim.SM.SetTitle()
+^!t::
+  KeyWait alt
+  if (Vim.SM.IsEditingText()) {
+    Vim.SM.DeselectAllComponents()
+    sleep 20  ; to make sure all components are de-focused
+  }
+  Vim.SM.SetTitle()
+return
 
 ^!f::  ; use IE's search
   if (Vim.SM.IsEditingHTML()) {
@@ -103,7 +93,10 @@ return
   }
 return
 
-~^enter::SetDefaultKeyboard(0x0409)  ; english-US	
+~^enter::
+  SetDefaultKeyboard(0x0409)  ; english-US	
+  Vim.State.SetMode("Insert")
+return
 
 ^!p::  ; convert to a *p*lain-text template
   ContinueLearning := Vim.SM.IsLearning()
@@ -120,43 +113,29 @@ SMCtrlN:
 ~^n::
   Vim.State.SetMode("Vim_Normal")
   if (InStr(Clipboard, "youtube.com")) {
+    WinClip._waitClipReady()
     if (A_ThisHotkey == "~^n")
       ClipSaved := ClipboardAll
-    Vim.SM.WaitFileLoad(10000)
-    ; gosub SMSetLinkFromClipboard
-    text := "#SuperMemo Reference:"
-          . "`n#Link: " . Clipboard
-    if (Vim.Browser.title)
-      text .= "`n#Title: " . Vim.Browser.title
-    if (Vim.Browser.source)
-      text .= "`n#Source: " . Vim.Browser.source
-    if (Vim.Browser.date)
-      text .= "`n#Date: " . Vim.Browser.date
-    WinClip.SetText(text)
-    ; WinWaitActive, ahk_class TElWind,, 3
+    vim.browser.url := Clipboard
+    WinClip.Clear()
+    WinClip.SetText(Vim.SM.MakeReference())
+    Vim.SM.WaitFileLoad()
     send q
-    Vim.SM.WaitTextFocus(2000)
-    ; send ^+{down}{bs}{esc}
-    send ^a^v{esc}
+    Vim.SM.WaitTextFocus()
+    send ^a{bs}{esc}
     Vim.SM.WaitTextExit()
-    send ^+p
-    WinWaitActive, ahk_class TElParamDlg,, 0
-    ControlSetText, TEdit2, % Vim.Browser.Title
-    send !t
-    send {text}y  ; YouTube
-    send {enter}
-    sleep 20
-    ; Wait for the YT component to exist
-    ControlWait("Internet Explorer_Server2", "ahk_class TElWind",,,, 2000)
-    sleep 800  ; needed for the html component to load
-    ControlFocus, TEdit2
-    send {right}t{bs}{enter}
+    send ^v{esc}
+    Vim.SM.WaitTextExit()  ; twice so current reference is merged to the same reference in the registry
+    Vim.SM.SetElParam(Vim.browser.title, prio, "YouTube", 1)
+    prio := ""
     if (A_ThisHotkey == "~^n") {
       Clipboard := ClipSaved
       Vim.Browser.Clear()
     }
   }
 return
+
+~^+m::SetDefaultKeyboard(0x0409)  ; english-US	
 
 ; More intuitive inter-element linking, inspired by Obsidian
 ; 1. Go to the element you want to link to and press ctrl+alt+g
@@ -169,13 +148,13 @@ return
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())
 ^!k::
   link := ""
-  if (RegExMatch(Clipboard, "^https?:\/\/") || RegExMatch(Clipboard, "^file:\/\/\/")) {
+  if (RegExMatch(Clipboard, "^(https?:\/\/|file:\/\/\/)")) {
     link := Clipboard
   } else if (RegExMatch(Clipboard, "^#")) {
     link := "SuperMemoElementNo=(" . RegExReplace(Clipboard, "^#") . ")"
   }
   WinClip.Snap(ClipData)
-  if (!clip("",, true) || !link) {  ; no selection or no link
+  if (!copy(true) || !link) {  ; no selection or no link
     WinClip.Restore(ClipData)
     return
   }
@@ -184,94 +163,94 @@ return
   clip(link,, true)
   send {enter}
   Vim.State.SetNormal()
-  WinActivate, ahk_class WorkerW
-  WinActivate, ahk_class TElWind  ; refresh caret
+  Vim.Caret.SwitchToSameWindow()
   WinClip.Restore(ClipData)
 return
 
 ^!l::
-  KeyWait ctrl
-  KeyWait alt
   FormatTime, CurrTimeDisplay,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
-  Vim.State.SetMode("Vim_Normal")
   WinClip.Snap(ClipData)
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  If (Vim.HTML.ClipboardGet_HTML(Data)) {
-    ; To do: Detecting selection contents
-    ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
-      ; ToolTip("Please select text or image only.")
-      ; WinClip.Restore(ClipData)
-      ; Return
-    ; } else
-    if (!InStr(data, "<IMG")) {  ; text only
-      send {bs}^{f7}  ; set read point
-      WinGetText, VisibleText, ahk_class TElWind
-      CollName := Vim.SM.GetCollName(VisibleText)
-      CollPath := Vim.SM.GetCollPath(VisibleText)
-      LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
-      LatexFormula := Enc_Uri(LatexFormula)
-      LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
-      LatexFolderPath := CollPath . CollName . "\elements\LaTeX"
-      LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
-      InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
-      SetTimer, DownloadLatex, -1
-      FileCreateDir % LatexFolderPath
-      ImgHTML = <img alt="%Clipboard%" src="%InsideHTMLPath%">
-      clip(ImgHTML,, true, true)
-      Vim.SM.SaveHTML()
-      FileRead, HTML, % Vim.SM.GetFilePath(true)
-      if (!HTML)
-        HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
-      
-      /*
-        recommended css setting for fuck_lexicon class:
-        .fuck_lexicon {
-          position: absolute;
-          left: -9999px;
-          top: -9999px;
-        }
-      */
-      
-      fuck_lexicon = <SPAN class=fuck_lexicon>Last LaTeX to image conversion: %CurrTimeDisplay%</SPAN>
-      if (InStr(HTML, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: ")) {  ; converted before
-        send {esc}
-        Vim.SM.WaitTextExit(5000)
-        NewHTML := RegExReplace(HTML, "<SPAN class=fuck_lexicon>Last LaTeX to image conversion: (.*?)(<\/SPAN>|$)", fuck_lexicon)
-        FileDelete % HTMLPath
-        FileAppend, % NewHTML, % HTMLPath
-      } else {  ; first time conversion
-        NewHTML := HTML . "`n" . fuck_lexicon
-        Vim.SM.MoveAboveRef(true)
-        send ^+{home}{bs}  ; this way read point is kept
-        send +{down 2}{bs}  ; go down twice to makes sure all formats are deleted
-        Vim.SM.SaveHTML()
-        send ^{home}  ; put the caret on top
-        clip(NewHTML,, true, true)
+  if (!Vim.HTML.ClipboardGet_HTML(Data))
+    return
+  ; To do: Detecting selection contents
+  ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
+    ; ToolTip("Please select text or image only.")
+    ; WinClip.Restore(ClipData)
+    ; Return
+  ; } else
+
+  if (!InStr(data, "<IMG")) {  ; text only
+    send {bs}^{f7}  ; set read point
+    WinGetText, VisibleText, ahk_class TElWind
+    CollName := Vim.SM.GetCollName(VisibleText)
+    CollPath := Vim.SM.GetCollPath(VisibleText)
+    LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
+    LatexFormula := Enc_Uri(LatexFormula)
+    LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
+    LatexFolderPath := CollPath . CollName . "\elements\LaTeX"
+    LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
+    InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
+    SetTimer, DownloadLatex, -1
+    FileCreateDir % LatexFolderPath
+    ImgHTML := "<img alt=""" . Clipboard . """ src=""" . InsideHTMLPath . """>"
+    Vim.HTML.SetClipboardHTML(ImgHTML)
+    send ^v
+    HTMLPath := Vim.SM.SaveHTML("", true)
+    ; VarSetCapacity(HTML, 10240000)  ; ~10 MB
+    FileRead, HTML, % HTMLPath
+    if (!HTML)
+      HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
+    
+    /*
+      Recommended css setting for AntiMerge class:
+      .AntiMerge {
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
       }
-      Vim.SM.Reload()
-      Vim.SM.WaitTextFocus()
-      send {right}
-    } else {  ; image only
-      RegExMatch(data, "(alt=""|alt=)\K.+?(?=(""|\s+src=))", LatexFormula)  ; getting formula from alt=""
-      RegExMatch(data, "src=""file:\/\/\/\K[^""]+", LatexPath)  ; getting path from src=""
-      LatexPath := StrReplace(LatexPath, "[PrimaryStorage]", Vim.SM.GetCollPath() . "\elements\")
-      if (InStr(LatexFormula, "{\displaystyle")) {  ; from wikipedia, wikibooks, etc
-        LatexFormula := StrReplace(LatexFormula, "{\displaystyle")
-        LatexFormula := RegExReplace(LatexFormula, "}$")
-      } else if (InStr(LatexFormula, "\displaystyle{")) {  ; from Better Explained
-        LatexFormula := StrReplace(LatexFormula, "\displaystyle{")
-        LatexFormula := RegExReplace(LatexFormula, "}$")
-      }
-      LatexFormula := RegExReplace(LatexFormula, "^\s+|\s+$")  ; removing start and end whitespaces
-      LatexFormula := RegExReplace(LatexFormula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in Better Explained)
-      LatexFormula := HTML_decode(LatexFormula)
-      clip(LatexFormula, true, true)
-      FileDelete % LatexPath
-      Vim.State.SetMode("Vim_Visual")
+    */
+    
+    AntiMerge := "<SPAN class=AntiMerge>Last LaTeX to image conversion: " . CurrTimeDisplay . "</SPAN>"
+    send {esc}
+    Vim.SM.WaitTextExit()
+
+    if (InStr(HTML, "<SPAN class=AntiMerge>Last LaTeX to image conversion: ")) {  ; converted before
+      NewHTML := RegExReplace(HTML, "<SPAN class=AntiMerge>Last LaTeX to image conversion: .*?(<\/SPAN>|$)", AntiMerge)
+      FileDelete % HTMLPath
+      FileAppend, % NewHTML, % HTMLPath
+    } else {  ; first time conversion
+      FileAppend, % "`n" . AntiMerge, % HTMLPath
     }
+    Vim.SM.SaveHTML()  ; better than Vim.SM.Reload()
+    Vim.SM.WaitTextFocus()
+    send {right}
+    Vim.State.SetMode("Vim_Normal")
+
+  } else {  ; image only
+    if (InStr(data, "alt=""")) {
+      RegExMatch(data, "alt=""(.*?)""", LatexFormula)  ; getting formula from alt=""
+    } else if (InStr(data, "alt=")) {
+      RegExMatch(data, "alt=(.*?) ", LatexFormula)  ; getting formula from alt=""
+    }
+    LatexFormula := LatexFormula1
+    if (InStr(data, "src=""")) {
+      RegExMatch(data, "src=""(.*?)""", LatexPath)  ; getting formula from src=""
+    } else if (InStr(data, "src=")) {
+      RegExMatch(data, "src=(.*?) ", LatexPath)  ; getting formula from src=""
+    }
+    LatexPath := StrReplace(LatexPath1, "file:///")
+    LatexFormula := StrReplace(LatexFormula, "{\displaystyle")  ; from Wikipedia, Wikibooks, etc
+    LatexFormula := StrReplace(LatexFormula, "\displaystyle{")  ; from Better Explained
+    LatexFormula := trim(RegExReplace(LatexFormula, "}$"))
+    LatexFormula := RegExReplace(LatexFormula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in Better Explained)
+    LatexFormula := HTML_decode(LatexFormula)
+    clip(LatexFormula, true, true)
+    FileDelete % LatexPath
+    Vim.State.SetMode("Vim_Visual")
   }
   WinClip.Restore(ClipData)
 return
@@ -303,14 +282,14 @@ PlanInsertGuiClose:
 return
 
 PlanInsertButtonInsert:
+  FormatTime, CurrTime,, HH:mm
   KeyWait alt
   gui submit
   gui destroy
-  FormatTime, CurrTime,, HH:mm
   WinActivate, ahk_class TPlanDlg
   if (!NoSplit) {
     send ^t  ; split
-    WinWaitActive, ahk_class TInputDlg,, 0
+    WinWaitActive, ahk_class TInputDlg
     send {enter}
   }
   ControlSend, TStringGrid1, {down}{ins}, ahk_class TPlanDlg  ; inserting one activity below the current selected activity and start editing
@@ -380,28 +359,44 @@ return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TMyFindDlg"))
 ; So ctrl+ff (hold ctrl and press f twice) could be a shorthand for search clipboard
-^f::send ^v{enter}
+^f::
+  ControlSetText, TEdit1, % Clipboard, ahk_class TMyFindDlg
+  ControlSend, TEdit1, {enter}, ahk_class TMyFindDlg
+return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
 d::
   Vim.State.SetMode("SMVim_PlanDragging")
   MouseGetPos, XCoordSaved, YCoordSaved
-  ; Get current entry coords
+
+  ; Move to the name of current entry
+  ; x := A_CaretX, y := A_CaretY
   send {home}{right}
+  ; WaitCaretMove(x, y)
+
+  ; Get current entry coords
   x := A_CaretX, y := A_CaretY
   send {f2}  ; sometimes A_Caret isn't accurate
   ControlFocusWait("TInplaceEdit1")
   WaitCaretMove(x, y)
-  IniYCoord := A_CaretY
-  send +{tab}
-  ; Calculate entry height
-  send {down}{right}
+
+  ; Move to the next entry
+  x := A_CaretX, IniYCoord := A_CaretY
+  send +{tab}{down}{right}
+  WaitCaretMove(x, IniYCoord)
+
+  ; Show caret in next entry
   x := A_CaretX, y := A_CaretY
   send {f2}
   ControlFocusWait("TInplaceEdit1")
   WaitCaretMove(x, y)
+
+  ; Calculate entry height
+  x := A_CaretX, y := A_CaretY
   PlanEntryGap := A_CaretY - IniYCoord
   send {up}{left}  ; go back
+  WaitCaretMove(x, y)
+
   ; Move to position
   MouseMove, 20, % IniYCoord + PlanEntryGap / 2, 0
   MouseGetPos, IniXCoord, IniYCoord
@@ -410,23 +405,23 @@ return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.IsCurrentVimMode("SMVim_PlanDragging"))
 j::
-  Vim.State.n := Vim.State.n ? Vim.State.n : 1
-  MouseMove, 0, % Vim.State.n * PlanEntryGap, 0, R
+  n := Vim.State.n ? Vim.State.n : 1
+  MouseMove, 0, % n * PlanEntryGap,, R
   Vim.State.n := 0
 return
 
 k::
-  Vim.State.n := Vim.State.n ? Vim.State.n : 1
-  MouseMove, 0, % -1 * Vim.State.n * PlanEntryGap, 0, R
+  n := Vim.State.n ? Vim.State.n : 1
+  MouseMove, 0, % -1 * n * PlanEntryGap,, R
   Vim.State.n := 0
 return
 
 p::
-  MouseMove, 0, % PlanEntryGap, 0, R  ; put after
+  MouseMove, 0, % PlanEntryGap,, R  ; put after
 +p::  ; put before
   click up
   MouseGetPos, XCoord, YCoord
-  if (XCoord == IniXCoord && YCoord == IniYCoord)  ; no change
+  if (XCoord == IniXCoord && YCoord == IniYCoord && A_ThisHotkey == "+p")  ; no change
     click  ; to unfix
   MouseMove, XCoordSaved, YCoordSaved, 0
   SMVimPlanDraggingPut := true
@@ -434,30 +429,36 @@ p::
 return
 
 ; Incremental video
-#if (WinActive("ahk_group Browsers") || WinActive("ahk_class TElWind"))
+#if (Vim.State.Vim.Enabled && (WinActive("ahk_group Browsers") || WinActive("ahk_class TElWind")))
 ^!s::  ; sync time
 !+s::  ; sync time but browser tab stays open
 ^+!s::  ; sync time and keep learning
 ^!`::  ; clear time
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
+  KeyWait shift
+  KeyWait ctrl
   KeyWait alt
   if (WinActive("ahk_group Browsers") && !Vim.Browser.VidTime) {
     send {esc 2}
-    Vim.Browser.GetTitleSourceDate("", true)
+    Vim.Browser.GetTitleSourceDate("", true)  ; get title for checking later
     if (!InStr(A_ThisHotkey, "``")) {
-      Vim.Browser.VidTime := Vim.Browser.GetVidtime()
+      Vim.Browser.GetVidtime()
       if (!Vim.Browser.VidTime) {
         Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
-        if (!Vim.Browser.VidTime || ErrorLevel)
+        if (!Vim.Browser.VidTime) {
+          Vim.Browser.Clear()
           return
+        }
       }
     }
-    WinGet, hwnd, ID, A
-    if (WinGetTitle("ahk_class TElWind") != Vim.Browser.title) {
+    hwnd := WinGet("ID")
+    ; SM uses "." instead of "..." in titles
+    if (WinGetTitle("ahk_class TElWind") != StrReplace(Vim.Browser.title, "...", ".")) {
       WinActivate, ahk_class TElWind
       MsgBox, 4,, Titles don't match. Continue?
       IfMsgBox, no, {
+        WinActivate % "ahk_id " . hwnd
         Vim.Browser.Clear()
         return
       }
@@ -465,67 +466,69 @@ return
     }
     if (InStr(A_ThisHotkey, "^"))  ; hotkeys with ctrl will close the tab
       send ^w
-    WinActivate, ahk_class TElWind
-  }
-  if (!Vim.Browser.VidTime && !InStr(A_ThisHotkey, "``")) {
+    KeyWait enter  ; without this script may stuck
+  } else if (!Vim.Browser.VidTime && !InStr(A_ThisHotkey, "``")) {
+    if (!Vim.SM.IsEditingText())  ; without this script may stuck
+      send q
     Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
-    if (!Vim.Browser.VidTime || ErrorLevel)
+    if (!Vim.Browser.VidTime) {
+      Vim.Browser.Clear()
       return
-  }
-  ToolTip := EditRef := BL := false
-  if (Vim.SM.IsPassiveColl()) {
-    Vim.SM.DeselectAllComponents()
-    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-    send q^t{f9}
-    WinWaitActive, ahk_class TScriptEditor,, 0
-    ControlGetText, script, TMemo1
-    if (InStr(A_ThisHotkey, "``") || !sec)
-      sec := 0
-    if (InStr(script, "youtube.com")) {
-      replacement := "&t=" . sec . "s"
-      match := "&t=.*s"
-    } else if (InStr(script, "bilibili.com")) {
-      replacement := "&t=" . sec
-      match := "&t=.*"
-      BL := true
-    } else {
-      send {esc 2}
-      EditRef := true
-    }
-    if (!EditRef) {  ; time in script component
-      if (RegExMatch(script, match)) {
-        ControlSetText, TMemo1, % RegExReplace(script, match, replacement)
-      } else {
-        if (BL && !RegExMatch(script, "p=[0-9]+"))
-          replacement := "?" . replacement
-        ControlSetText, TMemo1, % script . replacement
-      }
-      send !o{esc}  ; close script editor
-      ToolTip := true
-    } else {  ; time in comment
-      if (InStr(A_ThisHotkey, "``"))
-        Vim.Browser.VidTime := "0:00"
-      Vim.Browser.comment := Vim.Browser.VidTime
-      Vim.SM.PostMsg(660, true)
-      WinWaitActive, ahk_class TInputDlg,, 0
-      ControlGetText, OldRef, TMemo1
-      NewComment := "`n#Comment: " . Vim.Browser.comment . "`n"
-      if (InStr(OldRef, "#Comment") && Vim.Browser.comment) {
-        NewRef := RegExReplace(OldRef, "#Comment: .*", NewComment)
-      } else {
-        NewRef := OldRef . NewComment
-      }
-      ControlSetText, TMemo1, % NewRef
-      send !{enter}
     }
   }
   WinActivate, ahk_class TElWind
+
+  if (!Vim.SM.IsEditingText())
+    send q
+  send ^t{f9}
+  WinWaitActive, ahk_class TScriptEditor,, 0
+  if (ErrorLevel) {
+    Vim.Browser.Clear()
+    return
+  }
+  ControlGetText, script, TMemo1
+  sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+  if (!sec || InStr(A_ThisHotkey, "``"))
+    sec := 0
+  EditRef := false
+  if (BL := InStr(script, "bilibili.com")) {
+    replacement := "&t=" . sec
+    match := "&t=.*"
+  } else if (InStr(script, "youtube.com")) {
+    replacement := "&t=" . sec . "s"
+    match := "&t=.*s"
+  } else {
+    WinClose, ahk_class TScriptEditor
+    send {esc}
+    EditRef := true
+  }
+
+  if (!EditRef) {  ; time in script component
+    if (RegExMatch(script, match)) {
+      ControlSetText, TMemo1, % RegExReplace(script, match, replacement)
+    } else {
+      if (BL && !RegExMatch(script, "p=[0-9]+"))
+        replacement := "?" . replacement
+      ControlSetText, TMemo1, % script . replacement
+    }
+    send !o{esc}  ; close script editor
+    ToolTip("Time stamp in script component set as " . sec . "s")
+  } else {  ; time in comment
+    if (InStr(A_ThisHotkey, "``"))
+      Vim.Browser.VidTime := "0:00"
+    Vim.Browser.comment := Vim.Browser.VidTime
+    send !{f10}fe
+    WinWaitActive, ahk_class TInputDlg
+    ControlGetText, Ref, TMemo1
+    Ref := RegExReplace(Ref, "(#Comment: .*|$)", "`r`n#Comment: " . Vim.Browser.Comment)
+    ControlSetText, TMemo1, % Ref
+    send !{enter}
+  }
+  WinWaitActive, ahk_class TElWind
   if (InStr(A_ThisHotkey, "^+!")) {
     Vim.SM.Learn()
     Vim.SM.PlayIfCertainColl()
   }
-  if (ToolTip)
-    ToolTip("Time stamp in script component set as " . sec . "s")
   Vim.Browser.Clear()
 return
 
@@ -538,6 +541,13 @@ return
   } else if (epub) {
     RegExMatch(title, ".*?(?= \|)", clip)
   }
-  Clipboard := clip
+  Clipboard := clip := trim(clip)
   ToolTip("Copied " . clip)
 return
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm"))
+!p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
+; Use English input method for choosing concept when import
+~!g::SetDefaultKeyboard(0x0409)  ; english-US	

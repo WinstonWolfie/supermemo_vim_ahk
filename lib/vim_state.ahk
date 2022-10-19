@@ -21,14 +21,9 @@
     this.Mode := "Vim_Normal"  ; the default mode when vim_ahk opens
     this.g := 0
     this.n := 0
-    this.fts := ""
-    this.FtsChar := ""
-    this.LastFts := ""
-    this.LastFtsChar := ""
     this.LineCopy := 0
     this.LastIME := 0
-    this.CurrControl := ""
-    this.PrevControl := ""
+    this.BackToNormal := 0
 
     this.StatusCheckObj := ObjBindMethod(this, "StatusCheck")
   }
@@ -56,7 +51,7 @@
     this.CheckMode(4, , , , 1)
   }
 
-  SetMode(Mode="", g=0, n=0, LineCopy=-1, fts="", NoRefresh:=false) {
+  SetMode(Mode:="", g:=0, n:=0, LineCopy:=-1, fts:="", surround:=0, leader:=0) {
     PrevMode := this.Mode
     this.CheckValidMode(Mode)
     if (Mode != "") {
@@ -66,15 +61,7 @@
       if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
-      if (!NoRefresh) {
-        NoRefresh := ((InStr(PrevMode, "Vim_") && InStr(Mode, "Vim_"))
-                   || (InStr(PrevMode, "Command") || InStr(Mode, "Command")))
-      }
-      if (A_CaretX && PrevMode != Mode && !this.Vim.IsNavigating() && !NoRefresh) {
-        this.Vim.Caret.SetCaret(this.Mode)
-      } else if (!A_CaretX || this.Vim.IsNavigating() || NoRefresh) {
-        this.Vim.Caret.SetCaret(this.Mode, true)
-      }
+      this.Vim.Caret.SetCaret(this.Mode)
     }
     if (g != -1)
       this.g := g
@@ -83,10 +70,14 @@
     if (LineCopy != -1)
       this.LineCopy := LineCopy
     this.fts := fts
+    if (surround != -1)
+      this.surround := surround
+    if (leader != -1)
+      this.leader := leader
     this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, fts)
   }
 
-  SetNormal(NoRefresh:=false) {
+  SetNormal() {
     this.LastIME := VIM_IME_Get()
     if (this.LastIME) {
       if (VIM_IME_GetConverting(A)) {
@@ -105,11 +96,15 @@
         send {left}
       }
     }
-    this.SetMode("Vim_Normal",,,,, NoRefresh)
+    this.SetMode("Vim_Normal")
   }
 
   SetInner() {
-    this.SetMode(this.Mode "Inner")
+    this.SetMode(this.Mode "Inner",,,,, -1)
+  }
+
+  SetOuter() {
+    this.SetMode(this.Mode "Outer",,,,, -1)
   }
 
   HandleEsc() {

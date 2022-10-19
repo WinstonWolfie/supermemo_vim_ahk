@@ -5,13 +5,18 @@
 ;---------------------------------------------------------------------o
 ; Description:                                                        |
 ;    This Script is wrote by Feng Ruohang via AutoHotKey Script. It   |
-; Provieds an enhancement towards the "Useless Key" CapsLock, and     |
+; Provides an enhancement towards the "Useless Key" CapsLock, and     |
 ; turns CapsLock into an useful function Key just like Ctrl and Alt   |
 ; by combining CapsLock with almost all other keys in the keyboard.   |
 ;---------------------------------------------------------------------o
 ; Use it whatever and wherever you like. Hope it help                 |
 ;=====================================================================o
 
+#if (Vim.State.Vim.Enabled && (GetKeyState("LWin", "P") || GetKeyState("RWin", "P")))
+CapsLock & j::WinMinimize, A
+CapsLock & k::WinMaximize, A
+
+#if (Vim.State.Vim.Enabled)
 ;=====================================================================o
 ;                       CapsLock Switcher:                           ;|
 ;---------------------------------o-----------------------------------o
@@ -296,7 +301,6 @@ CapsLock & F6::send {Media_Stop}                                     ;|
 ;                      CapsLock Window Controller                    ;|
 ;-----------------------------------o---------------------------------o
 ;                     CapsLock + s  |  Ctrl + Tab (Swith Tag)        ;|
-;                     CapsLock + q  |  Alt + F4   (Close Window)     ;|
 ;                     CapsLock + g  |  AppsKey    (Menu Key)         ;|
 ;-----------------------------------o---------------------------------o
 CapsLock & s::                                                       ;|
@@ -304,8 +308,6 @@ CapsLock & s::                                                       ;|
     if (Vim.IsVimGroup())                                            ;|
         Vim.State.SetMode("Insert")                                  ;|
 return                                                               ;|
-;-----------------------------------o                                ;|
-CapsLock & q::send !{f4}                                             ;|
 ;-----------------------------------o                                ;|
 CapsLock & g::                                                       ;|
     send {AppsKey}                                                   ;|
@@ -315,3 +317,11 @@ return                                                               ;|
 ;---------------------------------------------------------------------o
 
 CapsLock & tab::send !{tab}
+
+!f4::
+CapsLock & q::
+    send !{f4}
+    WinWaitActive, ahk_class QuitWindow ahk_exe HiborClient.exe,, 0
+    if (!ErrorLevel)
+        send {enter}
+return

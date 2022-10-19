@@ -12,6 +12,7 @@
 #Include %A_LineFile%\..\util\Acc.ahk
 #Include %A_LineFile%\..\util\UIA_Browser.ahk
 #Include %A_LineFile%\..\util\UIA_Interface.ahk
+#Include %A_LineFile%\..\util\UIA_Constants.ahk
 
 wc := new WinClip
 
@@ -85,8 +86,9 @@ class VimAhk {
     GroupAdd, VimDoubleHomeGroup, ahk_exe Code.exe  ; Visual Studio Code
 
     ; Followings can emulate ^. For others, ^ works as same as 0
-    GroupAdd, VimCaretMove, ahk_exe notepad.exe  ; NotePad
-    GroupAdd, VimCaretMove, ahk_exe Notepad.exe  ; NotePad
+    ; It does not work for NotePad at Windows 11
+    ; GroupAdd, VimCaretMove, ahk_exe notepad.exe  ; NotePad
+    ; GroupAdd, VimCaretMove, ahk_exe Notepad.exe  ; NotePad
 
     ; Followings start cursor from the same place after selection.
     ; Others start right/left (by cursor) point of the selection
@@ -312,10 +314,12 @@ class VimAhk {
                   , "ahk_class TPlanDlg"    ; SM Plan window
                   , "ahk_class TTaskManager"  ; SM tasklist window
                   , "ahk_class TImgDown"    ; SM download image window (ctrl+f8)
-                  , "ahk_class TChecksDlg"]  ; SM check boxes (like f6)
+                  , "ahk_class TChecksDlg"  ; SM check boxes (e.g. f6)
+                  , "ahk_class TInputDlg"   ; SM input window (e.g. editing image name)
+                  , "ahk_class TTitleEdit"  ; SM title edit window (!t)
+                  , "ahk_class TRepSortDlg"]  ; SM sort repetition window
     DefaultGroup := ""
-    for i, v in DefaultList
-    {
+    for i, v in DefaultList {
       if (DefaultGroup == "") {
         DefaultGroup := v
       } else {
@@ -329,24 +333,23 @@ class VimAhk {
     if (not this.Enabled) {
       Return False
     } else if (this.Conf["VimAppList"]["val"] == "Allow List") {
-      Return (WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")) || this.IsExceptionWindow()
+      Return ((WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")) || this.IsExceptionWindow())
     } else if (this.Conf["VimAppList"]["val"] == "Deny List") {
-      Return !WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded") && !this.IsExceptionWindow()
+      Return (!WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded") && !this.IsExceptionWindow())
     }
     Return True
   }
 
   ; Ref: https://www.reddit.com/r/AutoHotkey/comments/4ma5b8/identifying_end_of_line_when_typing_with_ahk_and/
   CheckChr(key) {
-    if (this.Conf["VimCheckChr"]["val"] == 0) {
+    if (this.Conf["VimCheckChr"]["val"] == 0)
       Return False
-    }
     BlockInput, Send
     tempClip := clipboard
-    global WInClip
-    WinClip.Clear()
+    global WinClip
+    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     send {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
-    ClipWait 0.1
+    ClipWait, LongCopy ? 0.6 : 0.2, True
     ret := False
     If (clipboard ~= key) {
       ret := True
@@ -357,19 +360,7 @@ class VimAhk {
   }
 
   IsExceptionWindow() {
-    if (WinActive("ahk_group SuperMemo") && WinActive("Choices")) {
-      ControlGetText, Button1, TGroupButton1
-      ControlGetText, Button2, TGroupButton2
-      ControlGetText, Button3, TGroupButton3
-      ControlGetText, Button4, TGroupButton4
-      ; when you change the reference of an element that shares the reference with other elements
-      ; no shortcuts there, so movement keys are used for up/down navigation
-      ; if more windows are found without shortcuts in the future, they will be all added here
-      return (Button1 == "Cancel (i.e. restore the old version of references)"
-           || Button2 == "Combine old and new references for this element"
-           || Button3 == "Change references in all elements produced from the original article"
-           || Button4 == "Change only the references of the currently displayed element")
-    }
+    return this.SM.IsChangeRefWind()
   }
   
   ParseLineBreaks(str) {
@@ -381,6 +372,8 @@ class VimAhk {
         str := StrReplace(str, "`r`n`r`n", " ")  ; turn all paragraph tags (<P>) to space
       }
       str := StrReplace(str, "`r`n", " ")  ; turn all line breaks (<BR>) to space
+      hr := "--------------------------------------------------------------------------------"  ; <hr> tag
+      str := RegExReplace(str, "  " . hr . "(  )?", "  ")
     } else {
       str := StrReplace(str, "`r")
     }
@@ -403,6 +396,3 @@ class VimAhk {
          || !A_CaretX)
   }
 }
-
-Empty:
-return

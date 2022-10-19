@@ -8,7 +8,7 @@ class VimCaret {
                  , "Default": 1}
   }
 
-  SetCaret(Mode="", NoRefresh:=false) {
+  SetCaret(Mode="") {
     if (this.Vim.Conf["VimChangeCaretWidth"]["val"] == 0)
       return
     width :=
@@ -21,32 +21,32 @@ class VimCaret {
     } else {
       width := this.caretwidths["Default"]
     }
-    if (NoRefresh) {
-      this.SetCaretWidth(width, true)
-    } else {
-      this.SetCaretWidth(width)
-    }
+    this.SetCaretWidth(width, true)
   }
 
   ; Expects argument "width" in hex
-  SetCaretWidth(width, NoRefresh:=false) {
-      CARETWIDTH := width
-      ; SPI = SystemParametersInfo
-      SPI_SETCARETWIDTH := 0x2007
-      SPIF_UPDATEINIFILE := 0x01
-      SPIF_SENDCHANGE := 0x02
-      fWinIni := SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
-      DllCall("SystemParametersInfo", UInt,SPI_SETCARETWIDTH, UInt,0, UInt,CARETWIDTH, UInt,fWinIni)
-      if (!NoRefresh)
-        this.SwitchToSameWindow()
+  SetCaretWidth(width) {
+    CARETWIDTH := width
+    ; SPI = SystemParametersInfo
+    SPI_SETCARETWIDTH := 0x2007
+    SPIF_UPDATEINIFILE := 0x01
+    SPIF_SENDCHANGE := 0x02
+    fWinIni := SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
+    DllCall("SystemParametersInfo", UInt,SPI_SETCARETWIDTH, UInt,0, UInt,CARETWIDTH, UInt,fWinIni)
+    this.SwitchToSameWindow()
   }
 
-  SwitchToSameWindow() {
-      ; Get ID of active window
-      WinGet, hwnd, ID, A
+  SwitchToSameWindow(WinTitle:="") {
+      if (WinTitle) {
+        WinActivate % WinTitle
+      } else {
+        ; Get ID of active window
+        WinTitle := "ahk_id " . WinGet("ID")
+      }
       ; Activate desktop
-      winActivate, ahk_class WorkerW
-      WinActivate % "ahk_id " . hwnd
+      ; WinActivate, ahk_class WorkerW  ; doesn't work in Win 11
+      WinActivate, ahk_class Progman
+      WinActivate % WinTitle
   }
 }
 

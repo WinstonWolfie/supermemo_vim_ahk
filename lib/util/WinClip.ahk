@@ -325,12 +325,12 @@
     return bytesCopied
   }
 
-  Paste( plainText = "", method = 1, NoRestore:=false )
+  Paste( plainText = "", method = 1, PassClip:=false )
   {
     ret := 0
     if ( plainText != "" )
     {
-      if (!NoRestore)
+      if (!PassClip)
         this.Snap( data )
       this.Clear()
       ret := this.SetText( plainText )
@@ -342,7 +342,7 @@
     this._waitClipReady( 3000 )
     if ( plainText != "" )
     {
-      if (!NoRestore)
+      if (!PassClip)
         this.Restore( data )
     }
     else

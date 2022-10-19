@@ -1,16 +1,43 @@
 ﻿; Inner mode
 #if (Vim.IsVimGroup()
   && !Vim.State.StrIsInCurrentVimMode("Inner")
+  && !Vim.State.StrIsInCurrentVimMode("Outer")
   && (Vim.State.StrIsInCurrentVimMode("Vim_ydc")
    || Vim.State.IsCurrentVimMode("Vim_VisualChar")
    || Vim.State.IsCurrentVimMode("Vim_VisualFirst")
    || Vim.State.StrIsInCurrentVimMode("SMVim_")))
 i::Vim.State.SetInner()
+a::Vim.State.SetOuter()
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Inner"))
-w::Vim.Move.Inner("w")
-s::Vim.Move.Inner("s")
-p::Vim.Move.Inner("p")
+w::
+s::
+p::
+(::
+)::
+{::
+}::
+[::
+]::
+<::
+>::
+'::Vim.Move.Inner(A_ThisHotkey)
+"::Vim.Move.Inner("""")
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Outer"))
+w::
+s::
+p::
+(::
+)::
+{::
+}::
+[::
+]::
+<::
+>::
+'::Vim.Move.Outer(A_ThisHotkey)
+"::Vim.Move.Outer("""")
 
 ; gg
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.g)
@@ -33,8 +60,8 @@ l::Vim.Move.Repeat("l")
 0::Vim.Move.Move("0")
 $::Vim.Move.Move("$")
 ^::Vim.Move.Move("^")
-+::Vim.Move.Move("+")
--::Vim.Move.Move("-")
++::Vim.Move.Repeat("+")
+-::Vim.Move.Repeat("-")
 ; Words
 w::Vim.Move.Repeat("w")
 e::Vim.Move.Move("e")
@@ -55,6 +82,8 @@ b::Vim.Move.Repeat("b")
   KeyWait Shift  ; cannot use KeyWait shift, shift will still get stuck
   Vim.Move.Move(A_ThisHotkey)
 Return
+
+'::Vim.State.SetMode("",, -1,,, -1, 1)  ; leader key
 
 ; Search
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.StrIsInCurrentVimMode("Vim_Normal"))

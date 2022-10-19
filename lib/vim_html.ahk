@@ -23,18 +23,23 @@ class VimHTML {
   Clean(str, nuke:=false) {
     ; zzz in case you used f6 in SuperMemo to remove format before,
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
-    str := RegExReplace(str, "i) (zzz)?style="".*?""")
-    str := RegExReplace(str, "i) (zzz)?style='.*?'")
-    str := RegExReplace(str, "is)<\/?(zzz)?font.*?>")
-    str := RegExReplace(str, "i)<P( .*?)?>(<BR>)+<\/P>")
-    str := RegExReplace(str, "is)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
-    str := RegExReplace(str, "i)<P( .*?)?>(&nbsp;)+<\/P>")
-    str := RegExReplace(str, "i)<DIV( .*?)?>(&nbsp;)+<\/DIV>")
+
+    ; Styles and fonts
+    str := RegExReplace(str, "i)<([^>]+)?\K (zzz)?style="".*?""(?=([^<]+)?>)")
+    str := RegExReplace(str, "i)<([^>]+)?\K (zzz)?style='.*?'(?=([^<]+)?>)")
+    str := RegExReplace(str, "is)<\/?(zzz)?font( .*?)?>")
+    str := RegExReplace(str, "i)<([^>]+)?\K bgColor=[^ >]+(?=([^<]+)?>)")
+
+    ; Scripts
     str := RegExReplace(str, "i)<(zzz)?iframe( .*?)?>.*?<\/(zzz)?iframe>")
     str := RegExReplace(str, "i)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
+
+    str := RegExReplace(str, "is)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
+
     if (nuke) {
-      str := RegExReplace(str, "i)( class| id)=[^ >]+")
-      str := RegExReplace(str, "i) class=""[^""]+""")
+      ; Classes
+      str := RegExReplace(str, "i)<([^>]+)?\K class="".*?""(?=([^<]+)?>)")
+      str := RegExReplace(str, "i)<([^>]+)?\K class=[^ >]+(?=([^<]+)?>)")
     }
     return str
   }
@@ -54,7 +59,8 @@ class VimHTML {
         . ":00000000`r`nEndFragment:00000000`r`n<!DOCTYPE>`r`n<html>`r`n<head>`r`n"
               ; . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->`r`n"
               . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->"
-                . HtmlBody . "`r`n<!--EndFragment -->`r`n</body>`r`n</html>"
+                . HtmlBody . "<!--EndFragment -->`r`n</body>`r`n</html>"
+                ; . HtmlBody . "`r`n<!--EndFragment -->`r`n</body>`r`n</html>"
 
     Bytes    := StrPut(Html, "utf-8")
     hMemHTM  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",Bytes+4, "Ptr")

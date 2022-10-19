@@ -7,21 +7,32 @@
 ~Insert::
 ~NumpadIns::
 ~!m::  ; menu
+#if (Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")))
+~!a::  ; new item and new registry entry
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
-~!a::  ; new item
 ~!n::  ; new topic
-~^+f6::  ; open source in notepad
   Vim.State.SetMode("Insert")
 Return
 
+#if (Vim.State.Vim.Enabled && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")) && !Vim.SM.IsEditingText())
+~!r::
+  WinWaitActive, ahk_class TInputDlg,, 0
+  if (!ErrorLevel)
+    Vim.State.SetMode("Insert")
+return
+
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))
 !h::  ; change hours
-  ; click 320 50
   ControlFocus, TEdit1, A
   Vim.State.SetMode("Insert")
 Return
 
+~^t::  ; split
+  Vim.State.SetMode("Insert")
+  Vim.State.BackToNormal := 1
+return
+
 #if Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal")) && WinActive("ahk_group SuperMemo")
 ~RButton::  ; this button is evil and sacrilegious to the purity of Vim. Adding it anyway since someone might need it in the adjusting period
-  Vim.State.SetMode("Insert",,,,, true)
+  Vim.State.SetMode("Insert")
 Return

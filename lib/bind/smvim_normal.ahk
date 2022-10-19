@@ -79,14 +79,13 @@ s::  ; gs: go to source
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 f::  ; gf: open source file
   Vim.State.SetMode()
-  WinGet, hwnd, ID, A
+  hwnd := WinGet("ID")
   path := Vim.SM.GetFilePath()
   SplitPath, path,,, ext
+  ContinueLearning := Vim.SM.IsLearning()
   if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
-    ContinueLearning := false
     run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
   } else {
-    ContinueLearning := Vim.SM.IsLearning()
     send ^{f7}
     Vim.SM.SaveHTML()
     send {esc}  ; leave html
@@ -103,22 +102,13 @@ f::  ; gf: open source file
   }
 return
 
-u::  ; gu: go up
-  send ^{up}
-  Vim.State.SetMode()
-Return
-
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser") && Vim.State.g)
 +u::  ; gU: click source button
-	KeyWait shift
-  if (WinActive("ahk_class TElWind")) {
-    Vim.SM.ClickElWindSourceBtn()
-  } else if (WinActive("ahk_class TBrowser")) {
-    Vim.SM.ClickBrowserSourceButton()
-  }
+  Vim.SM.ClickBrowserSourceButton()
   Vim.State.SetMode()
 Return
 
-#if (Vim.State.Vim.Enabled
+#if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (WinActive("ahk_class TElWind")
    || WinActive("ahk_class TContents")
