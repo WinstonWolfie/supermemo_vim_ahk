@@ -130,6 +130,7 @@ return
   WinClip.Snap(ClipData)
   hwnd := WinGet("ID")
   IncWB := InStr(A_ThisHotkey, "x")
+  ImportDlg := InStr(A_ThisHotkey, "+")
   CurrText := WinGetText("ahk_class TElWind")
   CollName := Vim.SM.GetCollName(CurrText)
   PC := Vim.SM.IsPassiveColl(CollName)
@@ -146,12 +147,36 @@ return
   if (vim.sm.CheckDup(vim.browser.url, false))
     MsgBox, 4,, Continue import?
   WinActivate % "ahk_id " . hwnd
-  WinClose, ahk_class TBrowser  ; before WinActivate would make element window focus again
+  WinClose, ahk_class TBrowser
+  ; Have to put below WinActivate, otherwise would make element window focus again
   ; Cannot use SetTimer for SM.ClearUp(), exceeds recursion limit
   ; ClearUp := Vim.SM.ClearUp
   ; SetTimer, % ClearUp, -1
   IfMsgBox no
     goto ImportReturn
+
+  prio := concept := ""
+  if (ImportDlg) {
+    SetDefaultKeyboard(0x0409)  ; english-US	
+    gui, SMImport:Add, Text,, &Priority:
+    gui, SMImport:Add, Edit, vPrio
+    gui, SMImport:Add, Text,, &Concept:
+    gui, SMImport:Add, Edit, vConcept
+    gui, SMImport:Add, Button, default, &Import
+    gui, SMImport:Show,, SuperMemo Import
+    return
+  }
+
+SMImportButtonImport:
+  if (A_ThisLabel == "SMImportButtonImport") {
+    ; Without KeyWait WinActivate below could fail???
+    KeyWait enter
+    KeyWait alt
+    gui submit
+    gui destroy
+    WinActivate % "ahk_id " . hwnd
+  }
+
   HTMLText := PC ? "" : clip("",, true, true)
   Vim.Browser.GetTitleSourceDate(true)
   SMVidImport := (PC || (!HTMLText && vim.browser.VidSite))
@@ -195,26 +220,6 @@ Title : " . Vim.Browser.Title . "
     InfoToolTip .= "`nTime stamp: " . Vim.Browser.VidTime
   ToolTip(InfoToolTip)
 
-  prio := concept := ""
-  if (InStr(A_ThisHotkey, "+")) {
-    SetDefaultKeyboard(0x0409)  ; english-US	
-    gui, SMImport:Add, Text,, &Priority:
-    gui, SMImport:Add, Edit, vPrio
-    gui, SMImport:Add, Text,, &Concept:
-    gui, SMImport:Add, Edit, vConcept
-    gui, SMImport:Add, Button, default, &Import
-    gui, SMImport:Show,, SuperMemo Import
-    return
-  }
-
-SMImportButtonImport:
-  if (A_ThisLabel == "SMImportButtonImport") {
-    KeyWait enter  ; without this WinActivate below could fail???
-    KeyWait alt
-    gui submit
-    gui destroy
-  }
-  ToolTip("Import processing...", true)
   if (IncWB) {
     ; ControlSend,, {alt down}{shift down}h{shift up}{alt up}, % "ahk_id " . hwnd  ; not reliable
     send !+h
@@ -291,11 +296,11 @@ SMImportButtonImport:
   if (!refreshed)
     Vim.SM.reload(0, 1)
 
-ImportReturn:
 SMImportGuiEscape:
 SMImportGuiClose:
   if A_ThisLabel contains SMImportGuiEscape,SMImportGuiClose
     gui destroy
+ImportReturn:
   Vim.SM.ClearHighlight()
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
