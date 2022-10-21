@@ -7,13 +7,13 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 *::
   KeyWait shift
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^{Left}+^{Right}^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   send ^f
   send ^v!f
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
   Vim.State.SetMode("Insert")
 Return
 

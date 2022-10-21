@@ -7,15 +7,15 @@ class VimBrowser {
     this.title := this.url := this.source := this.date := this.VidTime := this.comment := this.VidSite := ""
   }
 
-  GetInfo(PassClip:=false, SkipCopy:=false) {
+  GetInfo(RestoreClip:=true, SkipCopy:=false) {
     this.clear()
     global WinClip
-    if (!PassClip)
-      WinClip.Snap(ClipData)
-    this.GetUrl(1, true)
-    this.GetTitleSourceDate(true, SkipCopy)
-    if (!PassClip)
-      WinClip.Restore(ClipData)
+    if (RestoreClip)
+      ClipSaved := ClipboardAll
+    this.GetUrl(0, false)
+    this.GetTitleSourceDate(false, SkipCopy)
+    if (RestoreClip)
+      Clipboard := ClipSaved
   }
 
   ParseUrl(url) {
@@ -33,8 +33,8 @@ class VimBrowser {
     return url
   }
 
-  GetTitleSourceDate(PassClip:=false, SkipCopy:=false) {
-    this.Title := this.RemoveBrowserName(WinGetActiveTitle())
+  GetTitleSourceDate(RestoreClip:=true, SkipCopy:=false) {
+    this.Title := this.RemoveBrowserName(WinGetTitle())
     this.VidSite := this.IsVidSite(this.title)
     if (!this.url)
       this.url := this.GetAddressBarUrl(1)
@@ -101,16 +101,18 @@ class VimBrowser {
       this.source := "CliffsNotes"
     } else if (InStr(this.url, "w3schools.com")) {
       this.source := "W3Schools"
+    } else if (InStr(this.url, "news-medical.net")) {
+      this.source := "News-Medical"
 
     ; Sites that should be skipped
-    } else if (InStr(this.Url, "mp.weixin.qq.com")) {
+    } else if (IfContains(this.Url, "mp.weixin.qq.com,blackrock.com")) {
       return
 
     ; Sites that require special attention
     } else if (RegExMatch(this.title, " - YouTube$")) {
       this.source := "YouTube"
       this.title := StrReplace(this.title, " - YouTube")
-      if (!SkipCopy && text := this.GetFullPage("", PassClip)) {
+      if (!SkipCopy && text := this.GetFullPage("", RestoreClip)) {
         this.VidTime := this.MatchYTTime(text)
         this.date := this.MatchYTDate(text)
         this.source .= ": " . this.MatchYTSource(text)
@@ -118,7 +120,7 @@ class VimBrowser {
     } else if (RegExMatch(this.Title, "_哔哩哔哩_bilibili$")) {
       this.Source := "哔哩哔哩"
       this.Title := StrReplace(this.Title, "_哔哩哔哩_bilibili")
-      if (!SkipCopy && text := this.GetFullPage("", PassClip)) {
+      if (!SkipCopy && text := this.GetFullPage("", RestoreClip)) {
         this.VidTime := this.MatchBLTime(text)
         this.date := this.MatchBLDate(text)
         this.source .= "：" . this.MatchBLSource(text)
@@ -149,24 +151,24 @@ class VimBrowser {
     }
   }
 
-  GetFullPage(title:="", PassClip:=false) {
+  GetFullPage(title:="", RestoreClip:=true) {
     if (!title)
-      title := this.RemoveBrowserName(WinGetActiveTitle())
+      title := this.RemoveBrowserName(WinGetTitle())
     global WinClip
-    if (!PassClip)
-      WinClip.Snap(ClipData)
+    if (RestoreClip)
+      ClipSaved := ClipboardAll
     if (vid := RegExMatch(title, "_哔哩哔哩_bilibili$")) {
       MouseGetPos, XSaved, YSaved
       MouseMove, % A_ScreenWidth / 2, % A_ScreenHeight / 2
     }
     WinClip.Clear()
-    send {esc 2}^a^c{esc}
+    send {esc 2}^a^{ins}{esc}
     ClipWait 1.5
     text := Clipboard
     if (vid)
       MouseMove, XSaved, YSaved
-    if (!PassClip)
-      WinClip.Restore(ClipData)
+    if (RestoreClip)
+      Clipboard := ClipSaved
     return text
   }
 
@@ -182,7 +184,7 @@ class VimBrowser {
       cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
       return cUIA.GetCurrentURL(true)
     } else {
-      hwnd := hwnd ? hwnd : WinGet("ID")
+      hwnd := hwnd ? hwnd : WinGet()
       if (browser = "chrome" || WinActive("ahk_exe chrome.exe")) {
         accAddressBar := Acc_Get("Object", "4.1.1.2.1.2.5.3",, "ahk_id " . hwnd)
       } else if (browser = "edge" || WinActive("ahk_exe msedge.exe")) {
@@ -192,44 +194,44 @@ class VimBrowser {
     }
   }
 
-  GetVidTime(title:="", FullPageText:="", PassClip:=false) {
+  GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     if (!title)
-      title := this.RemoveBrowserName(WinGetActiveTitle())
+      title := this.RemoveBrowserName(WinGetTitle())
     if (!this.IsVidSite(title))
       return
     global WinClip
-    if (!PassClip)
-      WinClip.Snap(ClipData)
+    if (RestoreClip)
+      ClipSaved := ClipboardAll
     WinClip.Clear()
     if (!FullPageText)
-      FullPageText := this.GetFullPage(title, true)
+      FullPageText := this.GetFullPage(title, false)
     if (RegExMatch(title, " - YouTube$")) {
       VidTime := this.MatchYTTime(FullPageText)
     } else if (RegExMatch(title, "_哔哩哔哩_bilibili$")) {
       VidTime := this.MatchBLTime(FullPageText)
     }
-    if (!PassClip)
-      WinClip.Restore(ClipData)
+    if (RestoreClip)
+      Clipboard := ClipSaved
     return this.VidTime := VidTime
   }
 
-  GetUrl(method:=0, PassClip:=false) {
+  GetUrl(method:=0, RestoreClip:=true) {
     if (!method) {
       if (!this.title)
-        this.title := this.RemoveBrowserName(WinGetActiveTitle())
+        this.title := this.RemoveBrowserName(WinGetTitle())
       if (this.title = "New Tab")
         return
       send {f6}^l  ; go to address bar
       global WinClip
-      if (!PassClip)
-        WinClip.Snap(ClipData)
+      if (RestoreClip)
+        ClipSaved := ClipboardAll
       WinClip.Clear()
       while (!Clipboard)
         send ^l^c
       this.url := this.ParseUrl(Clipboard)
       send {esc}
-      if (!PassClip)
-        WinClip.Restore(ClipData)
+      if (RestoreClip)
+        Clipboard := ClipSaved
       return this.url
     } else {
       cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
@@ -244,7 +246,7 @@ class VimBrowser {
   }
 
   MatchYTSource(text) {
-    RegExMatch(text, "SAVE(\r\n){3}\K.*", VidTime)
+    RegExMatch(text, "i)SAVE(\r\n){3}\K.*", VidTime)
     return VidTime
   }
 
@@ -280,7 +282,7 @@ class VimBrowser {
 
   IsVidSite(title:="") {
     if (!title)
-      title := this.RemoveBrowserName(WinGetActiveTitle())
+      title := this.RemoveBrowserName(WinGetTitle())
     return RegExMatch(title, "( - YouTube|_哔哩哔哩_bilibili)$")
   }
 }

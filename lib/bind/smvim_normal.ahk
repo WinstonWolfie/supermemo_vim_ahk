@@ -26,7 +26,7 @@ Return
 +x::
 x::  ; open hyperlink in current caret position (Open in *n*ew window)
   KeyWait shift
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send +{right}^c{left}
   ClipWait, LongCopy ? 0.6 : 0.2, True
@@ -72,14 +72,14 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
     }
   }
   Vim.State.SetMode()
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 s::  ; gs: go to source
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 f::  ; gf: open source file
   Vim.State.SetMode()
-  hwnd := WinGet("ID")
+  hwnd := WinGet()
   path := Vim.SM.GetFilePath()
   SplitPath, path,,, ext
   ContinueLearning := Vim.SM.IsLearning()

@@ -75,9 +75,10 @@ return
 
 ^!t::
   KeyWait alt
+  KeyWait ctrl
   if (Vim.SM.IsEditingText()) {
     Vim.SM.DeselectAllComponents()
-    sleep 20  ; to make sure all components are de-focused
+    sleep 40  ; to make sure all components are de-focused
   }
   Vim.SM.SetTitle()
 return
@@ -113,12 +114,13 @@ SMCtrlN:
 ~^n::
   Vim.State.SetMode("Vim_Normal")
   if (InStr(Clipboard, "youtube.com")) {
-    WinClip._waitClipReady()
+    sleep 100
+    WinClip._waitClipReady()  ; double insurance
     if (A_ThisHotkey == "~^n")
       ClipSaved := ClipboardAll
     vim.browser.url := Clipboard
     WinClip.Clear()
-    WinClip.SetText(Vim.SM.MakeReference())
+    WinClip.SetText(vim.browser.title . "`n" . Vim.SM.MakeReference())
     Vim.SM.WaitFileLoad()
     send q
     Vim.SM.WaitTextFocus()
@@ -126,8 +128,8 @@ SMCtrlN:
     Vim.SM.WaitTextExit()
     send ^v{esc}
     Vim.SM.WaitTextExit()  ; twice so current reference is merged to the same reference in the registry
-    Vim.SM.SetElParam(Vim.browser.title, prio, "YouTube", 1)
-    prio := ""
+    Vim.SM.SetElParam(vim.browser.title, prio, "YouTube")
+    vim.browser.title := prio := ""
     if (A_ThisHotkey == "~^n") {
       Clipboard := ClipSaved
       Vim.Browser.Clear()
@@ -153,24 +155,24 @@ return
   } else if (RegExMatch(Clipboard, "^#")) {
     link := "SuperMemoElementNo=(" . RegExReplace(Clipboard, "^#") . ")"
   }
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   if (!copy(true) || !link) {  ; no selection or no link
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     return
   }
   send ^k
   WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2  ; a bit more delay since everybody knows how slow IE can be
-  clip(link,, true)
+  clip(link,, false)
   send {enter}
   Vim.State.SetNormal()
   Vim.Caret.SwitchToSameWindow()
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 ^!l::
   FormatTime, CurrTimeDisplay,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
@@ -179,7 +181,7 @@ return
   ; To do: Detecting selection contents
   ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
     ; ToolTip("Please select text or image only.")
-    ; WinClip.Restore(ClipData)
+    ; Clipboard := ClipSaved
     ; Return
   ; } else
 
@@ -248,11 +250,11 @@ return
     LatexFormula := trim(RegExReplace(LatexFormula, "}$"))
     LatexFormula := RegExReplace(LatexFormula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in Better Explained)
     LatexFormula := HTML_decode(LatexFormula)
-    clip(LatexFormula, true, true)
+    clip(LatexFormula, true, false)
     FileDelete % LatexPath
     Vim.State.SetMode("Vim_Visual")
   }
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 DownloadLatex:
@@ -429,16 +431,15 @@ p::
 return
 
 ; Incremental video
-#if (Vim.State.Vim.Enabled && (WinActive("ahk_group Browsers") || WinActive("ahk_class TElWind")))
+#if (Vim.State.Vim.Enabled && ((WinActive("ahk_group Browsers") && WinExist("ahk_class TElWind")) || WinActive("ahk_class TElWind")) && Vim.SM.IsPassiveColl())
 ^!s::  ; sync time
 !+s::  ; sync time but browser tab stays open
 ^+!s::  ; sync time and keep learning
 ^!`::  ; clear time
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
-  KeyWait shift
-  KeyWait ctrl
   KeyWait alt
+  KeyWait ctrl
   if (WinActive("ahk_group Browsers") && !Vim.Browser.VidTime) {
     send {esc 2}
     Vim.Browser.GetTitleSourceDate("", true)  ; get title for checking later
@@ -452,7 +453,7 @@ return
         }
       }
     }
-    hwnd := WinGet("ID")
+    hwnd := WinGet()
     ; SM uses "." instead of "..." in titles
     if (WinGetTitle("ahk_class TElWind") != StrReplace(Vim.Browser.title, "...", ".")) {
       WinActivate, ahk_class TElWind
@@ -533,7 +534,7 @@ return
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
-                      && (title := WinGetActiveTitle())
+                      && (title := WinGetTitle())
                       && (RegExMatch(title, "(?<=^p)[0-9]+(?= )", page) || epub := InStr(title, "|")))
 !s::
   if (page) {

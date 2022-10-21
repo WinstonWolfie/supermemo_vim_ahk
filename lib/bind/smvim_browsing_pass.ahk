@@ -95,8 +95,8 @@ _::
 <::
 .::
 >::
-Space::
-  send {%A_ThisHotkey%}
+; Space::
+  send % "{" . A_ThisHotkey . "}"
 Return
 
 ~^d::  ; dismiss; vim scroll down

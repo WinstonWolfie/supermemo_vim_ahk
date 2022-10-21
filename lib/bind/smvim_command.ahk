@@ -53,12 +53,14 @@ NukeHTML:
 Return
 
 l::  ; *l*ink concept
-  Vim.SM.PostMsg(644, true)
+  send !{f10}cl
+  ; Vim.SM.PostMsg(644, true)
   Vim.State.SetMode("Vim_Normal")
 return
 
 +l::  ; list links
-  Vim.SM.PostMsg(652, true)
+  send !{f10}cs
+  ; Vim.SM.PostMsg(652, true)
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -164,7 +166,7 @@ s::  ; turn active language item to passive (*s*witch)
   Vim.SM.DeselectAllComponents()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
-  hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
+  hwnd := ControlGet("",, "Internet Explorer_Server2")
   send ^+s
   ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
   send ^t
@@ -185,7 +187,7 @@ return
 +s::
   KeyWait shift
   Vim.State.SetMode("Vim_Normal")
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   Vim.SM.DeselectAllComponents()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
@@ -200,13 +202,13 @@ return
   ClipWait
   send {esc}
   Vim.SM.WaitTextExit()
-  hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
+  hwnd := ControlGet("",, "Internet Explorer_Server2")
   send ^+s
   ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
   send ^t
   Vim.SM.WaitTextFocus()
   send ^v{left 2}{esc}
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 +p::

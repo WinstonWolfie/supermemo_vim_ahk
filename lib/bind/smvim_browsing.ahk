@@ -102,14 +102,14 @@ r::  ; reload
   ; which requires status bar text detection
   ContinueGrading := Vim.SM.IsGrading()
   ContinueLearning := ContinueGrading ? 0 : Vim.SM.IsLearning()
-  CurrTitle := WinGetActiveTitle()
+  CurrTitle := WinGetTitle()
   send !{home}
   if (ContinueLearning) {
     Vim.SM.Learn()
     Vim.SM.WaitFileLoad()
     ; When r is pressed, the review score in an item is submitted,
     ; thus refreshing and learning takes SM to a new element
-    if (ContinueLearning == 2 && CurrTitle != WinGetActiveTitle())
+    if (ContinueLearning == 2 && CurrTitle != WinGetTitle())
       send !{left 2}
   } else if (ContinueGrading) {
     Vim.SM.Learn()
@@ -219,7 +219,7 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan())
 s::
   ; ControlClickWinCoord(253, 48)  ; *s*witch plan
-  accButton := Acc_Get("Object", "4.1.4.1.4.1.4",, "ahk_id " . WinGet("ID"))
+  accButton := Acc_Get("Object", "4.1.4.1.4.1.4",, "ahk_id " . WinGet())
   accButton.accDoDefaultAction(2)
   ControlFocus, Edit1
 return
@@ -228,7 +228,7 @@ b::send !b  ; begin
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingTask())
 s::
   ; ControlClickWinCoord(153, 52)  ; *s*witch tasklist
-  accButton := Acc_Get("Object", "4.3.4.1.4",, "ahk_id " . WinGet("ID"))
+  accButton := Acc_Get("Object", "4.3.4.1.4",, "ahk_id " . WinGet())
   accButton.accDoDefaultAction(2)
   ControlFocus, Edit1
 return
@@ -425,7 +425,7 @@ SMSearchAgain:
         gosub ClozeStay
       }
     } else if (!CtrlState) {  ; alt is up and ctrl is up; shift can be up or down
-      Vim.Caret.SwitchToSameWindow()  ; to refresh caret
+      Vim.Caret.SwitchToSameWindow("ahk_class TElWind")  ; to refresh caret
     } else if (CtrlState) {  ; sometimes SM doesn't focus to anything after the search
       WinActivate, ahk_class TElWind
       if (!ControlGetFocus())

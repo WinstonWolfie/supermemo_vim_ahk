@@ -34,7 +34,7 @@ Return
 ; Commander, can be launched anywhere as long as the script is enabled
 #if (Vim.State.Vim.Enabled && !Vim.State.IsCurrentVimMode("Command"))
 ^`;::
-  hwnd := WinGet("ID")
+  hwnd := WinGet()
   gui, VimCommander:Add, Text,, &Command:
 
   list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search"
@@ -46,6 +46,7 @@ Return
         . "|Acc Viewer|Translate (Google)|Clear clipboard|Forcellini|RAE"
         . "|Show selection as html|Oxford Advanced Learner's Dictionary"
         . "|Alatius: a Latin macronizer|UIA Viewer"
+        . "|Register clipboard to Vim.Browser.VidTime"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list .= "|Set current element as concept hook"
@@ -270,17 +271,17 @@ DiscordGoLive:
 return
 
 CopyCurrentWindowsTitle:
-  Clipboard := WinGetActiveTitle()
-  ToolTip("Copied " . WinGetActiveTitle())
+  Clipboard := WinGetTitle()
+  ToolTip("Copied " . WinGetTitle())
 return
 
 CopyAsHTML:
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (!Clipboard) {
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     return
   }
   if (Vim.HTML.ClipboardGet_HTML(data)) {
@@ -382,7 +383,7 @@ RAE:
 return
 
 ShowSelectionAsHTML:
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
@@ -394,7 +395,7 @@ ShowSelectionAsHTML:
       return
     }
   }
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 OxfordAdvancedLearnersDictionary:
@@ -429,7 +430,7 @@ return
 
 ; Personal: Reformat my old incremental video topics
 ReformatScriptComponent:
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   WinWaitActive, ahk_class TElWind
   KeyWait alt
   KeyWait enter
@@ -465,7 +466,7 @@ ReformatScriptComponent:
   }
   if (ContinueLearning)
     send {enter}
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
 return
@@ -531,28 +532,29 @@ return
 
 ; Personal: Reformat my old vocabulary items
 ReformatVocab:
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   if (!Vim.SM.IsEditingHTML()) {
     send q
     Vim.SM.WaitTextFocus()
-    WinClip.Clear()
-    send ^a^c
-    ClipWait 0.6
   }
+  WinClip.Clear()
+  send ^a^c
+  ClipWait 0.6
   Vim.HTML.ClipboardGet_HTML(data)
   RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
   data := RegExReplace(data, "(\.<BR>""|\. \r\n<P>‘)", "<P>")
-  data := RegExReplace(data, "m)(""($|\s+)|’<\/P>)", "</P>")
+  data := RegExReplace(data, "m)(""|’)($|\s+)?(<\/P>|<BR>)", "</P>")
   data := StrReplace(data, "<P></P>")
   SynPos := RegExMatch(data, "<P>(Similar|Synonyms)")
   def := SubStr(data, 1, SynPos - 1)
   SynAndAnt := SubStr(data, SynPos)
   SynAndAnt := StrReplace(SynAndAnt, "; ", ", ")
   SynAndAnt := RegExReplace(SynAndAnt, "((Similar:?)<BR>|Synonyms(<\/P>\r\n<P>|<BR>))", "syn: ")
-  SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?)<BR>", "ant: ")
-  Clip(def . SynAndAnt,, true, true)
-  WinClip.Restore(ClipData)
+  SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?|Opuesta)<BR>", "ant: ")
+  Clip(def . SynAndAnt,, false, true)
+  Clipboard := ClipSaved
+  Vim.State.SetMode("Vim_Normal")
 return
 
 ZLibrary:
@@ -603,4 +605,9 @@ return
 
 OpenScriptSettings:
   Vim.Setting.ShowGui()
+return
+
+RegisterClipboardToVimBrowserVidTime:
+  Vim.Browser.VidTime := Clipboard
+  ToolTip("Vim.Browser.VidTime = " . Vim.Browser.VidTime)
 return

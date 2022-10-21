@@ -1,9 +1,7 @@
-﻿#if (Vim.IsVimGroup() && !WinActive("ahk_class TPlanDlg") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
-; in Plan window pressing enter simply goes to the next field; no need to go back to normal
-; in element window pressing enter to learn goes to normal
-~enter up::
-#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
-~space up::  ; for Learn button
+﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+; For Learn button
+~enter::  ; enter up doesn't work
+~space up::
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would add a {left}
   if (!Vim.SM.PlayIfCertainColl())
     Vim.SM.EnterInsertIfSpelling()

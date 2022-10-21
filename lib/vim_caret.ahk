@@ -41,7 +41,7 @@ class VimCaret {
         WinActivate % WinTitle
       } else {
         ; Get ID of active window
-        WinTitle := "ahk_id " . WinGet("ID")
+        WinTitle := "ahk_id " . WinGet()
       }
       ; Activate desktop
       ; WinActivate, ahk_class WorkerW  ; doesn't work in Win 11

@@ -109,7 +109,7 @@ space::
   if (InStr(Vim.State.fts, "s")) {
     if (!Vim.State.FtsChar) {
       Vim.State.FtsChar := CurrHotkey
-      Return
+      return
     } else {
       Vim.State.LastFtsChar := Vim.State.FtsChar .= CurrHotkey
     }
@@ -118,10 +118,14 @@ space::
   }
   Vim.State.LastFts := Vim.State.fts
   Vim.Move.Move(Vim.State.fts)
-Return
+return
+
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
+s::Vim.State.SetMode("",, -1,, "s")
++s::Vim.State.SetMode("",, -1,, "+s")
 
 #if (Vim.IsVimGroup()
-  && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
+  && (Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("Cloze"))
   && !Vim.State.StrIsInCurrentVimMode("Inner")
   && !Vim.State.StrIsInCurrentVimMode("Outer")
   && !Vim.State.g)
@@ -130,8 +134,9 @@ s::Vim.State.SetMode("",, -1,, "s")
 
 #if (Vim.IsVimGroup()
   && Vim.State.StrIsInCurrentVimMode("Vim_")
-  && !Vim.State.StrIsInCurrentVimMode("Vim_Normal")
-  && !Vim.State.StrIsInCurrentVimMode("Vim_Visual")
+  && !Vim.State.IsCurrentVimMode("Vim_Normal")
+  && !Vim.State.StrIsInCurrentVimMode("Visual")
+  && !Vim.State.StrIsInCurrentVimMode("Cloze")
   && !Vim.State.g
   && !Vim.State.StrIsInCurrentVimMode("Inner")
   && !Vim.State.StrIsInCurrentVimMode("Outer"))
@@ -150,7 +155,7 @@ Return
 
 ,::
   Vim.State.FtsChar := Vim.State.LastFtsChar
-  if InStr(Vim.State.LastFts, "+") {
+  if (InStr(Vim.State.LastFts, "+")) {
     FtsReversed := StrReplace(Vim.State.LastFts, "+")
   } else {
     FtsReversed := "+" . Vim.State.LastFts

@@ -28,7 +28,6 @@
 
 !+v::
   Clipboard := Clipboard
-  ClipWait
   send ^v
 return
 
@@ -81,7 +80,7 @@ return
 Return
 
 ^!t::  ; copy title
-  Vim.Browser.GetInfo(true, true)
+  Vim.Browser.GetInfo(false, true)
   ToolTip("Copied " . Vim.Browser.Title)
   Clipboard := Vim.Browser.Title
   Vim.Browser.Clear()
@@ -97,13 +96,13 @@ return
 return
 
 ^!d::  ; parse similar and opposite in google *d*efine
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   WinClip.Clear()
   send ^c
   ClipWait 0.6
   if (ErrorLevel) {
     ToolTip("Text not found.")
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     return
   }
   TempClip := RegExReplace(Clipboard, "(Similar|Synonymes).*\r\n", "`r`nsyn: ")
@@ -113,7 +112,7 @@ return
   TempClip := RegExReplace(TempClip, "(\r\n\K""|""(\r\n)?(?=\r\n))", "`r`n")
   TempClip := RegExReplace(TempClip, """$(?!\r\n)")
   TempClip := StrLower(SubStr(TempClip, 1, 1)) . SubStr(TempClip, 2)  ; make the first letter lower case
-  Clipboard := TempClip := StrReplace(TempClip, "vulgar slang", "vulgar slang > ")
+  Clipboard := TempClip := StrReplace(TempClip, "Vulgar slang:", "Vulgar slang: ")
   ToolTip("Copied:`n" . TempClip)
 return
 
@@ -127,8 +126,8 @@ return
   FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
   GetAddressBarUrlDone := false
   SetTimer, GetAddressBarUrl, -1
-  WinClip.Snap(ClipData)
-  hwnd := WinGet("ID")
+  ClipSaved := ClipboardAll
+  hwnd := WinGet()
   IncWB := InStr(A_ThisHotkey, "x")
   ImportDlg := InStr(A_ThisHotkey, "+")
   CurrText := WinGetText("ahk_class TElWind")
@@ -177,17 +176,17 @@ SMImportButtonImport:
     WinActivate % "ahk_id " . hwnd
   }
 
-  HTMLText := PC ? "" : clip("",, true, true)
-  Vim.Browser.GetTitleSourceDate(true)
+  HTMLText := PC ? "" : clip("",, false, true)
+  Vim.Browser.GetTitleSourceDate(false)
   SMVidImport := (PC || (!HTMLText && vim.browser.VidSite))
   if (!HTMLText && !SMVidImport) {
     send ^a
-    HTMLText := clip("",, true, true)
+    HTMLText := clip("",, false, true)
     send {esc}
     if (!HTMLText)
       goto ImportReturn
   }
-  Vim.Browser.GetUrl(1, true)
+  Vim.Browser.GetUrl(0, false)
 
   if (SMVidImport) {
     WinClip.Clear()
@@ -267,9 +266,9 @@ Title : " . Vim.Browser.Title . "
     ; Vim.SM.WaitTextExit()
   }
 
-  if (!IncWB && !prio) {
+  if (vim.browser.title && !IncWB && !prio) {
     Vim.SM.SetTitle(Vim.Browser.title)
-  } else if (IncWB && prio) {
+  } else if ((IncWB || !vim.browser.title) && prio) {
     ; Cannot just send the priority, might send into the wrong window
     send {alt down}
     PostMessage, 0x0104, 0x50, 1<<29,, ahk_class TElWind  ; P key
@@ -278,8 +277,8 @@ Title : " . Vim.Browser.Title . "
     WinWait, ahk_class TPriorityDlg
     ControlSetText, TEdit5, % prio, ahk_class TPriorityDlg
     ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
-  } else if (prio) {
-    Vim.SM.SetElParam(vim.browser.title, prio,, 1)
+  } else if (vim.browser.title && prio) {
+    Vim.SM.SetElParam(vim.browser.title, prio)
   }
 
   if (refreshed := concept) {
@@ -304,7 +303,7 @@ ImportReturn:
   Vim.SM.ClearHighlight()
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
   goto RemoveToolTip
 return
 
@@ -314,12 +313,12 @@ GetAddressBarUrl:
 return
 
 ^!c::  ; copy and save references
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel)
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
   Vim.Browser.GetInfo()
   source := Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : ""
   date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
@@ -380,16 +379,16 @@ return
   KeyWait shift
   KeyWait ctrl
   KeyWait alt
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c  ; clip() doesn't keep format; nor ClipboardAll can work with functions
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel) {
     ToolTip("Nothing is selected.")
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     return
   } else {
-    hwnd := WinGet("ID")
+    hwnd := WinGet()
     if (prio := InStr(A_ThisHotkey, "+")) {
       InputBox, prio, Priority, Enter extract priority.,, 196, 128
       if (ErrorLevel)
@@ -450,14 +449,18 @@ ExtractToSM:
   }
   send {left}
   if (!IsBrowser) {
-    clip(extract,, true,, false)
+    clip(extract,, false,, false)
   } else {
     WinClip.Clear()
     Clipboard := extract
     ClipWait
     Vim.HTML.ClipboardGet_HTML(data)
     RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
-    clip(Vim.HTML.Clean(data, true),, true, true)
+    WinClip.Clear()
+    WinClip.SetText(Vim.HTML.Clean(data, true))
+    send {AppsKey}xp  ; paste HTML
+    WinClip._waitClipReady()
+    WinWaitActive, ahk_class TElWind
   }
   send ^+{home}  ; select everything
   if (prio) {
@@ -470,7 +473,7 @@ ExtractToSM:
   }
   Vim.SM.WaitExtractProcessing()
   ; sleep 40  ; short sleep to make sure the extraction is done
-  Vim.SM.MoveAboveRef(true)
+  Vim.SM.MoveAboveRef(false)
   send !\\
   WinWaitNotActive, ahk_class TElWind
   send {enter}
@@ -481,7 +484,7 @@ ExtractToSM:
   } else {
     WinActivate % "ahk_id " . hwnd
   }
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 ; SumatraPDF
@@ -513,13 +516,14 @@ return
   send {enter}
 return
 
-#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_class Browsers")) && WinExist("ahk_class TElWind"))
+#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browsers")) && WinExist("ahk_class TElWind") && !Vim.SM.IsPassiveColl())
 !+s::
 ^!s::
 ^+!s::
-  WinClip.Snap(ClipData)
-  KeyWait alt
+  ClipSaved := ClipboardAll
   marker := PageNumber := ""
+  KeyWait alt
+  KeyWait ctrl
   if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
     PageNumber := "p" . ControlGetText("Edit1")
     if (InStr(A_ThisHotkey, "^")) {
@@ -528,10 +532,11 @@ return
       if (!ErrorLevel)
         send s
     }
-  } else if (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_class Browsers")) {
+  } else if (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browsers")) {
     marker := trim(copy(true), " `t`r`n")
     if (!marker) {
-      WinClip.Restore(ClipData)
+      ToolTip("No text selected.")
+      Clipboard := ClipSaved
       return
     }
     if (InStr(A_ThisHotkey, "^")) {
@@ -550,7 +555,7 @@ MarkInSMTitle:
   Vim.SM.WaitTextFocus()
   if (!Vim.SM.IsEditingText()) {
     ToolTip("No text component.")
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     return
   }
   send ^{home}^+{down}  ; go to top and select first paragraph below
@@ -572,7 +577,7 @@ MarkInSMTitle:
     if (ret) {
       ret := false
       ToolTip("No source element found or source element isn't empty.")
-      WinClip.Restore(ClipData)
+      Clipboard := ClipSaved
       return
     }
   }
@@ -601,7 +606,7 @@ MarkInSMTitle:
     Vim.SM.Learn()
     Vim.SM.EnterInsertIfSpelling()
   }
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 ; IE
@@ -713,31 +718,31 @@ return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe HiborClient.exe"))
 !+d::  ; check duplicates
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   KeyWait alt
   KeyWait shift
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^a^c
   ClipWait 0.6
   if (ErrorLevel) {
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     return
   }
   title := MatchHiborTitle(Clipboard)
   TitleArr := StrSplit(title, "-")
   Vim.SM.CheckDup(TitleArr[2])
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe HiborClient.exe") && WinExist("ahk_class TElWind"))
 ^!a::  ; import
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   KeyWait alt
   WinClip.Clear()
   send ^a^c
   ClipWait 0.6
   if (ErrorLevel) {
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     return
   }
   title := MatchHiborTitle(Clipboard)
@@ -753,9 +758,9 @@ return
         . "`n#Source: " . TitleArr[1]
         . "`n#Date: " . TitleArr[3]
         . "`n#Link: " . link
-  clip(text,, true)
+  clip(text,, false)
   Vim.SM.Reload()
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 MatchHiborTitle(text) {

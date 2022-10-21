@@ -18,12 +18,12 @@ s::Vim.State.SetMode("",, -1,,, 1)
 >::
 "::
 '::
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   KeyWait shift
   if (!ChangeEntered && (Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("ydc_y"))) {
     selection := copy(true)
     if (!selection) {
-      WinClip.Restore(ClipData)
+      Clipboard := ClipSaved
       return
     }
     SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
@@ -39,7 +39,7 @@ s::Vim.State.SetMode("",, -1,,, 1)
       Vim.Move.Inner(A_ThisHotkey)
       selection := copy(true)
       if (!selection) {
-        WinClip.Restore(ClipData)
+        Clipboard := ClipSaved
         return
       }
       SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
@@ -62,5 +62,5 @@ s::Vim.State.SetMode("",, -1,,, 1)
     }
   }
   Vim.State.SetMode("Vim_Normal")
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return

@@ -1,11 +1,10 @@
 ; Clip() - Send and Retrieve Text Using the Clipboard
 ; Originally by berban - updated February 18, 2019 - modified by Winston
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156
-Clip(Text="", Reselect="", PassClip:=false, HTML:=false, SetText:=true, method:=0) {
+Clip(Text="", Reselect="", RestoreClip:=true, HTML:=false, SetText:=true, method:=0) {
   global WinClip, Vim
-  if (!PassClip)
-    WinClip.Snap(ClipData)
-    ; ClipSaved := ClipboardAll
+  if (RestoreClip)
+    ClipSaved := ClipboardAll
   If (Text = "") {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     if (!method) {
@@ -23,10 +22,10 @@ Clip(Text="", Reselect="", PassClip:=false, HTML:=false, SetText:=true, method:=
       }
     }
   } Else {
-    WinClip.Clear()
     if (HTML && HTML != "sm") {
       Vim.HTML.SetClipboardHTML(text)
     } else {
+      WinClip.Clear()
       if (SetText) {
         WinClip.SetText(text)
       } else {
@@ -49,13 +48,12 @@ Clip(Text="", Reselect="", PassClip:=false, HTML:=false, SetText:=true, method:=
   }
   if (text && html = "sm")
     send ^+1
-  if (!PassClip)  ; for scripts that restore clipboard at the end
-    WinClip.Restore(ClipData)
-    ; Clipboard := ClipSaved
+  if (RestoreClip)  ; for scripts that restore clipboard at the end
+    Clipboard := ClipSaved
   If (Text = "")
     Return Clipped
 }
 
-copy(PassClip:=false, HTML:=false, method:=0) {
-  return clip("",, PassClip, HTML,, method)
+copy(RestoreClip:=true, HTML:=false, method:=0) {
+  return clip("",, RestoreClip, HTML,, method)
 }

@@ -115,15 +115,15 @@ Return
 
 *::
   KeyWait shift
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  hwnd := WinGet("ID")
+  hwnd := WinGet()
   send ^f
   WinWaitNotActive, % "ahk_id " . hwnd,, 0.25
   send ^v!f
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -134,62 +134,56 @@ p::
   JustPaste := Vim.State.Leader
   ; Get selection
   if (!JustPaste) {
-    ; WinClip.Snap(PrevClip)
     PrevClip := ClipboardAll
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     send ^c
     ClipWait, LongCopy ? 0.6 : 0.2, True
-    ; WinClip.Snap(NewClip)
     NewClip := ClipboardAll
-    ; WinClip.Restore(PrevClip)
     WinClip.Clear()
     Clipboard := PrevClip
-    ClipWait ; needed for pasting to work
   }
 
   ; Paste clipboard
-  if (InStr(A_ThisHotkey, "^")) {
+  if (InStr(A_ThisHotkey, "^"))
     Clipboard := Clipboard  ; convert to plain text
-    ClipWait
-  }
   send ^v
   Vim.State.SetMode("Vim_Normal")
 
   if (!JustPaste) {
-    WinClip._waitClipReady(100)
-    ; WinClip.Restore(NewClip)
+    while (WinClipAPI.GetOpenClipboardWindow())
+      sleep 1
     Clipboard := NewClip
   }
 Return
 
 ConvertToLowercase:
 u::
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := clip("",, true, html)
+  selection := clip("",, false, html)
   StringLower, selection, selection
-  clip(selection,, true, html)
-  WinClip.Restore(ClipData)
+  clip(selection,, false, html)
+  Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
 Return
 
 ConvertToUppercase:
 +u::
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := clip("",, true, html)
+  selection := clip("",, false, html)
   StringUpper, selection, selection
   clip(selection,, true, html)
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
 Return
 
 ; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
 InvertCase:
 ~::
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := clip("",, true, html)
+  selection := clip("",, false, html)
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(selection) {
     Lab_Invert_Char:= Substr(selection, A_Index, 1)
@@ -200,16 +194,15 @@ InvertCase:
     else
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
-  clip(Lab_Invert_Char_Out,, true, html)
-  WinClip.Restore(ClipData)
+  clip(Lab_Invert_Char_Out,, false, html)
+  Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
 Return
 
 o::  ; move to other end of marked area; not perfect with line breaks
-  WinClip.Snap(ClipData)
-  selection := copy(true)
-  if (!selection) {
-    WinClip.Restore(ClipData)
+  ClipSaved := ClipboardAll
+  if (!selection := copy(true)) {
+    Clipboard := ClipSaved
     return
   }
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
@@ -222,9 +215,9 @@ o::  ; move to other end of marked area; not perfect with line breaks
     send % "{right}+{left " . SelectionLen . "}"
   } else if (SelectionLen > SelectionRightLen
           || (SelectionLen == SelectionRightLen && StrLen(selection) > StrLen(SelectionRight))) {
-    send % "+{left}{right " . SelectionLen . "}"
+    send % "{left}+{right " . SelectionLen . "}"
   }
-  WinClip.Restore(ClipData)
+  Clipboard := ClipSaved
 return
 
 +s::Vim.State.SetMode("",,,,, 1)  ; surround

@@ -9,14 +9,14 @@ class VimSM {
       ControlClick, % ControlGetFocus(), ahk_class TElWind,,,, NA x1 y1
     } else {
       ; server2 because question field of items are server2
-      if (ControlGet("hwnd",, "Internet Explorer_Server2", "ahk_class TElWind")) {  ; item
+      if (ControlGet("",, "Internet Explorer_Server2", "ahk_class TElWind")) {  ; item
         ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, NA x1 y1
       } else {  ; topic
         ; Article field in topics is server1
-        if (ControlGet("hwnd",, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
+        if (ControlGet("",, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
         } else {  ; no html field found
-          if (ControlGet("hwnd",, "TMemo1", "ahk_class TElWind")) {  ; plain text item
+          if (ControlGet("",, "TMemo1", "ahk_class TElWind")) {  ; plain text item
             ControlClick, TMemo1, ahk_class TElWind,,,, NA x1 y1
           } else {  ; no text
             send q
@@ -149,9 +149,9 @@ class VimSM {
     this.Vim.State.SetNormal()
   }
 
-  MoveAboveRef(PassClip:=false) {
+  MoveAboveRef(RestoreClip:=true) {
     send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-    if (InStr(clip("",, PassClip), "#SuperMemo Reference:")) {
+    if (InStr(clip("",, RestoreClip,,, 1), "#SuperMemo Reference:")) {
       send {up 2}
     } else {
       send ^{end}
@@ -242,7 +242,7 @@ class VimSM {
   EnterInsertIfSpelling() {
     loop {
       sleep 100
-      if (InStr(ControlGetFocus(), "TMemo")) {
+      if (InStr(ControlGetFocus("ahk_class TElWind"), "TMemo")) {
         this.Vim.State.SetMode("Insert")
         break
       } else if (A_Index > 5) {  ; timeout after 0.5s
@@ -304,34 +304,34 @@ class VimSM {
     return CollPath
   }
 
-  GetLink(TemplCode:="", PassClip:=false) {
+  GetLink(TemplCode:="", RestoreClip:=true) {
     global WinClip
-    if (!PassClip && !TemplCode)
-      WinClip.Snap(ClipData)
+    if (RestoreClip && !TemplCode)
+      ClipSaved := ClipboardAll
     WinClip.Clear()
-    TemplCode := TemplCode ? TemplCode : this.GetTemplCode(true)
+    TemplCode := TemplCode ? TemplCode : this.GetTemplCode(false)
     if (InStr(TemplCode, "Link:")) {
       RegExMatch(TemplCode, "(?<=#Link: <a href="").*?(?="")", link)
-      if (!PassClip && !TemplCode)
-        WinClip.Restore(ClipData)
+      if (RestoreClip && !TemplCode)
+        Clipboard := ClipSaved
       return link
     } else {
-      if (!PassClip && !TemplCode)
-        WinClip.Restore(ClipData)
+      if (RestoreClip && !TemplCode)
+        Clipboard := ClipSaved
     }
   }
 
-  GetFilePath(PassClip:=false) {
+  GetFilePath(RestoreClip:=true) {
     global WinClip
-    if (!PassClip)
-      WinClip.Snap(ClipData)
+    if (RestoreClip)
+      ClipSaved := ClipboardAll
     WinClip.Clear()
     send !{f12}fc
     ; this.PostMsg(987, true)  ; not reliable???
     ClipWait
     path := Clipboard
-    if (!PassClip)
-      WinClip.Restore(ClipData)
+    if (RestoreClip)
+      Clipboard := ClipSaved
     return path
   }
 
@@ -365,7 +365,7 @@ class VimSM {
 
   IsPassiveColl(CollName:="") {
     CollName := CollName ? CollName : this.GetCollName()
-    return (IfIn(CollName, "passive,singing,piano,calligraphy,drawing,bgm"))
+    return (IfIn(CollName, "passive,singing,piano,calligraphy,drawing,bgm,music"))
   }
 
   PostMsg(msg, ContextMenu:=false) {
@@ -377,23 +377,25 @@ class VimSM {
       } else {
         WinClass := "ahk_exe sm18.exe"
       }
-      ; Requires DetectHiddenWindows on in settings
+      PrevDetectHiddenWind := A_DetectHiddenWindows
+      DetectHiddenWindows, on
       WinGet, ContextMenuID, list, % "ahk_class TPUtilWindow " . WinClass
       PostMessage, 0x0111, % msg,,, % "ahk_id " . ContextMenuID5
+      DetectHiddenWindows, % PrevDetectHiddenWind
     }
   }
 
-  GetTemplCode(PassClip:=false) {
+  GetTemplCode(RestoreClip:=true) {
     global WinClip
-    if (!PassClip)
-      WinClip.Snap(ClipData)
+    if (RestoreClip)
+      ClipSaved := ClipboardAll
     WinClip.Clear()
     send !{f10}tc
     ; this.PostMsg(693, true)  ; not reliable???
     ClipWait
     code := Clipboard
-    if (!PassClip)
-      WinClip.Restore(ClipData)
+    if (RestoreClip)
+      Clipboard := ClipSaved
     return code
   }
 
@@ -457,7 +459,7 @@ class VimSM {
       WinWait, ahk_class TRegistryForm
       ControlSetText, Edit1, % SubStr(concept, 2), ahk_class TRegistryForm
       ; Needed for updating the template; without {text},
-      ; the first letter would not be in the corret case;
+      ; the first letter would not be in the correct case;
       ; which makes ControlTextWait() cannot pass
       ControlSend, Edit1, % "{text}" . SubStr(concept, 1, 1), ahk_class TRegistryForm
       ControlTextWait("Edit1", concept, "ahk_class TRegistryForm")
@@ -475,7 +477,8 @@ class VimSM {
   }
 
   SetElParam(title:="", prio:="", template:="", method:=0) {
-    if (!method) {
+    if (method) {
+      ; Sometimes doesn't work
       ControlSend,, {ctrl down}{shift down}p{ctrl up}{shift up}, ahk_class TElWind
     } else {
       WinActivate, ahk_class TElWind
@@ -512,7 +515,7 @@ class VimSM {
 
   CheckDup(text, ClearHighlight:=true) {  ; try to find duplicates
     ; ControlSend,, {ctrl down}f{ctrl up}, ahk_class TElWind
-    while (WinExist("ahk_class TBrowser"))
+    while (WinExist("ahk_class TBrowser") || WinExist("ahk_class TMsgDialog"))
       WinClose
     ; if (this.GetCollName() == this.LastCheckDupColl && this.LastCheckText == text)
     ;   return this.LastCheckResult
@@ -547,7 +550,9 @@ class VimSM {
     this.PostMsg(240)
     WinWait, ahk_class TCommanderDlg
     ControlSetText, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
-    ControlSend, TEdit2, {enter}, ahk_class TCommanderDlg
+    ; ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
+    ControlTextWaitChange("TEdit2",, "ahk_class TCommanderDlg")
+    ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
   }
 
   MakeReference(html:=false) {

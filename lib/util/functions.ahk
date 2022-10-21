@@ -99,157 +99,157 @@ IfMsgBox(ByRef ButtonName) {
 		return true
 }
 
-ControlGet(Cmd:="hwnd", Value = "", Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+ControlGet(Cmd:="hwnd", Value:="", Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
 	control := control ? control : ControlGetFocus()
-	ControlGet, v, %Cmd%, %Value%, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+	ControlGet, v, % Cmd, % Value, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
 	Return, v
 }
-ControlGetFocus(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
-	ControlGetFocus, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+ControlGetFocus(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+	ControlGetFocus, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
 	Return, v
 }
-ControlGetText(Control = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+ControlGetText(Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
 	control := control ? control : ControlGetFocus()
-	ControlGetText, v, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+	ControlGetText, v, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
 	Return, v
 }
-DriveGet(Cmd, Value = "") {
-	DriveGet, v, %Cmd%, %Value%
+DriveGet(Cmd, Value:="") {
+	DriveGet, v, % Cmd, % Value
 	Return, v
 }
 DriveSpaceFree(Path) {
-	DriveSpaceFree, v, %Path%
+	DriveSpaceFree, v, % Path
 	Return, v
 }
 EnvGet(EnvVarName) {
-	EnvGet, v, %EnvVarName%
+	EnvGet, v, % EnvVarName
 	Return, v
 }
-FileGetAttrib(Filename = "") {
-	FileGetAttrib, v, %Filename%
+FileGetAttrib(Filename:="") {
+	FileGetAttrib, v, % Filename
 	Return, v
 }
-FileGetShortcut(LinkFile, ByRef OutTarget = "", ByRef OutDir = "", ByRef OutArgs = "", ByRef OutDescription = "", ByRef OutIcon = "", ByRef OutIconNum = "", ByRef OutRunState = "") {
-	FileGetShortcut, %LinkFile%, OutTarget, OutDir, OutArgs, OutDescription, OutIcon, OutIconNum, OutRunState
+FileGetShortcut(LinkFile, ByRef OutTarget:="", ByRef OutDir:="", ByRef OutArgs:="", ByRef OutDescription:="", ByRef OutIcon:="", ByRef OutIconNum:="", ByRef OutRunState:="") {
+	FileGetShortcut, % LinkFile, OutTarget, OutDir, OutArgs, OutDescription, OutIcon, OutIconNum, OutRunState
 }
-FileGetSize(Filename = "", Units = "") {
-	FileGetSize, v, %Filename%, %Units%
+FileGetSize(Filename:="", Units:="") {
+	FileGetSize, v, % Filename, % Units
 	Return, v
 }
-FileGetTime(Filename = "", WhichTime = "") {
-	FileGetTime, v, %Filename%, %WhichTime%
+FileGetTime(Filename:="", WhichTime:="") {
+	FileGetTime, v, % Filename, % WhichTime
 	Return, v
 }
-FileGetVersion(Filename = "") {
-	FileGetVersion, v, %Filename%
+FileGetVersion(Filename:="") {
+	FileGetVersion, v, % Filename
 	Return, v
 }
 FileRead(Filename) {
-	FileRead, v, %Filename%
+	FileRead, v, % Filename
 	Return, v
 }
 FileReadLine(Filename, LineNum) {
-	FileReadLine, v, %Filename%, %LineNum%
+	FileReadLine, v, % Filename, % LineNum
 	Return, v
 }
-FileSelectFile(Options = "", RootDir = "", Prompt = "", Filter = "") {
-	FileSelectFile, v, %Options%, %RootDir%, %Prompt%, %Filter%
+FileSelectFile(Options:="", RootDir:="", Prompt:="", Filter:="") {
+	FileSelectFile, v, % Options, % RootDir, % Prompt, % Filter
 	Return, v
 }
-FileSelectFolder(StartingFolder = "", Options = "", Prompt = "") {
-	FileSelectFolder, v, %StartingFolder%, %Options%, %Prompt%
+FileSelectFolder(StartingFolder:="", Options:="", Prompt:="") {
+	FileSelectFolder, v, % StartingFolder, % Options, % Prompt
 	Return, v
 }
-FormatTime(YYYYMMDDHH24MISS = "", Format = "") {
-	FormatTime, v, %YYYYMMDDHH24MISS%, %Format%
+FormatTime(YYYYMMDDHH24MISS:="", Format:="") {
+	FormatTime, v, % YYYYMMDDHH24MISS, % Format
 	Return, v
 }
-GuiControlGet(Subcommand = "", ControlID = "", Param4 = "") {
-	GuiControlGet, v, %Subcommand%, %ControlID%, %Param4%
+GuiControlGet(Subcommand:="", ControlID:="", Param4:="") {
+	GuiControlGet, v, % Subcommand, % ControlID, % Param4
 	Return, v
 }
 ImageSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ImageFile) {
-	ImageSearch, OutputVarX, OutputVarY, %X1%, %Y1%, %X2%, %Y2%, %ImageFile%
+	ImageSearch, OutputVarX, OutputVarY, % X1, % Y1, % X2, % Y2, % ImageFile
 }
-IniRead(Filename, Section, Key, Default = "") {
-	IniRead, v, %Filename%, %Section%, %Key%, %Default%
+IniRead(Filename, Section, Key, Default:="") {
+	IniRead, v, % Filename, % Section, % Key, % Default
 	Return, v
 }
-Input(Options = "", EndKeys = "", MatchList = "") {
-	Input, v, %Options%, %EndKeys%, %MatchList%
+Input(Options:="", EndKeys:="", MatchList:="") {
+	Input, v, % Options, % EndKeys, % MatchList
 	Return, v
 }
-InputBox(Title = "", Prompt = "", HIDE = "", Width = "", Height = "", X = "", Y = "", Font = "", Timeout = "", Default = "") {
-	InputBox, v, %Title%, %Prompt%, %HIDE%, %Width%, %Height%, %X%, %Y%, , %Timeout%, %Default%
+InputBox(Title:="", Prompt:="", HIDE:="", Width:="", Height:="", X:="", Y:="", Font:="", Timeout:="", Default:="") {
+	InputBox, v, % Title, % Prompt, % HIDE, % Width, % Height, % X, % Y, , % Timeout, % Default
 	Return, v
 }
-MouseGetPos(ByRef OutputVarX = "", ByRef OutputVarY = "", ByRef OutputVarWin = "", ByRef OutputVarControl = "", Mode = "") {
-	MouseGetPos, OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, %Mode%
+MouseGetPos(ByRef OutputVarX:="", ByRef OutputVarY:="", ByRef OutputVarWin:="", ByRef OutputVarControl:="", Mode:="") {
+	MouseGetPos, OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, % Mode
 }
-PixelGetColor(X, Y, RGB = "") {
-	PixelGetColor, v, %X%, %Y%, %RGB%
+PixelGetColor(X, Y, RGB:="") {
+	PixelGetColor, v, % X, % Y, % RGB
 	Return, v
 }
-PixelSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ColorID, Variation = "", Mode = "") {
-	PixelSearch, OutputVarX, OutputVarY, %X1%, %Y1%, %X2%, %Y2%, %ColorID%, %Variation%, %Mode%
+PixelSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ColorID, Variation:="", Mode:="") {
+	PixelSearch, OutputVarX, OutputVarY, % X1, % Y1, % X2, % Y2, % ColorID, % Variation, % Mode
 }
-Random(Min = "", Max = "") {
-	Random, v, %Min%, %Max%
+Random(Min:="", Max:="") {
+	Random, v, % Min, % Max
 	Return, v
 }
-RegRead(RootKey, SubKey, ValueName = "") {
-	RegRead, v, %RootKey%, %SubKey%, %ValueName%
+RegRead(RootKey, SubKey, ValueName:="") {
+	RegRead, v, % RootKey, % SubKey, % ValueName
 	Return, v
 }
-Run(Target, WorkingDir = "", Mode = "") {
-	Run, %Target%, %WorkingDir%, %Mode%, v
+Run(Target, WorkingDir:="", Mode:="") {
+	Run, % Target, % WorkingDir, % Mode, v
 	Return, v	
 }
-SoundGet(ComponentType = "", ControlType = "", DeviceNumber = "") {
-	SoundGet, v, %ComponentType%, %ControlType%, %DeviceNumber%
+SoundGet(ComponentType:="", ControlType:="", DeviceNumber:="") {
+	SoundGet, v, % ComponentType, % ControlType, % DeviceNumber
 	Return, v
 }
-SoundGetWaveVolume(DeviceNumber = "") {
-	SoundGetWaveVolume, v, %DeviceNumber%
+SoundGetWaveVolume(DeviceNumber:="") {
+	SoundGetWaveVolume, v, % DeviceNumber
 	Return, v
 }
-StatusBarGetText(Part = "", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
-	StatusBarGetText, v, %Part%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+StatusBarGetText(Part:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+	StatusBarGetText, v, % Part, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
 	Return, v
 }
-SplitPath(ByRef InputVar, ByRef OutFileName = "", ByRef OutDir = "", ByRef OutExtension = "", ByRef OutNameNoExt = "", ByRef OutDrive = "") {
+SplitPath(ByRef InputVar, ByRef OutFileName:="", ByRef OutDir:="", ByRef OutExtension:="", ByRef OutNameNoExt:="", ByRef OutDrive:="") {
 	SplitPath, InputVar, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive
 }
-StrLower(ByRef InputVar, T = "") {
-	StringLower, v, InputVar, %T%
+StrLower(ByRef InputVar, T:="") {
+	StringLower, v, InputVar, % T
 	Return, v
 }
-StrUpper(ByRef InputVar, T = "") {
-	StringUpper, v, InputVar, %T%
+StrUpper(ByRef InputVar, T:="") {
+	StringUpper, v, InputVar, % T
 	Return, v
 }
-SysGet(Subcommand, Param3 = "") {
-	SysGet, v, %Subcommand%, %Param3%
+SysGet(Subcommand, Param3:="") {
+	SysGet, v, % Subcommand, % Param3
 	Return, v
 }
-WinGet(Cmd:="hwnd", WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
-	WinGet, v, %Cmd%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+WinGet(Cmd:="ID", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+	WinGet, v, % Cmd, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
 	Return, v
 }
 WinGetActiveTitle() {
 	WinGetActiveTitle, v
 	Return, v
 }
-WinGetClass(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
-	WinGetClass, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+WinGetClass(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+	WinGetClass, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
 	Return, v
 }
-WinGetText(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
-	WinGetText, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+WinGetText(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+	WinGetText, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
 	Return, v
 }
-WinGetTitle(WinTitle:="A", WinText = "", ExcludeTitle = "", ExcludeText = "") {
-	WinGetTitle, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+WinGetTitle(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+	WinGetTitle, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
 	Return, v
 }
 
@@ -271,7 +271,7 @@ ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeT
 ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
-    if (ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
+    if (ControlGet("",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False
@@ -301,7 +301,7 @@ ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", Exc
   }
 }
 
-ControlTextWaitChange(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlTextWaitChange(Control, text:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
@@ -314,10 +314,10 @@ ControlTextWaitChange(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="
 
 ControlWaitHwndChange(Control, hwnd:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
 	if (!hwnd)
-		hwnd := ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+		hwnd := ControlGet("",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
   StartTime := A_TickCount
   Loop {
-		NewHwnd := ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+		NewHwnd := ControlGet("",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     if (NewHwnd && NewHwnd != hwnd) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
@@ -351,9 +351,9 @@ Enc_Uri(str)
   StringReplace, str, str, `%, `%25, All
   Loop
     If RegExMatch(str, "i)[^\w\.~%/:]", char)
-      StringReplace, str, str, %char%, % "%" . SubStr(Asc(char),3), All
+      StringReplace, str, str, % char, %  "" . SubStr(Asc(char),3), All
     Else Break
-  SetFormat, Integer, %f%
+  SetFormat, Integer, % f
   Return, pr . str
 }
 
@@ -365,12 +365,12 @@ Dec_XML(str)
 { ;Decode xml required characters, as well as numeric character references
    Loop
       If RegexMatch(str, "S)(&#(\d+);)", dec)						; matches:   &#[dec];
-         StringReplace, str, str, %dec1%, % Chr(dec2), All
+         StringReplace, str, str, % dec1, % Chr(dec2), All
       Else If   RegexMatch(str, "Si)(&#x([\da-f]+);)", hex)			; matches:   &#x[hex];
-         StringReplace, str, str, %hex1%, % Chr("0x" . hex2), All
+         StringReplace, str, str, % hex1, % Chr("0x" . hex2), All
       Else
          Break
-   StringReplace, str, str, % " ", %A_Space%, All
+   StringReplace, str, str, % " ", % A_Space, All
    StringReplace, str, str, ", ", All			;required predefined character entities &"<'>
    StringReplace, str, str, ', ', All
    StringReplace, str, str, <,   <, All
@@ -387,7 +387,7 @@ Enc_XML(str, chars="")
    StringReplace, str, str, <, <,   All
    StringReplace, str, str, >, >,   All
    Loop, Parse, chars         
-      StringReplace, str, str, %A_LoopField%, % "&#" . Asc(A_LoopField) . "`;", All
+      StringReplace, str, str, % A_LoopField, % "&#" . Asc(A_LoopField) . "`;", All
    return, str
 }
 
@@ -419,8 +419,7 @@ StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
 }
 
 WinWaitTitleChange(OriginalTitle:="", TimeOut:=0, WinTitle:="A") {
-	if (!OriginalTitle)
-		WinGetTitle, OriginalTitle, % WinTitle
+	OriginalTitle := OriginalTitle ? OriginalTitle : WinGetTitle(WinTitle)
 	StartTime := A_TickCount
 	loop {
 		if (WinGetTitle(WinTitle) != OriginalTitle) {
@@ -451,7 +450,7 @@ ClickDPIAdjusted(XCoord, YCoord) {
 
 ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
 	if (!Wintitle)
-		WinTitle := "ahk_id " . WinGet("ID")
+		WinTitle := "ahk_id " . WinGet()
 	ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
 }
 
@@ -459,7 +458,7 @@ ControlClickDPIAdjusted(XCoord, YCoord, Control:="", WinTitle:="") {
 	if (!Control)
 		Control := ControlGetFocus()
 	if (!Wintitle)
-		WinTitle := "ahk_id " . WinGet("ID")
+		WinTitle := "ahk_id " . WinGet()
 	ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
 }
 
@@ -488,7 +487,7 @@ SetDefaultKeyboard(LocaleID) {  ; https://www.autohotkey.com/boards/viewtopic.ph
 	DllCall("SystemParametersInfo", "UInt", SPI_SETDEFAULTINPUTLANG, "UInt", 0, "UPtr", &Lan%LocaleID%, "UInt", SPIF_SENDWININICHANGE)
 	WinGet, windows, List
 	Loop %windows% {
-		PostMessage 0x50, 0, %Lan%, , % "ahk_id " windows%A_Index%
+		PostMessage 0x50, 0, % Lan, , %  "ahk_id " windows%A_Index%
 	}
 }
 return

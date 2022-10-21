@@ -36,12 +36,12 @@ return
 HTMLTagButtonAdd:
   gui submit
   gui destroy
-  WinClip.Snap(ClipData)
+  ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel) {
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     return
   }
   if (OriginalHTML) {
@@ -58,7 +58,7 @@ HTMLTagButtonAdd:
     EndingTag := "SPAN>"
     tag := ""
   } else if (tag = "ruby") {
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
     InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above`, like Pinyin,, 272, 160
     if (ErrorLevel || !UserInput)
       return
@@ -68,8 +68,8 @@ HTMLTagButtonAdd:
   } else {
     StartingTag := "<", EndingTag := ">"
   }
-  clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag,, true, "sm")
-  WinClip.Restore(ClipData)
+  clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag,, false, "sm")
+  Clipboard := ClipSaved
 return
 
 m::  ; highlight: *m*ark
@@ -109,6 +109,7 @@ ExtractStay:
   send !x
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.WaitExtractProcessing()
+  sleep 20
   send !{left}
 return
 
@@ -222,8 +223,8 @@ CapsLock & z::  ; delete [...]
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send !{left}
-  sleep % (A_TickCount - SleepCalc) / 3 * 2
-  Vim.SM.WaitFileLoad()  ; double insurance
+  ; sleep % (A_TickCount - SleepCalc) / 3 * 2
+  Vim.SM.WaitFileLoad()  ; double insurance?
   send ^t
   if (!ClozeNoBracket && inside) {
     if (FullWidthChars) {
@@ -242,13 +243,13 @@ CapsLock & z::  ; delete [...]
   Vim.SM.WaitTextFocus()
   if (Vim.SM.IsEditingPlainText()) {
     send ^a
-    WinClip.Snap(ClipData)
+    ClipSaved := ClipboardAll
     if (!ClozeNoBracket) {
-      clip(StrReplace(copy(true), "[...]", cloze),, true)
+      clip(StrReplace(copy(true), "[...]", cloze),, false)
     } else {
-      clip(RegExReplace(copy(true), "\s?[...]"),, true)
+      clip(RegExReplace(copy(true), "\s?[...]"),, false)
     }
-    WinClip.Restore(ClipData)
+    Clipboard := ClipSaved
   } else if (Vim.SM.IsEditingHTML()) {
     if (!Vim.SM.HandleF3(1))
       return
@@ -260,6 +261,7 @@ CapsLock & z::  ; delete [...]
     if (!ClozeNoBracket) {
       send +{left}  ; so format is kept
       clip(cloze)
+      sleep 20  ; insurance
       send {del}
     } else {
       send {bs}

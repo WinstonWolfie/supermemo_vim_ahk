@@ -43,10 +43,10 @@ Return
   Vim.State.SetMode("Insert")
 Return
 
-+s::
-  send {end}+{home}{bs}
-    Vim.State.SetMode("Insert")
-Return
+; +s::  ; remapped in vim-sneak
+;   send {end}+{home}{bs}
+;   Vim.State.SetMode("Insert")
+; Return
 
 ; Keys that need insert mode
 ~f2::

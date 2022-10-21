@@ -1,5 +1,5 @@
 ﻿; Keys that need insert mode
-#if Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal")) && WinActive("ahk_group SuperMemo")
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_group SuperMemo"))
 ~!f10::
 ~+f10::
 ~!f12::
@@ -12,7 +12,12 @@
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
 ~!n::  ; new topic
   Vim.State.SetMode("Insert")
-Return
+return
+
+~^g::  ; element number
+  Vim.State.SetMode("Insert")
+  Vim.State.BackToNormal := 1
+return
 
 #if (Vim.State.Vim.Enabled && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")) && !Vim.SM.IsEditingText())
 ~!r::
