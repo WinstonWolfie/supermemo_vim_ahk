@@ -6,7 +6,7 @@ class VimSM {
 
   ClickTop() {
     if (this.IsEditingText()) {
-      ControlClick, % ControlGetFocus(), ahk_class TElWind,,,, NA x1 y1
+      ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, NA x1 y1
     } else {
       ; server2 because question field of items are server2
       if (ControlGet("",, "Internet Explorer_Server2", "ahk_class TElWind")) {  ; item
@@ -16,12 +16,10 @@ class VimSM {
         if (ControlGet("",, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
         } else {  ; no html field found
-          if (ControlGet("",, "TMemo1", "ahk_class TElWind")) {  ; plain text item
-            ControlClick, TMemo1, ahk_class TElWind,,,, NA x1 y1
-          } else {  ; no text
-            send q
+          send q
+          if (!this.WaitTextFocus(1000))
             return false
-          }
+          ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, NA x1 y1
         }
       }
     }
@@ -41,13 +39,10 @@ class VimSM {
         if (Height) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
         } else {  ; no html field found
-          ControlGetPos,,,, Height, TMemo1, ahk_class TElWind
-          if (Height) {  ; plain text item
-            ControlClick, TMemo1, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
-          } else {  ; no text
-            send q
+          send q
+          if (!this.WaitTextFocus(1000))
             return false
-          }
+          ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, % "NA x1 y" . Height / 2
         }
       }
     }
@@ -67,13 +62,10 @@ class VimSM {
         if (Height) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
         } else {  ; no html field found
-          ControlGetPos,,,, Height, TMemo1, ahk_class TElWind
-          if (Height) {  ; plain text item
-            ControlClick, TMemo1, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
-          } else {  ; no text
-            send q
+          send q
+          if (!this.WaitTextFocus(1000))
             return false
-          }
+          ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, % "NA x1 y" . Height - 2
         }
       }
     }
@@ -239,13 +231,14 @@ class VimSM {
     }
   }
 
-  EnterInsertIfSpelling() {
+  EnterInsertIfSpelling(timeout:=500) {
+    StartTime := A_TickCount
     loop {
       sleep 100
       if (InStr(ControlGetFocus("ahk_class TElWind"), "TMemo")) {
         this.Vim.State.SetMode("Insert")
         break
-      } else if (A_Index > 5) {  ; timeout after 0.5s
+      } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
         break
       }
     }
@@ -549,10 +542,10 @@ class VimSM {
     ; ControlSend,, {ctrl down}{enter}{ctrl up}, ahk_class TElWind
     this.PostMsg(240)
     WinWait, ahk_class TCommanderDlg
-    ControlSetText, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
-    ; ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
-    ControlTextWaitChange("TEdit2",, "ahk_class TCommanderDlg")
-    ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
+    ControlSend, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
+    ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
+    ; ControlTextWaitChange("TEdit2",, "ahk_class TCommanderDlg")
+    ; ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
   }
 
   MakeReference(html:=false) {

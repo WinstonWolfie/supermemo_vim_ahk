@@ -747,7 +747,7 @@
           } else {
             left := 0
           }
-          send {right}{left %left%}
+          send % "{right}{left " . left . "}"
         }
       } else if (key == ")") {  ; like "f" but search for ". "
         if (this.shift == 1) {
@@ -862,11 +862,8 @@
             } else {
               ret := true
             }
-            if (ret) {
-              ret := false
-            } else {
+            if (!ret)
               send % "+{right " . right . "}"
-            }
           }
         } else {
           this.SelectParagraphUp()
@@ -881,21 +878,21 @@
           DetectionStr := StrReverse(DetectionStr)
           pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence, true)
           if (pos) {
-            left := pos - 1
+            left := pos
             if (pos == 1) {
               this.SearchOccurrence++
               NextOccurrence := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence, true)
-              if (NextOccurrence)
-                left := NextOccurrence - 1
-              else
+              if (NextOccurrence) {
+                left := NextOccurrence
+              } else {
                 ret := true
+              }
             }
           } else {
             ret := true
           }
           if (ret) {
             send {left}
-            ret := false
           } else {
             send % "{right}{left " . left . "}"
           }
@@ -1538,8 +1535,10 @@
   }
 
   FindSentenceEnd(DetectionStr, Occurrence:=1, reversed:=false) {
-    if (pos := InStr(DetectionStr, "。"))  ; chinese full stop
-      return pos - 1
+    if (pos := InStr(DetectionStr, "。",,, Occurrence)) {  ; chinese full stop
+      pos := (pos > 1) ? pos - 1 : 1
+      return pos
+    }
     if (!reversed) {
       pos := RegExMatch(DetectionStr, "s)(\.((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿ,]+).*?){" . Occurrence - 1 . "}\K\.((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿ,]+)", v)
       if (pos)

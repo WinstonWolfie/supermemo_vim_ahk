@@ -6,25 +6,19 @@
     ;@Ahk2Exe-IgnoreBegin
     this.CheckModeValue := false
     ;@Ahk2Exe-IgnoreEnd
-    this.PossibleVimModes := ["", "Vim_Normal", "Insert", "Replace"
-    , "Vim_ydc_y" , "Vim_ydc_yInner", "Vim_ydc_c", "Vim_ydc_cInner"
-    , "Vim_ydc_d" , "Vim_ydc_dInner" , "Vim_VisualLine", "Vim_VisualFirst"
-    , "Vim_VisualFirstInner", "Vim_VisualChar", "Vim_VisualLineFirst"
-    , "Vim_VisualCharInner", "Command" , "Command_w", "Command_q"
-    , "Z", "r_once", "r_repeat", "SMVim_Cloze", "SMVim_ClozeInner"
-    , "SMVim_ClozeStay", "SMVim_ClozeStayInner", "SMVim_ClozeHinter"
-    , "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
-    , "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
-    , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
-    , "SMVim_ExtractPriorityInner", "Insert_unicode", "SMVim_AltT", "SMVim_AltQ"]
+    ; this.PossibleVimModes := ["", "Vim_Normal", "Insert", "Replace"
+    ; , "Vim_ydc_y" , "Vim_ydc_yInner", "Vim_ydc_c", "Vim_ydc_cInner"
+    ; , "Vim_ydc_d" , "Vim_ydc_dInner" , "Vim_VisualLine", "Vim_VisualFirst"
+    ; , "Vim_VisualFirstInner", "Vim_VisualChar", "Vim_VisualLineFirst"
+    ; , "Vim_VisualCharInner", "Command" , "Command_w", "Command_q"
+    ; , "Z", "r_once", "r_repeat", "SMVim_Cloze", "SMVim_ClozeInner"
+    ; , "SMVim_ClozeStay", "SMVim_ClozeStayInner", "SMVim_ClozeHinter"
+    ; , "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
+    ; , "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
+    ; , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
+    ; , "SMVim_ExtractPriorityInner", "Insert_unicode", "SMVim_AltT", "SMVim_AltQ"]
 
     this.Mode := "Vim_Normal"  ; the default mode when vim_ahk opens
-    this.g := 0
-    this.n := 0
-    this.LineCopy := 0
-    this.LastIME := 0
-    this.BackToNormal := 0
-
     this.StatusCheckObj := ObjBindMethod(this, "StatusCheck")
   }
 

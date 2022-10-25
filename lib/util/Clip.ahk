@@ -1,7 +1,7 @@
 ; Clip() - Send and Retrieve Text Using the Clipboard
 ; Originally by berban - updated February 18, 2019 - modified by Winston
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156
-Clip(Text="", Reselect="", RestoreClip:=true, HTML:=false, SetText:=true, method:=0) {
+Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, SetText:=false, method:=0) {
   global WinClip, Vim
   if (RestoreClip)
     ClipSaved := ClipboardAll
@@ -38,7 +38,7 @@ Clip(Text="", Reselect="", RestoreClip:=true, HTML:=false, SetText:=true, method
       sleep 1
     ; Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
   }
-  If (Text && (ReSelect || HTML = "sm")) {
+  If (Text && (Reselect || HTML = "sm")) {
     if (HTML = "sm") {
       n := StrLen(text)
     } else {

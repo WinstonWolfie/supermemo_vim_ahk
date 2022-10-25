@@ -18,9 +18,6 @@
 ;   keywait shift
 ;   keywait ctrl
 ;   keywait alt
-;   cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-;   url := cUIA.GetCurrentURL()
-;   msgbox % url
 ; return
 
 ; Shortcuts
@@ -71,7 +68,7 @@ SMPlan:
 return
 
 ; Browsers
-#if (Vim.State.Vim.Enabled && WinActive("ahk_group Browsers"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_group Browser"))
 ^!w::send ^w!{tab}  ; close tab and switch back
 
 ^!i::  ; open in *I*E
@@ -119,16 +116,19 @@ return
 ; Incremental web browsing
 ; +!x::
 ; !x::
+IncrementalWebBrowsingNewTopic:
 ; Incremental video: Import current YT video to SM
 ; Import current webpage to SuperMemo
 ^+!a::
 ^!a::
   FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
-  GetAddressBarUrlDone := false
-  SetTimer, GetAddressBarUrl, -1
+  IncWB := (InStr(A_ThisHotkey, "x") || A_ThisLabel == "IncrementalWebBrowsingNewTopic")
+  if (!IncWB) {
+    GetAddressBarUrlDone := false
+    SetTimer, GetAddressBarUrl, -1
+  }
   ClipSaved := ClipboardAll
   hwnd := WinGet()
-  IncWB := InStr(A_ThisHotkey, "x")
   ImportDlg := InStr(A_ThisHotkey, "+")
   CurrText := WinGetText("ahk_class TElWind")
   CollName := Vim.SM.GetCollName(CurrText)
@@ -137,14 +137,16 @@ return
   KeyWait ctrl
   KeyWait alt
   ; VarSetCapacity(HTMLText, 40960000)  ; ~40mb
-  WaitVarExists(GetAddressBarUrlDone)
-  if (!vim.browser.url) {
-    ToolTip("Web page not found.")
-    return
+  if (!IncWB) {
+    WaitVarExists(GetAddressBarUrlDone)
+    if (!vim.browser.url := Vim.Browser.GetAddressBarUrl(1)) {
+      ToolTip("Web page not found.")
+      return
+    }
+    vim.browser.url := vim.sm.ParseUrl(vim.browser.url)
+    if (vim.sm.CheckDup(vim.browser.url, false))
+      MsgBox, 4,, Continue import?
   }
-  vim.browser.url := vim.sm.ParseUrl(vim.browser.url)
-  if (vim.sm.CheckDup(vim.browser.url, false))
-    MsgBox, 4,, Continue import?
   WinActivate % "ahk_id " . hwnd
   WinClose, ahk_class TBrowser
   ; Have to put below WinActivate, otherwise would make element window focus again
@@ -177,6 +179,16 @@ SMImportButtonImport:
   }
 
   HTMLText := PC ? "" : clip("",, false, true)
+  if (IncWB) {
+    if (!HTMLText) {
+      ToolTip("Text not found.")
+      Clipboard := ClipSaved
+      return
+    }
+    ; ControlSend,, {alt down}{shift down}h{shift up}{alt up}, % "ahk_id " . hwnd  ; not reliable
+    send !+h
+    sleep 20
+  }
   Vim.Browser.GetTitleSourceDate(false)
   SMVidImport := (PC || (!HTMLText && vim.browser.VidSite))
   if (!HTMLText && !SMVidImport) {
@@ -188,12 +200,12 @@ SMImportButtonImport:
   }
   Vim.Browser.GetUrl(0, false)
 
+  WinClip.Clear()
   if (SMVidImport) {
-    WinClip.Clear()
     if (SMVidImport && !PC) {
-      WinClip.SetText(Vim.Browser.Url)
+      Clipboard := Vim.Browser.Url
     } else {
-      WinClip.SetText(Vim.SM.MakeReference())
+      Clipboard := Vim.SM.MakeReference()
     }
   } else {
     HTMLText := Vim.HTML.Clean(HTMLText, true)
@@ -202,9 +214,9 @@ SMImportButtonImport:
     } else if (!IncWB && !vim.browser.date) {
       vim.browser.date := "Imported on " . CurrTime
     }
-    WinClip.Clear()
-    WinClip.SetText(HTMLText . "<br>" . Vim.SM.MakeReference(true))
+    Clipboard := HTMLText . "<br>" . Vim.SM.MakeReference(true)
   }
+  ClipWait
 
   InfoToolTip := "
   (
@@ -219,11 +231,6 @@ Title : " . Vim.Browser.Title . "
     InfoToolTip .= "`nTime stamp: " . Vim.Browser.VidTime
   ToolTip(InfoToolTip)
 
-  if (IncWB) {
-    ; ControlSend,, {alt down}{shift down}h{shift up}{alt up}, % "ahk_id " . hwnd  ; not reliable
-    send !+h
-    sleep 20
-  }
   if (prio && RegExMatch(prio, "^\."))
     prio := "0" . prio
   WinActivate, ahk_class TElWind
@@ -370,7 +377,7 @@ return
 ; SumatraPDF/Calibre/MS Word to SuperMemo
 #if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME")  ; SumatraPDF
                             || WinActive("ahk_exe ebook-viewer.exe")     ; Calibre (a epub viewer)
-                            || WinActive("ahk_group Browsers")           ; browser group (chrome, edge, etc)
+                            || WinActive("ahk_group Browser")           ; browser group (chrome, edge, etc)
                             || WinActive("ahk_exe WINWORD.exe")))        ; MS Word
 ^+!x::
 ^!x::
@@ -397,7 +404,7 @@ return
         prio := "0" . prio
       WinWaitActive, % "ahk_id " . hwnd
     }
-    if (IsBrowser := WinActive("ahk_group Browsers")) {
+    if (IsBrowser := WinActive("ahk_group Browser")) {
       ; ControlSend,, {alt down}{shift down}h{shift up}{alt up}, % "ahk_id " . hwnd  ; need to enable this shortcut in settings
       send !+h
       sleep 20
@@ -457,7 +464,8 @@ ExtractToSM:
     Vim.HTML.ClipboardGet_HTML(data)
     RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
     WinClip.Clear()
-    WinClip.SetText(Vim.HTML.Clean(data, true))
+    Clipboard := Vim.HTML.Clean(data, true)
+    ClipWait
     send {AppsKey}xp  ; paste HTML
     WinClip._waitClipReady()
     WinWaitActive, ahk_class TElWind
@@ -516,7 +524,7 @@ return
   send {enter}
 return
 
-#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browsers")) && WinExist("ahk_class TElWind") && !Vim.SM.IsPassiveColl())
+#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser")) && WinExist("ahk_class TElWind") && !Vim.SM.IsPassiveColl())
 !+s::
 ^!s::
 ^+!s::
@@ -532,7 +540,7 @@ return
       if (!ErrorLevel)
         send s
     }
-  } else if (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browsers")) {
+  } else if (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser")) {
     marker := trim(copy(true), " `t`r`n")
     if (!marker) {
       ToolTip("No text selected.")

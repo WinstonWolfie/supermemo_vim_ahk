@@ -18,9 +18,9 @@ return
 !a::  ; p*a*rse html
   Vim.State.SetMode("Vim_Normal")
   gui, HTMLTag:Add, Text,, &HTML tag:
-  list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|cloze|clozed|extract|sub"
-        . "|sup|blockquote|ruby|hint|note|ignore|headers|refText|reference|highlight"
-        . "|searchHighlight|tableLabel|AntiMerge"
+  list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
+        . "|sup|blockquote|ruby|hint|note|ignore|headers|RefText|reference|highlight"
+        . "|SearchHighlight|TableLabel|AntiMerge"
   gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
   gui, HTMLTag:Add, Button, default, &Add
@@ -54,9 +54,7 @@ HTMLTagButtonAdd:
   }
   WinActivate, ahk_class TElWind
   if (Vim.SM.IsCssClass(tag)) {
-    StartingTag := "<SPAN class=" . tag
-    EndingTag := "SPAN>"
-    tag := ""
+    StartingTag := "<SPAN class=" . tag, EndingTag := "SPAN>", tag := ""
   } else if (tag = "ruby") {
     Clipboard := ClipSaved
     InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above`, like Pinyin,, 272, 160

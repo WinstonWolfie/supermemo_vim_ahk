@@ -120,7 +120,8 @@ SMCtrlN:
       ClipSaved := ClipboardAll
     vim.browser.url := Clipboard
     WinClip.Clear()
-    WinClip.SetText(vim.browser.title . "`n" . Vim.SM.MakeReference())
+    Clipboard := vim.browser.title . "`n" . Vim.SM.MakeReference()
+    ClipWait
     Vim.SM.WaitFileLoad()
     send q
     Vim.SM.WaitTextFocus()
@@ -179,7 +180,7 @@ return
   if (!Vim.HTML.ClipboardGet_HTML(Data))
     return
   ; To do: Detecting selection contents
-  ; if (RegExMatch(data, "<IMG[^>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
+  ; if (RegExMatch(data, "<IMG[^<>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
     ; ToolTip("Please select text or image only.")
     ; Clipboard := ClipSaved
     ; Return
@@ -363,7 +364,9 @@ return
 ; So ctrl+ff (hold ctrl and press f twice) could be a shorthand for search clipboard
 ^f::
   ControlSetText, TEdit1, % Clipboard, ahk_class TMyFindDlg
-  ControlSend, TEdit1, {enter}, ahk_class TMyFindDlg
+  ControlTextWaitChange("TEdit1",, "ahk_class TMyFindDlg")
+  ; ControlSend, TEdit1, {enter}, ahk_class TMyFindDlg
+  ControlClick, TButton3, ahk_class TMyFindDlg
 return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
@@ -407,19 +410,18 @@ return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.IsCurrentVimMode("SMVim_PlanDragging"))
 j::
-  n := Vim.State.n ? Vim.State.n : 1
+  n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
   MouseMove, 0, % n * PlanEntryGap,, R
-  Vim.State.n := 0
 return
 
 k::
-  n := Vim.State.n ? Vim.State.n : 1
+  n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
   MouseMove, 0, % -1 * n * PlanEntryGap,, R
-  Vim.State.n := 0
 return
 
 p::
   MouseMove, 0, % PlanEntryGap,, R  ; put after
+  sleep 100  ; wait for SM to update slot position
 +p::  ; put before
   click up
   MouseGetPos, XCoord, YCoord
@@ -431,7 +433,7 @@ p::
 return
 
 ; Incremental video
-#if (Vim.State.Vim.Enabled && ((WinActive("ahk_group Browsers") && WinExist("ahk_class TElWind")) || WinActive("ahk_class TElWind")) && Vim.SM.IsPassiveColl())
+#if (Vim.State.Vim.Enabled && ((WinActive("ahk_group Browser") && WinExist("ahk_class TElWind") && Vim.SM.IsPassiveColl())) || WinActive("ahk_class TElWind"))
 ^!s::  ; sync time
 !+s::  ; sync time but browser tab stays open
 ^+!s::  ; sync time and keep learning
@@ -440,7 +442,7 @@ return
 ^+!`::  ; clear time and keep learning
   KeyWait alt
   KeyWait ctrl
-  if (WinActive("ahk_group Browsers") && !Vim.Browser.VidTime) {
+  if (WinActive("ahk_group Browser") && !Vim.Browser.VidTime) {
     send {esc 2}
     Vim.Browser.GetTitleSourceDate("", true)  ; get title for checking later
     if (!InStr(A_ThisHotkey, "``")) {
@@ -477,6 +479,8 @@ return
       return
     }
   }
+  while (WinExist("ahk_class TMsgDialog"))
+    WinClose
   WinActivate, ahk_class TElWind
 
   if (!Vim.SM.IsEditingText())
@@ -508,8 +512,8 @@ return
     if (RegExMatch(script, match)) {
       ControlSetText, TMemo1, % RegExReplace(script, match, replacement)
     } else {
-      if (BL && !RegExMatch(script, "p=[0-9]+"))
-        replacement := "?" . replacement
+      ; if (BL && !RegExMatch(script, "p=[0-9]+"))
+        ; replacement := "?" . replacement
       ControlSetText, TMemo1, % script . replacement
     }
     send !o{esc}  ; close script editor
@@ -521,7 +525,7 @@ return
     send !{f10}fe
     WinWaitActive, ahk_class TInputDlg
     ControlGetText, Ref, TMemo1
-    Ref := RegExReplace(Ref, "(#Comment: .*|$)", "`r`n#Comment: " . Vim.Browser.Comment)
+    Ref := RegExReplace(Ref, "(#Comment: .*|$)", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
     ControlSetText, TMemo1, % Ref
     send !{enter}
   }

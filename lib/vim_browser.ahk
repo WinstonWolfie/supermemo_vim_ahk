@@ -24,7 +24,7 @@ class VimBrowser {
       url := StrReplace(url, "app=desktop&")
       url := RegExReplace(url, "&.*")
     } else if (InStr(url, "bilibili.com/video")) {
-      url := RegExReplace(url, "(\/\?p=[0-9]+\K|&).*")
+      url := RegExReplace(url, "(\?(?!p=[0-9]+)|&).*")
     } else if (InStr(url, "netflix.com/watch")) {
       url := RegExReplace(url, "\?trackId=.*")
     } else if (InStr(url, "baike.baidu.com")) {

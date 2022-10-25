@@ -3,7 +3,7 @@
 ~enter::  ; enter up doesn't work
 ~space up::
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would add a {left}
-  if (!Vim.SM.PlayIfCertainColl())
+  if (!Vim.SM.PlayIfCertainColl("", 3000))
     Vim.SM.EnterInsertIfSpelling()
 Return
 

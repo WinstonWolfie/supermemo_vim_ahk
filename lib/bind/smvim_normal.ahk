@@ -108,13 +108,58 @@ return
   Vim.State.SetMode()
 Return
 
-#if (Vim.IsVimGroup()
-  && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && (WinActive("ahk_class TElWind")
-   || WinActive("ahk_class TContents")
-   || WinActive("ahk_class TBrowser")))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))
 !h::send !{left}
 !l::send !{right}
 !j::send !{pgdn}
 !k::send !{pgup}
 !u::send ^{up}
+
+#if ((Vim.IsVimGroup() && Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key
+   || Vim.SM.IsLearning()
+   || Vim.SM.IsGrading()
+   || (WinActive("SuperMemo Import") && WinActive("ahk_class AutoHotkeyGUI"))
+   || (WinActive("Priority") && WinActive("ahk_class #32770"))
+   || WinActive("ahk_class TPriorityDlg"))
+; Priority script, originally made by Naess and modified by Guillem
+; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
+; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png
+!0::
+Numpad0::
+NumpadIns::Vim.SM.SetPriority(0.00,3.6076)
+
+!1::
+Numpad1::
+NumpadEnd::Vim.SM.SetPriority(3.6077,8.4131)
+
+!2::
+Numpad2::
+NumpadDown::Vim.SM.SetPriority(8.4132,18.4917)
+
+!3::
+Numpad3::
+NumpadPgdn::Vim.SM.SetPriority(18.4918,28.0885)
+
+!4::
+Numpad4::
+NumpadLeft::Vim.SM.SetPriority(28.0886,37.2103)
+
+!5::
+Numpad5::
+NumpadClear::Vim.SM.SetPriority(37.2104,46.24)
+
+!6::
+Numpad6::
+NumpadRight::Vim.SM.SetPriority(46.25,57.7575)
+
+!7::
+Numpad7::
+NumpadHome::Vim.SM.SetPriority(57.7576,70.5578)
+
+!8::
+Numpad8::
+NumpadUp::Vim.SM.SetPriority(70.5579,90.2474)
+
+!9::
+Numpad9::
+NumpadPgup::Vim.SM.SetPriority(90.2474,99.99)

@@ -1,15 +1,17 @@
-﻿#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
+﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
 :::Vim.State.SetMode("Command") ;(:)
 ; `;::Vim.State.SetMode("Command") ;(;)
-#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command"))
 w::Vim.State.SetMode("Command_w")
 q::Vim.State.SetMode("Command_q")
 h::
   send {F1}
   Vim.State.SetMode("Vim_Normal")
 Return
+CapsLock & m::
+bs::Vim.State.SetMode("Vim_Normal")
 
-#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command_w"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command_w"))
 Return::
   send ^s
   Vim.State.SetMode("Vim_Normal")
@@ -25,7 +27,7 @@ Space::  ; save as
   Vim.State.SetMode("Insert")
 Return
 
-#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Command_q"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command_q"))
 Return::
   send ^w
   Vim.State.SetMode("Insert")
@@ -61,7 +63,10 @@ Return
   } else if (WinActive("ahk_class TBrowser")) {
     list .= "|Memorise current browser|Set browser position"
           . "|Mass replace registry"
+  } else if (WinActive("ahk_group Browser")) {
+    list .= "|Incremental web browsing: New topic"
   }
+
   gui, VimCommander:Add, Combobox, vCommand gAutoComplete w256, % list
   gui, VimCommander:Add, Button, default, &Execute
   gui, VimCommander:Show,, Vim Commander
@@ -83,7 +88,7 @@ VimCommanderButtonExecute:
   }
   Vim.State.SetMode("Insert")
   WinActivate % "ahk_id " . hwnd
-  gosub % command
+  goto % command
 return
 
 WindowSpy:
@@ -204,7 +209,7 @@ GoogleDefineButtonSearch:
   gui submit
   gui destroy
   if (LangCode) {
-    run % "https://www.google.com/search?hl=" . LangCode . "&q=define:" . term
+    run % "https://www.google.com/search?hl=" . LangCode . "&q=define+" . term
         . "&forcedict=" . term . "&dictcorpus=" . LangCode . "&expnd=1"
   } else {
     run % "https://www.google.com/search?q=define:" . term
@@ -411,12 +416,12 @@ return
 AlatiusALatinMacronizer:
   Latin := trim(clip())
   if (!Latin) {
-    InputBox, Latin, Alatius: a Latin macronizer, Enter your Latin sentences,, 192, 128
+    InputBox, Latin, Alatius: a Latin macronizer, Enter your Latin sentences.,, 192, 128
     if (!Latin)
       return
   }
   run https://alatius.com/macronizer/
-  WinWaitActive, ahk_group Browsers,, 10
+  WinWaitActive, ahk_group Browser
   cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   cUIA.WaitPageLoad()
   send {tab 2}
@@ -460,7 +465,8 @@ ReformatScriptComponent:
       Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
     }
     WinClip.Clear()
-    WinClip.SetText(Vim.Browser.url)
+    Clipboard := Vim.Browser.url
+    ClipWait
     gosub SMSetLinkFromClipboard
     send {esc}
   }
@@ -474,7 +480,8 @@ return
 CopyCurrentWindowsPosition:
   WinGetPos, x, y, w, h, A
   WinClip.Clear()
-  WinClip.SetText("x = " . x . " y = " . y . " w = " . w . " h = " . h)
+  Clipboard := "x = " . x . " y = " . y . " w = " . w . " h = " . h
+  ClipWait
   ToolTip("Copied " . Clipboard)
 return
 
@@ -512,12 +519,13 @@ SciHub:
       return
   }
   run https://sci-hub.hkvisa.net/
-  WinWaitActive, ahk_group Browsers,, 10
+  WinWaitActive, ahk_group Browser
   cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   cUIA.WaitPageLoad()
-  send {tab}+{tab}
-  clip(text)
-  send {enter}
+  el := cUIA.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
+  ValuePattern := el.GetCurrentPatternAs("Value")
+  ValuePattern.SetValue(text)
+  cUIA.WaitElementExist("ControlType=Text AND Name='open'").Click()
 return
 
 YT:
@@ -552,7 +560,14 @@ ReformatVocab:
   SynAndAnt := StrReplace(SynAndAnt, "; ", ", ")
   SynAndAnt := RegExReplace(SynAndAnt, "((Similar:?)<BR>|Synonyms(<\/P>\r\n<P>|<BR>))", "syn: ")
   SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?|Opuesta)<BR>", "ant: ")
-  Clip(def . SynAndAnt,, false, true)
+  clip := def . SynAndAnt
+  Vim.HTML.SetClipboardHTML(clip)
+  sleep 200
+  while DllCall("user32\GetOpenClipboardWindow", "Ptr")
+    Sleep, -1
+  send ^v
+  while (WinClipAPI.GetOpenClipboardWindow())
+    sleep 1
   Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
 return
@@ -565,12 +580,11 @@ ZLibrary:
       return
   }
   run https://z-lib.org/
-  WinWaitActive, ahk_group Browsers,, 10
+  WinWaitActive, ahk_group Browser
   cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   cUIA.WaitPageLoad()
-  send {tab 4}{enter}
-  cUIA.WaitPageLoad()
-  cUIA.SetURL(GetActiveBrowserURL() . "/s/" . search . "?", true)
+  url := cUIA.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
+  cUIA.SetURL(url . "s/" . search . "?", true)
 return
 
 ImportFirstFile:

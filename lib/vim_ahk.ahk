@@ -109,9 +109,9 @@ class VimAhk {
     GroupAdd, SuperMemo, ahk_exe sm16.exe
     GroupAdd, SuperMemo, ahk_exe sm15.exe
     
-    GroupAdd, Browsers, ahk_exe chrome.exe
-    GroupAdd, Browsers, ahk_exe firefox.exe
-    GroupAdd, Browsers, ahk_exe msedge.exe  ; Microsoft Edge
+    GroupAdd, Browser, ahk_exe chrome.exe
+    GroupAdd, Browser, ahk_exe firefox.exe
+    GroupAdd, Browser, ahk_exe msedge.exe  ; Microsoft Edge
     
     GroupAdd, Excluded, ahk_class #32770  ; windows + r
 

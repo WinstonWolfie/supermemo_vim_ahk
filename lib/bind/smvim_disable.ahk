@@ -9,6 +9,7 @@ Return
 ^+!j::
   send ^+j  ; shift position in outstanding queue
   Vim.State.SetMode("Insert")
+  Vim.state.BackToNormal := 1
 return
 
 ^+!m::send ^m  ; remember

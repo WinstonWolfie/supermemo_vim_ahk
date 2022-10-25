@@ -25,21 +25,23 @@ class VimHTML {
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
 
     ; Styles and fonts
-    str := RegExReplace(str, "i)<([^>]+)?\K (zzz)?style="".*?""(?=([^<]+)?>)")
-    str := RegExReplace(str, "i)<([^>]+)?\K (zzz)?style='.*?'(?=([^<]+)?>)")
+    str := RegExReplace(str, "i)<([^<>]+)?\K (zzz)?style="".*?""(?=([^<>]+)?>)")
+    str := RegExReplace(str, "i)<([^<>]+)?\K (zzz)?style='.*?'(?=([^<>]+)?>)")
     str := RegExReplace(str, "is)<\/?(zzz)?font( .*?)?>")
-    str := RegExReplace(str, "i)<([^>]+)?\K bgColor=[^ >]+(?=([^<]+)?>)")
+    str := RegExReplace(str, "i)<([^<>]+)?\K (bgColor|onError|onLoad)=[^ >]+(?=([^<>]+)?>)")
 
     ; Scripts
     str := RegExReplace(str, "i)<(zzz)?iframe( .*?)?>.*?<\/(zzz)?iframe>")
     str := RegExReplace(str, "i)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
+    str := RegExReplace(str, "i)<(zzz)?form( .*?)?>.*?<\/(zzz)?form>")
+    str := RegExReplace(str, "i)<(zzz)?input( .*?)?>")
 
     str := RegExReplace(str, "is)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
 
     if (nuke) {
       ; Classes
-      str := RegExReplace(str, "i)<([^>]+)?\K class="".*?""(?=([^<]+)?>)")
-      str := RegExReplace(str, "i)<([^>]+)?\K class=[^ >]+(?=([^<]+)?>)")
+      str := RegExReplace(str, "i)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
+      str := RegExReplace(str, "i)<([^<>]+)?\K class=[^ >]+(?=([^<>]+)?>)")
     }
     return str
   }
