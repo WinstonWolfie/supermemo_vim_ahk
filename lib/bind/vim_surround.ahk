@@ -21,7 +21,7 @@ s::Vim.State.SetMode("",, -1,,, 1)
   ClipSaved := ClipboardAll
   KeyWait shift
   if (!ChangeEntered && (Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("ydc_y"))) {
-    selection := copy(true)
+    selection := copy(false)
     if (!selection) {
       Clipboard := ClipSaved
       return
@@ -37,7 +37,7 @@ s::Vim.State.SetMode("",, -1,,, 1)
     if (!ChangeEntered) {
       Vim.State.SetMode("Vim_Visual")
       Vim.Move.Inner(A_ThisHotkey)
-      selection := copy(true)
+      selection := copy(false)
       if (!selection) {
         Clipboard := ClipSaved
         return

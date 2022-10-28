@@ -317,7 +317,8 @@ class VimAhk {
                   , "ahk_class TChecksDlg"  ; SM check boxes (e.g. f6)
                   , "ahk_class TInputDlg"   ; SM input window (e.g. editing image name)
                   , "ahk_class TTitleEdit"  ; SM title edit window (!t)
-                  , "ahk_class TRepSortDlg"]  ; SM sort repetition window
+                  , "ahk_class TRepSortDlg"  ; SM sort repetition window
+                  , "ahk_class TElParamDlg"]  ; SM element parameter window
     DefaultGroup := ""
     for i, v in DefaultList {
       if (DefaultGroup == "") {

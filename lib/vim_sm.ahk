@@ -9,11 +9,11 @@ class VimSM {
       ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, NA x1 y1
     } else {
       ; server2 because question field of items are server2
-      if (ControlGet("",, "Internet Explorer_Server2", "ahk_class TElWind")) {  ; item
+      if (ControlGet("hwnd",, "Internet Explorer_Server2", "ahk_class TElWind")) {  ; item
         ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, NA x1 y1
       } else {  ; topic
         ; Article field in topics is server1
-        if (ControlGet("",, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
+        if (ControlGet("hwnd",, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
         } else {  ; no html field found
           send q
@@ -112,38 +112,44 @@ class VimSM {
     return (WinActive("ahk_class TBrowser") && ControlGetFocus() == "TStringGrid1")
   }
 
-  SetPriority(min, max) {
+  SetRandPrio(min, max) {
     if (WinActive("SuperMemo Import") && WinActive("ahk_class AutoHotkeyGUI")) {
       ControlSetText, Edit1, % random(min, max)
-      ControlFocus Edit2
+      ControlFocus, Edit2
     } else if (WinActive("Priority") && WinActive("ahk_class #32770")) {  ; input dialogue
       ControlSetText, Edit1, % random(min, max)
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
       ControlSetText, TEdit5, % random(min, max)
-    } else if (WinActive("ahk_group SuperMemo")) {
-      send !p  ; open priority window
-      send % random(min, max) . "{enter}"
-      this.Vim.State.SetNormal()
     } else {
+      this.SetPrio(random(min, max))
+    }
+    this.Vim.State.SetNormal()
+  }
+
+  SetPrio(prio, BG:=false) {
+    if (!BG && WinActive("ahk_class TElWind")) {
+      send !p  ; open priority window
+      send % prio . "{enter}"
+    } else if (BG && WinExist("ahk_class TElWind")) {
       send {alt down}
       PostMessage, 0x0104, 0x50, 1<<29,, ahk_class TElWind  ; P key
       PostMessage, 0x0105, 0x50, 1<<29,, ahk_class TElWind
       send {alt up}
       WinWait, ahk_class TPriorityDlg
-      ControlSetText, TEdit5, % random(min, max), ahk_class TPriorityDlg
+      ControlSetText, TEdit5, % prio, ahk_class TPriorityDlg
       ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
     }
   }
 
-  SetTaskValue(min, max) {
+  SetRandTaskVal(min, max) {
     ControlSetText, TEdit8, % random(min, max)
     ControlFocus, TEdit7
-    this.Vim.State.SetNormal()
+    this.Vim.State.SetMode("Insert")
   }
 
   MoveAboveRef(RestoreClip:=true) {
     send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-    if (InStr(clip("",, RestoreClip,,, 1), "#SuperMemo Reference:")) {
+    if (InStr(copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
       send {up 2}
     } else {
       send ^{end}
@@ -267,28 +273,28 @@ class VimSM {
     }
   }
 
-  SaveHTML(PassSend:=false, ReturnPath:=false) {
-    if (!PassSend && this.IsEditingHTML()) {
+  SaveHTML(SendEsc:=true, ReturnPath:=false, timeout:=0) {
+    if (SendEsc && this.IsEditingHTML()) {
       send {esc}
-      Vim.SM.WaitTextExit()
+      Vim.SM.WaitTextExit(timeout)
     }
     send ^+{f6}  ; opens notepad
     if (ReturnPath) {
-      WinWaitActive, ahk_class Notepad,, 0
+      WinWaitActive, ahk_class Notepad,, % timeout ? timeout / 1000 : ""
       for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where Name='notepad.exe'")
-        path := RegExReplace(process.CommandLine, """.*?"" ")
+        ret := path := RegExReplace(process.CommandLine, """.*?"" ")
     } else {
-      WinWaitNotActive, ahk_class TElWind,, 5
+      WinWaitNotActive, ahk_class TElWind,, % timeout ? timeout / 1000 : ""
+      ret := true
     }
     WinClose, ahk_class Notepad
     WinActivate, ahk_class TElWind
-    return path
+    return ret
   }
 
-  GetCollName(text:="") {
-    text := text ? text : WinGetText("ahk_class TElWind")
-    RegExMatch(text, "m)^.*?(?= \(SuperMemo)", CollName)
-    return CollName
+  GetCollName() {
+    RegExMatch(WinGetTitle("ahk_class TStats"), "\[(.*)\]$", v)
+    return v1
   }
 
   GetCollPath(text:="") {
@@ -298,9 +304,9 @@ class VimSM {
   }
 
   GetLink(TemplCode:="", RestoreClip:=true) {
-    global WinClip
     if (RestoreClip && !TemplCode)
       ClipSaved := ClipboardAll
+    global WinClip
     WinClip.Clear()
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(false)
     if (InStr(TemplCode, "Link:")) {
@@ -350,10 +356,8 @@ class VimSM {
     }
   }
 
-  GetCurrConcept(CurrText:="") {
-    CurrText := CurrText ? CurrText : WinGetText("ahk_class TElWind")
-    RegExMatch(CurrText, "m)(?<=\)\r\n).*$", ConceptName)
-    return ConceptName
+  GetCurrConcept() {
+    return ControlGetText("TEdit1", "ahk_class TElWind")
   }
 
   IsPassiveColl(CollName:="") {
@@ -365,6 +369,7 @@ class VimSM {
     if (!ContextMenu) {
       PostMessage, 0x0111, % msg,,, ahk_class TElWind
     } else {
+      ; NOT RELIABLE, NOT RECOMMENDED FOR USE
       if (WinActive("ahk_exe sm18.exe")) {
         WinClass := "ahk_pid " . WinGet("PID")
       } else {
@@ -383,7 +388,11 @@ class VimSM {
     if (RestoreClip)
       ClipSaved := ClipboardAll
     WinClip.Clear()
-    send !{f10}tc
+    if (!this.IsEditingText()) {
+      send ^c
+    } else {
+      send !{f10}tc
+    }
     ; this.PostMsg(693, true)  ; not reliable???
     ClipWait
     code := Clipboard
@@ -445,18 +454,32 @@ class VimSM {
       return true
   }
 
-  ChangeDefaultConcept(concept:="") {
+  ChangeDefaultConcept(concept:="", send:=0, CurrConcept:="", check:=true) {
+    if (concept && check) {
+      CurrConcept := CurrConcept ? CurrConcept : this.GetCurrConcept()
+      if (InStr(CurrConcept, concept) == 1)  ; entered concept = current concept
+        return false
+    }
     ControlClickWinCoord(723, 57, "ahk_class TElWind")
     ; ControlClickDPIAdjusted(716, 14, "TToolBar2", "ahk_class TElWind")  ; not reliable because sometimes it could be TToolBar3???
     if (concept) {
       WinWait, ahk_class TRegistryForm
-      ControlSetText, Edit1, % SubStr(concept, 2), ahk_class TRegistryForm
-      ; Needed for updating the template; without {text},
-      ; the first letter would not be in the correct case;
-      ; which makes ControlTextWait() cannot pass
-      ControlSend, Edit1, % "{text}" . SubStr(concept, 1, 1), ahk_class TRegistryForm
-      ControlTextWait("Edit1", concept, "ahk_class TRegistryForm")
+      ; send = 1 means must send
+      ; send = -1 means must not send
+      ; send = 0 means let string length decide
+      ; ControlSend is faster when string length smaller than 20
+      if (send == 1 || (send != -1 && StrLen(concept) <= 20)) {
+        ControlSend, Edit1, % "{text}" . concept, ahk_class TRegistryForm
+      } else {
+        ControlSetText, Edit1, % SubStr(concept, 2), ahk_class TRegistryForm
+        ; Needed for updating the template; without {text},
+        ; the first letter would not be in the correct case;
+        ; which makes ControlTextWait() cannot pass
+        ControlSend, Edit1, % "{text}" . SubStr(concept, 1, 1), ahk_class TRegistryForm
+        ControlTextWait("Edit1", concept, "ahk_class TRegistryForm")
+      }
       ControlSend, Edit1, {enter}, ahk_class TRegistryForm
+      return true
     }
   }
 
@@ -538,14 +561,18 @@ class VimSM {
     return ret
   }
 
-  ClearHighlight() {
-    ; ControlSend,, {ctrl down}{enter}{ctrl up}, ahk_class TElWind
-    this.PostMsg(240)
-    WinWait, ahk_class TCommanderDlg
-    ControlSend, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
-    ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
-    ; ControlTextWaitChange("TEdit2",, "ahk_class TCommanderDlg")
-    ; ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
+  ClearHighlight(OpenCommander:=true) {
+    if (OpenCommander) {
+      ; ControlSend,, {ctrl down}{enter}{ctrl up}, ahk_class TElWind
+      this.PostMsg(240)  ; open commander
+      WinWait, ahk_class TCommanderDlg
+    }
+    ; ControlSend, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
+    ControlSetText, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
+    ControlTextWait("TEdit2", "h", "ahk_class TCommanderDlg")
+    ; ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
+    while (WinExist("ahk_class TCommanderDlg"))
+      ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
   }
 
   MakeReference(html:=false) {
@@ -606,11 +633,15 @@ class VimSM {
         ToolTip("Not found.")
         return false
       }
-      ControlSetText, TEdit2, h  ; Highlight: Clear
-      send {enter}
+      this.ClearHighlight(false)
       if (WinExist("ahk_class TMyFindDlg"))  ; clears search box window
         WinClose
       return true
     }
+  }
+
+  GoToTopIfLearning() {
+    if (this.IsLearning())
+      ControlSend, TBitBtn3, {home}, ahk_class TElWind
   }
 }

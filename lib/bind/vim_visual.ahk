@@ -173,7 +173,7 @@ ConvertToUppercase:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
   selection := clip("",, false, html)
   StringUpper, selection, selection
-  clip(selection,, true, html)
+  clip(selection,, false, html)
   Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
 Return
@@ -201,13 +201,13 @@ Return
 
 o::  ; move to other end of marked area; not perfect with line breaks
   ClipSaved := ClipboardAll
-  if (!selection := copy(true)) {
+  if (!selection := copy(false)) {
     Clipboard := ClipSaved
     return
   }
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
-  SelectionRight := copy(true)
+  SelectionRight := copy(false)
   SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
   send +{left}
   if (SelectionLen < SelectionRightLen

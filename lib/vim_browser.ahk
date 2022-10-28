@@ -7,13 +7,12 @@ class VimBrowser {
     this.title := this.url := this.source := this.date := this.VidTime := this.comment := this.VidSite := ""
   }
 
-  GetInfo(RestoreClip:=true, SkipCopy:=false) {
+  GetInfo(RestoreClip:=true, CopyFullPage:=true) {
     this.clear()
-    global WinClip
     if (RestoreClip)
       ClipSaved := ClipboardAll
     this.GetUrl(0, false)
-    this.GetTitleSourceDate(false, SkipCopy)
+    this.GetTitleSourceDate(false, CopyFullPage)
     if (RestoreClip)
       Clipboard := ClipSaved
   }
@@ -33,7 +32,7 @@ class VimBrowser {
     return url
   }
 
-  GetTitleSourceDate(RestoreClip:=true, SkipCopy:=false) {
+  GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true) {
     this.Title := this.RemoveBrowserName(WinGetTitle())
     this.VidSite := this.IsVidSite(this.title)
     if (!this.url)
@@ -65,15 +64,18 @@ class VimBrowser {
     } else if (RegExMatch(this.title, ": MedlinePlus Medical Encyclopedia$")) {
       this.source := "MedlinePlus Medical Encyclopedia"
       this.title := RegExReplace(this.title, ": MedlinePlus Medical Encyclopedia$")
-    } else if (RegExMatch(this.title, " - supermemo.guru$")) {
+    } else if (RegExMatch(this.title, " - supermemo\.guru$")) {
       this.source := "SuperMemo Guru"
-      this.title := RegExReplace(this.title, " - supermemo.guru$")
+      this.title := RegExReplace(this.title, " - supermemo\.guru$")
     } else if (RegExMatch(this.title, " -- ScienceDaily$")) {
       this.source := "ScienceDaily"
       this.title := RegExReplace(this.title, " -- ScienceDaily$")
     } else if (RegExMatch(this.title, "_英为财情Investing.com$")) {
       this.source := "英为财情"
       this.title := RegExReplace(this.title, "_英为财情Investing.com$")
+    } else if (RegExMatch(this.title, " \| OSUCCC - James$")) {
+      this.source := "OSUCCC - James"
+      this.title := RegExReplace(this.title, " \| OSUCCC - James$")
 
     } else if (InStr(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", Source)
@@ -112,7 +114,7 @@ class VimBrowser {
     } else if (RegExMatch(this.title, " - YouTube$")) {
       this.source := "YouTube"
       this.title := StrReplace(this.title, " - YouTube")
-      if (!SkipCopy && text := this.GetFullPage("", RestoreClip)) {
+      if (CopyFullPage && text := this.GetFullPage("", RestoreClip)) {
         this.VidTime := this.MatchYTTime(text)
         this.date := this.MatchYTDate(text)
         this.source .= ": " . this.MatchYTSource(text)
@@ -120,7 +122,7 @@ class VimBrowser {
     } else if (RegExMatch(this.Title, "_哔哩哔哩_bilibili$")) {
       this.Source := "哔哩哔哩"
       this.Title := StrReplace(this.Title, "_哔哩哔哩_bilibili")
-      if (!SkipCopy && text := this.GetFullPage("", RestoreClip)) {
+      if (CopyFullPage && text := this.GetFullPage("", RestoreClip)) {
         this.VidTime := this.MatchBLTime(text)
         this.date := this.MatchBLDate(text)
         this.source .= "：" . this.MatchBLSource(text)
@@ -129,7 +131,6 @@ class VimBrowser {
     ; Try to use - or | to find source
     } else {
       ReversedTitle := StrReverse(this.Title)
-      separator := ""
       if (InStr(ReversedTitle, " | ")
        && (!InStr(ReversedTitle, " - ")
         || InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - "))) {  ; used to find source
@@ -137,7 +138,7 @@ class VimBrowser {
       } else if (InStr(ReversedTitle, " - ")) {
         separator := " - "
       } else if (InStr(ReversedTitle, " – ")) {
-        separator := " – "  ; websites like BetterExplained
+        separator := " – "  ; sites like BetterExplained
       } else if (InStr(ReversedTitle, " — ")) {
         separator := " — "
       }
@@ -154,13 +155,13 @@ class VimBrowser {
   GetFullPage(title:="", RestoreClip:=true) {
     if (!title)
       title := this.RemoveBrowserName(WinGetTitle())
-    global WinClip
     if (RestoreClip)
       ClipSaved := ClipboardAll
     if (vid := RegExMatch(title, "_哔哩哔哩_bilibili$")) {
       MouseGetPos, XSaved, YSaved
       MouseMove, % A_ScreenWidth / 2, % A_ScreenHeight / 2
     }
+    global WinClip
     WinClip.Clear()
     send {esc 2}^a^{ins}{esc}
     ClipWait 1.5
@@ -195,16 +196,14 @@ class VimBrowser {
   }
 
   GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
-    if (!title)
-      title := this.RemoveBrowserName(WinGetTitle())
+    title := title ? title : this.RemoveBrowserName(WinGetTitle())
     if (!this.IsVidSite(title))
       return
-    global WinClip
     if (RestoreClip)
       ClipSaved := ClipboardAll
+    global WinClip
     WinClip.Clear()
-    if (!FullPageText)
-      FullPageText := this.GetFullPage(title, false)
+    FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, false)
     if (RegExMatch(title, " - YouTube$")) {
       VidTime := this.MatchYTTime(FullPageText)
     } else if (RegExMatch(title, "_哔哩哔哩_bilibili$")) {
@@ -217,14 +216,13 @@ class VimBrowser {
 
   GetUrl(method:=0, RestoreClip:=true) {
     if (!method) {
-      if (!this.title)
-        this.title := this.RemoveBrowserName(WinGetTitle())
+      this.title := this.title ? this.title : this.RemoveBrowserName(WinGetTitle())
       if (this.title = "New Tab")
         return
       send {f6}^l  ; go to address bar
-      global WinClip
       if (RestoreClip)
         ClipSaved := ClipboardAll
+      global WinClip
       WinClip.Clear()
       while (!Clipboard)
         send ^l^c
@@ -281,8 +279,12 @@ class VimBrowser {
   }
 
   IsVidSite(title:="") {
-    if (!title)
-      title := this.RemoveBrowserName(WinGetTitle())
+    title := title ? title : this.RemoveBrowserName(WinGetTitle())
     return RegExMatch(title, "( - YouTube|_哔哩哔哩_bilibili)$")
+  }
+
+  Highlight() {
+    send !+h  ; more robust than ControlSend
+    sleep 20
   }
 }

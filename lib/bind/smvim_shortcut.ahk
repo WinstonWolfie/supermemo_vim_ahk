@@ -10,7 +10,7 @@
     pos := InStr(clip(), "[...]")
     if (pos) {
       pos += 4
-      send {left}{right %pos%}
+      send % "{left}{right " . pos . "}"
     } else {
       ToolTip("Not found.")
       Vim.State.SetNormal()
@@ -33,6 +33,7 @@
 return
 
 ^!c::  ; change default *c*oncept group
+  SetDefaultKeyboard(0x0409)  ; english-US	
   Vim.SM.ChangeDefaultConcept()
   Vim.State.SetMode("Vim_Normal")
 Return
@@ -46,12 +47,13 @@ return
 >^>+bs::  ; for processing pending queue Advanced English 2018: delete element and keep learning
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
+  Vim.State.SetNormal()
   KeyWait alt
   KeyWait ctrl
   KeyWait shift
   if (InStr(A_ThisHotkey, "\")) {
     send ^+{enter}
-    WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the Coll?"
+    WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
     send {enter}
   } else {
     send ^+{del}
@@ -62,15 +64,25 @@ return
   if (ErrorLevel)
     return
   Vim.SM.WaitFileLoad()
-  if (WinActive("ahk_class TElWind"))
+  if (WinActive("ahk_class TElWind")) {
     Vim.SM.Learn()
-  Vim.State.SetNormal()
-  Vim.SM.EnterInsertIfSpelling()
+    Vim.SM.EnterInsertIfSpelling()
+  }
 return
 
 ^!+g::  ; change element's concept *g*roup
-  send ^+p!g
-  Vim.State.SetNormal()
+  SetDefaultKeyboard(0x0409)  ; english-US	
+  send ^+p
+  WinWaitActive, ahk_class TElParamDlg
+  ; Can't use ControlFocus here, will actually focus to it even if the control is not shown
+  send !g  ; focus to concept group
+  if (!ControlFocusWait("Edit2", "ahk_class TElParamDlg",,,, 400)) {  ; in task parameter window
+    accButton := Acc_Get("Object", "4.2.4",, "ahk_id " . WinGet())
+    accButton.accDoDefaultAction(1)
+    ControlFocus, Edit2, ahk_class TElParamDlg  ; focus to concept group
+  }
+  Vim.State.SetMode("Insert")
+  Vim.State.BackToNormal := 1
 return
 
 ^!t::
@@ -97,6 +109,7 @@ return
 ~^enter::
   SetDefaultKeyboard(0x0409)  ; english-US	
   Vim.State.SetMode("Insert")
+  vim.state.BackToNormal := 1
 return
 
 ^!p::  ; convert to a *p*lain-text template
@@ -157,7 +170,7 @@ return
     link := "SuperMemoElementNo=(" . RegExReplace(Clipboard, "^#") . ")"
   }
   ClipSaved := ClipboardAll
-  if (!copy(true) || !link) {  ; no selection or no link
+  if (!copy(false) || !link) {  ; no selection or no link
     Clipboard := ClipSaved
     return
   }
@@ -188,13 +201,10 @@ return
 
   if (!InStr(data, "<IMG")) {  ; text only
     send {bs}^{f7}  ; set read point
-    WinGetText, VisibleText, ahk_class TElWind
-    CollName := Vim.SM.GetCollName(VisibleText)
-    CollPath := Vim.SM.GetCollPath(VisibleText)
     LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
     LatexFormula := Enc_Uri(LatexFormula)
     LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
-    LatexFolderPath := CollPath . CollName . "\elements\LaTeX"
+    LatexFolderPath := Vim.SM.GetCollName() . Vim.SM.GetCollPath() . "\elements\LaTeX"
     LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     SetTimer, DownloadLatex, -1
@@ -202,7 +212,7 @@ return
     ImgHTML := "<img alt=""" . Clipboard . """ src=""" . InsideHTMLPath . """>"
     Vim.HTML.SetClipboardHTML(ImgHTML)
     send ^v
-    HTMLPath := Vim.SM.SaveHTML("", true)
+    HTMLPath := Vim.SM.SaveHTML(true, true)
     ; VarSetCapacity(HTML, 10240000)  ; ~10 MB
     FileRead, HTML, % HTMLPath
     if (!HTML)
@@ -266,44 +276,44 @@ return
 !r::ControlClickWinCoord(39, A_CaretY)
 !t::send !mlt  ; Totals
 
-!a::  ; insert activity
+!a::  ; insert/append activity
   SetDefaultKeyboard(0x0409)  ; english-US	
-  gui, PlanInsert:Add, Text,, &Activity:
-  list := "Break||Gaming|Coding|Sports|Social|Writing|Family|Passive|Meal|Rest"
+  gui, PlanAdd:Add, Text,, Activity:
+  list := "Break||Gaming|Coding|Sports|Social|Family|Passive|Meal|Rest"
         . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc|Out|Singing"
-        . "|Calligraphy|Drawing"
-  gui, PlanInsert:Add, Combobox, vActivity gAutoComplete, % list
-  gui, PlanInsert:Add, CheckBox, vNoSplit, &Do not split current activity
-  gui, PlanInsert:Add, Button, default, &Insert
+        . "|Calligraphy|Drawing|Movie|TV"
+  gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
+  gui, PlanAdd:Add, Button, default x10 y50 w50 h24, &Insert
+  gui, PlanAdd:Add, Button, x+10 w50 h24, &Append
   KeyWait Alt
-  gui, PlanInsert:Show,, Insert Activity
+  gui, PlanAdd:Show,, Add Activity
 return
 
-PlanInsertGuiEscape:
-PlanInsertGuiClose:
+PlanAddGuiEscape:
+PlanAddGuiClose:
   gui destroy
 return
 
-PlanInsertButtonInsert:
+PlanAddButtonInsert:
+PlanAddButtonAppend:
   FormatTime, CurrTime,, HH:mm
   KeyWait alt
   gui submit
   gui destroy
   WinActivate, ahk_class TPlanDlg
-  if (!NoSplit) {
+  if (InStr(A_ThisLabel, "Insert")) {
     send ^t  ; split
     WinWaitActive, ahk_class TInputDlg
     send {enter}
+    WinWaitActive, ahk_class TPlanDlg
   }
-  ControlSend, TStringGrid1, {down}{ins}, ahk_class TPlanDlg  ; inserting one activity below the current selected activity and start editing
-  WinActivate, ahk_class TPlanDlg  ; just in case
-  ; Cannot use ControlSendRaw, uppercase will become lowercase
-  send % "{raw}" . activity
+  send {down}{ins}  ; inserting one activity below the current selected activity and start editing
+  send % "{text}" . activity
   send % "+{tab}" . CurrTime
   send {enter}^s
   if activity in Break,Sports,Piano,Out
     run b  ; my personal backup script
-  Vim.State.SetNormal(true)
+  Vim.State.SetNormal()
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
@@ -314,43 +324,43 @@ return
 ; Task value script, modified from Naess's priority script
 !0::
 Numpad0::
-NumpadIns::Vim.SM.SetTaskValue(9024.74,9999)
+NumpadIns::Vim.SM.SetRandTaskVal(9024.74,9999)
 
 !1::
 Numpad1::
-NumpadEnd::Vim.SM.SetTaskValue(7055.79,9024.74)
+NumpadEnd::Vim.SM.SetRandTaskVal(7055.79,9024.74)
 
 !2::
 Numpad2::
-NumpadDown::Vim.SM.SetTaskValue(5775.76,7055.78)
+NumpadDown::Vim.SM.SetRandTaskVal(5775.76,7055.78)
 
 !3::
 Numpad3::
-NumpadPgdn::Vim.SM.SetTaskValue(4625,5775.75)
+NumpadPgdn::Vim.SM.SetRandTaskVal(4625,5775.75)
 
 !4::
 Numpad4::
-NumpadLeft::Vim.SM.SetTaskValue(3721.04,4624)
+NumpadLeft::Vim.SM.SetRandTaskVal(3721.04,4624)
 
 !5::
 Numpad5::
-NumpadClear::Vim.SM.SetTaskValue(2808.86,3721.03)
+NumpadClear::Vim.SM.SetRandTaskVal(2808.86,3721.03)
 
 !6::
 Numpad6::
-NumpadRight::Vim.SM.SetTaskValue(1849.18,2808.85)
+NumpadRight::Vim.SM.SetRandTaskVal(1849.18,2808.85)
 
 !7::
 Numpad7::
-NumpadHome::Vim.SM.SetTaskValue(841.32,1849.17)
+NumpadHome::Vim.SM.SetRandTaskVal(841.32,1849.17)
 
 !8::
 Numpad8::
-NumpadUp::Vim.SM.SetTaskValue(360.77,841.31)
+NumpadUp::Vim.SM.SetRandTaskVal(360.77,841.31)
 
 !9::
 Numpad9::
-NumpadPgup::Vim.SM.SetTaskValue(0,360.76)
+NumpadPgup::Vim.SM.SetRandTaskVal(0,360.76)
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg"))  ; priority window (alt+p)
 enter::
@@ -443,19 +453,8 @@ return
   KeyWait alt
   KeyWait ctrl
   if (WinActive("ahk_group Browser") && !Vim.Browser.VidTime) {
-    send {esc 2}
-    Vim.Browser.GetTitleSourceDate("", true)  ; get title for checking later
-    if (!InStr(A_ThisHotkey, "``")) {
-      Vim.Browser.GetVidtime()
-      if (!Vim.Browser.VidTime) {
-        Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
-        if (!Vim.Browser.VidTime) {
-          Vim.Browser.Clear()
-          return
-        }
-      }
-    }
     hwnd := WinGet()
+    Vim.Browser.GetTitleSourceDate(true, false)  ; get title for checking later
     ; SM uses "." instead of "..." in titles
     if (WinGetTitle("ahk_class TElWind") != StrReplace(Vim.Browser.title, "...", ".")) {
       WinActivate, ahk_class TElWind
@@ -466,6 +465,17 @@ return
         return
       }
       WinActivate % "ahk_id " . hwnd
+    }
+    if (!InStr(A_ThisHotkey, "``")) {
+      send {esc 2}
+      Vim.Browser.GetVidtime()
+      if (!Vim.Browser.VidTime) {
+        Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
+        if (!Vim.Browser.VidTime) {
+          Vim.Browser.Clear()
+          return
+        }
+      }
     }
     if (InStr(A_ThisHotkey, "^"))  ; hotkeys with ctrl will close the tab
       send ^w
@@ -539,12 +549,12 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
                       && (title := WinGetTitle())
-                      && (RegExMatch(title, "(?<=^p)[0-9]+(?= )", page) || epub := InStr(title, "|")))
+                      && (RegExMatch(title, "(?<=^p)[0-9]+", page) || epub := InStr(title, "|")))
 !s::
   if (page) {
     clip := page
   } else if (epub) {
-    RegExMatch(title, ".*?(?= \|)", clip)
+    RegExMatch(title, ".+?(?= \|)", clip)
   }
   Clipboard := clip := trim(clip)
   ToolTip("Copied " . clip)

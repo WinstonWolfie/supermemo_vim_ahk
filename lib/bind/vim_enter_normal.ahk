@@ -2,6 +2,8 @@
 CapsLock::
 Esc::
   Vim.State.HandleEsc()
+  if (Vim.State.BackToNormal == 1)
+    Vim.State.SetMode("Vim_Normal")
   Vim.State.BackToNormal := 0
 Return
 
@@ -19,8 +21,14 @@ Return
 
 #if (Vim.State.Vim.Enabled && Vim.State.BackToNormal)
 ~enter::
-  if (Vim.State.BackToNormal == 1)
+  if (Vim.State.BackToNormal == 1) {
+    if (WinActive("ahk_class TCommanderDlg")) {
+      WinWaitActive, ahk_class TInputDlg,, 0.25
+      if (!ErrorLevel)  ; commands like Compress images
+        return
+    }
     Vim.State.SetMode("Vim_Normal")
+  }
   Vim.State.BackToNormal--
 Return
 

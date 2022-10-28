@@ -188,8 +188,12 @@ b::
   }
 return
 
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+^o::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && !Vim.State.g)
 o::
+  SetDefaultKeyboard(0x0409)  ; english-US	
+  Vim.SM.GoToTopIfLearning()
   Vim.State.SetMode("Insert")
   send ^o  ; favourites
   Vim.State.BackToNormal := 1
@@ -264,6 +268,7 @@ Return
 !+j::send !+{pgdn}  ; go to next sibling
 !+k::send !+{pgup}  ; go to previous sibling
 
+CapsLock & alt::return  ; so you can press CapsLock first and alt without triggering context menue
 #if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ^/::  ; visual
 ^<+/::  ; visual and start from the beginning
@@ -284,15 +289,15 @@ Return
     LShiftState := InStr(A_ThisHotkey, "<+")  ; start from top
   AltState := InStr(A_ThisHotkey, "!")  ; followed by a cloze
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (GetKeyState("alt") || GetKeyState("ctrl")))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && AltState := GetKeyState("alt") && CtrlState := GetKeyState("ctrl"))
+CapsLock & /::
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && CtrlState := GetKeyState("ctrl"))
+CapsLock & /::
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && AltState := GetKeyState("alt"))
 CapsLock & /::
   CapsState := InStr(A_ThisHotkey, "CapsLock")
-  if (A_ThisHotkey == "CapsLock & /") {
-    AltState := GetKeyState("alt")
-    CtrlState := GetKeyState("ctrl")
-  }
   if (!Vim.SM.IsEditingText()) {
-    send ^t
+    send q
     Vim.SM.WaitTextFocus()  ; make sure CurrFocus is updated    
     if (Vim.SM.IsEditingHTML())
       sleep 50  ; short sleep so the element window won't try to regain focus
@@ -386,7 +391,7 @@ SMSearchAgain:
       Vim.State.SetNormal()
       Return
     }
-  } else {
+  } else if (InStr(CurrFocus, "Internet Explorer_Server")) {
     if (!Vim.SM.HandleF3(1))
       return
     ; Left spaces need to be trimmed otherwise SM might eat the spaces in text
@@ -412,26 +417,21 @@ SMSearchAgain:
     }
     if (!Vim.SM.HandleF3(2))
       return
+    WinActivate, ahk_class TElWind
+    if (!ControlGetFocus("ahk_class TElWind"))  ; sometimes SM doesn't focus to anything after the search
+      ControlFocus, % CurrFocus, ahk_class TElWind
     if (AltState) {
       if (!CtrlState && !ShiftState && !CapsState) {
         send !z
       } else if (ShiftState) {
         ClozeHinterCtrlState := CtrlState
-        WinActivate, ahk_class TElWind
         gosub ClozeHinter
       } else if (CapsState) {
         ClozeHinterCtrlState := CtrlState
-        WinActivate, ahk_class TElWind
         gosub ClozeNoBracket
       } else if (CtrlState) {
         gosub ClozeStay
       }
-    } else if (!CtrlState) {  ; alt is up and ctrl is up; shift can be up or down
-      Vim.Caret.SwitchToSameWindow("ahk_class TElWind")  ; to refresh caret
-    } else if (CtrlState) {  ; sometimes SM doesn't focus to anything after the search
-      WinActivate, ahk_class TElWind
-      if (!ControlGetFocus())
-        ControlFocus, % CurrFocus, ahk_class TElWind
     }
   }
 return

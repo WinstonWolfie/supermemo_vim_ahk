@@ -46,7 +46,7 @@ HTMLTagButtonAdd:
   }
   if (OriginalHTML) {
     Vim.HTML.ClipboardGet_HTML(data)
-    RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", content)
+    RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", content)
   } else {
     content := Clipboard
     content := StrReplace(content, "<", "&lt;")
@@ -71,7 +71,8 @@ HTMLTagButtonAdd:
 return
 
 m::  ; highlight: *m*ark
-  Vim.SM.PostMsg(815, true)  ; highlight
+  send {AppsKey}rh
+  ; Vim.SM.PostMsg(815, true)  ; highlight
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -243,9 +244,9 @@ CapsLock & z::  ; delete [...]
     send ^a
     ClipSaved := ClipboardAll
     if (!ClozeNoBracket) {
-      clip(StrReplace(copy(true), "[...]", cloze),, false)
+      clip(StrReplace(copy(false), "[...]", cloze),, false)
     } else {
-      clip(RegExReplace(copy(true), "\s?[...]"),, false)
+      clip(RegExReplace(copy(false), "\s?[...]"),, false)
     }
     Clipboard := ClipSaved
   } else if (Vim.SM.IsEditingHTML()) {

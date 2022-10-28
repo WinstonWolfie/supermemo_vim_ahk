@@ -42,7 +42,7 @@ Return
   list := "SM Plan||Window Spy|Regex101|Watch later (YT)|Search"
         . "|Search clipboard|Z-Library|YT|Open script settings"
         . "|Move mouse to caret|LaTeX|Wayback Machine|DeepL|YouGlish|Kill IE"
-        . "|Define (Google)|YT History In IE|Wiktionary|Discord go live"
+        . "|Define (Google)|YT History In IE|Wiktionary|Bilibili"
         . "|Copy current window's title|Copy current window's position"
         . "|Copy as HTML|Forvo|Pin current window at top|Sci-Hub"
         . "|Acc Viewer|Translate (Google)|Clear clipboard|Forcellini|RAE"
@@ -65,6 +65,9 @@ Return
           . "|Mass replace registry"
   } else if (WinActive("ahk_group Browser")) {
     list .= "|Incremental web browsing: New topic"
+          . "|Incremental web browsing: New topic with priority and concept"
+  } else if (WinActive("ahk_exe Discord.exe")) {
+    list .= "|Discord go live"
   }
 
   gui, VimCommander:Add, Combobox, vCommand gAutoComplete w256, % list
@@ -290,7 +293,7 @@ CopyAsHTML:
     return
   }
   if (Vim.HTML.ClipboardGet_HTML(data)) {
-    RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
+    RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", data)
     Clipboard := data
   }
   ToolTip("Copied`n`n" . data)
@@ -393,7 +396,7 @@ ShowSelectionAsHTML:
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (Vim.HTML.ClipboardGet_HTML(data)) {
-    RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
+    RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", data)
     MsgBox, 4,, % "Copy?`n`n" . data
     IfMsgBox, yes, {
       Clipboard := data
@@ -540,7 +543,6 @@ return
 
 ; Personal: Reformat my old vocabulary items
 ReformatVocab:
-  ClipSaved := ClipboardAll
   if (!Vim.SM.IsEditingHTML()) {
     send q
     Vim.SM.WaitTextFocus()
@@ -548,11 +550,12 @@ ReformatVocab:
   WinClip.Clear()
   send ^a^c
   ClipWait 0.6
-  Vim.HTML.ClipboardGet_HTML(data)
-  RegExMatch(data, "s)(?<=<!--StartFragment-->).*(?=<!--EndFragment-->)", data)
+  if (!Vim.HTML.ClipboardGet_HTML(data))
+    return
+  RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", data)
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
   data := RegExReplace(data, "(\.<BR>""|\. \r\n<P>‘)", "<P>")
-  data := RegExReplace(data, "m)(""|’)($|\s+)?(<\/P>|<BR>)", "</P>")
+  data := RegExReplace(data, """.*", "</P>")
   data := StrReplace(data, "<P></P>")
   SynPos := RegExMatch(data, "<P>(Similar|Synonyms)")
   def := SubStr(data, 1, SynPos - 1)
@@ -561,14 +564,8 @@ ReformatVocab:
   SynAndAnt := RegExReplace(SynAndAnt, "((Similar:?)<BR>|Synonyms(<\/P>\r\n<P>|<BR>))", "syn: ")
   SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?|Opuesta)<BR>", "ant: ")
   clip := def . SynAndAnt
-  Vim.HTML.SetClipboardHTML(clip)
-  sleep 200
-  while DllCall("user32\GetOpenClipboardWindow", "Ptr")
-    Sleep, -1
-  send ^v
-  while (WinClipAPI.GetOpenClipboardWindow())
-    sleep 1
-  Clipboard := ClipSaved
+  clip(clip)
+  send ^a^+1
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -584,7 +581,7 @@ ZLibrary:
   cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   cUIA.WaitPageLoad()
   url := cUIA.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
-  cUIA.SetURL(url . "s/" . search . "?", true)
+  cUIA.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
 return
 
 ImportFirstFile:
@@ -599,22 +596,26 @@ ImportFirstFile:
   WinWaitActive, ahk_group SMCtrlQ
   while (!WinActive("ahk_class TFileBrowser")) {
     while (WinExist("ahk_class TMsgDialog"))
-      WinClose  ; Directory not found; Create? or MCI error
+      WinClose  ; Directory not found; Create?
     WinWaitActive, ahk_group SMCtrlQ
   }
   send {right}
-  MsgBox, 4,, Are you sure this is the file?
-  IfMsgBox no
+  MsgBox, 3,, Do you want to also delete the file?
+  IfMsgBox Cancel
     return
   WinWaitActive, ahk_class TFileBrowser
   send {enter}
   WinWaitActive, ahk_class TInputDlg
   send {enter}
   WinWaitActive, ahk_class TMsgDialog
-  send n
-  WinWaitNotActive, ahk_class TMsgDialog,, 0
-  WinWaitActive, ahk_class TMsgDialog
-  send y
+  IfMsgBox, yes, {
+    send n  ; not keeping the file in original position
+    WinWaitNotActive, ahk_class TMsgDialog,, 0
+    WinWaitActive, ahk_class TMsgDialog
+  }
+  send y  ; confirm to delete the file / confirm to keep the file
+  WinWaitActive, ahk_class TElWind
+  Vim.SM.Reload()
 return
 
 OpenScriptSettings:
@@ -624,4 +625,14 @@ return
 RegisterClipboardToVimBrowserVidTime:
   Vim.Browser.VidTime := Clipboard
   ToolTip("Vim.Browser.VidTime = " . Vim.Browser.VidTime)
+return
+
+Bilibili:
+  search := trim(clip())
+  if (!search) {
+    InputBox, search, Bilibili, Enter your search,, 192, 128
+    if (!search)
+      return
+  }
+  run % "https://search.bilibili.com/all?keyword=" . search
 return

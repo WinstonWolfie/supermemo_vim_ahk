@@ -17,7 +17,7 @@ SaveClipboard() {
     Clipboard :=
 }
 
-copy(true) {
+copy(false) {
     SaveClipboard()
     send ^c
     ClipWait, 0.1
@@ -48,7 +48,7 @@ RestoreClipboard() {
 }
 
 GetSelectedText() {
-    copy(true)
+    copy(false)
     Output := Clipboard
     RestoreClipboard()
     return Output

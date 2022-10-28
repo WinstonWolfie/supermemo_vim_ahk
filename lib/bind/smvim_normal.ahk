@@ -3,19 +3,16 @@
 +h::  ; move to top of screen
   KeyWait shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickTop()
-  send {shift}
 Return
 
 +m::  ; move to middle of screen
   KeyWait shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickMid()
-  send {shift}
 Return
 
 +l::  ; move to bottom of screen
   KeyWait shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickBottom()
-  send {shift}
 Return
 
 ; Editing HTML
@@ -126,40 +123,40 @@ Return
 ; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png
 !0::
 Numpad0::
-NumpadIns::Vim.SM.SetPriority(0.00,3.6076)
+NumpadIns::Vim.SM.SetRandPrio(0.00,3.6076)
 
 !1::
 Numpad1::
-NumpadEnd::Vim.SM.SetPriority(3.6077,8.4131)
+NumpadEnd::Vim.SM.SetRandPrio(3.6077,8.4131)
 
 !2::
 Numpad2::
-NumpadDown::Vim.SM.SetPriority(8.4132,18.4917)
+NumpadDown::Vim.SM.SetRandPrio(8.4132,18.4917)
 
 !3::
 Numpad3::
-NumpadPgdn::Vim.SM.SetPriority(18.4918,28.0885)
+NumpadPgdn::Vim.SM.SetRandPrio(18.4918,28.0885)
 
 !4::
 Numpad4::
-NumpadLeft::Vim.SM.SetPriority(28.0886,37.2103)
+NumpadLeft::Vim.SM.SetRandPrio(28.0886,37.2103)
 
 !5::
 Numpad5::
-NumpadClear::Vim.SM.SetPriority(37.2104,46.24)
+NumpadClear::Vim.SM.SetRandPrio(37.2104,46.24)
 
 !6::
 Numpad6::
-NumpadRight::Vim.SM.SetPriority(46.25,57.7575)
+NumpadRight::Vim.SM.SetRandPrio(46.25,57.7575)
 
 !7::
 Numpad7::
-NumpadHome::Vim.SM.SetPriority(57.7576,70.5578)
+NumpadHome::Vim.SM.SetRandPrio(57.7576,70.5578)
 
 !8::
 Numpad8::
-NumpadUp::Vim.SM.SetPriority(70.5579,90.2474)
+NumpadUp::Vim.SM.SetRandPrio(70.5579,90.2474)
 
 !9::
 Numpad9::
-NumpadPgup::Vim.SM.SetPriority(90.2474,99.99)
+NumpadPgup::Vim.SM.SetRandPrio(90.2474,99.99)

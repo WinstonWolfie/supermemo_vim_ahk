@@ -166,12 +166,12 @@ s::  ; turn active language item to passive (*s*witch)
   Vim.SM.DeselectAllComponents()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
-  hwnd := ControlGet("",, "Internet Explorer_Server2")
+  hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
   send ^+s
   ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
   send ^t
   Vim.SM.WaitTextFocus()
-  ControlGetFocus, CurrControl
+  CurrControl := ControlGetFocus()
   send ^{home}
   send {text}en:
   send {space}^t
@@ -202,7 +202,7 @@ return
   ClipWait
   send {esc}
   Vim.SM.WaitTextExit()
-  hwnd := ControlGet("",, "Internet Explorer_Server2")
+  hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
   send ^+s
   ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
   send ^t

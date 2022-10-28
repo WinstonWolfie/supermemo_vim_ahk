@@ -19,6 +19,11 @@
     ; , "SMVim_ExtractPriorityInner", "Insert_unicode", "SMVim_AltT", "SMVim_AltQ"]
 
     this.Mode := "Vim_Normal"  ; the default mode when vim_ahk opens
+    this.g := 0
+    this.n := 0
+    this.LineCopy := 0
+    this.LastIME := 0
+
     this.StatusCheckObj := ObjBindMethod(this, "StatusCheck")
   }
 
@@ -55,7 +60,8 @@
       if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
-      this.Vim.Caret.SetCaret(this.Mode)
+      if (PrevMode != mode && A_CaretX)
+        this.Vim.Caret.SetCaret(this.Mode)
     }
     if (g != -1)
       this.g := g

@@ -18,8 +18,6 @@ class VimHTML {
    Return dataL ? dataL : 0
   }
 
-  ; Semi-"transcribed" and modified from this Quicker script:
-  ; https://getquicker.net/Sharedaction?code=859bda04-fe78-4385-1b37-08d88a0dba1c
   Clean(str, nuke:=false) {
     ; zzz in case you used f6 in SuperMemo to remove format before,
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
@@ -28,13 +26,14 @@ class VimHTML {
     str := RegExReplace(str, "i)<([^<>]+)?\K (zzz)?style="".*?""(?=([^<>]+)?>)")
     str := RegExReplace(str, "i)<([^<>]+)?\K (zzz)?style='.*?'(?=([^<>]+)?>)")
     str := RegExReplace(str, "is)<\/?(zzz)?font( .*?)?>")
-    str := RegExReplace(str, "i)<([^<>]+)?\K (bgColor|onError|onLoad)=[^ >]+(?=([^<>]+)?>)")
 
     ; Scripts
     str := RegExReplace(str, "i)<(zzz)?iframe( .*?)?>.*?<\/(zzz)?iframe>")
     str := RegExReplace(str, "i)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
     str := RegExReplace(str, "i)<(zzz)?form( .*?)?>.*?<\/(zzz)?form>")
     str := RegExReplace(str, "i)<(zzz)?input( .*?)?>")
+    str := RegExReplace(str, "i)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)="".*?""(?=([^<>]+)?>)")
+    str := RegExReplace(str, "i)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)=[^ >]+(?=([^<>]+)?>)")
 
     str := RegExReplace(str, "is)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
 

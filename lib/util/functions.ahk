@@ -271,7 +271,7 @@ ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeT
 ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
-    if (ControlGet("",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
+    if (ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False
@@ -313,11 +313,10 @@ ControlTextWaitChange(Control, text:="", WinTitle:="A", WinText:="", ExcludeTitl
 }
 
 ControlWaitHwndChange(Control, hwnd:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
-	if (!hwnd)
-		hwnd := ControlGet("",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+	hwnd := hwnd ? hwnd : ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
   StartTime := A_TickCount
   Loop {
-		NewHwnd := ControlGet("",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+		NewHwnd := ControlGet("hwnd",, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     if (NewHwnd && NewHwnd != hwnd) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
@@ -449,16 +448,13 @@ ClickDPIAdjusted(XCoord, YCoord) {
 }
 
 ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
-	if (!Wintitle)
-		WinTitle := "ahk_id " . WinGet()
+	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
 	ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
 }
 
 ControlClickDPIAdjusted(XCoord, YCoord, Control:="", WinTitle:="") {
-	if (!Control)
-		Control := ControlGetFocus()
-	if (!Wintitle)
-		WinTitle := "ahk_id " . WinGet()
+	Control := Control ? Control : ControlGetFocus()
+	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
 	ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
 }
 
