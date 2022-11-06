@@ -146,8 +146,7 @@ ClozeHinter:
 ^+z::
 +z::  ; cloze hinter
   if (ClozeHinterCtrlState && A_ThisLabel == "ClozeHinter") {  ; from cloze hinter label and ctrl is down
-    CtrlState := 1
-    ClozeHinterCtrlState := 0
+    CtrlState := 1, ClozeHinterCtrlState := 0
   } else {
     CtrlState := InStr(A_ThisHotkey, "^")
   }
@@ -155,8 +154,7 @@ ClozeHinter:
   KeyWait shift
   if (!InitText := Clip())
     return
-  CurrFocus := ControlGetFocus("ahk_class TElWind")
-  inside := true
+  CurrFocus := ControlGetFocus("ahk_class TElWind"), inside := true
   if (RegExMatch(InitText, "\b(more|less)\b")) {
     InitText := "more/less"
   } else if (RegExMatch(InitText, "\b(faster|slower)\b")) {
@@ -188,6 +186,7 @@ ClozeHinter:
   gui, ClozeHinter:Add, Edit, vHint w196, % InitText
   gui, ClozeHinter:Add, CheckBox, % "vInside " . (inside ? "checked" : ""), &Inside square brackets
   gui, ClozeHinter:Add, CheckBox, vFullWidthChars, &Use fullwidth characters
+  gui, ClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
   gui, ClozeHinter:Add, Button, default, Clo&ze
   gui, ClozeHinter:Show,, Cloze Hinter
 Return
@@ -209,8 +208,7 @@ CapsLock & z::  ; delete [...]
 CapsLock & z::  ; delete [...]
   ClozeNoBracket := (A_ThisLabel == "ClozeNoBracket" || A_ThisHotkey == "CapsLock & z")
   if (A_ThisLabel == "ClozeNoBracket" && ClozeNoBracketCtrlState) {
-    CtrlState := 1
-    ClozeNoBracketCtrlState := 0
+    CtrlState := 1, ClozeNoBracketCtrlState := 0
   }
   KeyWait Capslock
   if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/,／")) {
