@@ -179,34 +179,37 @@
   }
 
   Up(n:=1) {
-    if this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML()
-      if (shift == 1)
+    if (this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML()) {
+      if (shift == 1) {
         this.SelectParagraphUp(n)
-      else
+      } else {
         this.ParagraphUp(n)
-    else if WinActive("ahk_group VimCtrlUpDownGroup")
-      Send ^{Up %n%}
-    else
-      Send {Up %n%}
+      }
+    } else if (WinActive("ahk_group VimCtrlUpUpGroup")) {
+      send % "^{Up " . n . "}"
+    } else {
+      send % "{Up " . n . "}"
+    }
   }
 
   Down(n:=1) {
-    if this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML()
-      if (shift == 1)
+    if (this.Vim.State.StrIsInCurrentVimMode("Paragraph") && this.Vim.IsHTML()) {
+      if (shift == 1) {
         this.SelectParagraphDown(n)
-      else
+      } else {
         this.ParagraphDown(n)
-    else if WinActive("ahk_group VimCtrlUpDownGroup")
-      Send ^{Down %n%}
-    else
-      Send {Down %n%}
+      }
+    } else if (WinActive("ahk_group VimCtrlUpDownGroup")) {
+      send % "^{down " . n . "}"
+    } else {
+      send % "{down " . n . "}"
+    }
   }
 
   ParagraphUp(n:=1) {
     if this.Vim.IsHTML()
       if this.Vim.SM.IsEditingHTML()
         send ^+{up %n%}{left}
-        ; ControlSend, ControlGetFocus(), {ctrl down}{up %n%}{ctrl up}  ; doesn't work
       else
         send ^{up %n%}
     else {
@@ -248,10 +251,10 @@
     if (this.Vim.IsHTML()) {
       if (this.Vim.SM.IsEditingHTML()) {
         selection := clip("",, RestoreClip)
-        if (InStr(selection, "`r`n"))
-          send .= "+{left}"
-      } else {
-        send .= "+{left}"
+        ; if (InStr(selection, "`r`n"))
+        ;   send .= "+{left}"
+      ; } else {
+      ;   send .= "+{left}"
       }
     }
     if (send) {
@@ -278,8 +281,7 @@
         if WinActive("ahk_group VimQdir") {
           send {BackSpace down}{BackSpace up}
         } else if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-          ControlGetPos, XCoord,,,, Internet Explorer_Server2, ahk_class TElWind
-          if (XCoord) {
+          if (ControlGet("hwnd",, "Internet Explorer_Server2", "ahk_class TElWind")) {
             SendMessage, 0x114, 0, 0, Internet Explorer_Server2, A ; scroll left
           } else {
             SendMessage, 0x114, 0, 0, Internet Explorer_Server1, A ; scroll left
@@ -291,8 +293,7 @@
         if WinActive("ahk_group VimQdir") {
           send {Enter}
         } else if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-          ControlGetPos, XCoord,,,, Internet Explorer_Server2, ahk_class TElWind
-          if (XCoord) {
+          if (ControlGet("hwnd",, "Internet Explorer_Server2", "ahk_class TElWind")) {
             SendMessage, 0x114, 1, 0, Internet Explorer_Server2, A ; scroll right
           } else {
             SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A ; scroll left
@@ -1239,17 +1240,19 @@
           }
         } else {
           if (this.shift == 1) {
-            send ^+{End}+{Home}
+            send ^+{End}
+            if (!this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
+              send +{home}
           } else {
             send ^{End}
-            if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_class TContents"))
+            if (!WinActive("ahk_class TContents"))
               send {Home}
           }
           if (this.Vim.SM.IsEditingHTML()) {
             send ^+{up}  ; if there are references this would select (or deselect in visual mode) them all
             if (this.shift == 1)
               send +{down}  ; go down one line, if there are references this would include the #SuperMemo Reference
-            if (InStr(copy("",, 1), "#SuperMemo Reference:")) {
+            if (InStr(copy(true,, 1), "#SuperMemo Reference:")) {
               if (this.shift == 1) {
                 send +{up 4}  ; select until start of last line
               } else {
@@ -1263,9 +1266,7 @@
                 if (!this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
                   send +{home}
               } else {
-                send ^{end}
-                if (!this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
-                  send {home}
+                send ^{end}{home}
               }
             }
           }
@@ -1336,15 +1337,19 @@
 
   Inner(key:="") {
     global WinClip
-    if (Vim.State.StrIsInCurrentVimMode("Vim_ydc"))
-      RestoreClip := true
+    RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
     if (key == "w") {
       send ^{right}^{left}
       this.Move("e")
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
-      send {right}  ; so if at start of a sentence, select this sentence
+      send +{right}
+      if (copy(false) ~= "`n") {
+        send {left}
+      } else {
+        send {right}
+      }
       this.Move("(",,, true, true, true)
       this.Move(")",,, true,, true)
       ; End of paragraph
@@ -1361,11 +1366,12 @@
       this.ParagraphDown()
       this.ParagraphUp()
       this.SelectParagraphDown()
-      selection := this.HandleHTMLSelection(false)
-      DetectionStr := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
+      if (this.Vim.IsHTML())
+        send +{left}
+      DetectionStr := this.Vim.ParseLineBreaks(copy(false))
       DetectionStr := StrReverse(DetectionStr)
-      RegExMatch(DetectionStr, "^(\s+\.|\.|\s+)", match)
-      n := StrLen(match)
+      RegExMatch(DetectionStr, "^(\s+)?((\][0-9]+\[)+)?(\.|。)", v)
+      n := StrLen(v)
       if (RestoreClip)
         Clipboard := ClipSaved
       if (this.Vim.IsHTML())  ; update selection
@@ -1379,7 +1385,12 @@
     } else if (IfIn(key, "(,),{,},[,],<,>,"",',=")) {
       if (RestoreClip)
         ClipSaved := ClipboardAll
-      send {right}
+      send +{right}
+      if (copy(false) ~= "`n") {
+        send {left}
+      } else {
+        send {right}
+      }
       this.SelectParagraphUp()
       KeyWait shift
       DetectionStr := this.Vim.ParseLineBreaks(copy(false))
@@ -1439,7 +1450,12 @@
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
-      send {right}  ; so if at start of a sentence, select this sentence
+      send +{right}
+      if (copy(false) ~= "`n") {
+        send {left}
+      } else {
+        send {right}
+      }
       this.Move("(",,, true, true, true)
       this.Move(")",,, true,, true)
       if (RestoreClip)
@@ -1460,7 +1476,12 @@
     } else if (IfIn(key, "(,),{,},[,],<,>,"",',=")) {
       if (RestoreClip)
         ClipSaved := ClipboardAll
-      send {right}
+      send +{right}
+      if (copy(false) ~= "`n") {
+        send {left}
+      } else {
+        send {right}
+      }
       this.SelectParagraphUp()
       DetectionStr := this.Vim.ParseLineBreaks(copy(false))
       if (!DetectionStr) {  ; start of paragraph

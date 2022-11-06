@@ -1,7 +1,7 @@
 ﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
   KeyWait ctrl
-  Vim.SM.DeselectAllComponents()
+  Vim.SM.ExitText()
   send q
   Vim.SM.WaitTextFocus()
   ; this is to make sure this finds in the question field
@@ -19,7 +19,7 @@
   } else if (Vim.SM.IsEditingHTML()) {
     if (!Vim.SM.HandleF3(1))
       return
-    ControlSetText, TEdit1, [...]
+    ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
     send {enter}
     WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
     send {right}  ; put caret on the right
@@ -73,14 +73,14 @@ return
 ^!+g::  ; change element's concept *g*roup
   SetDefaultKeyboard(0x0409)  ; english-US	
   send ^+p
-  WinWaitActive, ahk_class TElParamDlg
+  ; WinWaitActive, ahk_class TElParamDlg
   ; Can't use ControlFocus here, will actually focus to it even if the control is not shown
   send !g  ; focus to concept group
-  if (!ControlFocusWait("Edit2", "ahk_class TElParamDlg",,,, 400)) {  ; in task parameter window
-    accButton := Acc_Get("Object", "4.2.4",, "ahk_id " . WinGet())
-    accButton.accDoDefaultAction(1)
-    ControlFocus, Edit2, ahk_class TElParamDlg  ; focus to concept group
-  }
+  ; if (!ControlFocusWait("Edit2", "ahk_class TElParamDlg",,,, 200)) {  ; in task parameter window
+  ;   accButton := Acc_Get("Object", "4.2.4",, "ahk_id " . WinGet())
+  ;   accButton.accDoDefaultAction(1)
+  ;   ControlFocus, Edit2, ahk_class TElParamDlg  ; focus to concept group
+  ; }
   Vim.State.SetMode("Insert")
   Vim.State.BackToNormal := 1
 return
@@ -88,10 +88,8 @@ return
 ^!t::
   KeyWait alt
   KeyWait ctrl
-  if (Vim.SM.IsEditingText()) {
-    Vim.SM.DeselectAllComponents()
-    sleep 40  ; to make sure all components are de-focused
-  }
+  if (Vim.SM.IsEditingText())
+    send {right}  ; so no text is selected
   Vim.SM.SetTitle()
 return
 
@@ -127,27 +125,24 @@ SMCtrlN:
 ~^n::
   Vim.State.SetMode("Vim_Normal")
   if (InStr(Clipboard, "youtube.com")) {
-    sleep 100
-    WinClip._waitClipReady()  ; double insurance
     if (A_ThisHotkey == "~^n")
-      ClipSaved := ClipboardAll
+      prio := ""
     vim.browser.url := Clipboard
-    WinClip.Clear()
-    Clipboard := vim.browser.title . "`n" . Vim.SM.MakeReference()
-    ClipWait
+    text := vim.browser.title . "`n" . Vim.SM.MakeReference()
     Vim.SM.WaitFileLoad()
+    KeyWait ctrl
     send q
     Vim.SM.WaitTextFocus()
     send ^a{bs}{esc}
     Vim.SM.WaitTextExit()
-    send ^v{esc}
-    Vim.SM.WaitTextExit()  ; twice so current reference is merged to the same reference in the registry
+    send q
+    Vim.SM.WaitTextFocus()
+    send % "{text}" . text
+    send {esc}
     Vim.SM.SetElParam(vim.browser.title, prio, "YouTube")
     vim.browser.title := prio := ""
-    if (A_ThisHotkey == "~^n") {
-      Clipboard := ClipSaved
+    if (A_ThisHotkey == "~^n")
       Vim.Browser.Clear()
-    }
   }
 return
 
@@ -278,12 +273,14 @@ return
 
 !a::  ; insert/append activity
   SetDefaultKeyboard(0x0409)  ; english-US	
-  gui, PlanAdd:Add, Text,, Activity:
+  gui, PlanAdd:Add, Text,, A&ctivity:
   list := "Break||Gaming|Coding|Sports|Social|Family|Passive|Meal|Rest"
         . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc|Out|Singing"
         . "|Calligraphy|Drawing|Movie|TV"
   gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
-  gui, PlanAdd:Add, Button, default x10 y50 w50 h24, &Insert
+  gui, PlanAdd:Add, Text,, &Time:
+  gui, PlanAdd:Add, Edit, vTime w110
+  gui, PlanAdd:Add, Button, default x10 w50 h24, &Insert
   gui, PlanAdd:Add, Button, x+10 w50 h24, &Append
   KeyWait Alt
   gui, PlanAdd:Show,, Add Activity
@@ -309,8 +306,18 @@ PlanAddButtonAppend:
   }
   send {down}{ins}  ; inserting one activity below the current selected activity and start editing
   send % "{text}" . activity
-  send % "+{tab}" . CurrTime
-  send {enter}^s
+  if (time) {
+    send {enter}
+    send % "{text}" . time
+    send {enter}{up}!b
+    WinWaitActive, ahk_class TMsgDialog,, 0.4
+    if (!ErrorLevel)
+      WinClose, ahk_class TMsgDialog
+  } else {
+    send % "+{tab}" . CurrTime
+    send {enter}
+  }
+  send ^s
   if activity in Break,Sports,Piano,Out
     run b  ; my personal backup script
   Vim.State.SetNormal()
@@ -443,7 +450,7 @@ p::
 return
 
 ; Incremental video
-#if (Vim.State.Vim.Enabled && ((WinActive("ahk_group Browser") && WinExist("ahk_class TElWind") && Vim.SM.IsPassiveColl())) || WinActive("ahk_class TElWind"))
+#if (Vim.State.Vim.Enabled && ((WinActive("ahk_group Browser") && WinExist("ahk_class TElWind"))) || WinActive("ahk_class TElWind"))
 ^!s::  ; sync time
 !+s::  ; sync time but browser tab stays open
 ^+!s::  ; sync time and keep learning

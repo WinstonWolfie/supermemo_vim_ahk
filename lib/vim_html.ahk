@@ -18,7 +18,7 @@ class VimHTML {
    Return dataL ? dataL : 0
   }
 
-  Clean(str, nuke:=false) {
+  Clean(str, nuke:=false, LineBreak:=false) {
     ; zzz in case you used f6 in SuperMemo to remove format before,
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
 
@@ -41,6 +41,10 @@ class VimHTML {
       ; Classes
       str := RegExReplace(str, "i)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
       str := RegExReplace(str, "i)<([^<>]+)?\K class=[^ >]+(?=([^<>]+)?>)")
+    }
+    
+    if (LineBreak) {
+      str := RegExReplace(str, "i)<(BR|DIV)", "<P")
     }
     return str
   }

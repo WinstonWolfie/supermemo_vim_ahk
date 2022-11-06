@@ -55,7 +55,7 @@
     this.CheckValidMode(Mode)
     if (Mode != "") {
       this.Mode := Mode
-      if (PrevMode == "SMVim_PlanDragging" && mode == "Vim_Normal")
+      if (PrevMode == "SMVim_PlanDragging" && this.IsCurrentVimMode("Vim_Normal"))
         this.HandlePlanDraggingSetNormal()
       if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
@@ -80,7 +80,7 @@
   SetNormal() {
     this.LastIME := VIM_IME_Get()
     if (this.LastIME) {
-      if (VIM_IME_GetConverting(A)) {
+      if (VIM_IME_GetConverting()) {
         send {Esc}
         Return
       } else {

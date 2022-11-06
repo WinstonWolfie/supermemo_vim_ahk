@@ -36,11 +36,11 @@ class VimBrowser {
     this.Title := this.RemoveBrowserName(WinGetTitle())
     this.VidSite := this.IsVidSite(this.title)
     if (!this.url)
-      this.url := this.GetAddressBarUrl(1)
+      this.url := this.GetAddressBarUrl()
 
     ; Sites that have source in their title
     if (RegExMatch(this.Title, "^很帅的日报")) {
-      this.Date := StrReplace(this.Title, "很帅的日报 ")
+      this.Date := RegExReplace(this.Title, "^很帅的日报 ")
       this.Title := "很帅的日报"
     } else if (RegExMatch(this.title, "^Frontiers \| ")) {
       this.source := "Frontiers"
@@ -113,16 +113,16 @@ class VimBrowser {
     ; Sites that require special attention
     } else if (RegExMatch(this.title, " - YouTube$")) {
       this.source := "YouTube"
-      this.title := StrReplace(this.title, " - YouTube")
-      if (CopyFullPage && text := this.GetFullPage("", RestoreClip)) {
+      this.title := RegExReplace(this.title, " - YouTube$")
+      if (CopyFullPage && text := this.GetFullPage(" - YouTube", RestoreClip)) {
         this.VidTime := this.MatchYTTime(text)
         this.date := this.MatchYTDate(text)
         this.source .= ": " . this.MatchYTSource(text)
       }
     } else if (RegExMatch(this.Title, "_哔哩哔哩_bilibili$")) {
       this.Source := "哔哩哔哩"
-      this.Title := StrReplace(this.Title, "_哔哩哔哩_bilibili")
-      if (CopyFullPage && text := this.GetFullPage("", RestoreClip)) {
+      this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
+      if (CopyFullPage && text := this.GetFullPage("_哔哩哔哩_bilibili", RestoreClip)) {
         this.VidTime := this.MatchBLTime(text)
         this.date := this.MatchBLDate(text)
         this.source .= "：" . this.MatchBLSource(text)
@@ -152,22 +152,28 @@ class VimBrowser {
     }
   }
 
-  GetFullPage(title:="", RestoreClip:=true) {
-    if (!title)
-      title := this.RemoveBrowserName(WinGetTitle())
+  GetFullPage(title:="", RestoreClip:=true, ClickMore:=true) {
+    title := title ? title : this.RemoveBrowserName(WinGetTitle())
     if (RestoreClip)
       ClipSaved := ClipboardAll
-    if (vid := RegExMatch(title, "_哔哩哔哩_bilibili$")) {
+    if (BL := RegExMatch(title, "_哔哩哔哩_bilibili$")) {
+      send ^{home}
       MouseGetPos, XSaved, YSaved
       MouseMove, % A_ScreenWidth / 2, % A_ScreenHeight / 2
     }
+    ; if (ClickMore && YT := RegExMatch(title, " - YouTube$")) {
+    ;   if (Button := this.GetYTShowMoreButton())
+    ;     Button.Click(400)
+    ; }
     global WinClip
     WinClip.Clear()
     send {esc 2}^a^{ins}{esc}
-    ClipWait 1.5
+    ClipWait 2
     text := Clipboard
-    if (vid)
+    if (BL)
       MouseMove, XSaved, YSaved
+    if (YT)
+      send ^{home}
     if (RestoreClip)
       Clipboard := ClipSaved
     return text
@@ -181,7 +187,7 @@ class VimBrowser {
   }
 
   GetAddressBarUrl(method:=0) {
-    if (!method) {
+    if (method) {
       cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
       return cUIA.GetCurrentURL(true)
     } else {
@@ -203,7 +209,7 @@ class VimBrowser {
       ClipSaved := ClipboardAll
     global WinClip
     WinClip.Clear()
-    FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, false)
+    FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, false, false)
     if (RegExMatch(title, " - YouTube$")) {
       VidTime := this.MatchYTTime(FullPageText)
     } else if (RegExMatch(title, "_哔哩哔哩_bilibili$")) {
@@ -244,12 +250,13 @@ class VimBrowser {
   }
 
   MatchYTSource(text) {
-    RegExMatch(text, "i)SAVE(\r\n){3}\K.*", VidTime)
-    return VidTime
+    ; RegExMatch(text, "i)SAVE(\r\n){3}\K.*", YTSource)
+    RegExMatch(text, ".*(?=\r\n.*subscribers)", YTSource)
+    return YTSource
   }
 
   MatchYTDate(text) {
-    RegExMatch(text, " views((Streamed live|Premiered) on )?\K[0-9]+ \w+ [0-9]+", date)
+    RegExMatch(text, "views +?((Streamed live|Premiered) on )?\K[0-9]+ \w+ [0-9]+", date)
     return date
   }
 
@@ -259,8 +266,8 @@ class VimBrowser {
   }
 
   MatchBLSource(text) {
-    RegExMatch(text, "m)^.*(?=\r\n 发消息)", source)
-    return source
+    RegExMatch(text, "m)^.*(?=\r\n 发消息)", BLSource)
+    return BLSource
   }
 
   MatchBLDate(text) {
@@ -286,5 +293,16 @@ class VimBrowser {
   Highlight() {
     send !+h  ; more robust than ControlSend
     sleep 20
+  }
+
+  GetYTShowMoreButton(BrowserExe:="") {
+    this.url := this.url ? this.url : this.GetAddressBarUrl()
+    if (!InStr(this.url, "youtube.com/watch"))
+      return
+    BrowserExe := BrowserExe ? BrowserExe : WinGet("ProcessName")
+    cUIA := new UIA_Browser("ahk_exe " . BrowserExe)
+    if (!Button := cUIA.FindFirstBy("ControlType=Button AND Name='Show more' AND AutomationId='expand'"))
+      Button := cUIA.FindFirstBy("ControlType=Text AND Name='Show more'")
+    return Button
   }
 }

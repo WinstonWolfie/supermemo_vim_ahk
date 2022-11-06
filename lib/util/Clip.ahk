@@ -26,12 +26,8 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, CopyMethod:=0) {
       Vim.HTML.SetClipboardHTML(text)
     } else {
       WinClip.Clear()
-      if (SetText) {
-        WinClip.SetText(text)
-      } else {
-        Clipboard := Text
-        ClipWait
-      }
+      Clipboard := Text
+      ClipWait
     }
     send ^v
     while (WinClipAPI.GetOpenClipboardWindow())
@@ -54,6 +50,10 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, CopyMethod:=0) {
     Return Clipped
 }
 
-copy(RestoreClip:=true, HTML:=false, CopyMethod:=0) {
+copy(RestoreClip:=true, HTML:=false, CopyMethod:=0, KeyWait:=false) {
+  if (KeyWait) {
+    KeyWait shift
+    KeyWait ctrl
+  }
   return clip("",, RestoreClip, HTML, CopyMethod)
 }

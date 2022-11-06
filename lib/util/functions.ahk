@@ -46,6 +46,7 @@ IfIn(ByRef var, MatchList, StrCaseSense:=false) {
 		StringCaseSense % PrevStringCaseSense
 		Return, true
 	}
+	StringCaseSense % PrevStringCaseSense
 }
 IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
 	PrevStringCaseSense := A_StringCaseSense
@@ -59,6 +60,7 @@ IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
 		StringCaseSense % PrevStringCaseSense
 		Return, true
 	}
+	StringCaseSense % PrevStringCaseSense
 }
 IfContains(ByRef var, MatchList, StrCaseSense:=false) {
 	PrevStringCaseSense := A_StringCaseSense
@@ -72,6 +74,7 @@ IfContains(ByRef var, MatchList, StrCaseSense:=false) {
 		StringCaseSense % PrevStringCaseSense
 		Return, true
 	}
+	StringCaseSense % PrevStringCaseSense
 }
 IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
 	PrevStringCaseSense := A_StringCaseSense
@@ -85,6 +88,7 @@ IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
 		StringCaseSense % PrevStringCaseSense
 		Return, true
 	}
+	StringCaseSense % PrevStringCaseSense
 }
 IfIs(ByRef var, type) {
 	If var is %type%

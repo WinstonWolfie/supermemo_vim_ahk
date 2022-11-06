@@ -14,12 +14,11 @@
 #if (Vim.State.Vim.Enabled)
 ; Testing
 
-^!+t::
-  keywait shift
-  keywait ctrl
-  keywait alt
-  msgbox % vim.sm.GetCollName()
-return
+; ^!+t::
+;   keywait shift
+;   keywait ctrl
+;   keywait alt
+; return
 
 ; Shortcuts
 ^!r::reload
@@ -37,23 +36,24 @@ LAlt & RAlt::  ; for laptop
     Vim.State.SetMode("Insert")
 return
 
-#f::run % "D:\OneDrive\Miscellany\Programs\Everything\Everything64.exe"
+#f::run D:\OneDrive\Miscellany\Programs\Everything\Everything64.exe
 ^#h::send ^#{left}
 ^#l::send ^#{right}
 
 ^+!p::
 SMPlan:
-  KeyWait shift
   Vim.State.SetMode("Vim_Normal")
+  KeyWait shift
   if (!WinExist("ahk_group SuperMemo")) {
     run C:\SuperMemo\systems\all.kno
-    WinWaitActive, ahk_class TElWind,, 10
-    if (ErrorLevel)
-      return
-    while (!WinActive("ahk_class TPlanDlg"))
-      Vim.SM.PostMsg(243)  ; Plan
-    WinWaitActive, ahk_class TMsgDialog,, 1
-    WinClose, ahk_class TMsgDialog
+    WinWaitActive, ahk_class TElWind
+    Vim.SM.PostMsg(243)  ; Plan
+    WinWait, ahk_class TMsgDialog,, 1
+    if (!ErrorLevel) {
+      WinClose
+      WinWaitClose, ahk_class TMsgDialog
+    }
+    WinActivate, ahk_class TPlanDlg
     return
   }
   while (WinExist("ahk_class TMsgDialog"))
@@ -132,16 +132,16 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
     SetTimer, GetAddressBarUrl, -1
   }
   ClipSaved := ClipboardAll
-  hwnd := WinGet()
+  hwnd := WinGet(), BrowserExe := WinGet("ProcessName")
   ImportDlg := (InStr(A_ThisHotkey, "+") || A_ThisLabel == "IncrementalWebBrowsingNewTopicWithPriorityAndConcept")
-  PC := Vim.SM.IsPassiveColl(Vim.SM.GetCollName())
+  CollName := vim.sm.GetCollName(), ConceptBefore := Vim.SM.GetCurrConcept()
+  Passive := Vim.SM.IsPassive(CollName, ConceptBefore)
   KeyWait shift
   KeyWait ctrl
   KeyWait alt
-  ; VarSetCapacity(HTMLText, 40960000)  ; ~40mb
   if (!IncWB) {
     WaitVarExists(GetAddressBarUrlDone)
-    if (!vim.browser.url := Vim.Browser.GetAddressBarUrl(1)) {
+    if (!vim.browser.url) {
       ToolTip("Web page not found.")
       return
     }
@@ -149,8 +149,8 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
     if (vim.sm.CheckDup(vim.browser.url, false))
       MsgBox, 4,, Continue import?
   }
-  WinActivate % "ahk_id " . hwnd
   WinClose, ahk_class TBrowser
+  WinActivate % "ahk_id " . hwnd
   ; Have to put below WinActivate, otherwise would make element window focus again
   ; Cannot use SetTimer for SM.ClearUp(), exceeds recursion limit
   ; ClearUp := Vim.SM.ClearUp
@@ -161,12 +161,19 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
   prio := concept := ""
   if (ImportDlg) {
     SetDefaultKeyboard(0x0409)  ; english-US	
+    gui, SMImport:Add, Text,, % "Current collection: " . CollName
     gui, SMImport:Add, Text,, &Priority:
-    gui, SMImport:Add, Edit, vPrio
+    gui, SMImport:Add, Edit, vPrio w196
     gui, SMImport:Add, Text,, &Concept:
-    gui, SMImport:Add, Edit, vConcept
+    gui, SMImport:Add, Edit, vConcept w196, % ConceptBefore
     gui, SMImport:Add, Button, default, &Import
     gui, SMImport:Show,, SuperMemo Import
+    gui, SMImport:+HwndPrioGuiHwnd
+    if (button := vim.browser.GetYTShowMoreButton(BrowserExe)) {
+      button.click()
+      SendMessage, 0x115, 6, 0,, % "ahk_id " . hwnd  ; scroll to top
+      WinActivate % "ahk_id " . PrioGuiHwnd
+    }
     return
   }
 
@@ -176,11 +183,13 @@ SMImportButtonImport:
     KeyWait enter
     KeyWait alt
     gui submit
+    if (Passive != 2)
+      Passive := (InStr("online", concept) == 1) ? true : false
     gui destroy
     WinActivate % "ahk_id " . hwnd
   }
 
-  HTMLText := PC ? "" : clip("",, false, true)
+  HTMLText := Passive ? "" : copy(false, true)
   if (IncWB) {
     if (!HTMLText) {
       ToolTip("Text not found.")
@@ -190,25 +199,29 @@ SMImportButtonImport:
     Vim.Browser.Highlight()
   }
   Vim.Browser.GetTitleSourceDate(false)
-  SMVidImport := (PC || (!HTMLText && vim.browser.VidSite))
+  SMVidImport := (Passive || (!HTMLText && vim.browser.VidSite))
   if (!HTMLText && !SMVidImport) {
     send ^a
     HTMLText := clip("",, false, true)
     send {esc}
-    if (!HTMLText)
+    if (!HTMLText) {
+      ToolTip("Text not found.")
       goto ImportReturn
+    }
   }
   Vim.Browser.GetUrl(0, false)
 
   WinClip.Clear()
   if (SMVidImport) {
-    if (SMVidImport && !PC) {
-      Clipboard := Vim.Browser.Url
-    } else {
+    if (Passive) {
       Clipboard := Vim.SM.MakeReference()
+    } else {
+      Clipboard := Vim.Browser.Url
     }
   } else {
-    HTMLText := Vim.HTML.Clean(HTMLText, true)
+    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org"
+    LineBreak := IfContains(Vim.Browser.Url, LineBreakList)
+    HTMLText := Vim.HTML.Clean(HTMLText, true, LineBreak)
     if (IncWB) {
       Vim.browser.date := ""
     } else if (!IncWB && !vim.browser.date) {
@@ -236,7 +249,6 @@ Title : " . Vim.Browser.Title . "
   WinActivate, ahk_class TElWind
 
   if (concept) {
-    ConceptBefore := Vim.SM.GetCurrConcept()
     ; No need for changing if entered concept = current concept
     if (!Vim.SM.ChangeDefaultConcept(concept,, ConceptBefore))
       concept := ""
@@ -245,13 +257,13 @@ Title : " . Vim.Browser.Title . "
   }
 
   if (SMVidImport) {
-    if (PC) {
+    if (Passive) {
       gosub SMHyperLinkToTopic
     } else {
       gosub SMCtrlN
     }
   } else {
-    Vim.SM.PostMsg(98)  ; = send !n
+    Vim.SM.PostMsg(98)  ; = !n
     send {AppsKey}xp  ; Paste HTML
     WinClip._waitClipReady()
     WinWaitActive, ahk_class TElWind
@@ -263,33 +275,29 @@ Title : " . Vim.Browser.Title . "
     ; Cannot just send the priority, might send into the wrong window
     Vim.SM.SetPrio(prio, true)
   } else if (vim.browser.title && prio) {
+    WinActivate, ahk_class TElWind
     Vim.SM.SetElParam(vim.browser.title, prio)
   }
-
-  ; if (refreshed := concept) {
-  ;   Vim.SM.ChangeDefaultConcept(ConceptBefore,,, false)
-  ;   send {alt down}
-  ;   PostMessage, 0x0104, 0x25, 1<<29,, ahk_class TElWind  ; left arrow key
-  ;   PostMessage, 0x0105, 0x25, 1<<29,, ahk_class TElWind
-  ;   send {alt up}
-  ; }
-  ; if (!refreshed)
-    Vim.SM.reload(0, 1)
+  Vim.SM.reload(0, 1)
 
 SMImportGuiEscape:
 SMImportGuiClose:
-  if A_ThisLabel contains SMImportGuiEscape,SMImportGuiClose
+  if A_ThisLabel contains SMImportGui
     gui destroy
 ImportReturn:
   Vim.SM.ClearHighlight()
+  if (A_ThisLabel == "SMImportButtonImport" || A_ThisLabel == "^!a") {
+    ; Without this sometimes SM would focus to the window menu
+    send {AltUp}  ; reload would send alt down
+    Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
+  }
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
   Clipboard := ClipSaved
-  goto RemoveToolTip
 return
 
 GetAddressBarUrl:
-  vim.browser.url := Vim.Browser.GetAddressBarUrl(1)
+  vim.browser.url := Vim.Browser.GetAddressBarUrl()
   GetAddressBarUrlDone := true
 return
 
@@ -321,7 +329,7 @@ return
     return
   }
   ; Everything in this hotkey runs in the background
-  if (!url := Vim.Browser.GetAddressBarUrl(1)) {
+  if (!url := Vim.Browser.GetAddressBarUrl()) {
     ToolTip("Url not found.")
     return
   }
@@ -396,7 +404,7 @@ return
   WinActivate, ahk_class TElWind  ; focus to element window
 
 ExtractToSM:
-  Vim.SM.DeselectAllComponents()
+  Vim.SM.ExitText()
   send q
   Vim.SM.WaitTextFocus()
   if (!Vim.SM.IsEditingHTML()) {
@@ -427,6 +435,7 @@ ExtractToSM:
     }
   }
   send {left}
+
   if (!IsBrowser) {
     clip(extract,, false,, false)
   } else {
@@ -452,7 +461,7 @@ ExtractToSM:
     send !x  ; extract
   }
   Vim.SM.WaitExtractProcessing()
-  ; sleep 40  ; short sleep to make sure the extraction is done
+  sleep 40  ; short sleep to make sure the extraction is done
   Vim.SM.MoveAboveRef(false)
   send !\\
   WinWaitNotActive, ahk_class TElWind
@@ -503,14 +512,19 @@ return
   send {enter}
 return
 
-#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser")) && WinExist("ahk_class TElWind") && !Vim.SM.IsPassiveColl())
+#if (Vim.State.Vim.Enabled
+  && !Vim.SM.IsPassive("", -1)  ; current concept doesn't matter
+  && (WinActive("ahk_class SUMATRA_PDF_FRAME")
+   || (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser")) && marker := trim(copy(true,, 1, true), " `t`r`n"))
+  && WinExist("ahk_class TElWind"))
 !+s::
 ^!s::
 ^+!s::
   ClipSaved := ClipboardAll
   KeyWait alt
   KeyWait ctrl
-  marker := trim(copy(false), " `t`r`n")
+  if (WinActive("ahk_class SUMATRA_PDF_FRAME"))
+    marker := trim(copy(false), " `t`r`n")
   if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
     marker := marker ? marker : "p" . ControlGetText("Edit1")
     if (InStr(A_ThisHotkey, "^")) {
@@ -520,7 +534,7 @@ return
         send s
     }
   } else if (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser")) {
-    if (marker) {
+    if (!marker) {
       ToolTip("No text selected.")
       Clipboard := ClipSaved
       return
@@ -533,12 +547,14 @@ return
       }
     }
   }
-  if (!marker)
+  if (!marker) {
+    Clipboard := ClipSaved
     return
+  }
   WinActivate, ahk_class TElWind
 
 MarkInSMTitle:
-  Vim.SM.DeselectAllComponents()
+  Vim.SM.ExitText()
   send q
   if (!Vim.SM.WaitTextFocus(500)) {
     ToolTip("No text component.")
@@ -643,7 +659,7 @@ return
   Vim.SM.WaitFileLoad()
   QuestionFieldName := ControlGetFocus()
   if (Vim.Browser.title) {
-    clip(Vim.SM.MakeReference())
+    send % "{text}" . Vim.SM.MakeReference()
   } else {
     send {text}Listening comprehension:
   }
@@ -656,11 +672,9 @@ return
       WinClose  ; Directory not found; Create? / MCI error
     WinWaitActive, ahk_group SMCtrlQ
   }
-  ; Control related commands doesn't work in file browser
-  send !dc  ; select C drive
-  send !n
-  send % "{text}" . TempPath
-  send {enter}
+  ControlSend, TDriveComboBox1, c, ahk_class TFileBrowser
+  ControlSetText, TEdit1, % TempPath, ahk_class TFileBrowser
+  ControlSend, TEdit1, {enter}, ahk_class TFileBrowser
   WinWaitActive, ahk_class TInputDlg
   if (Vim.Browser.title) {
     ControlSetText, TMemo1, % Vim.Browser.title . " (excerpt)"
@@ -758,7 +772,8 @@ return
   clip(text,, false)
   if (prio)
     Vim.SM.SetPrio(prio)
-  Vim.SM.Reload(0, 1)
+  WinActivate, ahk_class TElWind
+  Vim.SM.reload()
 
 HBImportReturn:
   Vim.SM.ClearHighlight()

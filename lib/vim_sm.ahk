@@ -113,14 +113,16 @@ class VimSM {
   }
 
   SetRandPrio(min, max) {
-    if (WinActive("SuperMemo Import") && WinActive("ahk_class AutoHotkeyGUI")) {
-      ControlSetText, Edit1, % random(min, max)
-      ControlFocus, Edit2
+    global PrioGuiHwnd
+    if (WinGet() == PrioGuiHwnd) {
+      ControlSetText, Edit1, % random(min, max), A
+      ControlFocus, Edit2, A
+      ControlSend, Edit2, {home}{ShiftDown}{end}{ShiftUp}, A
     } else if (WinActive("Priority") && WinActive("ahk_class #32770")) {  ; input dialogue
       ControlSetText, Edit1, % random(min, max)
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
       ControlSetText, TEdit5, % random(min, max)
-    } else {
+    } else if (WinExist("ahk_class TElWind")) {
       this.SetPrio(random(min, max))
     }
     this.Vim.State.SetNormal()
@@ -156,7 +158,7 @@ class VimSM {
     }
   }
 
-  DeselectAllComponents(timeout:=0) {
+  ExitText(timeout:=0) {
     if (this.IsEditingText()) {
       send ^t{esc}
       this.WaitTextExit(timeout)
@@ -260,7 +262,7 @@ class VimSM {
   }
 
   PlayIfCertainColl(CollName:="", timeout:=0) {
-    if (this.IsPassiveColl(CollName)) {
+    if (this.IsPassive(CollName)) {
       StartTime := A_TickCount
       if (ControlTextWait("TBitBtn3", "Next repetition", "ahk_class TElWind",,,, timeout)) {
         ToolTip("Autoplay",, -1000)
@@ -360,9 +362,13 @@ class VimSM {
     return ControlGetText("TEdit1", "ahk_class TElWind")
   }
 
-  IsPassiveColl(CollName:="") {
+  IsPassive(CollName:="", CurrConcept:="") {
     CollName := CollName ? CollName : this.GetCollName()
-    return (IfIn(CollName, "passive,singing,piano,calligraphy,drawing,bgm,music"))
+    if CollName in passive,singing,piano,calligraphy,drawing,bgm,music
+      return 2
+    CurrConcept := CurrConcept ? CurrConcept : this.GetCurrConcept()
+    if (CurrConcept == "Online")
+      return 1
   }
 
   PostMsg(msg, ContextMenu:=false) {
@@ -439,13 +445,13 @@ class VimSM {
       this.WaitFileLoad(timeout)
       send !{left}
     } else {
-      send {alt down}
+      send {AltDown}
       PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
       PostMessage, 0x0105, 0x24, 1<<29,, ahk_class TElWind
       this.WaitFileLoad(timeout)
       PostMessage, 0x0104, 0x25, 1<<29,, ahk_class TElWind  ; left arrow key
       PostMessage, 0x0105, 0x25, 1<<29,, ahk_class TElWind
-      send {alt up}
+      send {AltUp}
     }
   }
 
@@ -457,11 +463,15 @@ class VimSM {
   ChangeDefaultConcept(concept:="", send:=0, CurrConcept:="", check:=true) {
     if (concept && check) {
       CurrConcept := CurrConcept ? CurrConcept : this.GetCurrConcept()
-      if (InStr(CurrConcept, concept) == 1)  ; entered concept = current concept
+      if (InStr(CurrConcept, concept) == 1)  ; entered concept's first letters match current concept
         return false
     }
-    ControlClickWinCoord(723, 57, "ahk_class TElWind")
-    ; ControlClickDPIAdjusted(716, 14, "TToolBar2", "ahk_class TElWind")  ; not reliable because sometimes it could be TToolBar3???
+    if (ControlGet("hwnd",, "TToolBar3")) {
+      ControlClickDPIAdjusted(716, 14, "TToolBar3", "ahk_class TElWind")
+    } else if (ControlGet("hwnd",, "TToolBar2")) {
+      ControlClickDPIAdjusted(716, 14, "TToolBar2", "ahk_class TElWind")
+    }
+    ; ControlClickWinCoord(723, 57, "ahk_class TElWind")
     if (concept) {
       WinWait, ahk_class TRegistryForm
       ; send = 1 means must send
@@ -484,36 +494,34 @@ class VimSM {
   }
 
   ClickElWindSourceBtn() {
-    ControlClickWinCoord(555, 57, "ahk_class TElWind")
-    ; ControlClickDPIAdjusted(548, 14, "TToolBar2", "ahk_class TElWind")
+    if (ControlGet("hwnd",, "TToolBar3")) {
+      ControlClickDPIAdjusted(548, 14, "TToolBar3", "ahk_class TElWind")
+    } else if (ControlGet("hwnd",, "TToolBar2")) {
+      ControlClickDPIAdjusted(548, 14, "TToolBar2", "ahk_class TElWind")
+    }
+    ; ControlClickWinCoord(555, 57, "ahk_class TElWind")
   }
 
   ClickBrowserSourceButton() {
     ControlClickWinCoord(294, 45, "ahk_class TBrowser")
   }
 
-  SetElParam(title:="", prio:="", template:="", method:=0) {
-    if (method) {
-      ; Sometimes doesn't work
-      ControlSend,, {ctrl down}{shift down}p{ctrl up}{shift up}, ahk_class TElWind
-    } else {
-      WinActivate, ahk_class TElWind
-      send ^+p
-    }
-    WinWait, ahk_class TElParamDlg
+  SetElParam(title:="", prio:="", template:="") {
+    send ^+p
+    WinWaitActive, ahk_class TElParamDlg
     if (title) {
-      ControlSetText, TEdit2, % SubStr(title, 2), ahk_class TElParamDlg
-      ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1), ahk_class TElParamDlg
+      ControlSetText, TEdit2, % SubStr(title, 2), A
+      ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1), A
     }
     if (prio) {
-      ControlSetText, TEdit1, % SubStr(prio, 2), ahk_class TElParamDlg
-      ControlSend, TEdit1, % "{text}" . SubStr(prio, 1, 1), ahk_class TElParamDlg
+      ControlSetText, TEdit1, % SubStr(prio, 2), A
+      ControlSend, TEdit1, % "{text}" . SubStr(prio, 1, 1), A
     }
     if (template) {
-      ControlSetText, Edit1, % SubStr(template, 2), ahk_class TElParamDlg
-      ControlSend, Edit1, % "{text}" . SubStr(template, 1, 1), ahk_class TElParamDlg
+      ControlSetText, Edit1, % SubStr(template, 2), A
+      ControlSend, Edit1, % "{text}" . SubStr(template, 1, 1), A
     }
-    while (WinExist("ahk_class TElParamDlg"))
+    while (WinActive("ahk_class TElParamDlg"))
       ControlSend, TEdit2, {enter}, ahk_class TElParamDlg
   }
 
@@ -610,10 +618,9 @@ class VimSM {
       send {f3}
       WinWaitActive, ahk_class TMyFindDlg,, 0
       if (ErrorLevel) {  ; SM goes to the next found without opening find dialogue
-        send {esc}
         this.ClearHighlight()  ; clears highlight so it opens find dialogue
-        send {f3}
-        WinWaitActive, ahk_class TMyFindDlg,, 0  ; still not opened somhow
+        ControlSend,, {f3}, ahk_class TElWind
+        WinWaitActive, ahk_class TMyFindDlg,, 0
         if (ErrorLevel) {
           ToolTip("Not found.")
           return false

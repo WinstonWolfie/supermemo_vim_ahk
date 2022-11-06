@@ -163,7 +163,7 @@ return
 
 s::  ; turn active language item to passive (*s*witch)
   Vim.State.SetMode("Vim_Normal")
-  Vim.SM.DeselectAllComponents()
+  Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
   hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
@@ -188,7 +188,7 @@ return
   KeyWait shift
   Vim.State.SetMode("Vim_Normal")
   ClipSaved := ClipboardAll
-  Vim.SM.DeselectAllComponents()
+  Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
   send q
@@ -214,22 +214,16 @@ return
 +p::
 p::  ; hyperlink to scri*p*t component
   Vim.State.SetMode("Vim_Normal")
-  CollName := ""
   ClipSaved := ClipboardAll
   Vim.Browser.url := Clipboard
   WinClip.Clear()
   Clipboard := Vim.SM.MakeReference()
   ClipWait
-  send !n
-  Vim.SM.WaitFileLoad()
-  send ^v
 
 SMHyperLinkToTopic:
-  if (A_ThisLabel == "SMHyperLinkToTopic") {
-    send ^n
-    Vim.SM.WaitFileLoad()
-  }
-
+  Vim.SM.PostMsg(98)  ; = !n
+  Vim.SM.WaitFileLoad()
+  send ^v
   send ^t{f9}{enter}  ; opens script editor
   WinWaitActive, ahk_class TScriptEditor,, 0
   if (ErrorLevel)
@@ -258,6 +252,8 @@ return
 
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
+  if (Vim.SM.IsEditingText())
+    send {right}  ; so no text is selected
 SMSetLinkFromClipboard:
   if (Vim.Browser.title)
     Vim.SM.SetTitle(Vim.Browser.title)

@@ -153,9 +153,9 @@ ClozeHinter:
   }
   KeyWait ctrl
   KeyWait shift
-  InitText := Clip()
-  if (!InitText)
+  if (!InitText := Clip())
     return
+  CurrFocus := ControlGetFocus("ahk_class TElWind")
   inside := true
   if (RegExMatch(InitText, "\b(more|less)\b")) {
     InitText := "more/less"
@@ -177,6 +177,10 @@ ClozeHinter:
     InitText := "increase/decrease"
   } else if (RegExMatch(InitText, "\b(positive|negative)\b")) {
     InitText := "positive/negative"
+  } else if (RegExMatch(InitText, "\b(acidic|alkaline)\b")) {
+    InitText := "acidic/alkaline"
+  } else if (RegExMatch(InitText, "\b(same|different)\b")) {
+    InitText := "same/different"
   } else if (!InStr(InitText, "/")) {
     inside := false
   }
@@ -199,6 +203,9 @@ ClozeHinterButtonCloze:
   gui destroy
   WinActivate, ahk_class TElWind
 ClozeNoBracket:
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind") && CtrlState := GetKeyState("ctrl"))
+CapsLock & z::  ; delete [...]
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 CapsLock & z::  ; delete [...]
   ClozeNoBracket := (A_ThisLabel == "ClozeNoBracket" || A_ThisHotkey == "CapsLock & z")
   if (A_ThisLabel == "ClozeNoBracket" && ClozeNoBracketCtrlState) {
@@ -222,7 +229,7 @@ CapsLock & z::  ; delete [...]
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send !{left}
-  ; sleep % (A_TickCount - SleepCalc) / 3 * 2
+  sleep % (A_TickCount - SleepCalc) / 3 * 2
   Vim.SM.WaitFileLoad()  ; double insurance?
   send ^t
   if (!ClozeNoBracket && inside) {
@@ -252,16 +259,18 @@ CapsLock & z::  ; delete [...]
   } else if (Vim.SM.IsEditingHTML()) {
     if (!Vim.SM.HandleF3(1))
       return
-    ControlSetText, TEdit1, [...]
+    ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
 		send {enter}
 		WinWaitNotActive, ahk_class TMyFindDlg ; faster than wait for element window to be active
     Vim.SM.ClearHighlight()
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
     if (!ClozeNoBracket) {
-      send +{left}  ; so format is kept
-      clip(cloze)
-      sleep 20  ; insurance
-      send {del}
+      ; Not reliable???
+      ; send +{left}  ; so format is kept
+      ; clip(cloze)
+      ; sleep 20  ; insurance
+      ; send {del}
+      send % "{text}" . cloze
     } else {
       send {bs}
     }

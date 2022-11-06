@@ -47,14 +47,14 @@ Return
         . "|Copy as HTML|Forvo|Pin current window at top|Sci-Hub"
         . "|Acc Viewer|Translate (Google)|Clear clipboard|Forcellini|RAE"
         . "|Show selection as html|Oxford Advanced Learner's Dictionary"
-        . "|Alatius: a Latin macronizer|UIA Viewer"
+        . "|Alatius: a Latin macronizer|UIA Viewer|Libgen"
         . "|Register clipboard to Vim.Browser.VidTime"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list .= "|Set current element as concept hook"
           . "|Memorise children of current element"
     if (WinActive("ahk_class TElWind")) {
-      if (Vim.SM.IsPassiveColl())
+      if (Vim.SM.IsPassive())
         list .= "|Reformat script component"
       list .= "|Nuke HTML|Reformat vocab|Import first file"
       if (Vim.SM.IsEditingText())
@@ -444,8 +444,8 @@ ReformatScriptComponent:
   KeyWait enter
   if (ContinueLearning := Vim.SM.IsLearning())
     send !g
-  Vim.SM.DeselectAllComponents()
-  if (Vim.SM.IsPassiveColl()) {
+  Vim.SM.ExitText()
+  if (Vim.SM.IsPassive()) {
     WinClip.Clear()
     send ^a^x
     ClipWait 0.6
@@ -521,6 +521,14 @@ SciHub:
     if (!text)
       return
   }
+  if (RegExMatch(text, "https:\/\/doi\.org\/([^ ]+)", v)) {
+    run % "https://sci-hub.hkvisa.net/" . v1
+    return
+  ; https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+  } else if (RegExMatch(text, "i)10.\d{4,9}/[-._;()/:A-Z0-9]+", v)) {
+    run % "https://sci-hub.hkvisa.net/" . v
+    return
+  }
   run https://sci-hub.hkvisa.net/
   WinWaitActive, ahk_group Browser
   cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
@@ -543,16 +551,18 @@ return
 
 ; Personal: Reformat my old vocabulary items
 ReformatVocab:
+  Vim.State.SetMode("Vim_Normal")
+  ClipSaved := ClipboardAll
   if (!Vim.SM.IsEditingHTML()) {
     send q
-    Vim.SM.WaitTextFocus()
+    if (!Vim.SM.WaitTextFocus(1000))
+      return
   }
-  WinClip.Clear()
-  send ^a^c
-  ClipWait 0.6
-  if (!Vim.HTML.ClipboardGet_HTML(data))
+  send ^a
+  if (!data := copy(false, true)) {
+    Clipboard := ClipboardAll
     return
-  RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", data)
+  }
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
   data := RegExReplace(data, "(\.<BR>""|\. \r\n<P>‘)", "<P>")
   data := RegExReplace(data, """.*", "</P>")
@@ -563,10 +573,9 @@ ReformatVocab:
   SynAndAnt := StrReplace(SynAndAnt, "; ", ", ")
   SynAndAnt := RegExReplace(SynAndAnt, "((Similar:?)<BR>|Synonyms(<\/P>\r\n<P>|<BR>))", "syn: ")
   SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?|Opuesta)<BR>", "ant: ")
-  clip := def . SynAndAnt
-  clip(clip)
+  WinClip.Paste(def . SynAndAnt,, false)
   send ^a^+1
-  Vim.State.SetMode("Vim_Normal")
+  Clipboard := ClipSaved
 return
 
 ZLibrary:
@@ -636,3 +645,12 @@ Bilibili:
   }
   run % "https://search.bilibili.com/all?keyword=" . search
 return
+
+Libgen:
+  search := trim(clip())
+  if (!search) {
+    InputBox, search, Library Genesis, Enter your search,, 192, 128
+    if (!search)
+      return
+  }
+  run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
