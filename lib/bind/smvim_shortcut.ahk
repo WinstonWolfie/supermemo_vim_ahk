@@ -198,7 +198,7 @@ return
   if (!InStr(data, "<IMG")) {  ; text only
     send {bs}^{f7}  ; set read point
     LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
-    LatexFormula := Enc_Uri(LatexFormula)
+    LatexFormula := EncodeDecodeURI(LatexFormula,, false)
     LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
     text := WinGetText("ahk_class TElWind")
     LatexFolderPath := Vim.SM.GetCollPath(text) . Vim.SM.GetCollName(text) . "\elements\LaTeX"
