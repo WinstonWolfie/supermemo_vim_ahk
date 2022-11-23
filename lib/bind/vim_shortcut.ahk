@@ -60,7 +60,7 @@ SMPlan:
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
   if (!WinExist("ahk_class TPlanDlg")) {
-    l := this.IsLearning()
+    l := Vim.SM.IsLearning()
     if (l == 2) {
       Vim.SM.Reload(, 1)
     } else if (l == 1) {

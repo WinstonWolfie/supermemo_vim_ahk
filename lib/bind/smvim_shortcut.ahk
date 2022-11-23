@@ -186,8 +186,10 @@ return
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (!Vim.HTML.ClipboardGet_HTML(Data))
+  if (!Vim.HTML.ClipboardGet_HTML(Data)) {
+    Clipboard := ClipSaved
     return
+  }
   ; To do: Detecting selection contents
   ; if (data ~= "<IMG[^<>]*>\K[\s\S]+(?=<!--EndFragment-->)") {  ; match end of first IMG tag until start of last EndFragment tag
     ; ToolTip("Please select text or image only.")
