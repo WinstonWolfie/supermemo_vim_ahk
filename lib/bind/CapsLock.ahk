@@ -321,7 +321,9 @@ CapsLock & tab::send !{tab}
 !f4::
 CapsLock & q::
     send !{f4}
-    WinWaitActive, ahk_class QuitWindow ahk_exe HiborClient.exe,, 0
-    if (!ErrorLevel)
-        send {enter}
+    if (WinActive("ahk_exe HiborClient.exe")) {
+        WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0
+        if (!ErrorLevel)
+            send {enter}
+    }
 return
