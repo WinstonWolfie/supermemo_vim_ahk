@@ -4,11 +4,11 @@
 ; putting those below would make gu stops working (u also triggers scroll up)
 
 ; Element window
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
 '::Vim.State.SetMode("",, -1,,, -1, 1)  ; leader key
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 g::Vim.State.SetMode("", 1, -1)
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && Vim.State.g)
 g::Vim.Move.Move("g")  ; 3gg goes to the 3rd line of entire text
 
 +u::  ; gU: click source button
@@ -76,7 +76,7 @@ Return
 Return
 
 ; Need scrolling bar present
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 ; Scrolling
 h::Vim.Move.Repeat("h")
 l::Vim.Move.Repeat("l")
@@ -86,6 +86,8 @@ j::Vim.Move.Repeat("j")
 k::Vim.Move.Repeat("k")
 d::Vim.Move.Repeat("^d")
 u::Vim.Move.Repeat("^u")
+0::Vim.Move.Move("0")
+$::Vim.Move.Move("$")
 Return
 
 ; "Browsing" mode
@@ -103,15 +105,15 @@ r::  ; reload
   ; Move mouse so WaitFileLoad() works correctly,
   ; which requires status bar text detection
   ContinueGrading := Vim.SM.IsGrading()
-  ContinueLearning := ContinueGrading ? 0 : Vim.SM.IsLearning()
+  ContLearn := ContinueGrading ? 0 : Vim.SM.IsLearning()
   CurrTitle := WinGetTitle()
   send !{home}
-  if (ContinueLearning) {
+  if (ContLearn) {
     Vim.SM.Learn()
     Vim.SM.WaitFileLoad()
     ; When r is pressed, the review score in an item is submitted,
     ; thus refreshing and learning takes SM to a new element
-    if (ContinueLearning == 2 && CurrTitle != WinGetTitle())
+    if (ContLearn == 2 && CurrTitle != WinGetTitle())
       send !{left 2}
   } else if (ContinueGrading) {
     Vim.SM.Learn()
@@ -137,12 +139,12 @@ n::send !n  ; create new topic
 x::send {del}  ; delete element/component
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+  && ((Vim.SM.IsBrowsing())
    || WinActive("ahk_class TContents")
    || WinActive("ahk_class TBrowser")))
 +x::send ^+{enter}  ; Done!
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
 p::
   send ^{f10}  ; replay auto-play
   WinWaitActive, ahk_class TMsgDialog,, 0
@@ -156,13 +158,13 @@ return
 ; Element navigation
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+  && ((Vim.SM.IsBrowsing())
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 !h::
 +h::send !{left}  ; go back in history
 !l::
 +l::send !{right}  ; go forward in history
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
 !j::
 +j::send !{pgdn}  ; J, ge: go down one element
 !k::
@@ -174,7 +176,7 @@ c::send !c  ; open content window
 c::send !c  ; refocus
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && ((WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+  && ((Vim.SM.IsBrowsing())
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 b::
   if (WinExist("ahk_class TBrowser")) {
@@ -190,10 +192,15 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^o::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 o::
   SetDefaultKeyboard(0x0409)  ; english-US	
-  Vim.SM.GoToTopIfLearning()
+  LearningState := Vim.SM.IsLearning()
+  if (LearningState == 1) {
+    Vim.SM.GoToTopEl()
+  } else if (LearningState == 2) {
+    Vim.SM.Reload()
+  }
   Vim.State.SetMode("Insert")
   send ^o  ; favourites
   Vim.State.BackToNormal := 1
@@ -202,9 +209,9 @@ return
 f::Vim.SM.ClickMid()  ; click on html component
 
 ; Copy
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
 y::  ; yy: copy current source url
   link := Vim.SM.GetLink()
   if (!link) {

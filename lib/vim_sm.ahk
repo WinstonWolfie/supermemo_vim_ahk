@@ -9,11 +9,11 @@ class VimSM {
       ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, NA x1 y1
     } else {
       ; server2 because question field of items are server2
-      if (ControlGet("hwnd",, "Internet Explorer_Server2", "ahk_class TElWind")) {  ; item
+      if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {  ; item
         ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, NA x1 y1
       } else {  ; topic
         ; Article field in topics is server1
-        if (ControlGet("hwnd",, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
+        if (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
         } else {  ; no html field found
           send q
@@ -84,6 +84,10 @@ class VimSM {
     return (WinActive("ahk_class TElWind") && (InStr(CurrFocus, "Internet Explorer_Server") || InStr(CurrFocus, "TMemo")))
   }
 
+  IsBrowsing() {
+    return (WinActive("ahk_class TElWind") && !this.IsEditingText())
+  }
+
   IsGrading() {
     CurrFocus := ControlGetFocus()
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
@@ -95,11 +99,11 @@ class VimSM {
           || CurrFocus == "TBitBtn8"
           || CurrFocus == "TBitBtn9"))
   }
-  
+ 
   IsNavigatingPlan() {
     return (WinActive("ahk_class TPlanDlg") && ControlGetFocus() == "TStringGrid1")
   }
-  
+ 
   IsNavigatingTask() {
     return (WinActive("ahk_class TTaskManager") && ControlGetFocus() == "TStringGrid1")
   }
@@ -113,11 +117,10 @@ class VimSM {
   }
 
   SetRandPrio(min, max) {
-    global PrioGuiHwnd
-    if (WinGet() == PrioGuiHwnd) {
+    global ImportGuiHwnd
+    if (WinGet() == ImportGuiHwnd) {
       ControlSetText, Edit1, % random(min, max), A
-      ControlFocus, Edit2, A
-      ControlSend, Edit2, {home}{ShiftDown}{end}{ShiftUp}, A
+      send !c
     } else if (WinActive("Priority") && WinActive("ahk_class #32770")) {  ; input dialogue
       ControlSetText, Edit1, % random(min, max)
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
@@ -213,6 +216,7 @@ class VimSM {
     loop {
       if (A_CaretX) {
         this.WaitFileLoad(timeout, "|Please wait")
+        sleep 20
         return 1
       } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
         Return 0
@@ -232,6 +236,7 @@ class VimSM {
     loop {
       if (A_CaretX) {
         this.WaitFileLoad(timeout, "|Loading file")
+        sleep 40
         return true
       } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
         Return false
@@ -262,7 +267,10 @@ class VimSM {
   }
 
   PlayIfCertainColl(CollName:="", timeout:=0) {
-    if (this.IsPassive(CollName)) {
+    CollName := CollName ? CollName : this.GetCollName()
+    if (CollName = "bgm")
+      return
+    if (this.IsPassive(CollName, -1)) {
       StartTime := A_TickCount
       if (ControlTextWait("TBitBtn3", "Next repetition", "ahk_class TElWind",,,, timeout)) {
         ToolTip("Autoplay",, -1000)
@@ -294,32 +302,32 @@ class VimSM {
     return ret
   }
 
-  GetCollName() {
-    RegExMatch(WinGetTitle("ahk_class TStats"), "\[(.*)\]$", v)
-    return v1
+  GetCollName(text:="") {
+    text := text ? text : WinGetText("ahk_class TElWind")
+    RegExMatch(text, "m)^.+?(?= \(SuperMemo)", CollName)
+    return CollName
   }
 
   GetCollPath(text:="") {
     text := text ? text : WinGetText("ahk_class TElWind")
-    RegExMatch(text, "m)\(SuperMemo [0-9]+: \K.*(?=\)$)", CollPath)
+    RegExMatch(text, "m)\(SuperMemo [0-9]+: \K.+(?=\)$)", CollPath)
     return CollPath
   }
 
   GetLink(TemplCode:="", RestoreClip:=true) {
-    if (RestoreClip && !TemplCode)
+    if (res := (RestoreClip && !TemplCode)) {
       ClipSaved := ClipboardAll
-    global WinClip
-    WinClip.Clear()
+      global WinClip
+      WinClip.Clear()
+    }
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(false)
     if (InStr(TemplCode, "Link:")) {
       RegExMatch(TemplCode, "(?<=#Link: <a href="").*?(?="")", link)
-      if (RestoreClip && !TemplCode)
-        Clipboard := ClipSaved
-      return link
-    } else {
-      if (RestoreClip && !TemplCode)
-        Clipboard := ClipSaved
+      ret := link
     }
+    if (res)
+      Clipboard := ClipSaved
+    return ret
   }
 
   GetFilePath(RestoreClip:=true) {
@@ -337,7 +345,7 @@ class VimSM {
   }
 
   SetTitle(title:="") {
-    if (WinGetTitle("ahk_class TElWind") != title) {
+    if !(WinGetTitle("ahk_class TElWind") == title) {
       this.PostMsg(116)  ; edit title
       GroupAdd, SMAltT, ahk_class TChoicesDlg
       GroupAdd, SMAltT, ahk_class TTitleEdit
@@ -431,10 +439,12 @@ class VimSM {
     return ret
   }
 
-  Learn() {
-    if (ControlGetText("TBitBtn2") == "Learn") {
+  Learn(CtrlL:=false) {
+    if (CtrlL) {
+      this.PostMsg(180)
+    } else if (ControlGetText("TBitBtn2", "ahk_class TElWind") == "Learn") {
       ControlSend, TBitBtn2, {enter}, ahk_class TElWind
-    } else if (IfIn(ControlGetText("TBitBtn3"), "Learn,Show answer,Next repetition", true)) {
+    } else if (IfIn(ControlGetText("TBitBtn3", "ahk_class TElWind"), "Learn,Show answer,Next repetition", true)) {
       ControlSend, TBitBtn3, {enter}, ahk_class TElWind
     }
   }
@@ -466,9 +476,9 @@ class VimSM {
       if (InStr(CurrConcept, concept) == 1)  ; entered concept's first letters match current concept
         return false
     }
-    if (ControlGet("hwnd",, "TToolBar3")) {
+    if (ControlGet(,, "TToolBar3")) {
       ControlClickDPIAdjusted(716, 14, "TToolBar3", "ahk_class TElWind")
-    } else if (ControlGet("hwnd",, "TToolBar2")) {
+    } else if (ControlGet(,, "TToolBar2")) {
       ControlClickDPIAdjusted(716, 14, "TToolBar2", "ahk_class TElWind")
     }
     ; ControlClickWinCoord(723, 57, "ahk_class TElWind")
@@ -494,9 +504,9 @@ class VimSM {
   }
 
   ClickElWindSourceBtn() {
-    if (ControlGet("hwnd",, "TToolBar3")) {
+    if (ControlGet(,, "TToolBar3")) {
       ControlClickDPIAdjusted(548, 14, "TToolBar3", "ahk_class TElWind")
-    } else if (ControlGet("hwnd",, "TToolBar2")) {
+    } else if (ControlGet(,, "TToolBar2")) {
       ControlClickDPIAdjusted(548, 14, "TToolBar2", "ahk_class TElWind")
     }
     ; ControlClickWinCoord(555, 57, "ahk_class TElWind")
@@ -531,18 +541,16 @@ class VimSM {
       ; no shortcuts there, so movement keys are used for up/down navigation
       ; if more windows are found without shortcuts in the future, they will be all added here
       return (ControlGetText("TGroupButton1") == "Cancel (i.e. restore the old version of references)"
-           || ControlGetText("TGroupButton2") == "Combine old and new references for this element"
-           || ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article"
-           || ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element")
+           && ControlGetText("TGroupButton2") == "Combine old and new references for this element"
+           && ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article"
+           && ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element")
     }
   }
 
   CheckDup(text, ClearHighlight:=true) {  ; try to find duplicates
-    ; ControlSend,, {ctrl down}f{ctrl up}, ahk_class TElWind
     while (WinExist("ahk_class TBrowser") || WinExist("ahk_class TMsgDialog"))
       WinClose
-    ; if (this.GetCollName() == this.LastCheckDupColl && this.LastCheckText == text)
-    ;   return this.LastCheckResult
+    ContLearn := this.IsLearning()
     this.PostMsg(144)
     WinWait, ahk_class TMyFindDlg
     ControlSetText, TEdit1, % text, ahk_class TMyFindDlg
@@ -563,19 +571,15 @@ class VimSM {
       WinActivate, ahk_class TBrowser
       ret := true
     }
-    ; this.LastCheckDupColl := this.GetCollName()
-    ; this.LastCheckText := text
-    ; this.LastCheckResult := ret
+    if (ContLearn)
+      this.Learn()
     return ret
   }
 
   ClearHighlight(OpenCommander:=true) {
-    if (OpenCommander) {
-      ; ControlSend,, {ctrl down}{enter}{ctrl up}, ahk_class TElWind
+    if (OpenCommander)
       this.PostMsg(240)  ; open commander
-      WinWait, ahk_class TCommanderDlg
-    }
-    ; ControlSend, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
+    WinWait, ahk_class TCommanderDlg
     ControlSetText, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
     ControlTextWait("TEdit2", "h", "ahk_class TCommanderDlg")
     ; ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
@@ -620,9 +624,9 @@ class VimSM {
       if (ErrorLevel) {  ; SM goes to the next found without opening find dialogue
         this.ClearHighlight()  ; clears highlight so it opens find dialogue
         ControlSend,, {f3}, ahk_class TElWind
-        WinWaitActive, ahk_class TMyFindDlg,, 0
+        WinWaitActive, ahk_class TMyFindDlg,, 1
         if (ErrorLevel) {
-          ToolTip("Not found.")
+          ToolTip("F3 window cannot be launched.")
           return false
         }
       }
@@ -637,7 +641,7 @@ class VimSM {
         this.ClearHighlight()
         send {esc}
         this.Vim.State.SetNormal()
-        ToolTip("Not found.")
+        ToolTip("Text not found.")
         return false
       }
       this.ClearHighlight(false)
@@ -647,8 +651,13 @@ class VimSM {
     }
   }
 
-  GoToTopIfLearning() {
-    if (this.IsLearning())
-      ControlSend, TBitBtn3, {home}, ahk_class TElWind
+  GoToTopIfLearning(LearningState:=0) {
+    if ((!LearningState && this.IsLearning())
+     || (LearningState && this.IsLearning() == LearningState))
+      this.GoToTopEl()
+  }
+
+  GoToTopEl() {
+    ControlSend, TBitBtn3, {home}, ahk_class TElWind
   }
 }

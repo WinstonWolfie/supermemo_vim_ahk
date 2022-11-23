@@ -86,7 +86,7 @@ SMSearchAgain:
     } else {
       match := "s)((" . UserInput . ").*?){" . n . "}\K" . UserInput
     }
-    selection := Vim.ParseLineBreaks(clip())
+    selection := Vim.ParseLineBreaks(Copy())
     pos := RegExMatch(selection, match)
     if (pos == 1) {
       if (WholeWord) {
@@ -105,7 +105,7 @@ SMSearchAgain:
       } else if (CtrlState || AltState) {
         send % "+{right " . InputLen . "}"
         if (CtrlState) {
-          Vim.State.SetMode("Vim_VisualFirst")
+          Vim.State.SetMode("Vim_Visual")
         } else if (AltState) {
           send !z
         }
@@ -140,7 +140,7 @@ SMSearchAgain:
       if (RShiftState) {
         send {right}  ; put caret on right of searched text
       } else if (CtrlState) {
-        Vim.State.SetMode("Vim_VisualFirst")
+        Vim.State.SetMode("Vim_Visual")
       } else {  ; all modifier keys are not pressed
         send {left}  ; put caret on left of searched text
       }

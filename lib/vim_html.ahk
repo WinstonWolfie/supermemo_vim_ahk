@@ -22,25 +22,28 @@ class VimHTML {
     ; zzz in case you used f6 in SuperMemo to remove format before,
     ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
 
+    ; All attributes removal detects for <> surrounding
+    ; however, sometimes if a text attribute is used, and it has HTML tag
+    ; style and others removal might not be working
+    ; Example: https://www.scientificamerican.com/article/can-newborn-neurons-prevent-addiction/
+    ; This will likely not be fixed
+
     ; Styles and fonts
-    str := RegExReplace(str, "i)<([^<>]+)?\K (zzz)?style="".*?""(?=([^<>]+)?>)")
-    str := RegExReplace(str, "i)<([^<>]+)?\K (zzz)?style='.*?'(?=([^<>]+)?>)")
-    str := RegExReplace(str, "is)<\/?(zzz)?font( .*?)?>")
+    str := RegExReplace(str, "is)<([^<>]+)?\K (zzz)?style="".*?""(?=([^<>]+)?>)")
+    str := RegExReplace(str, "is)<([^<>]+)?\K (zzz)?style='.*?'(?=([^<>]+)?>)")
+    str := RegExReplace(str, "is)<\/?(zzz)?(font|form)( .*?)?>")
 
     ; Scripts
-    str := RegExReplace(str, "i)<(zzz)?iframe( .*?)?>.*?<\/(zzz)?iframe>")
-    str := RegExReplace(str, "i)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
-    str := RegExReplace(str, "i)<(zzz)?form( .*?)?>.*?<\/(zzz)?form>")
-    str := RegExReplace(str, "i)<(zzz)?input( .*?)?>")
-    str := RegExReplace(str, "i)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)="".*?""(?=([^<>]+)?>)")
-    str := RegExReplace(str, "i)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)=[^ >]+(?=([^<>]+)?>)")
-
-    str := RegExReplace(str, "is)src=""file:\/\/\/.*?elements\/", "src=""file:///[PrimaryStorage]")
+    str := RegExReplace(str, "is)<(zzz)?iframe( .*?)?>.*?<\/(zzz)?iframe>")
+    str := RegExReplace(str, "is)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
+    str := RegExReplace(str, "is)<(zzz)?input( .*?)?>")
+    str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)="".*?""(?=([^<>]+)?>)")
+    str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)=[^ >]+(?=([^<>]+)?>)")
 
     if (nuke) {
       ; Classes
-      str := RegExReplace(str, "i)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
-      str := RegExReplace(str, "i)<([^<>]+)?\K class=[^ >]+(?=([^<>]+)?>)")
+      str := RegExReplace(str, "is)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
+      str := RegExReplace(str, "is)<([^<>]+)?\K class=[^ >]+(?=([^<>]+)?>)")
     }
     
     if (LineBreak) {

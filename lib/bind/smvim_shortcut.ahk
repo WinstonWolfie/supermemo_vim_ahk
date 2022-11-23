@@ -7,7 +7,7 @@
   ; this is to make sure this finds in the question field
   if (Vim.SM.IsEditingPlainText()) {
     send ^a
-    pos := InStr(clip(), "[...]")
+    pos := InStr(Copy(), "[...]")
     if (pos) {
       pos += 4
       send % "{left}{right " . pos . "}"
@@ -60,12 +60,12 @@ return
   }
   WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?"
   send {enter}
-  WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
+  WinWaitActive, ahk_class TElWind,, 1  ; wait for element window to become focused again
   if (ErrorLevel)
     return
   Vim.SM.WaitFileLoad()
   if (WinActive("ahk_class TElWind")) {
-    Vim.SM.Learn()
+    Vim.SM.Learn(true)
     Vim.SM.EnterInsertIfSpelling()
   }
 return
@@ -111,11 +111,12 @@ return
 return
 
 ^!p::  ; convert to a *p*lain-text template
-  ContinueLearning := Vim.SM.IsLearning()
+  KeyWait alt
+  ContLearn := Vim.SM.IsLearning()
   send ^+p!t  ; much faster than ^+m
   send {text}cl  ; my plain-text template name is classic
-  send {enter}
-  if (ContinueLearning == 1)
+  send {enter 2}
+  if (ContLearn == 1)
     send {enter}
   Vim.State.SetMode("Vim_Normal")
 return
@@ -159,9 +160,9 @@ return
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())
 ^!k::
   link := ""
-  if (RegExMatch(Clipboard, "^(https?:\/\/|file:\/\/\/)")) {
+  if (Clipboard ~= "^(https?:\/\/|file:\/\/\/)") {
     link := Clipboard
-  } else if (RegExMatch(Clipboard, "^#")) {
+  } else if (Clipboard ~= "^#") {
     link := "SuperMemoElementNo=(" . RegExReplace(Clipboard, "^#") . ")"
   }
   ClipSaved := ClipboardAll
@@ -188,7 +189,7 @@ return
   if (!Vim.HTML.ClipboardGet_HTML(Data))
     return
   ; To do: Detecting selection contents
-  ; if (RegExMatch(data, "<IMG[^<>]*>\K[\s\S]+(?=<!--EndFragment-->)")) {  ; match end of first IMG tag until start of last EndFragment tag
+  ; if (data ~= "<IMG[^<>]*>\K[\s\S]+(?=<!--EndFragment-->)") {  ; match end of first IMG tag until start of last EndFragment tag
     ; ToolTip("Please select text or image only.")
     ; Clipboard := ClipSaved
     ; Return
@@ -199,7 +200,8 @@ return
     LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
     LatexFormula := Enc_Uri(LatexFormula)
     LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cnormalsize%2520%257B%255Ccolor%257Bwhite%257D%2520" . LatexFormula . "%257D&dl=1"
-    LatexFolderPath := Vim.SM.GetCollName() . Vim.SM.GetCollPath() . "\elements\LaTeX"
+    text := WinGetText("ahk_class TElWind")
+    LatexFolderPath := Vim.SM.GetCollPath(text) . Vim.SM.GetCollName(text) . "\elements\LaTeX"
     LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     SetTimer, DownloadLatex, -1
@@ -268,7 +270,19 @@ DownloadLatex:
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
-!r::ControlClickWinCoord(39, A_CaretY)
+!r::
+  if (refresh := Vim.SM.IsNavigatingPlan()) {
+    send {home}{right}
+    x := A_CaretX, y := A_CaretY
+    send {f2}
+    WaitCaretMove(x, y)
+  }
+	WinTitle := "ahk_id " . WinGet()
+	ControlClick, % "x" . 39 * A_ScreenDPI / 96 . " y" . A_CaretY, % WinTitle,,,, NA
+  if (refresh)
+    send {tab}+{tab}
+return
+
 !t::send !mlt  ; Totals
 
 !a::  ; insert/append activity
@@ -276,7 +290,7 @@ return
   gui, PlanAdd:Add, Text,, A&ctivity:
   list := "Break||Gaming|Coding|Sports|Social|Family|Passive|Meal|Rest"
         . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc|Out|Singing"
-        . "|Calligraphy|Drawing|Movie|TV"
+        . "|Calligraphy|Drawing|Movie|TV|VC"
   gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
   gui, PlanAdd:Add, Text,, &Time:
   gui, PlanAdd:Add, Edit, vTime w110
@@ -372,7 +386,7 @@ NumpadPgup::Vim.SM.SetRandTaskVal(0,360.76)
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg"))  ; priority window (alt+p)
 enter::
   prio := ControlGetText("TEdit5")
-  if (RegExMatch(prio, "^\."))
+  if (prio ~= "^\.")
     ControlSetText, TEdit5, % "0" . prio
   send {enter}
 return
@@ -450,51 +464,47 @@ p::
 return
 
 ; Incremental video
-#if (Vim.State.Vim.Enabled && ((WinActive("ahk_group Browser") && WinExist("ahk_class TElWind"))) || WinActive("ahk_class TElWind"))
+#if (Vim.State.Vim.Enabled && ((WinActive("ahk_group Browser") && WinExist("ahk_class TElWind")) || WinActive("ahk_class TElWind")))
 ^!s::  ; sync time
 !+s::  ; sync time but browser tab stays open
 ^+!s::  ; sync time and keep learning
 ^!`::  ; clear time
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
+BrowserSyncTime:
+  sync := (A_ThisLabel == "BrowserSyncTime")
   KeyWait alt
   KeyWait ctrl
   if (WinActive("ahk_group Browser") && !Vim.Browser.VidTime) {
     hwnd := WinGet()
-    Vim.Browser.GetTitleSourceDate(true, false)  ; get title for checking later
+    Vim.Browser.GetTitleSourceDate(!sync, false)  ; get title for checking later
     ; SM uses "." instead of "..." in titles
     if (WinGetTitle("ahk_class TElWind") != StrReplace(Vim.Browser.title, "...", ".")) {
       WinActivate, ahk_class TElWind
       MsgBox, 4,, Titles don't match. Continue?
       IfMsgBox, no, {
         WinActivate % "ahk_id " . hwnd
-        Vim.Browser.Clear()
-        return
+        goto BrowserSyncReturn
       }
       WinActivate % "ahk_id " . hwnd
     }
-    if (!InStr(A_ThisHotkey, "``")) {
-      send {esc 2}
+    if (!IfContains(A_ThisHotkey, "``")) {
       Vim.Browser.GetVidtime()
       if (!Vim.Browser.VidTime) {
         Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
-        if (!Vim.Browser.VidTime) {
-          Vim.Browser.Clear()
-          return
-        }
+        if (!Vim.Browser.VidTime)
+          goto BrowserSyncReturn
       }
     }
-    if (InStr(A_ThisHotkey, "^"))  ; hotkeys with ctrl will close the tab
+    if A_ThisHotkey contains ^  ; hotkeys with ctrl will close the tab
       send ^w
-    KeyWait enter  ; without this script may stuck
-  } else if (!Vim.Browser.VidTime && !InStr(A_ThisHotkey, "``")) {
-    if (!Vim.SM.IsEditingText())  ; without this script may stuck
+    KeyWait enter  ; without this script may get stuck
+  } else if (!Vim.Browser.VidTime && !IfContains(A_ThisHotkey, "``")) {
+    if (!Vim.SM.IsEditingText())  ; without this script may get stuck
       send q
     Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
-    if (!Vim.Browser.VidTime) {
-      Vim.Browser.Clear()
-      return
-    }
+    if (!Vim.Browser.VidTime)
+      goto BrowserSyncReturn
   }
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
@@ -503,20 +513,20 @@ return
   if (!Vim.SM.IsEditingText())
     send q
   send ^t{f9}
-  WinWaitActive, ahk_class TScriptEditor,, 0
+  WinWaitActive, ahk_class TScriptEditor,, 1
   if (ErrorLevel) {
-    Vim.Browser.Clear()
-    return
+    ToolTip("Script editor not found.")
+    goto BrowserSyncReturn
   }
   ControlGetText, script, TMemo1
   sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-  if (!sec || InStr(A_ThisHotkey, "``"))
+  if (!sec || IfContains(A_ThisHotkey, "``"))
     sec := 0
   EditRef := false
-  if (BL := InStr(script, "bilibili.com")) {
+  if (BL := IfContains(script, "bilibili.com")) {
     replacement := "&t=" . sec
     match := "&t=.*"
-  } else if (InStr(script, "youtube.com")) {
+  } else if (IfContains(script, "youtube.com")) {
     replacement := "&t=" . sec . "s"
     match := "&t=.*s"
   } else {
@@ -536,7 +546,7 @@ return
     send !o{esc}  ; close script editor
     ToolTip("Time stamp in script component set as " . sec . "s")
   } else {  ; time in comment
-    if (InStr(A_ThisHotkey, "``"))
+    if A_ThisHotkey contains ``
       Vim.Browser.VidTime := "0:00"
     Vim.Browser.comment := Vim.Browser.VidTime
     send !{f10}fe
@@ -547,16 +557,19 @@ return
     send !{enter}
   }
   WinWaitActive, ahk_class TElWind
-  if (InStr(A_ThisHotkey, "^+!")) {
+  if (IfContains(A_ThisHotkey, "^+!")) {
     Vim.SM.Learn()
     Vim.SM.PlayIfCertainColl()
   }
+BrowserSyncReturn:
+  if (sync)
+    Clipboard := ClipSaved
   Vim.Browser.Clear()
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
                       && (title := WinGetTitle())
-                      && (RegExMatch(title, "(?<=^p)[0-9]+", page) || epub := InStr(title, "|")))
+                      && (RegExMatch(title, "(?<=^p)[0-9]+", page) || epub := IfContains(title, "|")))
 !s::
   if (page) {
     clip := page
@@ -569,7 +582,19 @@ return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm"))
 !p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
+SMRegAltG:
+!g::
+  accButton := Acc_Get("Object", "4.5.4.2.4",, "ahk_id " . WinGet())
+  accButton.accDoDefaultAction()
+return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
 ; Use English input method for choosing concept when import
 ~!g::SetDefaultKeyboard(0x0409)  ; english-US	
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Concept Registry"))
+^!c::
+  gosub SMRegAltG
+  WinWaitActive, ahk_class TElWind
+  goto SMLearnChild
+return

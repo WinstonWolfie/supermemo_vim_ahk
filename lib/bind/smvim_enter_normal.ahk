@@ -1,4 +1,4 @@
-﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())
+﻿#if (Vim.IsVimGroup() && Vim.SM.IsBrowsing())
 ; For Learn button
 ~enter::  ; enter up doesn't work
 ~space up::
@@ -12,7 +12,7 @@ Return
 ~!x::  ; extract
 ~!z::  ; cloze
 ~^+a::  ; web import
-#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText())  ; SuperMemo element window
+#if (Vim.IsVimGroup() && Vim.SM.IsBrowsing())  ; SuperMemo element window
 ~^+f6::  ; open source in notepad
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
 ~^s::  ; save

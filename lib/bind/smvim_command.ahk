@@ -101,7 +101,7 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   FileDelete % FilePath
   FileAppend, % HTML, % FilePath
   Vim.SM.SaveHTML()
-  if (RegExMatch(WikiLink, "(zh|fr|la).wikipedia.org")) {
+  if (WikiLink ~= "(zh|fr|la).wikipedia.org") {
     Vim.SM.WaitTextFocus()
     send ^{home}{end}+{home}!t  ; selecting first line
     WinWaitActive, ahk_class TChoicesDlg,, 2  ; sometimes it could take a really long time for the choice dialogue to pop up
@@ -166,7 +166,7 @@ s::  ; turn active language item to passive (*s*witch)
   Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
-  hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
+  hwnd := ControlGet(,, "Internet Explorer_Server2")
   send ^+s
   ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
   send ^t
@@ -202,7 +202,7 @@ return
   ClipWait
   send {esc}
   Vim.SM.WaitTextExit()
-  hwnd := ControlGet("hwnd",, "Internet Explorer_Server2")
+  hwnd := ControlGet(,, "Internet Explorer_Server2")
   send ^+s
   ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
   send ^t
@@ -225,9 +225,11 @@ SMHyperLinkToTopic:
   Vim.SM.WaitFileLoad()
   send ^v
   send ^t{f9}{enter}  ; opens script editor
-  WinWaitActive, ahk_class TScriptEditor,, 0
-  if (ErrorLevel)
+  WinWaitActive, ahk_class TScriptEditor,, 1
+  if (ErrorLevel) {
+    ToolTip("No script component found.")
     return
+  }
   script := "url " . vim.browser.url
   if (Vim.Browser.VidTime) {
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
@@ -278,6 +280,7 @@ SMSetLinkFromClipboard:
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
+SMLearnChild:
 c::  ; learn child
   Vim.State.SetMode("Vim_Normal")
   send ^{space}

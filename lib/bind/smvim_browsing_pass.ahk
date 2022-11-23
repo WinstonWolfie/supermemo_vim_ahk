@@ -10,7 +10,7 @@
   send % A_ThisHotkey
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.SM.IsEditingText() && !Vim.State.g && true)  ; true is needed here for not duplicating hotkeys
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g && true)  ; true is needed here for not duplicating hotkeys
 a::
 b::
 c::

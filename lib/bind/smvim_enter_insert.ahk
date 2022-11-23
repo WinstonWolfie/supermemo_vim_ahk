@@ -11,6 +11,8 @@
 ~!a::  ; new item and new registry entry
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
 ~!n::  ; new topic
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TTaskManager"))
+~!f1::  ; new task
   Vim.State.SetMode("Insert")
 return
 

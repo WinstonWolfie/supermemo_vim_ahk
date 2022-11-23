@@ -370,11 +370,11 @@ class VimAhk {
       if (StrLen(str) != InStr(str, "`r`n") + 1) {  ; first matched `r`n not at the end
         str := RegExReplace(str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
         str := RegExReplace(str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
-        str := StrReplace(str, "`r`n`r`n", " ")  ; turn all paragraph tags (<P>) to space
+        str := StrReplace(str, "`r`n`r`n", "啊")  ; turn all paragraph tags (<P>) to "啊"
       }
-      str := StrReplace(str, "`r`n", " ")  ; turn all line breaks (<BR>) to space
+      str := StrReplace(str, "`r`n", "啊")  ; turn all line breaks (<BR>) to "啊"
       hr := "--------------------------------------------------------------------------------"  ; <hr> tag
-      str := RegExReplace(str, "  " . hr . "(  )?", "  ")
+      str := RegExReplace(str, "(啊啊|  )" . hr . "(啊啊|  )?", "啊啊")
     } else {
       str := StrReplace(str, "`r")
     }

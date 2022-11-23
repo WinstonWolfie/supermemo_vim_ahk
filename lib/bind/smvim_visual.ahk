@@ -5,7 +5,7 @@
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  clip("<span class=""Cloze"">[...]</span>",,, true)
+  clip("<span class=""Cloze"">[...]</span>",,, "sm")
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -152,32 +152,32 @@ ClozeHinter:
   }
   KeyWait ctrl
   KeyWait shift
-  if (!InitText := Clip())
+  if (!InitText := Copy())
     return
   CurrFocus := ControlGetFocus("ahk_class TElWind"), inside := true
-  if (RegExMatch(InitText, "\b(more|less)\b")) {
+  if (InitText ~= "\b(more|less)\b") {
     InitText := "more/less"
-  } else if (RegExMatch(InitText, "\b(faster|slower)\b")) {
+  } else if (InitText ~= "\b(faster|slower)\b") {
     InitText := "faster/slower"
-  } else if (RegExMatch(InitText, "\b(fast|slow)\b")) {
+  } else if (InitText ~= "\b(fast|slow)\b") {
     InitText := "fast/slow"
-  } else if (RegExMatch(InitText, "\b(higher|lower)\b")) {
+  } else if (InitText ~= "\b(higher|lower)\b") {
     InitText := "higher/lower"
-  } else if (RegExMatch(InitText, "\b(high|low)\b")) {
+  } else if (InitText ~= "\b(high|low)\b") {
     InitText := "high/low"
-  } else if (RegExMatch(InitText, "\b(increased|decreased)\b")) {
+  } else if (InitText ~= "\b(increased|decreased)\b") {
     InitText := "increased/decreased"
-  } else if (RegExMatch(InitText, "\b(increased|reduced)\b")) {
+  } else if (InitText ~= "\b(increased|reduced)\b") {
     InitText := "increased/reduced"
-  } else if (RegExMatch(InitText, "\b(increases|decreases)\b")) {
+  } else if (InitText ~= "\b(increases|decreases)\b") {
     InitText := "increases/decreases"
-  } else if (RegExMatch(InitText, "\b(increase|decrease)\b")) {
+  } else if (InitText ~= "\b(increase|decrease)\b") {
     InitText := "increase/decrease"
-  } else if (RegExMatch(InitText, "\b(positive|negative)\b")) {
+  } else if (InitText ~= "\b(positive|negative)\b") {
     InitText := "positive/negative"
-  } else if (RegExMatch(InitText, "\b(acidic|alkaline)\b")) {
+  } else if (InitText ~= "\b(acidic|alkaline)\b") {
     InitText := "acidic/alkaline"
-  } else if (RegExMatch(InitText, "\b(same|different)\b")) {
+  } else if (InitText ~= "\b(same|different)\b") {
     InitText := "same/different"
   } else if (!InStr(InitText, "/")) {
     inside := false
@@ -185,7 +185,7 @@ ClozeHinter:
   gui, ClozeHinter:Add, Text,, &Hint:
   gui, ClozeHinter:Add, Edit, vHint w196, % InitText
   gui, ClozeHinter:Add, CheckBox, % "vInside " . (inside ? "checked" : ""), &Inside square brackets
-  gui, ClozeHinter:Add, CheckBox, vFullWidthChars, &Use fullwidth characters
+  gui, ClozeHinter:Add, CheckBox, vFullWidthChars, Use &fullwidth characters
   gui, ClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
   gui, ClozeHinter:Add, Button, default, Clo&ze
   gui, ClozeHinter:Show,, Cloze Hinter
@@ -198,6 +198,7 @@ ClozeHinterGuiClose:
 return
 
 ClozeHinterButtonCloze:
+  KeyWait alt
   gui submit
   gui destroy
   WinActivate, ahk_class TElWind
@@ -227,7 +228,7 @@ CapsLock & z::  ; delete [...]
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send !{left}
-  sleep % (A_TickCount - SleepCalc) / 3 * 2
+  ; sleep % (A_TickCount - SleepCalc) / 3 * 2
   Vim.SM.WaitFileLoad()  ; double insurance?
   send ^t
   if (!ClozeNoBracket && inside) {
@@ -258,16 +259,12 @@ CapsLock & z::  ; delete [...]
     if (!Vim.SM.HandleF3(1))
       return
     ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
-		send {enter}
-		WinWaitNotActive, ahk_class TMyFindDlg ; faster than wait for element window to be active
-    Vim.SM.ClearHighlight()
+    send {enter}
+    WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
+    if (!Vim.SM.HandleF3(2))
+      return
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
     if (!ClozeNoBracket) {
-      ; Not reliable???
-      ; send +{left}  ; so format is kept
-      ; clip(cloze)
-      ; sleep 20  ; insurance
-      ; send {del}
       send % "{text}" . cloze
     } else {
       send {bs}

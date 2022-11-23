@@ -46,7 +46,8 @@ SMPlan:
   KeyWait shift
   if (!WinExist("ahk_group SuperMemo")) {
     run C:\SuperMemo\systems\all.kno
-    WinWaitActive, ahk_class TElWind
+    WinWait, ahk_class TElWind
+    WinActivate
     Vim.SM.PostMsg(243)  ; Plan
     WinWait, ahk_class TMsgDialog,, 1
     if (!ErrorLevel) {
@@ -58,8 +59,13 @@ SMPlan:
   }
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
-  Vim.SM.GoToTopIfLearning()
   if (!WinExist("ahk_class TPlanDlg")) {
+    l := this.IsLearning()
+    if (l == 2) {
+      Vim.SM.Reload(, 1)
+    } else if (l == 1) {
+      Vim.SM.GoToTopEl()
+    }
     Vim.SM.PostMsg(243)  ; Plan
     WinWait, ahk_class TPlanDlg
   }
@@ -77,7 +83,7 @@ return
 Return
 
 ^!t::  ; copy title
-  Vim.Browser.GetInfo(false, false)
+  Vim.Browser.GetInfo(false, false, false)
   ToolTip("Copied " . Vim.Browser.Title)
   Clipboard := Vim.Browser.Title
   Vim.Browser.Clear()
@@ -86,6 +92,8 @@ return
 ^!l::  ; copy link and parse *l*ink if if's from YT
   KeyWait ctrl
   KeyWait alt
+  KeyWait l
+  send {esc}
   Vim.Browser.GetInfo()
   source := Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : ""
   date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
@@ -125,15 +133,21 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
 ; Import current webpage to SuperMemo
 ^+!a::
 ^!a::
-  FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
-  IncWB := (InStr(A_ThisHotkey, "x") || InStr(A_ThisLabel, "IncrementalWebBrowsing"))
+  if (WinExist("ahk_id " . ImportGuiHwnd)) {
+    WinActivate
+    return
+  }
+  Vim.Browser.Clear()
+  IncWB := (IfContains(A_ThisHotkey, "x") || IfContains(A_ThisLabel, "IncrementalWebBrowsing"))
   if (!IncWB) {
     GetAddressBarUrlDone := false
     SetTimer, GetAddressBarUrl, -1
   }
+  PressYTShowMoreButtonDone := false, BrowserExe := WinGet("ProcessName")
+  SetTimer, PressYTShowMoreButton, -1
   ClipSaved := ClipboardAll
-  hwnd := WinGet(), BrowserExe := WinGet("ProcessName")
-  ImportDlg := (InStr(A_ThisHotkey, "+") || A_ThisLabel == "IncrementalWebBrowsingNewTopicWithPriorityAndConcept")
+  ImportDlg := (IfContains(A_ThisHotkey, "+") || A_ThisLabel == "IncrementalWebBrowsingNewTopicWithPriorityAndConcept")
+  hwnd := WinGet()
   CollName := vim.sm.GetCollName(), ConceptBefore := Vim.SM.GetCurrConcept()
   Passive := Vim.SM.IsPassive(CollName, ConceptBefore)
   KeyWait shift
@@ -158,7 +172,8 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
   IfMsgBox, no
     goto ImportReturn
 
-  prio := concept := ""
+  prio := concept := CloseTab := ""
+  WaitVarExists(PressYTShowMoreButtonDone)
   if (ImportDlg) {
     SetDefaultKeyboard(0x0409)  ; english-US	
     gui, SMImport:Add, Text,, % "Current collection: " . CollName
@@ -166,29 +181,27 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
     gui, SMImport:Add, Edit, vPrio w196
     gui, SMImport:Add, Text,, &Concept:
     gui, SMImport:Add, Edit, vConcept w196, % ConceptBefore
+    gui, SMImport:Add, Checkbox, vCloseTab checked, Close &tab
     gui, SMImport:Add, Button, default, &Import
     gui, SMImport:Show,, SuperMemo Import
-    gui, SMImport:+HwndPrioGuiHwnd
-    if (button := vim.browser.GetYTShowMoreButton(BrowserExe)) {
-      button.click()
-      SendMessage, 0x115, 6, 0,, % "ahk_id " . hwnd  ; scroll to top
-      WinActivate % "ahk_id " . PrioGuiHwnd
-    }
+    gui, SMImport:+HwndImportGuiHwnd
     return
   }
 
 SMImportButtonImport:
+  FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
   if (A_ThisLabel == "SMImportButtonImport") {
     ; Without KeyWait WinActivate below could fail???
     KeyWait enter
     KeyWait alt
     gui submit
     if (Passive != 2)
-      Passive := (InStr("online", concept) == 1) ? true : false
+      Passive := (InStr("online", concept) == 1 || InStr("source", concept) == 1) ? true : false
     gui destroy
     WinActivate % "ahk_id " . hwnd
   }
 
+  ; VarSetCapacity(HTMLText, "40960000")  ; ~40 MB
   HTMLText := Passive ? "" : copy(false, true)
   if (IncWB) {
     if (!HTMLText) {
@@ -201,15 +214,18 @@ SMImportButtonImport:
   Vim.Browser.GetTitleSourceDate(false)
   SMVidImport := (Passive || (!HTMLText && vim.browser.VidSite))
   if (!HTMLText && !SMVidImport) {
-    send ^a
-    HTMLText := clip("",, false, true)
+    WinClip.Clear()
+    send ^a^c
+    ClipWait % Vim.Browser.FullPageCopyTimeout
+    Vim.HTML.ClipboardGet_HTML(clipped)
+    RegExMatch(clipped, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", HTMLText)
     send {esc}
     if (!HTMLText) {
       ToolTip("Text not found.")
       goto ImportReturn
     }
   }
-  Vim.Browser.GetUrl(0, false)
+  Vim.Browser.GetUrl(, false)
 
   WinClip.Clear()
   if (SMVidImport) {
@@ -246,6 +262,8 @@ Title : " . Vim.Browser.Title . "
 
   if (prio && RegExMatch(prio, "^\."))
     prio := "0" . prio
+  if (CloseTab)
+    send ^w
   WinActivate, ahk_class TElWind
 
   if (concept) {
@@ -278,7 +296,7 @@ Title : " . Vim.Browser.Title . "
     WinActivate, ahk_class TElWind
     Vim.SM.SetElParam(vim.browser.title, prio)
   }
-  Vim.SM.reload(0, 1)
+  Vim.SM.reload(, 1)
 
 SMImportGuiEscape:
 SMImportGuiClose:
@@ -370,7 +388,7 @@ return
   KeyWait alt
   ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-  send ^c  ; clip() doesn't keep format; nor ClipboardAll can work with functions
+  send ^c  ; Copy() doesn't keep format; nor ClipboardAll can work with functions
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel) {
     ToolTip("Nothing is selected.")
@@ -382,7 +400,7 @@ return
       InputBox, prio, Priority, Enter extract priority.,, 196, 128
       if (!prio)
         return
-      if (RegExMatch(prio, "^\."))
+      if (prio ~= "^\.")
         prio := "0" . prio
       WinWaitActive, % "ahk_id " . hwnd
     }
@@ -406,13 +424,13 @@ return
 ExtractToSM:
   Vim.SM.ExitText()
   send q
-  Vim.SM.WaitTextFocus()
+  Vim.SM.WaitTextFocus(1000)
   if (!Vim.SM.IsEditingHTML()) {
     ToolTip("No html component is focused, please go to the topic you want and paste your text.")
     return
   }
   send ^{home}^+{down}  ; go to top and select first paragraph below
-  if (RegExMatch(copy(false), "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
+  if (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") {
     send {left}
     if (A_ThisLabel == "ExtractToSM") {
       ret := true
@@ -493,7 +511,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus())
 !p::ControlFocus, Edit1  ; focus to page number field so you can enter a number
 ^f::
-  if (!selection := clip())
+  if (!selection := Copy())
     return
   send ^f
   ControlSetText, Edit2, % selection
@@ -514,8 +532,7 @@ return
 
 #if (Vim.State.Vim.Enabled
   && !Vim.SM.IsPassive("", -1)  ; current concept doesn't matter
-  && (WinActive("ahk_class SUMATRA_PDF_FRAME")
-   || (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser")) && marker := trim(copy(true,, 1, true), " `t`r`n"))
+  && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser"))
   && WinExist("ahk_class TElWind"))
 !+s::
 ^!s::
@@ -523,10 +540,14 @@ return
   ClipSaved := ClipboardAll
   KeyWait alt
   KeyWait ctrl
-  if (WinActive("ahk_class SUMATRA_PDF_FRAME"))
-    marker := trim(copy(false), " `t`r`n")
+  marker := trim(copy(false), " `t`r`n")
   if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
     marker := marker ? marker : "p" . ControlGetText("Edit1")
+    if (!marker) {
+      ToolTip("No text selected and page number not found.")
+      Clipboard := ClipSaved
+      return
+    }
     if (InStr(A_ThisHotkey, "^")) {
       send q
       WinWaitActive, Unsaved annotations,, 0
@@ -535,6 +556,8 @@ return
     }
   } else if (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser")) {
     if (!marker) {
+      if (WinActive("ahk_group Browser"))
+        goto BrowserSyncTime
       ToolTip("No text selected.")
       Clipboard := ClipSaved
       return
@@ -547,10 +570,6 @@ return
       }
     }
   }
-  if (!marker) {
-    Clipboard := ClipSaved
-    return
-  }
   WinActivate, ahk_class TElWind
 
 MarkInSMTitle:
@@ -562,7 +581,7 @@ MarkInSMTitle:
     return
   }
   send ^{home}^+{down}  ; go to top and select first paragraph below
-  if (RegExMatch(copy(false), "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
+  if (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") {
     send {left}
     if (A_ThisLabel == "MarkInSMTitle") {
       ret := true
@@ -668,8 +687,8 @@ return
   GroupAdd, SMCtrlQ, ahk_class TMsgDialog
   WinWaitActive, ahk_group SMCtrlQ
   while (!WinActive("ahk_class TFileBrowser")) {
-    while (WinExist("ahk_class TMsgDialog"))
-      WinClose  ; Directory not found; Create? / MCI error
+    while (WinActive("ahk_class TMsgDialog"))
+      send n  ; Directory not found; Create?
     WinWaitActive, ahk_group SMCtrlQ
   }
   ControlSend, TDriveComboBox1, c, ahk_class TFileBrowser

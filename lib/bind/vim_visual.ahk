@@ -159,8 +159,9 @@ Return
 ConvertToLowercase:
 u::
   ClipSaved := ClipboardAll
+ConvertToLowercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := clip("",, false, html)
+  selection := copy(false, html)
   StringLower, selection, selection
   clip(selection,, false, html)
   Clipboard := ClipSaved
@@ -170,8 +171,9 @@ Return
 ConvertToUppercase:
 +u::
   ClipSaved := ClipboardAll
+ConvertToUppercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := clip("",, false, html)
+  selection := copy(false, html)
   StringUpper, selection, selection
   clip(selection,, false, html)
   Clipboard := ClipSaved
@@ -182,8 +184,9 @@ Return
 InvertCase:
 ~::
   ClipSaved := ClipboardAll
+InvertCaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := clip("",, false, html)
+  selection := copy(false, html)
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(selection) {
     Lab_Invert_Char:= Substr(selection, A_Index, 1)

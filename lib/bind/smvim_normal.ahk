@@ -79,7 +79,7 @@ f::  ; gf: open source file
   hwnd := WinGet()
   path := Vim.SM.GetFilePath()
   SplitPath, path,,, ext
-  ContinueLearning := Vim.SM.IsLearning()
+  ContLearn := Vim.SM.IsLearning()
   if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
     run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
   } else {
@@ -91,7 +91,7 @@ f::  ; gf: open source file
   WinWaitNotActive % "ahk_id " . hwnd
   WinWaitActive % "ahk_id " . hwnd
   send !{home}
-  if (ContinueLearning) {
+  if (ContLearn) {
     Vim.SM.Learn()
   } else {
     Vim.SM.WaitFileLoad()
@@ -115,7 +115,7 @@ Return
 #if ((Vim.IsVimGroup() && Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key
    || Vim.SM.IsLearning()
    || Vim.SM.IsGrading()
-   || (WinGet() == PrioGuiHwnd)
+   || (WinGet() == ImportGuiHwnd)
    || (WinActive("Priority") && WinActive("ahk_class #32770"))
    || WinActive("ahk_class TPriorityDlg"))
 ; Priority script, originally made by Naess and modified by Guillem

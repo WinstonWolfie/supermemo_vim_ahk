@@ -35,11 +35,11 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, CopyMethod:=0) {
     ; Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
   }
   If (Text && (Reselect || HTML = "sm")) {
-    if (HTML = "sm") {
-      n := StrLen(text)
-    } else {
+    ; if (HTML = "sm") {
+    ;   n := StrLen(text)
+    ; } else {
       n := StrLen(Vim.ParseLineBreaks(text))
-    }
+    ; }
     send % "+{Left " . n . "}"
   }
   if (text && html = "sm")
@@ -50,10 +50,6 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, CopyMethod:=0) {
     Return Clipped
 }
 
-copy(RestoreClip:=true, HTML:=false, CopyMethod:=0, KeyWait:=false) {
-  if (KeyWait) {
-    KeyWait shift
-    KeyWait ctrl
-  }
-  return clip("",, RestoreClip, HTML, CopyMethod)
+copy(RestoreClip:=true, HTML:=false, CopyMethod:=0) {
+  return clip(,, RestoreClip, HTML, CopyMethod)
 }

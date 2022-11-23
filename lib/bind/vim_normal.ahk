@@ -10,7 +10,7 @@ u::Send,^z
 ; Change case
 ~::
   send +{right}
-  selection := clip()
+  selection := Copy()
   if selection is lower
     StringUpper, selection, selection
   else if selection is upper

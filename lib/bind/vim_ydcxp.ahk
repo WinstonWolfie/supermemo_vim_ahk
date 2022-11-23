@@ -138,15 +138,15 @@ Return
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
-u::Vim.State.SetMode("Vim_ydc_gu", 0, -1, 0)
-+u::Vim.State.SetMode("Vim_ydc_g+u", 0, -1, 0)
-~::Vim.State.SetMode("Vim_ydc_g~", 0, -1, 0)
+u::Vim.State.SetMode("Vim_gu", 0, -1, 0)
++u::Vim.State.SetMode("Vim_gU", 0, -1, 0)
+~::Vim.State.SetMode("Vim_g~", 0, -1, 0)
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_gu"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gu"))
 u::Vim.Move.YDCMove()
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g+u"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gU"))
 +u::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_g~"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_g~"))
 ~::
   KeyWait Shift  ; cannot use KeyWait shift, shift will still get stuck
   Vim.Move.YDCMove()

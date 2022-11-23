@@ -5,36 +5,50 @@
   }
   
   NoSelection() {
-    if !this.ExistingSelection && (this.Vim.State.StrIsInCurrentVimMode("VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_") || this.Vim.State.StrIsInCurrentVimMode("Inner")) {
+    if (!this.ExistingSelection
+     && (this.Vim.State.StrIsInCurrentVimMode("VisualFirst")
+      || this.Vim.State.StrIsInCurrentVimMode("ydc")
+      || this.Vim.State.StrIsInCurrentVimMode("SMVim_")
+      || this.Vim.State.StrIsInCurrentVimMode("Inner"))) {
       this.ExistingSelection := true  ; so it only returns true once in repeat
       Return true
     }
   }
 
   IsSearchKey(key) {
-    if key in f,t,+f,+t,(,),s,+s,/,?,e
-      return true
+    return (IfIn(key, "f,t,+f,+t,(,),s,+s,/,?,e")
+         || (key == "+g" && this.Vim.SM.IsEditingHTML()))
   }
 
   IsReplace() {
     return (this.Vim.State.StrIsInCurrentVimMode("ydc_c") || this.Vim.State.surround || this.Vim.State.StrIsInCurrentVimMode("SMVim_"))
   }
+  
+  RestoreCopy() {
+    return (!this.Vim.State.StrIsInCurrentVimMode("Vim_ydc"))
+  }
+
+  RestoreClipLater() {
+    return (this.Vim.State.StrIsInCurrentVimMode("Vim_g"))
+  }
 
   MoveInitialize(key:="", RestoreClip:=true) {
-    this.shift := 0
-    this.ExistingSelection := this.clipped := false
+    this.shift := this.ExistingSelection := this.clipped := 0
   
     if (this.IsSearchKey(key)) {
       this.SearchOccurrence := this.Vim.State.n ? this.Vim.State.n : 1
       this.FtsChar := this.Vim.State.FtsChar
-      if (RestoreClip) {
+      if (RestoreClip && this.RestoreCopy()) {
         global ClipSaved
         ClipSaved := ClipboardAll
         this.clipped := true
       }
     }
     
-    if (this.Vim.State.StrIsInCurrentVimMode("Visual") || this.Vim.State.StrIsInCurrentVimMode("ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")) {
+    if (this.Vim.State.StrIsInCurrentVimMode("Visual")
+     || this.Vim.State.StrIsInCurrentVimMode("ydc")
+     || this.Vim.State.StrIsInCurrentVimMode("SMVim_")
+     || this.Vim.State.StrIsInCurrentVimMode("Vim_g")) {
       this.shift := 1
       if (!this.IsSearchKey(key))
         send {Shift Down}
@@ -90,9 +104,12 @@
     Send {Shift Up}
     ydc_y := false
     this.Vim.State.FtsChar := ""
-    if (this.clipped && !this.Vim.State.StrIsInCurrentVimMode("ydc_y") && !this.Vim.State.StrIsInCurrentVimMode("ydc_d") && !this.Vim.State.StrIsInCurrentVimMode("ydc_c")) {
-      global ClipSaved
-      Clipboard := ClipSaved
+    if (this.clipped) {
+      Clipped := "Clipped"
+      if (!this.RestoreClipLater()) {
+        global ClipSaved
+        Clipboard := ClipSaved
+      }
     }
     if (!this.Vim.State.surround || !this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")) {
       if (this.Vim.State.StrIsInCurrentVimMode("ydc_y")) {
@@ -122,12 +139,12 @@
           send {bs}
         }
         this.Vim.State.SetMode("Insert")
-      } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_gu")) {
-        Gosub ConvertToLowercase
-      } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_g+u")) {
-        Gosub ConvertToUppercase
-      } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_g~")) {
-        Gosub InvertCase
+      } else if (this.Vim.State.StrIsInCurrentVimMode("Vim_gu")) {
+        gosub % "ConvertToLowercase" . Clipped
+      } else if (this.Vim.State.StrIsInCurrentVimMode("Vim_gU")) {
+        gosub % "ConvertToUppercase" . Clipped
+      } else if (this.Vim.State.StrIsInCurrentVimMode("Vim_g~")) {
+        gosub % "InvertCase" . Clipped
       } else if (this.Vim.State.StrIsInCurrentVimMode("ExtractStay")) {
         Gosub ExtractStay
       } else if (this.Vim.State.StrIsInCurrentVimMode("ExtractPriority")) {
@@ -163,17 +180,24 @@
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
     send {Ctrl Up}
-    if (!WinActive("ahk_exe iexplore.exe"))
+    if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe"))
       send {alt up}
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner") ||  this.Vim.State.StrIsInCurrentVimMode("Outer"))
       this.vim.state.setmode("Vim_VisualChar",,,,, -1)
   }
 
   Zero() {
-    if WinActive("ahk_group VimDoubleHomeGroup") {
+    if (WinActive("ahk_group VimDoubleHomeGroup")) {
       send {Home}
-    } else if WinActive("ahk_exe notepad++.exe") {
+    } else if (WinActive("ahk_exe notepad++.exe")) {
       send {end}
+    } else if (this.Vim.SM.IsBrowsing()) {
+      if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
+        SendMessage, 0x114, 2, 0, Internet Explorer_Server2, A ; scroll all the way to left
+      } else {
+        SendMessage, 0x114, 2, 0, Internet Explorer_Server1, A ; scroll all the way to left
+      }
+      return
     }
     send {Home}
   }
@@ -250,18 +274,18 @@
   HandleHTMLSelection(RestoreClip:=true) {
     if (this.Vim.IsHTML()) {
       if (this.Vim.SM.IsEditingHTML()) {
-        selection := clip("",, RestoreClip)
+        selection := copy(RestoreClip)
         ; if (InStr(selection, "`r`n"))
         ;   send .= "+{left}"
       ; } else {
       ;   send .= "+{left}"
       }
     }
-    if (send) {
-      send % send
-    } else {
+    ; if (send) {
+    ;   send % send
+    ; } else {
       return selection
-    }
+    ; }
   }
 
   Move(key="", repeat:=false, NoInitialize:=false, NoFinalize:=false, ForceNoShift:=false, RestoreClip:=true) {
@@ -280,8 +304,8 @@
       if (key == "h") {
         if WinActive("ahk_group VimQdir") {
           send {BackSpace down}{BackSpace up}
-        } else if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-          if (ControlGet("hwnd",, "Internet Explorer_Server2", "ahk_class TElWind")) {
+        } else if (this.Vim.SM.IsBrowsing()) {
+          if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
             SendMessage, 0x114, 0, 0, Internet Explorer_Server2, A ; scroll left
           } else {
             SendMessage, 0x114, 0, 0, Internet Explorer_Server1, A ; scroll left
@@ -292,11 +316,11 @@
       } else if (key == "l") {
         if WinActive("ahk_group VimQdir") {
           send {Enter}
-        } else if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-          if (ControlGet("hwnd",, "Internet Explorer_Server2", "ahk_class TElWind")) {
+        } else if (this.Vim.SM.IsBrowsing()) {
+          if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
             SendMessage, 0x114, 1, 0, Internet Explorer_Server2, A ; scroll right
           } else {
-            SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A ; scroll left
+            SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A ; scroll right
           }
         } else {
           send {Right}
@@ -305,7 +329,13 @@
       } else if (key == "0") {
         this.Zero()
       } else if (key == "$") {
-        if (this.shift == 1) {
+        if (this.Vim.SM.IsBrowsing()) {
+          if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
+            SendMessage, 0x114, 3, 0, Internet Explorer_Server2, A ; scroll all the way to right
+          } else {
+            SendMessage, 0x114, 3, 0, Internet Explorer_Server1, A ; scroll all the way to right
+          }
+        } else if (this.shift == 1) {
           send +{End}
         } else {
           send {End}
@@ -869,7 +899,7 @@
         } else {
           this.SelectParagraphUp()
           DetectionStr := copy(false)
-          if (RegExMatch(DetectionStr, "\r\n$")) {  ; start of paragraph
+          if (DetectionStr ~= "\r\n$") {  ; start of paragraph
             send {right}{left}
             this.SelectParagraphUp()
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
@@ -925,28 +955,16 @@
                 right := NextOccurrence + StrLen(StrBefore) - 1
             }
             send % "{left}+{right " . right . "}"
-            ; left := StrLen(DetectionStr) - pos
-            ; if (pos) {
-            ;   left++
-            ;   if (pos == 1) {
-            ;     this.SearchOccurrence++
-            ;     NextOccurrence := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
-            ;     if (NextOccurrence)
-            ;       left := StrLen(DetectionStr) - NextOccurrence + 1
-            ;   }
-            ; }
-            ; KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
-            ; send % "+{left " . left . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrBefore
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             if (pos) {
-              right := pos - 2
+              right := pos - 1
               if (pos == 2 || pos == 1) {
                 this.SearchOccurrence++
                 NextOccurrence := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
                 if (NextOccurrence > 1) {
-                  right := NextOccurrence - 2
+                  right := NextOccurrence - 1
                 } else {
                   right := 0
                 }
@@ -1136,8 +1154,8 @@
     }
     ; Up/Down 1 character
     if (key == "j") {
-      if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-        if (ControlGet("hwnd",, "Internet Explorer_Server2")) {
+      if (this.Vim.SM.IsBrowsing()) {
+        if (ControlGet(,, "Internet Explorer_Server2")) {
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A ; scroll down
         } else {
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A ; scroll down
@@ -1152,8 +1170,8 @@
         SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A ; scroll down
       }
     } else if (key == "k") {
-      if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-        if (ControlGet("hwnd",, "Internet Explorer_Server2")) {
+      if (this.Vim.SM.IsBrowsing()) {
+        if (ControlGet(,, "Internet Explorer_Server2")) {
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A ; scroll up
         } else {
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A ; scroll up
@@ -1170,8 +1188,8 @@
     ; Page Up/Down
     n := 10
     } else if (key == "^u") {
-      if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-        if (ControlGet("hwnd",, "Internet Explorer_Server2")) {
+      if (this.Vim.SM.IsBrowsing()) {
+        if (ControlGet(,, "Internet Explorer_Server2")) {
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A ; scroll up
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A ; scroll up
         } else {
@@ -1182,8 +1200,8 @@
         this.Up(10)
       }
     } else if (key == "^d") {
-      if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-        if (ControlGet("hwnd",, "Internet Explorer_Server2")) {
+      if (this.Vim.SM.IsBrowsing()) {
+        if (ControlGet(,, "Internet Explorer_Server2")) {
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A ; scroll down
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A ; scroll down
         } else {
@@ -1200,7 +1218,7 @@
     } else if (key == "g") {
       if (this.Vim.State.n > 0) {
         line := this.Vim.State.n - 1, this.Vim.State.n := 0
-        if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {  ; browsing
+        if (this.Vim.SM.IsBrowsing()) {  ; browsing
           send ^t
           this.Vim.SM.WaitTextFocus()
         } else {
@@ -1208,11 +1226,11 @@
         }
         send % "^{home}{down " . line . "}"
         this.SMClickSyncButton()
-      } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-        if (ControlGet("hwnd",, "Internet Explorer_Server2")) {
-          ControlSend, Internet Explorer_Server2, {home}
+      } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
+        if (ControlGet(,, "Internet Explorer_Server2")) {
+          SendMessage, 0x115, 6, 0, Internet Explorer_Server2, A  ; scroll to top
         } else {
-          ControlSend, Internet Explorer_Server1, {home}
+          SendMessage, 0x115, 6, 0, Internet Explorer_Server1, A  ; scroll to top
         }
       } else {
         send ^{Home}
@@ -1221,7 +1239,7 @@
         if (this.Vim.State.n > 0) {
           line := this.Vim.State.n - 1, this.Vim.State.n := 0
           KeyWait shift
-          if (WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {  ; browsing
+          if (this.Vim.SM.IsBrowsing()) {  ; browsing
             this.Vim.SM.ClickTop()
             this.Vim.SM.WaitTextFocus()
           } else if (this.Vim.SM.IsEditingText()) {
@@ -1232,11 +1250,11 @@
           }
           send % "{down " . line . "}"
           this.SMClickSyncButton()
-        } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !this.Vim.SM.IsEditingText()) {
-          if (ControlGet("hwnd",, "Internet Explorer_Server2")) {
-            ControlSend, Internet Explorer_Server2, {end}
+        } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
+          if (ControlGet(,, "Internet Explorer_Server2")) {
+            SendMessage, 0x115, 7, 0, Internet Explorer_Server2, A  ; scroll to bottom
           } else {
-            ControlSend, Internet Explorer_Server1, {end}
+            SendMessage, 0x115, 7, 0, Internet Explorer_Server1, A  ; scroll to bottom
           }
         } else {
           if (this.shift == 1) {
@@ -1245,14 +1263,14 @@
               send +{home}
           } else {
             send ^{End}
-            if (!WinActive("ahk_class TContents"))
+            if (this.Vim.SM.IsNavigatingPlan() || !this.vim.IsNavigating())
               send {Home}
           }
           if (this.Vim.SM.IsEditingHTML()) {
             send ^+{up}  ; if there are references this would select (or deselect in visual mode) them all
             if (this.shift == 1)
               send +{down}  ; go down one line, if there are references this would include the #SuperMemo Reference
-            if (InStr(copy(true,, 1), "#SuperMemo Reference:")) {
+            if (InStr(copy(false,, 1), "#SuperMemo Reference:")) {
               if (this.shift == 1) {
                 send +{up 4}  ; select until start of last line
               } else {
@@ -1559,22 +1577,24 @@
       return pos
     }
     if (!reversed) {
-      pos := RegExMatch(DetectionStr, "s)(\.((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿ,]+).*?){" . Occurrence - 1 . "}\K\.((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿ,]+)", v)
+      pos := RegExMatch(DetectionStr, "s)((\.|!|\?)((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿœ,.\]]+).*?){" . Occurrence - 1 . "}\K(\.|!|\?)((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿœ,.\]]+)", v)
       if (pos)
         pos += StrLen(v) - 2
       this.v := v
       this.DetectionStr := DetectionStr
     } else {
-      pos := RegExMatch(DetectionStr, "s)((\s(\].*?\[)+|[^\wÀ-ÖØ-öø-ÿ,]+)\..*?){" . Occurrence - 1 . "}\K(\s(\].*?\[)+|[^\wÀ-ÖØ-öø-ÿ,]+)\.")
+      pos := RegExMatch(DetectionStr, "s)((\s(\].*?\[)+|[^\wÀ-ÖØ-öø-ÿœ,.\[]+)(\.|!|\?).*?){" . Occurrence - 1 . "}\K(\s(\].*?\[)+|[^\wÀ-ÖØ-öø-ÿœ,.\[]+)(\.|!|\?)")
     }
     return pos
   }
 
   FindWordBoundary(DetectionStr, Occurrence:=1, reversed:=false) {
+    ; Can use \b for word boundary. Somehow, the letter "ó" counts as word boundary,
+    ; so words like cicatrización wouldn't correctly match
     if (!reversed) {
-      pos := RegExMatch(DetectionStr, "s)(([\wÀ-ÖØ-öø-ÿ]\b).*?){" . Occurrence - 1 . "}\K[\wÀ-ÖØ-öø-ÿ]\b")
+      pos := RegExMatch(DetectionStr, "s)(([\wÀ-ÖØ-öø-ÿœ][^\wÀ-ÖØ-öø-ÿœ]).*?){" . Occurrence - 1 . "}\K[\wÀ-ÖØ-öø-ÿœ][^\wÀ-ÖØ-öø-ÿœ]")
     } else {
-      pos := RegExMatch(DetectionStr, "s)((\b[\wÀ-ÖØ-öø-ÿ]).*?){" . Occurrence . "}\K\b[\wÀ-ÖØ-öø-ÿ]")
+      pos := RegExMatch(DetectionStr, "s)(([^\wÀ-ÖØ-öø-ÿœ][\wÀ-ÖØ-öø-ÿœ]).*?){" . Occurrence . "}\K[^\wÀ-ÖØ-öø-ÿœ][\wÀ-ÖØ-öø-ÿœ]")
     }
     return pos
   }

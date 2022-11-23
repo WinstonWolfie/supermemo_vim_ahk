@@ -36,6 +36,10 @@ Return
 ; Commander, can be launched anywhere as long as the script is enabled
 #if (Vim.State.Vim.Enabled && !Vim.State.IsCurrentVimMode("Command"))
 ^`;::
+  if (WinExist("ahk_id " . CommanderHwnd)) {
+    WinActivate
+    return
+  }
   hwnd := WinGet()
   gui, VimCommander:Add, Text,, &Command:
 
@@ -54,7 +58,7 @@ Return
     list .= "|Set current element as concept hook"
           . "|Memorise children of current element"
     if (WinActive("ahk_class TElWind")) {
-      if (Vim.SM.IsPassive())
+      if (Vim.SM.IsPassive("", -1))
         list .= "|Reformat script component"
       list .= "|Nuke HTML|Reformat vocab|Import first file"
       if (Vim.SM.IsEditingText())
@@ -73,6 +77,7 @@ Return
   gui, VimCommander:Add, Combobox, vCommand gAutoComplete w256, % list
   gui, VimCommander:Add, Button, default, &Execute
   gui, VimCommander:Show,, Vim Commander
+  gui, VimCommander:+HwndCommanderHwnd
 Return
 
 VimCommanderGuiEscape:
@@ -107,13 +112,12 @@ WatchLaterYT:
 return
 
 Search:
-  GoogleSearch := trim(clip())
-  if (!GoogleSearch) {
+  if (!GoogleSearch := Trim(Copy())) {
     InputBox, GoogleSearch, Google Search, Enter your search term.,, 192, 128
     if (!GoogleSearch)
       return
   }
-  if (RegExMatch(GoogleSearch, "^https?:\/\/")) {
+  if (GoogleSearch ~= "^https?:\/\/") {
     run % GoogleSearch
   } else {
     run % "https://www.google.com/search?q=" . GoogleSearch
@@ -122,7 +126,7 @@ return
 
 SearchClipboard:
   GoogleSearch := RegExReplace(Clipboard, "(^\s*|\s*$)")
-  if (RegExMatch(GoogleSearch, "^https?:\/\/")) {
+  if (GoogleSearch ~= "^https?:\/\/") {
     run % GoogleSearch
   } else {
     run % "https://www.google.com/search?q=" . GoogleSearch
@@ -143,8 +147,7 @@ LaTeX:
 return
 
 WaybackMachine:
-  url := trim(clip())
-  if (!url) {
+  if (!url := Trim(Copy())) {
     InputBox, url, Wayback Machine, Enter your URL.,, 192, 128
     if (!url)
       return
@@ -153,8 +156,7 @@ WaybackMachine:
 return
 
 DeepL:
-  text := trim(clip())
-  if (!text) {
+  if (!text := Trim(Copy())) {
     InputBox, text, DeepL Translate, Enter your text.,, 192, 128
     if (!text)
       return
@@ -163,7 +165,7 @@ DeepL:
 Return
 
 YouGlish:
-  term := trim(clip())
+  term := trim(Copy())
   gui, YouGlish:Add, Text,, &Term:
   gui, YouGlish:Add, Edit, vTerm, % term
   gui, YouGlish:Add, Text,, &Language:
@@ -193,14 +195,15 @@ KillIE:
 return
 
 DefineGoogle:
-  term := trim(clip())
+  term := trim(Copy())
   gui, GoogleDefine:Add, Text,, &Term:
   gui, GoogleDefine:Add, Edit, vTerm, % term
   gui, GoogleDefine:Add, Text,, &Language Code:
-  list := "es||en|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
+  list := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
   gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete, % list
   gui, GoogleDefine:Add, Button, default, &Search
   gui, GoogleDefine:Show,, Google Define
+  SetDefaultKeyboard(0x0409)  ; english-US	
 Return
 
 GoogleDefineGuiEscape:
@@ -220,7 +223,7 @@ GoogleDefineButtonSearch:
 return
 
 ClozeAndDone:
-  if (!clip())
+  if (!Copy())
     return
   send !z
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
@@ -239,7 +242,7 @@ YTHistoryInIE:
 return
 
 Wiktionary:
-  term := trim(clip())
+  term := trim(Copy())
   gui, Wiktionary:Add, Text,, &Term:
   gui, Wiktionary:Add, Edit, vTerm, % term
   gui, Wiktionary:Add, Text,, &Language:
@@ -300,8 +303,7 @@ CopyAsHTML:
 return
 
 Forvo:
-  term := trim(clip())
-  if (!term) {
+  if (!term := Trim(Copy())) {
     InputBox, term, Lexico, Enter your search term.,, 192, 128
     if (!term)
       return
@@ -339,8 +341,7 @@ UIAViewer:
 return
 
 TranslateGoogle:
-  text := trim(clip())
-  if (!text) {
+  if (!text := Trim(Copy())) {
     InputBox, text, Google Translate, Enter your text.,, 192, 128
     if (!text)
       return
@@ -371,8 +372,7 @@ MemoriseCurrentBrowser:
 return
 
 Forcellini:
-  term := trim(clip())
-  if (!term) {
+  if (!term := Trim(Copy())) {
     InputBox, term, Forcellini, Enter your search term.,, 192, 128
     if (!term)
       return
@@ -381,8 +381,7 @@ Forcellini:
 return
 
 RAE:
-  term := trim(clip())
-  if (!term) {
+  if (!term := Trim(Copy())) {
     InputBox, term, RAE, Enter your search term.,, 192, 128
     if (!term)
       return
@@ -407,8 +406,7 @@ ShowSelectionAsHTML:
 return
 
 OxfordAdvancedLearnersDictionary:
-  term := trim(clip())
-  if (!term) {
+  if (!term := Trim(Copy())) {
     InputBox, term, Oxford Advanced Learner's Dictionary, Enter your search term.,, 192, 128
     if (!term)
       return
@@ -417,8 +415,7 @@ OxfordAdvancedLearnersDictionary:
 return
 
 AlatiusALatinMacronizer:
-  Latin := trim(clip())
-  if (!Latin) {
+  if (!Latin := Trim(Copy())) {
     InputBox, Latin, Alatius: a Latin macronizer, Enter your Latin sentences.,, 192, 128
     if (!Latin)
       return
@@ -426,8 +423,8 @@ AlatiusALatinMacronizer:
   run https://alatius.com/macronizer/
   WinWaitActive, ahk_group Browser
   cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  cUIA.WaitPageLoad()
-  send {tab 2}
+  cUIA.WaitPageLoad(,, 2000)
+  send {esc}{tab 2}
   clip(Latin)
   send {tab}{enter}
 return
@@ -442,38 +439,36 @@ ReformatScriptComponent:
   WinWaitActive, ahk_class TElWind
   KeyWait alt
   KeyWait enter
-  if (ContinueLearning := Vim.SM.IsLearning())
+  if (ContLearn := Vim.SM.IsLearning())
     send !g
   Vim.SM.ExitText()
-  if (Vim.SM.IsPassive()) {
-    WinClip.Clear()
-    send ^a^x
-    ClipWait 0.6
-    ScriptArray := StrSplit(Clipboard, "`n`r")
-    Vim.Browser.url := RegExReplace(ScriptArray[1], "(^\s*|\s*$)")
-    Vim.Browser.title := WinGetTitle()
-    if (InStr(Vim.Browser.url, "youtube.com")) {
-      Vim.Browser.VidTime := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
-      YTTime := ""
-      if (ScriptArray[2])
-        YTTime := "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s"
-      Vim.Browser.source := "YouTube"
-      if (YTTime) {
-        send ^t{f9}  ; opens script editor
-        WinWaitActive, ahk_class TScriptEditor
-        ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime
-        send !o{esc}  ; close script editor
-      }
-    } else {
-      Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
+  WinClip.Clear()
+  send ^a^x
+  ClipWait 0.6
+  ScriptArray := StrSplit(Clipboard, "`n`r")
+  Vim.Browser.url := RegExReplace(ScriptArray[1], "(^\s*|\s*$)")
+  Vim.Browser.title := WinGetTitle()
+  if (InStr(Vim.Browser.url, "youtube.com")) {
+    Vim.Browser.VidTime := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
+    YTTime := ""
+    if (ScriptArray[2])
+      YTTime := "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s"
+    Vim.Browser.source := "YouTube"
+    if (YTTime) {
+      send ^t{f9}  ; opens script editor
+      WinWaitActive, ahk_class TScriptEditor
+      ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime
+      send !o{esc}  ; close script editor
     }
-    WinClip.Clear()
-    Clipboard := Vim.Browser.url
-    ClipWait
-    gosub SMSetLinkFromClipboard
-    send {esc}
+  } else {
+    Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
   }
-  if (ContinueLearning)
+  WinClip.Clear()
+  Clipboard := Vim.Browser.url
+  ClipWait
+  gosub SMSetLinkFromClipboard
+  send {esc}
+  if (ContLearn)
     send {enter}
   Clipboard := ClipSaved
   Vim.Browser.Clear()
@@ -515,8 +510,7 @@ MassReplaceRegistry:
 return
 
 SciHub:
-  text := trim(clip())
-  if (!text) {
+  if (!text := Trim(Copy())) {
     InputBox, text, Sci-Hub, Enter your search,, 192, 128
     if (!text)
       return
@@ -540,8 +534,7 @@ SciHub:
 return
 
 YT:
-  text := trim(clip())
-  if (!text) {
+  if (!text := Trim(Copy())) {
     InputBox, text, YouTube, Enter your search,, 192, 128
     if (!text)
       return
@@ -579,8 +572,7 @@ ReformatVocab:
 return
 
 ZLibrary:
-  search := trim(clip())
-  if (!search) {
+  if (!search := Trim(Copy())) {
     InputBox, search, Z-Library, Enter your search,, 192, 128
     if (!search)
       return
@@ -604,8 +596,8 @@ ImportFirstFile:
   GroupAdd, SMCtrlQ, ahk_class TMsgDialog
   WinWaitActive, ahk_group SMCtrlQ
   while (!WinActive("ahk_class TFileBrowser")) {
-    while (WinExist("ahk_class TMsgDialog"))
-      WinClose  ; Directory not found; Create?
+    while (WinActive("ahk_class TMsgDialog"))
+      send n  ; Directory not found; Create?
     WinWaitActive, ahk_group SMCtrlQ
   }
   send {right}
@@ -637,8 +629,7 @@ RegisterClipboardToVimBrowserVidTime:
 return
 
 Bilibili:
-  search := trim(clip())
-  if (!search) {
+  if (!search := Trim(Copy())) {
     InputBox, search, Bilibili, Enter your search,, 192, 128
     if (!search)
       return
@@ -647,10 +638,10 @@ Bilibili:
 return
 
 Libgen:
-  search := trim(clip())
-  if (!search) {
+  if (!search := Trim(Copy())) {
     InputBox, search, Library Genesis, Enter your search,, 192, 128
     if (!search)
       return
   }
   run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
+return

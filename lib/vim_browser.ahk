@@ -1,17 +1,24 @@
 class VimBrowser {
   __New(Vim) {
     this.Vim := Vim
+    this.FullPageCopyTimeout := 2.5
   }
 
   Clear() {
     this.title := this.url := this.source := this.date := this.VidTime := this.comment := this.VidSite := ""
   }
 
-  GetInfo(RestoreClip:=true, CopyFullPage:=true) {
+  GetInfo(RestoreClip:=true, CopyFullPage:=true, PressButton:=true) {
     this.clear()
     if (RestoreClip)
       ClipSaved := ClipboardAll
-    this.GetUrl(0, false)
+    if (PressButton) {
+      global PressYTShowMoreButtonDone := false, BrowserExe := WinGet("ProcessName")
+      SetTimer, PressYTShowMoreButton, -1
+    }
+    this.GetUrl(, false)
+    if (PressButton)
+      WaitVarExists(PressYTShowMoreButtonDone)
     this.GetTitleSourceDate(false, CopyFullPage)
     if (RestoreClip)
       Clipboard := ClipSaved
@@ -35,124 +42,142 @@ class VimBrowser {
   GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true) {
     this.Title := this.RemoveBrowserName(WinGetTitle())
     this.VidSite := this.IsVidSite(this.title)
-    if (!this.url)
-      this.url := this.GetAddressBarUrl()
+    this.url := this.url ? this.url : this.GetAddressBarUrl()
 
     ; Sites that have source in their title
-    if (RegExMatch(this.Title, "^很帅的日报")) {
+    if (this.Title ~= "^很帅的日报") {
       this.Date := RegExReplace(this.Title, "^很帅的日报 ")
       this.Title := "很帅的日报"
-    } else if (RegExMatch(this.title, "^Frontiers \| ")) {
+    } else if (this.title ~= "^Frontiers \| ") {
       this.source := "Frontiers"
       this.title := RegExReplace(this.title, "^Frontiers \| ")
-    } else if (RegExMatch(this.title, "^NIMH » ")) {
+    } else if (this.title ~= "^NIMH » ") {
       this.source := "NIMH"
       this.title := RegExReplace(this.title, "^NIMH » ")
-    } else if (RegExMatch(this.title, "^Discord \| ")) {
+    } else if (this.title ~= "^Discord \| ") {
       this.source := "Discord"
       this.title := RegExReplace(this.title, "^Discord \| ")
+    } else if (this.title ~= "^italki - ") {
+      this.source := "italki"
+      this.title := RegExReplace(this.title, "^italki - ")
 
-    } else if (RegExMatch(this.Title, "_百度百科$")) {
+    } else if (this.Title ~= "_百度百科$") {
       this.Source := "百度百科"
       this.Title := RegExReplace(this.Title, "_百度百科$")
-    } else if (RegExMatch(this.Title, "_百度知道$")) {
+    } else if (this.Title ~= "_百度知道$") {
       this.Source := "百度知道"
       this.Title := RegExReplace(this.Title, "_百度知道$")
-    } else if (RegExMatch(this.Title, "-新华网$")) {
+    } else if (this.Title ~= "-新华网$") {
       this.Source := "新华网"
       this.Title := RegExReplace(this.Title, "-新华网$")
-    } else if (RegExMatch(this.title, ": MedlinePlus Medical Encyclopedia$")) {
+    } else if (this.title ~= ": MedlinePlus Medical Encyclopedia$") {
       this.source := "MedlinePlus Medical Encyclopedia"
       this.title := RegExReplace(this.title, ": MedlinePlus Medical Encyclopedia$")
-    } else if (RegExMatch(this.title, " - supermemo\.guru$")) {
+    } else if (this.title ~= " - supermemo\.guru$") {
       this.source := "SuperMemo Guru"
       this.title := RegExReplace(this.title, " - supermemo\.guru$")
-    } else if (RegExMatch(this.title, " -- ScienceDaily$")) {
+    } else if (this.title ~= " -- ScienceDaily$") {
       this.source := "ScienceDaily"
       this.title := RegExReplace(this.title, " -- ScienceDaily$")
-    } else if (RegExMatch(this.title, "_英为财情Investing.com$")) {
+    } else if (this.title ~= "_英为财情Investing.com$") {
       this.source := "英为财情"
       this.title := RegExReplace(this.title, "_英为财情Investing.com$")
-    } else if (RegExMatch(this.title, " \| OSUCCC - James$")) {
+    } else if (this.title ~= " \| OSUCCC - James$") {
       this.source := "OSUCCC - James"
       this.title := RegExReplace(this.title, " \| OSUCCC - James$")
+    } else if (this.title ~= " · GitBook$") {
+      this.source := "GitBook"
+      this.title := RegExReplace(this.title, " · GitBook$")
 
-    } else if (InStr(this.Url, "reddit.com")) {
+    } else if (IfContains(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", Source)
       this.source := source
       this.Title := RegExReplace(this.Title, " : " . StrReplace(Source, "r/") . "$")
+    } else if (IfContains(this.Url, "github.com")) {
+      this.Source := "Github"
+      if (RegExMatch(this.url, "github\.com\/.+?\/(.+?)(\/|$)", v))
+        this.source .= ": " . v1
 
     ; Sites that don't include source in the title
-    } else if (InStr(this.Url, "dailystoic.com")) {
+    } else if (IfContains(this.Url, "dailystoic.com")) {
       this.Source := "Daily Stoic"
-    } else if (InStr(this.Url, "healthline.com")) {
+    } else if (IfContains(this.Url, "healthline.com")) {
       this.Source := "Healthline"
-    } else if (InStr(this.Url, "webmd.com")) {
+    } else if (IfContains(this.Url, "webmd.com")) {
       this.Source := "WebMD"
-    } else if (InStr(this.Url, "medicalnewstoday.com")) {
+    } else if (IfContains(this.Url, "medicalnewstoday.com")) {
       this.Source := "Medical News Today"
-    } else if (InStr(this.Url, "investopedia.com")) {
+    } else if (IfContains(this.Url, "investopedia.com")) {
       this.Source := "Investopedia"
-    } else if (InStr(this.Url, "github.com")) {
-      this.Source := "Github"
-    } else if (InStr(this.Url, "universityhealthnews.com")) {
+    } else if (IfContains(this.Url, "universityhealthnews.com")) {
       this.source := "University Health News"
-    } else if (InStr(this.url, "verywellmind.com")) {
+    } else if (IfContains(this.url, "verywellmind.com")) {
       this.source := "Verywell Mind"
-    } else if (InStr(this.url, "cliffsnotes.com")) {
+    } else if (IfContains(this.url, "cliffsnotes.com")) {
       this.source := "CliffsNotes"
-    } else if (InStr(this.url, "w3schools.com")) {
+    } else if (IfContains(this.url, "w3schools.com")) {
       this.source := "W3Schools"
-    } else if (InStr(this.url, "news-medical.net")) {
+    } else if (IfContains(this.url, "news-medical.net")) {
       this.source := "News-Medical"
+    } else if (IfContains(this.url, "ods.od.nih.gov")) {
+      this.source := "National Institutes of Health: Office of Dietary Supplements"
+    } else if (IfContains(this.url, "vandal.elespanol.com")) {
+      this.source := "Vandal"
+    } else if (IfContains(this.url, "fidelity.com")) {
+      this.source := "Fidelity International"
 
     ; Sites that should be skipped
     } else if (IfContains(this.Url, "mp.weixin.qq.com,blackrock.com")) {
       return
 
     ; Sites that require special attention
-    } else if (RegExMatch(this.title, " - YouTube$")) {
+    } else if (IfContains(this.url, "youtube.com/watch")) {
       this.source := "YouTube"
       this.title := RegExReplace(this.title, " - YouTube$")
-      if (CopyFullPage && text := this.GetFullPage(" - YouTube", RestoreClip)) {
+      if (CopyFullPage && (text := this.GetFullPage(" - YouTube", RestoreClip))) {
         this.VidTime := this.MatchYTTime(text)
         this.date := this.MatchYTDate(text)
-        this.source .= ": " . this.MatchYTSource(text)
+        if (source := this.MatchYTSource(text))
+          this.source .= ": " . source
       }
-    } else if (RegExMatch(this.Title, "_哔哩哔哩_bilibili$")) {
+    } else if (this.url ~= "bilibili.com/video") {
       this.Source := "哔哩哔哩"
       this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
-      if (CopyFullPage && text := this.GetFullPage("_哔哩哔哩_bilibili", RestoreClip)) {
+      if (CopyFullPage && (text := this.GetFullPage("_哔哩哔哩_bilibili", RestoreClip))) {
         this.VidTime := this.MatchBLTime(text)
         this.date := this.MatchBLDate(text)
-        this.source .= "：" . this.MatchBLSource(text)
+        if (source := this.MatchBLSource(text))
+          this.source .= "：" . source
       }
 
     ; Try to use - or | to find source
     } else {
       ReversedTitle := StrReverse(this.Title)
-      if (InStr(ReversedTitle, " | ")
-       && (!InStr(ReversedTitle, " - ")
+      if (IfContains(ReversedTitle, " | ")
+       && (!IfContains(ReversedTitle, " - ")
         || InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - "))) {  ; used to find source
         separator := " | "
-      } else if (InStr(ReversedTitle, " - ")) {
+      } else if (IfContains(ReversedTitle, " - ")) {
         separator := " - "
-      } else if (InStr(ReversedTitle, " – ")) {
+      } else if (IfContains(ReversedTitle, " – ")) {
         separator := " – "  ; sites like BetterExplained
-      } else if (InStr(ReversedTitle, " — ")) {
+      } else if (IfContains(ReversedTitle, " — ")) {
         separator := " — "
+      } else if (IfContains(ReversedTitle, " -- ")) {
+        separator := " -- "
       }
       pos := separator ? InStr(StrReverse(this.Title), separator) : 0
       if (pos) {
-        this.Source := SubStr(this.Title, StrLen(this.Title) - pos - 1, StrLen(this.Title))
-        if (InStr(this.Source, separator))
-          this.Source := StrReplace(this.Source, separator,,, 1)
-        this.Title := SubStr(this.Title, 1, StrLen(this.Title) - pos - 2)
+        TitleLength := StrLen(this.Title) - pos - StrLen(separator) + 1
+        this.Source := SubStr(this.Title, TitleLength + 1, StrLen(this.Title))
+        this.Source := StrReplace(this.Source, separator,,, 1)
+        this.Title := SubStr(this.Title, 1, TitleLength)
       }
     }
   }
 
-  GetFullPage(title:="", RestoreClip:=true, ClickMore:=true) {
+  GetFullPage(title:="", RestoreClip:=true) {
+    send {esc}
     title := title ? title : this.RemoveBrowserName(WinGetTitle())
     if (RestoreClip)
       ClipSaved := ClipboardAll
@@ -160,20 +185,15 @@ class VimBrowser {
       send ^{home}
       MouseGetPos, XSaved, YSaved
       MouseMove, % A_ScreenWidth / 2, % A_ScreenHeight / 2
+      sleep 20
     }
-    ; if (ClickMore && YT := RegExMatch(title, " - YouTube$")) {
-    ;   if (Button := this.GetYTShowMoreButton())
-    ;     Button.Click(400)
-    ; }
     global WinClip
     WinClip.Clear()
-    send {esc 2}^a^{ins}{esc}
-    ClipWait 2
+    send ^a^{ins}{esc}
+    ClipWait % this.FullPageCopyTimeout
     text := Clipboard
     if (BL)
       MouseMove, XSaved, YSaved
-    if (YT)
-      send ^{home}
     if (RestoreClip)
       Clipboard := ClipSaved
     return text
@@ -186,7 +206,7 @@ class VimBrowser {
     return (TimeArr[1] + TimeArr[2] * 60 + TimeArr[3] * 3600)
   }
 
-  GetAddressBarUrl(method:=0) {
+  GetAddressBarUrl(method:=1) {
     if (method) {
       cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
       return cUIA.GetCurrentURL(true)
@@ -209,10 +229,10 @@ class VimBrowser {
       ClipSaved := ClipboardAll
     global WinClip
     WinClip.Clear()
-    FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, false, false)
-    if (RegExMatch(title, " - YouTube$")) {
+    FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, false)
+    if (title ~= " - YouTube$") {
       VidTime := this.MatchYTTime(FullPageText)
-    } else if (RegExMatch(title, "_哔哩哔哩_bilibili$")) {
+    } else if (title ~= "_哔哩哔哩_bilibili$") {
       VidTime := this.MatchBLTime(FullPageText)
     }
     if (RestoreClip)
@@ -220,18 +240,21 @@ class VimBrowser {
     return this.VidTime := VidTime
   }
 
-  GetUrl(method:=0, RestoreClip:=true) {
+  GetUrl(method:=1, RestoreClip:=true) {
     if (!method) {
       this.title := this.title ? this.title : this.RemoveBrowserName(WinGetTitle())
       if (this.title = "New Tab")
         return
-      send {f6}^l  ; go to address bar
+      send {f6}^l^l  ; go to address bar; twice ^l to update link
+      sleep 200
       if (RestoreClip)
         ClipSaved := ClipboardAll
       global WinClip
       WinClip.Clear()
-      while (!Clipboard)
+      while (!Clipboard) {
         send ^l^c
+        ClipWait 0.2
+      }
       this.url := this.ParseUrl(Clipboard)
       send {esc}
       if (RestoreClip)
@@ -306,3 +329,11 @@ class VimBrowser {
     return Button
   }
 }
+
+PressYTShowMoreButton:
+  if (button := vim.Browser.GetYTShowMoreButton(BrowserExe)) {
+    button.click(100)
+    send ^{home}
+  }
+  PressYTShowMoreButtonDone := true
+return
