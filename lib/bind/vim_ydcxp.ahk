@@ -48,31 +48,31 @@ d::Vim.Move.YDCMove()
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c"))
 c::Vim.Move.YDCMove()
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && Vim.IsNavigating())
-x::
-  Vim.State.n := Vim.State.n ? Vim.State.n : 1
-  send % "{del " . Vim.State.n . "}"
-  Vim.State.SetMode()
-return
+; #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && Vim.IsNavigating())
+; x::
+;   Vim.State.n := Vim.State.n ? Vim.State.n : 1
+;   send % "{del " . Vim.State.n . "}"
+;   Vim.State.SetMode()
+; return
 
-+x::
-  Vim.State.n := Vim.State.n ? Vim.State.n : 1
-  send % "{bs " . Vim.State.n . "}"
-  Vim.State.SetMode()
-return
+; +x::
+;   Vim.State.n := Vim.State.n ? Vim.State.n : 1
+;   send % "{bs " . Vim.State.n . "}"
+;   Vim.State.SetMode()
+; return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
-x::
-  Vim.State.n := Vim.State.n ? Vim.State.n : 1
-  send % "+{right " . Vim.State.n . "}^x"
-  Vim.State.SetMode()
-return
+; #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+; x::
+;   Vim.State.n := Vim.State.n ? Vim.State.n : 1
+;   send % "+{right " . Vim.State.n . "}^x"
+;   Vim.State.SetMode()
+; return
 
-+x::
-  Vim.State.n := Vim.State.n ? Vim.State.n : 1
-  send % "+{left " . Vim.State.n . "}^x"
-  Vim.State.SetMode()
-return
+; +x::
+;   Vim.State.n := Vim.State.n ? Vim.State.n : 1
+;   send % "+{left " . Vim.State.n . "}^x"
+;   Vim.State.SetMode()
+; return
 
 ; Paste
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))

@@ -31,18 +31,29 @@ Return
   Vim.State.SetMode("Vim_Normal")
 Return
 
-; #if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
-; Space::send {Right}
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.Move.LastKey)
+; Period
+; .::send +^{Right}{BS}^v  ; original vim_ahk; don't know what that means
+.::
+  Vim.State.n := Vim.Move.LastN
+  Vim.State.Mode := Vim.Move.LastMode
+  if (Vim.Move.LastInOrOut == "Inner") {
+    Vim.Move.Inner(Vim.Move.LastKey)
+  } else if (Vim.Move.LastInOrOut == "Outer") {
+    Vim.Move.Outer(Vim.Move.LastKey)
+  } else if (Vim.Move.LastRepeat == true) {
+    Vim.Move.Repeat(Vim.Move.LastKey)
+  } else {
+    Vim.Move.Move(Vim.Move.LastKey)
+  }
+return
 
-; period
-; .::send +^{Right}{BS}^v
-
-#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
+#if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))
 ^e::Vim.Move.Repeat("^e")
 ^y::Vim.Move.Repeat("^y")
 
 ; Q-dir
-#if Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")
+#if (Vim.IsVimGroup() && WinActive("ahk_group VimQdir") && (Vim.State.Mode == "Vim_Normal"))
 ; For Q-dir, ^X mapping does not work, use !X instead.
 ; ^X does not work to be sent, too, use Down/Up
 ; switch to left top (1), right top (2), left bottom (3), right bottom (4)

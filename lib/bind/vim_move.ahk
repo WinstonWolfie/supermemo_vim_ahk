@@ -76,6 +76,9 @@ b::Vim.Move.Repeat("b")
 ; Paragraph up/down
 {::Vim.Move.Repeat("{")
 }::Vim.Move.Repeat("}")
+; Other motions
+x::Vim.Move.Repeat("x")
++x::Vim.Move.Repeat("+x")
 ; Sentence
 (::
 )::

@@ -44,6 +44,7 @@ return
 SMPlan:
   Vim.State.SetMode("Vim_Normal")
   KeyWait shift
+  KeyWait alt
   if (!WinExist("ahk_group SuperMemo")) {
     run C:\SuperMemo\systems\all.kno
     WinWait, ahk_class TElWind
@@ -124,6 +125,62 @@ return
   ToolTip("Copied:`n" . TempClip)
 return
 
+^!c::  ; copy and save references
+  ClipSaved := ClipboardAll
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+  send ^c
+  ClipWait, LongCopy ? 0.6 : 0.2, True
+  if (ErrorLevel)
+    Clipboard := ClipSaved
+  Vim.Browser.GetInfo()
+  source := Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : ""
+  date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
+  ToolTip("Copied " . Clipboard . "`nLink: " . Vim.Browser.Url . "`nTitle: " . Vim.Browser.Title . source . date)
+return
+
+^!m::  ; copy ti*m*e stamp
+  if (!Vim.Browser.GetVidtime()) {
+    ToolTip("Not found.")
+    return
+  }
+  Clipboard := Vim.Browser.VidTime
+  ToolTip("Registered " . vim.browser.VidTime)
+return
+
+!+d::  ; check duplicates in SM
+  if (!WinExist("ahk_class TElWind")) {
+    ToolTip("SuperMemo hasn't opened yet.")
+    return
+  }
+  ; Everything in this hotkey runs in the background
+  if (!url := Vim.Browser.GetAddressBarUrl()) {
+    ToolTip("Url not found.")
+    return
+  }
+  url := Vim.SM.ParseUrl(url)
+  KeyWait alt
+  KeyWait shift
+  Vim.SM.CheckDup(url)
+  Vim.Browser.Clear()
+return
+
+~^f::
+  if (A_PriorHotkey != "~^f" || A_TimeSincePriorHotkey > 400) {
+    KeyWait f
+    return
+  }
+  send ^v
+return
+
+~^l::
+  if (A_PriorHotkey != "~^l" || A_TimeSincePriorHotkey > 400) {
+    KeyWait l
+    return
+  }
+  send ^v
+return
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_group Browser") && WinExist("ahk_class TElWind"))
 ; Incremental web browsing
 ; +!x::
 ; !x::
@@ -133,6 +190,8 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
 ; Import current webpage to SuperMemo
 ^+!a::
 ^!a::
+  if (WinExist("ahk_class TMsgDialog"))
+    WinClose
   if (WinExist("ahk_id " . ImportGuiHwnd)) {
     WinActivate
     return
@@ -230,12 +289,13 @@ SMImportButtonImport:
   WinClip.Clear()
   if (SMVidImport) {
     if (Passive) {
-      Clipboard := Vim.SM.MakeReference()
+      add := (CollName = "bgm") ? Vim.Browser.Url . "`n" : ""
+      Clipboard := add . Vim.SM.MakeReference()
     } else {
       Clipboard := Vim.Browser.Url
     }
   } else {
-    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org"
+    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com"
     LineBreak := IfContains(Vim.Browser.Url, LineBreakList)
     HTMLText := Vim.HTML.Clean(HTMLText, true, LineBreak)
     if (IncWB) {
@@ -319,61 +379,6 @@ GetAddressBarUrl:
   GetAddressBarUrlDone := true
 return
 
-^!c::  ; copy and save references
-  ClipSaved := ClipboardAll
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-  send ^c
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (ErrorLevel)
-    Clipboard := ClipSaved
-  Vim.Browser.GetInfo()
-  source := Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : ""
-  date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
-  ToolTip("Copied " . Clipboard . "`nLink: " . Vim.Browser.Url . "`nTitle: " . Vim.Browser.Title . source . date)
-return
-
-^!m::  ; copy ti*m*e stamp
-  if (!Vim.Browser.GetVidtime()) {
-    ToolTip("Not found.")
-    return
-  }
-  Clipboard := Vim.Browser.VidTime
-  ToolTip("Registered " . vim.browser.VidTime)
-return
-
-!+d::  ; check duplicates in SM
-  if (!WinExist("ahk_class TElWind")) {
-    ToolTip("SuperMemo hasn't opened yet.")
-    return
-  }
-  ; Everything in this hotkey runs in the background
-  if (!url := Vim.Browser.GetAddressBarUrl()) {
-    ToolTip("Url not found.")
-    return
-  }
-  url := Vim.SM.ParseUrl(url)
-  KeyWait alt
-  KeyWait shift
-  Vim.SM.CheckDup(url)
-  Vim.Browser.Clear()
-return
-
-~^f::
-  if (A_PriorHotkey != "~^f" || A_TimeSincePriorHotkey > 400) {
-    KeyWait f
-    return
-  }
-  send ^v
-return
-
-~^l::
-  if (A_PriorHotkey != "~^l" || A_TimeSincePriorHotkey > 400) {
-    KeyWait l
-    return
-  }
-  send ^v
-return
-
 ; SumatraPDF/Calibre/MS Word to SuperMemo
 #if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME")  ; SumatraPDF
                             || WinActive("ahk_exe ebook-viewer.exe")     ; Calibre (a epub viewer)
@@ -383,11 +388,12 @@ return
 ^!x::
 !+x::
 !x::  ; pdf/epub extract to supermemo
+  CtrlState := IfContains(A_ThisHotkey, "^")
+  ClipSaved := ClipboardAll
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   KeyWait shift
   KeyWait ctrl
   KeyWait alt
-  ClipSaved := ClipboardAll
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c  ; Copy() doesn't keep format; nor ClipboardAll can work with functions
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel) {
@@ -396,7 +402,7 @@ return
     return
   } else {
     hwnd := WinGet()
-    if (prio := InStr(A_ThisHotkey, "+")) {
+    if (prio := IfContains(A_ThisHotkey, "+")) {
       InputBox, prio, Priority, Enter extract priority.,, 196, 128
       if (!prio)
         return
@@ -404,17 +410,17 @@ return
         prio := "0" . prio
       WinWaitActive, % "ahk_id " . hwnd
     }
-    if (IsBrowser := WinActive("ahk_group Browser")) {
+    if (NeedsClean := WinActive("ahk_group Browser")) {
       Vim.Browser.Highlight()
+    } else if (NeedsClean := WinActive("ahk_exe ebook-viewer.exe")) {
+      send {raw}q  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
-      send {text}a
-    } else if (WinActive("ahk_exe ebook-viewer.exe")) {
-      send {text}q  ; need to enable this shortcut in settings
+      send {raw}a  ; need to be {raw}, not {text}; otherwise IME could interfere
     } else if (WinActive("ahk_exe WINWORD.exe")) {
       send ^!h
     }
     if (!WinExist("ahk_group SuperMemo")) {
-      ToolTip("SuperMemo is not open, please open SuperMemo and paste your text.")
+      ToolTip("SuperMemo is not open; the text you selected is on your clipboard.")
       return
     }
   }
@@ -422,12 +428,23 @@ return
   WinActivate, ahk_class TElWind  ; focus to element window
 
 ExtractToSM:
-  Vim.SM.ExitText()
-  send q
-  Vim.SM.WaitTextFocus(1000)
-  if (!Vim.SM.IsEditingHTML()) {
-    ToolTip("No html component is focused, please go to the topic you want and paste your text.")
+  if (Vim.SM.IsEditingPlainText()) {
+    ToolTip("This script requires HTML component to work.")
+    Clipboard := ClipSaved
     return
+  }
+  if (!Vim.SM.IsEditingText()) {
+    send q
+    if (!Vim.SM.WaitTextFocus(1000)) {
+      ToolTip("No HTML component found; the text you selected is on your clipboard.")
+      Clipboard := ClipSaved
+      return
+    }
+    if (Vim.SM.IsEditingPlainText()) {
+      ToolTip("This script requires HTML component to work.")
+      Clipboard := ClipSaved
+      return
+    }
   }
   send ^{home}^+{down}  ; go to top and select first paragraph below
   if (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") {
@@ -435,12 +452,17 @@ ExtractToSM:
     if (A_ThisLabel == "ExtractToSM") {
       ret := true
     } else {
-      MsgBox, 4,, Go to source and try again?
-      IfMsgBox, yes, {
+      MsgBox, 3,, Go to source and try again? (press no to paste in current topic)
+      if (IfMsgbox("yes")) {
         WinWaitActive, ahk_class TElWind
         Vim.SM.ClickElWindSourceBtn()
         Vim.SM.WaitFileLoad()
         goto ExtractToSM
+      } else if (IfMsgBox("no")) {
+        WinWaitActive, ahk_class TElWind
+        send q
+        Vim.SM.WaitTextFocus()
+        ret := false
       } else {
         ret := true
       }
@@ -454,7 +476,7 @@ ExtractToSM:
   }
   send {left}
 
-  if (!IsBrowser) {
+  if (!NeedsClean) {
     clip(extract,, false,, false)
   } else {
     WinClip.Clear()
@@ -479,14 +501,14 @@ ExtractToSM:
     send !x  ; extract
   }
   Vim.SM.WaitExtractProcessing()
-  sleep 40  ; short sleep to make sure the extraction is done
-  Vim.SM.MoveAboveRef(false)
+  ; Vim.SM.MoveAboveRef(false)  ; sometimes caret position isn't right?
+  send {down}
   send !\\
   WinWaitNotActive, ahk_class TElWind
   send {enter}
   WinWaitNotActive, ahk_class TMsgDialog
   send {esc}
-  if (InStr(A_ThisHotkey, "^")) {
+  if (CtrlState) {
     send !{left}
   } else {
     WinActivate % "ahk_id " . hwnd
@@ -499,7 +521,7 @@ return
 +z::Vim.State.SetMode("Z")
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z") && !ControlGetFocus())
 +z::  ; exit and save annotations
-  send q
+  send {raw}q
   WinWaitActive, Unsaved annotations,, 0
   if (!ErrorLevel)
     send s
@@ -510,13 +532,15 @@ return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus())
 !p::ControlFocus, Edit1  ; focus to page number field so you can enter a number
-^f::
-  if (!selection := Copy())
-    return
-  send ^f
-  ControlSetText, Edit2, % selection
-  send {enter}
-return
+; ^f::
+;   if (!selection := Copy()) {
+;     send ^f
+;     return
+;   }
+;   send ^f
+;   ControlSetText, Edit2, % selection
+;   send {enter}
+; return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && ControlGetFocus() == "Edit1")
 !p::
@@ -530,6 +554,13 @@ return
   send {enter}
 return
 
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && page := ControlGetText("Edit1"))
+^!p::
+  Clipboard := "p" . page
+  ToolTip("Copied p" . page)
+return
+
+; Syncing page number / marker
 #if (Vim.State.Vim.Enabled
   && !Vim.SM.IsPassive("", -1)  ; current concept doesn't matter
   && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser"))
@@ -548,8 +579,8 @@ return
       Clipboard := ClipSaved
       return
     }
-    if (InStr(A_ThisHotkey, "^")) {
-      send q
+    if (IfContains(A_ThisHotkey, "^")) {
+      send {raw}q
       WinWaitActive, Unsaved annotations,, 0
       if (!ErrorLevel)
         send s
@@ -562,7 +593,7 @@ return
       Clipboard := ClipSaved
       return
     }
-    if (InStr(A_ThisHotkey, "^")) {
+    if (IfContains(A_ThisHotkey, "^")) {
       if (WinActive("ahk_exe ebook-viewer.exe")) {
         send !{f4}
       } else if (WinActive("ahk_class Browsers")) {
@@ -573,12 +604,13 @@ return
   WinActivate, ahk_class TElWind
 
 MarkInSMTitle:
-  Vim.SM.ExitText()
-  send q
-  if (!Vim.SM.WaitTextFocus(500)) {
-    ToolTip("No text component.")
-    Clipboard := ClipSaved
-    return
+  if (!Vim.SM.IsEditingText()) {
+    send q
+    if (!Vim.SM.WaitTextFocus(1000)) {
+      ToolTip("No text component.")
+      Clipboard := ClipSaved
+      return
+    }
   }
   send ^{home}^+{down}  ; go to top and select first paragraph below
   if (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") {
@@ -586,12 +618,20 @@ MarkInSMTitle:
     if (A_ThisLabel == "MarkInSMTitle") {
       ret := true
     } else {
-      MsgBox, 4,, Go to source and try again?
-      IfMsgBox, yes, {
+      MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
+      if (IfMsgbox("yes")) {
         WinWaitActive, ahk_class TElWind
         Vim.SM.ClickElWindSourceBtn()
         Vim.SM.WaitFileLoad()
         goto MarkInSMTitle
+      } else if (IfMsgBox("no")) {
+        WinWaitActive, ahk_class TElWind
+        send q
+        if (!Vim.SM.WaitTextFocus(1000)) {
+          ret := true
+        } else {
+          ret := false
+        }
       } else {
         ret := true
       }
@@ -621,7 +661,7 @@ MarkInSMTitle:
     ControlSetText, TMemo1, % title
     ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
   }
-  if (InStr(A_ThisHotkey, "^+!")) {
+  if (IfContains(A_ThisHotkey, "^+!")) {
     Vim.SM.Learn()
     Vim.SM.EnterInsertIfSpelling()
   }
@@ -773,7 +813,7 @@ return
   WinClose, ahk_class TBrowser
   IfMsgBox, no
     goto HBImportReturn
-  if (prio := InStr(A_ThisHotkey, "+")) {
+  if (prio := IfContains(A_ThisHotkey, "+")) {
     InputBox, prio, Priority, Enter extract priority.,, 196, 128
     if (!prio)
       return

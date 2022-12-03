@@ -70,8 +70,6 @@ Return
   } else if (WinActive("ahk_group Browser")) {
     list .= "|Incremental web browsing: New topic"
           . "|Incremental web browsing: New topic with priority and concept"
-  } else if (WinActive("ahk_exe Discord.exe")) {
-    list .= "|Discord go live"
   }
 
   gui, VimCommander:Add, Combobox, vCommand gAutoComplete w256, % list
@@ -186,6 +184,7 @@ YouGlishButtonSearch:
   gui destroy
   if (language == "American Sign Language")
     language := "signlanguage"
+  StringLower, language, language
   run % "https://youglish.com/pronounce/" . term . "/" . language . "?"
 Return
 
@@ -229,9 +228,9 @@ ClozeAndDone:
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send ^+{enter}
-  WinWaitNotActive, ahk_class TElWind,, 0  ; "Do you want to remove all element contents from the collection?"
+  WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
   send {enter}
-  WinWaitNotActive, ahk_class TElWind,, 0  ; wait for "Delete element?"
+  WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?"
   send {enter}
   Vim.State.SetNormal()
 return
@@ -263,22 +262,14 @@ WiktionaryButtonSearch:
   gui destroy
   if (language == "Ancient Greek")
     language := "Ancient_Greek"
-  run % "https://en.wiktionary.org/wiki/" . term . "#" . language
-return
-
-#if (WinActive("ahk_exe Discord.exe"))
-^!l::
-#if
-DiscordGoLive:
-  if (FindClick(A_ScriptDir . "\lib\bind\util\discord_screen_share.png", "r")
-   || FindClick(A_ScriptDir . "\lib\bind\util\discord_screen_share_alt.png", "r")) {
-    sleep 800
-    send {tab 2}{enter}
-    sleep 400
-    send {tab}{enter}
-    sleep 400
-    send +{tab 2}{enter}
+  if (language == "Latin") {
+    term := RegExReplace(term, "ā", "a")
+    term := RegExReplace(term, "ē", "e")
+    term := RegExReplace(term, "ī", "i")
+    term := RegExReplace(term, "ū", "u")
+    term := RegExReplace(term, "ō", "o")
   }
+  run % "https://en.wiktionary.org/wiki/" . term . "#" . language
 return
 
 CopyCurrentWindowsTitle:
@@ -557,14 +548,14 @@ ReformatVocab:
     return
   }
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
-  data := RegExReplace(data, "(\.<BR>""|\. \r\n<P>‘)", "<P>")
-  data := RegExReplace(data, """.*", "</P>")
+  data := RegExReplace(data, "(\.<BR>""|\. <BR>(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
+  data := RegExReplace(data, "(""|\.?’)", "</P>")
   data := StrReplace(data, "<P></P>")
-  SynPos := RegExMatch(data, "<P>(Similar|Synonyms)")
+  SynPos := RegExMatch(data, "<(P|BR)>(Similar|Synonyms)")
   def := SubStr(data, 1, SynPos - 1)
   SynAndAnt := SubStr(data, SynPos)
   SynAndAnt := StrReplace(SynAndAnt, "; ", ", ")
-  SynAndAnt := RegExReplace(SynAndAnt, "((Similar:?)<BR>|Synonyms(<\/P>\r\n<P>|<BR>))", "syn: ")
+  SynAndAnt := RegExReplace(SynAndAnt, "(<BR>)?((Similar:?)<BR>|Synonyms ?(\r\n)?(<\/P>\r\n<P>|<BR>))", "<P>syn: ")
   SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?|Opuesta)<BR>", "ant: ")
   WinClip.Paste(def . SynAndAnt,, false)
   send ^a^+1

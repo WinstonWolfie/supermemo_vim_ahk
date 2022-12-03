@@ -88,6 +88,9 @@ class VimBrowser {
     } else if (this.title ~= " · GitBook$") {
       this.source := "GitBook"
       this.title := RegExReplace(this.title, " · GitBook$")
+    } else if (this.title ~= " \| SLEEP \| Oxford Academic$") {
+      this.source := "SLEEP | Oxford Academic"
+      this.title := RegExReplace(this.title, " \| SLEEP \| Oxford Academic$")
 
     } else if (IfContains(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", Source)
@@ -127,7 +130,8 @@ class VimBrowser {
       this.source := "Fidelity International"
 
     ; Sites that should be skipped
-    } else if (IfContains(this.Url, "mp.weixin.qq.com,blackrock.com")) {
+    SkippedList := "mp.weixin.qq.com,blackrock.com,superdatascience.com"
+    } else if (IfContains(this.Url, SkippedList)) {
       return
 
     ; Sites that require special attention
@@ -268,8 +272,10 @@ class VimBrowser {
   }
 
   MatchYTTime(text) {
-    RegExMatch(text, "\r\n\K[0-9:]+(?= \/ )", VidTime)
-    return VidTime
+    RegExMatch(text, "\r\n([0-9:]+) \/ ([0-9:]+)", VidTime)
+    if (VidTime1 == VidTime2)  ; at end of video
+      VidTime1 := "0:00"
+    return VidTime1
   }
 
   MatchYTSource(text) {
@@ -320,7 +326,7 @@ class VimBrowser {
 
   GetYTShowMoreButton(BrowserExe:="") {
     this.url := this.url ? this.url : this.GetAddressBarUrl()
-    if (!InStr(this.url, "youtube.com/watch"))
+    if (!IfContains(this.url, "youtube.com/watch"))
       return
     BrowserExe := BrowserExe ? BrowserExe : WinGet("ProcessName")
     cUIA := new UIA_Browser("ahk_exe " . BrowserExe)
@@ -332,7 +338,7 @@ class VimBrowser {
 
 PressYTShowMoreButton:
   if (button := vim.Browser.GetYTShowMoreButton(BrowserExe)) {
-    button.click(100)
+    button.click(400)
     send ^{home}
   }
   PressYTShowMoreButtonDone := true

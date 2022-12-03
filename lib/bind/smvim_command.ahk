@@ -217,7 +217,8 @@ p::  ; hyperlink to scri*p*t component
   ClipSaved := ClipboardAll
   Vim.Browser.url := Clipboard
   WinClip.Clear()
-  Clipboard := Vim.SM.MakeReference()
+  add := (Vim.SM.GetCollName() = "bgm") ? Vim.Browser.Url . "`n" : ""
+  Clipboard := add . Vim.SM.MakeReference()
   ClipWait
 
 SMHyperLinkToTopic:
@@ -289,12 +290,12 @@ c::  ; learn child
     WinWaitNotActive, ahk_class TProgressBox
   WinWaitActive, ahk_class TBrowser
   send {AppsKey}co
-  WinWaitActive, ahk_class TProgressBox,, 0.75
+  WinWaitActive, ahk_class TProgressBox,, 1
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox
   WinWaitActive, ahk_class TBrowser
   send ^s
-  WinWaitActive, ahk_class TProgressBox,, 0.75
+  WinWaitActive, ahk_class TProgressBox,, 1
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox
   WinWaitActive, ahk_class TBrowser

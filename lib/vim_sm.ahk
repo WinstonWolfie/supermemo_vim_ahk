@@ -120,11 +120,13 @@ class VimSM {
     global ImportGuiHwnd
     if (WinGet() == ImportGuiHwnd) {
       ControlSetText, Edit1, % random(min, max), A
-      send !c
+      ControlFocus, Edit2, A
+      send ^a
     } else if (WinActive("Priority") && WinActive("ahk_class #32770")) {  ; input dialogue
       ControlSetText, Edit1, % random(min, max)
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
       ControlSetText, TEdit5, % random(min, max)
+      ControlFocus, TEdit1, A
     } else if (WinExist("ahk_class TElWind")) {
       this.SetPrio(random(min, max))
     }
@@ -154,7 +156,7 @@ class VimSM {
 
   MoveAboveRef(RestoreClip:=true) {
     send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-    if (InStr(copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
+    if (IfContains(copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
       send {up 2}
     } else {
       send ^{end}
@@ -216,7 +218,7 @@ class VimSM {
     loop {
       if (A_CaretX) {
         this.WaitFileLoad(timeout, "|Please wait")
-        sleep 20
+        sleep 40
         return 1
       } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
         Return 0
@@ -236,7 +238,7 @@ class VimSM {
     loop {
       if (A_CaretX) {
         this.WaitFileLoad(timeout, "|Loading file")
-        sleep 40
+        sleep 80
         return true
       } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
         Return false
@@ -577,12 +579,18 @@ class VimSM {
   }
 
   ClearHighlight(OpenCommander:=true) {
+    this.Command("h", OpenCommander)
+  }
+
+  Command(text, OpenCommander:=true) {
     if (OpenCommander)
       this.PostMsg(240)  ; open commander
     WinWait, ahk_class TCommanderDlg
-    ControlSetText, TEdit2, h, ahk_class TCommanderDlg  ; Highlight: Clear
-    ControlTextWait("TEdit2", "h", "ahk_class TCommanderDlg")
-    ; ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
+    if (text) {
+      ControlSetText, TEdit2, % text, ahk_class TCommanderDlg  ; Highlight: Clear
+      ControlTextWait("TEdit2", text, "ahk_class TCommanderDlg")
+      ; ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
+    }
     while (WinExist("ahk_class TCommanderDlg"))
       ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
   }

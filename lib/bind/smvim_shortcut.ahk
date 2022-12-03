@@ -112,6 +112,7 @@ return
 
 ^!p::  ; convert to a *p*lain-text template
   KeyWait alt
+  KeyWait, ctrl
   ContLearn := Vim.SM.IsLearning()
   send ^+p!t  ; much faster than ^+m
   send {text}cl  ; my plain-text template name is classic
@@ -287,6 +288,12 @@ return
 
 !t::send !mlt  ; Totals
 
+^!b::
+  send !b
+  Vim.SM.Command("")
+  WinActivate, ahk_class TPlanDlg
+return
+
 !a::  ; insert/append activity
   SetDefaultKeyboard(0x0409)  ; english-US	
   gui, PlanAdd:Add, Text,, A&ctivity:
@@ -334,7 +341,7 @@ PlanAddButtonAppend:
     send {enter}
   }
   send ^s
-  if activity in Break,Sports,Piano,Out
+  if activity in Break,Sports,Piano,Out,Shower
     run b  ; my personal backup script
   Vim.State.SetNormal()
 return

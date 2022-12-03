@@ -1,13 +1,19 @@
-﻿#if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && Vim.SM.IsEditingHTML()
-~^+i::Vim.State.SetMode("Vim_Normal")  ; ignore
-
+﻿#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 .::  ; selected text becomes [...]
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+  KeyWait ctrl
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  clip("<span class=""Cloze"">[...]</span>",,, "sm")
+  if (Vim.SM.IsEditingHTML()) {
+    clip("<span class=""Cloze"">[...]</span>",,, "sm")
+  } else if (Vim.SM.IsEditingPlainText()) {
+    clip("[...]")
+  }
   Vim.State.SetMode("Vim_Normal")
 return
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
+~^+i::Vim.State.SetMode("Vim_Normal")  ; ignore
 
 ^h::  ; parse *h*tml
   send ^+1
@@ -17,6 +23,7 @@ return
 
 !a::  ; p*a*rse html
   Vim.State.SetMode("Vim_Normal")
+  SetDefaultKeyboard(0x0409)  ; english-US	
   gui, HTMLTag:Add, Text,, &HTML tag:
   list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
         . "|sup|blockquote|ruby|hint|note|ignore|headers|RefText|reference|highlight"
@@ -108,7 +115,6 @@ ExtractStay:
   send !x
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.WaitExtractProcessing()
-  sleep 20
   send !{left}
 return
 
@@ -185,7 +191,7 @@ ClozeHinter:
   gui, ClozeHinter:Add, Text,, &Hint:
   gui, ClozeHinter:Add, Edit, vHint w196, % InitText
   gui, ClozeHinter:Add, CheckBox, % "vInside " . (inside ? "checked" : ""), &Inside square brackets
-  gui, ClozeHinter:Add, CheckBox, vFullWidthChars, Use &fullwidth characters
+  gui, ClozeHinter:Add, CheckBox, vFullWidthParen, Use &fullwidth parentheses
   gui, ClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
   gui, ClozeHinter:Add, Button, default, Clo&ze
   gui, ClozeHinter:Show,, Cloze Hinter
@@ -212,7 +218,7 @@ CapsLock & z::  ; delete [...]
     CtrlState := 1, ClozeNoBracketCtrlState := 0
   }
   KeyWait Capslock
-  if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/,／")) {
+  if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/")) {
     MsgBox, 4,, You sure you don't want to make the cloze inside square brackets?
     IfMsgBox no
       inside := true
@@ -232,15 +238,10 @@ CapsLock & z::  ; delete [...]
   Vim.SM.WaitFileLoad()  ; double insurance?
   send ^t
   if (!ClozeNoBracket && inside) {
-    if (FullWidthChars) {
-      hint := StrReplace(hint, "/", "／")
-      cloze := "［" . hint . "］"
-    } else {
-      cloze := "[" . hint . "]"
-    }
+    cloze := "[" . hint . "]"
   } else {
-    if (FullWidthChars) {
-      cloze := "［...］（" . hint . "）"
+    if (FullWidthParen) {
+      cloze := "[...]（" . hint . "）"
     } else {
       cloze := "[...](" . hint . ")"
     }
