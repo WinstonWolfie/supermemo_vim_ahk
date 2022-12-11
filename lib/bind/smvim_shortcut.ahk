@@ -153,13 +153,22 @@ return
 ^!m::
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
-  el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'").Click()
+  btn := el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'")
+  if (!btn)
+    return
+  btn.Click()
+  Vim.Caret.SwitchToSameWindow()  ; refresh caret
 return
 
 ^!space::
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
-  el.FindFirstBy("ControlType=Button AND Name='Play keyboard shortcut k' OR Name='Pause keyboard shortcut k'").Click()
+  ; Can't detect pause/play button, sometimes not present on screen
+  ; btn := el.FindFirstBy("ControlType=Button AND Name='Play keyboard shortcut k' OR Name='Pause keyboard shortcut k'")
+  btn := el.FindFirstBy("ControlType=Group AND Name='Video'")
+  if (!btn)
+    return
+  btn.Click()
   btn := el.WaitElementExist("ControlType=Button AND Name='Hide more videos' OR Name='More videos'")
   if (btn.CurrentName == "Hide more videos")
     btn.Click()
