@@ -153,8 +153,17 @@ return
 ^!m::
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
-  StartBtn := el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'")
-  StartBtn.GetCurrentPatternAs("Invoke").Invoke()
+  el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'").Click()
+return
+
+^!space::
+  UIA := UIA_Interface()
+  el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
+  el.FindFirstBy("ControlType=Button AND Name='Play keyboard shortcut k' OR Name='Pause keyboard shortcut k'").Click()
+  btn := el.WaitElementExist("ControlType=Button AND Name='Hide more videos' OR Name='More videos'")
+  if (btn.CurrentName == "Hide more videos")
+    btn.Click()
+  Vim.Caret.SwitchToSameWindow()  ; refresh caret
 return
 
 ; More intuitive inter-element linking, inspired by Obsidian

@@ -184,6 +184,8 @@ class UIA_Interface extends UIA_Base {
 		local
 		if hwnd is not integer
 			hwnd := WinExist(hwnd)
+		if !hwnd
+			return
 		if (activateChromiumAccessibility != 0)
 			activateChromiumAccessibility := this.ActivateChromiumAccessibility(hwnd)
 		return UIA_Hr(DllCall(this.__Vt(6), "ptr",this.__Value, "ptr",hwnd, "ptr*",out:=""))? UIA_Element(out):
@@ -216,6 +218,8 @@ class UIA_Interface extends UIA_Base {
 		local
 		if hwnd is not integer
 			hwnd := WinExist(hwnd)
+		if !hwnd
+			return
 		if (activateChromiumAccessibility != 0)
 			activateChromiumAccessibility := this.ActivateChromiumAccessibility(hwnd, cacheRequest)
 		return UIA_Hr(DllCall(this.__Vt(10), "ptr",this.__Value, "ptr",hwnd, "ptr",cacheRequest.__Value, "ptr*",out:=""))? UIA_Element(out):
@@ -618,7 +622,7 @@ class UIA_Interface extends UIA_Base {
 		return focusedEl
 	}
 	; Tries to get the Chromium content from Chrome_RenderWidgetHostHWND1 control
-	ElementFromChromium(winTitle:="A", activateChromiumAccessibility:=True) {
+	ElementFromChromium(winTitle:="A", activateChromiumAccessibility:=True, timeOut:=500) {
 		local
 		try ControlGet, cHwnd, Hwnd,, Chrome_RenderWidgetHostHWND1, %winTitle%
 		if !cHwnd
@@ -630,7 +634,7 @@ class UIA_Interface extends UIA_Base {
 				cEl.CurrentName ; it doesn't work without calling CurrentName (at least in Skype)
 				if (cEl.CurrentControlType == 50030) {
 					startTime := A_TickCount
-					while (!cEl.CurrentValue && (A_TickCount-startTime < 500))
+					while (!cEl.CurrentValue && (A_TickCount-startTime < timeOut))
 						Sleep, 20
 				}
 			}
@@ -638,14 +642,14 @@ class UIA_Interface extends UIA_Base {
 		return cEl
 	}
 	; In some setups Chromium-based renderers don't react to UIA calls by enabling accessibility, so we need to send the WM_GETOBJECT message to the renderer control to enable accessibility. Thanks to users malcev and rommmcek for this tip. Explanation why this works: https://www.chromium.org/developers/design-documents/accessibility/#TOC-How-Chrome-detects-the-presence-of-Assistive-Technology 
-	ActivateChromiumAccessibility(hwnd:="A", cacheRequest:=0) {
+	ActivateChromiumAccessibility(hwnd:="A", cacheRequest:=0, timeOut:=500) {
 		static activatedHwnds := {}
 		if hwnd is not integer
 			hwnd := WinExist(hwnd)
 		if activatedHwnds[hwnd] 
 			return
 		activatedHwnds[hwnd] := 1 ; Shouldn't store the element here, otherwise it can't be released until the program exits
-		return this.ElementFromChromium("ahk_id " hwnd)
+		return this.ElementFromChromium("ahk_id " hwnd,, timeOut)
 	}
 }
 
@@ -1430,7 +1434,8 @@ class UIA_Element extends UIA_Base {
 					ClickCount := ClickCountAndSleepTime[1]
 				}
 			}
-			if !((pos := this.GetClickablePointRelativeTo()).x || pos.y) {
+			try pos := this.GetClickablePointRelativeTo()
+			if !(pos.x || pos.y) {
 				pos := this.GetCurrentPos() ; or should only GetClickablePoint be used instead?
 				Click, % (pos.x+pos.w//2+rel[1]) " " (pos.y+pos.h//2+rel[2]) " " WhichButtonOrSleepTime (ClickCount ? " " ClickCount : "") (DownOrUp ? " " DownOrUp : "") (Relative ? " " Relative : "")
 			} else {
@@ -1445,8 +1450,9 @@ class UIA_Element extends UIA_Base {
 		local
 		try this.SetFocus()
 		if (WinTitleOrSleepTime == "")
-			WinTitleOrSleepTime := "ahk_id " this.GetParentHwnd()	
-		if !((pos := this.GetClickablePointRelativeTo("window")).x || pos.y) {
+			WinTitleOrSleepTime := "ahk_id " this.GetParentHwnd()
+		try pos := this.GetClickablePointRelativeTo("window")
+		if !(pos.x || pos.y) {
 			pos := this.GetCurrentPos("window") ; or should GetClickablePoint be used instead?
 			ControlClick, % "X" pos.x+pos.w//2 " Y" pos.y+pos.h//2, % WinTitleOrSleepTime, % WinTextOrSleepTime, % WhichButton, % ClickCount, % Options, % ExcludeTitle, % ExcludeText
 		} else {
@@ -4412,13 +4418,15 @@ UIA_TextRange(e,flag:=1) {
 ; Used by UIA methods to create new Pattern objects of the highest available version for a given pattern.
 UIA_Pattern(p, el) {
 	local i, patternName, patternAvailableId
+	static maxPatternVersions := {Selection:2, Text:2, TextRange:3, Transform:2}
 	if p is integer 
 		return patternName := UIA_Enum.UIA_Pattern(p)
 	else
-		patternName := InStr(p, "Pattern") ? p : p "Pattern", i:=1
+		patternName := InStr(p, "Pattern") ? p : p "Pattern", i:=2
+	
 	Loop {
 		i++
-		if !(VarSetCapacity(UIA_%patternName%%i%) && IsObject(UIA_%patternName%%i%) && UIA_%patternName%%i%.__iid && UIA_%patternName%%i%.__PatternID)
+		if !(UIA_Enum.UIA_PatternId(patternName i) && IsObject(UIA_%patternName%%i%) && UIA_%patternName%%i%.__iid && UIA_%patternName%%i%.__PatternID)
 			break
 	}
 	While (--i > 1) {
