@@ -6,19 +6,17 @@ class VimBrowser {
 
   Clear() {
     this.title := this.url := this.source := this.date := this.VidTime := this.comment := this.VidSite := ""
+    global guiaBrowser := ""
   }
 
   GetInfo(RestoreClip:=true, CopyFullPage:=true, PressButton:=true) {
     this.clear()
     if (RestoreClip)
       ClipSaved := ClipboardAll
-    if (PressButton) {
-      global PressYTShowMoreButtonDone := false, BrowserExe := WinGet("ProcessName")
-      SetTimer, PressYTShowMoreButton, -1
-    }
+    global guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
     this.GetUrl(, false)
     if (PressButton)
-      WaitVarExists(PressYTShowMoreButtonDone)
+      gosub PressYTShowMoreButton
     this.GetTitleSourceDate(false, CopyFullPage)
     if (RestoreClip)
       Clipboard := ClipSaved
@@ -42,7 +40,7 @@ class VimBrowser {
   GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true) {
     this.Title := this.RemoveBrowserName(WinGetTitle())
     this.VidSite := this.IsVidSite(this.title)
-    this.url := this.url ? this.url : this.GetAddressBarUrl()
+    this.url := this.url ? this.url : this.GetUrl(, RestoreClip)
 
     ; Sites that have source in their title
     if (this.Title ~= "^很帅的日报") {
@@ -181,7 +179,6 @@ class VimBrowser {
   }
 
   GetFullPage(title:="", RestoreClip:=true) {
-    send {esc}
     title := title ? title : this.RemoveBrowserName(WinGetTitle())
     if (RestoreClip)
       ClipSaved := ClipboardAll
@@ -193,13 +190,14 @@ class VimBrowser {
     }
     global WinClip
     WinClip.Clear()
-    send ^a^{ins}{esc}
+    send ^a^{ins}
     ClipWait % this.FullPageCopyTimeout
     text := Clipboard
     if (BL)
       MouseMove, XSaved, YSaved
     if (RestoreClip)
       Clipboard := ClipSaved
+    send {esc}
     return text
   }
 
@@ -210,20 +208,20 @@ class VimBrowser {
     return (TimeArr[1] + TimeArr[2] * 60 + TimeArr[3] * 3600)
   }
 
-  GetAddressBarUrl(method:=1) {
-    if (method) {
-      cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-      return cUIA.GetCurrentURL(true)
-    } else {
-      hwnd := hwnd ? hwnd : WinGet()
-      if (browser = "chrome" || WinActive("ahk_exe chrome.exe")) {
-        accAddressBar := Acc_Get("Object", "4.1.1.2.1.2.5.3",, "ahk_id " . hwnd)
-      } else if (browser = "edge" || WinActive("ahk_exe msedge.exe")) {
-        accAddressBar := Acc_Get("Object", "4.1.1.4.1.2.5.4",, "ahk_id " . hwnd)
-      }
-      return accAddressBar.accValue(0)
-    }
-  }
+  ; GetAddressBarUrl(method:=1) {
+  ;   if (method) {
+  ;     guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  ;     return guiaBrowser.GetCurrentURL(true)
+  ;   } else {
+  ;     hwnd := hwnd ? hwnd : WinGet()
+  ;     if (browser = "chrome" || WinActive("ahk_exe chrome.exe")) {
+  ;       accAddressBar := Acc_Get("Object", "4.1.1.2.1.2.5.3",, "ahk_id " . hwnd)
+  ;     } else if (browser = "edge" || WinActive("ahk_exe msedge.exe")) {
+  ;       accAddressBar := Acc_Get("Object", "4.1.1.4.1.2.5.4",, "ahk_id " . hwnd)
+  ;     }
+  ;     return accAddressBar.accValue(0)
+  ;   }
+  ; }
 
   GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     title := title ? title : this.RemoveBrowserName(WinGetTitle())
@@ -250,7 +248,7 @@ class VimBrowser {
       if (this.title = "New Tab")
         return
       send {f6}^l^l  ; go to address bar; twice ^l to update link
-      sleep 200
+      sleep 100
       if (RestoreClip)
         ClipSaved := ClipboardAll
       global WinClip
@@ -265,8 +263,10 @@ class VimBrowser {
         Clipboard := ClipSaved
       return this.url
     } else {
-      cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-      url := cUIA.GetCurrentURL()
+      global guiaBrowser
+      if (!guiaBrowser)
+        guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+      url := guiaBrowser.GetCurrentURL()
       return this.url := this.ParseUrl(url)
     }
   }
@@ -324,20 +324,21 @@ class VimBrowser {
     sleep 20
   }
 
-  GetYTShowMoreButton(BrowserExe:="") {
-    this.url := this.url ? this.url : this.GetAddressBarUrl()
+  GetYTShowMoreButton() {
+    this.url := this.url ? this.url : this.GetUrl()
     if (!IfContains(this.url, "youtube.com/watch"))
       return
-    BrowserExe := BrowserExe ? BrowserExe : WinGet("ProcessName")
-    cUIA := new UIA_Browser("ahk_exe " . BrowserExe)
-    if (!Button := cUIA.FindFirstBy("ControlType=Button AND Name='Show more' AND AutomationId='expand'"))
-      Button := cUIA.FindFirstBy("ControlType=Text AND Name='Show more'")
+    global guiaBrowser
+    if (!guiaBrowser)
+      guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    if (!Button := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show more' AND AutomationId='expand'"))
+      Button := guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show more'")
     return Button
   }
 }
 
 PressYTShowMoreButton:
-  if (button := vim.Browser.GetYTShowMoreButton(BrowserExe)) {
+  if (button := vim.Browser.GetYTShowMoreButton()) {
     button.click(400)
     send ^{home}
   }

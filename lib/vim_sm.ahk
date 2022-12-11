@@ -19,7 +19,9 @@ class VimSM {
           send q
           if (!this.WaitTextFocus(1000))
             return false
-          ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, NA x1 y1
+          control := ControlGetFocus("ahk_class TElWind")
+          ControlGetPos,,,, Height, % control, ahk_class TElWind
+          ControlClick, % control, ahk_class TElWind,,,, NA x1 y1
         }
       }
     }
@@ -42,7 +44,9 @@ class VimSM {
           send q
           if (!this.WaitTextFocus(1000))
             return false
-          ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, % "NA x1 y" . Height / 2
+          control := ControlGetFocus("ahk_class TElWind")
+          ControlGetPos,,,, Height, % control, ahk_class TElWind
+          ControlClick, % control, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
         }
       }
     }
@@ -65,7 +69,9 @@ class VimSM {
           send q
           if (!this.WaitTextFocus(1000))
             return false
-          ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, % "NA x1 y" . Height - 2
+          control := ControlGetFocus("ahk_class TElWind")
+          ControlGetPos,,,, Height, % control, ahk_class TElWind
+          ControlClick, % control, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
         }
       }
     }
@@ -133,15 +139,21 @@ class VimSM {
     this.Vim.State.SetNormal()
   }
 
-  SetPrio(prio, BG:=false) {
+  SetPrio(prio, BG:=false, WinWait:=false) {
     if (!BG && WinActive("ahk_class TElWind")) {
       send !p  ; open priority window
-      send % prio . "{enter}"
+      if (!WinWait) {
+        send % prio . "{enter}"
+      } else {
+        WinWaitActive, ahk_class TPriorityDlg
+        ControlSetText, TEdit5, % prio, ahk_class TPriorityDlg
+        ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
+      }
     } else if (BG && WinExist("ahk_class TElWind")) {
-      send {alt down}
+      send {AltDown}
       PostMessage, 0x0104, 0x50, 1<<29,, ahk_class TElWind  ; P key
       PostMessage, 0x0105, 0x50, 1<<29,, ahk_class TElWind
-      send {alt up}
+      send {AltUp}
       WinWait, ahk_class TPriorityDlg
       ControlSetText, TEdit5, % prio, ahk_class TPriorityDlg
       ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
@@ -441,7 +453,7 @@ class VimSM {
     return ret
   }
 
-  Learn(CtrlL:=false) {
+  Learn(CtrlL:=true) {
     if (CtrlL) {
       this.PostMsg(180)
     } else if (ControlGetText("TBitBtn2", "ahk_class TElWind") == "Learn") {
@@ -475,15 +487,20 @@ class VimSM {
   ChangeDefaultConcept(concept:="", send:=0, CurrConcept:="", check:=true) {
     if (concept && check) {
       CurrConcept := CurrConcept ? CurrConcept : this.GetCurrConcept()
-      if (InStr(CurrConcept, concept) == 1)  ; entered concept's first letters match current concept
+      if (CurrConcept = concept)
         return false
     }
-    if (ControlGet(,, "TToolBar3")) {
-      ControlClickDPIAdjusted(716, 14, "TToolBar3", "ahk_class TElWind")
-    } else if (ControlGet(,, "TToolBar2")) {
-      ControlClickDPIAdjusted(716, 14, "TToolBar2", "ahk_class TElWind")
-    }
-    ; ControlClickWinCoord(723, 57, "ahk_class TElWind")
+    UIA := UIA_Interface()
+    el := UIA.ElementFromHandle(WinExist("ahk_class TElWind"))
+    ; el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").Click("left")  ; doesn't work in background
+    pos := el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").GetCurrentPos("window")
+    ControlClickWinCoord(pos.x, pos.y, "ahk_class TElWind")
+    ; if (ControlGet(,, "TToolBar3")) {
+    ;   ControlClickDPIAdjusted(716, 14, "TToolBar3", "ahk_class TElWind")
+    ; } else if (ControlGet(,, "TToolBar2")) {
+    ;   ControlClickDPIAdjusted(716, 14, "TToolBar2", "ahk_class TElWind")
+    ; }
+    ; ControlClickWinCoordDPIAdjusted(723, 57, "ahk_class TElWind")
     if (concept) {
       WinWait, ahk_class TRegistryForm
       ; send = 1 means must send
@@ -511,11 +528,11 @@ class VimSM {
     } else if (ControlGet(,, "TToolBar2")) {
       ControlClickDPIAdjusted(548, 14, "TToolBar2", "ahk_class TElWind")
     }
-    ; ControlClickWinCoord(555, 57, "ahk_class TElWind")
+    ; ControlClickWinCoordDPIAdjusted(555, 57, "ahk_class TElWind")
   }
 
   ClickBrowserSourceButton() {
-    ControlClickWinCoord(294, 45, "ahk_class TBrowser")
+    ControlClickWinCoordDPIAdjusted(294, 45, "ahk_class TBrowser")
   }
 
   SetElParam(title:="", prio:="", template:="") {
@@ -553,6 +570,13 @@ class VimSM {
     while (WinExist("ahk_class TBrowser") || WinExist("ahk_class TMsgDialog"))
       WinClose
     ContLearn := this.IsLearning()
+    ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
+    if (ContLearn)
+      this.Learn()
+    return ret
+  }
+
+  CtrlF(text, ClearHighlight:=true, ToolTip:="Not found.") {
     this.PostMsg(144)
     WinWait, ahk_class TMyFindDlg
     ControlSetText, TEdit1, % text, ahk_class TMyFindDlg
@@ -563,7 +587,7 @@ class VimSM {
     if (WinExist("ahk_class TMsgDialog")) {
       while (WinExist("ahk_class TMsgDialog"))
         WinClose
-      ToolTip("No duplicates found.",, -3000)
+      ToolTip(ToolTip,, -3000)
       if (ClearHighlight)
         this.ClearHighlight()
     } else if (WinExist("ahk_class TBrowser")) {
@@ -573,8 +597,6 @@ class VimSM {
       WinActivate, ahk_class TBrowser
       ret := true
     }
-    if (ContLearn)
-      this.Learn()
     return ret
   }
 

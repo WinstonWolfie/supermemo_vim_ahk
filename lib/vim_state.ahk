@@ -145,7 +145,7 @@
       MouseMove, IniXCoord, IniYCoord  ; speed can't be 0 otherwise returning won't work reliably
       click up
       click  ; to uncheck the "fix"
-      ControlClickWinCoord(114, YCoord)
+      ControlClickWinCoordDPIAdjusted(114, YCoord)
       send {tab}+{tab 2}
       MouseMove, XCoordSaved, YCoordSaved, 0
     }

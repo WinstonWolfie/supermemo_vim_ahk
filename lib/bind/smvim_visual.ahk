@@ -219,8 +219,8 @@ CapsLock & z::  ; delete [...]
   }
   KeyWait Capslock
   if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/")) {
-    MsgBox, 4,, You sure you don't want to make the cloze inside square brackets?
-    IfMsgBox no
+    MsgBox, 4,, Your hint has a slash. Press yes to make it inside square brackets.
+    IfMsgBox yes
       inside := true
     WinWaitActive, ahk_class TElWind
   }
@@ -236,6 +236,7 @@ CapsLock & z::  ; delete [...]
   send !{left}
   ; sleep % (A_TickCount - SleepCalc) / 3 * 2
   Vim.SM.WaitFileLoad()  ; double insurance?
+  sleep 20
   send ^t
   if (!ClozeNoBracket && inside) {
     cloze := "[" . hint . "]"

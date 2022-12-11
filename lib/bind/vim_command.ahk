@@ -413,11 +413,14 @@ AlatiusALatinMacronizer:
   }
   run https://alatius.com/macronizer/
   WinWaitActive, ahk_group Browser
-  cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  cUIA.WaitPageLoad(,, 2000)
-  send {esc}{tab 2}
-  clip(Latin)
-  send {tab}{enter}
+  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  guiaBrowser.WaitPageLoad()
+  guiaBrowser.WaitElementExist("ControlType=Edit AND ProcessId=33468 AND FrameworkId=Chrome").SetValue(Latin)
+  ; while (!accText := Acc_Get("Object", "4.1.1.2.2.2.1.4.1.1",, "ahk_id " . WinGet()))
+  ;   sleep 40
+  ; accText.accValue(0) := Latin
+  guiaBrowser.WaitElementExist("ControlType=Button AND Name='Submit'").Click()
+  guiaBrowser := ""
 return
 
 SetBrowserPosition:
@@ -516,12 +519,13 @@ SciHub:
   }
   run https://sci-hub.hkvisa.net/
   WinWaitActive, ahk_group Browser
-  cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  cUIA.WaitPageLoad()
-  el := cUIA.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
+  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  guiaBrowser.WaitPageLoad()
+  el := guiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
   ValuePattern := el.GetCurrentPatternAs("Value")
   ValuePattern.SetValue(text)
-  cUIA.WaitElementExist("ControlType=Text AND Name='open'").Click()
+  guiaBrowser.WaitElementExist("ControlType=Text AND Name='open'").Click()
+  guiaBrowser := ""
 return
 
 YT:
@@ -570,10 +574,11 @@ ZLibrary:
   }
   run https://z-lib.org/
   WinWaitActive, ahk_group Browser
-  cUIA := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  cUIA.WaitPageLoad()
-  url := cUIA.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
-  cUIA.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
+  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  guiaBrowser.WaitPageLoad()
+  url := guiaBrowser.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
+  guiaBrowser.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
+  guiaBrowser := ""
 return
 
 ImportFirstFile:

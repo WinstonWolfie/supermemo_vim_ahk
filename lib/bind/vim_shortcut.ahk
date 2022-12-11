@@ -18,6 +18,7 @@
 ;   keywait shift
 ;   keywait ctrl
 ;   keywait alt
+;   Vim.SM.ChangeDefaultConcept()
 ; return
 
 ; Shortcuts
@@ -95,7 +96,7 @@ return
   KeyWait alt
   KeyWait l
   send {esc}
-  Vim.Browser.GetInfo()
+  Vim.Browser.GetInfo(false)
   source := Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : ""
   date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
   vidtime := Vim.Browser.VidTime ? "`nTime stamp: " . Vim.Browser.VidTime : ""
@@ -125,7 +126,7 @@ return
   ToolTip("Copied:`n" . TempClip)
 return
 
-^!c::  ; copy and save references
+^!c::  ; copy and register references
   ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
@@ -139,8 +140,11 @@ return
 return
 
 ^!m::  ; copy ti*m*e stamp
-  if (!Vim.Browser.GetVidtime()) {
+  ClipSaved := ClipboardAll
+  send {esc}
+  if (!Vim.Browser.GetVidtime(,, false)) {
     ToolTip("Not found.")
+    Clipboard := ClipSaved
     return
   }
   Clipboard := Vim.Browser.VidTime
@@ -153,7 +157,7 @@ return
     return
   }
   ; Everything in this hotkey runs in the background
-  if (!url := Vim.Browser.GetAddressBarUrl()) {
+  if (!url := Vim.Browser.GetUrl()) {
     ToolTip("Url not found.")
     return
   }
@@ -180,7 +184,6 @@ return
   send ^v
 return
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_group Browser") && WinExist("ahk_class TElWind"))
 ; Incremental web browsing
 ; +!x::
 ; !x::
@@ -190,19 +193,23 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
 ; Import current webpage to SuperMemo
 ^+!a::
 ^!a::
+  if (!WinExist("ahk_class TElWind")) {
+    ToolTip("SuperMemo hasn't opened yet.")
+    return
+  }
   if (WinExist("ahk_class TMsgDialog"))
     WinClose
   if (WinExist("ahk_id " . ImportGuiHwnd)) {
     WinActivate
     return
   }
-  Vim.Browser.Clear()
   IncWB := (IfContains(A_ThisHotkey, "x") || IfContains(A_ThisLabel, "IncrementalWebBrowsing"))
+  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   if (!IncWB) {
-    GetAddressBarUrlDone := false
-    SetTimer, GetAddressBarUrl, -1
+    GetUrlDone := false
+    SetTimer, GetUrl, -1
   }
-  PressYTShowMoreButtonDone := false, BrowserExe := WinGet("ProcessName")
+  PressYTShowMoreButtonDone := false
   SetTimer, PressYTShowMoreButton, -1
   ClipSaved := ClipboardAll
   ImportDlg := (IfContains(A_ThisHotkey, "+") || A_ThisLabel == "IncrementalWebBrowsingNewTopicWithPriorityAndConcept")
@@ -213,7 +220,7 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
   KeyWait ctrl
   KeyWait alt
   if (!IncWB) {
-    WaitVarExists(GetAddressBarUrlDone)
+    WaitVarExists(GetUrlDone)
     if (!vim.browser.url) {
       ToolTip("Web page not found.")
       return
@@ -284,7 +291,7 @@ SMImportButtonImport:
       goto ImportReturn
     }
   }
-  Vim.Browser.GetUrl(, false)
+  ; Vim.Browser.GetUrl(, false)
 
   WinClip.Clear()
   if (SMVidImport) {
@@ -322,8 +329,8 @@ Title : " . Vim.Browser.Title . "
 
   if (prio && RegExMatch(prio, "^\."))
     prio := "0" . prio
-  if (CloseTab)
-    send ^w
+  ; if (CloseTab)
+  ;   send ^w
   WinActivate, ahk_class TElWind
 
   if (concept) {
@@ -331,7 +338,7 @@ Title : " . Vim.Browser.Title . "
     if (!Vim.SM.ChangeDefaultConcept(concept,, ConceptBefore))
       concept := ""
     WinWaitClose, ahk_class TRegistryForm
-    WinActivate, ahk_class TElWind
+    WinWaitActive, ahk_class TElWind
   }
 
   if (SMVidImport) {
@@ -351,12 +358,16 @@ Title : " . Vim.Browser.Title . "
     Vim.SM.SetTitle(Vim.Browser.title)
   } else if ((IncWB || !vim.browser.title) && prio) {
     ; Cannot just send the priority, might send into the wrong window
-    Vim.SM.SetPrio(prio, true)
+    WinActivate, ahk_class TElWind
+    Vim.SM.SetPrio(prio,, true)
   } else if (vim.browser.title && prio) {
     WinActivate, ahk_class TElWind
     Vim.SM.SetElParam(vim.browser.title, prio)
   }
   Vim.SM.reload(, 1)
+  if (CloseTab)
+    guiaBrowser.CloseTab()
+
 
 SMImportGuiEscape:
 SMImportGuiClose:
@@ -371,19 +382,21 @@ ImportReturn:
   }
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
-  Clipboard := ClipSaved
+  If A_ThisLabel not contains SMImportGui
+    Clipboard := ClipSaved
 return
 
-GetAddressBarUrl:
-  vim.browser.url := Vim.Browser.GetAddressBarUrl()
-  GetAddressBarUrlDone := true
+GetUrl:
+  vim.browser.url := Vim.Browser.GetUrl()
+  GetUrlDone := true
 return
 
 ; SumatraPDF/Calibre/MS Word to SuperMemo
 #if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME")  ; SumatraPDF
                             || WinActive("ahk_exe ebook-viewer.exe")     ; Calibre (a epub viewer)
-                            || WinActive("ahk_group Browser")           ; browser group (chrome, edge, etc)
-                            || WinActive("ahk_exe WINWORD.exe")))        ; MS Word
+                            || WinActive("ahk_group Browser")            ; browser group (chrome, edge, etc)
+                            || WinActive("ahk_exe WINWORD.exe")          ; MS Word
+                            || WinActive("ahk_exe WinDjView.exe")))      ; djvu viewer
 ^+!x::
 ^!x::
 !+x::
@@ -418,6 +431,10 @@ return
       send {raw}a  ; need to be {raw}, not {text}; otherwise IME could interfere
     } else if (WinActive("ahk_exe WINWORD.exe")) {
       send ^!h
+    } else if (WinActive("ahk_exe WinDjView.exe")) {
+      send ^h
+      WinWaitActive, ahk_class #32770  ; create annotations
+      send {enter}
     }
     if (!WinExist("ahk_group SuperMemo")) {
       ToolTip("SuperMemo is not open; the text you selected is on your clipboard.")
@@ -530,7 +547,7 @@ return
   Vim.State.SetMode("Vim_Normal")
 return
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus())
+#if (Vim.State.Vim.Enabled && ((WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus()) || (WinActive("ahk_exe WinDjView.exe") && ControlGetFocus() != "Edit1")))
 !p::ControlFocus, Edit1  ; focus to page number field so you can enter a number
 ; ^f::
 ;   if (!selection := Copy()) {
@@ -542,10 +559,16 @@ return
 ;   send {enter}
 ; return
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && ControlGetFocus() == "Edit1")
+#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) && ControlGetFocus() == "Edit1")
 !p::
   ControlSetText, Edit1, % Clipboard
   send {enter}
+return
+
+#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) && page := ControlGetText("Edit1"))
+^!p::
+  Clipboard := "p" . page
+  ToolTip("Copied p" . page)
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && ControlGetFocus() == "Edit2")
@@ -554,16 +577,19 @@ return
   send {enter}
 return
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && page := ControlGetText("Edit1"))
-^!p::
-  Clipboard := "p" . page
-  ToolTip("Copied p" . page)
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class #32770 ahk_exe WinDjView.exe"))  ; find window
+^f::
+  ControlSetText, Edit1, % Clipboard
+  send {enter}
 return
 
 ; Syncing page number / marker
 #if (Vim.State.Vim.Enabled
   && !Vim.SM.IsPassive("", -1)  ; current concept doesn't matter
-  && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser"))
+  && (WinActive("ahk_class SUMATRA_PDF_FRAME")
+   || WinActive("ahk_exe ebook-viewer.exe")
+   || WinActive("ahk_group Browser")
+   || WinActive("ahk_exe WinDjView.exe"))
   && WinExist("ahk_class TElWind"))
 !+s::
 ^!s::
@@ -571,8 +597,10 @@ return
   ClipSaved := ClipboardAll
   KeyWait alt
   KeyWait ctrl
+  if (WinActive("ahk_class SUMATRA_PDF_FRAME") && IfContains(ControlGetFocus(), "Edit"))
+    send {esc}
   marker := trim(copy(false), " `t`r`n")
-  if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
+  if (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) {
     marker := marker ? marker : "p" . ControlGetText("Edit1")
     if (!marker) {
       ToolTip("No text selected and page number not found.")
@@ -585,7 +613,7 @@ return
       if (!ErrorLevel)
         send s
     }
-  } else if (WinActive("ahk_exe ebook-viewer.exe") || WinActive("ahk_group Browser")) {
+  } else {
     if (!marker) {
       if (WinActive("ahk_group Browser"))
         goto BrowserSyncTime
@@ -594,10 +622,10 @@ return
       return
     }
     if (IfContains(A_ThisHotkey, "^")) {
-      if (WinActive("ahk_exe ebook-viewer.exe")) {
-        send !{f4}
-      } else if (WinActive("ahk_class Browsers")) {
+      if (WinActive("ahk_class Browsers")) {
         send ^w
+      } else {
+        send !{f4}
       }
     }
   }
@@ -849,3 +877,19 @@ MatchHiborLink(text) {
   RegExMatch(text, "s)推荐给朋友:\r\n\K.*?(?=  )", v)
   return v
 }
+
+#if (Vim.State.Vim.Enabled && hwnd := WinActive("ahk_exe Discord.exe"))
+^!l::  ; go live
+  if (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.3.1.2.1.1.2.1.2.1.6",, "ahk_id " . hwnd))
+    return
+  accBtn.accDoDefaultAction(0)
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.2.1.1.3",, "ahk_id " . hwnd))
+    sleep 40
+  accBtn.accDoDefaultAction(0)
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.2.1.2.1.1",, "ahk_id " . hwnd))
+    sleep 40
+  accBtn.accDoDefaultAction(0)
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.3.1",, "ahk_id " . hwnd))
+    sleep 40
+  accBtn.accDoDefaultAction(0)
+return

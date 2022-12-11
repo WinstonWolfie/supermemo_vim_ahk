@@ -199,10 +199,10 @@ o::
   if (LearningState == 1) {
     Vim.SM.GoToTopEl()
   } else if (LearningState == 2) {
-    Vim.SM.Reload()
+    Vim.SM.Reload(, 1)
   }
   Vim.State.SetMode("Insert")
-  send ^o  ; favourites
+  Vim.SM.PostMsg(3)  ; favourites
   Vim.State.BackToNormal := 1
 return
 
@@ -231,7 +231,7 @@ Return
 ; Plan/tasklist window
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan())
 s::
-  ; ControlClickWinCoord(253, 48)  ; *s*witch plan
+  ; ControlClickWinCoordDPIAdjusted(253, 48)  ; *s*witch plan
   accButton := Acc_Get("Object", "4.1.4.1.4.1.4",, "ahk_id " . WinGet())
   accButton.accDoDefaultAction(2)
   ControlFocus, Edit1
@@ -240,7 +240,7 @@ return
 b::send !b  ; begin
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingTask())
 s::
-  ; ControlClickWinCoord(153, 52)  ; *s*witch tasklist
+  ; ControlClickWinCoordDPIAdjusted(153, 52)  ; *s*witch tasklist
   accButton := Acc_Get("Object", "4.3.4.1.4",, "ahk_id " . WinGet())
   accButton.accDoDefaultAction(2)
   ControlFocus, Edit1

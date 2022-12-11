@@ -23,6 +23,7 @@ return
 NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
+  KeyWait shift
   if (Vim.SM.IsEditingPlainText())
     return
 	send ^{f7}  ; save read point
@@ -280,6 +281,27 @@ SMSetLinkFromClipboard:
     Vim.Browser.Clear()
 return
 
+m::
+  Vim.State.SetMode("Vim_Normal")
+  send !{f10}fe  ; open registry editor
+  WinWait, ahk_class TInputDlg
+  ControlGetText, Ref, TMemo1, ahk_class TInputDlg
+  if (Ref ~= "#Comment: .*#audio") {
+    ControlSend, TMemo1, {esc}, ahk_class TInputDlg
+    return
+  }
+  Ref := RegExReplace(Ref, "(#Comment: |$)", "`r`n#Comment: #audio ",, 1)
+  ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
+  ControlSend, TMemo1, {ctrl down}{enter}{ctrl up}, ahk_class TInputDlg  ; submit
+return
+
+d::
+  Vim.State.SetMode("Vim_Normal")
+  if (!Vim.SM.CtrlF("#audio"))
+    return
+  goto SMLearnChildActiveBrowser
+return
+
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 SMLearnChild:
 c::  ; learn child
@@ -289,6 +311,7 @@ c::  ; learn child
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox
   WinWaitActive, ahk_class TBrowser
+SMLearnChildActiveBrowser:
   send {AppsKey}co
   WinWaitActive, ahk_class TProgressBox,, 1
   if (!ErrorLevel)

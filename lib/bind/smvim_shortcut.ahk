@@ -88,20 +88,20 @@ return
 ^!t::
   KeyWait alt
   KeyWait ctrl
-  if (Vim.SM.IsEditingText())
+  if (t := Vim.SM.IsEditingText())
     send {right}  ; so no text is selected
   Vim.SM.SetTitle()
+  if (t)
+    ControlSend,, {esc}, ahk_class TElWind
 return
 
 ^!f::  ; use IE's search
-  if (Vim.SM.IsEditingHTML()) {
-    send {right}{left}{ctrl down}cf{ctrl up}  ; discovered by Harvey from the SuperMemo.wiki Discord server
-  } else if (!Vim.SM.IsEditingText()) {
+  if (!Vim.SM.IsEditingText()) {
     send ^t
     Vim.SM.WaitTextFocus()
-    if (Vim.SM.IsEditingHTML())
-      send {right}{left}{ctrl down}cf{ctrl up}
   }
+  if (Vim.SM.IsEditingHTML())
+    send {right}{left}{ctrl down}cf{ctrl up}  ; discovered by Harvey from the SuperMemo.wiki Discord server
 return
 
 ~^enter::
@@ -149,6 +149,13 @@ SMCtrlN:
 return
 
 ~^+m::SetDefaultKeyboard(0x0409)  ; english-US	
+
+^!m::
+  UIA := UIA_Interface()
+  el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
+  StartBtn := el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'")
+  StartBtn.GetCurrentPatternAs("Invoke").Invoke()
+return
 
 ; More intuitive inter-element linking, inspired by Obsidian
 ; 1. Go to the element you want to link to and press ctrl+alt+g
@@ -291,6 +298,21 @@ return
 ^!b::
   send !b
   Vim.SM.Command("")
+  WinWait, ahk_class TMsgDialog,, 0
+  if (!ErrorLevel) {
+    WinActivate
+    send y
+    Vim.SM.Command("")
+    WinActivate, ahk_class TPlanDlg
+  } else {
+    WinActivate, ahk_class TPlanDlg
+    return
+  }
+  WinWait, ahk_class TMsgDialog,, 0
+  if (!ErrorLevel) {
+    WinActivate
+    send y
+  }
   WinActivate, ahk_class TPlanDlg
 return
 
@@ -347,8 +369,8 @@ PlanAddButtonAppend:
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
-!+d::ControlClickWinCoord(250, 66)
-!+s::ControlClickWinCoord(173, 67)
+!+d::ControlClickWinCoordDPIAdjusted(250, 66)
+!+s::ControlClickWinCoordDPIAdjusted(173, 67)
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg"))
 ; Task value script, modified from Naess's priority script
@@ -484,6 +506,8 @@ BrowserSyncTime:
   sync := (A_ThisLabel == "BrowserSyncTime")
   KeyWait alt
   KeyWait ctrl
+  KeyWait shift
+  send {esc}
   if (WinActive("ahk_group Browser") && !Vim.Browser.VidTime) {
     hwnd := WinGet()
     Vim.Browser.GetTitleSourceDate(!sync, false)  ; get title for checking later
@@ -505,9 +529,10 @@ BrowserSyncTime:
           goto BrowserSyncReturn
       }
     }
+    ; KeyWait enter  ; without this script may get stuck
+    WinActivate % "ahk_id " . hwnd
     if A_ThisHotkey contains ^  ; hotkeys with ctrl will close the tab
       send ^w
-    KeyWait enter  ; without this script may get stuck
   } else if (!Vim.Browser.VidTime && !IfContains(A_ThisHotkey, "``")) {
     if (!Vim.SM.IsEditingText())  ; without this script may get stuck
       send q
@@ -561,7 +586,7 @@ BrowserSyncTime:
     send !{f10}fe
     WinWaitActive, ahk_class TInputDlg
     ControlGetText, Ref, TMemo1
-    Ref := RegExReplace(Ref, "(#Comment: .*|$)", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
+    Ref := RegExReplace(Ref, "(#Comment: [0-9:]+|$)", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
     ControlSetText, TMemo1, % Ref
     send !{enter}
   }

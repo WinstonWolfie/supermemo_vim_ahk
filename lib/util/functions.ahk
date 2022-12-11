@@ -433,6 +433,17 @@ WinWaitTitleChange(OriginalTitle:="", TimeOut:=0, WinTitle:="A") {
 	}
 }
 
+WinWaitTitle(title, TimeOut:=0, WinTitle:="A") {
+	StartTime := A_TickCount
+	loop {
+		if (WinGetTitle(WinTitle) == title) {
+			return true
+		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+			return false
+		}
+	}
+}
+
 Click(XCoord, YCoord, WhichButton:="") {
 	MouseDelay := A_MouseDelay
 	MouseGetPos, XSaved, YSaved
@@ -452,6 +463,11 @@ ClickDPIAdjusted(XCoord, YCoord) {
 }
 
 ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
+	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+	ControlClick, % "x" . XCoord . " y" . YCoord, % WinTitle,,,, NA
+}
+
+ControlClickWinCoordDPIAdjusted(XCoord, YCoord, WinTitle:="") {
 	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
 	ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
 }
@@ -510,9 +526,11 @@ RevArr(arr) {
 	return newarr
 }
 
-WaitVarExists(v, timeout:=0) {
+WaitVarExists(v, timeout:=0, interval:=0) {
 	StartTime := A_TickCount
 	loop {
+		if (interval)
+			sleep % interval
 		if (v) {
 			return true
 		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {

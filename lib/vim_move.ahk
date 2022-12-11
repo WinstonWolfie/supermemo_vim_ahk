@@ -296,23 +296,6 @@
     }
   }
 
-  HandleHTMLSelection(RestoreClip:=true) {
-    if (this.Vim.IsHTML()) {
-      if (this.Vim.SM.IsEditingHTML()) {
-        selection := copy(RestoreClip)
-        ; if (InStr(selection, "`r`n"))
-        ;   send .= "+{left}"
-      ; } else {
-      ;   send .= "+{left}"
-      }
-    }
-    ; if (send) {
-    ;   send % send
-    ; } else {
-      return selection
-    ; }
-  }
-
   Move(key="", repeat:=false, NoInitialize:=false, NoFinalize:=false, ForceNoShift:=false, RestoreClip:=true) {
     if (!repeat && !NoInitialize)
       this.MoveInitialize(key, RestoreClip)
@@ -460,8 +443,6 @@
             }
             DetectionStr := StrReverse(DetectionStr)
             pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence, true)
-            if (pos)
-              pos--
             send % "{right}{left " . pos . "}"
           }
         } else if (this.shift == 1) {
@@ -541,12 +522,10 @@
           }
           if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {  ; searching forward
             send +{end}
-            selection := this.HandleHTMLSelection(false)
-            StrAfter := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
+            StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
               send +{right}+{end}
-              selection := this.HandleHTMLSelection(false)
-              StrAfter := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
+              StrAfter := this.Vim.ParseLineBreaks(copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)  ; what's selected after +{end}
@@ -605,12 +584,10 @@
           }
           if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {  ; searching forward
             send +{end}
-            selection := this.HandleHTMLSelection(false)
-            StrAfter := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
+            StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
               send +{right}+{end}
-              selection := this.HandleHTMLSelection(false)
-              StrAfter := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
+              StrAfter := this.Vim.ParseLineBreaks(copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)  ; what's selected after +end
@@ -1650,10 +1627,10 @@
   SMClickSyncButton() {
     if (WinActive("ahk_class TContents")) {
       ClickDPIAdjusted(295, 50)
-      ; ControlClickWinCoord(295, 50)
+      ; ControlClickWinCoordDPIAdjusted(295, 50)
     } else if (WinActive("ahk_class TBrowser")) {
       ClickDPIAdjusted(638, 46)
-      ; ControlClickWinCoord(638, 46)
+      ; ControlClickWinCoordDPIAdjusted(638, 46)
     }
   }
 
