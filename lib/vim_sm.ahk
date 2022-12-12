@@ -523,11 +523,15 @@ class VimSM {
   }
 
   ClickElWindSourceBtn() {
-    if (ControlGet(,, "TToolBar3")) {
-      ControlClickDPIAdjusted(548, 14, "TToolBar3", "ahk_class TElWind")
-    } else if (ControlGet(,, "TToolBar2")) {
-      ControlClickDPIAdjusted(548, 14, "TToolBar2", "ahk_class TElWind")
-    }
+    UIA := UIA_Interface()
+    el := UIA.ElementFromHandle(WinExist("ahk_class TElWind"))
+    pos := el.FindFirstBy("ControlType=Button AND Name='ReferenceBtn'").GetCurrentPos("window")
+    ControlClickWinCoord(pos.x, pos.y, "ahk_class TElWind")
+    ; if (ControlGet(,, "TToolBar3")) {
+    ;   ControlClickDPIAdjusted(548, 14, "TToolBar3", "ahk_class TElWind")
+    ; } else if (ControlGet(,, "TToolBar2")) {
+    ;   ControlClickDPIAdjusted(548, 14, "TToolBar2", "ahk_class TElWind")
+    ; }
     ; ControlClickWinCoordDPIAdjusted(555, 57, "ahk_class TElWind")
   }
 
@@ -571,7 +575,7 @@ class VimSM {
       WinClose
     ContLearn := this.IsLearning()
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
-    if (ContLearn)
+    if (ContLearn && !ret)
       this.Learn()
     return ret
   }
