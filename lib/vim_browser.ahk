@@ -192,12 +192,12 @@ class VimBrowser {
     WinClip.Clear()
     send ^a^{ins}
     ClipWait % this.FullPageCopyTimeout
+    send {esc}
     text := Clipboard
     if (BL)
       MouseMove, XSaved, YSaved
     if (RestoreClip)
       Clipboard := ClipSaved
-    send {esc}
     return text
   }
 

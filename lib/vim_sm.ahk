@@ -436,7 +436,11 @@ class VimSM {
     MouseGetPos, x, y
     MouseMove, 0, 0, 0
     StartTime := A_TickCount
-    StatText := WinGetText("ahk_class TStatBar")
+    if (!StatText := WinGetText("ahk_class TStatBar")) {
+      this.PostMsg(313)
+      StatBar := 0
+      StatText := WinTextWaitExist("ahk_class TStatBar")
+    }
     ControlTextWaitChange("ahk_class TStatBar", StatText,,,,, timeout)
     match := "^(\s+)?(Priority|Int|Downloading|\([0-9]+ item\(s\)" . add . ")"
     loop {
@@ -450,6 +454,8 @@ class VimSM {
     }
     MouseMove, x, y, 0
     CoordMode, Mouse, % PrevCoordModeMouse
+    if (StatBar == 0)
+      this.PostMsg(313)
     return ret
   }
 
@@ -574,6 +580,7 @@ class VimSM {
     while (WinExist("ahk_class TBrowser") || WinExist("ahk_class TMsgDialog"))
       WinClose
     ContLearn := this.IsLearning()
+    text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if (ContLearn && !ret)
       this.Learn()
@@ -681,6 +688,10 @@ class VimSM {
       this.ClearHighlight(false)
       if (WinExist("ahk_class TMyFindDlg"))  ; clears search box window
         WinClose
+      this.Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
+      ; WinActivate, ahk_class TElWind
+      ; if (!ControlGetFocus("ahk_class TElWind"))  ; sometimes SM doesn't focus to anything after the search
+      ;   ControlFocus, % CurrFocus, ahk_class TElWind
       return true
     }
   }

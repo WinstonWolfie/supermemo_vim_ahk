@@ -61,7 +61,14 @@ alt::  ; for access keys
   Vim.State.SetMode("Insert")
 return
 
+~RButton::  ; this button is evil and sacrilegious to the purity of Vim. Adding it anyway since someone might need it in the adjusting period
 ~AppsKey::Vim.State.SetMode("Insert")
+
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class Notepad"))
+~^h::
+  if (ControlFocusWait("Windows.UI.Input.InputSite.WindowClass1",,,,, 500))  ; search window
+    Vim.State.SetMode("Insert")
+return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual"))
 ~#a::Vim.State.SetMode("Insert")  ; text editor everywhere shortcut

@@ -16,9 +16,17 @@ Return
 Return
 
 ; Editing HTML
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML())
-^c::send {home}>{space}  ; add comment; useful when replying emails
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
+^/::send {home}//{space}
++!a::send /*  */{left 3}
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.leader)
+q::
+  send {home}>{space}  ; add comment; useful when replying emails
+  Vim.State.SetMode()
+return
+
+u::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
 +x::
 x::  ; open hyperlink in current caret position (Open in *n*ew window)
@@ -29,16 +37,14 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel) {  ; end of line
     send +{right}^c{right}
-    ClipWait, LongCopy ? 0.6 : 0.2, True
   } else if (Clipboard ~= "\s") {
     WinClip.Clear()
     send +{left}^c{right}
-    ClipWait, LongCopy ? 0.6 : 0.2, True
   }
-  LinkMatch := "(<A((.|\r\n)*)href="")\K[^""]+"
+  ClipWait, LongCopy ? 0.6 : 0.2, True
+  LinkMatch := "(<A((.|\r\n)*)href="")\K[^""]+", RunLink := false
   If (Vim.HTML.ClipboardGet_HTML(data)) {
     RegExMatch(data, LinkMatch, CurrLink)
-    RunLink := false
     if (!CurrLink) {
       WinClip.Clear()
       send +{left}^c{right}
@@ -55,21 +61,27 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
       RunLink := true
     }
     if (RunLink) {
-      if (InStr(CurrLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
-        RegExMatch(CurrLink, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
-        send % "^g" . ElementNumber . "{enter}"
-      } else {
-        if (InStr(A_ThisHotkey, "+")) {
-          ; run % "iexplore.exe " . CurrLink  ; RIP IE
-          Vim.Browser.RunInIE(CurrLink)
+      if (A_ThisHotkey == "u") {
+        Clipboard := CurrLink
+        ToolTip("Copied " . CurrLink)
+      } else if (IfContains(A_ThisHotkey, "x")) {
+        if (InStr(CurrLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
+          RegExMatch(CurrLink, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
+          send % "^g" . ElementNumber . "{enter}"
         } else {
-          run % CurrLink
+          if (InStr(A_ThisHotkey, "+")) {
+            ; run % "iexplore.exe " . CurrLink  ; RIP IE
+            Vim.Browser.RunInIE(CurrLink)
+          } else {
+            run % CurrLink
+          }
         }
       }
     }
   }
   Vim.State.SetMode()
-  Clipboard := ClipSaved
+  if (A_ThisHotkey != "u" && RunLink)
+    Clipboard := ClipSaved
 return
 
 s::  ; gs: go to source

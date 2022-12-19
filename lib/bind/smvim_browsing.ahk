@@ -192,14 +192,16 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^o::
+  KeyWait ctrl
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 o::
   SetDefaultKeyboard(0x0409)  ; english-US	
-  LearningState := Vim.SM.IsLearning()
-  if (LearningState == 1) {
+  l := Vim.SM.IsLearning()
+  if (l == 1) {
     Vim.SM.GoToTopEl()
-  } else if (LearningState == 2) {
-    Vim.SM.Reload(, 1)
+  } else if (l == 2) {
+    Vim.SM.Reload()
+    Vim.SM.WaitFileLoad()
   }
   Vim.State.SetMode("Insert")
   Vim.SM.PostMsg(3)  ; favourites

@@ -197,21 +197,19 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
     ToolTip("SuperMemo hasn't opened yet.")
     return
   }
-  if (WinExist("ahk_class TMsgDialog"))
-    WinClose
   if (WinExist("ahk_id " . ImportGuiHwnd)) {
     WinActivate
     return
   }
-  IncWB := (IfContains(A_ThisHotkey, "x") || IfContains(A_ThisLabel, "IncrementalWebBrowsing"))
   guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   if (!IncWB) {
     GetUrlDone := false
     SetTimer, GetUrl, -1
   }
-  PressYTShowMoreButtonDone := false
-  SetTimer, PressYTShowMoreButton, -1
+  if (WinExist("ahk_class TMsgDialog"))
+    WinClose
   ClipSaved := ClipboardAll
+  IncWB := (IfContains(A_ThisHotkey, "x") || IfContains(A_ThisLabel, "IncrementalWebBrowsing"))
   ImportDlg := (IfContains(A_ThisHotkey, "+") || A_ThisLabel == "IncrementalWebBrowsingNewTopicWithPriorityAndConcept")
   hwnd := WinGet()
   CollName := vim.sm.GetCollName(), ConceptBefore := Vim.SM.GetCurrConcept()
@@ -219,8 +217,10 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
   KeyWait shift
   KeyWait ctrl
   KeyWait alt
+  WaitVarExists(GetUrlDone)
+  PressYTShowMoreButtonDone := false
+  SetTimer, PressYTShowMoreButton, -1
   if (!IncWB) {
-    WaitVarExists(GetUrlDone)
     if (!vim.browser.url) {
       ToolTip("Web page not found.")
       return
@@ -231,10 +231,6 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
   }
   WinClose, ahk_class TBrowser
   WinActivate % "ahk_id " . hwnd
-  ; Have to put below WinActivate, otherwise would make element window focus again
-  ; Cannot use SetTimer for SM.ClearUp(), exceeds recursion limit
-  ; ClearUp := Vim.SM.ClearUp
-  ; SetTimer, % ClearUp, -1
   IfMsgBox, no
     goto ImportReturn
 
@@ -284,7 +280,7 @@ SMImportButtonImport:
     send ^a^c
     ClipWait % Vim.Browser.FullPageCopyTimeout
     Vim.HTML.ClipboardGet_HTML(clipped)
-    RegExMatch(clipped, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", HTMLText)
+    RegExMatch(clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
     send {esc}
     if (!HTMLText) {
       ToolTip("Text not found.")
@@ -375,10 +371,14 @@ SMImportGuiClose:
     gui destroy
 ImportReturn:
   Vim.SM.ClearHighlight()
-  if (A_ThisLabel == "SMImportButtonImport" || A_ThisLabel == "^!a") {
-    ; Without this sometimes SM would focus to the window menu
+  if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
+    ; Without this sometimes SM would focus to context menu
     send {AltUp}  ; reload would send alt down
-    Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
+    if (WinActive("ahk_class TElWind")) {
+      Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
+    } else {
+      WinActivate, ahk_class TElWind
+    }
   }
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
@@ -500,7 +500,7 @@ ExtractToSM:
     Clipboard := extract
     ClipWait
     Vim.HTML.ClipboardGet_HTML(data)
-    RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", data)
+    RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
     WinClip.Clear()
     Clipboard := Vim.HTML.Clean(data, true)
     ClipWait
@@ -549,15 +549,13 @@ return
 
 #if (Vim.State.Vim.Enabled && ((WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus()) || (WinActive("ahk_exe WinDjView.exe") && ControlGetFocus() != "Edit1")))
 !p::ControlFocus, Edit1  ; focus to page number field so you can enter a number
-; ^f::
-;   if (!selection := Copy()) {
-;     send ^f
-;     return
-;   }
-;   send ^f
-;   ControlSetText, Edit2, % selection
-;   send {enter}
-; return
+^!f::
+  if (!selection := Copy())
+    return
+  ControlSetText, Edit2, % selection
+  ControlFocus, Edit2
+  send {enter 2}^a
+return
 
 #if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) && ControlGetFocus() == "Edit1")
 !p::
@@ -576,6 +574,8 @@ return
   ControlSetText, Edit2, % Clipboard
   send {enter}
 return
+
+^!f::send {enter}^a
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class #32770 ahk_exe WinDjView.exe"))  ; find window
 ^f::
@@ -597,6 +597,7 @@ return
   ClipSaved := ClipboardAll
   KeyWait alt
   KeyWait ctrl
+  KeyWait shift
   if (WinActive("ahk_class SUMATRA_PDF_FRAME") && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := trim(copy(false), " `t`r`n")
@@ -839,7 +840,7 @@ return
     MsgBox, 4,, Continue import?
   WinActivate % "ahk_id " . hwnd
   WinClose, ahk_class TBrowser
-  IfMsgBox, no
+  IfMsgBox no
     goto HBImportReturn
   if (prio := IfContains(A_ThisHotkey, "+")) {
     InputBox, prio, Priority, Enter extract priority.,, 196, 128

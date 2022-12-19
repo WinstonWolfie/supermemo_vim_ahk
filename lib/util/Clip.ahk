@@ -16,7 +16,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, CopyMethod:=0) {
     if (!ErrorLevel) {
       if (HTML) {
         Vim.HTML.ClipboardGet_HTML(clipped)
-        RegExMatch(clipped, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", clipped)
+        RegExMatch(clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", clipped)
       } else {
         Clipped := Clipboard
       }

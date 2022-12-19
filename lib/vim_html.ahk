@@ -65,10 +65,10 @@ class VimHTML {
   {
     Html     := "Version:0.9`r`nStartHTML:00000000`r`nEndHTML:00000000`r`nStartFragment"
         . ":00000000`r`nEndFragment:00000000`r`n<!DOCTYPE>`r`n<html>`r`n<head>`r`n"
-              ; . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->`r`n"
-              . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment -->"
-                . HtmlBody . "<!--EndFragment -->`r`n</body>`r`n</html>"
-                ; . HtmlBody . "`r`n<!--EndFragment -->`r`n</body>`r`n</html>"
+              ; . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment-->`r`n"
+              . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment-->"
+                . HtmlBody . "<!--EndFragment-->`r`n</body>`r`n</html>"
+                ; . HtmlBody . "`r`n<!--EndFragment-->`r`n</body>`r`n</html>"
 
     Bytes    := StrPut(Html, "utf-8")
     hMemHTM  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",Bytes+4, "Ptr")

@@ -86,10 +86,14 @@ return
 VimCommanderButtonExecute:
   gui submit
   gui destroy
-  if (InStr("|" . list . "|", "|" . command . "|")) {
+  if (IfContains("|" . list . "|", "|" . command . "|")) {
     command := RegExReplace(command, "\W")
   } else {
-    run % "https://www.google.com/search?q=" . command
+    if (command ~= "^https?:\/\/") {
+      run % command
+    } else {
+      run % "https://www.google.com/search?q=" . command
+    }
     return
   }
   Vim.State.SetMode("Insert")
@@ -287,7 +291,7 @@ CopyAsHTML:
     return
   }
   if (Vim.HTML.ClipboardGet_HTML(data)) {
-    RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", data)
+    RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
     Clipboard := data
   }
   ToolTip("Copied`n`n" . data)
@@ -386,7 +390,7 @@ ShowSelectionAsHTML:
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (Vim.HTML.ClipboardGet_HTML(data)) {
-    RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", data)
+    RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
     MsgBox, 4,, % "Copy?`n`n" . data
     IfMsgBox, yes, {
       Clipboard := data
@@ -415,7 +419,7 @@ AlatiusALatinMacronizer:
   WinWaitActive, ahk_group Browser
   guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   guiaBrowser.WaitPageLoad()
-  guiaBrowser.WaitElementExist("ControlType=Edit AND ProcessId=33468 AND FrameworkId=Chrome").SetValue(Latin)
+  guiaBrowser.WaitElementExist("ControlType=Edit AND FrameworkId=Chrome").SetValue(Latin)
   ; while (!accText := Acc_Get("Object", "4.1.1.2.2.2.1.4.1.1",, "ahk_id " . WinGet()))
   ;   sleep 40
   ; accText.accValue(0) := Latin
@@ -600,7 +604,7 @@ ImportFirstFile:
   MsgBox, 3,, Do you want to also delete the file?
   IfMsgBox Cancel
     return
-  WinWaitActive, ahk_class TFileBrowser
+  WinActivate, ahk_class TFileBrowser
   send {enter}
   WinWaitActive, ahk_class TInputDlg
   send {enter}

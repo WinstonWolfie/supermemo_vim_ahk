@@ -183,7 +183,7 @@ Input(Options:="", EndKeys:="", MatchList:="") {
 	Input, v, % Options, % EndKeys, % MatchList
 	Return, v
 }
-InputBox(Title:="", Prompt:="", HIDE:="", Width:="", Height:="", X:="", Y:="", Font:="", Timeout:="", Default:="") {
+InputBox(Title:="", Prompt:="", HIDE:="", Width:="192", Height:="128", X:="", Y:="", Font:="", Timeout:="", Default:="") {
 	InputBox, v, % Title, % Prompt, % HIDE, % Width, % Height, % X, % Y, , % Timeout, % Default
 	Return, v
 }
@@ -287,6 +287,28 @@ ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", Exclu
   StartTime := A_TickCount
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) != Control) {
+      Return True
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      Return False
+    }
+  }
+}
+
+WinTextWaitExist(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+  StartTime := A_TickCount
+  Loop {
+    if (text := WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)) {
+      Return text
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      Return False
+    }
+  }
+}
+
+ControlTextWaitExist(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+  StartTime := A_TickCount
+  Loop {
+    if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False

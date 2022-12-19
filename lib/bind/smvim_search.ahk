@@ -1,27 +1,19 @@
 CapsLock & alt::return  ; so you can press CapsLock first and alt without triggering context menue
 #if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind"))
-^/::  ; visual
-^<+/::  ; visual and start from the beginning
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (RShiftState := GetKeyState("RShift") || LShiftState := GetKeyState("LShift")))
 ?::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
-; >+/:  ; caret on the right
-; <+/:  ; start from top
 !/::  ; followed by a cloze
 ^!/::  ; followed by a cloze and stays in clozed item
-<+!/::  ; followed by a cloze hinter and start from top
 +!/::  ; followed by a cloze hinter
 ^+!/::  ; also cloze hinter but stays in clozed item
 /::  ; better search
-  CtrlState := InStr(A_ThisHotkey, "^")  ; visual
-  ShiftState := InStr(A_ThisHotkey, "+")  ; caret on the right
-  if (!InStr(A_ThisHotkey, "?"))
-    LShiftState := InStr(A_ThisHotkey, "<+")  ; start from top
-  AltState := InStr(A_ThisHotkey, "!")  ; followed by a cloze
+  ShiftState := IfContains(A_ThisHotkey, "+,?")
+  AltState := IfContains(A_ThisHotkey, "!")  ; followed by a cloze
+  CtrlState := IfContains(A_ThisHotkey, "^")
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && AltState := GetKeyState("alt") && CtrlState := GetKeyState("ctrl"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && AltState := GetKeyState("alt") && ShiftState := GetKeyState("shift"))
 CapsLock & /::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && CtrlState := GetKeyState("ctrl"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && ShiftState := GetKeyState("shift"))
 CapsLock & /::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && AltState := GetKeyState("alt"))
 CapsLock & /::
@@ -46,13 +38,17 @@ CapsLock & /::
   CurrFocus := ControlGetFocus("ahk_class TElWind")
   if (AltState) {
     gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
-  } else if (CtrlState) {
+  } else if (ShiftState) {
     gui, Search:Add, Text,, &Find text:`n(will go to visual mode after the search)
   } else {
     gui, Search:Add, Text,, &Find text:
   }
   gui, Search:Add, Edit, vUserInput w196, % VimLastSearch
   gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
+  if (AltState) {
+    gui, Search:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), S&tay in clozed item
+    gui, Search:Add, CheckBox, % "vShiftState " . (ShiftState ? "checked" : ""), Cloze &hinter
+  }
   gui, Search:Add, Button, default, &Search
   gui, Search:Show,, Search
 return
@@ -102,9 +98,9 @@ SMSearchAgain:
       InputLen := StrLen(UserInput)
       if (RShiftState) {
         send % "{right " . InputLen . "}"
-      } else if (CtrlState || AltState) {
+      } else if (ShiftState || AltState) {
         send % "+{right " . InputLen . "}"
-        if (CtrlState) {
+        if (ShiftState) {
           Vim.State.SetMode("Vim_Visual")
         } else if (AltState) {
           send !z
@@ -130,7 +126,7 @@ SMSearchAgain:
     if (WholeWord)
       Control, Check,, TCheckBox2, ahk_class TMyFindDlg  ; match whole word
     Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
-    send {enter}
+    ControlSend,, {enter}, ahk_class TMyFindDlg
     if (Vim.State.n) {
       send % "{f3 " . Vim.State.n - 1 . "}"
       Vim.State.n := 0
@@ -139,7 +135,7 @@ SMSearchAgain:
     if (!AltState) {
       if (RShiftState) {
         send {right}  ; put caret on right of searched text
-      } else if (CtrlState) {
+      } else if (ShiftState) {
         Vim.State.SetMode("Vim_Visual")
       } else {  ; all modifier keys are not pressed
         send {left}  ; put caret on left of searched text
@@ -147,9 +143,6 @@ SMSearchAgain:
     }
     if (!Vim.SM.HandleF3(2))
       return
-    WinActivate, ahk_class TElWind
-    if (!ControlGetFocus("ahk_class TElWind"))  ; sometimes SM doesn't focus to anything after the search
-      ControlFocus, % CurrFocus, ahk_class TElWind
     if (AltState) {
       if (!CtrlState && !ShiftState && !CapsState) {
         send !z

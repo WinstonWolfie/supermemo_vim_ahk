@@ -40,8 +40,8 @@ Return
         Vim.Move.SelectParagraphDown()
         Vim.State.SetMode("Vim_VisualParagraphFirst")
       }
-    } else if (Vim.SM.IsEditingPlainText()) {
-      gosub VisualLine
+    } else if (WinActive("ahk_group SuperMemo")) {
+      goto VisualLine
     } else {
       if (!WinActive("ahk_exe notepad++.exe"))  ; notepad++ requires alt down
         send ^b

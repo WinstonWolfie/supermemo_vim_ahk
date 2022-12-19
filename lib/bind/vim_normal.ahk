@@ -33,10 +33,12 @@ Return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.Move.LastKey)
 ; Period
-; .::send +^{Right}{BS}^v  ; original vim_ahk; don't know what that means
+; .::send +^{Right}{BS}^v  ; original vim_ahk; no idea what that means
 .::
   Vim.State.n := Vim.Move.LastN
   Vim.State.Mode := Vim.Move.LastMode
+  if (Vim.Move.LastFtsChar)
+    Vim.State.FtsChar := Vim.Move.LastFtsChar
   if (Vim.Move.LastInOrOut == "Inner") {
     Vim.Move.Inner(Vim.Move.LastKey)
   } else if (Vim.Move.LastInOrOut == "Outer") {

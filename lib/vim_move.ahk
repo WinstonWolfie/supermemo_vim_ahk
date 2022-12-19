@@ -50,6 +50,7 @@
     if (this.DoesRegForDot(key)) {
       this.LastInOrOut := this.LastMode := this.LastRepeat := 0
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
+      this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
     }
 
     if (this.IsSearchKey(key)) {

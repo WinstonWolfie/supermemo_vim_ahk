@@ -25,9 +25,6 @@
     send {right}  ; put caret on the right
     if (!Vim.SM.HandleF3(2))
       return
-    WinActivate, ahk_class TElWind
-    if (!Vim.SM.IsEditingText())
-      send q
   }
   Vim.State.SetMode("Insert")
 return
@@ -58,14 +55,17 @@ return
   } else {
     send ^+{del}
   }
-  WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?"
+  WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?" or confirm registry deletion
   send {enter}
-  WinWaitActive, ahk_class TElWind,, 1  ; wait for element window to become focused again
-  if (ErrorLevel)
+  WinWaitNotActive, ahk_class TElWind,, 0
+  if (!ErrorLevel)
+    send {enter}
+  WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
+  if (ErrorLevel)  ; could be several registry deletion confirmations; in that case, script is stopped
     return
   Vim.SM.WaitFileLoad()
   if (WinActive("ahk_class TElWind")) {
-    Vim.SM.Learn(true)
+    Vim.SM.Learn()
     Vim.SM.EnterInsertIfSpelling()
   }
 return
@@ -169,7 +169,7 @@ return
   if (!btn)
     return
   btn.Click()
-  btn := el.WaitElementExist("ControlType=Button AND Name='Hide more videos' OR Name='More videos'")
+  btn := el.WaitElementExist("ControlType=Button AND Name='Hide more videos' OR Name='More videos'",,,, 1000)
   if (btn.CurrentName == "Hide more videos")
     btn.Click()
   Vim.Caret.SwitchToSameWindow()  ; refresh caret
@@ -320,6 +320,7 @@ return
   if (!ErrorLevel) {
     WinActivate
     send y
+    WinWaitClose, ahk_class TMsgDialog
     Vim.SM.Command("")
     WinActivate, ahk_class TPlanDlg
   } else {
@@ -379,6 +380,9 @@ PlanAddButtonAppend:
   } else {
     send % "+{tab}" . CurrTime
     send {enter}
+    WinWaitActive, ahk_class TMsgDialog,, 0.4
+    if (!ErrorLevel)
+      send y
   }
   send ^s
   if activity in Break,Sports,Piano,Out,Shower
@@ -521,23 +525,26 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
+  if (b := (WinActive("ahk_group Browser") && !Vim.Browser.VidTime)) {
+    GetUrlDone := false
+    SetTimer, GetUrl, -1
+  }
   sync := (A_ThisLabel == "BrowserSyncTime")
   KeyWait alt
   KeyWait ctrl
   KeyWait shift
-  send {esc}
-  if (WinActive("ahk_group Browser") && !Vim.Browser.VidTime) {
+  if (b) {
+    send {esc}
     hwnd := WinGet()
+    WaitVarExists(GetUrlDone)
     Vim.Browser.GetTitleSourceDate(!sync, false)  ; get title for checking later
     ; SM uses "." instead of "..." in titles
     if (WinGetTitle("ahk_class TElWind") != StrReplace(Vim.Browser.title, "...", ".")) {
       WinActivate, ahk_class TElWind
       MsgBox, 4,, Titles don't match. Continue?
-      IfMsgBox, no, {
-        WinActivate % "ahk_id " . hwnd
-        goto BrowserSyncReturn
-      }
       WinActivate % "ahk_id " . hwnd
+      IfMsgBox no
+        goto BrowserSyncReturn
     }
     if (!IfContains(A_ThisHotkey, "``")) {
       Vim.Browser.GetVidtime()

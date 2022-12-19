@@ -53,7 +53,7 @@ HTMLTagButtonAdd:
   }
   if (OriginalHTML) {
     Vim.HTML.ClipboardGet_HTML(data)
-    RegExMatch(data, "s)<!--StartFragment ?-->\K.*(?=<!--EndFragment ?-->)", content)
+    RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", content)
   } else {
     content := Clipboard
     content := StrReplace(content, "<", "&lt;")
@@ -236,7 +236,7 @@ CapsLock & z::  ; delete [...]
   send !{left}
   ; sleep % (A_TickCount - SleepCalc) / 3 * 2
   Vim.SM.WaitFileLoad()  ; double insurance?
-  sleep 20
+  sleep 80
   send ^t
   if (!ClozeNoBracket && inside) {
     cloze := "[" . hint . "]"
@@ -265,7 +265,6 @@ CapsLock & z::  ; delete [...]
     WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
     if (!Vim.SM.HandleF3(2))
       return
-    Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
     if (!ClozeNoBracket) {
       send % "{text}" . cloze
     } else {

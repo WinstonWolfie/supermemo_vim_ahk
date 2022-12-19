@@ -311,6 +311,9 @@ c::  ; learn child
   if (!ErrorLevel)
     WinWaitNotActive, ahk_class TProgressBox
   WinWaitActive, ahk_class TBrowser
+
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TBrowser"))
+c::
 SMLearnChildActiveBrowser:
   send {AppsKey}co
   WinWaitActive, ahk_class TProgressBox,, 1
@@ -327,6 +330,7 @@ SMLearnChildActiveBrowser:
   Vim.SM.PlayIfCertainColl("", 500)
 return
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 +c::  ; add new concept
   WinActivate, ahk_class TElWind
   Vim.SM.PostMsg(126)
