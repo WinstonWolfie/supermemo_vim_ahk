@@ -116,7 +116,7 @@ return
   }
   TempClip := RegExReplace(Clipboard, "(Similar|Synonymes).*\r\n", "`r`nsyn: ")
   TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
-  TempClip := RegExReplace(TempClip, "(?<![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
+  TempClip := RegExReplace(TempClip, "(?![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
   TempClip := RegExReplace(TempClip, "\.(?=\r\n)")
   TempClip := RegExReplace(TempClip, "(\r\n\K""|""(\r\n)?(?=\r\n))", "`r`n")
   TempClip := RegExReplace(TempClip, """$(?!\r\n)")
@@ -161,7 +161,7 @@ return
     ToolTip("Url not found.")
     return
   }
-  url := Vim.SM.ParseUrl(url)
+  ; url := Vim.SM.ParseUrl(url)
   KeyWait alt
   KeyWait shift
   Vim.SM.CheckDup(url)
@@ -202,30 +202,28 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
     return
   }
   guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  if (!IncWB) {
-    GetUrlDone := false
-    SetTimer, GetUrl, -1
-  }
+  GetUrlDone := false
+  SetTimer, GetUrl, -1
   if (WinExist("ahk_class TMsgDialog"))
     WinClose
   ClipSaved := ClipboardAll
-  IncWB := (IfContains(A_ThisHotkey, "x") || IfContains(A_ThisLabel, "IncrementalWebBrowsing"))
-  ImportDlg := (IfContains(A_ThisHotkey, "+") || A_ThisLabel == "IncrementalWebBrowsingNewTopicWithPriorityAndConcept")
+  IncWB := IfContains(A_ThisLabel, "x,Inc"), ImportDlg := IfContains(A_ThisLabel, "+,Prio")
   hwnd := WinGet()
   CollName := vim.sm.GetCollName(), ConceptBefore := Vim.SM.GetCurrConcept()
   Passive := Vim.SM.IsPassive(CollName, ConceptBefore)
   KeyWait shift
   KeyWait ctrl
   KeyWait alt
-  WaitVarExists(GetUrlDone)
+  while (!GetUrlDone)
+    continue
+  if (!vim.browser.url) {
+    ToolTip("Web page not found.")
+    return
+  }
   PressYTShowMoreButtonDone := false
   SetTimer, PressYTShowMoreButton, -1
   if (!IncWB) {
-    if (!vim.browser.url) {
-      ToolTip("Web page not found.")
-      return
-    }
-    vim.browser.url := vim.sm.ParseUrl(vim.browser.url)
+    ; vim.browser.url := vim.sm.ParseUrl(vim.browser.url)
     if (vim.sm.CheckDup(vim.browser.url, false))
       MsgBox, 4,, Continue import?
   }
@@ -235,7 +233,8 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
     goto ImportReturn
 
   prio := concept := CloseTab := ""
-  WaitVarExists(PressYTShowMoreButtonDone)
+  while (!PressYTShowMoreButtonDone)
+    continue
   if (ImportDlg) {
     SetDefaultKeyboard(0x0409)  ; english-US	
     gui, SMImport:Add, Text,, % "Current collection: " . CollName
@@ -371,11 +370,13 @@ SMImportGuiClose:
     gui destroy
 ImportReturn:
   Vim.SM.ClearHighlight()
-  if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
+  if (SMVidImport) {
+    WinActivate % "ahk_id " . hwnd
+  } else if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
     ; Without this sometimes SM would focus to context menu
     send {AltUp}  ; reload would send alt down
     if (WinActive("ahk_class TElWind")) {
-      Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
+      Vim.Caret.SwitchToSameWindow()
     } else {
       WinActivate, ahk_class TElWind
     }
@@ -390,6 +391,8 @@ GetUrl:
   vim.browser.url := Vim.Browser.GetUrl()
   GetUrlDone := true
 return
+
+^+e::run % "msedge.exe " . Vim.Browser.GetUrl()
 
 ; SumatraPDF/Calibre/MS Word to SuperMemo
 #if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME")  ; SumatraPDF
@@ -793,7 +796,7 @@ Return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe ebook-viewer.exe"))
 ~^f::
-  if (A_PriorHotkey != "~^f" || A_TimeSincePriorHotkey > 400) {
+  if (A_PriorHotkey != "~^f" || A_TimeSincePriorHotkey  400) {
     KeyWait f
     return
   }

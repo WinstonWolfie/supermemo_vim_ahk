@@ -315,19 +315,19 @@ return
 
 ^!b::
   send !b
-  Vim.SM.Command("")
-  WinWait, ahk_class TMsgDialog,, 0
+  WinWait, ahk_class TMsgDialog,, 0.25
   if (!ErrorLevel) {
     WinActivate
     send y
     WinWaitClose, ahk_class TMsgDialog
     Vim.SM.Command("")
-    WinActivate, ahk_class TPlanDlg
   } else {
+    Vim.SM.Command("")
+    WinWaitClose, ahk_class TCommanderDlg
     WinActivate, ahk_class TPlanDlg
     return
   }
-  WinWait, ahk_class TMsgDialog,, 0
+  WinWait, ahk_class TMsgDialog,, 0.25
   if (!ErrorLevel) {
     WinActivate
     send y
@@ -536,7 +536,8 @@ BrowserSyncTime:
   if (b) {
     send {esc}
     hwnd := WinGet()
-    WaitVarExists(GetUrlDone)
+    while (!GetUrlDone)
+      continue
     Vim.Browser.GetTitleSourceDate(!sync, false)  ; get title for checking later
     ; SM uses "." instead of "..." in titles
     if (WinGetTitle("ahk_class TElWind") != StrReplace(Vim.Browser.title, "...", ".")) {
@@ -549,8 +550,7 @@ BrowserSyncTime:
     if (!IfContains(A_ThisHotkey, "``")) {
       Vim.Browser.GetVidtime()
       if (!Vim.Browser.VidTime) {
-        Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
-        if (!Vim.Browser.VidTime)
+        if (!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp."))
           goto BrowserSyncReturn
       }
     }
@@ -561,9 +561,8 @@ BrowserSyncTime:
   } else if (!Vim.Browser.VidTime && !IfContains(A_ThisHotkey, "``")) {
     if (!Vim.SM.IsEditingText())  ; without this script may get stuck
       send q
-    Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.",, 192, 128)
-    if (!Vim.Browser.VidTime)
-      goto BrowserSyncReturn
+      if (!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp."))
+        goto BrowserSyncReturn
   }
   while (WinExist("ahk_class TMsgDialog"))
     WinClose

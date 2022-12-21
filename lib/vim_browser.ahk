@@ -305,9 +305,21 @@ class VimBrowser {
   }
 
   RunInIE(url) {
-    ie := ComObjCreate("InternetExplorer.Application")
-    ie.Visible := true
-    ie.Navigate(url)
+    if (!el := WinExist("ahk_class IEFrame ahk_exe iexplore.exe")) {
+      ie := ComObjCreate("InternetExplorer.Application")
+      ie.Visible := true
+      ie.Navigate(url)
+    } else {
+      if (ControlGetText("Edit1", "ahk_class IEFrame ahk_exe iexplore.exe")) {  ; current page is not new tab page
+        UIA := UIA_Interface()
+        el := UIA.ElementFromHandle(el)
+        el.FindFirstBy("ControlType=Button AND Name='New tab (Ctrl+T)'").Click()
+        ControlTextWait("Edit1", "", "ahk_class IEFrame ahk_exe iexplore.exe")
+      }
+      ControlSetText, Edit1, % url, ahk_class IEFrame ahk_exe iexplore.exe
+      ControlSend, Edit1, {enter}, ahk_class IEFrame ahk_exe iexplore.exe
+      WinActivate, ahk_class IEFrame ahk_exe iexplore.exe
+    }
   }
 
   RemoveBrowserName(title) {

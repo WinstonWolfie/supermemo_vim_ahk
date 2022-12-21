@@ -40,18 +40,17 @@
     return (IfIn(key, "x,+x"))
   }
 
-  DoesRegForDot(key) {
-    return (!this.IsMotionOnly() || this.IsActionKey(key))
+  RegForDot(key) {
+    if (!this.IsMotionOnly() || this.IsActionKey(key) && A_ThisHotkey != ".") {
+      this.LastInOrOut := this.LastRepeat := 0
+      this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
+      this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
+    }
   }
 
   MoveInitialize(key:="", RestoreClip:=true) {
     this.shift := this.ExistingSelection := this.clipped := 0
-
-    if (this.DoesRegForDot(key)) {
-      this.LastInOrOut := this.LastMode := this.LastRepeat := 0
-      this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
-      this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
-    }
+    this.RegForDot(key)
 
     if (this.IsSearchKey(key)) {
       this.SearchOccurrence := this.Vim.State.n ? this.Vim.State.n : 1
@@ -1366,7 +1365,6 @@
   }
 
   Inner(key:="") {
-    this.LastInOrOut := "Inner", this.LastKey := key
     global WinClip
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
     if (key == "w") {
@@ -1418,6 +1416,7 @@
         this.MoveFinalize()
       }
     } else if (IfIn(key, "(,),{,},[,],<,>,"",',=")) {
+      this.RegForDot(key)
       if (RestoreClip)
         ClipSaved := ClipboardAll
       send +{right}
@@ -1473,10 +1472,10 @@
         Clipboard := ClipSaved
       this.MoveFinalize()
     }
+    this.LastInOrOut := "Inner"
   }
 
   Outer(key:="") {
-    this.LastInOrOut := "Outer", this.LastKey := key
     global WinClip
     if (Vim.State.StrIsInCurrentVimMode("Vim_ydc"))
       RestoreClip := true
@@ -1510,6 +1509,7 @@
         send +{left}  ; so that "dap" would delete an entire paragraph, whereas "cap" would empty the paragraph
       this.MoveFinalize()
     } else if (IfIn(key, "(,),{,},[,],<,>,"",',=")) {
+      this.RegForDot(key)
       if (RestoreClip)
         ClipSaved := ClipboardAll
       send +{right}
@@ -1561,6 +1561,7 @@
         Clipboard := ClipSaved
       this.MoveFinalize()
     }
+    this.LastInOrOut := "Outer"
   }
 
   RevSurrKey(key, step:=1) {

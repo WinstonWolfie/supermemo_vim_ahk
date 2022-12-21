@@ -315,6 +315,7 @@ c::  ; learn child
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TBrowser"))
 c::
 SMLearnChildActiveBrowser:
+  Vim.State.SetMode("Vim_Normal")
   send {AppsKey}co
   WinWaitActive, ahk_class TProgressBox,, 1
   if (!ErrorLevel)

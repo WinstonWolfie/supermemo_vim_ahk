@@ -335,7 +335,7 @@ class VimSM {
       WinClip.Clear()
     }
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(false)
-    if (InStr(TemplCode, "Link:")) {
+    if (IfContains(TemplCode, "Link:")) {
       RegExMatch(TemplCode, "(?<=#Link: <a href="").*?(?="")", link)
       ret := link
     }
@@ -644,14 +644,14 @@ class VimSM {
     return text
   }
 
-  ParseUrl(url) {  ; for checking duplicates
-    ; This is the function that works. Enc_Uri() does not
-    ; (2nd parameter) Encode in case there are Chinese characters in URL
-    ; (3rd parameter) component := false because "/" doesn't need to be encoded
-    url := EncodeDecodeURI(this.Vim.Browser.ParseUrl(url),, false)
-    url := StrReplace(url, "%253A", ":")  ; ":" appears in url of SuperMemo references
-    return url
-  }
+  ; ParseUrl(url) {  ; for checking duplicates
+  ;   ; This is the function that works. Enc_Uri() does not
+  ;   ; (2nd parameter) Encode in case there are Chinese characters in URL
+  ;   ; (3rd parameter) component := false because "/" doesn't need to be encoded
+  ;   url := EncodeDecodeURI(this.Vim.Browser.ParseUrl(url),, false)
+  ;   url := StrReplace(url, "%253A", ":")  ; ":" appears in url of SuperMemo references
+  ;   return url
+  ; }
 
   ClearUp() {
     this.ClearHighlight()

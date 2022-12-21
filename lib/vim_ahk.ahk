@@ -286,39 +286,39 @@ class VimAhk {
   }
 
   SetDefaultActiveWindows() {
-    DefaultList := ["ahk_exe Evernote.exe"  ; Evernote
-                  ; , "ahk_exe explorer.exe"  ; Explorer
-                  ; , "ahk_exe Explorer.exe"  ; Explorer, Explorer became also upper case, but lower case works for this
-                  , "ahk_exe notepad.exe"   ; NotePad
-                  , "ahk_exe Notepad.exe"   ; NotePad, Changed as upper case since ~2022/1 ??
-                  , "OneNote"               ; OneNote at Windows 10
-                  , "ahk_exe onenote.exe"   ; OneNote Desktop
-                  ; , "ahk_exe ApplicationFrameHost.exe"  ; Some Windows applications use this, including OneNote at Windows 10  ; incl. settings app in win11
-                  , "ahk_exe POWERPNT.exe"  ; PowerPoint
-                  , "ahk_exe TeraPad.exe"   ; TeraPad
+    DefaultList := ["ahk_exe Evernote.exe"   ; Evernote
+                  ; , "ahk_exe explorer.exe"   ; Explorer
+                  ; , "ahk_exe Explorer.exe"   ; Explorer, Explorer became also upper case, but lower case works for this
+                  , "ahk_exe notepad.exe"    ; NotePad
+                  , "ahk_exe Notepad.exe"    ; NotePad, Changed as upper case since ~2022/1 ??
+                  , "OneNote"                ; OneNote at Windows 10
+                  , "ahk_exe onenote.exe"    ; OneNote Desktop
+                  ; , "ahk_exe ApplicationFrameHost.exe"   ; Some Windows applications use this, including OneNote at Windows 10  ; incl. settings app in win11
+                  , "ahk_exe POWERPNT.exe"   ; PowerPoint
+                  , "ahk_exe TeraPad.exe"    ; TeraPad
                   , "ahk_exe texstudio.exe"  ; TexStudio
-                  , "ahk_exe texworks.exe"  ; TexWork
-                  , "Write:"                ; Thunderbird, English
-                  , "作成"                  ; Thunderbird, 日本語
-                  ; , "ahk_exe Code.exe"      ; Visual Studio Code  ; why not use VSCodeVim???
-                  , "ahk_exe WINWORD.exe"   ; Word
-                  , "ahk_exe OUTLOOK.EXE"   ; Outlook
-                  , "ahk_exe wordpad.exe"   ; WordPad
+                  , "ahk_exe texworks.exe"   ; TexWork
+                  , "Write:"                 ; Thunderbird, English
+                  , "作成"                   ; Thunderbird, 日本語
+                  ; , "ahk_exe Code.exe"       ; Visual Studio Code  ; why not use VSCodeVim???
+                  , "ahk_exe WINWORD.exe"    ; Word
+                  , "ahk_exe OUTLOOK.EXE"    ; Outlook
+                  , "ahk_exe wordpad.exe"    ; WordPad
                   , "ahk_exe Q-Dir_x64.exe"  ; Q-dir
-                  , "ahk_exe Q-Dir.exe"     ; Q-dir
+                  , "ahk_exe Q-Dir.exe"      ; Q-dir
                   , "ahk_exe notepad++.exe"  ; Notepad++
-                  , "ahk_exe iexplore.exe"  ; Internet Explorer
-                  , "ahk_class TElWind"     ; SM element window
-                  , "ahk_class TContents"   ; SM content window
-                  , "ahk_class TBrowser"    ; SM browser
-                  , "ahk_class TPlanDlg"    ; SM Plan window
-                  , "ahk_class TTaskManager"  ; SM tasklist window
-                  , "ahk_class TImgDown"    ; SM download image window (ctrl+f8)
-                  , "ahk_class TChecksDlg"  ; SM check boxes (e.g. f6)
-                  , "ahk_class TInputDlg"   ; SM input window (e.g. editing image name)
-                  , "ahk_class TTitleEdit"  ; SM title edit window (!t)
+                  , "ahk_exe iexplore.exe"   ; Internet Explorer
+                  , "ahk_class TElWind"      ; SM element window
+                  , "ahk_class TContents"    ; SM content window
+                  , "ahk_class TBrowser"     ; SM browser
+                  , "ahk_class TPlanDlg"     ; SM Plan window
+                  , "ahk_class TTaskManager" ; SM tasklist window
+                  , "ahk_class TImgDown"     ; SM download image window (ctrl+f8)
+                  , "ahk_class TChecksDlg"   ; SM check boxes (e.g. f6)
+                  , "ahk_class TInputDlg"    ; SM input window (e.g. editing image name)
+                  , "ahk_class TTitleEdit"   ; SM title edit window (!t)
                   , "ahk_class TRepSortDlg"  ; SM sort repetition window
-                  , "ahk_class TElParamDlg"]  ; SM element parameter window
+                  , "ahk_class TElParamDlg"] ; SM element parameter window
     DefaultGroup := ""
     for i, v in DefaultList {
       if (DefaultGroup == "") {

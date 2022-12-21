@@ -20,9 +20,8 @@ Return
 SMGoToLink:
 s::  ; gs: go to link
   Vim.State.SetMode()
-  link := Vim.SM.GetLink()
-  if (link) {
-    if (InStr(A_ThisHotkey, "+")) {
+  if (link := Vim.SM.GetLink()) {
+    if (IfContains(A_ThisHotkey, "+")) {
       ; run % "iexplore.exe " . Link  ; RIP IE
       Vim.Browser.RunInIE(link)
     } else {

@@ -547,16 +547,3 @@ RevArr(arr) {
 			newarr.InsertAt(1, value)
 	return newarr
 }
-
-WaitVarExists(v, timeout:=0, interval:=0) {
-	StartTime := A_TickCount
-	loop {
-		if (interval)
-			sleep % interval
-		if (v) {
-			return true
-		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-			return false
-		}
-	}
-}
