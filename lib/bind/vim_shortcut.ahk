@@ -371,6 +371,7 @@ SMImportGuiClose:
 ImportReturn:
   Vim.SM.ClearHighlight()
   if (SMVidImport) {
+    WinWaitNotActive % "ahk_id " . hwnd  ; needed, otherwise ClearHighlight() might focus to SM
     WinActivate % "ahk_id " . hwnd
   } else if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
     ; Without this sometimes SM would focus to context menu
