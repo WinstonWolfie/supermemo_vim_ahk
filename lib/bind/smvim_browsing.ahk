@@ -145,7 +145,7 @@ x::send {del}  ; delete element/component
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
 p::
-  send ^{f10}  ; replay auto-play
+  Vim.SM.AutoPlay()
   WinWaitActive, ahk_class TMsgDialog,, 0
   if (!ErrorLevel)
     send y 

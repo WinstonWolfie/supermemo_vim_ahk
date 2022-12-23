@@ -530,11 +530,18 @@ SetDefaultKeyboard(LocaleID) {  ; https://www.autohotkey.com/boards/viewtopic.ph
 }
 return
 
-ToolTip(text:="", perma:=false, period:=-2000) {
+ToolTip(text:="", perma:=false, period:=-2000, command:="") {
+	PrevCoordModeTT := A_CoordModeToolTip
 	CoordMode, ToolTip, Screen
-	ToolTip, % text, % A_ScreenWidth / 3, % A_ScreenHeight / 4 * 3, 20
+	if (command = "center") {
+		x := A_ScreenWidth / 3, y := A_ScreenHeight / 2
+	} else {
+		x := A_ScreenWidth / 3, y := A_ScreenHeight / 4 * 3
+	}
+	ToolTip, % text, % x, % y, 20
 	if (!perma)
 		SetTimer, RemoveToolTip, % period
+	CoordMode, ToolTip, % PrevCoordModeTT
 }
 
 RemoveToolTip:

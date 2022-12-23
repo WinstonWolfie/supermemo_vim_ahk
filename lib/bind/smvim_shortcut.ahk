@@ -48,7 +48,7 @@ return
   KeyWait alt
   KeyWait ctrl
   KeyWait shift
-  if (InStr(A_ThisHotkey, "\")) {
+  if (IfContains(A_ThisHotkey, "\")) {
     send ^+{enter}
     WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
     send {enter}
@@ -57,17 +57,15 @@ return
   }
   WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?" or confirm registry deletion
   send {enter}
-  WinWaitNotActive, ahk_class TElWind,, 0
+  WinWaitNotActive, ahk_class TElWind,, 0.25
   if (!ErrorLevel)
     send {enter}
-  WinWaitActive, ahk_class TElWind,, 0  ; wait for element window to become focused again
+  WinWaitActive, ahk_class TElWind,, 0.25  ; wait for element window to become focused again
   if (ErrorLevel)  ; could be several registry deletion confirmations; in that case, script is stopped
     return
   Vim.SM.WaitFileLoad()
-  if (WinActive("ahk_class TElWind")) {
-    Vim.SM.Learn()
-    Vim.SM.EnterInsertIfSpelling()
-  }
+  if (WinActive("ahk_class TElWind"))
+    Vim.SM.Learn(, true)
 return
 
 ^!+g::  ; change element's concept *g*roup
@@ -165,14 +163,34 @@ return
   el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
   ; Can't detect pause/play button, sometimes not present on screen
   ; btn := el.FindFirstBy("ControlType=Button AND Name='Play keyboard shortcut k' OR Name='Pause keyboard shortcut k'")
-  btn := el.FindFirstBy("ControlType=Group AND Name='Video'")
-  if (!btn)
+  if (!btn := el.FindFirstBy("ControlType=Group AND Name='Video'"))
     return
   btn.Click()
   btn := el.WaitElementExist("ControlType=Button AND Name='Hide more videos' OR Name='More videos'",,,, 1000)
   if (btn.CurrentName == "Hide more videos")
     btn.Click()
   Vim.Caret.SwitchToSameWindow()  ; refresh caret
+return
+
+!+c::
+  if (!Vim.SM.IsEditingText())
+    send q
+  send ^t{f9}
+  WinWaitActive, ahk_class TScriptEditor,, 0
+  if (ErrorLevel) {
+    ToolTip("Script editor not found.")
+    return
+  }
+  send !c
+  WinWaitActive, ahk_class TInputDlg,, 0.25
+  if (ErrorLevel) {
+    Send {esc}
+    ToolTip("Can't be cloned because this script registry is the only instance in this collection.",, -5000)
+    return
+  }
+  send !o!o
+  ToolTip("Cloning successful.")
+  Vim.SM.Reload()
 return
 
 ; More intuitive inter-element linking, inspired by Obsidian
@@ -615,10 +633,8 @@ BrowserSyncTime:
     send !{enter}
   }
   WinWaitActive, ahk_class TElWind
-  if (IfContains(A_ThisHotkey, "^+!")) {
-    Vim.SM.Learn()
-    Vim.SM.PlayIfCertainColl()
-  }
+  if (IfContains(A_ThisHotkey, "^+!"))
+    Vim.SM.Learn(,, true)
 BrowserSyncReturn:
   if (sync)
     Clipboard := ClipSaved

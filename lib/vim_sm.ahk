@@ -287,9 +287,8 @@ class VimSM {
     if (this.IsPassive(CollName, -1)) {
       StartTime := A_TickCount
       if (ControlTextWait("TBitBtn3", "Next repetition", "ahk_class TElWind",,,, timeout)) {
-        ToolTip("Autoplay",, -1000)
         WinActivate, ahk_class TElWind
-        send ^{f10}
+        this.AutoPlay()
         return true
       } else {
         return false
@@ -368,13 +367,14 @@ class VimSM {
         if (!title)
           ControlFocus, TGroupButton2, ahk_class TChoicesDlg
         ; ControlSend, TBitBtn2, {enter}, ahk_class TChoicesDlg  ; doesn't work if alt is pressed down
-        ControlClick, TBitBtn2, ahk_class TChoicesDlg,,,, NA
+        while (WinExist("ahk_class TChoicesDlg"))
+          ControlClick, TBitBtn2, ahk_class TChoicesDlg,,,, NA
         if (title)
           WinWait, ahk_class TTitleEdit
       }
       if (WinExist("ahk_class TTitleEdit")) {
         if (title)
-          ControlSetText, TMemo1, % title
+          ControlSetText, TMemo1, % title, ahk_class TTitleEdit
         ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
       }
     }
@@ -452,14 +452,14 @@ class VimSM {
         break
       }
     }
-    MouseMove, x, y, 0
-    CoordMode, Mouse, % PrevCoordModeMouse
     if (StatBar == 0)
       this.PostMsg(313)
+    MouseMove, x, y, 0
+    CoordMode, Mouse, % PrevCoordModeMouse
     return ret
   }
 
-  Learn(CtrlL:=true) {
+  Learn(CtrlL:=true, EnterInsert:=false, AutoPlay:=false) {
     if (CtrlL) {
       this.PostMsg(180)
     } else if (ControlGetText("TBitBtn2", "ahk_class TElWind") == "Learn") {
@@ -467,6 +467,10 @@ class VimSM {
     } else if (IfIn(ControlGetText("TBitBtn3", "ahk_class TElWind"), "Learn,Show answer,Next repetition", true)) {
       ControlSend, TBitBtn3, {enter}, ahk_class TElWind
     }
+    if (EnterInsert)
+      this.EnterInsertIfSpelling()
+    if (AutoPlay)
+      this.PlayIfCertainColl()
   }
 
   Reload(timeout:=0, method:=0) {
@@ -704,5 +708,10 @@ class VimSM {
 
   GoToTopEl() {
     ControlSend, TBitBtn3, {home}, ahk_class TElWind
+  }
+
+  AutoPlay() {
+    ToolTip(WinGetTitle("ahk_class TElWind"),,, "center")
+    send ^{f10}
   }
 }

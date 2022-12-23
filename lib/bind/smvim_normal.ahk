@@ -88,15 +88,13 @@ s::  ; gs: go to source
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 f::  ; gf: open source file
   Vim.State.SetMode()
-  hwnd := WinGet()
-  path := Vim.SM.GetFilePath()
+  hwnd := WinGet(), ContLearn := Vim.SM.IsLearning(), path := Vim.SM.GetFilePath()
   SplitPath, path,,, ext
-  ContLearn := Vim.SM.IsLearning()
   if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
     run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
   } else {
-    send ^{f7}
-    Vim.SM.SaveHTML()
+    send ^{f7}  ; save read point
+    path := Vim.SM.SaveHTML(, true)  ; path may be updated
     send {esc}  ; leave html
     run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . path
   }

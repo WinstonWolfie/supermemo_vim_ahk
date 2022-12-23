@@ -365,16 +365,14 @@ class VimAhk {
   }
   
   ParseLineBreaks(str) {
-    ; Not perfect
-    if (this.SM.IsEditingHTML()) {
+    if (this.SM.IsEditingHTML()) {  ; not perfect
       if (StrLen(str) != InStr(str, "`r`n") + 1) {  ; first matched `r`n not at the end
         str := RegExReplace(str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
         str := RegExReplace(str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
-        str := StrReplace(str, "`r`n`r`n", "啊")  ; turn all paragraph tags (<P>) to "啊"
+        str := StrReplace(str, "`r`n`r`n", "`n")  ; parse all paragraph tags (<P>)
       }
-      str := StrReplace(str, "`r`n", "啊")  ; turn all line breaks (<BR>) to "啊"
-      hr := "--------------------------------------------------------------------------------"  ; <hr> tag
-      str := RegExReplace(str, "(啊啊|  )" . hr . "(啊啊|  )?", "啊啊")
+      str := StrReplace(str, "`r")  ; parse all line breaks (<BR>)
+      str := RegExReplace(str, this.move.hr)  ; parse horizontal lines
     } else {
       str := StrReplace(str, "`r")
     }

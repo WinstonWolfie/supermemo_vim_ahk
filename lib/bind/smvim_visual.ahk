@@ -265,6 +265,8 @@ CapsLock & z::  ; delete [...]
     WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
     if (!Vim.SM.HandleF3(2))
       return
+    if (copy() = " [...")  ; a bug in SM
+      send {left}{right}+{right 5}
     if (!ClozeNoBracket) {
       send % "{text}" . cloze
     } else {

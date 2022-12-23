@@ -109,7 +109,7 @@
 
   HandleEsc() {
     global Vim, VimEscNormal, SMVimSendEscInsert, VimSendEscNormal, VimLongEscNormal
-    if (this.Vim.SM.IsEditingText() && A_ThisHotkey != "esc")
+    if (this.Vim.SM.IsEditingText() && A_ThisHotkey = "capslock")
       this.Vim.SM.ClickMid()
     if (!VimEscNormal) {
       send {Esc}
@@ -123,12 +123,10 @@
     neither := !(VimLongEscNormal || LongPress)
     SetNormal := (both || neither)
     ; In SuperMemo you can use esc to both escape and enter normal mode
-    if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
+    if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert))
       send {Esc}
-    }
-    if (SetNormal || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert)) {
+    if (SetNormal || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert))
       this.SetNormal()
-    }
     if (LongPress) {
       ; Have to ensure the key has been released, otherwise this will get
       ; triggered again.

@@ -2,6 +2,7 @@
   __New(vim) {
     this.Vim := vim
     this.shift := 0
+    this.hr := "--------------------------------------------------------------------------------"  ; <hr> tag
   }
   
   NoSelection() {
@@ -252,23 +253,24 @@
   }
 
   ParagraphUp(n:=1) {
-    if this.Vim.IsHTML()
-      if this.Vim.SM.IsEditingHTML()
-        send ^+{up %n%}{left}
-      else
-        send ^{up %n%}
-    else {
+    if (this.Vim.IsHTML()) {
+      if (this.Vim.SM.IsEditingHTML()) {
+        send % "^+{up " . n . "}{left}"
+      } else {
+        send % "^{up " . n . "}"
+      }
+    } else {
       this.up(n)
       send {end}
       this.Zero()
     }
   }
-  
+
   ParagraphDown(n:=1) {
-    if this.Vim.IsHTML()
-      send ^{down %n%}
-    else {
-      this.down(n)
+    if (this.Vim.IsHTML()) {
+      send % "^{Down " . n . "}"
+    } else {
+      this.Down(n)
       send {end}
       this.Zero()
     }
@@ -461,7 +463,7 @@
               StrAfter := this.Vim.ParseLineBreaks(copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
-            DetectionStr := SubStr(StrAfter, StartPos)  ; what's selected after +{end}
+            DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence)
             if (pos)
               send % "{left}+{right " . pos + StrLen(StrBefore) . "}"
@@ -528,7 +530,7 @@
               StrAfter := this.Vim.ParseLineBreaks(copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
-            DetectionStr := SubStr(StrAfter, StartPos)  ; what's selected after +{end}
+            DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             pos += StrLen(StrBefore)
             send % "{left}+{right " . pos . "}"
@@ -590,7 +592,7 @@
               StrAfter := this.Vim.ParseLineBreaks(copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
-            DetectionStr := SubStr(StrAfter, StartPos)  ; what's selected after +end
+            DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             right := pos + StrLen(StrBefore) - 1
             if (pos == 1) {
@@ -796,10 +798,19 @@
               StrAfter := this.Vim.ParseLineBreaks(copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
-            DetectionStr := SubStr(StrAfter, StartPos)  ; what's selected after +end
+            DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
             if (pos) {
               pos += StrLen(StrBefore) + 1
+              a := InStr(DetectionStr, "`n")
+              b := StrLen(DetectionStr)
+              if (a == b - 1) {
+                pos -= 2
+                this.v := SubStr(this.v, 3)
+              } else if (a == b) {
+                pos--
+                this.v := SubStr(this.v, 2)
+              }
               send % "{left}+{right " . pos . "}"
             } else {
               send +{left}
@@ -867,7 +878,7 @@
           } else if (StrLen(StrAfter) <= StrLen(StrBefore) || !StrBefore) {
             this.SelectParagraphUp(, true)
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
-            if !StrAfter {  ; start of line
+            if (!StrAfter) {  ; start of line
               send {left}
               this.SelectParagraphUp(, true)
               StrAfter := this.Vim.ParseLineBreaks(copy(false))
@@ -942,7 +953,7 @@
               StrAfter := this.Vim.ParseLineBreaks(copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
-            DetectionStr := SubStr(StrAfter, StartPos)  ; what's selected after +end
+            DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             right := pos + StrLen(StrBefore) - 1
             if (pos == 1) {
@@ -1381,8 +1392,7 @@
       }
       this.Move("(",,, true, true, true)
       this.Move(")",,, true,, true)
-      ; End of paragraph
-      if (!this.v)
+      if (!this.v)  ; end of paragraph
         this.FindSentenceEnd(this.Vim.ParseLineBreaks(copy(false)))
       n := StrLen(this.v)
       this.Vim.State.SetMode("",, n,,, -1)
@@ -1399,16 +1409,17 @@
       this.ParagraphDown()
       this.ParagraphUp()
       this.SelectParagraphDown()
-      if (this.Vim.IsHTML())
-        send +{left}
-      DetectionStr := this.Vim.ParseLineBreaks(copy(false))
+      selection := copy(false)
+      if (this.Vim.SM.IsEditingHTML() && IfContains(selection, this.hr)) {
+        send +{left 2}
+        selection := ""
+      }
+      DetectionStr := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
       DetectionStr := StrReverse(DetectionStr)
       RegExMatch(DetectionStr, "^(\s+)?((\][0-9]+\[)+)?(\.|。)", v)
       n := StrLen(v)
       if (RestoreClip)
         Clipboard := ClipSaved
-      if (this.Vim.IsHTML())  ; update selection
-        send +{left}+{right}
       if (n) {
         this.Vim.State.SetMode("",, n,,, -1)
         this.Repeat("h")

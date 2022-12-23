@@ -273,8 +273,8 @@ SMImportButtonImport:
     Vim.Browser.Highlight()
   }
   Vim.Browser.GetTitleSourceDate(false)
-  SMVidImport := (Passive || (!HTMLText && vim.browser.VidSite))
-  if (!HTMLText && !SMVidImport) {
+  bOnline := (Passive || (!HTMLText && vim.browser.VidSite))
+  if (!HTMLText && !bOnline) {
     WinClip.Clear()
     send ^a^c
     ClipWait % Vim.Browser.FullPageCopyTimeout
@@ -289,7 +289,7 @@ SMImportButtonImport:
   ; Vim.Browser.GetUrl(, false)
 
   WinClip.Clear()
-  if (SMVidImport) {
+  if (bOnline) {
     if (Passive) {
       add := (CollName = "bgm") ? Vim.Browser.Url . "`n" : ""
       Clipboard := add . Vim.SM.MakeReference()
@@ -336,7 +336,7 @@ Title : " . Vim.Browser.Title . "
     WinWaitActive, ahk_class TElWind
   }
 
-  if (SMVidImport) {
+  if (bOnline) {
     if (Passive) {
       gosub SMHyperLinkToTopic
     } else {
@@ -370,7 +370,7 @@ SMImportGuiClose:
     gui destroy
 ImportReturn:
   Vim.SM.ClearHighlight()
-  if (SMVidImport) {
+  if (bOnline) {
     WinWaitNotActive % "ahk_id " . hwnd  ; needed, otherwise ClearHighlight() might focus to SM
     WinActivate % "ahk_id " . hwnd
   } else if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
@@ -694,10 +694,8 @@ MarkInSMTitle:
     ControlSetText, TMemo1, % title
     ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
   }
-  if (IfContains(A_ThisHotkey, "^+!")) {
-    Vim.SM.Learn()
-    Vim.SM.EnterInsertIfSpelling()
-  }
+  if (IfContains(A_ThisHotkey, "^+!"))
+    Vim.SM.Learn(, true)
   Clipboard := ClipSaved
 return
 
