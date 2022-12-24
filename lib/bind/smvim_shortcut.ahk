@@ -71,14 +71,8 @@ return
 ^!+g::  ; change element's concept *g*roup
   SetDefaultKeyboard(0x0409)  ; english-US	
   send ^+p
-  ; WinWaitActive, ahk_class TElParamDlg
-  ; Can't use ControlFocus here, will actually focus to it even if the control is not shown
+  WinWaitActive, ahk_class TElParamDlg
   send !g  ; focus to concept group
-  ; if (!ControlFocusWait("Edit2", "ahk_class TElParamDlg",,,, 200)) {  ; in task parameter window
-  ;   accButton := Acc_Get("Object", "4.2.4",, "ahk_id " . WinGet())
-  ;   accButton.accDoDefaultAction(1)
-  ;   ControlFocus, Edit2, ahk_class TElParamDlg  ; focus to concept group
-  ; }
   Vim.State.SetMode("Insert")
   Vim.State.BackToNormal := 1
 return
@@ -96,7 +90,7 @@ return
 ^!f::  ; use IE's search
   if (!Vim.SM.IsEditingText()) {
     send ^t
-    Vim.SM.WaitTextFocus()
+    Vim.SM.WaitTextFocus(500)
   }
   if (Vim.SM.IsEditingHTML())
     send {right}{left}{ctrl down}cf{ctrl up}  ; discovered by Harvey from the SuperMemo.wiki Discord server
@@ -110,13 +104,15 @@ return
 
 ^!p::  ; convert to a *p*lain-text template
   KeyWait alt
-  KeyWait, ctrl
+  KeyWait ctrl
   ContLearn := Vim.SM.IsLearning()
-  send ^+p!t  ; much faster than ^+m
+  send ^+p  ; much faster than ^+m
+  WinWaitActive, ahk_class TElParamDlg
+  send !t
   send {text}cl  ; my plain-text template name is classic
   send {enter 2}
   if (ContLearn == 1)
-    send {enter}
+    vim.sm.learn()
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -151,8 +147,7 @@ return
 ^!m::
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
-  btn := el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'")
-  if (!btn)
+  if (!btn := el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'"))
     return
   btn.Click()
   Vim.Caret.SwitchToSameWindow()  ; refresh caret
@@ -589,7 +584,7 @@ BrowserSyncTime:
   if (!Vim.SM.IsEditingText())
     send q
   send ^t{f9}
-  WinWaitActive, ahk_class TScriptEditor,, 1
+  WinWaitActive, ahk_class TScriptEditor,, 1.5
   if (ErrorLevel) {
     ToolTip("Script editor not found.")
     goto BrowserSyncReturn
@@ -635,10 +630,10 @@ BrowserSyncTime:
   WinWaitActive, ahk_class TElWind
   if (IfContains(A_ThisHotkey, "^+!"))
     Vim.SM.Learn(,, true)
+  Vim.Browser.Clear()
 BrowserSyncReturn:
   if (sync)
     Clipboard := ClipSaved
-  Vim.Browser.Clear()
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")

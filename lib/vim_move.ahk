@@ -42,10 +42,11 @@
   }
 
   RegForDot(key) {
-    if (!this.IsMotionOnly() || this.IsActionKey(key) && A_ThisHotkey != ".") {
-      this.LastInOrOut := this.LastRepeat := 0
+    if ((!this.IsMotionOnly() || this.IsActionKey(key)) && A_ThisHotkey != ".") {
+      this.LastInOrOut := this.LastRepeat := false
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
       this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
+      return true
     }
   }
 
@@ -298,10 +299,10 @@
     }
   }
 
-  Move(key="", repeat:=false, NoInitialize:=false, NoFinalize:=false, ForceNoShift:=false, RestoreClip:=true) {
-    if (!repeat && !NoInitialize)
+  Move(key="", repeat:=false, initialize:=true, finalize:=true, ForceShiftRelease:=false, RestoreClip:=true) {
+    if (!repeat && initialize)
       this.MoveInitialize(key, RestoreClip)
-    if (ForceNoShift)
+    if (ForceShiftRelease)
       this.shift := 0
 
     ; Left/Right
@@ -1337,13 +1338,14 @@
       }
     }
 
-    if (!repeat && !NoFinalize)
+    if (!repeat && finalize)
       this.MoveFinalize()
   }
 
-  Repeat(key:="") {
-    this.MoveInitialize(key)
-    if (this.DoesRegForDot(key))
+  Repeat(key:="", initialize:=true, finalize:=true) {
+    if (initialize)
+      this.MoveInitialize(key)
+    if (this.RegForDot(key))
       this.LastRepeat := true
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
@@ -1353,7 +1355,8 @@
 			this.Move(key, true)
     if (b)
       this.SMClickSyncButton()
-    this.MoveFinalize()
+    if (finalize)
+      this.MoveFinalize()
   }
 
   YDCMove() {
@@ -1380,7 +1383,8 @@
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
     if (key == "w") {
       send ^{right}^{left}
-      this.Move("e")
+      this.Move("e",,, false)
+      finalize := true
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1390,19 +1394,16 @@
       } else {
         send {right}
       }
-      this.Move("(",,, true, true, true)
-      this.Move(")",,, true,, true)
+      this.Move("(",,, false, true, false)
+      this.Move(")",,, false,, false)
       if (!this.v)  ; end of paragraph
         this.FindSentenceEnd(this.Vim.ParseLineBreaks(copy(false)))
       n := StrLen(this.v)
-      this.Vim.State.SetMode("",, n,,, -1)
       if (RestoreClip)
         Clipboard := ClipSaved
-      if (n) {
-        this.Repeat("h")
-      } else {
-        this.MoveFinalize()
-      }
+      if (n)
+        send % "+{left " . n . "}"
+      finalize := true
     } else if (key == "p") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1410,8 +1411,10 @@
       this.ParagraphUp()
       this.SelectParagraphDown()
       selection := copy(false)
-      if (this.Vim.SM.IsEditingHTML() && IfContains(selection, this.hr)) {
-        send +{left 2}
+      if (this.Vim.SM.IsEditingHTML()) {
+        send +{left}
+        if (IfContains(selection, this.hr))
+          send +{left}
         selection := ""
       }
       DetectionStr := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
@@ -1421,11 +1424,11 @@
       if (RestoreClip)
         Clipboard := ClipSaved
       if (n) {
-        this.Vim.State.SetMode("",, n,,, -1)
-        this.Repeat("h")
+        send % "+{left " . n . "}"
       } else {
-        this.MoveFinalize()
+        send +{left}+{right}  ; refresh caret
       }
+      finalize := true
     } else if (IfIn(key, "(,),{,},[,],<,>,"",',=")) {
       this.RegForDot(key)
       if (RestoreClip)
@@ -1455,35 +1458,35 @@
       send % "{right}{left " . left . "}"
       if (!pos) {
         send {left}
-        if (RestoreClip)
-          Clipboard := ClipSaved
-        this.MoveFinalize()
-        return
-      }
-      this.SelectParagraphDown(, true)
-      DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-      if (!DetectionStr) {  ; end of paragraph
-        send {right}  ; to the next paragraph
-        this.SelectParagraphDown(, true)
-        DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-      } else if (this.Vim.IsWhitespaceOnly(DetectionStr)) {
-        send {right 2}  ; to the next paragraph
-        this.SelectParagraphDown(, true)
-        DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-      }
-      key := this.RevSurrKey(key, 2)
-      if (AltKey := this.GetAltKey(key)) {
-        pos := RegExMatch(DetectionStr, AltKey)
       } else {
-        pos := InStr(DetectionStr, key)
+        this.SelectParagraphDown(, true)
+        DetectionStr := this.Vim.ParseLineBreaks(copy(false))
+        if (!DetectionStr) {  ; end of paragraph
+          send {right}  ; to the next paragraph
+          this.SelectParagraphDown(, true)
+          DetectionStr := this.Vim.ParseLineBreaks(copy(false))
+        } else if (this.Vim.IsWhitespaceOnly(DetectionStr)) {
+          send {right 2}  ; to the next paragraph
+          this.SelectParagraphDown(, true)
+          DetectionStr := this.Vim.ParseLineBreaks(copy(false))
+        }
+        key := this.RevSurrKey(key, 2)
+        if (AltKey := this.GetAltKey(key)) {
+          pos := RegExMatch(DetectionStr, AltKey)
+        } else {
+          pos := InStr(DetectionStr, key)
+        }
+        pos := pos ? pos - 1 : 0
+        send % "{left}+{right " . pos . "}"
       }
-      pos := pos ? pos - 1 : 0
-      send % "{left}+{right " . pos . "}"
       if (RestoreClip)
         Clipboard := ClipSaved
-      this.MoveFinalize()
+      finalize := true
     }
+    this.RegForDot(key)
     this.LastInOrOut := "Inner"
+    if (finalize)
+      this.MoveFinalize()
   }
 
   Outer(key:="") {
@@ -1491,8 +1494,8 @@
     if (Vim.State.StrIsInCurrentVimMode("Vim_ydc"))
       RestoreClip := true
     if (key == "w") {
-      send ^{right}^{left}
-      this.Move("w")
+      send ^{right}^{left}^+{right}
+      finalize := true
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1502,8 +1505,8 @@
       } else {
         send {right}
       }
-      this.Move("(",,, true, true, true)
-      this.Move(")",,, true,, true)
+      this.Move("(",,, false, true, false)
+      this.Move(")",,, false,, false)
       if (RestoreClip)
         Clipboard := ClipSaved
       if (this.IsReplace()) {
@@ -1511,16 +1514,15 @@
           n := StrLen(RegExReplace(this.v, "\.\K(\[.*?\])+")) - 1
         send % "+{left " . n . "}"  ; so that "dap" would delete an entire paragraph, whereas "cap" would empty the paragraph
       }
-      this.MoveFinalize()
+      finalize := true
     } else if (key == "p") {
       this.ParagraphDown()
       this.ParagraphUp()
       this.SelectParagraphDown()
       if (this.IsReplace())
         send +{left}  ; so that "dap" would delete an entire paragraph, whereas "cap" would empty the paragraph
-      this.MoveFinalize()
+      finalize := true
     } else if (IfIn(key, "(,),{,},[,],<,>,"",',=")) {
-      this.RegForDot(key)
       if (RestoreClip)
         ClipSaved := ClipboardAll
       send +{right}
@@ -1544,35 +1546,34 @@
         pos := InStr(DetectionStr, key)
       }
       send % "{right}{left " . pos . "}"
-      if (!pos) {
-        if (RestoreClip)
-          Clipboard := ClipSaved
-        this.MoveFinalize()
-        return
-      }
-      this.SelectParagraphDown(, true)
-      DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-      if (!DetectionStr) {  ; end of paragraph
-        send {right}  ; to the next paragraph
+      if (pos) {
         this.SelectParagraphDown(, true)
         DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-      } else if (this.Vim.IsWhitespaceOnly(DetectionStr)) {
-        send {right 2}  ; to the next paragraph
-        this.SelectParagraphDown(, true)
-        DetectionStr := this.Vim.ParseLineBreaks(copy(false))
+        if (!DetectionStr) {  ; end of paragraph
+          send {right}  ; to the next paragraph
+          this.SelectParagraphDown(, true)
+          DetectionStr := this.Vim.ParseLineBreaks(copy(false))
+        } else if (this.Vim.IsWhitespaceOnly(DetectionStr)) {
+          send {right 2}  ; to the next paragraph
+          this.SelectParagraphDown(, true)
+          DetectionStr := this.Vim.ParseLineBreaks(copy(false))
+        }
+        key := this.RevSurrKey(key, 2)
+        if (AltKey := this.GetAltKey(key)) {
+          pos := RegExMatch(DetectionStr, AltKey)
+        } else {
+          pos := InStr(DetectionStr, key,, 2)
+        }
+        send % "{left}+{right " . pos . "}"
       }
-      key := this.RevSurrKey(key, 2)
-      if (AltKey := this.GetAltKey(key)) {
-        pos := RegExMatch(DetectionStr, AltKey)
-      } else {
-        pos := InStr(DetectionStr, key,, 2)
-      }
-      send % "{left}+{right " . pos . "}"
       if (RestoreClip)
         Clipboard := ClipSaved
-      this.MoveFinalize()
+      finalize := true
     }
+    this.RegForDot(key)
     this.LastInOrOut := "Outer"
+    if (finalize)
+      this.MoveFinalize()
   }
 
   RevSurrKey(key, step:=1) {

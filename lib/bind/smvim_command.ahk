@@ -227,7 +227,7 @@ SMHyperLinkToTopic:
   Vim.SM.WaitFileLoad()
   send ^v
   send ^t{f9}{enter}  ; opens script editor
-  WinWaitActive, ahk_class TScriptEditor,, 1
+  WinWaitActive, ahk_class TScriptEditor,, 1.5
   if (ErrorLevel) {
     ToolTip("No script component found.")
     return
