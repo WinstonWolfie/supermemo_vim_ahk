@@ -23,24 +23,18 @@ capslock::
     for k, v in aHints {
       i++
       if (i == ArrayIndex) {
-        if (IfContains(v, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
-          RegExMatch(v, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
-          send % "^g" . ElementNumber . "{enter}"
-        } else {
-          if (AltState) {
-            Vim.Browser.RunInIE(v)
-          } else {
-            run % v
-          }
-        }
+        Vim.SM.RunLink(v)
         break
       }
     }
   }
-  reload  ; for more than 8 hints, reload is necessary, otherwise the second time tooltip won't show up somehow
-  ; HintsEntered := ""
-  ; RemoveAllToopTip(LastHintCount, "g")
-  ; Vim.State.SetNormal()
+  if (LastHintCount > 8) {
+    reload  ; for more than 8 hints, reload is necessary, otherwise the second time tooltip won't show up somehow
+  } else {
+    HintsEntered := ""
+    RemoveAllToopTip(LastHintCount, "g")
+    Vim.State.SetNormal()
+  }
 return
 
 RemoveAllToopTip(n:=20, ToolTipKind:="") {

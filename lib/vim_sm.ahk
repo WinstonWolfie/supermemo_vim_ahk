@@ -723,4 +723,26 @@ class VimSM {
   AltT() {
     this.PostMsg(116)
   }
+
+  RunLink(url) {
+    if (IfContains(url, "SuperMemoElementNo=(")) {  ; goes to a SuperMemo element
+      RegExMatch(url, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
+      send % "^g" . ElementNumber . "{enter}"
+    } else {
+      if (AltState) {
+        Vim.Browser.RunInIE(url)
+      } else {
+        if ((url ~= "file:\/\/") && (url ~= "#.*")) {
+          v := url
+          url := RegExReplace(url, "#.*")
+        }
+        run % url
+        if (v) {
+          WinWaitActive, ahk_group Browser
+          global guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+          guiaBrowser.Navigate(v)
+        }
+      }
+    }
+  }
 }

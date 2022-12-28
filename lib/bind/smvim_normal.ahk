@@ -65,17 +65,7 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
         Clipboard := CurrLink
         ToolTip("Copied " . CurrLink)
       } else if (IfContains(A_ThisHotkey, "x")) {
-        if (IfContains(CurrLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
-          RegExMatch(CurrLink, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
-          send % "^g" . ElementNumber . "{enter}"
-        } else {
-          if (InStr(A_ThisHotkey, "+")) {
-            ; run % "iexplore.exe " . CurrLink  ; RIP IE
-            Vim.Browser.RunInIE(CurrLink)
-          } else {
-            run % CurrLink
-          }
-        }
+        vim.sm.runlink(currlink)
       }
     }
   }
