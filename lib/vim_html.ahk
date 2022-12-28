@@ -36,7 +36,7 @@ class VimHTML {
     ; Scripts
     str := RegExReplace(str, "is)<(zzz)?iframe( .*?)?>.*?<\/(zzz)?iframe>")
     str := RegExReplace(str, "is)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
-    str := RegExReplace(str, "is)<(zzz)?input( .*?)?>")
+    str := RegExReplace(str, "is)<(zzz)?input( .*?)?[^-]>")
     str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)="".*?""(?=([^<>]+)?>)")
     str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)=[^ >]+(?=([^<>]+)?>)")
 

@@ -8,7 +8,6 @@
 #Include %A_LineFile%\..\util\unicode.ahk
 #Include %A_LineFile%\..\util\WinClipAPI.ahk
 #Include %A_LineFile%\..\util\WinClip.ahk
-#Include %A_LineFile%\..\util\Get the URL of the current (active) browser tab.ahk
 #Include %A_LineFile%\..\util\Acc.ahk
 #Include %A_LineFile%\..\util\UIA_Browser.ahk
 #Include %A_LineFile%\..\util\UIA_Interface.ahk
@@ -349,7 +348,7 @@ class VimAhk {
     tempClip := clipboard
     global WinClip
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    send {Shift Down}{Right}{Shift up}{Ctrl down}c{Ctrl Up}{Left}
+    send {Shift Down}{Right}{Shift up}{CtrlDown}c{CtrlUp}{Left}
     ClipWait, LongCopy ? 0.6 : 0.2, True
     ret := False
     If (clipboard ~= key) {

@@ -258,15 +258,15 @@ class UIA_Mozilla extends UIA_Browser {
 		local
 		ControlFocus, ahk_parent, % "ahk_id" this.BrowserId
 		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id" this.BrowserId
-		ControlSend, ahk_parent, {ctrl down}{shift down}k{ctrl up}{shift up}, % "ahk_id" this.BrowserId
+		ControlSend, ahk_parent, {CtrlDown}{shift down}k{CtrlUp}{shift up}, % "ahk_id" this.BrowserId
 		this.BrowserElement.WaitElementExistByNameAndType("Switch to multi-line editor mode (Ctrl + B)", "Button")	
 		ClipSave := ClipboardAll
 		Clipboard := js
 		WinActivate, % "ahk_id" this.BrowserId
 		WinWaitActive, % "ahk_id" this.BrowserId
-		Send, {ctrl down}v{ctrl up}{enter down}{enter up}
+		Send, {CtrlDown}v{CtrlUp}{enter down}{enter up}
 		sleep 40
-		Send, {ctrl down}{shift down}i{ctrl up}{shift up}
+		Send, {CtrlDown}{shift down}i{CtrlUp}{shift up}
 		Clipboard := ClipSave
 		Clipsave=
 	}
@@ -301,7 +301,7 @@ class UIA_Mozilla extends UIA_Browser {
 			}
 		}
 		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id " this.BrowserId
-		ControlSend, ahk_parent, {Ctrl down}w{Ctrl up}, % "ahk_id " this.BrowserId
+		ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " this.BrowserId
 	}
 }
 

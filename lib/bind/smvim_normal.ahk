@@ -65,7 +65,7 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
         Clipboard := CurrLink
         ToolTip("Copied " . CurrLink)
       } else if (IfContains(A_ThisHotkey, "x")) {
-        if (InStr(CurrLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
+        if (IfContains(CurrLink, "SuperMemoElementNo=(")) {  ; goes to a supermemo element
           RegExMatch(CurrLink, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
           send % "^g" . ElementNumber . "{enter}"
         } else {

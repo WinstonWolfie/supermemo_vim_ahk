@@ -104,7 +104,8 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.SM.SaveHTML()
   if (WikiLink ~= "(zh|fr|la).wikipedia.org") {
     Vim.SM.WaitTextFocus()
-    send ^{home}{end}+{home}!t  ; selecting first line
+    send ^{home}{end}+{home}  ; selecting first line
+    Vim.SM.AltT()
     WinWaitActive, ahk_class TChoicesDlg,, 2  ; sometimes it could take a really long time for the choice dialogue to pop up
     if (!ErrorLevel)
       send 2{enter}  ; makes selection title
@@ -165,22 +166,20 @@ return
 s::  ; turn active language item to passive (*s*witch)
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.ExitText()
-  if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
+  if (Vim.SM.IsLearning() == 2)  ; if learning (on "next repitition")
     send {esc}
-  hwnd := ControlGet(,, "Internet Explorer_Server2")
   send ^+s
-  ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
+  sleep 300
   send ^t
   Vim.SM.WaitTextFocus()
-  CurrControl := ControlGetFocus()
   send ^{home}
   send {text}en:
   send {space}^t
-  ControlWaitNotFocus(CurrControl)
+  sleep 320
   if (Vim.SM.IsEditingHTML()) {
     send ^{home}^{del 2}
   } else if (Vim.SM.IsEditingPlainText()) {
-    send ^{home}^{del}
+    send ^{home}^+{right}{bs}
   }
   send {esc}
 return
@@ -188,7 +187,6 @@ return
 +s::
   KeyWait shift
   Vim.State.SetMode("Vim_Normal")
-  ClipSaved := ClipboardAll
   Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
@@ -196,20 +194,19 @@ return
   Vim.SM.WaitTextFocus()
   WinClip.Clear()
   if (Vim.SM.IsEditingHTML()) {
-    send ^{home}^+{right 2}^x
+    send ^{home}^+{right 2}
   } else if (Vim.SM.IsEditingPlainText()) {
-    send ^{home}^+{right}^x
+    send ^{home}^+{right}
   }
-  ClipWait
-  send {esc}
+  text := clip()
+  send {bs}{esc}
   Vim.SM.WaitTextExit()
-  hwnd := ControlGet(,, "Internet Explorer_Server2")
   send ^+s
-  ControlWaitHwndChange("Internet Explorer_Server2", hwnd)
+  sleep 300
   send ^t
   Vim.SM.WaitTextFocus()
-  send ^v{left 2}{esc}
-  Clipboard := ClipSaved
+  send % "{text}" . text
+  send {left 2}{esc}
 return
 
 +p::
@@ -233,11 +230,11 @@ SMHyperLinkToTopic:
     return
   }
   script := "url " . vim.browser.url
-  if (Vim.Browser.VidTime) {
+  if (Vim.Browser.VidTime && !IfContains(vim.browser.url, "xiaoheimi.net/index.php/vod/play/id")) {
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-    if (InStr(Vim.Browser.url, "youtube.com")) {
+    if (IfContains(Vim.Browser.url, "youtube.com")) {
       script .= "&t=" . sec . "s"
-    } else if (InStr(Vim.Browser.url, "bilibili.com")) {
+    } else if (IfContains(Vim.Browser.url, "bilibili.com")) {
       script .= "?&t=" . sec
     }
     ToolTip("Time stamp in script component set as " . sec . "s")
@@ -276,7 +273,7 @@ SMSetLinkFromClipboard:
   if (Vim.Browser.Comment)
     Ref := RegExReplace(Ref, "(#Comment: .*|$)", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
   ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
-  ControlSend, TMemo1, {ctrl down}{enter}{ctrl up}, ahk_class TInputDlg  ; submit
+  ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}, ahk_class TInputDlg  ; submit
   if (A_ThisHotkey == "r")
     Vim.Browser.Clear()
 return
@@ -290,9 +287,9 @@ m::
     ControlSend, TMemo1, {esc}, ahk_class TInputDlg
     return
   }
-  Ref := RegExReplace(Ref, "(#Comment: |$)", "`r`n#Comment: #audio ",, 1)
+  Ref := RegExReplace(Ref, "#Comment: (.*)|$", "`r`n#Comment: $1 #audio ",, 1)
   ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
-  ControlSend, TMemo1, {ctrl down}{enter}{ctrl up}, ahk_class TInputDlg  ; submit
+  ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}, ahk_class TInputDlg  ; submit
 return
 
 d::

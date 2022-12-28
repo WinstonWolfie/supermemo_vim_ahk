@@ -3,6 +3,7 @@
     this.Vim := vim
     this.shift := 0
     this.hr := "--------------------------------------------------------------------------------"  ; <hr> tag
+    this.InnerKeys := "(,),{,},[,],<,>,"",',="
   }
   
   NoSelection() {
@@ -186,7 +187,7 @@
         send !z
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltT")) {
-        Send !t
+        this.Vim.SM.AltT()
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltQ")) {
         Send !q
@@ -202,10 +203,10 @@
     }
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
-    send {Ctrl Up}
+    send {CtrlUp}
     if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe"))
       send {alt up}
-    if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner") ||  this.Vim.State.StrIsInCurrentVimMode("Outer"))
+    if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner") || this.Vim.State.StrIsInCurrentVimMode("Outer"))
       this.vim.state.setmode("Vim_VisualChar",,,,, -1)
   }
 
@@ -1291,7 +1292,7 @@
             send ^+{up}  ; if there are references this would select (or deselect in visual mode) them all
             if (this.shift == 1)
               send +{down}  ; go down one line, if there are references this would include the #SuperMemo Reference
-            if (InStr(copy(false,, 1), "#SuperMemo Reference:")) {
+            if (IfContains(copy(false,, 1), "#SuperMemo Reference:")) {
               if (this.shift == 1) {
                 send +{up 4}  ; select until start of last line
               } else {
@@ -1311,7 +1312,7 @@
           }
         }
     } else if (key == "{") {
-      if (this.Vim.State.n > 0 && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
+      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         paragraph := this.Vim.State.n - 1, this.Vim.State.n := 0
         if (!this.Vim.SM.IsEditingText()) {
           send ^t
@@ -1325,7 +1326,7 @@
         this.ParagraphUp()
       }
     } else if (key == "}") {
-      if (this.Vim.State.n > 0 && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
+      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         paragraph := this.Vim.State.n - 1, this.Vim.State.n := 0
         KeyWait shift
         this.Vim.SM.ClickTop()
@@ -1349,7 +1350,7 @@
       this.LastRepeat := true
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
-    if (b := (IfIn(key, "j,k") && this.Vim.State.n > 1))
+    if ((b := (IfIn(key, "j,k")) && this.Vim.State.n > 1))
       this.SMClickSyncButton()
 		loop % this.Vim.State.n
 			this.Move(key, true)
@@ -1429,7 +1430,7 @@
         send +{left}+{right}  ; refresh caret
       }
       finalize := true
-    } else if (IfIn(key, "(,),{,},[,],<,>,"",',=")) {
+    } else if (IfIn(key, this.InnerKeys)) {
       this.RegForDot(key)
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1522,7 +1523,7 @@
       if (this.IsReplace())
         send +{left}  ; so that "dap" would delete an entire paragraph, whereas "cap" would empty the paragraph
       finalize := true
-    } else if (IfIn(key, "(,),{,},[,],<,>,"",',=")) {
+    } else if (IfIn(key, this.InnerKeys)) {
       if (RestoreClip)
         ClipSaved := ClipboardAll
       send +{right}

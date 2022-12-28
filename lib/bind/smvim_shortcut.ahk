@@ -93,7 +93,7 @@ return
     Vim.SM.WaitTextFocus(500)
   }
   if (Vim.SM.IsEditingHTML())
-    send {right}{left}{ctrl down}cf{ctrl up}  ; discovered by Harvey from the SuperMemo.wiki Discord server
+    send {right}{left}{CtrlDown}cf{CtrlUp}  ; discovered by Harvey from the SuperMemo.wiki Discord server
 return
 
 ~^enter::
@@ -538,7 +538,7 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
-  if (b := (WinActive("ahk_group Browser") && !Vim.Browser.VidTime)) {
+  if ((b := (WinActive("ahk_group Browser")) && !Vim.Browser.VidTime)) {
     GetUrlDone := false
     SetTimer, GetUrl, -1
   }
@@ -570,7 +570,7 @@ BrowserSyncTime:
     ; KeyWait enter  ; without this script may get stuck
     WinActivate % "ahk_id " . hwnd
     if A_ThisHotkey contains ^  ; hotkeys with ctrl will close the tab
-      send ^w
+      Vim.Browser.CloseTab()
   } else if (!Vim.Browser.VidTime && !IfContains(A_ThisHotkey, "``")) {
     if (!Vim.SM.IsEditingText())  ; without this script may get stuck
       send q
@@ -581,37 +581,39 @@ BrowserSyncTime:
     WinClose
   WinActivate, ahk_class TElWind
 
-  if (!Vim.SM.IsEditingText())
-    send q
-  send ^t{f9}
-  WinWaitActive, ahk_class TScriptEditor,, 1.5
-  if (ErrorLevel) {
-    ToolTip("Script editor not found.")
-    goto BrowserSyncReturn
-  }
-  ControlGetText, script, TMemo1
-  sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-  if (!sec || IfContains(A_ThisHotkey, "``"))
-    sec := 0
-  EditRef := false
-  if (BL := IfContains(script, "bilibili.com")) {
-    replacement := "&t=" . sec
-    match := "&t=.*"
-  } else if (IfContains(script, "youtube.com")) {
-    replacement := "&t=" . sec . "s"
-    match := "&t=.*s"
-  } else {
-    WinClose, ahk_class TScriptEditor
-    send {esc}
+  if (b && (vim.browser.IsVidSite(, true) == 2)) {
     EditRef := true
+  } else {
+    if (!Vim.SM.IsEditingText())
+      send q
+    send ^t{f9}
+    WinWaitActive, ahk_class TScriptEditor,, 1.5
+    if (ErrorLevel) {
+      ToolTip("Script editor not found.")
+      goto BrowserSyncReturn
+    }
+    ControlGetText, script, TMemo1
+    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+    if (!sec || IfContains(A_ThisHotkey, "``"))
+      sec := 0
+    EditRef := false
+    if (IfContains(script, "bilibili.com")) {
+      replacement := "&t=" . sec
+      match := "&t=.*"
+    } else if (IfContains(script, "youtube.com")) {
+      replacement := "&t=" . sec . "s"
+      match := "&t=.*s"
+    } else {
+      WinClose, ahk_class TScriptEditor
+      send {esc}
+      EditRef := true
+    }
   }
 
   if (!EditRef) {  ; time in script component
     if (RegExMatch(script, match)) {
       ControlSetText, TMemo1, % RegExReplace(script, match, replacement)
     } else {
-      ; if (BL && !RegExMatch(script, "p=[0-9]+"))
-        ; replacement := "?" . replacement
       ControlSetText, TMemo1, % script . replacement
     }
     send !o{esc}  ; close script editor

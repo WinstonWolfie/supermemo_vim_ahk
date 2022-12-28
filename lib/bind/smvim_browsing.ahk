@@ -74,7 +74,6 @@ Return
   Vim.State.SetMode()
 Return
 
-; Need scrolling bar present
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 ; Scrolling
 h::Vim.Move.Repeat("h")
@@ -133,17 +132,6 @@ r::  ; reload
   }
 return
 
-n::send !n  ; create new topic
-+n::send !a  ; create new item
-x::send {del}  ; delete element/component
-#if (Vim.IsVimGroup()
-  && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && ((Vim.SM.IsBrowsing())
-   || WinActive("ahk_class TContents")
-   || WinActive("ahk_class TBrowser")))
-+x::send ^+{enter}  ; Done!
-
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
 p::
   Vim.SM.AutoPlay()
   WinWaitActive, ahk_class TMsgDialog,, 0
@@ -152,7 +140,54 @@ p::
 return
 
 +p::send q^{t}{f9}  ; play video in default system player / edit script component
+
+n::send !n  ; create new topic
++n::send !a  ; create new item
+x::send {del}  ; delete element/component
+
 ^i::send ^{f8}  ; download images
+
+!f::  ; open in IE
++f::
+  KeyWait Shift
+  KeyWait Alt
+  AltState := IfContains(A_ThisHotkey, "!")
+  UIA := UIA_Interface()
+  control := "Internet Explorer_Server2"
+  if (!hCtrl := ControlGet(,, control)) {
+    control := "Internet Explorer_Server1"
+    if (!hCtrl := ControlGet(,, control))
+      return
+  }
+  el := UIA.ElementFromHandle(hCtrl)
+  ControlGetPos, x, y, w, h, % control
+  auiaHints := el.FindAllByType("Hyperlink")
+  i := 0, aHints := []
+  for k, v in auiaHints {
+    pos := v.GetCurrentPos()
+    if (((pos.x >= x ) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
+     || ((pos.x + pos.w >= x ) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
+      i++
+      ; if (i > 8)
+        ; break
+      HintKey := pos.x . " " . pos.y
+      aHints[HintKey] := v.CurrentValue
+    }
+  }
+  if (!n := ObjCount(aHints))
+    return
+  ; aHintStrings := GetHintStrings(n)
+  aHintStrings := hintStrings(n)
+  CreateHints(aHints, aHintStrings)
+  Vim.State.SetMode("KeyListener")
+return
+
+#if (Vim.IsVimGroup()
+  && Vim.State.IsCurrentVimMode("Vim_Normal")
+  && ((Vim.SM.IsBrowsing())
+   || WinActive("ahk_class TContents")
+   || WinActive("ahk_class TBrowser")))
++x::send ^+{enter}  ; Done!
 
 ; Element navigation
 #if (Vim.IsVimGroup()

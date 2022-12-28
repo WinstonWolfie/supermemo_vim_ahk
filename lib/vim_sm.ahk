@@ -359,7 +359,7 @@ class VimSM {
 
   SetTitle(title:="") {
     if !(WinGetTitle("ahk_class TElWind") == title) {
-      this.PostMsg(116)  ; edit title
+      this.AltT()
       GroupAdd, SMAltT, ahk_class TChoicesDlg
       GroupAdd, SMAltT, ahk_class TTitleEdit
       WinWait, ahk_group SMAltT
@@ -585,6 +585,8 @@ class VimSM {
       WinClose
     ContLearn := this.IsLearning()
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
+    ; text := EncodeDecodeURI(text, false)  ; can't do this, Chinese characters will be encoded
+    text := StrReplace(text, "%20", " ")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if (ContLearn && !ret)
       this.Learn()
@@ -643,8 +645,11 @@ class VimSM {
       text .= break . "#Source: " . this.Vim.Browser.source
     if (this.Vim.Browser.date)
       text .= break . "#Date: " . this.Vim.Browser.date
-    if (this.Vim.Browser.comment)
+    if ((this.vim.browser.IsVidSite(, true) == 2) && this.vim.browser.VidTime) {
+      text .= break . "#Comment: " . this.Vim.Browser.VidTime
+    } else if (this.Vim.Browser.comment) {
       text .= break . "#Comment: " . this.Vim.Browser.comment
+    }
     return text
   }
 
@@ -713,5 +718,9 @@ class VimSM {
   AutoPlay() {
     ToolTip(WinGetTitle("ahk_class TElWind"),,, "center")
     send ^{f10}
+  }
+
+  AltT() {
+    this.PostMsg(116)
   }
 }

@@ -52,7 +52,7 @@ Return
         . "|Acc Viewer|Translate (Google)|Clear clipboard|Forcellini|RAE"
         . "|Show selection as html|Oxford Advanced Learner's Dictionary"
         . "|Alatius: a Latin macronizer|UIA Viewer|Libgen"
-        . "|Register clipboard to Vim.Browser.VidTime"
+        . "|Register clipboard to Vim.Browser.VidTime|Image (Google)"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list .= "|Set current element as concept hook"
@@ -509,7 +509,7 @@ return
 
 SciHub:
   if (!text := Trim(Copy())) {
-    InputBox, text, Sci-Hub, Enter your search,, 192, 128
+    InputBox, text, Sci-Hub, Enter your search.,, 192, 128
     if (!text)
       return
   }
@@ -534,7 +534,7 @@ return
 
 YT:
   if (!text := Trim(Copy())) {
-    InputBox, text, YouTube, Enter your search,, 192, 128
+    InputBox, text, YouTube, Enter your search.,, 192, 128
     if (!text)
       return
   }
@@ -572,7 +572,7 @@ return
 
 ZLibrary:
   if (!search := Trim(Copy())) {
-    InputBox, search, Z-Library, Enter your search,, 192, 128
+    InputBox, search, Z-Library, Enter your search.,, 192, 128
     if (!search)
       return
   }
@@ -587,11 +587,13 @@ return
 
 ImportFirstFile:
   Vim.State.SetMode("Vim_Normal")
-  send ^+p!t
+  send ^+p
+  WinWaitActive, ahk_class TElParamDlg
+  send !t
   send {text}b  ; my template for pdf/epub file is binary
   send {enter 2}
   WinWaitActive, ahk_class TElWind
-  send {ctrl down}ttq{ctrl up}
+  send {CtrlDown}ttq{CtrlUp}
   GroupAdd, SMCtrlQ, ahk_class TFileBrowser
   GroupAdd, SMCtrlQ, ahk_class TMsgDialog
   WinWaitActive, ahk_group SMCtrlQ
@@ -630,7 +632,7 @@ return
 
 Bilibili:
   if (!search := Trim(Copy())) {
-    InputBox, search, Bilibili, Enter your search,, 192, 128
+    InputBox, search, Bilibili, Enter your search.,, 192, 128
     if (!search)
       return
   }
@@ -639,9 +641,18 @@ return
 
 Libgen:
   if (!search := Trim(Copy())) {
-    InputBox, search, Library Genesis, Enter your search,, 192, 128
+    InputBox, search, Library Genesis, Enter your search.,, 192, 128
     if (!search)
       return
   }
   run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
+return
+
+ImageGoogle:
+  if (!search := Trim(Copy())) {
+    InputBox, search, Image (Google), Enter your search.,, 192, 128
+    if (!search)
+      return
+  }
+  run % "https://www.google.com/search?hl=en&tbm=isch&q=" . search
 return

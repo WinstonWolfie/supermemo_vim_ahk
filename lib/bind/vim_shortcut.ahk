@@ -18,7 +18,8 @@
 ;   keywait shift
 ;   keywait ctrl
 ;   keywait alt
-;   Vim.SM.ChangeDefaultConcept()
+;   ; guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+;   ; msgbox % clipboard := guiaBrowser.GetAllText()
 ; return
 
 ; Shortcuts
@@ -80,7 +81,7 @@ return
 ^!w::send ^w!{tab}  ; close tab and switch back
 
 ^!i::  ; open in *I*E
-  Vim.Browser.RunInIE(Vim.Browser.ParseUrl(GetActiveBrowserURL()))
+  Vim.Browser.RunInIE(Vim.Browser.ParseUrl(Vim.Browser.GetUrl()))
   ; run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL())  ; RIP old method
 Return
 
@@ -156,7 +157,6 @@ return
     ToolTip("SuperMemo hasn't opened yet.")
     return
   }
-  ; Everything in this hotkey runs in the background
   if (!url := Vim.Browser.GetUrl()) {
     ToolTip("Url not found.")
     return
@@ -324,8 +324,6 @@ Title : " . Vim.Browser.Title . "
 
   if (prio && RegExMatch(prio, "^\."))
     prio := "0" . prio
-  ; if (CloseTab)
-  ;   send ^w
   WinActivate, ahk_class TElWind
 
   if (concept) {
@@ -606,7 +604,10 @@ return
     send {esc}
   marker := trim(copy(false), " `t`r`n")
   if (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) {
-    marker := marker ? marker : "p" . ControlGetText("Edit1")
+    if (!marker) {
+      if (p := ControlGetText("Edit1"))
+        marker := "p" . p
+    }
     if (!marker) {
       ToolTip("No text selected and page number not found.")
       Clipboard := ClipSaved
@@ -627,8 +628,8 @@ return
       return
     }
     if (IfContains(A_ThisHotkey, "^")) {
-      if (WinActive("ahk_class Browsers")) {
-        send ^w
+      if (WinActive("ahk_group Browser")) {
+        Vim.Browser.CloseTab()
       } else {
         send !{f4}
       }
@@ -679,7 +680,7 @@ MarkInSMTitle:
   send {left}{esc}
   Vim.SM.WaitTextExit()
 
-  Vim.SM.PostMsg(116)  ; edit title
+  Vim.SM.AltT()
   GroupAdd, SMAltT, ahk_class TChoicesDlg
   GroupAdd, SMAltT, ahk_class TTitleEdit
   WinWait, ahk_group SMAltT
@@ -753,7 +754,7 @@ return
   } else {
     send {text}Listening comprehension:
   }
-  send {ctrl down}ttq{ctrl up}
+  send {CtrlDown}ttq{CtrlUp}
   GroupAdd, SMCtrlQ, ahk_class TFileBrowser
   GroupAdd, SMCtrlQ, ahk_class TMsgDialog
   WinWaitActive, ahk_group SMCtrlQ
@@ -881,18 +882,25 @@ MatchHiborLink(text) {
   return v
 }
 
-#if (Vim.State.Vim.Enabled && hwnd := WinActive("ahk_exe Discord.exe"))
+#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_exe Discord.exe")))
 ^!l::  ; go live
-  if (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.3.1.2.1.1.2.1.2.1.6",, "ahk_id " . hwnd))
+  if (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.3.1.2.1.1.2.1.2.1.6",, "ahk_id " . hWnd))
     return
   accBtn.accDoDefaultAction(0)
-  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.2.1.1.3",, "ahk_id " . hwnd))
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.2.1.1.3",, "ahk_id " . hWnd))
     sleep 40
   accBtn.accDoDefaultAction(0)
-  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.2.1.2.1.1",, "ahk_id " . hwnd))
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.2.1.2.1.1",, "ahk_id " . hWnd))
     sleep 40
   accBtn.accDoDefaultAction(0)
-  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.3.1",, "ahk_id " . hwnd))
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.4.2.1.1.2.3.1",, "ahk_id " . hWnd))
     sleep 40
   accBtn.accDoDefaultAction(0)
+return
+
+#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_exe Clash for Windows.exe")))
+!t::  ; test latency
+  UIA := UIA_Interface()
+  el := UIA.ElementFromHandle(hWnd)
+  el.FindFirstBy("ControlType=Text AND Name='network_check'").Click()
 return
