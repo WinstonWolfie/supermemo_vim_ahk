@@ -23,18 +23,19 @@ capslock::
     for k, v in aHints {
       i++
       if (i == ArrayIndex) {
-        Vim.SM.RunLink(v)
+        if (HinterMode == "YankLink") {
+          Clipboard := v
+          ToolTip("Copied " . v)
+        } else {
+          Vim.SM.RunLink(v, OpenInIE)
+        }
         break
       }
     }
   }
-  if (LastHintCount > 8) {
-    reload  ; for more than 8 hints, reload is necessary, otherwise the second time tooltip won't show up somehow
-  } else {
-    HintsEntered := ""
-    RemoveAllToopTip(LastHintCount, "g")
-    Vim.State.SetNormal()
-  }
+  HintsEntered := ""
+  RemoveAllToopTip(LastHintCount, "g")
+  Vim.State.SetNormal()
 return
 
 RemoveAllToopTip(n:=20, ToolTipKind:="") {

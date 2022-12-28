@@ -147,11 +147,18 @@ x::send {del}  ; delete element/component
 
 ^i::send ^{f8}  ; download images
 
-!f::  ; open in IE
+!+f::  ; open in IE
 +f::
-  KeyWait Shift
   KeyWait Alt
-  AltState := IfContains(A_ThisHotkey, "!")
+  KeyWait Shift
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
+f::
+  if (Vim.State.IsCurrentVimMode("Vim_ydc_y")) {
+    HinterMode := "YankLink"
+  } else {
+    HinterMode := "Normal"
+    OpenInIE := IfContains(A_ThisHotkey, "!+")
+  }
   UIA := UIA_Interface()
   control := "Internet Explorer_Server2"
   if (!hCtrl := ControlGet(,, control)) {

@@ -724,13 +724,13 @@ class VimSM {
     this.PostMsg(116)
   }
 
-  RunLink(url) {
+  RunLink(url, RunInIE:=false) {
     if (IfContains(url, "SuperMemoElementNo=(")) {  ; goes to a SuperMemo element
       RegExMatch(url, "SuperMemoElementNo=\(\K[0-9]+", ElementNumber)
       send % "^g" . ElementNumber . "{enter}"
     } else {
-      if (AltState) {
-        Vim.Browser.RunInIE(url)
+      if (RunInIE) {
+        this.Vim.Browser.RunInIE(url)
       } else {
         if ((url ~= "file:\/\/") && (url ~= "#.*")) {
           v := url
