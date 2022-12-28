@@ -72,7 +72,7 @@ hintStrings(linkCount) {  ; adapted from vimium
       hints[n] := v . hint
     }
   }
-  hints := slice(hints, offset, offset + linkCount)
+  hints := slice(hints, offset + 1, offset + linkCount)
 
   ; Shuffle the hints so that they're scattered; hints starting with the same character and short hints are
   ; spread evenly throughout the array.
