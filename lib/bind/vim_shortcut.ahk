@@ -112,8 +112,7 @@ return
   ClipWait 0.6
   if (ErrorLevel) {
     ToolTip("Text not found.")
-    Clipboard := ClipSaved
-    return
+    goto RestoreClipReturn
   }
   TempClip := RegExReplace(Clipboard, "(Similar|Synonymes).*\r\n", "`r`nsyn: ")
   TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
@@ -145,8 +144,7 @@ return
   send {esc}
   if (!Vim.Browser.GetVidtime(,, false)) {
     ToolTip("Not found.")
-    Clipboard := ClipSaved
-    return
+    goto RestoreClipReturn
   }
   Clipboard := Vim.Browser.VidTime
   ToolTip("Registered " . vim.browser.VidTime)
@@ -413,8 +411,7 @@ return
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel) {
     ToolTip("Nothing is selected.")
-    Clipboard := ClipSaved
-    return
+    goto RestoreClipReturn
   } else {
     hwnd := WinGet()
     if (prio := IfContains(A_ThisHotkey, "+")) {
@@ -449,20 +446,17 @@ return
 ExtractToSM:
   if (Vim.SM.IsEditingPlainText()) {
     ToolTip("This script requires HTML component to work.")
-    Clipboard := ClipSaved
-    return
+    goto RestoreClipReturn
   }
   if (!Vim.SM.IsEditingText()) {
     send q
     if (!Vim.SM.WaitTextFocus(1000)) {
       ToolTip("No HTML component found; the text you selected is on your clipboard.")
-      Clipboard := ClipSaved
-      return
+      goto RestoreClipReturn
     }
     if (Vim.SM.IsEditingPlainText()) {
       ToolTip("This script requires HTML component to work.")
-      Clipboard := ClipSaved
-      return
+      goto RestoreClipReturn
     }
   }
   send ^{home}^+{down}  ; go to top and select first paragraph below
@@ -610,8 +604,7 @@ return
     }
     if (!marker) {
       ToolTip("No text selected and page number not found.")
-      Clipboard := ClipSaved
-      return
+      goto RestoreClipReturn
     }
     if (IfContains(A_ThisHotkey, "^")) {
       send {raw}q
@@ -624,8 +617,7 @@ return
       if (WinActive("ahk_group Browser"))
         goto BrowserSyncTime
       ToolTip("No text selected.")
-      Clipboard := ClipSaved
-      return
+      goto RestoreClipReturn
     }
     if (IfContains(A_ThisHotkey, "^")) {
       if (WinActive("ahk_group Browser")) {
@@ -642,8 +634,7 @@ MarkInSMTitle:
     send q
     if (!Vim.SM.WaitTextFocus(1000)) {
       ToolTip("No text component.")
-      Clipboard := ClipSaved
-      return
+      goto RestoreClipReturn
     }
   }
   send ^{home}^+{down}  ; go to top and select first paragraph below
@@ -673,8 +664,7 @@ MarkInSMTitle:
     if (ret) {
       ret := false
       ToolTip("No source element found or source element isn't empty.")
-      Clipboard := ClipSaved
-      return
+      goto RestoreClipReturn
     }
   }
   send {left}{esc}
@@ -813,10 +803,8 @@ return
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^a^c
   ClipWait 0.6
-  if (ErrorLevel) {
-    Clipboard := ClipSaved
-    return
-  }
+  if (ErrorLevel)
+    goto RestoreClipReturn
   title := MatchHiborTitle(Clipboard)
   TitleArr := StrSplit(title, "-")
   Vim.SM.CheckDup(TitleArr[2])
@@ -832,10 +820,8 @@ return
   WinClip.Clear()
   send ^a^c
   ClipWait 0.6
-  if (ErrorLevel) {
-    Clipboard := ClipSaved
-    return
-  }
+  if (ErrorLevel)
+    goto RestoreClipReturn
   title := MatchHiborTitle(Clipboard)
   link := MatchHiborLink(Clipboard)
   TitleArr := StrSplit(title, "-")

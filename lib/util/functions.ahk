@@ -979,3 +979,7 @@ sortArray( a, o := "A")  ; https://www.autohotkey.com/boards/viewtopic.php?t=601
             Partitions .= "|" pivot+1 "," epos      	;the right partition
     } Until !Partitions
 }
+
+RestoreClipReturn:
+  Clipboard := ClipSaved
+return

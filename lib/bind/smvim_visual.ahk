@@ -47,10 +47,8 @@ HTMLTagButtonAdd:
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (ErrorLevel) {
-    Clipboard := ClipSaved
-    return
-  }
+  if (ErrorLevel)
+    goto RestoreClipReturn
   if (OriginalHTML) {
     Vim.HTML.ClipboardGet_HTML(data)
     RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", content)

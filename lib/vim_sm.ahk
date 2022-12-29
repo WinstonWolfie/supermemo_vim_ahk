@@ -597,6 +597,7 @@ class VimSM {
     this.PostMsg(144)
     WinWait, ahk_class TMyFindDlg
     ControlSetText, TEdit1, % text, ahk_class TMyFindDlg
+    ControlTextWait("TEdit1", text, "ahk_class TMyFindDlg")
     ControlSend,, {enter}, ahk_class TMyFindDlg
     GroupAdd, SMCtrlF, ahk_class TMsgDialog
     GroupAdd, SMCtrlF, ahk_class TBrowser

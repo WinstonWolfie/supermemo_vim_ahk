@@ -205,10 +205,8 @@ return
     link := "SuperMemoElementNo=(" . RegExReplace(Clipboard, "^#") . ")"
   }
   ClipSaved := ClipboardAll
-  if (!copy(false) || !link) {  ; no selection or no link
-    Clipboard := ClipSaved
-    return
-  }
+  if (!copy(false) || !link)  ; no selection or no link
+    goto RestoreClipReturn
   send ^k
   WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame,, 2  ; a bit more delay since everybody knows how slow IE can be
   clip(link,, false)
@@ -225,10 +223,8 @@ return
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (!Vim.HTML.ClipboardGet_HTML(Data)) {
-    Clipboard := ClipSaved
-    return
-  }
+  if (!Vim.HTML.ClipboardGet_HTML(Data))
+    goto RestoreClipReturn
   ; To do: Detecting selection contents
   ; if (data ~= "<IMG[^<>]*>\K[\s\S]+(?=<!--EndFragment-->)") {  ; match end of first IMG tag until start of last EndFragment tag
     ; ToolTip("Please select text or image only.")
@@ -236,7 +232,7 @@ return
     ; Return
   ; } else
 
-  if (!InStr(data, "<IMG")) {  ; text only
+  if (!IfContains(data, "<IMG")) {  ; text only
     send {bs}^{f7}  ; set read point
     LatexFormula := RegExReplace(Clipboard, "\\$", "\ ")  ; just in case someone would leave a \ at the end
     LatexFormula := EncodeDecodeURI(LatexFormula,, false)
@@ -338,6 +334,7 @@ return
     Vim.SM.Command("")
     WinWaitClose, ahk_class TCommanderDlg
     WinActivate, ahk_class TPlanDlg
+    send ^s
     return
   }
   WinWait, ahk_class TMsgDialog,, 0.25
@@ -346,6 +343,7 @@ return
     send y
   }
   WinActivate, ahk_class TPlanDlg
+  send ^s
 return
 
 !a::  ; insert/append activity

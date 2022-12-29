@@ -204,10 +204,8 @@ Return
 
 o::  ; move to other end of marked area; not perfect with line breaks
   ClipSaved := ClipboardAll
-  if (!selection := copy(false)) {
-    Clipboard := ClipSaved
-    return
-  }
+  if (!selection := copy(false))
+    goto RestoreClipReturn
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
   SelectionRight := copy(false)

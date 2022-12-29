@@ -22,10 +22,8 @@ s::Vim.State.SetMode("",, -1,,, 1)
   KeyWait shift
   if (!ChangeEntered && (Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("ydc_y"))) {
     selection := copy(false)
-    if (!selection) {
-      Clipboard := ClipSaved
-      return
-    }
+    if (!selection)
+      goto RestoreClipReturn
     SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
     send {left}
     key := Vim.Move.RevSurrKey(A_ThisHotkey)
@@ -38,10 +36,8 @@ s::Vim.State.SetMode("",, -1,,, 1)
       Vim.State.SetMode("Vim_Visual")
       Vim.Move.Inner(A_ThisHotkey)
       selection := copy(false)
-      if (!selection) {
-        Clipboard := ClipSaved
-        return
-      }
+      if (!selection)
+        goto RestoreClipReturn
       SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
       if (c) {
         ChangeEntered := true

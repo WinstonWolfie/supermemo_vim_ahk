@@ -148,6 +148,7 @@ x::send {del}  ; delete element/component
 ^i::send ^{f8}  ; download images
 
 !+f::  ; open in IE
+!f::
 +f::
   KeyWait Alt
   KeyWait Shift
@@ -155,6 +156,8 @@ x::send {del}  ; delete element/component
 f::
   if (Vim.State.IsCurrentVimMode("Vim_ydc_y")) {
     HinterMode := "YankLink"
+  } else if (A_ThisHotkey == "!f") {
+    HinterMode := "Persistent"
   } else {
     HinterMode := "Normal"
     OpenInIE := IfContains(A_ThisHotkey, "!+")
@@ -172,11 +175,10 @@ f::
   i := 0, aHints := []
   for k, v in auiaHints {
     pos := v.GetCurrentPos()
-    if (((pos.x >= x ) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
-     || ((pos.x + pos.w >= x ) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
-      i++
-      ; if (i > 8)
-        ; break
+    if (((pos.x >= x) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
+     || ((pos.x + pos.w >= x) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
+      ; if (i++ > 8)
+      ;   break
       HintKey := pos.x . " " . pos.y
       aHints[HintKey] := v.CurrentValue
     }

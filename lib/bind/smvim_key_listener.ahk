@@ -15,7 +15,9 @@ g::
 h::
 esc::
 capslock::
-  if (!IfIn(A_ThisHotkey, "esc,capslock")) {
+^[::
+  esc := IfIn(A_ThisHotkey, "esc,capslock,^[")
+  if (!esc) {
     HintsEntered .= A_ThisHotkey
     if (!ArrayIndex := HasVal(aHintStrings, HintsEntered))
       return
@@ -28,14 +30,20 @@ capslock::
           ToolTip("Copied " . v)
         } else {
           Vim.SM.RunLink(v, OpenInIE)
+          if (HinterMode == "Persistent") {
+            WinWaitNotActive, ahk_class TElWind
+            WinActivate, ahk_class TElWind
+          }
         }
         break
       }
     }
   }
   HintsEntered := ""
-  RemoveAllToopTip(LastHintCount, "g")
-  Vim.State.SetNormal()
+  if (esc || (HinterMode != "Persistent")) {
+    RemoveAllToopTip(LastHintCount, "g")
+    Vim.State.SetNormal()
+  }
 return
 
 RemoveAllToopTip(n:=20, ToolTipKind:="") {
@@ -66,12 +74,9 @@ hintStrings(linkCount) {  ; adapted from vimium
   offset := 0
   linkHintCharacters := ["S", "A", "D", "J", "K", "L", "E", "W", "C", "M", "P", "G", "H"]
   while (((ObjCount(hints) - offset) < linkCount) || (ObjCount(hints) == 1)) {
-    offset++
-    hint := hints[offset]
-    for i, v in linkHintCharacters {
-      n := ObjCount(hints) + 1
-      hints[n] := v . hint
-    }
+    hint := hints[offset++]
+    for i, v in linkHintCharacters
+      hints[ObjCount(hints) + 1] := v . hint
   }
   hints := slice(hints, offset + 1, offset + linkCount)
 
