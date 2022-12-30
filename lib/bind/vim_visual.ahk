@@ -221,4 +221,4 @@ o::  ; move to other end of marked area; not perfect with line breaks
   Clipboard := ClipSaved
 return
 
-+s::Vim.State.SetMode("",,,,, 1)  ; surround
++s::Vim.State.SetMode(,,,,, 1)  ; surround

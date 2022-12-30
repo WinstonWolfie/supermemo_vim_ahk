@@ -21,15 +21,16 @@ capslock::
     HintsEntered .= A_ThisHotkey
     if (!ArrayIndex := HasVal(aHintStrings, HintsEntered))
       return
-    i := 0
     for k, v in aHints {
-      i++
-      if (i == ArrayIndex) {
+      if (A_Index == ArrayIndex) {
         if (HinterMode == "YankLink") {
           Clipboard := v
           ToolTip("Copied " . v)
         } else {
-          Vim.SM.RunLink(v, OpenInIE)
+          if (!Vim.SM.RunLink(v, OpenInIE)) {
+            ToolTip("An error occured when running " . v)
+            break
+          }
           if (HinterMode == "Persistent") {
             WinWaitNotActive, ahk_class TElWind
             WinActivate, ahk_class TElWind
@@ -59,14 +60,11 @@ RemoveAllToopTip(n:=20, ToolTipKind:="") {
 }
 
 CreateHints(HintsArray, HintStrings) {
-  i := 0
   for k, v in HintsArray {
-    i++
     aCoords := StrSplit(k, " ")
-    ; ToolTip, % HintStrings[i], aCoords[1], aCoords[2], i
-    ToolTipG(HintStrings[i], aCoords[1], aCoords[2], i,, "yellow", "black")
+    ToolTipG(HintStrings[A_Index], aCoords[1], aCoords[2], A_Index,, "yellow", "black")
+    global LastHintCount := A_Index
   }
-  global LastHintCount := i
 }
 
 hintStrings(linkCount) {  ; adapted from vimium
@@ -87,61 +85,3 @@ hintStrings(linkCount) {  ; adapted from vimium
   sortArray(hints)
   return hints
 }
-
-; GetHintStrings(hintCount) {  ; adapted from hunt-and-peck (Github)
-;   hintStrings := []
-;   if (hintCount <= 0)
-;       return
-
-;   hintCharacters := ["S", "A", "D", "F", "J", "K", "L", "E", "W", "C", "M", "P", "G", "H"]
-;   hintCharactersLength := ObjCount(hintCharacters)
-;   digitsNeeded := ceil(log(hintCount) / log(hintCharactersLength))
-
-;   wholeHintCount := hintCharactersLength ** digitsNeeded
-;   shortHintCount := (wholeHintCount - hintCount) / hintCharactersLength
-;   longHintCount := hintCount - shortHintCount
-
-;   longHintPrefixCount := wholeHintCount / hintCharactersLength - shortHintCount
-;   i := 0, j := 0
-;   while (i < longHintCount) {
-;     k := ObjCount(hintStrings) + 1
-;     hintStrings[k] := StrReverse(NumberToHintString(j, hintCharacters, digitsNeeded))
-;     if ((longHintPrefixCount > 0) && (mod(i + 1, longHintPrefixCount) == 0))
-;       j += shortHintCount
-;     i++, j++
-;   }
-
-;   if (digitsNeeded > 1) {
-;     i := 0
-;     while (i < shortHintCount) {
-;       k := ObjCount(hintStrings) + 1
-;       hintStrings[k] := StrReverse(NumberToHintString(i + longHintPrefixCount, hintCharacters, digitsNeeded - 1))
-;       i++
-;     }
-;   }
-
-;   return hintStrings
-; }
-
-; NumberToHintString(number, characterSet, noHintDigits:=0) {
-;   divisor := ObjCount(characterSet)
-;   hintString := ""
-
-;   while (number > 0) {
-;     remainder := mod(number, divisor)
-;     hintString := characterSet[remainder + 1] . hintString
-;     number -= remainder
-;     number /= floor(divisor)
-;   }
-
-;   ; Pad the hint string we're returning so that it matches numHintDigits.
-;   ; Note: the loop body changes StrLen(hintString), so the original length must be cached!
-;   length := StrLen(hintString)
-;   i := 0
-;   while (i < (noHintDigits - length)) {
-;     hintString := characterSet[1] . hintString
-;     i++
-;   }
-
-;   return hintString
-; }

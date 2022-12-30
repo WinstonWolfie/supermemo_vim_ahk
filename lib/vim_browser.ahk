@@ -13,7 +13,9 @@ class VimBrowser {
     this.clear()
     if (RestoreClip)
       ClipSaved := ClipboardAll
-    global guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    global guiaBrowser
+    if (!guiaBrowser)
+      guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
     this.GetUrl(, false)
     if (PressButton)
       gosub PressYTShowMoreButton
@@ -228,21 +230,6 @@ class VimBrowser {
     return (TimeArr[1] + TimeArr[2] * 60 + TimeArr[3] * 3600)
   }
 
-  ; GetAddressBarUrl(method:=1) {
-  ;   if (method) {
-  ;     guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  ;     return guiaBrowser.GetCurrentURL(true)
-  ;   } else {
-  ;     hwnd := hwnd ? hwnd : WinGet()
-  ;     if (browser = "chrome" || WinActive("ahk_exe chrome.exe")) {
-  ;       accAddressBar := Acc_Get("Object", "4.1.1.2.1.2.5.3",, "ahk_id " . hwnd)
-  ;     } else if (browser = "edge" || WinActive("ahk_exe msedge.exe")) {
-  ;       accAddressBar := Acc_Get("Object", "4.1.1.4.1.2.5.4",, "ahk_id " . hwnd)
-  ;     }
-  ;     return accAddressBar.accValue(0)
-  ;   }
-  ; }
-
   GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     title := title ? title : this.RemoveBrowserName(WinGetTitle())
     if (!this.IsVidSite(title))
@@ -330,6 +317,8 @@ class VimBrowser {
   }
 
   RunInIE(url) {
+    if ((url ~= "file:\/\/") && (url ~= "#.*"))
+      url := RegExReplace(url, "#.*")
     if (!el := WinExist("ahk_class IEFrame ahk_exe iexplore.exe")) {
       ie := ComObjCreate("InternetExplorer.Application")
       ie.Visible := true

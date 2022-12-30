@@ -415,14 +415,10 @@ AlatiusALatinMacronizer:
   }
   run https://alatius.com/macronizer/
   WinWaitActive, ahk_group Browser
-  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  guiaBrowser.WaitPageLoad()
-  guiaBrowser.WaitElementExist("ControlType=Edit AND FrameworkId=Chrome").SetValue(Latin)
-  ; while (!accText := Acc_Get("Object", "4.1.1.2.2.2.1.4.1.1",, "ahk_id " . WinGet()))
-  ;   sleep 40
-  ; accText.accValue(0) := Latin
-  guiaBrowser.WaitElementExist("ControlType=Button AND Name='Submit'").Click()
-  guiaBrowser := ""
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser.WaitPageLoad()
+  uiaBrowser.WaitElementExist("ControlType=Edit AND FrameworkId=Chrome").SetValue(Latin)
+  uiaBrowser.WaitElementExist("ControlType=Button AND Name='Submit'").Click()
 return
 
 SetBrowserPosition:
@@ -521,13 +517,12 @@ SciHub:
   }
   run https://sci-hub.hkvisa.net/
   WinWaitActive, ahk_group Browser
-  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  guiaBrowser.WaitPageLoad()
-  el := guiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser.WaitPageLoad()
+  el := uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
   ValuePattern := el.GetCurrentPatternAs("Value")
   ValuePattern.SetValue(text)
-  guiaBrowser.WaitElementExist("ControlType=Text AND Name='open'").Click()
-  guiaBrowser := ""
+  uiaBrowser.WaitElementExist("ControlType=Text AND Name='open'").Click()
 return
 
 YT:
@@ -576,11 +571,10 @@ ZLibrary:
   }
   run https://z-lib.org/
   WinWaitActive, ahk_group Browser
-  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  guiaBrowser.WaitPageLoad()
-  url := guiaBrowser.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
-  guiaBrowser.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
-  guiaBrowser := ""
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser.WaitPageLoad()
+  url := uiaBrowser.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
+  uiaBrowser.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
 return
 
 ImportFirstFile:

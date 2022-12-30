@@ -18,8 +18,8 @@
 ;   keywait shift
 ;   keywait ctrl
 ;   keywait alt
-;   ; guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-;   ; msgbox % clipboard := guiaBrowser.GetAllText()
+;   ; uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+;   ; msgbox % clipboard := uiaBrowser.GetAllText()
 ; return
 
 ; Shortcuts
@@ -93,6 +93,7 @@ Return
 return
 
 ^!l::  ; copy link and parse *l*ink if if's from YT
+  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   KeyWait ctrl
   KeyWait alt
   KeyWait l
@@ -103,6 +104,7 @@ return
   vidtime := Vim.Browser.VidTime ? "`nTime stamp: " . Vim.Browser.VidTime : ""
   ToolTip("Copied " . Vim.Browser.Url . "`nTitle: " . Vim.Browser.Title . source . date . vidtime)
   Clipboard := Vim.Browser.Url
+  guiaBrowser := ""
 return
 
 ^!d::  ; parse similar and opposite in google *d*efine
@@ -320,7 +322,7 @@ Title : " . Vim.Browser.Title . "
     InfoToolTip .= "`nTime stamp: " . Vim.Browser.VidTime
   ToolTip(InfoToolTip)
 
-  if (prio && RegExMatch(prio, "^\."))
+  if (prio ~= "^\.")
     prio := "0" . prio
   WinActivate, ahk_class TElWind
 
@@ -367,8 +369,8 @@ SMImportGuiClose:
 ImportReturn:
   Vim.SM.ClearHighlight()
   if (bOnline) {
-    WinWaitNotActive % "ahk_id " . hwnd  ; needed, otherwise ClearHighlight() might focus to SM
-    WinActivate % "ahk_id " . hwnd
+    WinWaitNotActive % "ahk_id " . guiaBrowser.BrowserId  ; needed, otherwise ClearHighlight() might focus to SM
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
   } else if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
     ; Without this sometimes SM would focus to context menu
     send {AltUp}  ; reload would send alt down

@@ -733,17 +733,18 @@ class VimSM {
       if (RunInIE) {
         this.Vim.Browser.RunInIE(url)
       } else {
-        if ((url ~= "file:\/\/") && (url ~= "#.*")) {
-          v := url
-          url := RegExReplace(url, "#.*")
-        }
-        run % url
+        if ((url ~= "file:\/\/") && (url ~= "#.*"))
+          v := url, url := RegExReplace(url, "#.*")
+        try run % url
+        catch
+          return false
         if (v) {
           WinWaitActive, ahk_group Browser
-          global guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-          guiaBrowser.Navigate(v)
+          uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+          uiaBrowser.SetUrl(v, true)
         }
       }
     }
+    return true
   }
 }

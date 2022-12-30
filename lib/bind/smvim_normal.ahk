@@ -30,9 +30,10 @@ u::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
 +x::
 x::  ; open hyperlink in current caret position (Open in *n*ew window)
-  KeyWait shift
+  Vim.State.SetMode()
   ClipSaved := ClipboardAll
   LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+  KeyWait shift
   send +{right}^c{left}
   ClipWait, LongCopy ? 0.6 : 0.2, True
   if (ErrorLevel) {  ; end of line
@@ -69,8 +70,7 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
       }
     }
   }
-  Vim.State.SetMode()
-  if (A_ThisHotkey != "u" && RunLink)
+  if ((A_ThisHotkey != "u") && RunLink)
     Clipboard := ClipSaved
 return
 
