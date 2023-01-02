@@ -19,7 +19,7 @@ CapsLock & /::
 CapsLock & /::
   CapsState := InStr(A_ThisHotkey, "CapsLock")
   if (!Vim.SM.IsEditingText()) {
-    send q
+    Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()  ; make sure CurrFocus is updated    
     if (Vim.SM.IsEditingHTML())
       sleep 50  ; short sleep so the element window won't try to regain focus
@@ -126,7 +126,7 @@ SMSearchAgain:
     if (WholeWord)
       Control, Check,, TCheckBox2, ahk_class TMyFindDlg  ; match whole word
     Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
-    ControlSend,, {enter}, ahk_class TMyFindDlg
+    ControlSend, TEdit1, {enter}, ahk_class TMyFindDlg
     if (Vim.State.n) {
       send % "{f3 " . Vim.State.n - 1 . "}"
       Vim.State.n := 0

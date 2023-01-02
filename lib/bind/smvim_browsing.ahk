@@ -111,7 +111,7 @@ r::  ; reload
     Vim.SM.WaitFileLoad()
     ; When r is pressed, the review score in an item is submitted,
     ; thus refreshing and learning takes SM to a new element
-    if (ContLearn == 2 && CurrTitle != WinGetTitle())
+    if ((ContLearn == 2) && CurrTitle != WinGetTitle())
       send !{left 2}
   } else if (ContinueGrading) {
     Vim.SM.Learn()
@@ -141,8 +141,8 @@ return
 
 +p::send q^{t}{f9}  ; play video in default system player / edit script component
 
-n::send !n  ; create new topic
-+n::send !a  ; create new item
+n::Vim.SM.PostMsg(98)  ; = alt+N
++n::Vim.SM.PostMsg(95)  ; = alt+A
 x::send {del}  ; delete element/component
 
 ^i::send ^{f8}  ; download images
@@ -155,12 +155,18 @@ x::send {del}  ; delete element/component
   KeyWait Shift
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
 f::
-  if (Vim.State.IsCurrentVimMode("Vim_ydc_y")) {
+v::
+c::
+  if (A_ThisHotkey == "f") {
     HinterMode := "YankLink"
   } else if (IfIn(A_ThisHotkey, "^!+f,!f")) {
     HinterMode := "Persistent"
-  } else {
+  } else if (A_ThisHotkey == "v") {
+    HinterMode := "Visual"
+  } else if (A_ThisHotkey == "c") {
     HinterMode := "Normal"
+  } else {
+    HinterMode := "OpenLink"
     OpenInIE := IfContains(A_ThisHotkey, "!+f")
   }
   UIA := UIA_Interface()
@@ -172,23 +178,40 @@ f::
   }
   el := UIA.ElementFromHandle(hCtrl)
   ControlGetPos, x, y, w, h, % control
-  auiaHints := el.FindAllByType("Hyperlink")
+  WinGetPos, wX, wY,,, ahk_class TElWind
+  x += wX, y += wY  ; so that coords are relative to screen
+  if (Caret := IfIn(A_ThisHotkey, "v,c"))
+    vim.sm.editAll()
+  type := Caret ? "Text" : "Hyperlink"
+  auiaHints := el.FindAllByType(type)
   aHints := []
-  for k, v in auiaHints {
-    pos := v.GetCurrentPos()
+  for i, v in auiaHints {
+    pos := v.GetCurrentPos("screen")
     if (((pos.x >= x) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
      || ((pos.x + pos.w >= x) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
-      ; if (A_Index > 8)
-      ;   break
-      aHints[pos.x . " " . pos.y] := v.CurrentValue
+      aHints[pos.x . " " . pos.y] := Caret ? Control : v.CurrentValue
+    }
+  }
+  control := "Internet Explorer_Server1"
+  if (hCtrl := ControlGet(,, control)) {
+    el := UIA.ElementFromHandle(hCtrl)
+    ControlGetPos, x, y, w, h, % control
+    WinGetPos, wX, wY,,, ahk_class TElWind
+    x += wX, y += wY  ; so that coords are relative to screen
+    auiaHints := el.FindAllByType(type)
+    for i, v in auiaHints {
+      pos := v.GetCurrentPos("screen")
+      if (((pos.x >= x) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
+      || ((pos.x + pos.w >= x) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
+        aHints[pos.x . " " . pos.y] := Caret ? Control : v.CurrentValue
+      }
     }
   }
   if (!n := ObjCount(aHints))
     return
-  ; aHintStrings := GetHintStrings(n)
+  Vim.State.SetMode("KeyListener")
   aHintStrings := hintStrings(n)
   CreateHints(aHints, aHintStrings)
-  Vim.State.SetMode("KeyListener")
 return
 
 #if (Vim.IsVimGroup()

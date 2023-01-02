@@ -538,11 +538,9 @@ return
 ReformatVocab:
   Vim.State.SetMode("Vim_Normal")
   ClipSaved := ClipboardAll
-  if (!Vim.SM.IsEditingHTML()) {
-    send q
-    if (!Vim.SM.WaitTextFocus(1000))
-      return
-  }
+  Vim.SM.EditFirstQuestion()
+  if (!Vim.SM.WaitTextFocus(1000))
+    return
   send ^a
   if (!data := copy(false, true)) {
     Clipboard := ClipboardAll

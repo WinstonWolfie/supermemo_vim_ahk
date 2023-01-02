@@ -1,7 +1,6 @@
 class VimSM {
   __New(Vim) {
     this.Vim := Vim
-    ; this.ClearUp := ObjBindMethod(this, "ClearUp")
   }
 
   ClickTop() {
@@ -16,7 +15,7 @@ class VimSM {
         if (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
         } else {  ; no html field found
-          send q
+          this.EditFirstQuestion()
           if (!this.WaitTextFocus(1000))
             return false
           control := ControlGetFocus("ahk_class TElWind")
@@ -41,7 +40,7 @@ class VimSM {
         if (Height) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
         } else {  ; no html field found
-          send q
+          this.EditFirstQuestion()
           if (!this.WaitTextFocus(1000))
             return false
           control := ControlGetFocus("ahk_class TElWind")
@@ -66,7 +65,7 @@ class VimSM {
         if (Height) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
         } else {  ; no html field found
-          send q
+          this.EditFirstQuestion()
           if (!this.WaitTextFocus(1000))
             return false
           control := ControlGetFocus("ahk_class TElWind")
@@ -78,16 +77,15 @@ class VimSM {
   }
 
   IsEditingHTML() {
-    return (WinActive("ahk_class TElWind") && InStr(ControlGetFocus(), "Internet Explorer_Server"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server"))
   }
 
   IsEditingPlainText() {
-    return (WinActive("ahk_class TElWind") && InStr(ControlGetFocus(), "TMemo"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "TMemo"))
   }
 
   IsEditingText() {
-    CurrFocus := ControlGetFocus()
-    return (WinActive("ahk_class TElWind") && (InStr(CurrFocus, "Internet Explorer_Server") || InStr(CurrFocus, "TMemo")))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server,TMemo"))
   }
 
   IsBrowsing() {
@@ -124,17 +122,19 @@ class VimSM {
 
   SetRandPrio(min, max) {
     global ImportGuiHwnd
+    prio := Random(min, max)
     if (WinGet() == ImportGuiHwnd) {
-      ControlSetText, Edit1, % random(min, max), A
+      ControlSetText, Edit1, % prio, A
       ControlFocus, Edit2, A
       send ^a
     } else if (WinActive("Priority") && WinActive("ahk_class #32770")) {  ; input dialogue
-      ControlSetText, Edit1, % random(min, max)
+      ControlSetText, Edit1, % prio, A
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
-      ControlSetText, TEdit5, % random(min, max)
+      ControlSetText, TEdit5, % prio, A
       ControlFocus, TEdit1, A
     } else if (WinExist("ahk_class TElWind")) {
-      this.SetPrio(random(min, max))
+      KeyWait, Alt
+      this.SetPrio(prio)
     }
     this.Vim.State.SetNormal()
   }
@@ -176,9 +176,16 @@ class VimSM {
   }
 
   ExitText(timeout:=0) {
-    if (this.IsEditingText()) {
-      send ^t{esc}
-      this.WaitTextExit(timeout)
+    CurrControl := ControlGetFocus(), StartTime := A_TickCount
+    if (!IfContains(CurrControl, "TBitBtn")) {
+      send ^t
+      ControlWaitNotFocus(CurrControl)
+      send {esc}
+      while (!IfContains(ControlGetFocus(), "TBitBtn")) {
+        if (Timeout && (A_TickCount - StartTime > Timeout))
+          return false
+      }
+      return true
     }
   }
 
@@ -366,9 +373,7 @@ class VimSM {
       if (WinExist("ahk_class TChoicesDlg")) {
         if (!title)
           ControlFocus, TGroupButton2, ahk_class TChoicesDlg
-        ; ControlSend, TBitBtn2, {enter}, ahk_class TChoicesDlg  ; doesn't work if alt is pressed down
-        while (WinExist("ahk_class TChoicesDlg"))
-          ControlClick, TBitBtn2, ahk_class TChoicesDlg,,,, NA
+        ControlClick, TBitBtn2, ahk_class TChoicesDlg,,,, NA
         if (title)
           WinWait, ahk_class TTitleEdit
       }
@@ -439,15 +444,15 @@ class VimSM {
     if (!StatText := WinGetText("ahk_class TStatBar")) {
       this.PostMsg(313)
       StatBar := 0
-      StatText := WinTextWaitExist("ahk_class TStatBar")
+      StatText := WinTextWaitExist("ahk_class TStatBar",,,, timeout)
     }
     ControlTextWaitChange("ahk_class TStatBar", StatText,,,,, timeout)
     match := "^(\s+)?(Priority|Int|Downloading|\([0-9]+ item\(s\)" . add . ")"
     loop {
-      if (RegExMatch(WinGetText("ahk_class TStatBar"), match)) {
+      if (WinGetText("ahk_class TStatBar") ~= match) {
         ret := true
         break
-      } else if (timeout && A_TickCount - StartTime > timeout) {
+      } else if (timeout && (A_TickCount - StartTime > timeout)) {
         ret := false
         break
       }
@@ -475,7 +480,7 @@ class VimSM {
 
   Reload(timeout:=0, method:=0) {
     if (!method) {
-      send !{home}
+      this.GoToTopEl()
       this.WaitFileLoad(timeout)
       send !{left}
     } else {
@@ -502,15 +507,8 @@ class VimSM {
     }
     UIA := UIA_Interface()
     el := UIA.ElementFromHandle(WinExist("ahk_class TElWind"))
-    ; el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").Click("left")  ; doesn't work in background
     pos := el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").GetCurrentPos("window")
     ControlClickWinCoord(pos.x, pos.y, "ahk_class TElWind")
-    ; if (ControlGet(,, "TToolBar3")) {
-    ;   ControlClickDPIAdjusted(716, 14, "TToolBar3", "ahk_class TElWind")
-    ; } else if (ControlGet(,, "TToolBar2")) {
-    ;   ControlClickDPIAdjusted(716, 14, "TToolBar2", "ahk_class TElWind")
-    ; }
-    ; ControlClickWinCoordDPIAdjusted(723, 57, "ahk_class TElWind")
     if (concept) {
       WinWait, ahk_class TRegistryForm
       ; send = 1 means must send
@@ -537,12 +535,6 @@ class VimSM {
     el := UIA.ElementFromHandle(WinExist("ahk_class TElWind"))
     pos := el.FindFirstBy("ControlType=Button AND Name='ReferenceBtn'").GetCurrentPos("window")
     ControlClickWinCoord(pos.x, pos.y, "ahk_class TElWind")
-    ; if (ControlGet(,, "TToolBar3")) {
-    ;   ControlClickDPIAdjusted(548, 14, "TToolBar3", "ahk_class TElWind")
-    ; } else if (ControlGet(,, "TToolBar2")) {
-    ;   ControlClickDPIAdjusted(548, 14, "TToolBar2", "ahk_class TElWind")
-    ; }
-    ; ControlClickWinCoordDPIAdjusted(555, 57, "ahk_class TElWind")
   }
 
   ClickBrowserSourceButton() {
@@ -550,22 +542,25 @@ class VimSM {
   }
 
   SetElParam(title:="", prio:="", template:="") {
-    send ^+p
-    WinWaitActive, ahk_class TElParamDlg
+		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
+		ControlSend, ahk_parent, {CtrlDown}{ShiftDown}p{CtrlUp}{ShiftUp}, ahk_class TElWind
+    WinWait, ahk_class TElParamDlg
     if (title) {
-      ControlSetText, TEdit2, % SubStr(title, 2), A
-      ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1), A
+      ControlSetText, TEdit2, % SubStr(title, 2), ahk_class TElParamDlg
+      ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1), ahk_class TElParamDlg
     }
     if (prio) {
-      ControlSetText, TEdit1, % SubStr(prio, 2), A
-      ControlSend, TEdit1, % "{text}" . SubStr(prio, 1, 1), A
+      ControlSetText, TEdit1, % SubStr(prio, 2), ahk_class TElParamDlg
+      ControlSend, TEdit1, % "{text}" . SubStr(prio, 1, 1), ahk_class TElParamDlg
     }
     if (template) {
-      ControlSetText, Edit1, % SubStr(template, 2), A
-      ControlSend, Edit1, % "{text}" . SubStr(template, 1, 1), A
+      ControlSetText, Edit1, % SubStr(template, 2), ahk_class TElParamDlg
+      ControlSend, Edit1, % "{text}" . SubStr(template, 1, 1), ahk_class TElParamDlg
     }
-    while (WinActive("ahk_class TElParamDlg"))
-      ControlSend, TEdit2, {enter}, ahk_class TElParamDlg
+    while (WinExist("ahk_class TElParamDlg")) {
+      ControlFocus, TMemo1, ahk_class TElParamDlg  ; needed, otherwise the window won't close sometimes
+      ControlSend, TMemo1, {enter}, ahk_class TElParamDlg
+    }
   }
 
   IsChangeRefWind() {
@@ -588,7 +583,7 @@ class VimSM {
     ; text := EncodeDecodeURI(text, false)  ; can't do this, Chinese characters will be encoded
     text := StrReplace(text, "%20", " ")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
-    if (ContLearn && !ret)
+    if ((ContLearn == 1) && !ret)
       this.Learn()
     return ret
   }
@@ -597,23 +592,22 @@ class VimSM {
     this.PostMsg(144)
     WinWait, ahk_class TMyFindDlg
     ControlSetText, TEdit1, % text, ahk_class TMyFindDlg
-    ControlTextWait("TEdit1", text, "ahk_class TMyFindDlg")
-    ControlSend,, {enter}, ahk_class TMyFindDlg
+    ControlFocus, TEdit1, ahk_class TMyFindDlg
+    ControlSend, TEdit1, {enter}, ahk_class TMyFindDlg
     GroupAdd, SMCtrlF, ahk_class TMsgDialog
     GroupAdd, SMCtrlF, ahk_class TBrowser
     WinWait, ahk_group SMCtrlF
-    if (WinExist("ahk_class TMsgDialog")) {
+    if (WinExist("ahk_class TBrowser")) {
+      if (ClearHighlight)
+        this.ClearHighlight()
+      WinActivate, ahk_class TBrowser
+      ret := true
+    } else if (WinExist("ahk_class TMsgDialog")) {
       while (WinExist("ahk_class TMsgDialog"))
         WinClose
       ToolTip(ToolTip,, -3000)
       if (ClearHighlight)
         this.ClearHighlight()
-    } else if (WinExist("ahk_class TBrowser")) {
-      WinActivate
-      if (ClearHighlight)
-        this.ClearHighlight()
-      WinActivate, ahk_class TBrowser
-      ret := true
     }
     return ret
   }
@@ -631,8 +625,10 @@ class VimSM {
       ControlTextWait("TEdit2", text, "ahk_class TCommanderDlg")
       ; ControlSend, TButton4, {enter}, ahk_class TCommanderDlg  ; doesn't close sometimes?
     }
-    while (WinExist("ahk_class TCommanderDlg"))
-      ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
+    ControlFocus, TEdit2, ahk_class TCommanderDlg
+    ControlSend, TEdit2, {enter}, ahk_class TCommanderDlg
+    ; while (WinExist("ahk_class TCommanderDlg"))
+      ; ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
   }
 
   MakeReference(html:=false) {
@@ -644,6 +640,8 @@ class VimSM {
       text .= break . "#Title: " . this.Vim.Browser.title
     if (this.Vim.Browser.source)
       text .= break . "#Source: " . this.Vim.Browser.source
+    if (this.Vim.Browser.author)
+      text .= break . "#Author: " . this.Vim.Browser.author
     if (this.Vim.Browser.date)
       text .= break . "#Date: " . this.Vim.Browser.date
     if ((this.vim.browser.IsVidSite(, true) == 2) && this.vim.browser.VidTime) {
@@ -652,20 +650,6 @@ class VimSM {
       text .= break . "#Comment: " . this.Vim.Browser.comment
     }
     return text
-  }
-
-  ; ParseUrl(url) {  ; for checking duplicates
-  ;   ; This is the function that works. Enc_Uri() does not
-  ;   ; (2nd parameter) Encode in case there are Chinese characters in URL
-  ;   ; (3rd parameter) component := false because "/" doesn't need to be encoded
-  ;   url := EncodeDecodeURI(this.Vim.Browser.ParseUrl(url),, false)
-  ;   url := StrReplace(url, "%253A", ":")  ; ":" appears in url of SuperMemo references
-  ;   return url
-  ; }
-
-  ClearUp() {
-    this.ClearHighlight()
-    WinClose, ahk_class TBrowser
   }
 
   HandleF3(step) {
@@ -699,9 +683,6 @@ class VimSM {
       if (WinExist("ahk_class TMyFindDlg"))  ; clears search box window
         WinClose
       this.Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
-      ; WinActivate, ahk_class TElWind
-      ; if (!ControlGetFocus("ahk_class TElWind"))  ; sometimes SM doesn't focus to anything after the search
-      ;   ControlFocus, % CurrFocus, ahk_class TElWind
       return true
     }
   }
@@ -713,7 +694,14 @@ class VimSM {
   }
 
   GoToTopEl() {
-    ControlSend, TBitBtn3, {home}, ahk_class TElWind
+    if (WinActive("ahk_class TElWind")) {
+      send !{home}
+    } else {
+      send {AltDown}
+      PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
+      PostMessage, 0x0105, 0x24, 1<<29,, ahk_class TElWind
+      send {AltUp}
+    }
   }
 
   AutoPlay() {
@@ -746,5 +734,17 @@ class VimSM {
       }
     }
     return true
+  }
+
+  EditFirstQuestion() {
+    this.PostMsg(118)
+  }
+
+  EditFirstAnswer() {
+    this.PostMsg(119)
+  }
+
+  EditAll() {
+    this.PostMsg(120)
   }
 }

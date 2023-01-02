@@ -190,7 +190,7 @@ return
   Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
-  send q
+  Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
   WinClip.Clear()
   if (Vim.SM.IsEditingHTML()) {
@@ -220,7 +220,7 @@ p::  ; hyperlink to scri*p*t component
   ClipWait
 
 SMHyperLinkToTopic:
-  Vim.SM.PostMsg(98)  ; = !n
+  Vim.SM.PostMsg(98)  ; = alt+N
   Vim.SM.WaitFileLoad()
   send ^v
   send ^t{f9}{enter}  ; opens script editor
@@ -268,6 +268,8 @@ SMSetLinkFromClipboard:
     Ref := RegExReplace(Ref, "(#Title: .*|$)", "`r`n#Title: " . Vim.Browser.title,, 1)
   if (Vim.Browser.Source)
     Ref := RegExReplace(Ref, "(#Source: .*|$)", "`r`n#Source: " . Vim.Browser.Source,, 1)
+  if (Vim.Browser.author)
+    Ref := RegExReplace(Ref, "(#Author: .*|$)", "`r`n#Author: " . Vim.Browser.author,, 1)
   if (Vim.Browser.Date)
     Ref := RegExReplace(Ref, "(#Date: .*|$)", "`r`n#Date: " . Vim.Browser.Date,, 1)
   if (Vim.Browser.Comment)

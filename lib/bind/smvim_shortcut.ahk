@@ -2,7 +2,7 @@
 ^!.::  ; find [...] and insert
   KeyWait ctrl
   Vim.SM.ExitText()
-  send q
+  Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
   ; this is to make sure this finds in the question field
   if (Vim.SM.IsEditingPlainText()) {
@@ -69,11 +69,11 @@ return
 return
 
 ^!+g::  ; change element's concept *g*roup
+  Vim.State.SetMode("Insert")
   SetDefaultKeyboard(0x0409)  ; english-US	
   send ^+p
   WinWaitActive, ahk_class TElParamDlg
   send !g  ; focus to concept group
-  Vim.State.SetMode("Insert")
   Vim.State.BackToNormal := 1
 return
 
@@ -117,28 +117,33 @@ return
 return
 
 SMCtrlN:
-  send ^n
+  Vim.SM.PostMsg(96)  ; ctrl+N
 ~^n::
   Vim.State.SetMode("Vim_Normal")
-  if (InStr(Clipboard, "youtube.com")) {
-    if (A_ThisHotkey == "~^n")
+  if (IfContains(Clipboard, "youtube.com")) {
+    if (A_ThisHotkey == "~^n") {
+      ClipSaved := ClipboardAll
       prio := ""
+    }
     vim.browser.url := Clipboard
     text := vim.browser.title . "`n" . Vim.SM.MakeReference()
     Vim.SM.WaitFileLoad()
     KeyWait ctrl
-    send q
+    Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
     send ^a{bs}{esc}
     Vim.SM.WaitTextExit()
-    send q
+    Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
-    send % "{text}" . text
+    ; send % "{text}" . text
+    Clip(text,, false)
     send {esc}
     Vim.SM.SetElParam(vim.browser.title, prio, "YouTube")
     vim.browser.title := prio := ""
-    if (A_ThisHotkey == "~^n")
+    if (A_ThisHotkey == "~^n") {
       Vim.Browser.Clear()
+      Clipboard := ClipSaved
+    }
   }
 return
 
@@ -168,8 +173,7 @@ return
 return
 
 !+c::
-  if (!Vim.SM.IsEditingText())
-    send q
+  Vim.SM.EditFirstQuestion()
   send ^t{f9}
   WinWaitActive, ahk_class TScriptEditor,, 0
   if (ErrorLevel) {
@@ -459,8 +463,7 @@ return
 ; So ctrl+ff (hold ctrl and press f twice) could be a shorthand for search clipboard
 ^f::
   ControlSetText, TEdit1, % Clipboard, ahk_class TMyFindDlg
-  ControlTextWaitChange("TEdit1",, "ahk_class TMyFindDlg")
-  ; ControlSend, TEdit1, {enter}, ahk_class TMyFindDlg
+  ControlFocus, TEdit1, ahk_class TMyFindDlg
   ControlClick, TButton3, ahk_class TMyFindDlg
 return
 
@@ -536,7 +539,9 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
-  if ((b := (WinActive("ahk_group Browser")) && !Vim.Browser.VidTime)) {
+  if (b := WinActive("ahk_group Browser"))
+    guiaBrowser := new UIA_Browser("ahk_id " . b)
+  if (b && !Vim.Browser.VidTime) {
     GetUrlDone := false
     SetTimer, GetUrl, -1
   }
@@ -546,7 +551,6 @@ BrowserSyncTime:
   KeyWait shift
   if (b) {
     send {esc}
-    hwnd := WinGet()
     while (!GetUrlDone)
       continue
     Vim.Browser.GetTitleSourceDate(!sync, false)  ; get title for checking later
@@ -554,7 +558,7 @@ BrowserSyncTime:
     if (WinGetTitle("ahk_class TElWind") != StrReplace(Vim.Browser.title, "...", ".")) {
       WinActivate, ahk_class TElWind
       MsgBox, 4,, Titles don't match. Continue?
-      WinActivate % "ahk_id " . hwnd
+      WinActivate % "ahk_id " . guiaBrowser.BrowserId
       IfMsgBox no
         goto BrowserSyncReturn
     }
@@ -566,14 +570,12 @@ BrowserSyncTime:
       }
     }
     ; KeyWait enter  ; without this script may get stuck
-    WinActivate % "ahk_id " . hwnd
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
     if A_ThisHotkey contains ^  ; hotkeys with ctrl will close the tab
-      Vim.Browser.CloseTab()
+      guiaBrowser.CloseTab()
   } else if (!Vim.Browser.VidTime && !IfContains(A_ThisHotkey, "``")) {
-    if (!Vim.SM.IsEditingText())  ; without this script may get stuck
-      send q
-      if (!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp."))
-        goto BrowserSyncReturn
+    if (!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp."))
+      goto BrowserSyncReturn
   }
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
@@ -582,8 +584,7 @@ BrowserSyncTime:
   if (b && (vim.browser.IsVidSite(, true) == 2)) {
     EditRef := true
   } else {
-    if (!Vim.SM.IsEditingText())
-      send q
+    Vim.SM.EditFirstQuestion()
     send ^t{f9}
     WinWaitActive, ahk_class TScriptEditor,, 1.5
     if (ErrorLevel) {

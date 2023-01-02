@@ -183,7 +183,7 @@ ClozeHinter:
     InitText := "acidic/alkaline"
   } else if (InitText ~= "\b(same|different)\b") {
     InitText := "same/different"
-  } else if (!InStr(InitText, "/")) {
+  } else if (!IfContains(InitText, "/")) {
     inside := false
   }
   gui, ClozeHinter:Add, Text,, &Hint:
@@ -212,9 +212,8 @@ CapsLock & z::  ; delete [...]
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 CapsLock & z::  ; delete [...]
   ClozeNoBracket := (A_ThisLabel == "ClozeNoBracket" || A_ThisHotkey == "CapsLock & z")
-  if (A_ThisLabel == "ClozeNoBracket" && ClozeNoBracketCtrlState) {
+  if (A_ThisLabel == "ClozeNoBracket" && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
-  }
   KeyWait Capslock
   if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/")) {
     MsgBox, 4,, Your hint has a slash. Press yes to make it inside square brackets.
@@ -228,7 +227,7 @@ CapsLock & z::  ; delete [...]
     return
 
   ToolTip("Cloze processing...", true)
-  SleepCalc := A_TickCount
+  ; SleepCalc := A_TickCount
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send !{left}
@@ -249,10 +248,10 @@ CapsLock & z::  ; delete [...]
   if (Vim.SM.IsEditingPlainText()) {
     send ^a
     ClipSaved := ClipboardAll
-    if (!ClozeNoBracket) {
-      clip(StrReplace(copy(false), "[...]", cloze),, false)
-    } else {
+    if (ClozeNoBracket) {
       clip(RegExReplace(copy(false), "\s?[...]"),, false)
+    } else {
+      clip(StrReplace(copy(false), "[...]", cloze),, false)
     }
     Clipboard := ClipSaved
   } else if (Vim.SM.IsEditingHTML()) {
@@ -265,10 +264,10 @@ CapsLock & z::  ; delete [...]
       return
     if (copy() = " [...")  ; a bug in SM
       send {left}{right}+{right 5}
-    if (!ClozeNoBracket) {
-      send % "{text}" . cloze
-    } else {
+    if (ClozeNoBracket) {
       send {bs}
+    } else {
+      send % "{text}" . cloze
     }
 		if (WinExist("ahk_class TMyFindDlg")) ; clears search box window
 			WinClose

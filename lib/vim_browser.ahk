@@ -5,18 +5,17 @@ class VimBrowser {
   }
 
   Clear() {
-    this.title := this.url := this.source := this.date := this.VidTime := this.comment := this.VidSite := ""
+    this.title := this.url := this.source := this.date := this.comment := this.VidSite := this.author := ""
     global guiaBrowser := ""
   }
 
   GetInfo(RestoreClip:=true, CopyFullPage:=true, PressButton:=true) {
-    this.clear()
     if (RestoreClip)
       ClipSaved := ClipboardAll
     global guiaBrowser
     if (!guiaBrowser)
       guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-    this.GetUrl(, false)
+    this.GetUrl()
     if (PressButton)
       gosub PressYTShowMoreButton
     this.GetTitleSourceDate(false, CopyFullPage)
@@ -26,23 +25,22 @@ class VimBrowser {
 
   ParseUrl(url) {
     url := RegExReplace(url, "#.*")
-    if (InStr(url, "youtube.com/watch")) {
+    if (IfContains(url, "youtube.com/watch")) {
       url := StrReplace(url, "app=desktop&")
       url := RegExReplace(url, "&.*")
-    } else if (InStr(url, "bilibili.com/video")) {
+    } else if (IfContains(url, "bilibili.com/video")) {
       url := RegExReplace(url, "(\?(?!p=[0-9]+)|&).*")
-    } else if (InStr(url, "netflix.com/watch")) {
+    } else if (IfContains(url, "netflix.com/watch")) {
       url := RegExReplace(url, "\?trackId=.*")
-    } else if (InStr(url, "baike.baidu.com")) {
+    } else if (IfContains(url, "baike.baidu.com")) {
       url := RegExReplace(url, "\?.*")
     }
     return url
   }
 
-  GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true) {
-    this.Title := this.RemoveBrowserName(WinGetTitle())
-    this.VidSite := this.IsVidSite(this.title)
-    this.url := this.url ? this.url : this.GetUrl(, RestoreClip)
+  GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true, FullPageText:="") {
+    this.Title := this.title ? this.title : this.RemoveBrowserName(WinGetTitle())
+    this.url := this.url ? this.url : this.GetUrl()
 
     ; Sites that have source in their title
     if (this.Title ~= "^很帅的日报") {
@@ -99,10 +97,6 @@ class VimBrowser {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", Source)
       this.source := source
       this.Title := RegExReplace(this.Title, " : " . StrReplace(Source, "r/") . "$")
-    } else if (IfContains(this.Url, "github.com")) {
-      this.Source := "Github"
-      if (RegExMatch(this.url, "github\.com\/.+?\/(.+?)(\/|$)", v))
-        this.source .= ": " . v1
 
     ; Sites that don't include source in the title
     } else if (IfContains(this.Url, "dailystoic.com")) {
@@ -131,41 +125,64 @@ class VimBrowser {
       this.source := "Vandal"
     } else if (IfContains(this.url, "fidelity.com")) {
       this.source := "Fidelity International"
+    } else if (IfContains(this.Url, "github.com")) {
+      this.source := "Github"
 
     ; Sites that should be skipped
     SkippedList := "mp.weixin.qq.com,blackrock.com,superdatascience.com"
     } else if (IfContains(this.Url, SkippedList)) {
-      return
+      ret := ""
 
     ; Sites that require special attention
     } else if (IfContains(this.url, "youtube.com/watch")) {
       this.source := "YouTube"
-      if (CopyFullPage && (text := this.GetFullPage(this.title, RestoreClip))) {
-        this.VidTime := this.MatchVidTime(this.title, text)
-        this.date := this.MatchYTDate(text)
-        if (source := this.MatchYTSource(text))
-          this.source .= ": " . source
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
+        this.VidTime := this.MatchVidTime(this.title, FullPageText)
+        this.date := this.MatchYTDate(FullPageText)
+        if (author := this.MatchYTAuthor(FullPageText))
+          this.author := author
       }
       this.title := RegExReplace(this.title, " - YouTube$")
     } else if (IfContains(this.url, "bilibili.com/video")) {
       this.Source := "哔哩哔哩"
-      if (CopyFullPage && (text := this.GetFullPage(this.title, RestoreClip))) {
-        this.VidTime := this.MatchVidTime(this.title, text)
-        this.date := this.MatchBLDate(text)
-        if (source := this.MatchBLSource(text))
-          this.source .= "：" . source
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
+        this.VidTime := this.MatchVidTime(this.title, FullPageText)
+        this.date := this.MatchBLDate(FullPageText)
+        if (author := this.MatchBLAuthor(FullPageText))
+          this.author := author
       }
       this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
     } else if (this.title ~= " 在线播放 - 小宝影院 - 在线视频$") {
       this.Source := "小宝影院"
-      if (CopyFullPage && (text := this.GetFullPage(this.title, RestoreClip)))
-        this.VidTime := this.MatchVidTime(this.title, text)
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip))))
+        this.VidTime := this.MatchVidTime(this.title, FullPageText)
       this.Title := RegExReplace(this.Title, " 在线播放 - 小宝影院 - 在线视频$")
     } else if (this.title ~= "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$") {
       this.source := "唐人街影院"
-      if (CopyFullPage && (text := this.GetFullPage(this.title, RestoreClip)))
-        this.VidTime := this.MatchVidTime(this.title, text)
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip))))
+        this.VidTime := this.MatchVidTime(this.title, FullPageText)
       this.title := RegExReplace(this.title, "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$")
+    } else if (IfContains(this.url, "en.wikipedia.org")) {
+      this.Source := "Wikipedia"
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v)
+        this.date := v1
+      }
+      this.title := RegExReplace(this.title, " - Wikipedia$")
+    } else if (IfContains(this.url, "zh.wikipedia.org")) {
+      this.Source := "维基百科"
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
+        RegExMatch(FullPageText, "本页面最后修订于(.*?) \(", v)
+        this.date := v1
+      }
+      this.title := RegExReplace(this.title, " - 维基百科，自由的百科全书$")
+    } else if (IfContains(this.url, "es.wikipedia.org")) {
+      this.Source := "Wikipedia"
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
+        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v)
+        this.date := v1
+      }
+      this.title := RegExReplace(this.title, " - Wikipedia, la enciclopedia libre$")
 
     ; Try to use - or | to find source
     } else {
@@ -191,6 +208,9 @@ class VimBrowser {
         this.Title := SubStr(this.Title, 1, TitleLength)
       }
     }
+    if (RestoreClip)
+      Clipboard := ClipSaved
+    return ret
   }
 
   GetFullPage(title:="", RestoreClip:=true) {
@@ -199,7 +219,7 @@ class VimBrowser {
       global guiaBrowser
       if (!guiaBrowser)
         guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-      return guiaBrowser.GetAllText()
+      return guiaBrowser.FindAll(guiaBrowser.TextControlCondition)
     }
     if (RestoreClip)
       ClipSaved := ClipboardAll
@@ -245,36 +265,15 @@ class VimBrowser {
     return this.VidTime := VidTime
   }
 
-  GetUrl(method:=1, RestoreClip:=true) {
-    if (!method) {
-      this.title := this.title ? this.title : this.RemoveBrowserName(WinGetTitle())
-      if (this.title = "New Tab")
-        return
-      send {f6}^l^l  ; go to address bar; twice ^l to update link
-      sleep 100
-      if (RestoreClip)
-        ClipSaved := ClipboardAll
-      global WinClip
-      WinClip.Clear()
-      while (!Clipboard) {
-        send ^l^c
-        ClipWait 0.2
-      }
-      this.url := this.ParseUrl(Clipboard)
-      send {esc}
-      if (RestoreClip)
-        Clipboard := ClipSaved
-      return this.url
-    } else {
-      global guiaBrowser
-      if (!guiaBrowser)
-        guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-      url := guiaBrowser.GetCurrentURL()
-      return this.url := this.ParseUrl(url)
-    }
+  GetUrl() {
+    global guiaBrowser
+    if (!guiaBrowser)
+      guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    url := guiaBrowser.GetCurrentURL()
+    return this.url := this.ParseUrl(url)
   }
 
-  MatchYTSource(text) {
+  MatchYTAuthor(text) {
     ; RegExMatch(text, "i)SAVE(\r\n){3}\K.*", YTSource)
     RegExMatch(text, ".*(?=\r\n.*subscribers)", YTSource)
     return YTSource
@@ -285,7 +284,7 @@ class VimBrowser {
     return date
   }
 
-  MatchBLSource(text) {
+  MatchBLAuthor(text) {
     RegExMatch(text, "m)^.*(?=\r\n 发消息)", BLSource)
     return BLSource
   }
@@ -311,7 +310,13 @@ class VimBrowser {
     } else if (title ~= "_哔哩哔哩_bilibili$") {
       RegExMatch(FullPageText, "\r\n\K[0-9:]+(?= \/ )", VidTime)
     } else if (title ~= "( 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放)$") {
-      RegExMatch(FullPageText, "[0-9:]+(?=\n \/ )", VidTime)
+      for i, v in FullPageText {
+        if (v.CurrentName ~= "[0-9:]+$") {
+          VidTime := v.CurrentName
+          break
+        }
+      }
+      ; RegExMatch(FullPageText, "[0-9:]+(?=\n \/ )", VidTime)
     }
     return VidTime
   }
@@ -342,15 +347,15 @@ class VimBrowser {
 
   IsVidSite(title:="", check:=false) {
     if (!check) {
-      title := title ? title : this.RemoveBrowserName(WinGetTitle())
-      if (title ~= "( - YouTube|_哔哩哔哩_bilibili| 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放)$")
+      this.title := title ? title : this.RemoveBrowserName(WinGetTitle())
+      if (this.title ~= "( - YouTube|_哔哩哔哩_bilibili| 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放)$")
         return true
     } else {  ; check if time stamp can be in the url
       if (!this.source)
-        this.GetTitleSourceDate()
-      if (IfIn(this.source, "Youtube,哔哩哔哩")) {  ; time stamp can be in url
+        this.GetTitleSourceDate(, false)
+      if (IfContains(this.source, "Youtube,哔哩哔哩")) {  ; time stamp can be in url
         return 1
-      } else if (IfIn(this.source, "小宝影院,唐人街影院")) {  ; time stamp can't be in url
+      } else if (IfContains(this.source, "小宝影院,唐人街影院")) {  ; time stamp can't be in url
         return 2
       }
     }
@@ -359,11 +364,6 @@ class VimBrowser {
   Highlight() {
 		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id " . WinGet()
     ControlSend, ahk_parent, {AltDown}{ShiftDown}h{AltUp}{ShiftUp}, % "ahk_id " . WinGet()
-  }
-
-  CloseTab() {
-		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id " . WinGet()
-    ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " . WinGet()
   }
 
   GetYTShowMoreButton() {

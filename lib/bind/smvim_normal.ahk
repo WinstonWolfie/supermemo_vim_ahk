@@ -91,7 +91,7 @@ f::  ; gf: open source file
   WinWaitNotActive % "ahk_id " . hwnd
   WinWaitActive % "ahk_id " . hwnd
   send !{home}
-  if (ContLearn) {
+  if (ContLearn == 1) {
     Vim.SM.Learn()
   } else {
     Vim.SM.WaitFileLoad()

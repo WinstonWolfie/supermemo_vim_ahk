@@ -19,6 +19,8 @@ capslock::
   esc := IfIn(A_ThisHotkey, "esc,capslock,^[")
   if (!esc) {
     HintsEntered .= A_ThisHotkey
+    TT := StrUpper(HintsEntered)
+    ToolTip(TT, true)
     if (!ArrayIndex := HasVal(aHintStrings, HintsEntered))
       return
     for k, v in aHints {
@@ -26,6 +28,25 @@ capslock::
         if (HinterMode == "YankLink") {
           Clipboard := v
           ToolTip("Copied " . v)
+        } else if (IfIn(HinterMode, "Visual,Normal")) {
+          if ((IE2 := ControlGet(,, "Internet Explorer_Server2")) && (IE1 := ControlGet,, "Internet Explorer_Server1")) {
+            Vim.SM.ExitText()
+            sleep 20
+          }
+          aCoords := StrSplit(k, " ")
+          if (v == "Internet Explorer_Server1") {
+            if (IE2) {
+              Vim.SM.EditFirstAnswer()
+            } else {
+              Vim.SM.EditFirstQuestion()
+            }
+          } else if (v == "Internet Explorer_Server2") {
+            Vim.SM.EditFirstQuestion()
+          }
+          Vim.SM.WaitTextFocus()
+          ControlClickScreen(aCoords[1], aCoords[2])
+          if (HinterMode == "Visual")
+            send {right}{left}^+{right}
         } else {
           if (!Vim.SM.RunLink(v, OpenInIE)) {
             ToolTip("An error occured when running " . v)
@@ -41,9 +62,14 @@ capslock::
     }
   }
   HintsEntered := ""
+  gosub RemoveToolTip
   if (esc || (HinterMode != "Persistent")) {
     RemoveAllToopTip(LastHintCount, "g")
-    Vim.State.SetNormal()
+    if (HinterMode != "Visual") {
+      Vim.State.SetNormal()
+    } else {
+      Vim.State.SetMode("Vim_VisualChar")
+    }
   }
 return
 
@@ -62,7 +88,7 @@ RemoveAllToopTip(n:=20, ToolTipKind:="") {
 CreateHints(HintsArray, HintStrings) {
   for k, v in HintsArray {
     aCoords := StrSplit(k, " ")
-    ToolTipG(HintStrings[A_Index], aCoords[1], aCoords[2], A_Index,, "yellow", "black")
+    ToolTipG(HintStrings[A_Index], aCoords[1], aCoords[2], A_Index,, "yellow", "black",, "S")
     global LastHintCount := A_Index
   }
 }

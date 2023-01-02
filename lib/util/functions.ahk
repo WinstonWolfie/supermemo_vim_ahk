@@ -16,10 +16,9 @@ IfBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
 		StringCaseSense off
 	}
 	If var between %LowerBound% and %UpperBound%
-	{
-		StringCaseSense % PrevStringCaseSense
-		Return, true
-	}
+		ret := true
+	StringCaseSense % PrevStringCaseSense
+   return ret
 }
 IfNotBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
 	PrevStringCaseSense := A_StringCaseSense
@@ -29,10 +28,9 @@ IfNotBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
 		StringCaseSense off
 	}
 	If var not between %LowerBound% and %UpperBound%
-	{
-		StringCaseSense % PrevStringCaseSense
-		Return, true
-	}
+		ret := true
+	StringCaseSense % PrevStringCaseSense
+   return ret
 }
 IfIn(ByRef var, MatchList, StrCaseSense:=false) {
 	PrevStringCaseSense := A_StringCaseSense
@@ -42,11 +40,9 @@ IfIn(ByRef var, MatchList, StrCaseSense:=false) {
 		StringCaseSense off
 	}
 	If var in %MatchList%
-	{
-		StringCaseSense % PrevStringCaseSense
-		Return, true
-	}
+		ret := true
 	StringCaseSense % PrevStringCaseSense
+   return ret
 }
 IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
 	PrevStringCaseSense := A_StringCaseSense
@@ -56,11 +52,9 @@ IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
 		StringCaseSense off
 	}
 	If var not in %MatchList%
-	{
-		StringCaseSense % PrevStringCaseSense
-		Return, true
-	}
+		ret := true
 	StringCaseSense % PrevStringCaseSense
+   return ret
 }
 IfContains(ByRef var, MatchList, StrCaseSense:=false) {
 	PrevStringCaseSense := A_StringCaseSense
@@ -70,11 +64,9 @@ IfContains(ByRef var, MatchList, StrCaseSense:=false) {
 		StringCaseSense off
 	}
 	If var contains %MatchList%
-	{
-		StringCaseSense % PrevStringCaseSense
-		Return, true
-	}
+		ret := true
 	StringCaseSense % PrevStringCaseSense
+   return ret
 }
 IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
 	PrevStringCaseSense := A_StringCaseSense
@@ -84,11 +76,9 @@ IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
 		StringCaseSense off
 	}
 	If var not contains %MatchList%
-	{
-		StringCaseSense % PrevStringCaseSense
-		Return, true
-	}
+		ret := true
 	StringCaseSense % PrevStringCaseSense
+   return ret
 }
 IfIs(ByRef var, type) {
 	If var is %type%
@@ -498,6 +488,12 @@ ControlClickDPIAdjusted(XCoord, YCoord, Control:="", WinTitle:="") {
 	Control := Control ? Control : ControlGetFocus()
 	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
 	ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
+}
+
+ControlClickScreen(x, y, WinTitle:="") {
+	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+	WinGetPos, wX, wY,,, % WinTitle
+	ControlClick, % "x" . x - wX . " y" . y - wY, % WinTitle,,,, NA
 }
 
 WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=0) {
@@ -983,3 +979,7 @@ sortArray( a, o := "A")  ; https://www.autohotkey.com/boards/viewtopic.php?t=601
 RestoreClipReturn:
   Clipboard := ClipSaved
 return
+
+ReleaseModifierKeys() {
+  send {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}
+}

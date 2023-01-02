@@ -9,8 +9,6 @@
 ~!m::  ; menu
 #if (Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")))
 ~!a::  ; new item and new registry entry
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
-~!n::  ; new topic
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TTaskManager"))
 ~!f1::  ; new task
   Vim.State.SetMode("Insert")
@@ -19,6 +17,17 @@ return
 ~^g::  ; element number
   Vim.State.SetMode("Insert")
   Vim.State.BackToNormal := 1
+return
+
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
+!n::  ; new topic
+  Vim.SM.PostMsg(98)  ; = alt+N
+  Vim.State.SetMode("Insert")
+return
+
+!t::  ; new topic
+  Vim.SM.AltT()
+  Vim.State.SetMode("Insert")
 return
 
 #if (Vim.State.Vim.Enabled && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")) && !Vim.SM.IsEditingText())
