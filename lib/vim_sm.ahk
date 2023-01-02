@@ -3,8 +3,10 @@ class VimSM {
     this.Vim := Vim
   }
 
-  ClickTop() {
-    if (this.IsEditingText()) {
+  ClickTop(Control:="") {
+    if (Control) {
+      ControlClick, % Control, ahk_class TElWind,,,, NA x1 y1
+    } else if (this.IsEditingText()) {
       ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, NA x1 y1
     } else {
       ; server2 because question field of items are server2
@@ -24,10 +26,14 @@ class VimSM {
         }
       }
     }
+    return true
   }
 
-  ClickMid() {
-    if (this.IsEditingText()) {
+  ClickMid(Control:="") {
+    if (Control) {
+      ControlGetPos,,,, Height, % Control, ahk_class TElWind
+      ControlClick, % Control, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
+    } else if (this.IsEditingText()) {
       CurrFocus := ControlGetFocus("ahk_class TElWind")
       ControlGetPos,,,, Height, % CurrFocus, ahk_class TElWind
       ControlClick, % CurrFocus, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
@@ -49,10 +55,14 @@ class VimSM {
         }
       }
     }
+    return true
   }
 
-  ClickBottom() {
-    if (this.IsEditingText()) {
+  ClickBottom(Control:="") {
+    if (Control) {
+      ControlGetPos,,,, Height, % Control, ahk_class TElWind
+      ControlClick, % Control, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
+    } else if (this.IsEditingText()) {
       CurrFocus := ControlGetFocus("ahk_class TElWind")
       ControlGetPos,,,, Height, % CurrFocus, ahk_class TElWind
       ControlClick, % CurrFocus, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
@@ -74,6 +84,7 @@ class VimSM {
         }
       }
     }
+    return true
   }
 
   IsEditingHTML() {
@@ -176,17 +187,16 @@ class VimSM {
   }
 
   ExitText(timeout:=0) {
-    CurrControl := ControlGetFocus(), StartTime := A_TickCount
-    if (!IfContains(CurrControl, "TBitBtn")) {
-      send ^t
-      ControlWaitNotFocus(CurrControl)
+    if (this.IsEditingText()) {
+      IE2 := ControlGet(,, "Internet Explorer_Server2")
+      IE1 := ControlGet(,, "Internet Explorer_Server1")
+      if (IE2 && IE1)
+        send ^t
       send {esc}
-      while (!IfContains(ControlGetFocus(), "TBitBtn")) {
-        if (Timeout && (A_TickCount - StartTime > Timeout))
-          return false
-      }
-      return true
+      if (!this.WaitTextExit(timeout))
+        return false
     }
+    return true
   }
 
   WaitTextExit(Timeout:=0) {
@@ -195,7 +205,7 @@ class VimSM {
       if (WinActive("ahk_class TElWind") && !this.IsEditingText()) {
         return true
       ; Choices because reference could update
-      } else if (this.IsChangeRefWind() || (TimeOut && A_TickCount - StartTime > TimeOut)) {
+      } else if (this.IsChangeRefWind() || (TimeOut && (A_TickCount - StartTime > TimeOut))) {
         return false
       }
     }
@@ -206,7 +216,7 @@ class VimSM {
     loop {
       if (this.IsEditingText()) {
         return true
-      } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
         return false
       }
     }
@@ -542,9 +552,12 @@ class VimSM {
   }
 
   SetElParam(title:="", prio:="", template:="") {
-		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
-		ControlSend, ahk_parent, {CtrlDown}{ShiftDown}p{CtrlUp}{ShiftUp}, ahk_class TElWind
-    WinWait, ahk_class TElParamDlg
+    while (!WinExist("ahk_class TElParamDlg")) {
+      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
+      ControlSend, ahk_parent, {ShiftDown}{CtrlDown}p{CtrlUp}{ShiftUp}, ahk_class TElWind
+      WinWait, ahk_class TElParamDlg,, 0.3
+    }
+    WinWait, ahk_class TElParamDlg  ; needed, otherwise the following ControlSetText might fail
     if (title) {
       ControlSetText, TEdit2, % SubStr(title, 2), ahk_class TElParamDlg
       ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1), ahk_class TElParamDlg
@@ -560,6 +573,7 @@ class VimSM {
     while (WinExist("ahk_class TElParamDlg")) {
       ControlFocus, TMemo1, ahk_class TElParamDlg  ; needed, otherwise the window won't close sometimes
       ControlSend, TMemo1, {enter}, ahk_class TElParamDlg
+      WinWaitClose, ahk_class TElParamDlg,, 0.3
     }
   }
 

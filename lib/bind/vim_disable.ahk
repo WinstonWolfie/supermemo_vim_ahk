@@ -1,4 +1,4 @@
-﻿#if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("ydc") or Vim.State.StrIsInCurrentVimMode("Command") or (Vim.State.IsCurrentVimMode("Z")))
+﻿#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("ydc") || Vim.State.StrIsInCurrentVimMode("Command") || Vim.State.IsCurrentVimMode("Z") || Vim.State.IsCurrentVimMode("KeyListener")))
 *a::
 *b::
 *c::
@@ -68,7 +68,8 @@ _::
 .::
 >::
 Space::
-  Vim.State.SetMode("Vim_Normal")
+  if (!Vim.State.IsCurrentVimMode("KeyListener"))
+    Vim.State.SetMode("Vim_Normal")
 Return
 
 #if Vim.IsVimGroup() and Vim.State.StrIsInCurrentVimMode("Vim_") and (Vim.Conf["VimDisableUnused"]["val"] == 2)

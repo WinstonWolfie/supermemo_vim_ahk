@@ -1,4 +1,4 @@
-#if (Vim.State.IsCurrentVimMode("KeyListener"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("KeyListener"))
 s::
 a::
 d::
@@ -13,15 +13,20 @@ m::
 p::
 g::
 h::
+bs::
 esc::
 capslock::
 ^[::
   esc := IfIn(A_ThisHotkey, "esc,capslock,^[")
   if (!esc) {
-    HintsEntered .= A_ThisHotkey
+    if (bs := (HintsEntered && (A_ThisHotkey = "bs"))) {
+      HintsEntered := RegExReplace(HintsEntered, ".$")
+    } else {
+      HintsEntered .= A_ThisHotkey
+    }
     TT := StrUpper(HintsEntered)
-    ToolTip(TT, true)
-    if (!ArrayIndex := HasVal(aHintStrings, HintsEntered))
+    ToolTip(TT, true,,, 19)
+    if (bs || (!ArrayIndex := HasVal(aHintStrings, HintsEntered)))
       return
     for k, v in aHints {
       if (A_Index == ArrayIndex) {
@@ -29,11 +34,13 @@ capslock::
           Clipboard := v
           ToolTip("Copied " . v)
         } else if (IfIn(HinterMode, "Visual,Normal")) {
-          if ((IE2 := ControlGet(,, "Internet Explorer_Server2")) && (IE1 := ControlGet,, "Internet Explorer_Server1")) {
-            Vim.SM.ExitText()
+          IE2 := ControlGet(,, "Internet Explorer_Server2")
+          IE1 := ControlGet(,, "Internet Explorer_Server1")
+          if (IE2 && IE1) {
+            send ^t{esc}
+            Vim.SM.WaitTextExit()
             sleep 20
           }
-          aCoords := StrSplit(k, " ")
           if (v == "Internet Explorer_Server1") {
             if (IE2) {
               Vim.SM.EditFirstAnswer()
@@ -44,6 +51,7 @@ capslock::
             Vim.SM.EditFirstQuestion()
           }
           Vim.SM.WaitTextFocus()
+          aCoords := StrSplit(k, " ")
           ControlClickScreen(aCoords[1], aCoords[2])
           if (HinterMode == "Visual")
             send {right}{left}^+{right}
@@ -62,13 +70,13 @@ capslock::
     }
   }
   HintsEntered := ""
-  gosub RemoveToolTip
+  RemoveToolTip(19)
   if (esc || (HinterMode != "Persistent")) {
     RemoveAllToopTip(LastHintCount, "g")
-    if (HinterMode != "Visual") {
-      Vim.State.SetNormal()
-    } else {
+    if (HinterMode == "Visual") {
       Vim.State.SetMode("Vim_VisualChar")
+    } else {
+      Vim.State.SetNormal()
     }
   }
 return

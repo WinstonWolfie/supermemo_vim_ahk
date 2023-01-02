@@ -897,5 +897,7 @@ return
 !t::  ; test latency
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(hWnd)
-  el.FindFirstBy("ControlType=Text AND Name='network_check'").Click()
+  if (!btn := el.FindFirstBy("ControlType=Text AND Name='network_check'"))
+    btn := el.FindFirstBy("ControlType=Text AND Name='Update All'")
+  btn.click()
 return

@@ -181,7 +181,7 @@ c::
   WinGetPos, wX, wY,,, ahk_class TElWind
   x += wX, y += wY  ; so that coords are relative to screen
   if (Caret := IfIn(A_ThisHotkey, "v,c"))
-    vim.sm.editAll()
+    Vim.SM.ClickMid(Control)
   type := Caret ? "Text" : "Hyperlink"
   auiaHints := el.FindAllByType(type)
   aHints := []
@@ -192,18 +192,22 @@ c::
       aHints[pos.x . " " . pos.y] := Caret ? Control : v.CurrentValue
     }
   }
-  control := "Internet Explorer_Server1"
-  if (hCtrl := ControlGet(,, control)) {
-    el := UIA.ElementFromHandle(hCtrl)
-    ControlGetPos, x, y, w, h, % control
-    WinGetPos, wX, wY,,, ahk_class TElWind
-    x += wX, y += wY  ; so that coords are relative to screen
-    auiaHints := el.FindAllByType(type)
-    for i, v in auiaHints {
-      pos := v.GetCurrentPos("screen")
-      if (((pos.x >= x) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
-      || ((pos.x + pos.w >= x) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
-        aHints[pos.x . " " . pos.y] := Caret ? Control : v.CurrentValue
+  if (control == "Internet Explorer_Server2") {
+    control := "Internet Explorer_Server1"
+    if (Caret)
+      Vim.SM.ClickMid(Control)
+    if (hCtrl := ControlGet(,, control)) {
+      el := UIA.ElementFromHandle(hCtrl)
+      ControlGetPos, x, y, w, h, % control
+      WinGetPos, wX, wY,,, ahk_class TElWind
+      x += wX, y += wY  ; so that coords are relative to screen
+      auiaHints := el.FindAllByType(type)
+      for i, v in auiaHints {
+        pos := v.GetCurrentPos("screen")
+        if (((pos.x >= x) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
+        || ((pos.x + pos.w >= x) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
+          aHints[pos.x . " " . pos.y] := Caret ? Control : v.CurrentValue
+        }
       }
     }
   }

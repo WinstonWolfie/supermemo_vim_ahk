@@ -25,6 +25,7 @@ return
   Vim.State.SetMode("Insert")
 return
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.State.g)
 !t::  ; new topic
   Vim.SM.AltT()
   Vim.State.SetMode("Insert")

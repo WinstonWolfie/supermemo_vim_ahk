@@ -128,16 +128,15 @@ SMCtrlN:
     vim.browser.url := Clipboard
     text := vim.browser.title . "`n" . Vim.SM.MakeReference()
     Vim.SM.WaitFileLoad()
-    KeyWait ctrl
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
+    KeyWait ctrl
     send ^a{bs}{esc}
     Vim.SM.WaitTextExit()
-    Vim.SM.EditFirstQuestion()
-    Vim.SM.WaitTextFocus()
+    ; Vim.SM.EditFirstQuestion()
+    ; Vim.SM.WaitTextFocus()
     ; send % "{text}" . text
     Clip(text,, false)
-    send {esc}
     Vim.SM.SetElParam(vim.browser.title, prio, "YouTube")
     vim.browser.title := prio := ""
     if (A_ThisHotkey == "~^n") {
