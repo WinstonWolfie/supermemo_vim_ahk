@@ -55,7 +55,7 @@
     this.CheckValidMode(Mode)
     if (Mode != "") {
       this.Mode := Mode
-      if (PrevMode == "SMVim_PlanDragging" && this.IsCurrentVimMode("Vim_Normal"))
+      if (PrevMode == "SMPlanDragging" && this.IsCurrentVimMode("Vim_Normal"))
         this.HandlePlanDraggingSetNormal()
       if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
@@ -135,9 +135,9 @@
   }
 
   HandlePlanDraggingSetNormal() {
-    global XCoordSaved, YCoordSaved, IniXCoord, IniYCoord, SMVimPlanDraggingPut
-    if (SMVimPlanDraggingPut) {
-      SMVimPlanDraggingPut := false
+    global XCoordSaved, YCoordSaved, IniXCoord, IniYCoord, SMPlanDraggingPut
+    if (SMPlanDraggingPut) {
+      SMPlanDraggingPut := false
     } else {
       MouseGetPos,, YCoord
       MouseMove, IniXCoord, IniYCoord  ; speed can't be 0 otherwise returning won't work reliably
@@ -245,8 +245,10 @@
   ToggleEnabled() {
     if (this.Vim.Enabled) {
       this.Vim.Enabled := False
+      ToolTip("vim_ahk disabled.")
     } else {
       this.Vim.Enabled := True
+      ToolTip("vim_ahk enabled.")
     }
   }
 }

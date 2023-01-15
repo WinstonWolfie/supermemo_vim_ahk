@@ -10,7 +10,7 @@
 ;=======================================================================================
 CbAutoComplete()
 {  ; CB_GETEDITSEL = 0x0140, CB_SETEDITSEL = 0x0142
-  If ((GetKeyState("Delete", "P")) || (GetKeyState("Backspace", "P")))
+  If (GetKeyState("Delete") || GetKeyState("Backspace") || GetKeyState("CapsLock", "P"))
     return
   GuiControlGet, lHwnd, Hwnd, %A_GuiControl%
   SendMessage, 0x0140, 0, 0,, ahk_id %lHwnd%

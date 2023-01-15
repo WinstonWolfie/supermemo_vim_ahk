@@ -43,7 +43,7 @@ CapsLock & /::
   } else {
     gui, Search:Add, Text,, &Find text:
   }
-  gui, Search:Add, Edit, vUserInput w196, % VimLastSearch
+  gui, Search:Add, Edit, vUserInput w196 r1 -WantReturn, % VimLastSearch
   gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
   if (AltState) {
     gui, Search:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), S&tay in clozed item

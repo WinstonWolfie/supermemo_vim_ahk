@@ -400,7 +400,7 @@
               StrAfter := this.Vim.ParseLineBreaks(copy(false))
               send +{right}
             }
-            if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {
+            if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
               this.SelectParagraphUp(, true)
               StrAfter := this.Vim.ParseLineBreaks(copy(false))
               if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at start of line
@@ -410,14 +410,14 @@
               }
               length := StrLen(StrAfter) - StrLen(StrBefore)
               DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
-              pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence, true)
+              pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence - 1, true)
               if (pos) {
-                right := StrLen(DetectionStr) - pos + 1
+                right := StrLen(DetectionStr) - pos
                 if (pos == 1) {
                   this.SearchOccurrence++
-                  NextOccurrence := this.FindWordBoundary(DetectionStr, this.SearchOccurrence, true)
+                  NextOccurrence := this.FindWordBoundary(DetectionStr, this.SearchOccurrence - 1, true)
                   if (NextOccurrence)
-                    right := StrLen(DetectionStr) - NextOccurrence + 1
+                    right := StrLen(DetectionStr) - NextOccurrence
                 }
               }
               send % "+{right " . right . "}"
@@ -425,12 +425,12 @@
               DetectionStr := StrReverse(StrBefore)
               pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence, true)
               if (pos) {
-                left := pos - 1
+                left := pos
                 if (pos == 1) {
                   this.SearchOccurrence++
                   NextOccurrence := this.FindWordBoundary(DetectionStr, this.SearchOccurrence, true)
                   if (NextOccurrence)
-                    left := NextOccurrence - 1
+                    left := NextOccurrence
                 }
                 if (StrLen(StrAfter) == StrLen(StrBefore))
                   left++
@@ -446,7 +446,7 @@
               DetectionStr := this.Vim.ParseLineBreaks(copy(false))
             }
             DetectionStr := StrReverse(DetectionStr)
-            pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence, true)
+            pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence - 1, true)
             send % "{right}{left " . pos . "}"
           }
         } else if (this.shift == 1) {
@@ -456,7 +456,7 @@
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             send +{left}
           }
-          if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {  ; searching forward
+          if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {  ; searching forward
             this.SelectParagraphDown(, true)
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
@@ -524,7 +524,7 @@
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             send +{left}
           }
-          if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {  ; searching forward
+          if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {  ; searching forward
             send +{end}
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
@@ -536,9 +536,6 @@
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             pos += StrLen(StrBefore)
             send % "{left}+{right " . pos . "}"
-            ; left := StrLen(DetectionStr) - pos  ; goes back
-            ; KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
-            ; send % "+{left " . left . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrBefore
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
@@ -586,7 +583,7 @@
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             send +{left}
           }
-          if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {  ; searching forward
+          if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {  ; searching forward
             send +{end}
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
@@ -604,18 +601,6 @@
                 right := NextOccurrence + StrLen(StrBefore) - 1
             }
             send % "{left}+{right " . right . "}"
-            ; left := StrLen(DetectionStr) - pos
-            ; if (pos) {
-            ;   left++
-            ;   if (pos == 1) {
-            ;     this.SearchOccurrence++
-            ;     NextOccurrence := InStr(DetectionStr, this.FtsChar, true,, this.SearchOccurrence)
-            ;     if (NextOccurrence)
-            ;       left := StrLen(DetectionStr) - NextOccurrence + 1
-            ;   }
-            ; }
-            ; KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
-            ; send % "+{left " . left . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrBefore
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
@@ -665,7 +650,7 @@
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             send +{right}
           }
-          if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {
+          if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
             send +{home}
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at start of line
@@ -714,7 +699,7 @@
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             send +{right}
           }
-          if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {
+          if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
             send +{home}
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at start of line
@@ -791,7 +776,7 @@
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             send +{left}
           }
-          if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {
+          if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
             this.SelectParagraphDown(, true)
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore) + 1) {  ; at end of paragraph
@@ -809,9 +794,9 @@
               if (a == b - 1) {
                 pos -= 2
                 this.v := SubStr(this.v, 3)
-              } else if (a == b) {
-                pos--
-                this.v := SubStr(this.v, 2)
+              ; } else if (a == b) {
+                ; pos--
+                ; this.v := SubStr(this.v, 2)
               }
               send % "{left}+{right " . pos . "}"
             } else {
@@ -946,7 +931,7 @@
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             send +{left}
           }
-          if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {  ; searching forward
+          if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {  ; searching forward
             this.SelectParagraphDown(, true)
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
@@ -1018,7 +1003,7 @@
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             send +{right}
           }
-          if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {
+          if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
             this.SelectParagraphUp(, true)
             StrAfter := this.Vim.ParseLineBreaks(copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at start of line
@@ -1089,7 +1074,7 @@
           StrAfter := this.Vim.ParseLineBreaks(copy(false))
           send +{left}
         }
-        if (!StrBefore || StrLen(StrAfter) > StrLen(StrBefore)) {
+        if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
           this.SelectParagraphDown(, true)
           StrAfter := this.Vim.ParseLineBreaks(copy(false))
           if (StrLen(StrAfter) == StrLen(StrBefore) + 1) {  ; at end of paragraph
@@ -1292,6 +1277,7 @@
             send ^+{up}  ; if there are references this would select (or deselect in visual mode) them all
             if (this.shift == 1)
               send +{down}  ; go down one line, if there are references this would include the #SuperMemo Reference
+            KeyWait Shift
             if (IfContains(copy(false,, 1), "#SuperMemo Reference:")) {
               if (this.shift == 1) {
                 send +{up 4}  ; select until start of last line

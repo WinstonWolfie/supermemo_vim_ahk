@@ -66,13 +66,13 @@ Return
 
 ; ydc
 y::
-  Clipboard :=
+  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   send ^c
   send {Right}
-  if WinActive("ahk_group VimCursorSameAfterSelect") {
+  if WinActive("ahk_group VimCursorSameAfterSelect")
     send {Left}
-  }
-  ClipWait, 1
+  ClipWait, LongCopy ? 0.6 : 0.2, True
+  vim.move.YdcClipSaved := Clipboard
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
   } else {
@@ -81,20 +81,15 @@ y::
 Return
 
 d::
-  Clipboard :=
-  send ^x
-  ClipWait, 1
-  if (Vim.State.StrIsInCurrentVimMode("Line")) {
-    Vim.State.SetMode("Vim_Normal", 0, 0, 1)
-  } else {
-    Vim.State.SetMode("Vim_Normal", 0, 0, 0)
-  }
-Return
-
 x::
-  Clipboard :=
-  send ^x
-  ClipWait, 1
+  if (!vim.state.leader) {
+    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+    send ^x
+    ClipWait, LongCopy ? 0.6 : 0.2, True
+    vim.move.YdcClipSaved := Clipboard
+  } else {
+    send {bs}
+  }
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
   } else {
@@ -103,9 +98,14 @@ x::
 Return
 
 c::
-  Clipboard :=
-  send ^x
-  ClipWait, 1
+  if (!vim.state.leader) {
+    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+    send ^x
+    ClipWait, LongCopy ? 0.6 : 0.2, True
+    vim.move.YdcClipSaved := Clipboard
+  } else {
+    send {bs}
+  }
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Insert", 0, 0, 1)
   } else {
@@ -144,7 +144,7 @@ p::
   }
 
   ; Paste clipboard
-  if (InStr(A_ThisHotkey, "^"))
+  if (IfContains(A_ThisHotkey, "^"))
     Clipboard := Clipboard  ; convert to plain text
   send ^v
   Vim.State.SetMode("Vim_Normal")
@@ -170,6 +170,7 @@ Return
 
 ConvertToUppercase:
 +u::
+  KeyWait Shift
   ClipSaved := ClipboardAll
 ConvertToUppercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
@@ -183,6 +184,7 @@ Return
 ; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
 InvertCase:
 ~::
+  KeyWait Shift
   ClipSaved := ClipboardAll
 InvertCaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()

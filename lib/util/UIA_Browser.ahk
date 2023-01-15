@@ -258,15 +258,15 @@ class UIA_Mozilla extends UIA_Browser {
 		local
 		ControlFocus, ahk_parent, % "ahk_id" this.BrowserId
 		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id" this.BrowserId
-		ControlSend, ahk_parent, {CtrlDown}{shift down}k{CtrlUp}{shift up}, % "ahk_id" this.BrowserId
+		ControlSend, ahk_parent, {ctrl down}{shift down}k{ctrl up}{shift up}, % "ahk_id" this.BrowserId
 		this.BrowserElement.WaitElementExistByNameAndType("Switch to multi-line editor mode (Ctrl + B)", "Button")	
 		ClipSave := ClipboardAll
 		Clipboard := js
 		WinActivate, % "ahk_id" this.BrowserId
 		WinWaitActive, % "ahk_id" this.BrowserId
-		Send, {CtrlDown}v{CtrlUp}{enter down}{enter up}
+		Send, {ctrl down}v{ctrl up}{enter down}{enter up}
 		sleep 40
-		Send, {CtrlDown}{shift down}i{CtrlUp}{shift up}
+		Send, {ctrl down}{shift down}i{ctrl up}{shift up}
 		Clipboard := ClipSave
 		Clipsave=
 	}
@@ -294,14 +294,14 @@ class UIA_Mozilla extends UIA_Browser {
 	CloseTab(tabElementOrName:="", matchMode:=3, caseSensitive:=True) { 
 		if (tabElementOrName != "") {
 			if IsObject(tabElementOrName) {
-				if (tabElementOrName.CurrentControlType == this.UIA.TabItemControlType)
+				if (tabElementOrName.CurrentControlType == this.UIA.TabItemControlTypeId)
 					tabElementOrName.Click()
 			} else {
-				try this.TabBarElement.FindFirstByNameAndType(searchPhrase, "TabItem",, matchMode, caseSensitive).Click()
+				try this.TabBarElement.FindFirstByNameAndType(tabElementOrName, "TabItem",, matchMode, caseSensitive).Click()
 			}
 		}
 		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id " this.BrowserId
-		ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " this.BrowserId
+		ControlSend, ahk_parent, {Ctrl down}w{Ctrl up}, % "ahk_id " this.BrowserId
 	}
 }
 
@@ -729,13 +729,13 @@ class UIA_Browser {
 	; Close tab by either providing the tab element or the name of the tab. If tabElementOrName is left empty, the current tab will be closed.
 	CloseTab(tabElementOrName:="", matchMode:=3, caseSensitive:=True) { 
 		if IsObject(tabElementOrName) {
-			if (tabElementOrName.CurrentControlType == this.UIA.TabItemControlType)
+			if (tabElementOrName.CurrentControlType == this.UIA.TabItemControlTypeId)
 				try this.TWT.GetLastChildElement(tabElementOrName).Click()
 		} else {
 			if (tabElementOrName == "") {
 				try this.TWT.GetLastChildElement(this.GetTab()).Click()
 			} else
-				try this.TWT.GetLastChildElement(this.TabBarElement.FindFirstByNameAndType(searchPhrase, "TabItem",, matchMode, caseSensitive)).Click()
+				try this.TWT.GetLastChildElement(this.TabBarElement.FindFirstByNameAndType(tabElementOrName, "TabItem",, matchMode, caseSensitive)).Click()
 		}
 	}
 	

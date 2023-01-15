@@ -100,8 +100,6 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::  ; reload
-  ; Move mouse so WaitFileLoad() works correctly,
-  ; which requires status bar text detection
   ContinueGrading := Vim.SM.IsGrading()
   ContLearn := ContinueGrading ? 0 : Vim.SM.IsLearning()
   CurrTitle := WinGetTitle()
@@ -111,18 +109,18 @@ r::  ; reload
     Vim.SM.WaitFileLoad()
     ; When r is pressed, the review score in an item is submitted,
     ; thus refreshing and learning takes SM to a new element
-    if ((ContLearn == 2) && CurrTitle != WinGetTitle())
+    if ((ContLearn == 2) && (CurrTitle != WinGetTitle()))
       send !{left 2}
   } else if (ContinueGrading) {
     Vim.SM.Learn()
     ControlTextWait("TBitBtn3", "Show answer")
     ControlSend, TBitBtn3, {enter}
   } else {
-    Vim.SM.WaitFileLoad()
+    text := Vim.SM.WaitFileLoad()
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame"))  ; sometimes could happen on YT videos
       WinClose
     ; If current element is home element
-    if (RegExMatch(CurrTitle, "^Concept: ") && CurrTitle == WinGetTitle("ahk_class TElWind")) {
+    if ((CurrTitle ~= "^Concept: ") && (CurrTitle == WinGetTitle())) {
       send !{left}
       Vim.SM.WaitFileLoad()
       send !{right}
@@ -136,12 +134,12 @@ p::
   Vim.SM.AutoPlay()
   WinWaitActive, ahk_class TMsgDialog,, 0
   if (!ErrorLevel)
-    send y 
+    send {text}y 
 return
 
 +p::send q^{t}{f9}  ; play video in default system player / edit script component
 
-n::Vim.SM.PostMsg(98)  ; = alt+N
+n::Vim.SM.AltN()  ; = alt+N
 +n::Vim.SM.PostMsg(95)  ; = alt+A
 x::send {del}  ; delete element/component
 
@@ -151,13 +149,14 @@ x::send {del}  ; delete element/component
 ^!+f::  ; open in IE and persistent
 !f::
 +f::
+f::
   KeyWait Alt
   KeyWait Shift
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
 f::
 v::
 c::
-  if (A_ThisHotkey == "f") {
+  if (Vim.State.IsCurrentVimMode("Vim_ydc_y") && (A_ThisHotkey == "f")) {
     HinterMode := "YankLink"
   } else if (IfIn(A_ThisHotkey, "^!+f,!f")) {
     HinterMode := "Persistent"
@@ -165,50 +164,28 @@ c::
     HinterMode := "Visual"
   } else if (A_ThisHotkey == "c") {
     HinterMode := "Normal"
+  } else if (A_ThisHotkey == "+f") {
+    HinterMode := "OpenLinkInNew"
   } else {
     HinterMode := "OpenLink"
     OpenInIE := IfContains(A_ThisHotkey, "!+f")
   }
   UIA := UIA_Interface()
-  control := "Internet Explorer_Server2"
-  if (!hCtrl := ControlGet(,, control)) {
-    control := "Internet Explorer_Server1"
-    if (!hCtrl := ControlGet(,, control))
+  Control := "Internet Explorer_Server2"
+  LearningState := Vim.SM.IsLearning()
+  if (!hCtrl := ControlGet(,, Control)) {
+    Control := "Internet Explorer_Server1"
+    if (!hCtrl := ControlGet(,, Control))
       return
   }
-  el := UIA.ElementFromHandle(hCtrl)
-  ControlGetPos, x, y, w, h, % control
-  WinGetPos, wX, wY,,, ahk_class TElWind
-  x += wX, y += wY  ; so that coords are relative to screen
-  if (Caret := IfIn(A_ThisHotkey, "v,c"))
-    Vim.SM.ClickMid(Control)
-  type := Caret ? "Text" : "Hyperlink"
-  auiaHints := el.FindAllByType(type)
-  aHints := []
-  for i, v in auiaHints {
-    pos := v.GetCurrentPos("screen")
-    if (((pos.x >= x) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
-     || ((pos.x + pos.w >= x) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
-      aHints[pos.x . " " . pos.y] := Caret ? Control : v.CurrentValue
-    }
-  }
-  if (control == "Internet Explorer_Server2") {
-    control := "Internet Explorer_Server1"
-    if (Caret)
-      Vim.SM.ClickMid(Control)
-    if (hCtrl := ControlGet(,, control)) {
-      el := UIA.ElementFromHandle(hCtrl)
-      ControlGetPos, x, y, w, h, % control
-      WinGetPos, wX, wY,,, ahk_class TElWind
-      x += wX, y += wY  ; so that coords are relative to screen
-      auiaHints := el.FindAllByType(type)
-      for i, v in auiaHints {
-        pos := v.GetCurrentPos("screen")
-        if (((pos.x >= x) && (pos.x <= x + w) && (pos.y >= y) && (pos.y <= y + h))
-        || ((pos.x + pos.w >= x) && (pos.x + pos.w <= x + w) && (pos.y + pos.h >= y) && (pos.y + pos.h <= y + h))) {
-          aHints[pos.x . " " . pos.y] := Caret ? Control : v.CurrentValue
-        }
-      }
+  Caret := IfIn(A_ThisHotkey, "v,c")
+  Type := Caret ? "Text" : "Hyperlink"
+  aHints := CreateHintsArray(Control, hCtrl, Type, Caret)
+  if ((Control == "Internet Explorer_Server2") && (LearningState != 1)) {  ; so answer isn't revealed
+    Control := "Internet Explorer_Server1"
+    if (hCtrl := ControlGet(,, Control)) {
+      a := CreateHintsArray(Control, hCtrl, Type, Caret)
+      aHints.Push(a*)
     }
   }
   if (!n := ObjCount(aHints))
@@ -217,6 +194,27 @@ c::
   aHintStrings := hintStrings(n)
   CreateHints(aHints, aHintStrings)
 return
+
+CreateHintsArray(Control, hCtrl, Type, Caret) {
+  global Vim, UIA
+  if (Caret)
+    Vim.SM.ClickMid(Control)
+  el := UIA.ElementFromHandle(hCtrl)
+  auiaHints := el.FindAllByType(Type)
+  aHints := [], i := 0
+  for k, v in auiaHints {
+    if (((v.CurrentBoundingRectangle.l == 0) && (v.CurrentBoundingRectangle.t == 0))  ; text not shown
+     || (!Caret && !v.CurrentValue))  ; some hyperlinks don't have value
+      continue
+    pos := v.GetCurrentPos("screen"), i++
+    if (Caret) {
+      aHints[i] := {x:pos.x, y:pos.y, Control:Control}
+    } else {
+      aHints[i] := {x:pos.x, y:pos.y, Link:v.CurrentValue}
+    }
+  }
+  return aHints
+}
 
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
@@ -255,7 +253,7 @@ b::
     ; Sometimes a bug makes that you can't use ^space to open browser in content window
     ; After a while, I found out it's due to my Chinese input method
     ; Fixed in win11?
-    ; SetDefaultKeyboard(0x0409)  ; english-US	
+    ; SetDefaultKeyboard(0x0409)  ; English-US
     send ^{space}  ; open browser
   }
 return
@@ -265,20 +263,22 @@ return
   KeyWait ctrl
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 o::
-  SetDefaultKeyboard(0x0409)  ; english-US	
+  BlockInput, on
+  SetDefaultKeyboard(0x0409)  ; English-US
   l := Vim.SM.IsLearning()
   if (l == 1) {
-    Vim.SM.GoToTopEl()
+    send !{home}
   } else if (l == 2) {
     Vim.SM.Reload()
     Vim.SM.WaitFileLoad()
   }
   Vim.State.SetMode("Insert")
   Vim.SM.PostMsg(3)  ; favourites
+  BlockInput, off
   Vim.State.BackToNormal := 1
 return
 
-f::Vim.SM.ClickMid()  ; click on html component
+t::Vim.SM.ClickMid()  ; *t*ext
 
 ; Copy
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
@@ -348,12 +348,12 @@ Return
 !+k::send !+{pgup}  ; go to previous sibling
 
 #if (Vim.IsVimGroup()
-  && (Vim.State.IsCurrentVimMode("Vim_Normal") || (Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.Surround))
+  && (Vim.State.IsCurrentVimMode("Vim_Normal") || (Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.Surround && !Vim.State.fts))
   && !Vim.State.StrIsInCurrentVimMode("Inner")
   && !Vim.State.StrIsInCurrentVimMode("Outer")
   && WinActive("ahk_class TElWind"))
 \::
-  send ^{f3}
+  Vim.SM.PostMsg(151)
 ~^f3::
   Vim.State.SetMode("Insert")
   Vim.State.BackToNormal := 2

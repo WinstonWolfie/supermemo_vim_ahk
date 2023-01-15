@@ -1,25 +1,25 @@
 ﻿; Editing text only
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
 +h::  ; move to top of screen
-  KeyWait shift  ; to avoid clicking becomes selecting
+  KeyWait Shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickTop()
 Return
 
 +m::  ; move to middle of screen
-  KeyWait shift  ; to avoid clicking becomes selecting
+  KeyWait Shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickMid()
 Return
 
 +l::  ; move to bottom of screen
-  KeyWait shift  ; to avoid clicking becomes selecting
+  KeyWait Shift  ; to avoid clicking becomes selecting
   Vim.SM.ClickBottom()
 Return
 
-; Editing HTML
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
 ^/::send {home}//{space}
 +!a::send /*  */{left 3}
 
+; Editing HTML
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.leader)
 q::
   send {home}>{space}  ; add comment; useful when replying emails
@@ -43,7 +43,7 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
     send +{left}^c{right}
   }
   ClipWait, LongCopy ? 0.6 : 0.2, True
-  LinkMatch := "(<A((.|\r\n)*)href="")\K[^""]+", RunLink := false
+  LinkMatch := "(<A((.|\r\n)*)href="")\K[^""]+"
   If (Vim.HTML.ClipboardGet_HTML(data)) {
     RegExMatch(data, LinkMatch, CurrLink)
     if (!CurrLink) {
@@ -52,16 +52,11 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
       ClipWait, LongCopy ? 0.6 : 0.2, True
       If (Vim.HTML.ClipboardGet_HTML(data)) {
         RegExMatch(data, LinkMatch, CurrLink)
-        if (!CurrLink) {
+        if (!CurrLink)
           ToolTip("No link found.")
-        } else {
-          RunLink := true
-        }
       }
-    } else {
-      RunLink := true
     }
-    if (RunLink) {
+    if (CurrLink) {
       if (A_ThisHotkey == "u") {
         Clipboard := CurrLink
         ToolTip("Copied " . CurrLink)
@@ -70,30 +65,44 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
       }
     }
   }
-  if ((A_ThisHotkey != "u") && RunLink)
+  if (A_ThisHotkey != "u")
     Clipboard := ClipSaved
 return
 
 s::  ; gs: go to source
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+^+f6::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 f::  ; gf: open source file
+n::  ; gn: open in Notepad
   Vim.State.SetMode()
-  hwnd := WinGet(), ContLearn := Vim.SM.IsLearning(), path := Vim.SM.GetFilePath()
-  SplitPath, path,,, ext
-  if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
-    run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
+  hwnd := WinGet(), ContLearn := Vim.SM.IsLearning()
+  if (Notepad := IfIn(A_ThisHotkey, "^+f6,n")) {
+    Vim.SM.ExitText(true)
+    send ^{f7}
+    send ^+{f6}
   } else {
-    send ^{f7}  ; save read point
-    path := Vim.SM.SaveHTML(, true)  ; path may be updated
-    send {esc}  ; leave html
-    run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . path
+    path := Vim.SM.GetFilePath()
+    SplitPath, path,,, ext
+    if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
+      run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
+    } else {
+      send ^{f7}  ; save read point
+      path := Vim.SM.SaveHTML(, true)  ; path may be updated
+      Vim.SM.ExitText(true)
+      run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . path
+    }
   }
   WinWaitNotActive % "ahk_id " . hwnd
   WinWaitActive % "ahk_id " . hwnd
-  send !{home}
+  if (Notepad) {
+    send !{f7}
+  } else {
+    send !{home}
+  }
   if (ContLearn == 1) {
     Vim.SM.Learn()
-  } else {
+  } else if (!Notepad) {
     Vim.SM.WaitFileLoad()
     send !{left}
   }

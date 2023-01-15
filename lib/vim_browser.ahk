@@ -5,7 +5,7 @@ class VimBrowser {
   }
 
   Clear() {
-    this.title := this.url := this.source := this.date := this.comment := this.VidSite := this.author := ""
+    this.title := this.url := this.source := this.date := this.comment := this.VidTime := this.author := this.FullTitle := ""
     global guiaBrowser := ""
   }
 
@@ -17,7 +17,7 @@ class VimBrowser {
       guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
     this.GetUrl()
     if (PressButton)
-      gosub PressYTShowMoreButton
+      gosub PressBrowserBtn
     this.GetTitleSourceDate(false, CopyFullPage)
     if (RestoreClip)
       Clipboard := ClipSaved
@@ -38,9 +38,11 @@ class VimBrowser {
     return url
   }
 
-  GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true, FullPageText:="") {
-    this.Title := this.title ? this.title : this.RemoveBrowserName(WinGetTitle())
-    this.url := this.url ? this.url : this.GetUrl()
+  GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true, FullPageText:="", GetUrl:=true) {
+    this.FullTitle := this.FullTitle ? this.FullTitle : this.RemoveBrowserName(WinGetTitle())
+    this.Title := this.title ? this.title : this.FullTitle
+    if (GetUrl)
+      this.url := this.url ? this.url : this.GetUrl()
 
     ; Sites that have source in their title
     if (this.Title ~= "^很帅的日报") {
@@ -52,16 +54,13 @@ class VimBrowser {
     } else if (this.title ~= "^NIMH » ") {
       this.source := "NIMH"
       this.title := RegExReplace(this.title, "^NIMH » ")
-    } else if (this.title ~= "^Discord \| ") {
+    } else if (this.title ~= "^• Discord \| ") {
       this.source := "Discord"
-      this.title := RegExReplace(this.title, "^Discord \| ")
+      this.title := RegExReplace(this.title, "^• Discord \| ")
     } else if (this.title ~= "^italki - ") {
       this.source := "italki"
       this.title := RegExReplace(this.title, "^italki - ")
 
-    } else if (this.Title ~= "_百度百科$") {
-      this.Source := "百度百科"
-      this.Title := RegExReplace(this.Title, "_百度百科$")
     } else if (this.Title ~= "_百度知道$") {
       this.Source := "百度知道"
       this.Title := RegExReplace(this.Title, "_百度知道$")
@@ -92,11 +91,16 @@ class VimBrowser {
     } else if (this.title ~= "-清华大学医学院$") {
       this.source := "清华大学医学院"
       this.title := RegExReplace(this.title, "-清华大学医学院$")
+    } else if (this.title ~= "- 雪球$") {
+      this.source := "雪球"
+      this.title := RegExReplace(this.title, "- 雪球$")
+    } else if (this.title ~= "\| Neuron Glia Biology \| Cambridge Core$") {
+      this.source := "Neuron Glia Biology | Cambridge Core"
+      this.title := RegExReplace(this.title, "\| Neuron Glia Biology \| Cambridge Core$")
 
     } else if (IfContains(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", Source)
-      this.source := source
-      this.Title := RegExReplace(this.Title, " : " . StrReplace(Source, "r/") . "$")
+      this.source := source, this.Title := RegExReplace(this.Title, " : " . StrReplace(Source, "r/") . "$")
 
     ; Sites that don't include source in the title
     } else if (IfContains(this.Url, "dailystoic.com")) {
@@ -143,10 +147,12 @@ class VimBrowser {
           this.author := author
       }
       this.title := RegExReplace(this.title, " - YouTube$")
-    } else if (IfContains(this.url, "bilibili.com/video")) {
+    } else if (this.title ~= "_哔哩哔哩_bilibili$") {
       this.Source := "哔哩哔哩"
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
-        this.VidTime := this.MatchVidTime(this.title, FullPageText)
+      if (IfContains(this.url, "bilibili.com/video")
+       && CopyFullPage
+       && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
+        this.VidTime := this.MatchVidTime(this.title)
         this.date := this.MatchBLDate(FullPageText)
         if (author := this.MatchBLAuthor(FullPageText))
           this.author := author
@@ -169,6 +175,20 @@ class VimBrowser {
         this.date := v1
       }
       this.title := RegExReplace(this.title, " - Wikipedia$")
+    } else if (IfContains(this.url, "en.wiktionary.org")) {
+      this.Source := "Wiktionary"
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v)
+        this.date := v1
+      }
+      this.title := RegExReplace(this.title, " - Wiktionary$")
+    } else if (this.Title ~= "_百度百科$") {
+      this.Source := "百度百科"
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
+        RegExMatch(FullPageText, "最近更新：.*（(.*)）", v)
+        this.date := v1
+      }
+      this.Title := RegExReplace(this.Title, "_百度百科$")
     } else if (IfContains(this.url, "zh.wikipedia.org")) {
       this.Source := "维基百科"
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(this.title, RestoreClip)))) {
@@ -199,6 +219,8 @@ class VimBrowser {
         separator := " — "
       } else if (IfContains(ReversedTitle, " -- ")) {
         separator := " -- "
+      } else if (IfContains(ReversedTitle, " • ")) {
+        separator := " • "
       }
       pos := separator ? InStr(StrReverse(this.Title), separator) : 0
       if (pos) {
@@ -215,7 +237,7 @@ class VimBrowser {
 
   GetFullPage(title:="", RestoreClip:=true) {
     title := title ? title : this.RemoveBrowserName(WinGetTitle())
-    if (this.IsVidSite(, true) == 2) {
+    if (this.IsVidSite(title) == 2) {
       global guiaBrowser
       if (!guiaBrowser)
         guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
@@ -223,31 +245,23 @@ class VimBrowser {
     }
     if (RestoreClip)
       ClipSaved := ClipboardAll
-    if (BL := (title ~= "_哔哩哔哩_bilibili$")) {
-      send ^{home}
-      MouseGetPos, XSaved, YSaved
-      WinGetPos,,, w, h
-      MouseMove, % w / 2, % h / 2
-      sleep 20
-    }
     global WinClip
     WinClip.Clear()
-    send ^a^{ins}
+    send {CtrlDown}a{Ins}{CtrlUp}{Esc}
     ClipWait % this.FullPageCopyTimeout
-    send {esc}
     text := Clipboard
-    if (BL)
-      MouseMove, XSaved, YSaved
     if (RestoreClip)
       Clipboard := ClipSaved
     return text
   }
 
   GetSecFromTime(TimeStamp) {
+    if (!TimeStamp)
+      return 0
     TimeArr := StrSplit(TimeStamp, ":")
     TimeArr := RevArr(TimeArr)
     TimeArr[3] := TimeArr[3] ? TimeArr[3] : 0
-    return (TimeArr[1] + TimeArr[2] * 60 + TimeArr[3] * 3600)
+    return TimeArr[1] + TimeArr[2] * 60 + TimeArr[3] * 3600
   }
 
   GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
@@ -258,11 +272,10 @@ class VimBrowser {
       ClipSaved := ClipboardAll
     global WinClip
     WinClip.Clear()
-    FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, false)
     VidTime := this.MatchVidTime(title, FullPageText)
     if (RestoreClip)
       Clipboard := ClipSaved
-    return this.VidTime := VidTime
+    return VidTime
   }
 
   GetUrl() {
@@ -270,7 +283,7 @@ class VimBrowser {
     if (!guiaBrowser)
       guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
     url := guiaBrowser.GetCurrentURL()
-    return this.url := this.ParseUrl(url)
+    return this.ParseUrl(url)
   }
 
   MatchYTAuthor(text) {
@@ -301,22 +314,25 @@ class VimBrowser {
 
   MatchVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     title := title ? title : this.RemoveBrowserName(WinGetTitle())
-    FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, RestoreClip)
+    if (!BL := (title ~= "_哔哩哔哩_bilibili$"))
+      FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, RestoreClip)
     if (title ~= " - YouTube$") {
-      RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", VidTime)
-      if (VidTime1 == VidTime2)  ; at end of video
-        VidTime1 := "0:00"
-      VidTime := VidTime1
-    } else if (title ~= "_哔哩哔哩_bilibili$") {
-      RegExMatch(FullPageText, "\r\n\K[0-9:]+(?= \/ )", VidTime)
-    } else if (title ~= "( 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放)$") {
+      RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
+      ; v1 = v2 means at end of video
+      VidTime := (v1 == v2) ? "0:00" : v1
+    } else if (BL) {
+      global guiaBrowser
+      if (!guiaBrowser)
+        guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+      FullPageText := guiaBrowser.FindAll(guiaBrowser.TextControlCondition)
+    }
+    if (BL || (this.IsVidSite(title) == 2)) {
       for i, v in FullPageText {
-        if (v.CurrentName ~= "[0-9:]+$") {
+        if (v.CurrentName ~= "^(\d{2}:)?\d{2}:\d{2}$") {
           VidTime := v.CurrentName
           break
         }
       }
-      ; RegExMatch(FullPageText, "[0-9:]+(?=\n \/ )", VidTime)
     }
     return VidTime
   }
@@ -330,9 +346,10 @@ class VimBrowser {
       ie.Navigate(url)
     } else {
       if (ControlGetText("Edit1", "ahk_class IEFrame ahk_exe iexplore.exe")) {  ; current page is not new tab page
-        UIA := UIA_Interface()
-        el := UIA.ElementFromHandle(el)
-        el.FindFirstBy("ControlType=Button AND Name='New tab (Ctrl+T)'").Click()
+        ; UIA := UIA_Interface()
+        ; el := UIA.ElementFromHandle(el)
+        ; el.FindFirstBy("ControlType=Button AND Name='New tab (Ctrl+T)'").Click()
+        ControlSend, ahk_parent, {CtrlDown}t{CtrlUp}, ahk_class IEFrame ahk_exe iexplore.exe
         ControlTextWait("Edit1", "", "ahk_class IEFrame ahk_exe iexplore.exe")
       }
       ControlSetText, Edit1, % url, ahk_class IEFrame ahk_exe iexplore.exe
@@ -345,44 +362,40 @@ class VimBrowser {
     return RegExReplace(title, "( - Google Chrome| — Mozilla Firefox|( and [0-9]+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
   }
 
-  IsVidSite(title:="", check:=false) {
-    if (!check) {
-      this.title := title ? title : this.RemoveBrowserName(WinGetTitle())
-      if (this.title ~= "( - YouTube|_哔哩哔哩_bilibili| 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放)$")
-        return true
-    } else {  ; check if time stamp can be in the url
-      if (!this.source)
-        this.GetTitleSourceDate(, false)
-      if (IfContains(this.source, "Youtube,哔哩哔哩")) {  ; time stamp can be in url
-        return 1
-      } else if (IfContains(this.source, "小宝影院,唐人街影院")) {  ; time stamp can't be in url
-        return 2
-      }
+  IsVidSite(title:="") {
+    title := title ? title : this.RemoveBrowserName(WinGetTitle())
+    if (title ~= "( - YouTube|_哔哩哔哩_bilibili)$") {
+      return 1
+    } else if (title ~= "( 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放)$") {
+      return 2
     }
   }
 
   Highlight() {
-		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id " . WinGet()
-    ControlSend, ahk_parent, {AltDown}{ShiftDown}h{AltUp}{ShiftUp}, % "ahk_id " . WinGet()
+    send !+h
+    sleep 100
+    ; ControlSend doesn't work reliably because browser can't highlight in background
+		; ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id " . WinGet()
+    ; ControlSend, ahk_parent, {AltDown}{ShiftDown}h{AltUp}{ShiftUp}, % "ahk_id " . WinGet()
   }
 
-  GetYTShowMoreButton() {
+  ClickBtn() {
     this.url := this.url ? this.url : this.GetUrl()
-    if (!IfContains(this.url, "youtube.com/watch"))
-      return
-    global guiaBrowser
-    if (!guiaBrowser)
-      guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-    if (!Button := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show more' AND AutomationId='expand'"))
-      Button := guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show more'")
-    return Button
+    if (IfContains(this.url, "youtube.com/watch")) {
+      global guiaBrowser
+      if (!guiaBrowser)
+        guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+      if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show more' AND AutomationId='expand'"))
+        btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show more'")
+      if (btn) {
+        btn.click(500)
+        send ^{home}
+      }
+    }
   }
 }
 
-PressYTShowMoreButton:
-  if (button := vim.Browser.GetYTShowMoreButton()) {
-    button.click(400)
-    send ^{home}
-  }
-  PressYTShowMoreButtonDone := true
+PressBrowserBtn:
+  Vim.Browser.ClickBtn()
+  PressBrowserBtnDone := true
 return

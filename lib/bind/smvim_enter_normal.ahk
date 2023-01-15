@@ -13,7 +13,7 @@ Return
 ~!z::  ; cloze
 ~^+a::  ; web import
 #if (Vim.IsVimGroup() && Vim.SM.IsBrowsing())  ; SuperMemo element window
-~^+f6::  ; open source in notepad
+; ~^+f6::  ; open source in Notepad
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
 ~^s::  ; save
 ~^+a::  ; archive current plan

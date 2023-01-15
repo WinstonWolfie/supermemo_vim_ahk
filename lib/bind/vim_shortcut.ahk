@@ -18,8 +18,11 @@
 ;   keywait shift
 ;   keywait ctrl
 ;   keywait alt
-;   ; uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-;   ; msgbox % clipboard := uiaBrowser.GetAllText()
+;   string := "<=>"
+;   msgbox % EncodeHTML(string)
+; ; transform, encoded, html, %string%
+; ; msgbox, %string%`n%encoded%
+; ;   ; guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
 ; return
 
 ; Shortcuts
@@ -43,7 +46,7 @@ return
 ^#l::send ^#{right}
 
 ^+!p::
-SMPlan:
+Plan:
   Vim.State.SetMode("Vim_Normal")
   KeyWait shift
   KeyWait alt
@@ -65,9 +68,9 @@ SMPlan:
   if (!WinExist("ahk_class TPlanDlg")) {
     l := Vim.SM.IsLearning()
     if (l == 2) {
-      Vim.SM.Reload(, 1)
+      Vim.SM.Reload()
     } else if (l == 1) {
-      Vim.SM.GoToTopEl()
+      Vim.SM.GoToFirstEl()
     }
     Vim.SM.PostMsg(243)  ; Plan
     WinWait, ahk_class TPlanDlg
@@ -81,14 +84,14 @@ return
 ^!w::send ^w!{tab}  ; close tab and switch back
 
 ^!i::  ; open in *I*E
-  Vim.Browser.RunInIE(Vim.Browser.ParseUrl(Vim.Browser.GetUrl()))
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  Vim.Browser.RunInIE(Vim.Browser.ParseUrl(uiaBrowser.GetCurrentURL()))
   ; run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL())  ; RIP old method
 Return
 
 ^!t::  ; copy title
   Vim.Browser.Clear()
-  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  Vim.Browser.GetInfo(false, false, false)
+  Vim.Browser.GetTitleSourceDate(false, false)
   ToolTip("Copied " . Vim.Browser.Title)
   Clipboard := Vim.Browser.Title
   Vim.Browser.Clear()
@@ -107,8 +110,7 @@ return
   date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
   vidtime := Vim.Browser.VidTime ? "`nTime stamp: " . Vim.Browser.VidTime : ""
   ToolTip("Copied " . Vim.Browser.Url . "`nTitle: " . Vim.Browser.Title . source . author . date . vidtime)
-  Clipboard := Vim.Browser.Url
-  guiaBrowser := ""
+  Clipboard := Vim.Browser.Url, guiaBrowser := ""
 return
 
 ^!d::  ; parse similar and opposite in google *d*efine
@@ -120,10 +122,10 @@ return
     ToolTip("Text not found.")
     goto RestoreClipReturn
   }
-  TempClip := RegExReplace(Clipboard, "(Similar|Synonymes).*\r\n", "`r`nsyn: ")
+  TempClip := RegExReplace(Clipboard, "(Similar|Synonymes|Synonyms)(.*\r\n)?", "`r`nsyn: ")
   TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
   TempClip := RegExReplace(TempClip, "(?![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
-  TempClip := RegExReplace(TempClip, "\.(?=\r\n)")
+  TempClip := RegExReplace(TempClip, "\.\r\n", "`r`n")
   TempClip := RegExReplace(TempClip, "(\r\n\K""|""(\r\n)?(?=\r\n))", "`r`n")
   TempClip := RegExReplace(TempClip, """$(?!\r\n)")
   TempClip := StrLower(SubStr(TempClip, 1, 1)) . SubStr(TempClip, 2)  ; make the first letter lower case
@@ -150,14 +152,14 @@ return
 return
 
 ^!m::  ; copy ti*m*e stamp
-  ClipSaved := ClipboardAll
   send {esc}
-  if (!Vim.Browser.GetVidtime(,, false)) {
+  ClipSaved := ClipboardAll
+  if (!VidTime := Vim.Browser.GetVidtime(,, false)) {
     ToolTip("Not found.")
     goto RestoreClipReturn
   }
-  Clipboard := Vim.Browser.VidTime
-  ToolTip("Registered " . vim.browser.VidTime)
+  ToolTip("Copied " . VidTime)
+  Clipboard := VidTime, Vim.Browser.Clear()
 return
 
 !+d::  ; check duplicates in SM
@@ -165,18 +167,18 @@ return
     ToolTip("SuperMemo hasn't opened yet.")
     return
   }
-  if (!url := Vim.Browser.GetUrl()) {
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  if (!url := uiaBrowser.GetCurrentUrl()) {
     ToolTip("Url not found.")
     return
   }
   KeyWait alt
   KeyWait shift
-  Vim.SM.CheckDup(url)
-  Vim.Browser.Clear()
+  Vim.SM.CheckDup(Vim.Browser.ParseUrl(url))
 return
 
 ~^f::
-  if (A_PriorHotkey != "~^f" || A_TimeSincePriorHotkey > 400) {
+  if ((A_PriorHotkey != "~^f") || (A_TimeSincePriorHotkey > 400)) {
     KeyWait f
     return
   }
@@ -184,7 +186,7 @@ return
 return
 
 ~^l::
-  if (A_PriorHotkey != "~^l" || A_TimeSincePriorHotkey > 400) {
+  if ((A_PriorHotkey != "~^l") || (A_TimeSincePriorHotkey > 400)) {
     KeyWait l
     return
   }
@@ -194,8 +196,8 @@ return
 ; Incremental web browsing
 ; +!x::
 ; !x::
-IncrementalWebBrowsingNewTopic:
-IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
+IWBNewTopic:
+IWBPriorityAndConcept:
 ; Incremental video: Import current YT video to SM
 ; Import current webpage to SuperMemo
 ^+!a::
@@ -215,7 +217,7 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
   if (WinExist("ahk_class TMsgDialog"))
     WinClose
   ClipSaved := ClipboardAll
-  IncWB := IfContains(A_ThisLabel, "x,Inc"), ImportDlg := IfContains(A_ThisLabel, "+,Prio")
+  IncWB := IfContains(A_ThisLabel, "x,IWB"), ImportDlg := IfContains(A_ThisLabel, "+,Prio")
   CollName := vim.sm.GetCollName(), ConceptBefore := Vim.SM.GetCurrConcept()
   Passive := Vim.SM.IsPassive(CollName, ConceptBefore)
   KeyWait shift
@@ -227,8 +229,8 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
     ToolTip("Web page not found.")
     return
   }
-  PressYTShowMoreButtonDone := false
-  SetTimer, PressYTShowMoreButton, -1
+  PressBrowserBtnDone := false
+  SetTimer, PressBrowserBtn, -1
   if (!IncWB) {
     if (vim.sm.CheckDup(vim.browser.url, false))
       MsgBox, 4,, Continue import?
@@ -239,16 +241,16 @@ IncrementalWebBrowsingNewTopicWithPriorityAndConcept:
     goto ImportReturn
 
   prio := concept := CloseTab := ""
-  while (!PressYTShowMoreButtonDone)
+  while (!PressBrowserBtnDone)
     continue
   if (ImportDlg) {
-    SetDefaultKeyboard(0x0409)  ; english-US	
+    SetDefaultKeyboard(0x0409)  ; English-US
     gui, SMImport:Add, Text,, % "Current collection: " . CollName
     gui, SMImport:Add, Text,, &Priority:
     gui, SMImport:Add, Edit, vPrio w196
     gui, SMImport:Add, Text,, &Concept:
     ; gui, SMImport:Add, Edit, vConcept w196, % ConceptBefore
-    list := ConceptBefore . "||Online|Source"
+    list := ConceptBefore . "||Online|Sources"
     gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % list
     gui, SMImport:Add, Checkbox, vCloseTab checked, Close &tab
     gui, SMImport:Add, Button, default, &Import
@@ -265,7 +267,7 @@ SMImportButtonImport:
     KeyWait alt
     gui submit
     if (Passive != 2)
-      Passive := (IfIn(concept, "online,source")) ? true : false
+      Passive := (IfIn(concept, "online,sources")) ? true : false
     gui destroy
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
   }
@@ -279,24 +281,23 @@ SMImportButtonImport:
     }
     Vim.Browser.Highlight()
   }
-  bOnline := (Passive || (!HTMLText && vim.browser.IsVidSite())), bFullPage := false
-  if (!HTMLText && !bOnline) {
+  Online := (Passive || (!HTMLText && vim.browser.IsVidSite(Vim.Browser.FullTitle))), FullPage := false
+  if (!HTMLText && !Online) {
     WinClip.Clear()
-    send ^a^c
+    send {CtrlDown}a{Ins}{CtrlUp}{Esc}
     ClipWait % Vim.Browser.FullPageCopyTimeout
     Vim.HTML.ClipboardGet_HTML(clipped)
     RegExMatch(clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
-    send {esc}
     if (!HTMLText) {
       ToolTip("Text not found.")
       goto ImportReturn
     }
-    bFullPage := true
+    FullPage := true
   }
-  Vim.Browser.GetTitleSourceDate(false,, (bFullPage ? Clipboard : ""))
+  Vim.Browser.GetTitleSourceDate(false,, (FullPage ? Clipboard : ""))
 
   WinClip.Clear()
-  if (bOnline) {
+  if (Online) {
     if (Passive) {
       add := (CollName = "bgm") ? Vim.Browser.Url . "`n" : ""
       Clipboard := add . Vim.SM.MakeReference()
@@ -307,20 +308,13 @@ SMImportButtonImport:
     LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com"
     LineBreak := IfContains(Vim.Browser.Url, LineBreakList)
     HTMLText := Vim.HTML.Clean(HTMLText, true, LineBreak)
-    if (IncWB) {
-      Vim.browser.date := ""
-    } else if (!IncWB && !vim.browser.date) {
+    if (!IncWB && !vim.browser.date)
       vim.browser.date := "Imported on " . CurrTime
-    }
     Clipboard := HTMLText . "<br>" . Vim.SM.MakeReference(true)
   }
   ClipWait
 
-  InfoToolTip := "
-  (
-Url: " . Vim.Browser.url . "
-Title : " . Vim.Browser.Title . "
-  )"
+  InfoToolTip := "Url: " . Vim.Browser.url . "`nTitle: " . Vim.Browser.Title
   if (Vim.Browser.Source)
     InfoToolTip .= "`nSource: " . Vim.Browser.Source
   if (Vim.Browser.Author)
@@ -342,57 +336,63 @@ Title : " . Vim.Browser.Title . "
     WinWaitActive, ahk_class TElWind
   }
 
-  if (bOnline) {
-    if (Passive) {
-      gosub SMHyperLinkToTopic
-    } else {
-      gosub SMCtrlN
-    }
+  if (Online && !Passive) {
+    gosub SMCtrlN
   } else {
-    Vim.SM.PostMsg(98)  ; = alt+N
+    Vim.SM.AltN()
     Vim.SM.WaitTextFocus()
+    if (!Online) {
+      send {AppsKey}xp  ; Paste HTML
+      WinClip._waitClipReady()
+      WinWaitActive, ahk_class TElWind
+    } else if (Passive) {
+      gosub SMHyperLinkToTopic
+      if (ErrorLevel)
+        goto ImportReturn
+    }
   }
+  ; Process above contains references (in text). For this reason, element title
+  ; has to be set later; otherwise, references that have the same titles will
+  ; be merged.
 
   if (vim.browser.title && !IncWB && !prio) {
     Vim.SM.SetTitle(Vim.Browser.title)
   } else if ((IncWB || !vim.browser.title) && prio) {
-    Vim.SM.SetPrio(prio, true)
+    Vim.SM.SetPrio(prio, true)  ; WinWait=true in case priority get sent into other windows
   } else if (vim.browser.title && prio) {
     Vim.SM.SetElParam(vim.browser.title, prio)
   }
 
-  if (!bOnline) {
-    Vim.SM.EditFirstQuestion()
-    Vim.SM.WaitHTMLFocus()
-    send {AppsKey}xp  ; Paste HTML
-    WinClip._waitClipReady()
-    WinWaitActive, ahk_class TElWind
+  Vim.SM.Reload()
+  if (CloseTab) {
+    TabCount := ObjCount(guiaBrowser.GetAllTabs())
+    if (TabCount == 1) {
+      guiaBrowser.NewTab()
+      guiaBrowser.CloseTab(oTabs[1])
+    } else {
+      guiaBrowser.CloseTab()
+    }
+    if ((TabCount == 1 ) || (TabCount == 2))
+      Passive := false
   }
-
-  Vim.SM.reload(, 1)
-  if (CloseTab)
-    guiaBrowser.CloseTab()
 
 SMImportGuiEscape:
 SMImportGuiClose:
-  if A_ThisLabel contains SMImportGui
-    gui destroy
 ImportReturn:
+  if (esc := IfContains(A_ThisLabel, "SMImportGui"))
+    gui destroy
   Vim.SM.ClearHighlight()
-  if (bOnline) {
-    WinWaitNotActive % "ahk_id " . guiaBrowser.BrowserId  ; needed, otherwise ClearHighlight() might focus to SM
+  if (Passive || esc) {
+    WinWaitNotActive % "ahk_id " . guiaBrowser.BrowserId,, 0  ; needed, otherwise ClearHighlight() might focus to SM
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
   } else if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
-    ; Without this sometimes SM would focus to context menu
-    if (WinActive("ahk_class TElWind")) {
-      Vim.Caret.SwitchToSameWindow()
-    } else {
-      WinActivate, ahk_class TElWind
-    }
+    send {AltUp}  ; sometimes SM focuses on context menu
+    WinWaitNotActive, ahk_class TElWind,, 0
+    Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
   }
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
-  If A_ThisLabel not contains SMImportGui
+  if (!esc)
     Clipboard := ClipSaved
 return
 
@@ -401,7 +401,10 @@ GetUrl:
   GetUrlDone := true
 return
 
-^+e::run % "msedge.exe " . Vim.Browser.GetUrl()
+^+e::
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  run % "msedge.exe " . uiaBrowser.GetCurrentUrl()
+return
 
 ; SumatraPDF/Calibre/MS Word to SuperMemo
 #if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME")  ; SumatraPDF
@@ -437,7 +440,7 @@ return
     if (NeedsClean := WinActive("ahk_group Browser")) {
       Vim.Browser.Highlight()
     } else if (NeedsClean := WinActive("ahk_exe ebook-viewer.exe")) {
-      send {raw}q  ; need to enable this shortcut in settings
+      ControlSend,, {raw}q, ahk_exe ebook-viewer.exe  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
       send {raw}a  ; need to be {raw}, not {text}; otherwise IME could interfere
     } else if (WinActive("ahk_exe WINWORD.exe")) {
@@ -591,7 +594,7 @@ return
 
 ; Syncing page number / marker
 #if (Vim.State.Vim.Enabled
-  && !Vim.SM.IsPassive("", -1)  ; current concept doesn't matter
+  && !Vim.SM.IsPassive(, -1)  ; current concept doesn't matter
   && (WinActive("ahk_class SUMATRA_PDF_FRAME")
    || WinActive("ahk_exe ebook-viewer.exe")
    || WinActive("ahk_group Browser")
@@ -601,6 +604,7 @@ return
 ^!s::
 ^+!s::
   ClipSaved := ClipboardAll
+  CloseWnd := IfContains(A_ThisHotkey, "^")
   KeyWait alt
   KeyWait ctrl
   KeyWait shift
@@ -616,7 +620,7 @@ return
       ToolTip("No text selected and page number not found.")
       goto RestoreClipReturn
     }
-    if (IfContains(A_ThisHotkey, "^")) {
+    if (CloseWnd) {
       send {raw}q
       WinWaitActive, Unsaved annotations,, 0
       if (!ErrorLevel)
@@ -629,7 +633,7 @@ return
       ToolTip("No text selected.")
       goto RestoreClipReturn
     }
-    if (IfContains(A_ThisHotkey, "^")) {
+    if (CloseWnd) {
       if (WinActive("ahk_group Browser")) {
         uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
         uiaBrowser.CloseTab()
@@ -678,22 +682,9 @@ MarkInSMTitle:
   }
   send {left}{esc}
   Vim.SM.WaitTextExit()
-
-  Vim.SM.AltT()
-  GroupAdd, SMAltT, ahk_class TChoicesDlg
-  GroupAdd, SMAltT, ahk_class TTitleEdit
-  WinWait, ahk_group SMAltT
-  if (WinExist("ahk_class TChoicesDlg")) {
-    ControlSend, TGroupButton3, {enter}, ahk_class TChoicesDlg
-    WinWait, ahk_class TTitleEdit
-  }
-  if (WinExist("ahk_class TTitleEdit")) {
-    CurrText := ControlGetText("TMemo1", "ahk_class TTitleEdit")
-    CurrText := StrReplace(CurrText, "Duplicate: ")
-    title := RegExReplace(CurrText, "((^.+ \| )|^)", marker . " | ")
-    ControlSetText, TMemo1, % title
-    ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
-  }
+  SMTitle := StrReplace(WinGetTitle("ahk_class TElWind"), "Duplicate: ")
+  title := RegExReplace(SMTitle, "((^.+ \| )|^)", marker . " | ")
+  Vim.SM.SetTitle(title)
   if (IfContains(A_ThisHotkey, "^+!"))
     Vim.SM.Learn(, true)
   Clipboard := ClipSaved
@@ -703,6 +694,11 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ; Open in default browser (in my case, Chrome); similar to default shortcut ^+e to open in ms edge
 ^+c::run % ControlGetText("Edit1")  ; browser url field
+#if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))
+^+c::
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  run % uiaBrowser.GetCurrentUrl()
+return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
@@ -735,8 +731,8 @@ return
   } else {
     TempPath := A_Desktop . "\temp.mp3"
   }
-  control, choose, 3, ComboBox3  ; choose mp3 from file type
-  ControlSetText, Edit1, % TempPath
+  control, choose, 3, ComboBox3, A  ; choose mp3 from file type
+  ControlSetText, Edit1, % TempPath, A
   send {enter}
   WinWaitActive, Warning,, 0
   if (!ErrorLevel) {
@@ -753,30 +749,22 @@ return
   } else {
     send {text}Listening comprehension:
   }
-  send {CtrlDown}ttq{CtrlUp}
-  GroupAdd, SMCtrlQ, ahk_class TFileBrowser
-  GroupAdd, SMCtrlQ, ahk_class TMsgDialog
-  WinWaitActive, ahk_group SMCtrlQ
-  while (!WinActive("ahk_class TFileBrowser")) {
-    while (WinActive("ahk_class TMsgDialog"))
-      send n  ; Directory not found; Create?
-    WinWaitActive, ahk_group SMCtrlQ
-  }
-  ControlSend, TDriveComboBox1, c, ahk_class TFileBrowser
-  ControlSetText, TEdit1, % TempPath, ahk_class TFileBrowser
-  ControlSend, TEdit1, {enter}, ahk_class TFileBrowser
+  Vim.SM.InvokeFileBrowser()
+  ControlSend, TDriveComboBox1, c, A
+  ControlSetText, TEdit1, % TempPath, A
+  ControlSend, TEdit1, {enter}, A
   WinWaitActive, ahk_class TInputDlg
   if (Vim.Browser.title) {
-    ControlSetText, TMemo1, % Vim.Browser.title . " (excerpt)"
+    ControlSetText, TMemo1, % Vim.Browser.title . " (excerpt)", A
   } else {
-    ControlSetText, TMemo1, listening comprehension_
+    ControlSetText, TMemo1, listening comprehension_, A
   }
   send {enter}
   WinWaitActive, ahk_class TMsgDialog
-  send n
-  WinWaitNotActive, ahk_class TMsgDialog,, 0
+  send {text}n
+  WinWaitClose
   WinWaitActive, ahk_class TMsgDialog
-  send y
+  send {text}y
   Vim.SM.SetTitle(Vim.browser.title)
   CurrFocus := ControlGetFocus("ahk_class TElWind")
   WinActivate, ahk_class TElWind

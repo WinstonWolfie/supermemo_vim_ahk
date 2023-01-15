@@ -1,250 +1,250 @@
 ﻿/*
-	Title: Command Functions
-		A wrapper set of functions for commands which have an output variable.
+  Title: Command Functions
+    A wrapper set of functions for commands which have an output variable.
 
-	License:
-		- Version 1.41 <http://www.autohotkey.net/~polyethene/#functions>
-		- Dedicated to the public domain (CC0 1.0) <http://creativecommons.org/publicdomain/zero/1.0/>
+  License:
+    - Version 1.41 <http://www.autohotkey.net/~polyethene/#functions>
+    - Dedicated to the public domain (CC0 1.0) <http://creativecommons.org/publicdomain/zero/1.0/>
 */
 ; https://github.com/Paris/AutoHotkey-Scripts/blob/master/Functions.ahk
 
 IfBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
-	PrevStringCaseSense := A_StringCaseSense
-	if (StrCaseSense) {
-		StringCaseSense on
-	} else {
-		StringCaseSense off
-	}
-	If var between %LowerBound% and %UpperBound%
-		ret := true
-	StringCaseSense % PrevStringCaseSense
+  PrevStringCaseSense := A_StringCaseSense
+  if (StrCaseSense) {
+    StringCaseSense on
+  } else {
+    StringCaseSense off
+  }
+  If var between %LowerBound% and %UpperBound%
+    ret := true
+  StringCaseSense % PrevStringCaseSense
    return ret
 }
 IfNotBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
-	PrevStringCaseSense := A_StringCaseSense
-	if (StrCaseSense) {
-		StringCaseSense on
-	} else {
-		StringCaseSense off
-	}
-	If var not between %LowerBound% and %UpperBound%
-		ret := true
-	StringCaseSense % PrevStringCaseSense
+  PrevStringCaseSense := A_StringCaseSense
+  if (StrCaseSense) {
+    StringCaseSense on
+  } else {
+    StringCaseSense off
+  }
+  If var not between %LowerBound% and %UpperBound%
+    ret := true
+  StringCaseSense % PrevStringCaseSense
    return ret
 }
 IfIn(ByRef var, MatchList, StrCaseSense:=false) {
-	PrevStringCaseSense := A_StringCaseSense
-	if (StrCaseSense) {
-		StringCaseSense on
-	} else {
-		StringCaseSense off
-	}
-	If var in %MatchList%
-		ret := true
-	StringCaseSense % PrevStringCaseSense
+  PrevStringCaseSense := A_StringCaseSense
+  if (StrCaseSense) {
+    StringCaseSense on
+  } else {
+    StringCaseSense off
+  }
+  If var in %MatchList%
+    ret := true
+  StringCaseSense % PrevStringCaseSense
    return ret
 }
 IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
-	PrevStringCaseSense := A_StringCaseSense
-	if (StrCaseSense) {
-		StringCaseSense on
-	} else {
-		StringCaseSense off
-	}
-	If var not in %MatchList%
-		ret := true
-	StringCaseSense % PrevStringCaseSense
+  PrevStringCaseSense := A_StringCaseSense
+  if (StrCaseSense) {
+    StringCaseSense on
+  } else {
+    StringCaseSense off
+  }
+  If var not in %MatchList%
+    ret := true
+  StringCaseSense % PrevStringCaseSense
    return ret
 }
 IfContains(ByRef var, MatchList, StrCaseSense:=false) {
-	PrevStringCaseSense := A_StringCaseSense
-	if (StrCaseSense) {
-		StringCaseSense on
-	} else {
-		StringCaseSense off
-	}
-	If var contains %MatchList%
-		ret := true
-	StringCaseSense % PrevStringCaseSense
+  PrevStringCaseSense := A_StringCaseSense
+  if (StrCaseSense) {
+    StringCaseSense on
+  } else {
+    StringCaseSense off
+  }
+  If var contains %MatchList%
+    ret := true
+  StringCaseSense % PrevStringCaseSense
    return ret
 }
 IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
-	PrevStringCaseSense := A_StringCaseSense
-	if (StrCaseSense) {
-		StringCaseSense on
-	} else {
-		StringCaseSense off
-	}
-	If var not contains %MatchList%
-		ret := true
-	StringCaseSense % PrevStringCaseSense
+  PrevStringCaseSense := A_StringCaseSense
+  if (StrCaseSense) {
+    StringCaseSense on
+  } else {
+    StringCaseSense off
+  }
+  If var not contains %MatchList%
+    ret := true
+  StringCaseSense % PrevStringCaseSense
    return ret
 }
 IfIs(ByRef var, type) {
-	If var is %type%
-		Return, true
+  If var is %type%
+    Return, true
 }
 IfIsNot(ByRef var, type) {
-	If var is not %type%
-		Return, true
+  If var is not %type%
+    Return, true
 }
 IfMsgBox(ByRef ButtonName) {
-	IfMsgBox, % ButtonName
-		return true
+  IfMsgBox, % ButtonName
+    return true
 }
 
 ControlGet(Cmd:="hwnd", Value:="", Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-	control := control ? control : ControlGetFocus()
-	ControlGet, v, % Cmd, % Value, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
-	Return, v
+  control := control ? control : ControlGetFocus()
+  ControlGet, v, % Cmd, % Value, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
+  Return, v
 }
 ControlGetFocus(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-	ControlGetFocus, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
-	Return, v
+  ControlGetFocus, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
+  Return, v
 }
 ControlGetText(Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-	control := control ? control : ControlGetFocus()
-	ControlGetText, v, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
-	Return, v
+  control := control ? control : ControlGetFocus()
+  ControlGetText, v, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
+  Return, v
 }
 DriveGet(Cmd, Value:="") {
-	DriveGet, v, % Cmd, % Value
-	Return, v
+  DriveGet, v, % Cmd, % Value
+  Return, v
 }
 DriveSpaceFree(Path) {
-	DriveSpaceFree, v, % Path
-	Return, v
+  DriveSpaceFree, v, % Path
+  Return, v
 }
 EnvGet(EnvVarName) {
-	EnvGet, v, % EnvVarName
-	Return, v
+  EnvGet, v, % EnvVarName
+  Return, v
 }
 FileGetAttrib(Filename:="") {
-	FileGetAttrib, v, % Filename
-	Return, v
+  FileGetAttrib, v, % Filename
+  Return, v
 }
 FileGetShortcut(LinkFile, ByRef OutTarget:="", ByRef OutDir:="", ByRef OutArgs:="", ByRef OutDescription:="", ByRef OutIcon:="", ByRef OutIconNum:="", ByRef OutRunState:="") {
-	FileGetShortcut, % LinkFile, OutTarget, OutDir, OutArgs, OutDescription, OutIcon, OutIconNum, OutRunState
+  FileGetShortcut, % LinkFile, OutTarget, OutDir, OutArgs, OutDescription, OutIcon, OutIconNum, OutRunState
 }
 FileGetSize(Filename:="", Units:="") {
-	FileGetSize, v, % Filename, % Units
-	Return, v
+  FileGetSize, v, % Filename, % Units
+  Return, v
 }
 FileGetTime(Filename:="", WhichTime:="") {
-	FileGetTime, v, % Filename, % WhichTime
-	Return, v
+  FileGetTime, v, % Filename, % WhichTime
+  Return, v
 }
 FileGetVersion(Filename:="") {
-	FileGetVersion, v, % Filename
-	Return, v
+  FileGetVersion, v, % Filename
+  Return, v
 }
 FileRead(Filename) {
-	FileRead, v, % Filename
-	Return, v
+  FileRead, v, % Filename
+  Return, v
 }
 FileReadLine(Filename, LineNum) {
-	FileReadLine, v, % Filename, % LineNum
-	Return, v
+  FileReadLine, v, % Filename, % LineNum
+  Return, v
 }
 FileSelectFile(Options:="", RootDir:="", Prompt:="", Filter:="") {
-	FileSelectFile, v, % Options, % RootDir, % Prompt, % Filter
-	Return, v
+  FileSelectFile, v, % Options, % RootDir, % Prompt, % Filter
+  Return, v
 }
 FileSelectFolder(StartingFolder:="", Options:="", Prompt:="") {
-	FileSelectFolder, v, % StartingFolder, % Options, % Prompt
-	Return, v
+  FileSelectFolder, v, % StartingFolder, % Options, % Prompt
+  Return, v
 }
 FormatTime(YYYYMMDDHH24MISS:="", Format:="") {
-	FormatTime, v, % YYYYMMDDHH24MISS, % Format
-	Return, v
+  FormatTime, v, % YYYYMMDDHH24MISS, % Format
+  Return, v
 }
 GuiControlGet(Subcommand:="", ControlID:="", Param4:="") {
-	GuiControlGet, v, % Subcommand, % ControlID, % Param4
-	Return, v
+  GuiControlGet, v, % Subcommand, % ControlID, % Param4
+  Return, v
 }
 ImageSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ImageFile) {
-	ImageSearch, OutputVarX, OutputVarY, % X1, % Y1, % X2, % Y2, % ImageFile
+  ImageSearch, OutputVarX, OutputVarY, % X1, % Y1, % X2, % Y2, % ImageFile
 }
 IniRead(Filename, Section, Key, Default:="") {
-	IniRead, v, % Filename, % Section, % Key, % Default
-	Return, v
+  IniRead, v, % Filename, % Section, % Key, % Default
+  Return, v
 }
 Input(Options:="", EndKeys:="", MatchList:="") {
-	Input, v, % Options, % EndKeys, % MatchList
-	Return, v
+  Input, v, % Options, % EndKeys, % MatchList
+  Return, v
 }
 InputBox(Title:="", Prompt:="", HIDE:="", Width:="192", Height:="128", X:="", Y:="", Font:="", Timeout:="", Default:="") {
-	InputBox, v, % Title, % Prompt, % HIDE, % Width, % Height, % X, % Y, , % Timeout, % Default
-	Return, v
+  InputBox, v, % Title, % Prompt, % HIDE, % Width, % Height, % X, % Y, , % Timeout, % Default
+  Return, v
 }
 MouseGetPos(ByRef OutputVarX:="", ByRef OutputVarY:="", ByRef OutputVarWin:="", ByRef OutputVarControl:="", Mode:="") {
-	MouseGetPos, OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, % Mode
+  MouseGetPos, OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, % Mode
 }
 PixelGetColor(X, Y, RGB:="") {
-	PixelGetColor, v, % X, % Y, % RGB
-	Return, v
+  PixelGetColor, v, % X, % Y, % RGB
+  Return, v
 }
 PixelSearch(ByRef OutputVarX, ByRef OutputVarY, X1, Y1, X2, Y2, ColorID, Variation:="", Mode:="") {
-	PixelSearch, OutputVarX, OutputVarY, % X1, % Y1, % X2, % Y2, % ColorID, % Variation, % Mode
+  PixelSearch, OutputVarX, OutputVarY, % X1, % Y1, % X2, % Y2, % ColorID, % Variation, % Mode
 }
 Random(Min:="", Max:="") {
-	Random, v, % Min, % Max
-	Return, v
+  Random, v, % Min, % Max
+  Return, v
 }
 RegRead(RootKey, SubKey, ValueName:="") {
-	RegRead, v, % RootKey, % SubKey, % ValueName
-	Return, v
+  RegRead, v, % RootKey, % SubKey, % ValueName
+  Return, v
 }
 Run(Target, WorkingDir:="", Mode:="") {
-	Run, % Target, % WorkingDir, % Mode, v
-	Return, v	
+  Run, % Target, % WorkingDir, % Mode, v
+  Return, v 
 }
 SoundGet(ComponentType:="", ControlType:="", DeviceNumber:="") {
-	SoundGet, v, % ComponentType, % ControlType, % DeviceNumber
-	Return, v
+  SoundGet, v, % ComponentType, % ControlType, % DeviceNumber
+  Return, v
 }
 SoundGetWaveVolume(DeviceNumber:="") {
-	SoundGetWaveVolume, v, % DeviceNumber
-	Return, v
+  SoundGetWaveVolume, v, % DeviceNumber
+  Return, v
 }
 StatusBarGetText(Part:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-	StatusBarGetText, v, % Part, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
-	Return, v
+  StatusBarGetText, v, % Part, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
+  Return, v
 }
 SplitPath(ByRef InputVar, ByRef OutFileName:="", ByRef OutDir:="", ByRef OutExtension:="", ByRef OutNameNoExt:="", ByRef OutDrive:="") {
-	SplitPath, InputVar, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive
+  SplitPath, InputVar, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive
 }
 StrLower(ByRef InputVar, T:="") {
-	StringLower, v, InputVar, % T
-	Return, v
+  StringLower, v, InputVar, % T
+  Return, v
 }
 StrUpper(ByRef InputVar, T:="") {
-	StringUpper, v, InputVar, % T
-	Return, v
+  StringUpper, v, InputVar, % T
+  Return, v
 }
 SysGet(Subcommand, Param3:="") {
-	SysGet, v, % Subcommand, % Param3
-	Return, v
+  SysGet, v, % Subcommand, % Param3
+  Return, v
 }
 WinGet(Cmd:="ID", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-	WinGet, v, % Cmd, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
-	Return, v
+  WinGet, v, % Cmd, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
+  Return, v
 }
 WinGetActiveTitle() {
-	WinGetActiveTitle, v
-	Return, v
+  WinGetActiveTitle, v
+  Return, v
 }
 WinGetClass(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-	WinGetClass, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
-	Return, v
+  WinGetClass, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
+  Return, v
 }
 WinGetText(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-	WinGetText, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
-	Return, v
+  WinGetText, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
+  Return, v
 }
 WinGetTitle(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-	WinGetTitle, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
-	Return, v
+  WinGetTitle, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
+  Return, v
 }
 
 ; https://www.autohotkey.com/boards/viewtopic.php?t=5484
@@ -329,11 +329,22 @@ ControlTextWaitChange(Control, text:="", WinTitle:="A", WinText:="", ExcludeTitl
 }
 
 ControlWaitHwndChange(Control, hwnd:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
-	hwnd := hwnd ? hwnd : ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+  hwnd := hwnd ? hwnd : ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
   StartTime := A_TickCount
   Loop {
-		NewHwnd := ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
-    if (NewHwnd && NewHwnd != hwnd) {
+    NewHwnd := ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+    if (NewHwnd && (NewHwnd != hwnd)) {
+      Return True
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      Return False
+    }
+  }
+}
+
+WinTextWaitChange(text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+  StartTime := A_TickCount
+  Loop {
+    if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
       Return True
     } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
       Return False
@@ -379,25 +390,25 @@ Enc_Uri(str)
 Dec_XML(str)
 { ;Decode xml required characters, as well as numeric character references
    Loop
-      If RegexMatch(str, "S)(&#(\d+);)", dec)						; matches:   &#[dec];
+      If RegexMatch(str, "S)(&#(\d+);)", dec)           ; matches:   &#[dec];
          StringReplace, str, str, % dec1, % Chr(dec2), All
-      Else If   RegexMatch(str, "Si)(&#x([\da-f]+);)", hex)			; matches:   &#x[hex];
+      Else If   RegexMatch(str, "Si)(&#x([\da-f]+);)", hex)     ; matches:   &#x[hex];
          StringReplace, str, str, % hex1, % Chr("0x" . hex2), All
       Else
          Break
    StringReplace, str, str, % " ", % A_Space, All
-   StringReplace, str, str, ", ", All			;required predefined character entities &"<'>
+   StringReplace, str, str, ", ", All     ;required predefined character entities &"<'>
    StringReplace, str, str, ', ', All
    StringReplace, str, str, <,   <, All
    StringReplace, str, str, >,   >, All
-   StringReplace, str, str, &,  &, All			;do this last so str doesn't resolve to other entities
+   StringReplace, str, str, &,  &, All      ;do this last so str doesn't resolve to other entities
    return, str
 }
 
 Enc_XML(str, chars="") 
 { ;encode required xml characters. and characters listed in Param2 as numeric character references
-   StringReplace, str, str, &, &,  All			;do first so it doesn't re-encode already encoded characters
-   StringReplace, str, str, ", ", All			;required predefined character entities &"<'>
+   StringReplace, str, str, &, &,  All      ;do first so it doesn't re-encode already encoded characters
+   StringReplace, str, str, ", ", All     ;required predefined character entities &"<'>
    StringReplace, str, str, ', ', All
    StringReplace, str, str, <, <,   All
    StringReplace, str, str, >, >,   All
@@ -430,114 +441,114 @@ EncodeDecodeURI(str, encode := true, component := true) {  ; https://www.autohot
 
 StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
   String .= "", DllCall("msvcrt.dll\_wcsrev", "Ptr", &String, "CDecl")
-	return String
+  return String
 }
 
 WinWaitTitleChange(OriginalTitle:="", TimeOut:=0, WinTitle:="A") {
-	OriginalTitle := OriginalTitle ? OriginalTitle : WinGetTitle(WinTitle)
-	StartTime := A_TickCount
-	loop {
-		if (WinGetTitle(WinTitle) != OriginalTitle) {
-			return true
-		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-			return false
-		}
-	}
+  OriginalTitle := OriginalTitle ? OriginalTitle : WinGetTitle(WinTitle)
+  StartTime := A_TickCount
+  loop {
+    if (WinGetTitle(WinTitle) != OriginalTitle) {
+      return true
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      return false
+    }
+  }
 }
 
 WinWaitTitle(title, TimeOut:=0, WinTitle:="A") {
-	StartTime := A_TickCount
-	loop {
-		if (WinGetTitle(WinTitle) == title) {
-			return true
-		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-			return false
-		}
-	}
+  StartTime := A_TickCount
+  loop {
+    if (WinGetTitle(WinTitle) == title) {
+      return true
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      return false
+    }
+  }
 }
 
 Click(XCoord, YCoord, WhichButton:="") {
-	MouseDelay := A_MouseDelay
-	MouseGetPos, XSaved, YSaved
-	SetMouseDelay -1
-	Click % XCoord . " " . YCoord . " " . WhichButton
-	MouseMove, XSaved, YSaved, 0
-	SetMouseDelay % MouseDelay
+  MouseDelay := A_MouseDelay
+  MouseGetPos, XSaved, YSaved
+  SetMouseDelay -1
+  Click % XCoord . " " . YCoord . " " . WhichButton
+  MouseMove, XSaved, YSaved, 0
+  SetMouseDelay % MouseDelay
 }
 
 ClickDPIAdjusted(XCoord, YCoord) {
-	MouseDelay := A_MouseDelay
-	MouseGetPos, XSaved, YSaved
-	SetMouseDelay -1
-	Click % XCoord * A_ScreenDPI / 96 . " " . YCoord * A_ScreenDPI / 96
-	MouseMove, XSaved, YSaved, 0
-	SetMouseDelay % MouseDelay
+  MouseDelay := A_MouseDelay
+  MouseGetPos, XSaved, YSaved
+  SetMouseDelay -1
+  Click % XCoord * A_ScreenDPI / 96 . " " . YCoord * A_ScreenDPI / 96
+  MouseMove, XSaved, YSaved, 0
+  SetMouseDelay % MouseDelay
 }
 
 ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
-	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
-	ControlClick, % "x" . XCoord . " y" . YCoord, % WinTitle,,,, NA
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  ControlClick, % "x" . XCoord . " y" . YCoord, % WinTitle,,,, NA
 }
 
 ControlClickWinCoordDPIAdjusted(XCoord, YCoord, WinTitle:="") {
-	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
-	ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
 }
 
 ControlClickDPIAdjusted(XCoord, YCoord, Control:="", WinTitle:="") {
-	Control := Control ? Control : ControlGetFocus()
-	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
-	ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
+  Control := Control ? Control : ControlGetFocus()
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
 }
 
 ControlClickScreen(x, y, WinTitle:="") {
-	WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
-	WinGetPos, wX, wY,,, % WinTitle
-	ControlClick, % "x" . x - wX . " y" . y - wY, % WinTitle,,,, NA
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  WinGetPos, wX, wY,,, % WinTitle
+  ControlClick, % "x" . x - wX . " y" . y - wY, % WinTitle,,,, NA
 }
 
 WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=0) {
-	if (!OriginalX)
-		MouseGetPos, OriginalX
-	if (!OriginalY)
-		MouseGetPos,, OriginalY
-	StartTime := A_TickCount
-	loop {
-		if (A_CaretX != OriginalX || A_CaretY != OriginalY) {
-			return true
-		} else if (TimeOut && A_TickCount - StartTime > TimeOut) {
-			return false
-		}
-	}
+  if (!OriginalX)
+    MouseGetPos, OriginalX
+  if (!OriginalY)
+    MouseGetPos,, OriginalY
+  StartTime := A_TickCount
+  loop {
+    if (A_CaretX != OriginalX || A_CaretY != OriginalY) {
+      return true
+    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+      return false
+    }
+  }
 }
 
 SetDefaultKeyboard(LocaleID) {  ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=18519
-	Global
-	SPI_SETDEFAULTINPUTLANG := 0x005A
-	SPIF_SENDWININICHANGE := 2
-	Lan := DllCall("LoadKeyboardLayout", "Str", Format("{:08x}", LocaleID), "Int", 0)
-	VarSetCapacity(Lan%LocaleID%, 4, 0)
-	NumPut(LocaleID, Lan%LocaleID%)
-	DllCall("SystemParametersInfo", "UInt", SPI_SETDEFAULTINPUTLANG, "UInt", 0, "UPtr", &Lan%LocaleID%, "UInt", SPIF_SENDWININICHANGE)
-	WinGet, windows, List
-	Loop %windows% {
-		PostMessage 0x50, 0, % Lan, , %  "ahk_id " windows%A_Index%
-	}
+  Global
+  SPI_SETDEFAULTINPUTLANG := 0x005A
+  SPIF_SENDWININICHANGE := 2
+  Lan := DllCall("LoadKeyboardLayout", "Str", Format("{:08x}", LocaleID), "Int", 0)
+  VarSetCapacity(Lan%LocaleID%, 4, 0)
+  NumPut(LocaleID, Lan%LocaleID%)
+  DllCall("SystemParametersInfo", "UInt", SPI_SETDEFAULTINPUTLANG, "UInt", 0, "UPtr", &Lan%LocaleID%, "UInt", SPIF_SENDWININICHANGE)
+  WinGet, windows, List
+  Loop %windows% {
+    PostMessage 0x50, 0, % Lan, , %  "ahk_id " windows%A_Index%
+  }
 }
 return
 
 ToolTip(text:="", perma:=false, period:=-2000, command:="", n:=20) {
-	PrevCoordModeTT := A_CoordModeToolTip
-	CoordMode, ToolTip, Screen
-	if (command = "center") {
-		x := A_ScreenWidth / 3, y := A_ScreenHeight / 2
-	} else {
-		x := A_ScreenWidth / 3, y := A_ScreenHeight / 4 * 3
-	}
-	ToolTip, % text, % x, % y, n
-	if (!perma)
-		SetTimer, RemoveToolTip, % period
-	CoordMode, ToolTip, % PrevCoordModeTT
+  PrevCoordModeTT := A_CoordModeToolTip
+  CoordMode, ToolTip, Screen
+  if (command = "center") {
+    x := A_ScreenWidth / 3, y := A_ScreenHeight / 2
+  } else {
+    x := A_ScreenWidth / 3, y := A_ScreenHeight / 4 * 3
+  }
+  ToolTip, % text, % x, % y, n
+  if (!perma)
+    SetTimer, RemoveToolTip, % period
+  CoordMode, ToolTip, % PrevCoordModeTT
 }
 
 RemoveToolTip:
@@ -549,23 +560,23 @@ RemoveToolTip(n) {
 }
 
 RevArr(arr) {
-	newarr := []
-	for index, value in arr
-		newarr.InsertAt(1, value)
-	return newarr
+  newarr := []
+  for index, value in arr
+    newarr.InsertAt(1, value)
+  return newarr
 }
 
 ObjCount(obj) {  ; https://www.autohotkey.com/boards/viewtopic.php?f=37&t=3950&p=21579#p21578
-	return NumGet(&obj+4*A_PtrSize)  ; obj->mFieldCount -- OK for v1.1.15.01 and v2.0-a48
+  return NumGet(&obj+4*A_PtrSize)  ; obj->mFieldCount -- OK for v1.1.15.01 and v2.0-a48
 }
 
 HasVal(haystack, needle) {
-	for index, value in haystack
-		if (value = needle)
-			return index
-	if !(IsObject(haystack))
-		throw Exception("Bad haystack!", -1, haystack)
-	return 0
+  for index, value in haystack
+    if (value = needle)
+      return index
+  if !(IsObject(haystack))
+    throw Exception("Bad haystack!", -1, haystack)
+  return 0
 }
 
 ; ======================================================================================================================
@@ -680,7 +691,7 @@ ToolTipEx(Text:="", X:="", Y:="", WhichToolTip:=1, HFONT:="", BgColor:="", TxCol
    ; -------------------------------------------------------------------------------------------------------------------
    ; Initialise the ToolTip coordinates. If either X or Y is empty, use the cursor position for the present.
    PT := {X: 0, Y: 0}
-	If (TTXP = "") || (TTYP = "") {
+  If (TTXP = "") || (TTYP = "") {
       VarSetCapacity(Cursor, 8, 0)
       DllCall("User32.dll\GetCursorPos", "Ptr", &Cursor)
       Cursor := {X: NumGet(Cursor, 0, "Int"), Y: NumGet(Cursor, 4, "Int")}
@@ -744,30 +755,30 @@ ToolTipEx(Text:="", X:="", Y:="", WhichToolTip:=1, HFONT:="", BgColor:="", TxCol
    DllCall("User32.dll\SendMessage", "Ptr", TTHW, "UInt", UPDTIPTX, "Ptr", 0, "Ptr", &TI)
    ; -------------------------------------------------------------------------------------------------------------------
    ; Get the ToolTip window dimensions.
-	VarSetCapacity(RC, 16, 0)
-	DllCall("User32.dll\GetWindowRect", "Ptr", TTHW, "Ptr", &RC)
-	TTRC := {L: NumGet(RC, 0, "Int"), T: NumGet(RC, 4, "Int"), R: NumGet(RC, 8, "Int"), B: NumGet(RC, 12, "Int")}
-	TTW := TTRC.R - TTRC.L
-	TTH := TTRC.B - TTRC.T
+  VarSetCapacity(RC, 16, 0)
+  DllCall("User32.dll\GetWindowRect", "Ptr", TTHW, "Ptr", &RC)
+  TTRC := {L: NumGet(RC, 0, "Int"), T: NumGet(RC, 4, "Int"), R: NumGet(RC, 8, "Int"), B: NumGet(RC, 12, "Int")}
+  TTW := TTRC.R - TTRC.L
+  TTH := TTRC.B - TTRC.T
    ; -------------------------------------------------------------------------------------------------------------------
    ; Check if the Tooltip will be partially outside the virtual desktop and adjust the position, if necessary.
-	If (PT.X + TTW >= DTW.R)
-		PT.X := DTW.R - TTW - 1
-	If (PT.Y + TTH >= DTW.B)
-		PT.Y := DTW.B - TTH - 1
+  If (PT.X + TTW >= DTW.R)
+    PT.X := DTW.R - TTW - 1
+  If (PT.Y + TTH >= DTW.B)
+    PT.Y := DTW.B - TTH - 1
    ; -------------------------------------------------------------------------------------------------------------------
    ; Check if the cursor is inside the ToolTip window and adjust the position, if necessary.
-	If (TTXP = "") || (TTYP = "") {
-		TTRC.L := PT.X, TTRC.T := PT.Y, TTRC.R := TTRC.L + TTW, TTRC.B := TTRC.T + TTH
-		If (Cursor.X >= TTRC.L) && (Cursor.X <= TTRC.R) && (Cursor.Y >= TTRC.T) && (Cursor.Y <= TTRC.B)
-			PT.X := Cursor.X - TTW - 3, PT.Y := Cursor.Y - TTH - 3
-	}
+  If (TTXP = "") || (TTYP = "") {
+    TTRC.L := PT.X, TTRC.T := PT.Y, TTRC.R := TTRC.L + TTW, TTRC.B := TTRC.T + TTH
+    If (Cursor.X >= TTRC.L) && (Cursor.X <= TTRC.R) && (Cursor.Y >= TTRC.T) && (Cursor.Y <= TTRC.B)
+      PT.X := Cursor.X - TTW - 3, PT.Y := Cursor.Y - TTH - 3
+  }
    ; -------------------------------------------------------------------------------------------------------------------
    ; Show the Tooltip using the final coordinates.
    DllCall("User32.dll\SendMessage", "Ptr", TTHW, "UInt", TRACKPOS, "Ptr", 0, "Ptr", PT.X | (PT.Y << 16))
    DllCall("User32.dll\SendMessage", "Ptr", TTHW, "UInt", TRACKACT, "Ptr", 1, "Ptr", &TI)
    TT[TTIX].HW := TTHW
-	Return TTHW
+  Return TTHW
 }
 
 ; ======================================================================================================================
@@ -928,29 +939,29 @@ ToolTipG(Text:="", X:="", Y:="", WhichToolTip:=1, Font:="", BgColor:="", TxColor
 }
 
 slice(arr, start, end = ""){  ; https://www.autohotkey.com/boards/viewtopic.php?t=76049
-	len := arr.Length()
-	if(end == "" || end > len)
-		end := len
-	if(start<arr.MinIndex())
-		start := arr.MinIndex()
-	if(len<=0 || len < start || start > end)
-		return []
-		
-	ret := []
-	start -= 1
-	c := end - start
-	loop %c%
-		ret.push(arr[A_Index + start])
-	return ret
+  len := arr.Length()
+  if(end == "" || end > len)
+    end := len
+  if(start<arr.MinIndex())
+    start := arr.MinIndex()
+  if(len<=0 || len < start || start > end)
+    return []
+    
+  ret := []
+  start -= 1
+  c := end - start
+  loop %c%
+    ret.push(arr[A_Index + start])
+  return ret
 }
 
 sortArray( a, o := "A")  ; https://www.autohotkey.com/boards/viewtopic.php?t=60181
-{	
-	;	AHK References
-	;	https://sites.google.com/site/ahkref/custom-functions/sortarray
+{ 
+  ; AHK References
+  ; https://sites.google.com/site/ahkref/custom-functions/sortarray
     MaxIndex := ObjMaxIndex(a)
     If (o = "R") 
-	{
+  {
         count := 0
         Loop, % MaxIndex
             ObjInsert( a, ObjRemove( a, MaxIndex - count++))
@@ -958,25 +969,25 @@ sortArray( a, o := "A")  ; https://www.autohotkey.com/boards/viewtopic.php?t=601
     }
     Partitions := "|" ObjMinIndex( a) "," MaxIndex
     Loop 
-	{
+  {
         comma := InStr( this_partition := SubStr( Partitions, InStr( Partitions, "|", False, 0)+1), ",")
         spos := pivot := SubStr( this_partition, 1, comma-1) 
-		epos := SubStr( this_partition, comma+1)
+    epos := SubStr( this_partition, comma+1)
         if (o = "A") 
-		{    
+    {    
             Loop, % epos - spos 
                 if (a[pivot] > a[A_Index+spos])
                     ObjInsert(a, pivot++, ObjRemove( a, A_Index+spos))    
         } 
-		else 
+    else 
             Loop, % epos - spos 
                 if (a[pivot] < a[A_Index+spos])
                     ObjInsert(a, pivot++, ObjRemove( a, A_Index+spos))    
         Partitions := SubStr( Partitions, 1, InStr( Partitions, "|", False, 0)-1)
-        if (pivot - spos) > 1    						;if more than one elements
-            Partitions .= "|" spos "," pivot-1      	;the left partition
-        if (epos - pivot) > 1    						;if more than one elements
-            Partitions .= "|" pivot+1 "," epos      	;the right partition
+        if (pivot - spos) > 1               ;if more than one elements
+            Partitions .= "|" spos "," pivot-1        ;the left partition
+        if (epos - pivot) > 1               ;if more than one elements
+            Partitions .= "|" pivot+1 "," epos        ;the right partition
     } Until !Partitions
 }
 
@@ -986,4 +997,86 @@ return
 
 ReleaseModifierKeys() {
   send {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}
+}
+
+ControlReleaseModifierKeys(Control:="", WinTitle:="") {
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  ControlSend, % Control, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % WinTitle
+}
+
+; https://www.autohotkey.com/docs/v1/scripts/index.htm#HTML_Entities_Encoding
+; HTML Entities Encoding
+; https://www.autohotkey.com
+; Similar to the Transform's HTML sub-command, this function converts a
+; string into its HTML equivalent by translating characters whose ASCII
+; values are above 127 to their HTML names (e.g. £ becomes &pound;). In
+; addition, the four characters "&<> are translated to &quot;&amp;&lt;&gt;.
+; Finally, each linefeed (`n) is translated to <br>`n (i.e. <br> followed
+; by a linefeed).
+
+; For Unicode executables: In addition of the functionality above, Flags
+; can be zero or a combination (sum) of the following values. If omitted,
+; it defaults to 1.
+
+; - 1: Converts certain characters to named expressions. e.g. € is
+;      converted to &euro;
+; - 2: Converts certain characters to numbered expressions. e.g. € is
+;      converted to &#8364;
+
+; Only non-ASCII characters are affected. If Flags is the number 3,
+; numbered expressions are used only where a named expression is not
+; available. The following characters are always converted: <>"& and `n
+; (line feed).
+
+EncodeHTML(String, Flags := 1)
+{
+    SetBatchLines, -1
+    static TRANS_HTML_NAMED := 1
+    static TRANS_HTML_NUMBERED := 2
+    static ansi := ["euro", "#129", "sbquo", "fnof", "bdquo", "hellip", "dagger", "Dagger", "circ", "permil", "Scaron", "lsaquo", "OElig", "#141", "#381", "#143", "#144", "lsquo", "rsquo", "ldquo", "rdquo", "bull", "ndash", "mdash", "tilde", "trade", "scaron", "rsaquo", "oelig", "#157", "#382", "Yuml", "nbsp", "iexcl", "cent", "pound", "curren", "yen", "brvbar", "sect", "uml", "copy", "ordf", "laquo", "not", "shy", "reg", "macr", "deg", "plusmn", "sup2", "sup3", "acute", "micro", "para", "middot", "cedil", "sup1", "ordm", "raquo", "frac14", "frac12", "frac34", "iquest", "Agrave", "Aacute", "Acirc", "Atilde", "Auml", "Aring", "AElig", "Ccedil", "Egrave", "Eacute", "Ecirc", "Euml", "Igrave", "Iacute", "Icirc", "Iuml", "ETH", "Ntilde", "Ograve", "Oacute", "Ocirc", "Otilde", "Ouml", "times", "Oslash", "Ugrave", "Uacute", "Ucirc", "Uuml", "Yacute", "THORN", "szlig", "agrave", "aacute", "acirc", "atilde", "auml", "aring", "aelig", "ccedil", "egrave", "eacute", "ecirc", "euml", "igrave", "iacute", "icirc", "iuml", "eth", "ntilde", "ograve", "oacute", "ocirc", "otilde", "ouml", "divide", "oslash", "ugrave", "uacute", "ucirc", "uuml", "yacute", "thorn", "yuml"]
+    static unicode := {0x20AC:1, 0x201A:3, 0x0192:4, 0x201E:5, 0x2026:6, 0x2020:7, 0x2021:8, 0x02C6:9, 0x2030:10, 0x0160:11, 0x2039:12, 0x0152:13, 0x2018:18, 0x2019:19, 0x201C:20, 0x201D:21, 0x2022:22, 0x2013:23, 0x2014:24, 0x02DC:25, 0x2122:26, 0x0161:27, 0x203A:28, 0x0153:29, 0x0178:32}
+
+    if !A_IsUnicode && !(Flags & TRANS_HTML_NAMED)
+        throw Exception("Parameter #2 must be omitted or 1 in the ANSI version.", -1)
+    
+    out  := ""
+    for i, char in StrSplit(String)
+    {
+        code := Asc(char)
+        switch code
+        {
+            case 10: out .= "<br>`n"
+            case 34: out .= "&quot;"
+            case 38: out .= "&amp;"
+            case 60: out .= "&lt;"
+            case 62: out .= "&gt;"
+            default:
+            if (code >= 160 && code <= 255)
+            {
+                if (Flags & TRANS_HTML_NAMED)
+                    out .= "&" ansi[code-127] ";"
+                else if (Flags & TRANS_HTML_NUMBERED)
+                    out .= "&#" code ";"
+                else
+                    out .= char
+            }
+            else if (A_IsUnicode && code > 255)
+            {
+                if (Flags & TRANS_HTML_NAMED && unicode[code])
+                    out .= "&" ansi[unicode[code]] ";"
+                else if (Flags & TRANS_HTML_NUMBERED)
+                    out .= "&#" code ";"
+                else
+                    out .= char
+            }
+            else
+            {
+                if (code >= 128 && code <= 159)
+                    out .= "&" ansi[code-127] ";"
+                else
+                    out .= char
+            }
+        }
+    }
+    return out
 }

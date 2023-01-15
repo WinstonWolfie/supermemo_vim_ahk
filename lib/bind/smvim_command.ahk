@@ -116,42 +116,25 @@ return
 
 i::  ; learn outstanding *i*tems only
   Vim.State.SetMode("Vim_Normal")
-  send !{home}{esc 4}  ; clear any hidden windows
+  send !{home}
+  send {esc 4}  ; clear any hidden windows
   Vim.SM.PostMsg(202)  ; View - Outstanding
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
   send {AppsKey}ci
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
   send ^l
 return
 
 +i::  ; learn current element's outstanding child item
   Vim.State.SetMode("Vim_Normal")
   send ^{space}
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
   send {AppsKey}ci
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
   send {AppsKey}co
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
   send ^s
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
   send ^+l
 return
 
@@ -218,19 +201,23 @@ p::  ; hyperlink to scri*p*t component
   add := (Vim.SM.GetCollName() = "bgm") ? Vim.Browser.Url . "`n" : ""
   Clipboard := add . Vim.SM.MakeReference()
   ClipWait
+  Vim.SM.AltN()
+  Vim.SM.WaitFileLoad()
 
 SMHyperLinkToTopic:
-  Vim.SM.PostMsg(98)  ; = alt+N
-  Vim.SM.WaitFileLoad()
   send ^v
   send ^t{f9}{enter}  ; opens script editor
   WinWaitActive, ahk_class TScriptEditor,, 1.5
   if (ErrorLevel) {
     ToolTip("No script component found.")
+    if (A_ThisLabel != "SMHyperLinkToTopic") {
+      Clipboard := ClipSaved
+      Vim.Browser.Clear()
+    }
     return
   }
   script := "url " . vim.browser.url
-  if (Vim.Browser.VidTime && !IfContains(vim.browser.url, "xiaoheimi.net/index.php/vod/play/id")) {
+  if (Vim.Browser.VidTime && (Vim.Browser.IsVidSite(vim.browser.FullTitle) == 1)) {
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
     if (IfContains(Vim.Browser.url, "youtube.com")) {
       script .= "&t=" . sec . "s"
@@ -244,6 +231,7 @@ SMHyperLinkToTopic:
   WinWaitActive, ahk_class TElWind  ; without this SetTitle() may fail
   if (A_ThisLabel == "SMHyperLinkToTopic")
     return
+
   if (Vim.Browser.title)
     Vim.SM.SetTitle(Vim.browser.title)
   Clipboard := ClipSaved
@@ -253,14 +241,12 @@ return
 
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.IsEditingText())
-    send {right}  ; so no text is selected
+  ; if (Vim.SM.IsEditingText())
+    ; send {right}  ; so no text is selected
+  Vim.SM.ExitText()
+
 SMSetLinkFromClipboard:
-  if (Vim.Browser.title)
-    Vim.SM.SetTitle(Vim.Browser.title)
-  ; Vim.SM.PostMsg(961, true)
-  ; Somehow PostMessage doesn't work reliably here???
-  send !{f10}fe  ; open registry editor
+  Vim.SM.EditRef()
   WinWait, ahk_class TInputDlg
   ControlGetText, Ref, TMemo1, ahk_class TInputDlg
   Ref := RegExReplace(Ref, "(#Link: .*|$)", "`r`n#Link: " . Clipboard,, 1)
@@ -276,13 +262,17 @@ SMSetLinkFromClipboard:
     Ref := RegExReplace(Ref, "(#Comment: .*|$)", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
   ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
   ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}, ahk_class TInputDlg  ; submit
-  if (A_ThisHotkey == "r")
+  WinWaitClose, ahk_class TInputDlg
+  if (Vim.Browser.title)
+    Vim.SM.SetTitle(Vim.Browser.title)
+
+  if (A_ThisLabel == "r")
     Vim.Browser.Clear()
 return
 
 m::
   Vim.State.SetMode("Vim_Normal")
-  send !{f10}fe  ; open registry editor
+  Vim.SM.EditRef()
   WinWait, ahk_class TInputDlg
   ControlGetText, Ref, TMemo1, ahk_class TInputDlg
   if (Ref ~= "#Comment: .*#audio") {
@@ -306,25 +296,16 @@ SMLearnChild:
 c::  ; learn child
   Vim.State.SetMode("Vim_Normal")
   send ^{space}
-  WinWaitActive, ahk_class TProgressBox,, 0
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TBrowser"))
 c::
 SMLearnChildActiveBrowser:
   Vim.State.SetMode("Vim_Normal")
   send {AppsKey}co
-  WinWaitActive, ahk_class TProgressBox,, 1
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
   send ^s
-  WinWaitActive, ahk_class TProgressBox,, 1
-  if (!ErrorLevel)
-    WinWaitNotActive, ahk_class TProgressBox
-  WinWaitActive, ahk_class TBrowser
+  Vim.SM.WaitBrowser()
   send ^l
   WinWaitActive, ahk_class TElWind
   Vim.SM.PlayIfCertainColl("", 500)

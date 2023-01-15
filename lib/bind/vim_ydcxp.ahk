@@ -48,34 +48,8 @@ d::Vim.Move.YDCMove()
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c"))
 c::Vim.Move.YDCMove()
 
-; #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && Vim.IsNavigating())
-; x::
-;   Vim.State.n := Vim.State.n ? Vim.State.n : 1
-;   send % "{del " . Vim.State.n . "}"
-;   Vim.State.SetMode()
-; return
-
-; +x::
-;   Vim.State.n := Vim.State.n ? Vim.State.n : 1
-;   send % "{bs " . Vim.State.n . "}"
-;   Vim.State.SetMode()
-; return
-
-; #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
-; x::
-;   Vim.State.n := Vim.State.n ? Vim.State.n : 1
-;   send % "+{right " . Vim.State.n . "}^x"
-;   Vim.State.SetMode()
-; return
-
-; +x::
-;   Vim.State.n := Vim.State.n ? Vim.State.n : 1
-;   send % "+{left " . Vim.State.n . "}^x"
-;   Vim.State.SetMode()
-; return
-
 ; Paste
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.SM.IsNavigatingContentWindow())
 ^p::
 p::
   ;i:=0
@@ -104,9 +78,9 @@ p::
   ;  i+=1
   ;  break
   ;}
-  if (InStr(A_ThisHotkey, "^"))
+  if (IfContains(A_ThisHotkey, "^"))
     Clipboard := Clipboard
-  if (Vim.State.LineCopy == 1 && Vim.Move.YdcClipSaved == Clipboard) {
+  if ((Vim.State.LineCopy == 1) && (Vim.Move.YdcClipSaved == Clipboard)) {
     ; if WinActive("ahk_group VimNoLBCopyGroup") {
     ;   send {End}{Enter}^v{Home}
     ; } else {
@@ -125,9 +99,9 @@ Return
 
 ^+p::
 +p::
-  if (InStr(A_ThisHotkey, "^"))
+  if (IfContains(A_ThisHotkey, "^"))
     Clipboard := Clipboard
-  if (Vim.State.LineCopy == 1 && Vim.Move.YdcClipSaved == Clipboard) {
+  if ((Vim.State.LineCopy == 1) && (Vim.Move.YdcClipSaved == Clipboard)) {
     ; send {Up}{End}{Enter}^v{BS}{Home}
     send {Up}{End}{Enter}^v{Home}
   } else {
@@ -148,6 +122,6 @@ u::Vim.Move.YDCMove()
 +u::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_g~"))
 ~::
-  KeyWait Shift  ; cannot use KeyWait shift, shift will still get stuck
+  KeyWait Shift
   Vim.Move.YDCMove()
 return

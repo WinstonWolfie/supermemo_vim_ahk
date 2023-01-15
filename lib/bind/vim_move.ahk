@@ -82,7 +82,7 @@ x::Vim.Move.Repeat("x")
 ; Sentence
 (::
 )::
-  KeyWait Shift  ; cannot use KeyWait shift, shift will still get stuck
+  KeyWait Shift
   Vim.Move.Move(A_ThisHotkey)
 Return
 

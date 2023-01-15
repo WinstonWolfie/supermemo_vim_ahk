@@ -23,7 +23,7 @@ return
 
 !a::  ; p*a*rse html
   Vim.State.SetMode("Vim_Normal")
-  SetDefaultKeyboard(0x0409)  ; english-US	
+  SetDefaultKeyboard(0x0409)  ; English-US
   gui, HTMLTag:Add, Text,, &HTML tag:
   list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
         . "|sup|blockquote|ruby|hint|note|ignore|headers|RefText|reference|highlight"
@@ -87,21 +87,21 @@ q::  ; extract (*q*uote)
 return
 
 +h::  ; move to top of screen
-  send {shift down}
+  send {ShiftDown}
   Vim.SM.ClickTop()
-  send {shift up}
+  send {ShiftUp}
 Return
 
 +m::  ; move to middle of screen
-  send {shift down}
+  send {ShiftDown}
   Vim.SM.ClickMid()
-  send {shift up}
+  send {ShiftUp}
 Return
 
 +l::  ; move to bottom of screen
-  send {shift down}
+  send {ShiftDown}
   Vim.SM.ClickBottom()
-  send {shift up}
+  send {ShiftUp}
 Return
 
 ExtractStay:
@@ -152,42 +152,48 @@ ClozeHinter:
   if (ClozeHinterCtrlState && A_ThisLabel == "ClozeHinter") {  ; from cloze hinter label and ctrl is down
     CtrlState := 1, ClozeHinterCtrlState := 0
   } else {
-    CtrlState := InStr(A_ThisHotkey, "^")
+    CtrlState := IfContains(A_ThisHotkey, "^")
   }
   KeyWait ctrl
   KeyWait shift
   if (!InitText := Copy())
     return
   CurrFocus := ControlGetFocus("ahk_class TElWind"), inside := true
-  if (InitText ~= "\b(more|less)\b") {
+  if (InitText ~= "^(more|less)$") {
     InitText := "more/less"
-  } else if (InitText ~= "\b(faster|slower)\b") {
+  } else if (InitText ~= "^(faster|slower)$") {
     InitText := "faster/slower"
-  } else if (InitText ~= "\b(fast|slow)\b") {
+  } else if (InitText ~= "^(fast|slow)$") {
     InitText := "fast/slow"
-  } else if (InitText ~= "\b(higher|lower)\b") {
+  } else if (InitText ~= "^(higher|lower)$") {
     InitText := "higher/lower"
-  } else if (InitText ~= "\b(high|low)\b") {
+  } else if (InitText ~= "^(high|low)$") {
     InitText := "high/low"
-  } else if (InitText ~= "\b(increased|decreased)\b") {
+  } else if (InitText ~= "^(increased|decreased)$") {
     InitText := "increased/decreased"
-  } else if (InitText ~= "\b(increased|reduced)\b") {
-    InitText := "increased/reduced"
-  } else if (InitText ~= "\b(increases|decreases)\b") {
+  } else if (InitText ~= "^(increases|decreases)$") {
     InitText := "increases/decreases"
-  } else if (InitText ~= "\b(increase|decrease)\b") {
+  } else if (InitText ~= "^(increase|decrease)$") {
     InitText := "increase/decrease"
-  } else if (InitText ~= "\b(positive|negative)\b") {
+  } else if (InitText ~= "^(reduced)$") {
+    InitText := "increased/reduced"
+  } else if (InitText ~= "^(reduces)$") {
+    InitText := "increases/reduces"
+  } else if (InitText ~= "^(reduce)$") {
+    InitText := "increase/reduce"
+  } else if (InitText ~= "^(positive|negative)$") {
     InitText := "positive/negative"
-  } else if (InitText ~= "\b(acidic|alkaline)\b") {
+  } else if (InitText ~= "^(acidic|alkaline)$") {
     InitText := "acidic/alkaline"
-  } else if (InitText ~= "\b(same|different)\b") {
+  } else if (InitText ~= "^(same|different)$") {
     InitText := "same/different"
+  } else if (InitText ~= "^(inside|outside)$") {
+    InitText := "inside/outside"
   } else if (!IfContains(InitText, "/")) {
     inside := false
   }
   gui, ClozeHinter:Add, Text,, &Hint:
-  gui, ClozeHinter:Add, Edit, vHint w196, % InitText
+  gui, ClozeHinter:Add, Edit, vHint w196 r1 -WantReturn, % InitText
   gui, ClozeHinter:Add, CheckBox, % "vInside " . (inside ? "checked" : ""), &Inside square brackets
   gui, ClozeHinter:Add, CheckBox, vFullWidthParen, Use &fullwidth parentheses
   gui, ClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item

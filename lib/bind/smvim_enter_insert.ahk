@@ -21,7 +21,7 @@ return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
 !n::  ; new topic
-  Vim.SM.PostMsg(98)  ; = alt+N
+  Vim.SM.AltN()
   Vim.State.SetMode("Insert")
 return
 
