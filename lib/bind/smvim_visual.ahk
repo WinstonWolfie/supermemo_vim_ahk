@@ -1,9 +1,7 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 .::  ; selected text becomes [...]
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
   KeyWait ctrl
-  send ^c
-  ClipWait, LongCopy ? 0.6 : 0.2, True
+  copy(false)
   if (Vim.SM.IsEditingHTML()) {
     clip("<span class=""Cloze"">[...]</span>",,, "sm")
   } else if (Vim.SM.IsEditingPlainText()) {
@@ -44,32 +42,26 @@ HTMLTagButtonAdd:
   gui submit
   gui destroy
   ClipSaved := ClipboardAll
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-  send ^c
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (ErrorLevel)
+  WinActivate, ahk_class TElWind
+  if (!copy(false))
     goto RestoreClipReturn
   if (OriginalHTML) {
     Vim.HTML.ClipboardGet_HTML(data)
     RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", content)
   } else {
-    content := Clipboard
-    content := StrReplace(content, "<", "&lt;")
-    content := StrReplace(content, ">", "&gt;")
+    content := StrReplace(Clipboard, "<", "&lt;"), content := StrReplace(content, ">", "&gt;")
   }
-  WinActivate, ahk_class TElWind
+  StartingTag := "<", EndingTag := ">"
   if (Vim.SM.IsCssClass(tag)) {
     StartingTag := "<SPAN class=" . tag, EndingTag := "SPAN>", tag := ""
   } else if (tag = "ruby") {
     Clipboard := ClipSaved
-    InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above`, like Pinyin,, 272, 160
+    InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above your selection`, like Pinyin,, 200, 180
     if (ErrorLevel || !UserInput)
       return
     clip("<RUBY>" . content . "<RP>(</RP><RT>" . UserInput
        . "</RT><RP>)</RP></RUBY>",,, "sm")
     return
-  } else {
-    StartingTag := "<", EndingTag := ">"
   }
   clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag,, false, "sm")
   Clipboard := ClipSaved
@@ -77,7 +69,6 @@ return
 
 m::  ; highlight: *m*ark
   send {AppsKey}rh
-  ; Vim.SM.PostMsg(815, true)  ; highlight
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -105,15 +96,15 @@ Return
 Return
 
 ExtractStay:
-#if Vim.IsVimGroup() and WinActive("ahk_class TElWind")
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!x::
-#if Vim.IsVimGroup() and (Vim.State.StrIsInCurrentVimMode("Visual")) && WinActive("ahk_class TElWind")
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 ^q::  ; extract (*q*uote)
   KeyWait ctrl
   send !x
-  Vim.State.SetMode("Vim_Normal")
   Vim.SM.WaitExtractProcessing()
   send !{left}
+  Vim.State.SetMode("Vim_Normal")
 return
 
 +q::  ; extract with priority
@@ -213,12 +204,12 @@ ClozeHinterButtonCloze:
   gui destroy
   WinActivate, ahk_class TElWind
 ClozeNoBracket:
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind") && CtrlState := GetKeyState("ctrl"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind") && (CtrlState := GetKeyState("ctrl")))
 CapsLock & z::  ; delete [...]
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 CapsLock & z::  ; delete [...]
-  ClozeNoBracket := (A_ThisLabel == "ClozeNoBracket" || A_ThisHotkey == "CapsLock & z")
-  if (A_ThisLabel == "ClozeNoBracket" && ClozeNoBracketCtrlState)
+  ClozeNoBracket := IfIn(A_ThisLabel, "ClozeNoBracket,CapsLock & z"), TopicTitle := WinGetTitle("ahk_class TElWind")
+  if ((A_ThisLabel == "ClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
   KeyWait Capslock
   if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/")) {
@@ -233,14 +224,17 @@ CapsLock & z::  ; delete [...]
     return
 
   ToolTip("Cloze processing...", true)
-  ; SleepCalc := A_TickCount
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send !{left}
-  ; sleep % (A_TickCount - SleepCalc) / 3 * 2
-  Vim.SM.WaitFileLoad()  ; double insurance?
-  sleep 80
-  send ^t
+  Vim.SM.WaitFileLoad()
+  if (WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 100)) {
+    if (!Vim.SM.SpamQ(, 1500))
+      return
+  } else {
+    Vim.SM.EditFirstQuestion()
+    Vim.SM.WaitTextFocus()
+  }
   if (!ClozeNoBracket && inside) {
     cloze := "[" . hint . "]"
   } else {
@@ -250,7 +244,6 @@ CapsLock & z::  ; delete [...]
       cloze := "[...](" . hint . ")"
     }
   }
-  Vim.SM.WaitTextFocus()
   if (Vim.SM.IsEditingPlainText()) {
     send ^a
     ClipSaved := ClipboardAll
@@ -268,13 +261,10 @@ CapsLock & z::  ; delete [...]
     WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
     if (!Vim.SM.HandleF3(2))
       return
+    WinWaitActive, ahk_class TElWind
     if (copy() = " [...")  ; a bug in SM
       send {left}{right}+{right 5}
-    if (ClozeNoBracket) {
-      send {bs}
-    } else {
-      send % "{text}" . cloze
-    }
+    send % ClozeNoBracket ? "{bs}" : "{text}" . cloze
 		if (WinExist("ahk_class TMyFindDlg")) ; clears search box window
 			WinClose
   }

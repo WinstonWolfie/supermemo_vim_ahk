@@ -1,9 +1,9 @@
-﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
+﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0,,,-1)
 d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,,-1)
 c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0,,,-1)
 +y::
-  Vim.State.SetMode("Vim_ydc_y", 0, 0, 1)
+  Vim.State.SetMode("Vim_ydc_y", 0, 0, 1,,, -1)
   ; Sleep, 150  ; Need to wait (For variable change?)
   if WinActive("ahk_group VimDoubleHomeGroup")
     send {Home}
@@ -17,7 +17,7 @@ c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0,,,-1)
 Return
 
 +d::
-  Vim.State.SetMode("Vim_ydc_d", 0, 0, 0)
+  Vim.State.SetMode("Vim_ydc_d", 0, 0, 0,,, -1)
   if (!WinActive("ahk_group VimLBSelectGroup")) {
     Vim.Move.Move("$")
   } else {
@@ -27,7 +27,7 @@ Return
 Return
 
 +c::
-  Vim.State.SetMode("Vim_ydc_c",0,0,0)
+  Vim.State.SetMode("Vim_ydc_c",0,0,0,,, -1)
   if (!WinActive("ahk_group VimLBSelectGroup")) {
     Vim.Move.Move("$")
   } else {
@@ -36,20 +36,20 @@ Return
   }
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_y"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_y") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 y::
   Vim.Move.YDCMove()
   send {Left}{Home}
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 d::Vim.Move.YDCMove()
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 c::Vim.Move.YDCMove()
 
 ; Paste
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.SM.IsNavigatingContentWindow())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 ^p::
 p::
   ;i:=0
@@ -111,16 +111,16 @@ Return
   KeyWait, p
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 u::Vim.State.SetMode("Vim_gu", 0, -1, 0)
 +u::Vim.State.SetMode("Vim_gU", 0, -1, 0)
 ~::Vim.State.SetMode("Vim_g~", 0, -1, 0)
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gu"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gu") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 u::Vim.Move.YDCMove()
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gU"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gU") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 +u::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_g~"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_g~") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 ~::
   KeyWait Shift
   Vim.Move.YDCMove()

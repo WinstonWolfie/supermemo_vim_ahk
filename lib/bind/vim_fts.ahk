@@ -99,14 +99,14 @@ space::
   if (CurrHotkey = "space")
     CurrHotkey := " "
   if (StrLen(CurrHotkey) > 1) {
-    if (InStr(CurrHotkey, "+")) {
+    if (IfContains(CurrHotkey, "+")) {
       CurrHotkey := StrReplace(CurrHotkey, "+")
       StringUpper, CurrHotkey, CurrHotkey
     }
-    if (InStr(CurrHotkey, "~"))
+    if (IfContains(CurrHotkey, "~"))
       CurrHotkey := StrReplace(CurrHotkey, "~")
   }
-  if (InStr(Vim.State.fts, "s")) {
+  if (IfContains(Vim.State.fts, "s")) {
     if (!Vim.State.FtsChar) {
       Vim.State.FtsChar := CurrHotkey
       return
@@ -155,7 +155,7 @@ Return
 
 ,::
   Vim.State.FtsChar := Vim.State.LastFtsChar
-  if (InStr(Vim.State.LastFts, "+")) {
+  if (IfContains(Vim.State.LastFts, "+")) {
     FtsReversed := StrReplace(Vim.State.LastFts, "+")
   } else {
     FtsReversed := "+" . Vim.State.LastFts

@@ -134,13 +134,9 @@ SMCtrlN:
     KeyWait ctrl
     send ^a{bs}{esc}
     Vim.SM.WaitTextExit()
-    ; Vim.SM.EditFirstQuestion()
-    ; Vim.SM.WaitTextFocus()
-    ; send % "{text}" . text
     Clip(text,, false)
     Vim.SM.WaitTextFocus()
-    ; KeyWait Ctrl
-    ; sleep 20
+    KeyWait Ctrl
     Vim.SM.SetElParam(vim.browser.title, prio, "YouTube")
     vim.browser.title := prio := ""
     if (A_ThisHotkey == "~^n") {
@@ -190,7 +186,7 @@ return
     ToolTip("Can't be cloned because this script registry is the only instance in this collection.",, -5000)
     return
   }
-  send !o!o
+  send {AltDown}oo{AltUp}
   ToolTip("Cloning successful.")
   Vim.SM.Reload()
 return
@@ -212,13 +208,14 @@ return
     link := "SuperMemoElementNo=(" . v1 . ")"
   }
   if (!link || !copy())  ; no selection or no link
-    goto RestoreClipReturn
+    return
   send ^k
   WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class Internet Explorer_TridentDlgFrame"))
   el.WaitElementExist("ControlType=Edit AND Name='URL: ' AND AutomationId='txtURL'").SetValue(link)
   send {enter}
+  WinWaitClose, ahk_class Internet Explorer_TridentDlgFrame
   Vim.State.SetNormal()
   Vim.Caret.SwitchToSameWindow()
 return
@@ -234,27 +231,21 @@ return
     goto RestoreClipReturn
   if (!IfContains(data, "<IMG")) {  ; text
     send {bs}^{f7}  ; set read point
-    ; Almost a year since I wrote this script, turned out this f**ker website encodes the formula twice. Well, I suppose I don't use math that often in SM
     LatexFormula := ProcessLatexFormula(Clipboard)
-    UrlLatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
-    ; white text no background
-    ; LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Chuge%2520%257B%255Ccolor%257Bwhite%257D%2520" . UrlLatexFormula . "&dl=1"
-    LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cbg_white%2520%255Chuge%2520" . UrlLatexFormula . "&dl=1"
+    ; After almost a year since I wrote this script, I finially figured out this f**ker website encodes the formula twice. Well, I suppose I don't use math that often in SM
+    LatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
+    LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cbg_white%2520%255Chuge%2520" . LatexFormula . "&dl=1"
     text := WinGetText("ahk_class TElWind")
     LatexFolderPath := Vim.SM.GetCollPath(text) . Vim.SM.GetCollName(text) . "\elements\LaTeX"
     LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     SetTimer, DownloadLatex, -1
     FileCreateDir % LatexFolderPath
-    alt := "zzz333LaTeXMarker321zzz" . LatexFormula . "zzz333LaTeXMarker321zzz", AltEncoded := EncodeHTML(LatexFormula)
-    ImgHTML := "<img alt=""" . alt . """ src=""" . InsideHTMLPath . """>", 
-    Vim.HTML.SetClipboardHTML(ImgHTML)
-    send ^v
+    clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>",, false, true)
     HTMLPath := Vim.SM.SaveHTML(true, true)
     ; VarSetCapacity(HTML, 10240000)  ; ~10 MB
     FileRead, HTML, % HTMLPath
     HTML := HTML ? HTML : ImgHTML  ; in case the HTML is picture only and somehow not saved
-    HTML := StrReplace(HTML, alt, AltEncoded)  ; sometimes alt is not saved correctly
     
     /*
       Recommended css setting for AntiMerge class:
@@ -269,11 +260,9 @@ return
     send {esc}
     Vim.SM.WaitTextExit()
 
-    if (IfContains(HTML, "<SPAN class=AntiMerge>Last LaTeX to image conversion: ")) {  ; converted before
-      HTML := RegExReplace(HTML, "<SPAN class=AntiMerge>Last LaTeX to image conversion: .*?(<\/SPAN>|$)", AntiMerge)
-    } else {  ; first time conversion
+    HTML := RegExReplace(HTML, "<SPAN class=AntiMerge>Last LaTeX to image conversion: .*?(<\/SPAN>|$)", AntiMerge, v)
+    if (!v)
       HTML .= "`n" . AntiMerge
-    }
     FileDelete % HTMLPath
     FileAppend, % HTML, % HTMLPath
     Vim.SM.SaveHTML()  ; better than Vim.SM.Reload()
@@ -283,17 +272,14 @@ return
 
   } else {  ; image
     send {bs}  ; otherwise might contain unwanted format
-    if (IfContains(data, "alt=""")) {
-      RegExMatch(data, "alt=""(.*?)""", v)  ; getting formula from alt=""
-    } else if (IfContains(data, "alt=")) {
-      RegExMatch(data, "alt=(.*?) ", v)  ; getting formula from alt=
-    }
-    LatexFormula := ProcessLatexFormula(v1)
-    if (IfContains(data, "src=""")) {
-      RegExMatch(data, "src=""(.*?)""", v)  ; getting formula from src=""
-    } else if (IfContains(data, "src=")) {
-      RegExMatch(data, "src=(.*?) ", v)  ; getting formula from src=
-    }
+    RegExMatch(data, "alt=""(.*?)""", v)
+    if (!v)
+      RegExMatch(data, "alt=(.*?) ", v)
+    LatexFormula := EncodeDecodeURI(EncodeDecodeURI(v1, false), false)
+    LatexFormula := ProcessLatexFormula(LatexFormula)
+    RegExMatch(data, "src=""(.*?)""", v)
+    if (!v)
+      RegExMatch(data, "src=(.*?) ", v)
     LatexPath := StrReplace(v1, "file:///"), LatexFormula := HTML_decode(LatexFormula)
     clip(LatexFormula, true, false)
     FileDelete % LatexPath
@@ -303,7 +289,7 @@ return
 return
 
 ProcessLatexFormula(LatexFormula) {
-  LatexFormula := RegExReplace(LatexFormula, "{\\displaystyle |\\displaystyle{ ",, v)  ; from Wikipedia, Wikibooks, Better Explained, etc
+  LatexFormula := RegExReplace(LatexFormula, "{\\displaystyle |\\displaystyle{ ?",, v)  ; from Wikipedia, Wikibooks, Better Explained, etc
   if (v)
     LatexFormula := RegExReplace(LatexFormula, "}$")
   LatexFormula := StrReplace(LatexFormula, "{\ce ",, v)  ; from Wikipedia's chemistry formulae
@@ -388,7 +374,7 @@ PlanAddButtonAppend:
   gui submit
   gui destroy
   WinActivate, ahk_class TPlanDlg
-  if (InStr(A_ThisLabel, "Insert")) {
+  if (IfContains(A_ThisLabel, "Insert")) {
     send ^t  ; split
     WinWaitActive, ahk_class TInputDlg
     send {enter}
@@ -478,6 +464,8 @@ return
   ControlClick, TButton3, ahk_class TMyFindDlg
 return
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan())
+d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,,-1)
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
 d::
   BlockInput, on
@@ -550,13 +538,12 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
-  sync := (A_ThisLabel == "BrowserSyncTime")
-  ResetTime := IfContains(A_ThisHotkey, "``")
+  sync := (A_ThisLabel == "BrowserSyncTime"), ResetTime := IfContains(A_ThisHotkey, "``")
   KeyWait alt
   KeyWait ctrl
   KeyWait shift
-  if (Browser := WinActive("ahk_group Browser")) {
-    guiaBrowser := new UIA_Browser("ahk_id " . Browser)
+  if (BrowserHwnd := WinActive("ahk_group Browser")) {
+    guiaBrowser := new UIA_Browser("ahk_id " . BrowserHwnd)
     send {esc}
     Vim.Browser.GetTitleSourceDate(!sync, false,, false)  ; get title for checking later
     ; SM uses "." instead of "..." in titles
@@ -571,24 +558,22 @@ BrowserSyncTime:
     if (!ResetTime) {
       if (!Vim.Browser.VidTime := Vim.Browser.GetVidtime(Vim.Browser.FullTitle)) {
         SetDefaultKeyboard(0x0409)  ; English-US
-        if (!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp."))
+        if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
           goto BrowserSyncReturn
       }
     }
     ; KeyWait enter  ; without this script may get stuck
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
     if (IfContains(A_ThisHotkey, "^")) {  ; hotkeys with ctrl will close the tab
-      oTabs := guiaBrowser.GetAllTabs()
-      if (ObjCount(oTabs) == 1) {
-        guiaBrowser.NewTab()
-        guiaBrowser.CloseTab(oTabs[1])
+      if (ObjCount(oTabs := guiaBrowser.GetAllTabs()) == 1) {
+        guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1])
       } else {
         guiaBrowser.CloseTab()
       }
     }
   } else if (!Vim.Browser.VidTime && !IfContains(A_ThisHotkey, "``")) {
     SetDefaultKeyboard(0x0409)  ; English-US
-    if (!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp."))
+    if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
       goto BrowserSyncReturn
   }
   while (WinExist("ahk_class TMsgDialog"))
@@ -597,18 +582,16 @@ BrowserSyncTime:
 
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
-  if (Browser && (vim.browser.IsVidSite(vim.browser.fullTitle) == 2)) {
-    EditRef := true
+  if (BrowserHwnd && (vim.browser.IsVidSite(vim.browser.fullTitle) == 3)) {
+    EditTitle := true
   } else {
     Vim.SM.EditFirstQuestion()
     send ^t{f9}
     WinWaitActive, ahk_class TScriptEditor,, 1.5
-    if (ErrorLevel) {
-      ToolTip("Script editor not found.")
-      goto BrowserSyncReturn
-    }
+    if (ErrorLevel)
+      ToolTip("Script editor not found."), goto BrowserSyncReturn
     ControlGetText, script, TMemo1, A
-    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime), EditRef := false
+    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime), EditTitle := false
     if (IfContains(script, "bilibili.com")) {
       replacement := "&t=" . sec, match := "&t=.*"
     } else if (IfContains(script, "youtube.com")) {
@@ -616,16 +599,12 @@ BrowserSyncTime:
     } else {
       WinClose, ahk_class TScriptEditor
       send {esc}
-      EditRef := true
+      EditTitle := true
     }
   }
 
-  if (!EditRef) {  ; time in script component
-    if (RegExMatch(script, match)) {
-      ControlSetText, TMemo1, % RegExReplace(script, match, replacement), A
-    } else {
-      ControlSetText, TMemo1, % script . replacement, A
-    }
+  if (!EditTitle) {  ; time in script component
+    ControlSetText, TMemo1, % RegExReplace(script, match . "|$", replacement,, 1), A
     send !o{esc}  ; close script editor
     ToolTip("Time stamp in script component set as " . sec . "s")
   } else {  ; time in title
@@ -643,7 +622,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
                       && (title := WinGetTitle())
-                      && (RegExMatch(title, "(?<=^p)[0-9]+", page) || epub := IfContains(title, "|")))
+                      && (RegExMatch(title, "(?<=^p)[0-9]+", page) || epub := IfContains(title, " | ")))
 !s::
   if (page) {
     clip := page
@@ -672,3 +651,7 @@ return
   WinWaitActive, ahk_class TElWind
   goto SMLearnChild
 return
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TMsgDialog"))
+y::send {text}y
+n::send {text}n

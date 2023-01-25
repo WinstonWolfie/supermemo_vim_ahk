@@ -10,8 +10,6 @@ i::
   if (Vim.State.g)
     Vim.Move.Move("g")
   Vim.State.SetMode("Insert")
-  if (Vim.SM.IsNavigatingPlan())
-    send {f2}^a
 Return
 
 +i::
@@ -20,8 +18,8 @@ Return
 Return
 
 a::
-  if (Vim.SM.IsNavigatingPlan()) {
-    send {tab}{f2}^a
+  if (Vim.IsNavigating()) {
+    send {tab}
   } else if (!Vim.CheckChr("`n")) {
     send {Right}
   }

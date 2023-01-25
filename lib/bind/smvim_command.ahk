@@ -55,13 +55,11 @@ Return
 
 l::  ; *l*ink concept
   send !{f10}cl
-  ; Vim.SM.PostMsg(644, true)
   Vim.State.SetMode("Vim_Normal")
 return
 
 +l::  ; list links
   send !{f10}cs
-  ; Vim.SM.PostMsg(652, true)
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -72,7 +70,7 @@ w::  ; prepare *w*ikipedia articles in languages other than English
 	send !g  ; in case it's learning
 	send ^{f7}  ; save read point
   if (!Vim.SM.IsEditingHTML()) {
-    send ^t
+    Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
     if (!Vim.SM.IsEditingHTML())
       return
@@ -80,14 +78,13 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.SM.SaveHTML()  ; making sure the html path is correct
   send {esc}
   Vim.SM.WaitTextExit()  ; making changes to the html file requires not editing html in SM
-  TemplCode := Vim.SM.GetTemplCode()
-  link := Vim.SM.GetLink(TemplCode)
+  link := Vim.SM.GetLink(TemplCode := Vim.SM.GetTemplCode())
   if (link) {
-    if (!InStr(Link, "wikipedia.org/wiki")) {
+    if (!IfContains(link, "wikipedia.org/wiki")) {
       ToolTip("Not Wikipedia!")
       return
     }
-    if (InStr(Link, "en.wikipedia.org")) {
+    if (IfContains(link, "en.wikipedia.org")) {
       ToolTip("English Wikipedia doesn't need to be prepared!")
       return
     }
@@ -102,7 +99,7 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   FileDelete % FilePath
   FileAppend, % HTML, % FilePath
   Vim.SM.SaveHTML()
-  if (WikiLink ~= "(zh|fr|la).wikipedia.org") {
+  if (WikiLink ~= "(zh|fr|la)\.wikipedia\.org") {
     Vim.SM.WaitTextFocus()
     send ^{home}{end}+{home}  ; selecting first line
     Vim.SM.AltT()
@@ -152,8 +149,8 @@ s::  ; turn active language item to passive (*s*witch)
   if (Vim.SM.IsLearning() == 2)  ; if learning (on "next repitition")
     send {esc}
   send ^+s
-  sleep 300
-  send ^t
+  sleep 320
+  Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
   send ^{home}
   send {text}en:
@@ -185,8 +182,8 @@ return
   send {bs}{esc}
   Vim.SM.WaitTextExit()
   send ^+s
-  sleep 300
-  send ^t
+  sleep 320
+  Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
   send % "{text}" . text
   send {left 2}{esc}
@@ -198,15 +195,13 @@ p::  ; hyperlink to scri*p*t component
   ClipSaved := ClipboardAll
   Vim.Browser.url := Clipboard
   WinClip.Clear()
-  add := (Vim.SM.GetCollName() = "bgm") ? Vim.Browser.Url . "`n" : ""
-  Clipboard := add . Vim.SM.MakeReference()
+  Clipboard := ((CollName = "bgm") ? Vim.Browser.Url . "`n" : "") . Vim.SM.MakeReference()
   ClipWait
   Vim.SM.AltN()
   Vim.SM.WaitFileLoad()
 
 SMHyperLinkToTopic:
-  send ^v
-  send ^t{f9}{enter}  ; opens script editor
+  send {CtrlDown}vt{CtrlUp}{f9}{enter}  ; opens script editor
   WinWaitActive, ahk_class TScriptEditor,, 1.5
   if (ErrorLevel) {
     ToolTip("No script component found.")
@@ -217,7 +212,7 @@ SMHyperLinkToTopic:
     return
   }
   script := "url " . vim.browser.url
-  if (Vim.Browser.VidTime && (Vim.Browser.IsVidSite(vim.browser.FullTitle) == 1)) {
+  if (Vim.Browser.VidTime && IfIn(Vim.Browser.IsVidSite(vim.browser.FullTitle), "1,2")) {
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
     if (IfContains(Vim.Browser.url, "youtube.com")) {
       script .= "&t=" . sec . "s"
@@ -226,9 +221,11 @@ SMHyperLinkToTopic:
     }
     ToolTip("Time stamp in script component set as " . sec . "s")
   }
-  ControlSetText, TMemo1, % script
+  ControlSetText, TMemo1, % script, A
   send !o{esc 2}  ; close script editor
   WinWaitActive, ahk_class TElWind  ; without this SetTitle() may fail
+  if (Vim.Browser.VidTime && (Vim.Browser.IsVidSite(vim.browser.FullTitle) == 3))
+    Vim.Browser.Title := Vim.Browser.VidTime . " | " . Vim.Browser.Title
   if (A_ThisLabel == "SMHyperLinkToTopic")
     return
 
@@ -241,30 +238,29 @@ return
 
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal")
-  ; if (Vim.SM.IsEditingText())
-    ; send {right}  ; so no text is selected
   Vim.SM.ExitText()
 
 SMSetLinkFromClipboard:
+  ; Has to edit title first, in case of multiple references change
+  if (Vim.Browser.title)
+    Vim.SM.SetTitle(Vim.Browser.title)
   Vim.SM.EditRef()
   WinWait, ahk_class TInputDlg
   ControlGetText, Ref, TMemo1, ahk_class TInputDlg
-  Ref := RegExReplace(Ref, "(#Link: .*|$)", "`r`n#Link: " . Clipboard,, 1)
+  Ref := RegExReplace(Ref, "#Link: .*|$", "`r`n#Link: " . Clipboard,, 1)
   if (Vim.Browser.title)
-    Ref := RegExReplace(Ref, "(#Title: .*|$)", "`r`n#Title: " . Vim.Browser.title,, 1)
+    Ref := RegExReplace(Ref, "#Title: .*|$", "`r`n#Title: " . Vim.Browser.title,, 1)
   if (Vim.Browser.Source)
-    Ref := RegExReplace(Ref, "(#Source: .*|$)", "`r`n#Source: " . Vim.Browser.Source,, 1)
+    Ref := RegExReplace(Ref, "#Source: .*|$", "`r`n#Source: " . Vim.Browser.Source,, 1)
   if (Vim.Browser.author)
-    Ref := RegExReplace(Ref, "(#Author: .*|$)", "`r`n#Author: " . Vim.Browser.author,, 1)
+    Ref := RegExReplace(Ref, "#Author: .*|$", "`r`n#Author: " . Vim.Browser.author,, 1)
   if (Vim.Browser.Date)
-    Ref := RegExReplace(Ref, "(#Date: .*|$)", "`r`n#Date: " . Vim.Browser.Date,, 1)
+    Ref := RegExReplace(Ref, "#Date: .*|$", "`r`n#Date: " . Vim.Browser.Date,, 1)
   if (Vim.Browser.Comment)
-    Ref := RegExReplace(Ref, "(#Comment: .*|$)", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
+    Ref := RegExReplace(Ref, "#Comment: .*|$", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
   ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
   ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}, ahk_class TInputDlg  ; submit
   WinWaitClose, ahk_class TInputDlg
-  if (Vim.Browser.title)
-    Vim.SM.SetTitle(Vim.Browser.title)
 
   if (A_ThisLabel == "r")
     Vim.Browser.Clear()

@@ -43,18 +43,19 @@ Return
   hwnd := WinGet()
   gui, VimCommander:Add, Text,, &Command:
 
-  list := "Plan||WindowSpy|Regex101|Google|YT|ScriptSettings|MoveMouseToCaret"
-        . "|LaTeX|WaybackMachine|DeepL|YouGlish|KillIE|DefineGoogle|Wiktionary"
-        . "|Bilibili|CopyCurrentTitle|CopyHTML|Forvo|Sci-Hub|AccViewer"
+  list := "Plan||Wiktionary|Regex101|Google|YT|ScriptSettings|MoveMouseToCaret"
+        . "|LaTeX|WaybackMachine|DeepL|YouGlish|KillIE|DefineGoogle|WindowSpy"
+        . "|Bilibili|CopyTitle|CopyHTML|Forvo|Sci-Hub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
+        . "|CopyPosition|ZLibrary"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
     if (WinActive("ahk_class TElWind")) {
+      list := "NukeHTML|ReformatVocab|ImportFirstFile|" . list
       if (Vim.SM.IsPassive(, -1))
         list := "ReformatScriptComponent|SearchLinkInYT|" . list
-      list := "NukeHTML|ReformatVocab|ImportFirstFile|" . list
       if (Vim.SM.IsEditingText())
         list := "ClozeAndDone!|" . list
     }
@@ -248,18 +249,18 @@ WiktionaryButtonSearch:
   if (language == "Ancient Greek")
     language := "Ancient_Greek"
   if (language == "Latin") {
-    term := RegExReplace(term, "ā", "a")
-    term := RegExReplace(term, "ē", "e")
-    term := RegExReplace(term, "ī", "i")
-    term := RegExReplace(term, "ū", "u")
-    term := RegExReplace(term, "ō", "o")
+    term := StrReplace(term, "ā", "a")
+    term := StrReplace(term, "ē", "e")
+    term := StrReplace(term, "ī", "i")
+    term := StrReplace(term, "ū", "u")
+    term := StrReplace(term, "ō", "o")
   }
   run % "https://en.wiktionary.org/wiki/" . term . "#" . language
 return
 
-CopyCurrentTitle:
-  Clipboard := WinGetTitle()
-  ToolTip("Copied " . WinGetTitle())
+CopyTitle:
+  Clipboard := title := WinGetTitle()
+  ToolTip("Copied " . title)
 return
 
 CopyHTML:
@@ -313,7 +314,7 @@ return
 MemoriseChildren:
   send ^{space}
   Vim.SM.WaitBrowser()
-  gosub MemoriseCurrentBrowser
+  goto MemoriseCurrentBrowser
 return
 
 MemoriseCurrentBrowser:
@@ -366,24 +367,21 @@ ReformatScriptComponent:
   Vim.SM.ExitText()
   WinClip.Clear()
   send ^a^x
-  ClipWait 0.6
-  ScriptArray := StrSplit(Clipboard, "`n`r")
-  Vim.Browser.url := RegExReplace(ScriptArray[1], "(^\s*|\s*$)")
-  Vim.Browser.title := WinGetTitle()
-  if (InStr(Vim.Browser.url, "youtube.com")) {
-    Vim.Browser.VidTime := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
-    YTTime := ""
-    if (ScriptArray[2])
-      YTTime := "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s"
+  ClipWait
+  aOriginalText := StrSplit(Clipboard, "`n`r")
+  Vim.Browser.url := trim(aOriginalText[1], " `r`n"), Vim.Browser.title := WinGetTitle()
+  Vim.Browser.VidTime := trim(aOriginalText[2], " `r`n")
+  if (IfContains(Vim.Browser.url, "youtube.com")) {
+    YTTime := Vim.Browser.VidTime ? "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s" : ""
     Vim.Browser.source := "YouTube"
     if (YTTime) {
       send ^t{f9}  ; opens script editor
       WinWaitActive, ahk_class TScriptEditor
-      ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime
+      ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime, A
       send !o{esc}  ; close script editor
     }
   } else {
-    Vim.Browser.comment := RegExReplace(ScriptArray[2], "(^\s*|\s*$)")
+    vim.browser.title := Vim.Browser.VidTime . " | " . Vim.Browser.title
   }
   WinClip.Clear()
   Clipboard := Vim.Browser.url
@@ -391,19 +389,17 @@ ReformatScriptComponent:
   gosub SMSetLinkFromClipboard
   send {esc}
   if (ContLearn)
-    send {enter}
+    Vim.SM.Learn()
   Clipboard := ClipSaved
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
 return
 
-; CopyCurrentWindowsPosition:
-;   WinGetPos, x, y, w, h, A
-;   WinClip.Clear()
-;   Clipboard := "x = " . x . " y = " . y . " w = " . w . " h = " . h
-;   ClipWait
-;   ToolTip("Copied " . Clipboard)
-; return
+CopyPosition:
+  WinGetPos, x, y, w, h, A
+  Clipboard := pos := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h
+  ToolTip("Copied " . pos)
+return
 
 MassReplaceRegistry:
   find := ""
@@ -415,9 +411,9 @@ MassReplaceRegistry:
     Vim.SM.WaitFileLoad()
     Vim.SM.EditRef()
     WinWaitActive, ahk_class TInputDlg
-    ControlGetText, ref, TMemo1
+    ControlGetText, ref, TMemo1, A
     if (IfContains(ref, find)) {
-      ControlSetText, TMemo1, % StrReplace(ref, find, replacement)
+      ControlSetText, TMemo1, % StrReplace(ref, find, replacement), A
     } else {
       return
     }
@@ -484,19 +480,25 @@ ReformatVocab:
   Clipboard := ClipSaved
 return
 
-; ZLibrary:
-;   if (!search := Trim(Copy())) {
-;     InputBox, search, Z-Library, Enter your search.,, 192, 128
-;     if (!search)
-;       return
-;   }
+ZLibrary:
+  if (!text := FindSearch("Z-Library", "Enter your search."))
+    return
 ;   run https://z-lib.org/
 ;   WinWaitActive, ahk_group Browser
 ;   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
 ;   uiaBrowser.WaitPageLoad()
 ;   url := uiaBrowser.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
 ;   uiaBrowser.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
-; return
+
+  run https://web.telegram.org/z/#1788460589
+  WinWaitActive, ahk_group Browser
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser.WaitPageLoad()
+  uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Message' AND AutomationId='editable-message-text'") ; SetValue(text) doesn't work
+  send {tab}
+  send % "{text}" . text
+  uiaBrowser.FindFirstBy("ControlType=Button AND Name='Send Message'").Click()
+return
 
 ImportFirstFile:
   Vim.State.SetMode("Vim_Normal")

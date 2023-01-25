@@ -66,13 +66,9 @@ Return
 
 ; ydc
 y::
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-  send ^c
-  send {Right}
-  if WinActive("ahk_group VimCursorSameAfterSelect")
+  vim.move.YdcClipSaved := copy(false,,, "^c{Right}")
+  if (WinActive("ahk_group VimCursorSameAfterSelect"))
     send {Left}
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  vim.move.YdcClipSaved := Clipboard
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
   } else {
@@ -83,10 +79,7 @@ Return
 d::
 x::
   if (!vim.state.leader) {
-    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    send ^x
-    ClipWait, LongCopy ? 0.6 : 0.2, True
-    vim.move.YdcClipSaved := Clipboard
+    vim.move.YdcClipSaved := copy(false,,, "^x")
   } else {
     send {bs}
   }
@@ -99,10 +92,7 @@ Return
 
 c::
   if (!vim.state.leader) {
-    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    send ^x
-    ClipWait, LongCopy ? 0.6 : 0.2, True
-    vim.move.YdcClipSaved := Clipboard
+    vim.move.YdcClipSaved := copy(false,,, "^x")
   } else {
     send {bs}
   }
@@ -114,11 +104,9 @@ c::
 Return
 
 *::
-  KeyWait shift
   ClipSaved := ClipboardAll
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-  send ^c
-  ClipWait, LongCopy ? 0.6 : 0.2, True
+  KeyWait shift
+  copy(false)
   hwnd := WinGet()
   send ^f
   WinWaitNotActive, % "ahk_id " . hwnd,, 0.25
@@ -135,12 +123,13 @@ p::
   ; Get selection
   if (!JustPaste) {
     PrevClip := ClipboardAll
-    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    send ^c
-    ClipWait, LongCopy ? 0.6 : 0.2, True
+    copy(false)
     NewClip := ClipboardAll
-    WinClip.Clear()
-    Clipboard := PrevClip
+    if (PrevClip) {
+      WinClip.Clear()
+      Clipboard := PrevClip
+      ClipWait
+    }
   }
 
   ; Paste clipboard
@@ -161,9 +150,7 @@ u::
   ClipSaved := ClipboardAll
 ConvertToLowercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := copy(false, html)
-  StringLower, selection, selection
-  clip(selection,, false, html)
+  clip(StrLower(copy(false, html)),, false, html)
   Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
 Return
@@ -174,9 +161,7 @@ ConvertToUppercase:
   ClipSaved := ClipboardAll
 ConvertToUppercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := copy(false, html)
-  StringUpper, selection, selection
-  clip(selection,, false, html)
+  clip(StrUpper(copy(false, html)),, false, html)
   Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
 Return
@@ -210,8 +195,7 @@ o::  ; move to other end of marked area; not perfect with line breaks
     goto RestoreClipReturn
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
-  SelectionRight := copy(false)
-  SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
+  SelectionRight := copy(false), SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
   send +{left}
   if (SelectionLen < SelectionRightLen
    || (SelectionLen == SelectionRightLen && StrLen(selection) < StrLen(SelectionRight))) {  ; moving point of selection is on the right

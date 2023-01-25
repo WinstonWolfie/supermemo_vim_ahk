@@ -41,6 +41,7 @@ class VimHTML {
     ; str := RegExReplace(str, "i)<(input)", "<ZZZ$1")
     str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)="".*?""(?=([^<>]+)?>)")
     str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)=[^ >]+(?=([^<>]+)?>)")
+    str := RegExReplace(str, "is)<([^<>]+)?\K (onmouseover|onmouseout)=.*?;(?=([^<>]+)?>)")
 
     str := RegExReplace(str, "is)<p( [^>]+)?>(&nbsp;|\s| )<\/p>")
 

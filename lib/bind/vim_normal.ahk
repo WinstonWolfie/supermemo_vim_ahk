@@ -3,6 +3,7 @@
 u::Send,^z
 ^r::Send,^y
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g && !Vim.IsNavigating())
 ; Combine lines
 +j:: send {End}{Space}{Delete}
 +k:: send {up}{End}{Space}{Delete}
@@ -18,6 +19,7 @@ u::Send,^z
   send % "{text}" . selection
 return
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
 +z::Vim.State.SetMode("Z")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::

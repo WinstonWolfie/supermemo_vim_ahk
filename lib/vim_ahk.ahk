@@ -344,19 +344,7 @@ class VimAhk {
   CheckChr(key) {
     if (this.Conf["VimCheckChr"]["val"] == 0)
       Return False
-    BlockInput, Send
-    tempClip := clipboard
-    global WinClip
-    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    send {Shift Down}{Right}{Shift up}{CtrlDown}c{CtrlUp}{Left}
-    ClipWait, LongCopy ? 0.6 : 0.2, True
-    ret := False
-    If (clipboard ~= key) {
-      ret := True
-    }
-    clipboard := tempClip
-    BlockInput, off
-    Return ret
+    Return (copy(,,, "+{right}^c{left}") ~= key)
   }
 
   IsExceptionWindow() {
@@ -379,7 +367,7 @@ class VimAhk {
   }
   
   IsWhitespaceOnly(str) {
-    return (!RegExMatch(str, "[\S]"))
+    return !RegExMatch(str, "[\S]")
   }
   
   IsHTML() {
@@ -390,7 +378,6 @@ class VimAhk {
     return (this.SM.IsNavigatingPlan()
          || this.SM.IsNavigatingTask()
          || this.SM.IsNavigatingContentWindow()
-         || this.SM.IsNavigatingBrowser()
-         || !A_CaretX)
+         || this.SM.IsNavigatingBrowser())
   }
 }

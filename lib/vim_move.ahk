@@ -120,12 +120,11 @@
     }
 
     if (IfIn(key, "x,+x") && !this.Vim.IsNavigating())
-      this.Vim.State.SetMode("Vim_ydc_d",, -1)
+      this.Vim.State.SetMode("Vim_ydc_d",, -1,,,, -1)
   }
 
   MoveFinalize() {
     Send {Shift Up}
-    ydc_y := false
     this.Vim.State.FtsChar := ""
     if (this.clipped) {
       Clipped := "Clipped"
@@ -136,29 +135,19 @@
     }
     global WinClip
     if (!this.Vim.State.surround || !this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")) {
-      if (this.Vim.State.StrIsInCurrentVimMode("ydc_y")) {
-        LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-        send ^c
-        ClipWait, LongCopy ? 0.6 : 0.2, True
-        this.YdcClipSaved := Clipboard
+      if (ydc_y := this.Vim.State.StrIsInCurrentVimMode("ydc_y")) {
+        this.YdcClipSaved := copy(false)
         this.Vim.State.SetMode("Vim_Normal")
-        ydc_y := true
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_d")) {
         if (!this.vim.state.leader) {
-          LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-          send ^x
-          ClipWait, LongCopy ? 0.6 : 0.2, True
-          this.YdcClipSaved := Clipboard
+          this.YdcClipSaved := copy(false,,, "^x")
         } else {
           send {bs}
         }
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_c")) {
         if (!this.vim.state.leader) {
-          LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-          send ^x
-          ClipWait, LongCopy ? 0.6 : 0.2, True
-          this.YdcClipSaved := Clipboard
+          this.YdcClipSaved := copy(false,,, "^x")
         } else {
           send {bs}
         }
@@ -198,9 +187,8 @@
       }
     }
     this.Vim.State.SetMode("", 0, 0,,, -1)
-    if (ydc_y) {
+    if (ydc_y)
       send {Left}{Right}
-    }
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
     send {CtrlUp}
@@ -1299,13 +1287,13 @@
         }
     } else if (key == "{") {
       if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
-        paragraph := this.Vim.State.n - 1, this.Vim.State.n := 0
+        KeyWait Shift
         if (!this.Vim.SM.IsEditingText()) {
           send ^t
           this.Vim.SM.WaitTextFocus()
         }
         send ^{home}
-        this.ParagraphDown(paragraph)
+        this.ParagraphDown(this.Vim.State.n - 1), this.Vim.State.n := 0
       } else if (this.shift == 1) {
         this.SelectParagraphUp()
       } else {
@@ -1313,11 +1301,10 @@
       }
     } else if (key == "}") {
       if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
-        paragraph := this.Vim.State.n - 1, this.Vim.State.n := 0
         KeyWait shift
         this.Vim.SM.ClickTop()
         this.Vim.SM.WaitTextFocus()
-        this.ParagraphDown(paragraph)
+        this.ParagraphDown(this.Vim.State.n - 1), this.Vim.State.n := 0
       } else if (this.shift == 1) {
         this.SelectParagraphDown()
       } else {
@@ -1336,11 +1323,11 @@
       this.LastRepeat := true
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
-    if ((b := (IfIn(key, "j,k")) && this.Vim.State.n > 1))
-      this.SMClickSyncButton()
+    if (IfIn(key, "j,k") && (this.Vim.State.n > 1))
+      this.SMClickSyncButton(), navigate := true
 		loop % this.Vim.State.n
 			this.Move(key, true)
-    if (b)
+    if (navigate)
       this.SMClickSyncButton()
     if (finalize)
       this.MoveFinalize()
@@ -1406,8 +1393,7 @@
       }
       DetectionStr := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
       DetectionStr := StrReverse(DetectionStr)
-      RegExMatch(DetectionStr, "^(\s+)?((\][0-9]+\[)+)?(\.|。)", v)
-      n := StrLen(v)
+      RegExMatch(DetectionStr, "^(\s+)?((\][0-9]+\[)+)?(\.|。)", v), n := StrLen(v)
       if (RestoreClip)
         Clipboard := ClipSaved
       if (n) {
@@ -1628,33 +1614,37 @@
   SMClickSyncButton() {
     if (WinActive("ahk_class TContents")) {
       ClickDPIAdjusted(295, 50)
-      ; ControlClickWinCoordDPIAdjusted(295, 50)
     } else if (WinActive("ahk_class TBrowser")) {
       ClickDPIAdjusted(638, 46)
-      ; ControlClickWinCoordDPIAdjusted(638, 46)
     }
   }
 
   GetAltKey(key) {  ; return is regex compatible
     if (key == """") {
-      key := """|“|”"
+      ret := """|“|”"
     } else if (key == "'") {
-      key := "'|‘|’"
+      ret := "'|‘|’"
     } else if (key == "(") {
-      key := "\(|（"
+      ret := "\(|（"
     } else if (key == ")") {
-      key := "\)|）"
+      ret := "\)|）"
     } else if (key == ".") {
-      key := "\.|。"
+      ret := "\.|。"
     } else if (key == ",") {
-      key := ",|，"
+      ret := ",|，"
     } else if (key == ":") {
-      key := ":|："
+      ret := ":|："
     } else if (key == ";") {
-      key := ";|；"
-    } else {
-      return
+      ret := ";|；"
+    } else if (key == "?") {
+      ret := "\?|？"
+    } else if (key == "!") {
+      ret := "!|！"
+    } else if (key == "[") {
+      ret := "\[|【"
+    } else if (key == "]") {
+      ret := "\]|】"
     }
-    return key
+    return ret
   }
 }

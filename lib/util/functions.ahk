@@ -10,75 +10,51 @@
 
 IfBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
   PrevStringCaseSense := A_StringCaseSense
-  if (StrCaseSense) {
-    StringCaseSense on
-  } else {
-    StringCaseSense off
-  }
+  StringCaseSense % StrCaseSense ? "on" : "off"
   If var between %LowerBound% and %UpperBound%
     ret := true
   StringCaseSense % PrevStringCaseSense
-   return ret
+  return ret
 }
 IfNotBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
   PrevStringCaseSense := A_StringCaseSense
-  if (StrCaseSense) {
-    StringCaseSense on
-  } else {
-    StringCaseSense off
-  }
+  StringCaseSense % StrCaseSense ? "on" : "off"
   If var not between %LowerBound% and %UpperBound%
     ret := true
   StringCaseSense % PrevStringCaseSense
-   return ret
+  return ret
 }
 IfIn(ByRef var, MatchList, StrCaseSense:=false) {
   PrevStringCaseSense := A_StringCaseSense
-  if (StrCaseSense) {
-    StringCaseSense on
-  } else {
-    StringCaseSense off
-  }
+  StringCaseSense % StrCaseSense ? "on" : "off"
   If var in %MatchList%
     ret := true
   StringCaseSense % PrevStringCaseSense
-   return ret
+  return ret
 }
 IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
   PrevStringCaseSense := A_StringCaseSense
-  if (StrCaseSense) {
-    StringCaseSense on
-  } else {
-    StringCaseSense off
-  }
+  StringCaseSense % StrCaseSense ? "on" : "off"
   If var not in %MatchList%
     ret := true
   StringCaseSense % PrevStringCaseSense
-   return ret
+  return ret
 }
 IfContains(ByRef var, MatchList, StrCaseSense:=false) {
   PrevStringCaseSense := A_StringCaseSense
-  if (StrCaseSense) {
-    StringCaseSense on
-  } else {
-    StringCaseSense off
-  }
+  StringCaseSense % StrCaseSense ? "on" : "off"
   If var contains %MatchList%
     ret := true
   StringCaseSense % PrevStringCaseSense
-   return ret
+  return ret
 }
 IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
   PrevStringCaseSense := A_StringCaseSense
-  if (StrCaseSense) {
-    StringCaseSense on
-  } else {
-    StringCaseSense off
-  }
+  StringCaseSense % StrCaseSense ? "on" : "off"
   If var not contains %MatchList%
     ret := true
   StringCaseSense % PrevStringCaseSense
-   return ret
+  return ret
 }
 IfIs(ByRef var, type) {
   If var is %type%
@@ -256,7 +232,7 @@ ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeT
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) == Control) {
       Return True
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -267,7 +243,7 @@ ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:=
   Loop {
     if (ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return True
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -278,7 +254,7 @@ ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", Exclu
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) != Control) {
       Return True
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -289,7 +265,7 @@ WinTextWaitExist(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", 
   Loop {
     if (text := WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return text
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -300,7 +276,7 @@ ControlTextWaitExist(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", Excl
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return True
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -311,7 +287,7 @@ ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", Exc
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == text) {
       Return True
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -322,7 +298,7 @@ ControlTextWaitChange(Control, text:="", WinTitle:="A", WinText:="", ExcludeTitl
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
       Return True
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -335,7 +311,7 @@ ControlWaitHwndChange(Control, hwnd:="", WinTitle:="A", WinText:="", ExcludeTitl
     NewHwnd := ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     if (NewHwnd && (NewHwnd != hwnd)) {
       Return True
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -346,7 +322,7 @@ WinTextWaitChange(text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeTex
   Loop {
     if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
       Return True
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
   }
@@ -444,13 +420,13 @@ StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
   return String
 }
 
-WinWaitTitleChange(OriginalTitle:="", TimeOut:=0, WinTitle:="A") {
+WinWaitTitleChange(OriginalTitle:="", WinTitle:="A", TimeOut:=0) {
   OriginalTitle := OriginalTitle ? OriginalTitle : WinGetTitle(WinTitle)
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) != OriginalTitle) {
       return true
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       return false
     }
   }
@@ -461,7 +437,7 @@ WinWaitTitle(title, TimeOut:=0, WinTitle:="A") {
   loop {
     if (WinGetTitle(WinTitle) == title) {
       return true
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       return false
     }
   }
@@ -516,7 +492,7 @@ WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=0) {
   loop {
     if (A_CaretX != OriginalX || A_CaretY != OriginalY) {
       return true
-    } else if (TimeOut && A_TickCount - StartTime > TimeOut) {
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       return false
     }
   }
@@ -1079,4 +1055,12 @@ EncodeHTML(String, Flags := 1)
         }
     }
     return out
+}
+
+CopyAll(Timeout:=2.5) {
+  global WinClip
+  WinClip.Clear()
+  send {CtrlDown}a{Ins}{CtrlUp}{Esc}
+  ClipWait % Timeout
+  return !ErrorLevel
 }

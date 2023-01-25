@@ -8,8 +8,7 @@
 7::
 8::
 9::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.n > 0 && !Vim.SM.IsGrading())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && (Vim.State.n > 0) && !Vim.SM.IsGrading())
 0::  ; 0 is used as {Home} for Vim.State.n=0
-  n_repeat := Vim.State.n*10 + A_ThisHotkey
-  Vim.State.SetMode("", -1, n_repeat,,, -1)
+  Vim.State.SetMode("", -1, Vim.State.n*10 + A_ThisHotkey,,, -1, -1)
 Return

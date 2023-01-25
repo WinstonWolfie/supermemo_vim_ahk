@@ -32,24 +32,16 @@ u::
 x::  ; open hyperlink in current caret position (Open in *n*ew window)
   Vim.State.SetMode()
   ClipSaved := ClipboardAll
-  LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-  KeyWait shift
-  send +{right}^c{left}
-  ClipWait, LongCopy ? 0.6 : 0.2, True
-  if (ErrorLevel) {  ; end of line
-    send +{right}^c{right}
+  if (!copy(false,,, "+{right}^c{left}")) {  ; end of line
+    copy(false,,, "+{right}^c{right}")
   } else if (Clipboard ~= "\s") {
-    WinClip.Clear()
-    send +{left}^c{right}
+    copy(false,,, "+{left}^c{right}")
   }
-  ClipWait, LongCopy ? 0.6 : 0.2, True
   LinkMatch := "(<A((.|\r\n)*)href="")\K[^""]+"
   If (Vim.HTML.ClipboardGet_HTML(data)) {
     RegExMatch(data, LinkMatch, CurrLink)
     if (!CurrLink) {
-      WinClip.Clear()
-      send +{left}^c{right}
-      ClipWait, LongCopy ? 0.6 : 0.2, True
+      copy(false,,, "+{left}^c{right}")
       If (Vim.HTML.ClipboardGet_HTML(data)) {
         RegExMatch(data, LinkMatch, CurrLink)
         if (!CurrLink)
@@ -121,12 +113,13 @@ Return
 !k::send !{pgup}
 !u::send ^{up}
 
-#if ((Vim.IsVimGroup() && Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key
+#if (Vim.State.Vim.Enabled
+  && ((Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key
    || Vim.SM.IsLearning()
    || Vim.SM.IsGrading()
    || (WinGet() == ImportGuiHwnd)
    || (WinActive("Priority") && WinActive("ahk_class #32770"))
-   || WinActive("ahk_class TPriorityDlg"))
+   || WinActive("ahk_class TPriorityDlg")))
 ; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
 ; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png
@@ -169,3 +162,44 @@ NumpadUp::Vim.SM.SetRandPrio(70.5579,90.2474)
 !9::
 Numpad9::
 NumpadPgup::Vim.SM.SetRandPrio(90.2474,99.99)
+
+#if (Vim.State.Vim.Enabled && ((Vim.State.Leader && WinActive("ahk_class TElWind")) || Vim.SM.IsLearning() || Vim.SM.IsGrading()))
+^!0::
+^Numpad0::
+^NumpadIns::Vim.SM.RandCtrlJ(1, 3)
+
+^!1::
+^Numpad1::
+^NumpadEnd::Vim.SM.RandCtrlJ(4, 8)
+
+^!2::
+^Numpad2::
+^NumpadDown::Vim.SM.RandCtrlJ(9, 18)
+
+^!3::
+^Numpad3::
+^NumpadPgdn::Vim.SM.RandCtrlJ(19, 28)
+
+^!4::
+^Numpad4::
+^NumpadLeft::Vim.SM.RandCtrlJ(29, 37)
+
+^!5::
+^Numpad5::
+^NumpadClear::Vim.SM.RandCtrlJ(38, 46)
+
+^!6::
+^Numpad6::
+^NumpadRight::Vim.SM.RandCtrlJ(47, 57)
+
+^!7::
+^Numpad7::
+^NumpadHome::Vim.SM.RandCtrlJ(58, 70)
+
+^!8::
+^Numpad8::
+^NumpadUp::Vim.SM.RandCtrlJ(71, 90)
+
+^!9::
+^Numpad9::
+^NumpadPgup::Vim.SM.RandCtrlJ(91, 99)

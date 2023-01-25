@@ -69,7 +69,6 @@ c::  ; gc: go to next *c*omponent
 Return
 
 +c::  ; gC: go to previous *c*omponent
-  ; Vim.SM.PostMsg(992, true)  ; not reliable???
   send !{f12}fl
   Vim.State.SetMode()
 Return
@@ -100,9 +99,7 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::  ; reload
-  ContinueGrading := Vim.SM.IsGrading()
-  ContLearn := ContinueGrading ? 0 : Vim.SM.IsLearning()
-  CurrTitle := WinGetTitle()
+  ContLearn := (ContinueGrading := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning(), CurrTitle := WinGetTitle()
   send !{home}
   if (ContLearn) {
     Vim.SM.Learn()
@@ -114,9 +111,9 @@ r::  ; reload
   } else if (ContinueGrading) {
     Vim.SM.Learn()
     ControlTextWait("TBitBtn3", "Show answer")
-    ControlSend, TBitBtn3, {enter}
+    ControlSend, TBitBtn3, {enter}, A
   } else {
-    text := Vim.SM.WaitFileLoad()
+    Vim.SM.WaitFileLoad()
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame"))  ; sometimes could happen on YT videos
       WinClose
     ; If current element is home element
@@ -139,7 +136,7 @@ return
 
 +p::send q^{t}{f9}  ; play video in default system player / edit script component
 
-n::Vim.SM.AltN()  ; = alt+N
+n::Vim.SM.AltN()
 +n::Vim.SM.PostMsg(95)  ; = alt+A
 x::send {del}  ; delete element/component
 
@@ -156,6 +153,7 @@ f::
 f::
 v::
 c::
+  Vim.State.SetNormal()
   if (Vim.State.IsCurrentVimMode("Vim_ydc_y") && (A_ThisHotkey == "f")) {
     HinterMode := "YankLink"
   } else if (IfIn(A_ThisHotkey, "^!+f,!f")) {
@@ -167,26 +165,18 @@ c::
   } else if (A_ThisHotkey == "+f") {
     HinterMode := "OpenLinkInNew"
   } else {
-    HinterMode := "OpenLink"
-    OpenInIE := IfContains(A_ThisHotkey, "!+f")
+    HinterMode := "OpenLink", OpenInIE := IfContains(A_ThisHotkey, "!+f")
   }
-  UIA := UIA_Interface()
-  Control := "Internet Explorer_Server2"
-  LearningState := Vim.SM.IsLearning()
-  if (!hCtrl := ControlGet(,, Control)) {
-    Control := "Internet Explorer_Server1"
-    if (!hCtrl := ControlGet(,, Control))
+  UIA := UIA_Interface(), LearningState := Vim.SM.IsLearning()
+  if (!hCtrl := ControlGet(,, Control := "Internet Explorer_Server2")) {
+    if (!hCtrl := ControlGet(,, Control := "Internet Explorer_Server1"))
       return
   }
-  Caret := IfIn(A_ThisHotkey, "v,c")
-  Type := Caret ? "Text" : "Hyperlink"
+  Caret := IfIn(A_ThisHotkey, "v,c"), Type := Caret ? "Text" : "Hyperlink"
   aHints := CreateHintsArray(Control, hCtrl, Type, Caret)
   if ((Control == "Internet Explorer_Server2") && (LearningState != 1)) {  ; so answer isn't revealed
-    Control := "Internet Explorer_Server1"
-    if (hCtrl := ControlGet(,, Control)) {
-      a := CreateHintsArray(Control, hCtrl, Type, Caret)
-      aHints.Push(a*)
-    }
+    if (hCtrl := ControlGet(,, Control := "Internet Explorer_Server1"))
+      aHints.Push(CreateHintsArray(Control, hCtrl, Type, Caret)*)
   }
   if (!n := ObjCount(aHints))
     return
@@ -199,18 +189,16 @@ CreateHintsArray(Control, hCtrl, Type, Caret) {
   global Vim, UIA
   if (Caret)
     Vim.SM.ClickMid(Control)
-  el := UIA.ElementFromHandle(hCtrl)
-  auiaHints := el.FindAllByType(Type)
-  aHints := [], i := 0
-  for k, v in auiaHints {
-    if (((v.CurrentBoundingRectangle.l == 0) && (v.CurrentBoundingRectangle.t == 0))  ; text not shown
-     || (!Caret && !v.CurrentValue))  ; some hyperlinks don't have value
+  el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)
+  aHints := [], HintsIndex := 0
+  for i, v in auiaHints {
+    if (!v.CurrentBoundingRectangle.l || (!Caret && !v.CurrentValue))  ; some hyperlinks don't have value
       continue
-    pos := v.GetCurrentPos("screen"), i++
+    found := i, pos := v.GetCurrentPos("screen"), HintsIndex++
     if (Caret) {
-      aHints[i] := {x:pos.x, y:pos.y, Control:Control}
+      aHints[HintsIndex] := {x:pos.x, y:pos.y, Control:Control}
     } else {
-      aHints[i] := {x:pos.x, y:pos.y, Link:v.CurrentValue}
+      aHints[HintsIndex] := {x:pos.x, y:pos.y, Link:v.CurrentValue}
     }
   }
   return aHints
@@ -239,13 +227,11 @@ CreateHintsArray(Control, hCtrl, Type, Caret) {
 +k::send !{pgup}  ; K, gE: go up one element
 
 ; Open windows
-c::send !c  ; open content window
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())
-c::send !c  ; refocus
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && ((Vim.SM.IsBrowsing())
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
+c::send !c  ; open content window
 b::
   if (WinExist("ahk_class TBrowser")) {
     WinActivate
@@ -319,7 +305,7 @@ s::
 return
 
 ; Browsing/editing
-#if Vim.IsVimGroup() and Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") and (Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 {::Vim.Move.Move("{")
 }::Vim.Move.Move("}")
 

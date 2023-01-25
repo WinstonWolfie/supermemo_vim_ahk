@@ -17,7 +17,7 @@ CapsLock & /::
 CapsLock & /::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && AltState := GetKeyState("alt"))
 CapsLock & /::
-  CapsState := InStr(A_ThisHotkey, "CapsLock")
+  CapsState := IfContains(A_ThisHotkey, "CapsLock")
   if (!Vim.SM.IsEditingText()) {
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()  ; make sure CurrFocus is updated    
@@ -69,7 +69,7 @@ SearchButtonSearch:
   WinActivate, ahk_class TElWind
 
 SMSearchAgain:
-  if (InStr(CurrFocus, "TMemo")) {
+  if (IfContains(CurrFocus, "TMemo")) {
     send ^+{end}
     if (A_ThisLabel != "SMSearchAgain") {
       if (Vim.State.n)
@@ -117,7 +117,7 @@ SMSearchAgain:
       Vim.State.SetNormal()
       Return
     }
-  } else if (InStr(CurrFocus, "Internet Explorer_Server")) {
+  } else if (IfContains(CurrFocus, "Internet Explorer_Server")) {
     if (!Vim.SM.HandleF3(1))
       return
     ; Left spaces need to be trimmed otherwise SM might eat the spaces in text
