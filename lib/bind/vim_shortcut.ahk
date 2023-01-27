@@ -92,8 +92,7 @@ Return
 ^!t::  ; copy title
   Vim.Browser.Clear()
   Vim.Browser.GetTitleSourceDate(false, false)
-  ToolTip("Copied " . Vim.Browser.Title)
-  Clipboard := Vim.Browser.Title
+  ToolTip("Copied " . Vim.Browser.Title), Clipboard := Vim.Browser.Title
   Vim.Browser.Clear()
 return
 
@@ -105,18 +104,21 @@ return
   KeyWait l
   send {esc}
   Vim.Browser.GetInfo(false)
-  source := Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : ""
-  author := Vim.Browser.author ? "`nAuthor: " . Vim.Browser.Author : ""
-  date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
-  vidtime := Vim.Browser.VidTime ? "`nTime stamp: " . Vim.Browser.VidTime : ""
-  ToolTip("Copied " . Vim.Browser.Url . "`nTitle: " . Vim.Browser.Title . source . author . date . vidtime)
+  ToolTip("Copied " . Vim.Browser.Url . "`n"
+        . "Title: " . Vim.Browser.Title
+        . (Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : "")
+        . (Vim.Browser.author ? "`nAuthor: " . Vim.Browser.author : "")
+        . (Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : "")
+        . (Vim.Browser.VidTime ? "`nTime stamp: " . Vim.Browser.VidTime : ""))
   Clipboard := Vim.Browser.Url, guiaBrowser := ""
 return
 
 ^!d::  ; parse similar and opposite in google *d*efine
   ClipSaved := ClipboardAll
-  if (copy(false))
-    ToolTip("Text not found."), goto RestoreClipReturn
+  if (copy(false)) {
+    ToolTip("Text not found.")
+    goto RestoreClipReturn
+  }
   TempClip := RegExReplace(Clipboard, "(Similar|Synonymes|Synonyms)(.*\r\n)?", "`r`nsyn: ")
   TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
   TempClip := RegExReplace(TempClip, "(?![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
@@ -136,18 +138,22 @@ return
   if (copy(false))
     Clipboard := ClipSaved
   Vim.Browser.GetInfo()
-  source := Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : ""
-  author := Vim.Browser.author ? "`nAuthor: " . Vim.Browser.author : ""
-  date := Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""
-  ToolTip("Copied " . Clipboard . "`nLink: " . Vim.Browser.Url . "`nTitle: " . Vim.Browser.Title . source . author . date)
+  ToolTip("Copied " . Clipboard . "`n"
+        . "Link: " . Vim.Browser.Url . "`n"
+        . "Title: " . Vim.Browser.Title
+        . (Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : "")
+        . (Vim.Browser.author ? "`nAuthor: " . Vim.Browser.author : "")
+        . (Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""))
   guiaBrowser := ""
 return
 
 ^!m::  ; copy ti*m*e stamp
   send {esc}
   ClipSaved := ClipboardAll
-  if (!VidTime := Vim.Browser.GetVidtime(,, false))
-    ToolTip("Not found."), goto RestoreClipReturn
+  if (!VidTime := Vim.Browser.GetVidtime(,, false)) {
+    ToolTip("Not found.")
+    goto RestoreClipReturn
+  }
   ToolTip("Copied " . VidTime)
   Clipboard := VidTime, Vim.Browser.Clear()
 return
@@ -157,14 +163,17 @@ return
     ToolTip("SuperMemo hasn't opened yet.")
     return
   }
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  if (!url := uiaBrowser.GetCurrentUrl()) {
-    ToolTip("Url not found.")
-    return
+  if (!text := copy()) {
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    if (!text := uiaBrowser.GetCurrentUrl()) {
+      ToolTip("Url not found.")
+      return
+    }
+    text := Vim.Browser.ParseUrl(text)
   }
   KeyWait alt
   KeyWait shift
-  Vim.SM.CheckDup(Vim.Browser.ParseUrl(url))
+  Vim.SM.CheckDup(text)
 return
 
 ~^f::
@@ -205,13 +214,16 @@ IWBPriorityAndConcept:
     return
   }
   Vim.Browser.Clear()
-  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName")), GetUrlDone := false
+  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  GetUrlDone := false
   SetTimer, GetUrl, -1
   if (WinExist("ahk_class TMsgDialog"))
     WinClose
   ClipSaved := ClipboardAll
-  IWB := IfContains(A_ThisLabel, "x,IWB"), ImportDlg := IfContains(A_ThisLabel, "+,Prio")
-  Passive := Vim.SM.IsPassive(CollName := vim.sm.GetCollName(), ConceptBefore := Vim.SM.GetCurrConcept())
+  IWB := IfContains(A_ThisLabel, "x,IWB")
+  ImportDlg := IfContains(A_ThisLabel, "+,Prio")
+  Passive := Vim.SM.IsPassive(CollName := vim.sm.GetCollName()
+                              , ConceptBefore := Vim.SM.GetCurrConcept())
   while (!GetUrlDone)
     continue
   if (!vim.browser.url) {
@@ -241,7 +253,8 @@ IWBPriorityAndConcept:
     gui, SMImport:Add, Text,, &Priority:
     gui, SMImport:Add, Edit, vPrio w196
     gui, SMImport:Add, Text,, &Concept:
-    gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % ConceptBefore . "||Online|Sources"
+    list := ConceptBefore . "||Online|Sources"
+    gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % list
     gui, SMImport:Add, Checkbox, vCloseTab checked, Close &tab
     gui, SMImport:Add, Button, default, &Import
     gui, SMImport:Show,, SuperMemo Import
@@ -250,9 +263,9 @@ IWBPriorityAndConcept:
   }
 
 SMImportButtonImport:
-  FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
+  CurrTime := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   if (A_ThisLabel == "SMImportButtonImport") {
-    ; Without KeyWait WinActivate below could fail???
+    ; Without KeyWait, Enter SwitchToSameWindow() below could fail???
     KeyWait enter
     KeyWait alt
     gui submit
@@ -265,31 +278,42 @@ SMImportButtonImport:
   ; VarSetCapacity(HTMLText, "40960000")  ; ~40 MB
   HTMLText := Passive ? "" : copy(false, true)
   if (IWB) {
-    if (!HTMLText)
-      ToolTip("Text not found."), goto RestoreClipReturn
-    Vim.Browser.Highlight()
-  }
-  Online := (Passive || (!HTMLText && vim.browser.IsVidSite(Vim.Browser.FullTitle))), FullPage := false
-  if (!HTMLText && !Online) {
-    send {esc}
-    CopyAll()
-    Vim.HTML.ClipboardGet_HTML(clipped)
-    RegExMatch(clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
     if (!HTMLText) {
       ToolTip("Text not found.")
       goto ImportReturn
     }
-    FullPage := true
+    Vim.Browser.Highlight()
+  }
+  Online := (Passive || (!HTMLText && vim.browser.IsVidSite(Vim.Browser.FullTitle)))
+  if (FullPage := (!HTMLText && !Online)) {
+    DownloadHTMLList := "economist.com,webmd.com"
+    if (IfContains(Vim.Browser.Url, DownloadHTMLList)) {
+      TempPath := A_Temp . "\" . StrReplace(CurrTime, ":") . ".htm"
+      UrlDownloadToFile, % Vim.Browser.Url, % TempPath
+      HTMLText := FileRead(TempPath)
+      FileDelete, % TempPath
+      WinClip.Clear()  ; so that Clipboard is not sent into GetTitleSourceDate() below
+    } else {
+      send {esc}
+      CopyAll()
+      Vim.HTML.ClipboardGet_HTML(clipped)
+      RegExMatch(clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
+    }
+    if (!HTMLText) {
+      ToolTip("Text not found.")
+      goto ImportReturn
+    }
   }
   Vim.Browser.GetTitleSourceDate(false,, (FullPage ? Clipboard : ""))
 
   WinClip.Clear()
   if (Online && Passive) {
-    Clipboard := ((CollName = "bgm") ? Vim.Browser.Url . "`n" : "") . Vim.SM.MakeReference()
+    add := (CollName = "bgm") ? Vim.Browser.Url . "`n" : ""
+    Clipboard := add . Vim.SM.MakeReference()
   } else if (Online) {
     Clipboard := Vim.Browser.Url
   } else {
-    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com"
+    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,webmd.com"
     LineBreak := IfContains(Vim.Browser.Url, LineBreakList)
     HTMLText := Vim.HTML.Clean(HTMLText, true, LineBreak)
     if (!IWB && !vim.browser.date)
@@ -298,7 +322,8 @@ SMImportButtonImport:
   }
   ClipWait
 
-  InfoToolTip := "Url: " . Vim.Browser.url . "`nTitle: " . Vim.Browser.Title
+  InfoToolTip := "Url: " . Vim.Browser.url . "`n"
+               . "Title: " . Vim.Browser.Title
   if (Vim.Browser.Source)
     InfoToolTip .= "`nSource: " . Vim.Browser.Source
   if (Vim.Browser.Author)
@@ -355,7 +380,8 @@ SMImportButtonImport:
       guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1]), Passive := false
     } else {
       guiaBrowser.CloseTab()
-      if ((TabCount == 2) && ((oTabs[1].CurrentName = "new tab") || oTabs[2].CurrentName = "new tab"))
+      if ((TabCount == 2)
+       && ((oTabs[1].CurrentName = "new tab") || oTabs[2].CurrentName = "new tab"))
         Passive := false
     }
   }
@@ -406,7 +432,8 @@ return
   KeyWait ctrl
   KeyWait alt
   if (!copy(false)) {
-    ToolTip("Nothing is selected."), goto RestoreClipReturn
+    ToolTip("Nothing is selected.")
+    goto RestoreClipReturn
   } else {
     hwnd := WinGet()
     if (prio := IfContains(A_ThisHotkey, "+")) {
@@ -438,17 +465,22 @@ return
   WinActivate, ahk_class TElWind  ; focus to element window
 
 ExtractToSM:
-  if (Vim.SM.IsEditingPlainText())
-    ToolTip("This script requires HTML component to work."), goto RestoreClipReturn
+  if (Vim.SM.IsEditingPlainText()) {
+    ToolTip("This script requires HTML component to work.")
+    goto RestoreClipReturn
+  }
   Vim.SM.EditFirstQuestion()
-  if (!Vim.SM.WaitTextFocus(1500))
-    ToolTip("No HTML component found; the text you selected is on your clipboard."), goto RestoreClipReturn
-  if (Vim.SM.IsEditingPlainText())
-    ToolTip("This script requires HTML component to work."), goto RestoreClipReturn
+  if (!Vim.SM.WaitTextFocus(1500)) {
+    ToolTip("No HTML component found; the text you selected is on your clipboard.")
+    goto RestoreClipReturn
+  }
+  if (Vim.SM.IsEditingPlainText()) {
+    ToolTip("This script requires HTML component to work.")
+    goto RestoreClipReturn
+  }
   send ^{home}^+{down}  ; go to top and select first paragraph below
-  if (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") {
+  if (ret := (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
     send {left}
-    ret := true
     if (A_ThisLabel != "ExtractToSM") {
       MsgBox, 3,, Go to source and try again? (press no to paste in current topic)
       if (IfMsgbox("yes")) {
@@ -471,7 +503,7 @@ ExtractToSM:
   send {left}
 
   if (!NeedsClean) {
-    clip(extract,, false,, false)
+    clip(extract,, false)
   } else {
     WinClip.Clear()
     Clipboard := extract
@@ -523,31 +555,36 @@ return
   Vim.State.SetMode("Vim_Normal")
 return
 
-#if (Vim.State.Vim.Enabled && ((WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus()) || (WinActive("ahk_exe WinDjView.exe") && ControlGetFocus() != "Edit1")))
-!p::ControlFocus, Edit1  ; focus to page number field so you can enter a number
+#if (Vim.State.Vim.Enabled
+     && ((WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus())
+         || (WinActive("ahk_exe WinDjView.exe") && ControlGetFocus() != "Edit1")))
+!p::ControlFocus, Edit1, A  ; focus to page number field so you can enter a number
 ^!f::
   if (!selection := Copy())
     return
-  ControlSetText, Edit2, % selection
-  ControlFocus, Edit2
+  ControlSetText, Edit2, % selection, A
+  ControlFocus, Edit2, A
   send {enter 2}^a
 return
 
-#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) && ControlGetFocus() == "Edit1")
+#if (Vim.State.Vim.Enabled
+  && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe"))
+  && (ControlGetFocus() == "Edit1"))
 !p::
-  ControlSetText, Edit1, % Clipboard
+  ControlSetText, Edit1, % Clipboard, A
   send {enter}
 return
 
-#if (Vim.State.Vim.Enabled && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) && page := ControlGetText("Edit1"))
+#if (Vim.State.Vim.Enabled
+  && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe"))
+  && (page := ControlGetText("Edit1")))
 ^!p::
-  Clipboard := "p" . page
-  ToolTip("Copied p" . page)
+  Clipboard := "p" . page, ToolTip("Copied p" . page)
 return
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && ControlGetFocus() == "Edit2")
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && (ControlGetFocus() == "Edit2"))
 ^f::
-  ControlSetText, Edit2, % Clipboard
+  ControlSetText, Edit2, % Clipboard, A
   send {enter}
 return
 
@@ -555,7 +592,7 @@ return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class #32770 ahk_exe WinDjView.exe"))  ; find window
 ^f::
-  ControlSetText, Edit1, % Clipboard
+  ControlSetText, Edit1, % Clipboard, A
   send {enter}
 return
 
@@ -578,13 +615,16 @@ return
   if (WinActive("ahk_class SUMATRA_PDF_FRAME") && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := trim(copy(false), " `t`r`n")
-  if ((pdf := WinActive("ahk_class SUMATRA_PDF_FRAME")) || WinActive("ahk_exe WinDjView.exe")) {
+  if ((pdf := WinActive("ahk_class SUMATRA_PDF_FRAME"))
+      || WinActive("ahk_exe WinDjView.exe")) {
     if (!marker) {
       if (p := ControlGetText("Edit1"))
         marker := "p" . p
     }
-    if (!marker)
-      ToolTip("No text selected and page number not found."), goto RestoreClipReturn
+    if (!marker) {
+      ToolTip("No text selected and page number not found.")
+      goto RestoreClipReturn
+    }
     if (CloseWnd) {
       WinClose, A
       if (pdf) {
@@ -597,7 +637,8 @@ return
     if (!marker) {
       if (WinActive("ahk_group Browser"))
         goto BrowserSyncTime
-      ToolTip("No text selected."), goto RestoreClipReturn
+      ToolTip("No text selected.")
+      goto RestoreClipReturn
     }
     if (CloseWnd) {
       if (WinActive("ahk_group Browser")) {
@@ -612,12 +653,13 @@ return
 
 MarkInSMTitle:
   Vim.SM.EditFirstQuestion()
-  if (!Vim.SM.WaitTextFocus(1500))
-    ToolTip("No text component."), goto RestoreClipReturn
+  if (!Vim.SM.WaitTextFocus(1500)) {
+    ToolTip("No text component.")
+    goto RestoreClipReturn
+  }
   send ^{home}^+{down}  ; go to top and select first paragraph below
-  if (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])") {
+  if (ret := (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
     send {left}
-    ret := true
     if (A_ThisLabel != "MarkInSMTitle") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
       if (IfMsgbox("yes")) {
@@ -631,8 +673,10 @@ MarkInSMTitle:
         ret := !Vim.SM.WaitTextFocus(1500)
       }
     }
-    if (ret)
-      ToolTip("No source element found or source element isn't empty."), goto RestoreClipReturn
+    if (ret) {
+      ToolTip("No source element found or source element isn't empty.")
+      goto RestoreClipReturn
+    }
   }
   send {left}{esc}
   Vim.SM.WaitTextExit()
@@ -657,7 +701,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
 !x::
-  FormatTime, CurrTime,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
+  CurrTime := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   KeyWait ctrl
   KeyWait alt
   if (A_ThisHotkey == "^!x") {
@@ -666,9 +710,9 @@ return
     PostMessage, 0x0111, 17200,,, A  ; truncate silence
     WinWaitActive, Truncate Silence
     ; Settings for truncate complete silence
-    ControlSetText, Edit1, -80
-    ControlSetText, Edit2, 0.001
-    ControlSetText, Edit3, 0
+    ControlSetText, Edit1, -80, A
+    ControlSetText, Edit2, 0.001, A
+    ControlSetText, Edit3, 0, A
     send {enter}
     WinWaitNotActive, Truncate Silence
     WinWaitActive, ahk_class wxWindowNR  ; audacity main window
@@ -752,8 +796,7 @@ return
   KeyWait shift
   if (!CopyAll())
     goto RestoreClipReturn
-  title := MatchHiborTitle(Clipboard)
-  Vim.SM.CheckDup(StrSplit(title, "-")[2])
+  Vim.SM.CheckDup(StrSplit(MatchHiborTitle(Clipboard), "-")[2])
   Clipboard := ClipSaved
 return
 
@@ -764,7 +807,8 @@ return
   KeyWait alt
   if (!CopyAll())
     goto RestoreClipReturn
-  title := MatchHiborTitle(Clipboard), link := MatchHiborLink(Clipboard), aTitle := StrSplit(title, "-")
+  link := MatchHiborLink(Clipboard)
+  aTitle := StrSplit(MatchHiborTitle(Clipboard), "-")
   if (vim.sm.CheckDup(aTitle[2], false))
     MsgBox, 4,, Continue import?
   WinActivate % "ahk_id " . hwnd

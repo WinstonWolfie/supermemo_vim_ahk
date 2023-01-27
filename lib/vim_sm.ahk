@@ -601,7 +601,8 @@ class VimSM {
     ContLearn := this.IsLearning()
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
     ; Can't just encode uri, Chinese characters will be encoded
-    text := StrReplace(text, "%20", " ")
+    if ((text ~= "^file:\/\/") || (text ~= "^https?:\/\/"))
+      text := StrReplace(text, "%20", " "), text := StrReplace(text, "%3F", "?")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if ((ContLearn == 1) && !ret)
       this.Learn()
@@ -617,11 +618,10 @@ class VimSM {
     GroupAdd, SMCtrlF, ahk_class TMsgDialog
     GroupAdd, SMCtrlF, ahk_class TBrowser
     WinWait, ahk_group SMCtrlF
-    if (WinExist("ahk_class TBrowser")) {
+    if (ret := WinExist("ahk_class TBrowser")) {
       if (ClearHighlight)
         this.ClearHighlight()
       WinActivate, ahk_class TBrowser
-      ret := true
     } else if (WinExist("ahk_class TMsgDialog")) {
       while (WinExist("ahk_class TMsgDialog"))
         WinClose

@@ -70,7 +70,7 @@ IfMsgBox(ByRef ButtonName) {
 }
 
 ControlGet(Cmd:="hwnd", Value:="", Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-  control := control ? control : ControlGetFocus()
+  Control := Control ? Control : ControlGetFocus()
   ControlGet, v, % Cmd, % Value, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
@@ -79,7 +79,7 @@ ControlGetFocus(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   Return, v
 }
 ControlGetText(Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-  control := control ? control : ControlGetFocus()
+  Control := Control ? Control : ControlGetFocus()
   ControlGetText, v, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
@@ -221,6 +221,9 @@ WinGetText(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
 WinGetTitle(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   WinGetTitle, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
+}
+UrlDownloadToFile(URL, Filename) {
+  UrlDownloadToFile, % URL, % Filename
 }
 
 ; https://www.autohotkey.com/boards/viewtopic.php?t=5484
@@ -521,21 +524,18 @@ ToolTip(text:="", perma:=false, period:=-2000, command:="", n:=20) {
   } else {
     x := A_ScreenWidth / 3, y := A_ScreenHeight / 4 * 3
   }
-  ToolTip, % text, % x, % y, n
+  ToolTip, % text, % x, % y, % n
+  RemoveTTFunc := Func("RemoveToolTip").Bind(n)
   if (!perma)
-    SetTimer, RemoveToolTip, % period
+    SetTimer, % RemoveTTFunc, % period
   CoordMode, ToolTip, % PrevCoordModeTT
 }
 
-RemoveToolTip:
-  ToolTip,,,, 20
-return
-
-RemoveToolTip(n) {
-  Tooltip,,,, n
+RemoveToolTip(n:=20) {
+  Tooltip,,,, % n
 }
 
-RevArr(arr) {
+RevArr(arr) {  ; https://github.com/jNizM/AHK_Scripts/blob/master/src/arrays/RevArr.ahk
   newarr := []
   for index, value in arr
     newarr.InsertAt(1, value)
@@ -546,7 +546,7 @@ ObjCount(obj) {  ; https://www.autohotkey.com/boards/viewtopic.php?f=37&t=3950&p
   return NumGet(&obj+4*A_PtrSize)  ; obj->mFieldCount -- OK for v1.1.15.01 and v2.0-a48
 }
 
-HasVal(haystack, needle) {
+HasVal(haystack, needle) {  ; https://github.com/jNizM/AHK_Scripts/blob/master/src/arrays/HasVal.ahk
   for index, value in haystack
     if (value = needle)
       return index

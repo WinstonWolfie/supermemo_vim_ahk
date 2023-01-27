@@ -15,15 +15,17 @@ return
 CapsLock & z::Vim.State.SetMode("SMVim_ClozeNoBracket", 0, -1, 0,,,-1)
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText() && Vim.State.g)
-!t::Vim.State.SetMode("SMVim_AltT", 0, -1, 0,,,-1)
+!t::Vim.State.SetMode("SMAltT", 0, -1, 0,,,-1)
 !q::Vim.State.SetMode("SMAltQ_Command", 0, -1, 0,,,-1)
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMAltT") && Vim.SM.IsEditingText())
+!t::
+  KeyWait Alt
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_Extract") && Vim.SM.IsEditingText())
 q::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_Cloze") && Vim.SM.IsEditingText())
-z::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMVim_AltT") && Vim.SM.IsEditingText())
-!t::Vim.Move.YDCMove()
+z::Vim.Move.YDCMove()
+
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMAltQ_Command") && Vim.SM.IsEditingText())
 !q::SMAltQYdcMove := true
 
@@ -122,12 +124,11 @@ _::
 .::
 >::
 space::
-  KeyWait shift
   Vim.Move.KeyAfterSMAltQ := A_ThisHotkey
   if (SMAltQYdcMove) {
-    SMAltQYdcMove := false
-    Vim.Move.YDCMove()
+    KeyWait shift
+    Vim.Move.YDCMove(), SMAltQYdcMove := false
   } else {
-    Vim.State.SetMode("SMVim_AltQ", 0, -1, 0)
+    Vim.State.SetMode("SMAltQ", 0, -1, 0)
   }
 return

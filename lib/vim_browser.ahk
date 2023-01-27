@@ -110,7 +110,7 @@ class VimBrowser {
     } else if (IfContains(this.url, "verywellmind.com")) {
       this.source := "Verywell Mind"
     } else if (IfContains(this.url, "cliffsnotes.com")) {
-      this.source := "CliffsNotes"
+      this.source := "CliffsNotes", this.title := RegExReplace(this.title, " \| CliffsNotes$")
     } else if (IfContains(this.url, "w3schools.com")) {
       this.source := "W3Schools"
     } else if (IfContains(this.url, "news-medical.net")) {
@@ -137,17 +137,23 @@ class VimBrowser {
     } else if (IfContains(this.url, "youtube.com/watch")) {
       this.source := "YouTube", this.title := RegExReplace(this.title, " - YouTube$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText), this.date := this.MatchYTDate(FullPageText), this.author := this.MatchYTAuthor(FullPageText)
+        this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText), this.date := this.MatchYTDate(FullPageText), this.author := this.MatchYTVidAuthor(FullPageText)
+    } else if (IfContains(this.url, "youtube.com/playlist")) {
+      this.source := "YouTube", this.title := RegExReplace(this.title, " - YouTube$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        this.author := this.MatchYTPLAuthor(FullPageText)
     } else if (this.title ~= "_哔哩哔哩_bilibili$") {
       this.Source := "哔哩哔哩", this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
       if (IfContains(this.url, "bilibili.com/video") && CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         this.VidTime := this.MatchVidTime(this.FullTitle), this.date := this.MatchBLDate(FullPageText), this.author := this.MatchBLAuthor(FullPageText)
     } else if (this.title ~= " 在线播放 - 小宝影院 - 在线视频$") {
       this.Source := "小宝影院", this.Title := RegExReplace(this.Title, " 在线播放 - 小宝影院 - 在线视频$")
-      this.VidTime := CopyFullPage ? this.MatchVidTime(this.FullTitle) : ""
+      if (CopyFullPage)
+        this.VidTime := this.MatchVidTime(this.FullTitle)
     } else if (this.title ~= "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$") {
       this.source := "唐人街影院", this.title := RegExReplace(this.title, "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$")
-      this.VidTime := CopyFullPage ? this.MatchVidTime(this.FullTitle) : ""
+      if (CopyFullPage)
+        this.VidTime := this.MatchVidTime(this.FullTitle)
 
     ; Wikipedia or wiki format websites
     } else if (IfContains(this.url, "en.wikipedia.org")) {
@@ -179,8 +185,7 @@ class VimBrowser {
 
     } else {
       ReversedTitle := StrReverse(this.Title)
-      if (IfContains(ReversedTitle, " | ")
-       && (!IfContains(ReversedTitle, " - ") || (InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - ")))) {
+      if (IfContains(ReversedTitle, " | ") && (!IfContains(ReversedTitle, " - ") || (InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - ")))) {
         separator := " | "
       } else if (IfContains(ReversedTitle, " - ")) {
         separator := " - "
@@ -240,10 +245,15 @@ class VimBrowser {
     return this.ParseUrl(guiaBrowser.GetCurrentURL())
   }
 
-  MatchYTAuthor(text) {
+  MatchYTVidAuthor(text) {
     ; RegExMatch(text, "i)SAVE(\r\n){3}\K.*", v)
     RegExMatch(text, ".*(?=\r\n.*subscribers)", v)
     return v
+  }
+
+  MatchYTPLAuthor(text) {
+    RegExMatch(text, "(.*)\r\n[0-9]+ videos", v)
+    return v1
   }
 
   MatchYTDate(text) {

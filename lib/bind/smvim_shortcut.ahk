@@ -221,7 +221,7 @@ return
 return
 
 ^!l::
-  FormatTime, CurrTimeDisplay,, % "yyyy-MM-dd HH:mm:ss:" . A_MSec
+  CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   ClipSaved := ClipboardAll
   KeyWait Ctrl
@@ -229,6 +229,7 @@ return
   KeyWait l
   if (!data := copy(false, true, 1))
     goto RestoreClipReturn
+  ToolTip("LaTeX converting...", true)
   if (!IfContains(data, "<IMG")) {  ; text
     send {bs}^{f7}  ; set read point
     LatexFormula := ProcessLatexFormula(Clipboard)
@@ -244,8 +245,8 @@ return
     clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>",, false, true)
     HTMLPath := Vim.SM.SaveHTML(true, true)
     ; VarSetCapacity(HTML, 10240000)  ; ~10 MB
-    FileRead, HTML, % HTMLPath
-    HTML := HTML ? HTML : ImgHTML  ; in case the HTML is picture only and somehow not saved
+    if (!HTML := FileRead(HTMLPath))
+      HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
     
     /*
       Recommended css setting for AntiMerge class:
@@ -286,6 +287,7 @@ return
     Vim.State.SetMode("Vim_Visual")
   }
   Clipboard := ClipSaved
+  RemoveToolTip()
 return
 
 ProcessLatexFormula(LatexFormula) {
@@ -320,6 +322,8 @@ return
 !t::send !mlt  ; Totals
 
 ^!b::
+  KeyWait Ctrl
+  KeyWait alt
   send !b
   WinWait, ahk_class TMsgDialog,, 0.25
   if (!ErrorLevel) {
@@ -365,8 +369,7 @@ return
 
 PlanAddButtonInsert:
 PlanAddButtonAppend:
-  FormatTime, CurrTime,, HH:mm:ss
-  aTime := StrSplit(CurrTime, ":")
+  aTime := StrSplit(CurrTime := FormatTime(, "HH:mm:ss"), ":")
   if (aTime[3] >= 30)
     aTime[2]++
   CurrTime := aTime[1] . ":" . aTime[2]
@@ -397,7 +400,7 @@ PlanAddButtonAppend:
       send {text}y
   }
   send ^s
-  if activity in Break,Sports,Piano,Out,Shower
+  if activity in Break,Sports,Out,Shower,Meal
     run b  ; my personal backup script
   Vim.State.SetNormal()
 return
@@ -588,8 +591,10 @@ BrowserSyncTime:
     Vim.SM.EditFirstQuestion()
     send ^t{f9}
     WinWaitActive, ahk_class TScriptEditor,, 1.5
-    if (ErrorLevel)
-      ToolTip("Script editor not found."), goto BrowserSyncReturn
+    if (ErrorLevel) {
+      ToolTip("Script editor not found.")
+      goto BrowserSyncReturn
+    }
     ControlGetText, script, TMemo1, A
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime), EditTitle := false
     if (IfContains(script, "bilibili.com")) {

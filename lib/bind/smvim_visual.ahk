@@ -270,5 +270,5 @@ CapsLock & z::  ; delete [...]
   }
   if (!CtrlState)  ; only goes back to topic if ctrl is up
     send !{right}  ; add a ctrl to keep editing the clozed item
-  goto RemoveToolTip
+  RemoveToolTip()
 return

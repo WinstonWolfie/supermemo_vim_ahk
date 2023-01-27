@@ -43,7 +43,7 @@ Return
   hwnd := WinGet()
   gui, VimCommander:Add, Text,, &Command:
 
-  list := "Plan||Wiktionary|Regex101|Google|YT|ScriptSettings|MoveMouseToCaret"
+  list := "Plan||Wiktionary|Regex101|SearchWeb|YT|ScriptSettings|MoveMouseToCaret"
         . "|LaTeX|WaybackMachine|DeepL|YouGlish|KillIE|DefineGoogle|WindowSpy"
         . "|Bilibili|CopyTitle|CopyHTML|Forvo|Sci-Hub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
@@ -80,24 +80,21 @@ VimCommanderButtonExecute:
   gui submit
   gui destroy
   if (IfContains("|" . list . "|", "|" . command . "|")) {
-    command := RegExReplace(command, "\W")
+    Vim.State.SetMode("Insert")
+    WinActivate % "ahk_id " . hwnd
+    goto % RegExReplace(command, "\W")
   } else {
     if (command ~= "^https?:\/\/") {
       run % command
     } else {
-      command := EncodeDecodeURI(command)
-      run % "https://www.google.com/search?q=" . command
+      run % "https://www.google.com/search?q=" . EncodeDecodeURI(command)
     }
-    return
   }
-  Vim.State.SetMode("Insert")
-  WinActivate % "ahk_id " . hwnd
-  goto % command
 return
 
 FindSearch(title, prompt, text:="") {
   if (!Default := trim(copy()))
-      Default := text ? text : Clipboard
+    Default := text ? text : Clipboard
   v := InputBox(title, prompt,,,,,,,, Default)
   if (ErrorLevel)
     return
@@ -112,13 +109,13 @@ Regex101:
   run https://regex101.com/
 return
 
-Google:
-  if (!GoogleSearch := FindSearch("Google Search", "Enter your search."))
+SearchWeb:
+  if (!text := FindSearch("Google Search", "Enter your search."))
     return
-  if (GoogleSearch ~= "^https?:\/\/") {
-    run % GoogleSearch
+  if (text ~= "^https?:\/\/") {
+    run % text
   } else {
-    run % "https://www.google.com/search?q=" . GoogleSearch
+    run % "https://www.google.com/search?q=" . text
   }
 return
 
@@ -155,7 +152,7 @@ YouGlish:
   gui, YouGlish:Add, Text,, &Language:
   list := "English||Spanish|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|American Sign Language"
-  gui, YouGlish:Add, Combobox, vLanguage gAutoComplete, % list
+  gui, YouGlish:Add, Combobox, vLanguage gAutoComplete w136, % list
   gui, YouGlish:Add, Button, default, &Search
   gui, YouGlish:Show,, YouGlish
 Return
@@ -170,8 +167,7 @@ YouGlishButtonSearch:
   gui destroy
   if (language == "American Sign Language")
     language := "signlanguage"
-  StringLower, language, language
-  run % "https://youglish.com/pronounce/" . term . "/" . language . "?"
+  run % "https://youglish.com/pronounce/" . term . "/" . StrLower(language) . "?"
 Return
 
 KillIE:
@@ -185,7 +181,7 @@ DefineGoogle:
   gui, GoogleDefine:Add, Edit, vTerm w136 r1 -WantReturn, % term
   gui, GoogleDefine:Add, Text,, &Language Code:
   list := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
-  gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete, % list
+  gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete w136, % list
   gui, GoogleDefine:Add, Button, default, &Search
   gui, GoogleDefine:Show,, Google Define
   SetDefaultKeyboard(0x0409)  ; English-US
@@ -233,7 +229,7 @@ Wiktionary:
   gui, Wiktionary:Add, Text,, &Language:
   list := "Spanish||English|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|Latin|Ancient Greek|Chinese"
-  gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete, % list
+  gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete w136, % list
   gui, Wiktionary:Add, Button, default, &Search
   gui, Wiktionary:Show,, Wiktionary
 return
@@ -461,10 +457,8 @@ ReformatVocab:
   if (!Vim.SM.WaitTextFocus(1000))
     return
   send ^a
-  if (!data := copy(false, true)) {
-    Clipboard := ClipboardAll
-    return
-  }
+  if (!data := copy(false, true))
+    goto RestoreClipReturn
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
   data := RegExReplace(data, "(\.<BR>""|\. <BR>(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
   data := RegExReplace(data, "(""|\.?’)", "</P>")
@@ -483,17 +477,16 @@ return
 ZLibrary:
   if (!text := FindSearch("Z-Library", "Enter your search."))
     return
-;   run https://z-lib.org/
-;   WinWaitActive, ahk_group Browser
-;   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-;   uiaBrowser.WaitPageLoad()
-;   url := uiaBrowser.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
-;   uiaBrowser.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
-
+  ; RIP z-lib
+  ; run https://z-lib.org/
   run https://web.telegram.org/z/#1788460589
   WinWaitActive, ahk_group Browser
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
   uiaBrowser.WaitPageLoad()
+  ; RIP z-lib
+  ; url := uiaBrowser.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
+  ; uiaBrowser.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
+
   uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Message' AND AutomationId='editable-message-text'") ; SetValue(text) doesn't work
   send {tab}
   send % "{text}" . text

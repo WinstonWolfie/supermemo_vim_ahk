@@ -37,11 +37,9 @@ NukeHTML:
   }
   send {esc}
   Vim.SM.WaitTextExit()
-  HTMLPath := Vim.SM.GetFilePath()
-  FileRead, HTML, % HTMLPath
-  if (!HTML)
+  if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath()))
     return
-  if (A_ThisLabel == "NukeHTML" && RegExMatch(HTML, "i)<.*?\K class=(extract|clozed?)(?=.*?>)")) {
+  if ((A_ThisLabel == "NukeHTML") && (HTML ~= "i)<.*?\K class=(extract|clozed?)(?=.*?>)")) {
     MsgBox, 4,, HTML has SM classes. Continue?
     IfMsgBox, no
       return
@@ -94,8 +92,7 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   }
   RegExMatch(Link, "(?<=https:\/\/).*?(?=\/wiki\/)", WikiLink)
   RegExMatch(TemplCode, "HTMFile=\K.*", FilePath)
-  FileRead, HTML, % FilePath
-  HTML := StrReplace(HTML, "en.wikipedia.org", WikiLink)
+  HTML := StrReplace(FileRead(FilePath), "en.wikipedia.org", WikiLink)
   FileDelete % FilePath
   FileAppend, % HTML, % FilePath
   Vim.SM.SaveHTML()
@@ -195,7 +192,8 @@ p::  ; hyperlink to scri*p*t component
   ClipSaved := ClipboardAll
   Vim.Browser.url := Clipboard
   WinClip.Clear()
-  Clipboard := ((CollName = "bgm") ? Vim.Browser.Url . "`n" : "") . Vim.SM.MakeReference()
+  add := (CollName = "bgm") ? Vim.Browser.Url . "`n" : ""
+  Clipboard := add . Vim.SM.MakeReference()
   ClipWait
   Vim.SM.AltN()
   Vim.SM.WaitFileLoad()
