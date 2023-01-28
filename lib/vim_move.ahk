@@ -181,8 +181,7 @@
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltQ")) {
         Send !q
         WinWaitActive, ahk_class TChoicesDlg
-        send % this.KeyAfterSMAltQ
-        send {enter}
+        send % this.KeyAfterSMAltQ . "{enter}"
         this.Vim.State.SetMode("Vim_Normal")
       }
     }

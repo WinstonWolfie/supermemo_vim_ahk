@@ -398,7 +398,8 @@ class VimSM {
     if (WinExist("ahk_class TChoicesDlg")) {
       if (!title)
         ControlFocus, TGroupButton2, ahk_class TChoicesDlg
-      ControlClick, TBitBtn2, ahk_class TChoicesDlg,,,, NA
+      while (WinExist("ahk_class TChoicesDlg"))
+        ControlClick, TBitBtn2, ahk_class TChoicesDlg,,,, NA
       if (title)
         WinWait, ahk_class TTitleEdit
     }

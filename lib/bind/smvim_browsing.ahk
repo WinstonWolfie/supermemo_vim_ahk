@@ -248,10 +248,10 @@ return
 ^o::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 o::
-  BlockInput, on
   SetDefaultKeyboard(0x0409)  ; English-US
   l := Vim.SM.IsLearning()
   KeyWait ctrl
+  BlockInput, on
   if (l == 1) {
     send !{home}
   } else if (l == 2) {

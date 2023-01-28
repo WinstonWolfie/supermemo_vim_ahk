@@ -291,6 +291,7 @@ SMImportButtonImport:
     DownloadHTMLList := "economist.com,webmd.com"
     if (DownloadHTML || IfContains(Vim.Browser.Url, DownloadHTMLList)) {
       ToolTip("Attempting to download website...", true)
+      RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
 
       ; Using UrlDownloadToFile
       TempPath := A_Temp . "\" . StrReplace(CurrTime, ":") . ".htm"
@@ -305,6 +306,8 @@ SMImportButtonImport:
       ; ; Using 'true' above and the call below allows the script to remain responsive.
       ; whr.WaitForResponse()
       ; HTMLText := whr.ResponseText
+
+      HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K href=""\/(?=([^<>]+)?>)", " href=""" . UrlHead)
 
       ; So that Clipboard is not sent into GetTitleSourceDate() below
       WinClip.Clear(), RemoveToolTip()

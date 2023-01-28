@@ -16,7 +16,7 @@
     , "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
     , "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
     , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
-    , "SMVim_ExtractPriorityInner", "Insert_unicode", "SMAltT", "SMAltQ"]
+    , "SMVim_ExtractPriorityInner", "Insert_unicode", "SMVim_AltT", "SMVim_AltQ"]
 
     this.Mode := "Vim_Normal"  ; the default mode when vim_ahk opens
     this.g := 0
