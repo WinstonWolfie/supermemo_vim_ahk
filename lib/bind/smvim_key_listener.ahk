@@ -69,8 +69,7 @@ capslock::
       }
     }
   }
-  HintsEntered := ""
-  RemoveToolTip(19)
+  HintsEntered := "", RemoveToolTip(19)
   if (esc || (HinterMode != "Persistent")) {
     RemoveAllToopTip(LastHintCount, "g")
     if (HinterMode == "Visual") {
@@ -101,8 +100,7 @@ CreateHints(HintsArray, HintStrings) {
 }
 
 hintStrings(linkCount) {  ; adapted from vimium
-  hints := []
-  offset := 0
+  hints := [], offset := 0
   linkHintCharacters := ["S", "A", "D", "J", "K", "L", "E", "W", "C", "M", "P", "G", "H"]
   while (((ObjCount(hints) - offset) < linkCount) || (ObjCount(hints) == 1)) {
     hint := hints[offset++]

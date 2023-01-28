@@ -357,7 +357,7 @@ class VimSM {
 
   GetCollPath(text:="") {
     text := text ? text : WinGetText("ahk_class TElWind")
-    RegExMatch(text, "m)\(SuperMemo [0-9]+: \K.+(?=\)$)", CollPath)
+    RegExMatch(text, "m)\(SuperMemo \d+: \K.+(?=\)$)", CollPath)
     return CollPath
   }
 
@@ -459,7 +459,7 @@ class VimSM {
       this.MoveMouse(1)
     if (!WinGetText("ahk_class TStatBar"))
       this.PostMsg(313), StatBar := 0
-    match := "^(\s+)?(Priority|Int|Downloading|\([0-9]+ item\(s\)" . add . ")"
+    match := "^(\s+)?(Priority|Int|Downloading|\(\d+ item\(s\)" . add . ")"
     if (timeout == -1) {
       ret := (WinGetText("ahk_class TStatBar") ~= match)
     } else {
@@ -728,7 +728,7 @@ class VimSM {
   }
 
   RunLink(url, RunInIE:=false) {
-    if (RegExMatch(url, "SuperMemoElementNo=\(\K[0-9]+", v)) {  ; goes to a SuperMemo element
+    if (RegExMatch(url, "SuperMemoElementNo=\(\K\d+", v)) {  ; goes to a SuperMemo element
       send % "^g" . v . "{enter}"
     } else {
       if (RunInIE) {

@@ -1393,7 +1393,7 @@
       }
       DetectionStr := this.Vim.ParseLineBreaks(selection ? selection : copy(false))
       DetectionStr := StrReverse(DetectionStr)
-      RegExMatch(DetectionStr, "^(\s+)?((\][0-9]+\[)+)?(\.|。)", v), n := StrLen(v)
+      RegExMatch(DetectionStr, "^(\s+)?((\]\d+\[)+)?(\.|。)", v), n := StrLen(v)
       if (RestoreClip)
         Clipboard := ClipSaved
       if (n) {

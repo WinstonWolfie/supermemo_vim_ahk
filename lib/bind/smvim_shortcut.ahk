@@ -550,7 +550,7 @@ BrowserSyncTime:
     send {esc}
     Vim.Browser.GetTitleSourceDate(!sync, false,, false)  ; get title for checking later
     ; SM uses "." instead of "..." in titles
-    SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind"), "^(\d{1,2}:)?\d{1,2}:\d{2} \| ")
+    SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind"), "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
     if (SMTitle != StrReplace(Vim.Browser.title, "...", ".")) {
       WinActivate, ahk_class TElWind
       MsgBox, 4,, Titles don't match. Continue?
@@ -585,9 +585,7 @@ BrowserSyncTime:
 
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
-  if (BrowserHwnd && (vim.browser.IsVidSite(vim.browser.fullTitle) == 3)) {
-    EditTitle := true
-  } else {
+  if (!EditTitle := (BrowserHwnd && (vim.browser.IsVidSite(vim.browser.fullTitle) == 3))) {
     Vim.SM.EditFirstQuestion()
     send ^t{f9}
     WinWaitActive, ahk_class TScriptEditor,, 1.5
@@ -596,15 +594,12 @@ BrowserSyncTime:
       goto BrowserSyncReturn
     }
     ControlGetText, script, TMemo1, A
-    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime), EditTitle := false
-    if (IfContains(script, "bilibili.com")) {
-      replacement := "&t=" . sec, match := "&t=.*"
-    } else if (IfContains(script, "youtube.com")) {
-      replacement := "&t=" . sec . "s", match := "&t=.*s"
-    } else {
+    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+    if (IfContains(script, "youtube.com,bilibili.com")) {
+      match := "t=\d+", replacement := "t=" . sec
+    } else if (EditTitle := true) {
       WinClose, ahk_class TScriptEditor
       send {esc}
-      EditTitle := true
     }
   }
 
@@ -613,7 +608,7 @@ BrowserSyncTime:
     send !o{esc}  ; close script editor
     ToolTip("Time stamp in script component set as " . sec . "s")
   } else {  ; time in title
-    SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind"), "^(\d{1,2}:)?\d{1,2}:\d{2} \| ")
+    SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind"), "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
     Vim.SM.SetTitle(Vim.Browser.VidTime . " | " . SMTitle)
   }
   WinWaitActive, ahk_class TElWind
@@ -627,7 +622,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
                       && (title := WinGetTitle())
-                      && (RegExMatch(title, "(?<=^p)[0-9]+", page) || epub := IfContains(title, " | ")))
+                      && (RegExMatch(title, "(?<=^p)\d+", page) || epub := IfContains(title, " | ")))
 !s::
   if (page) {
     clip := page

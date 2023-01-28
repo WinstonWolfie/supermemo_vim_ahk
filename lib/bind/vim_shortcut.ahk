@@ -241,7 +241,7 @@ IWBPriorityAndConcept:
   IfMsgBox, no
     goto ImportReturn
 
-  prio := concept := CloseTab := ""
+  prio := concept := CloseTab := DownloadHTML := ""
   while (!PressBrowserBtnDone)
     continue
   KeyWait shift
@@ -256,6 +256,8 @@ IWBPriorityAndConcept:
     list := ConceptBefore . "||Online|Sources"
     gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % list
     gui, SMImport:Add, Checkbox, vCloseTab checked, Close &tab
+    if (!IWB)
+      gui, SMImport:Add, Checkbox, vDownloadHTML, Import fullpage &HTML
     gui, SMImport:Add, Button, default, &Import
     gui, SMImport:Show,, SuperMemo Import
     gui, SMImport:+HwndImportGuiHwnd
@@ -276,7 +278,7 @@ SMImportButtonImport:
   }
 
   ; VarSetCapacity(HTMLText, "40960000")  ; ~40 MB
-  HTMLText := Passive ? "" : copy(false, true)
+  HTMLText := (DownloadHTML || Passive) ? "" : copy(false, true)
   if (IWB) {
     if (!HTMLText) {
       ToolTip("Text not found.")
@@ -285,14 +287,27 @@ SMImportButtonImport:
     Vim.Browser.Highlight()
   }
   Online := (Passive || (!HTMLText && vim.browser.IsVidSite(Vim.Browser.FullTitle)))
-  if (FullPage := (!HTMLText && !Online)) {
+  if (FullPage := (DownloadHTML || (!HTMLText && !Online))) {
     DownloadHTMLList := "economist.com,webmd.com"
-    if (IfContains(Vim.Browser.Url, DownloadHTMLList)) {
+    if (DownloadHTML || IfContains(Vim.Browser.Url, DownloadHTMLList)) {
+      ToolTip("Attempting to download website...", true)
+
+      ; Using UrlDownloadToFile
       TempPath := A_Temp . "\" . StrReplace(CurrTime, ":") . ".htm"
       UrlDownloadToFile, % Vim.Browser.Url, % TempPath
       HTMLText := FileRead(TempPath)
       FileDelete, % TempPath
-      WinClip.Clear()  ; so that Clipboard is not sent into GetTitleSourceDate() below
+
+      ; Using ComObj
+      ; whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+      ; whr.Open("GET", Vim.Browser.Url, true)
+      ; whr.Send()
+      ; ; Using 'true' above and the call below allows the script to remain responsive.
+      ; whr.WaitForResponse()
+      ; HTMLText := whr.ResponseText
+
+      ; So that Clipboard is not sent into GetTitleSourceDate() below
+      WinClip.Clear(), RemoveToolTip()
     } else {
       send {esc}
       CopyAll()
@@ -322,7 +337,8 @@ SMImportButtonImport:
   }
   ClipWait
 
-  InfoToolTip := "Url: " . Vim.Browser.url . "`n"
+  InfoToolTip := "Importing:`n"
+               . "Url: " . Vim.Browser.url . "`n"
                . "Title: " . Vim.Browser.Title
   if (Vim.Browser.Source)
     InfoToolTip .= "`nSource: " . Vim.Browser.Source
@@ -332,7 +348,7 @@ SMImportButtonImport:
     InfoToolTip .= "`nDate: " . Vim.Browser.Date
   if (Vim.Browser.VidTime)
     InfoToolTip .= "`nTime stamp: " . Vim.Browser.VidTime
-  ToolTip(InfoToolTip)
+  ToolTip(InfoToolTip, true)
 
   if (prio ~= "^\.")
     prio := "0" . prio
@@ -404,6 +420,7 @@ ImportReturn:
   Vim.State.SetMode("Vim_Normal")
   if (!esc)
     Clipboard := ClipSaved
+  RemoveToolTip()
 return
 
 GetUrl:

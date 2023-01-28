@@ -9,15 +9,11 @@ class VimBrowser {
   }
 
   GetInfo(RestoreClip:=true, CopyFullPage:=true, PressButton:=true) {
-    if (RestoreClip)
-      ClipSaved := ClipboardAll
     global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
     this.url := this.GetParsedUrl()
     if (PressButton)
       this.ClickBtn()
-    this.GetTitleSourceDate(false, CopyFullPage)
-    if (RestoreClip)
-      Clipboard := ClipSaved
+    this.GetTitleSourceDate(RestoreClip, CopyFullPage)
   }
 
   ParseUrl(url) {
@@ -26,7 +22,7 @@ class VimBrowser {
       url := StrReplace(url, "app=desktop&")
       url := RegExReplace(url, "&.*")
     } else if (IfContains(url, "bilibili.com/video")) {
-      url := RegExReplace(url, "(\?(?!p=[0-9]+)|&).*")
+      url := RegExReplace(url, "(\?(?!p=\d+)|&).*")
     } else if (IfContains(url, "netflix.com/watch")) {
       url := RegExReplace(url, "\?trackId=.*")
     } else if (IfContains(url, "baike.baidu.com")) {
@@ -68,8 +64,6 @@ class VimBrowser {
       this.Source := "新华网", this.Title := RegExReplace(this.Title, "-新华网$")
     } else if (this.title ~= ": MedlinePlus Medical Encyclopedia$") {
       this.source := "MedlinePlus Medical Encyclopedia", this.title := RegExReplace(this.title, ": MedlinePlus Medical Encyclopedia$")
-    } else if (this.title ~= " - supermemo\.guru$") {
-      this.source := "SuperMemo Guru", this.title := RegExReplace(this.title, " - supermemo\.guru$")
     } else if (this.title ~= "_英为财情Investing.com$") {
       this.source := "英为财情", this.title := RegExReplace(this.title, "_英为财情Investing.com$")
     } else if (this.title ~= " \| OSUCCC - James$") {
@@ -92,7 +86,7 @@ class VimBrowser {
       this.source := "RAE", this.title := RegExReplace(this.title, " \| Definición \| Diccionario de la lengua española \| RAE - ASALE$")
 
     } else if (IfContains(this.Url, "reddit.com")) {
-      RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", Source), this.source := source, this.Title := RegExReplace(this.Title, " : " . StrReplace(Source, "r/") . "$")
+      RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(Source, "r/") . "$")
 
     ; Sites that don't include source in the title
     } else if (IfContains(this.Url, "dailystoic.com")) {
@@ -156,6 +150,10 @@ class VimBrowser {
         this.VidTime := this.MatchVidTime(this.FullTitle)
 
     ; Wikipedia or wiki format websites
+    } else if (this.title ~= " - supermemo\.guru$") {
+      this.source := "SuperMemo Guru", this.title := RegExReplace(this.title, " - supermemo\.guru$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
     } else if (IfContains(this.url, "en.wikipedia.org")) {
       this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -164,10 +162,6 @@ class VimBrowser {
       this.Source := "Wiktionary", this.title := RegExReplace(this.title, " - Wiktionary$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (this.Title ~= "_百度百科$") {
-      this.Source := "百度百科", this.Title := RegExReplace(this.Title, "_百度百科$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "最近更新：.*（(.*)）", v), this.date := v1
     } else if (IfContains(this.url, "zh.wikipedia.org")) {
       this.Source := "维基百科", this.title := RegExReplace(this.title, " - 维基百科，自由的百科全书$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -178,10 +172,18 @@ class VimBrowser {
         RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.date := v1
 
     ; Others
+    } else if (this.Title ~= "_百度百科$") {
+      this.Source := "百度百科", this.Title := RegExReplace(this.Title, "_百度百科$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "最近更新：.*（(.*)）", v), this.date := v1
     } else if (IfContains(this.url, "zhihu.com")) {
       this.Source := "知乎", this.title := RegExReplace(this.title, " - 知乎$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "编辑于 (.*?) ", v), this.date := v1
+    } else if (this.Title ~= " \| The Economist$") {
+      this.Source := "The Economist", this.title := RegExReplace(this.title, " \| The Economist$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "\r\n(\w+ \d+\w+ \d+)\r\n\r\n", v), this.date := v1
 
     } else {
       ReversedTitle := StrReverse(this.Title)
@@ -228,16 +230,8 @@ class VimBrowser {
 
   GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     title := title ? title : this.RemoveBrowserName(WinGetTitle())
-    if (!this.IsVidSite(title))
-      return
-    if (RestoreClip)
-      ClipSaved := ClipboardAll
-    global WinClip
-    WinClip.Clear()
-    VidTime := this.MatchVidTime(title, FullPageText)
-    if (RestoreClip)
-      Clipboard := ClipSaved
-    return VidTime
+    if (this.IsVidSite(title))
+      return this.MatchVidTime(title, FullPageText, RestoreClip)
   }
 
   GetParsedUrl() {
@@ -246,18 +240,17 @@ class VimBrowser {
   }
 
   MatchYTVidAuthor(text) {
-    ; RegExMatch(text, "i)SAVE(\r\n){3}\K.*", v)
     RegExMatch(text, ".*(?=\r\n.*subscribers)", v)
     return v
   }
 
   MatchYTPLAuthor(text) {
-    RegExMatch(text, "(.*)\r\n[0-9]+ videos", v)
+    RegExMatch(text, "(.*)\r\n\d+ videos", v)
     return v1
   }
 
   MatchYTDate(text) {
-    RegExMatch(text, "views +?((Streamed live|Premiered) on )?\K[0-9]+ \w+ [0-9]+", v)
+    RegExMatch(text, "views +?((Streamed live|Premiered) on )?\K\d+ \w+ \d+", v)
     return v
   }
 
@@ -267,49 +260,45 @@ class VimBrowser {
   }
 
   MatchBLDate(text) {
-    RegExMatch(text, "\n\K[0-9]{4}-[0-9]{2}-[0-9]{2}", v)
-    return v
-  }
-
-  MatchXBTime(text) {
-    RegExMatch(text, "[0-9:]+(?=\r\n \/ )", v)
-    return v
+    RegExMatch(text, " (.*?) \d{2}:\d{2}:\d{2}\r\n", v)
+    return v1
   }
 
   MatchVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     title := title ? title : this.RemoveBrowserName(WinGetTitle())
     if (title ~= " - YouTube$") {
-      FullPageText := FullPageText ? FullPageText : this.GetFullPage(title, RestoreClip)
+      FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip)
       RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
       ; v1 = v2 means at end of video
       VidTime := (v1 == v2) ? "0:00" : v1
     } else if (IfIn(this.IsVidSite(title), "2,3")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-      VidTime := guiaBrowser.FindFirstByName("^(\d{2}:)?\d{2}:\d{2}$",, "regex").CurrentName
+      VidTime := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
     }
-    return RegExReplace(VidTime, "^0(?=[0-9])")
+    return RegExReplace(VidTime, "^0(?=\d)")
   }
 
   RunInIE(url) {
+    wIE := "ahk_class IEFrame ahk_exe iexplore.exe"
     if ((url ~= "file:\/\/") && (url ~= "#.*"))
       url := RegExReplace(url, "#.*")
-    if (!el := WinExist("ahk_class IEFrame ahk_exe iexplore.exe")) {
+    if (!el := WinExist(wIE)) {
       ie := ComObjCreate("InternetExplorer.Application")
       ie.Visible := true
       ie.Navigate(url)
     } else {
-      if (ControlGetText("Edit1", "ahk_class IEFrame ahk_exe iexplore.exe")) {  ; current page is not new tab page
-        ControlSend, ahk_parent, {CtrlDown}t{CtrlUp}, ahk_class IEFrame ahk_exe iexplore.exe
-        ControlTextWait("Edit1", "", "ahk_class IEFrame ahk_exe iexplore.exe")
+      if (ControlGetText("Edit1", wIE)) {  ; current page is not new tab page
+        ControlSend, ahk_parent, {CtrlDown}t{CtrlUp}, % wIE
+        ControlTextWait("Edit1", "", wIE)
       }
-      ControlSetText, Edit1, % url, ahk_class IEFrame ahk_exe iexplore.exe
-      ControlSend, Edit1, {enter}, ahk_class IEFrame ahk_exe iexplore.exe
+      ControlSetText, Edit1, % url, % wIE
+      ControlSend, Edit1, {enter}, % wIE
     }
-    WinActivate, ahk_class IEFrame ahk_exe iexplore.exe
+    WinActivate, % wIE
   }
 
   RemoveBrowserName(title) {
-    return RegExReplace(title, "( - Google Chrome| — Mozilla Firefox|( and [0-9]+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
+    return RegExReplace(title, "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
   }
 
   IsVidSite(title:="") {

@@ -215,7 +215,7 @@ SMHyperLinkToTopic:
     if (IfContains(Vim.Browser.url, "youtube.com")) {
       script .= "&t=" . sec . "s"
     } else if (IfContains(Vim.Browser.url, "bilibili.com")) {
-      script .= "?&t=" . sec
+      script .= (script ~= "\?p=\d+") ? "&t=" . sec : "?t=" . sec
     }
     ToolTip("Time stamp in script component set as " . sec . "s")
   }

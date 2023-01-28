@@ -525,9 +525,10 @@ ToolTip(text:="", perma:=false, period:=-2000, command:="", n:=20) {
     x := A_ScreenWidth / 3, y := A_ScreenHeight / 4 * 3
   }
   ToolTip, % text, % x, % y, % n
-  RemoveTTFunc := Func("RemoveToolTip").Bind(n)
-  if (!perma)
+  if (!perma) {
+    RemoveTTFunc := Func("RemoveToolTip").Bind(n)
     SetTimer, % RemoveTTFunc, % period
+  }
   CoordMode, ToolTip, % PrevCoordModeTT
 }
 

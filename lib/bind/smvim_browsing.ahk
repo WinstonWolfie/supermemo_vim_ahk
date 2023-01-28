@@ -181,8 +181,8 @@ c::
   if (!n := ObjCount(aHints))
     return
   Vim.State.SetMode("KeyListener")
-  aHintStrings := hintStrings(n)
-  CreateHints(aHints, aHintStrings)
+  ; aHintStrings is later used in key listener
+  CreateHints(aHints, aHintStrings := hintStrings(n))
 return
 
 CreateHintsArray(Control, hCtrl, Type, Caret) {
@@ -246,12 +246,12 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^o::
-  KeyWait ctrl
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 o::
   BlockInput, on
   SetDefaultKeyboard(0x0409)  ; English-US
   l := Vim.SM.IsLearning()
+  KeyWait ctrl
   if (l == 1) {
     send !{home}
   } else if (l == 2) {
@@ -275,8 +275,7 @@ y::  ; yy: copy current source url
   if (!link) {
     ToolTip("Link not found.")
   } else {
-    Clipboard := link
-    ToolTip("Copied " . link)
+    Clipboard := link, ToolTip("Copied " . link)
   }
   Vim.State.SetNormal()
 return
@@ -289,19 +288,15 @@ Return
 ; Plan/tasklist window
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan())
 s::
-  ; ControlClickWinCoordDPIAdjusted(253, 48)  ; *s*witch plan
-  accButton := Acc_Get("Object", "4.1.4.1.4.1.4",, "ahk_id " . WinGet())
-  accButton.accDoDefaultAction(2)
-  ControlFocus, Edit1
+  Acc_Get("Object", "4.1.4.1.4.1.4",, "ahk_id " . WinGet()).accDoDefaultAction(2)
+  ControlFocus, Edit1, A
 return
 
 b::send !b  ; begin
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingTask())
 s::
-  ; ControlClickWinCoordDPIAdjusted(153, 52)  ; *s*witch tasklist
-  accButton := Acc_Get("Object", "4.3.4.1.4",, "ahk_id " . WinGet())
-  accButton.accDoDefaultAction(2)
-  ControlFocus, Edit1
+  Acc_Get("Object", "4.3.4.1.4",, "ahk_id " . WinGet()).accDoDefaultAction(2)
+  ControlFocus, Edit1, A
 return
 
 ; Browsing/editing
