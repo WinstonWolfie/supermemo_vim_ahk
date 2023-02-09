@@ -13,22 +13,26 @@ class VimBrowser {
     this.url := this.GetParsedUrl()
     if (PressButton)
       this.ClickBtn()
+    sleep -1
     this.GetTitleSourceDate(RestoreClip, CopyFullPage)
   }
 
   ParseUrl(url) {
     url := RegExReplace(url, "#.*")
-    if (IfContains(url, "youtube.com/watch")) {
-      url := StrReplace(url, "app=desktop&")
-      url := RegExReplace(url, "&.*")
+    ; Remove everything after "?"
+    QuestionMarkList := "baike.baidu.com,bloomberg.com"
+    if (IfContains(url, QuestionMarkList)) {
+      url := RegExReplace(url, "\?.*")
+    } else if (IfContains(url, "youtube.com/watch")) {
+      url := StrReplace(url, "app=desktop&"), url := RegExReplace(url, "&.*")
     } else if (IfContains(url, "bilibili.com/video")) {
       url := RegExReplace(url, "(\?(?!p=\d+)|&).*")
     } else if (IfContains(url, "netflix.com/watch")) {
       url := RegExReplace(url, "\?trackId=.*")
-    } else if (IfContains(url, "baike.baidu.com")) {
-      url := RegExReplace(url, "\?.*")
     } else if (IfContains(url, "finance.yahoo.com")) {
       url := RegExReplace(url, "\?p=.*|\/$")
+    } else if (IfContains(url, "dle.rae.es")) {
+      url := StrReplace(url, "?m=form")
     }
     return url
   }
@@ -83,7 +87,7 @@ class VimBrowser {
     } else if (this.title ~= " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$") {
       this.source := "SuperDataScience", this.title := RegExReplace(this.title, " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$")
     } else if (this.title ~= " \| Definición \| Diccionario de la lengua española \| RAE - ASALE$") {
-      this.source := "RAE", this.title := RegExReplace(this.title, " \| Definición \| Diccionario de la lengua española \| RAE - ASALE$")
+      this.source := "Diccionario de la lengua española | RAE - ASALE", this.title := RegExReplace(this.title, " \| Diccionario de la lengua española \| RAE - ASALE$")
 
     } else if (IfContains(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(Source, "r/") . "$")
@@ -97,8 +101,6 @@ class VimBrowser {
       this.Source := "WebMD"
     } else if (IfContains(this.Url, "medicalnewstoday.com")) {
       this.Source := "Medical News Today"
-    } else if (IfContains(this.Url, "investopedia.com")) {
-      this.Source := "Investopedia"
     } else if (IfContains(this.Url, "universityhealthnews.com")) {
       this.source := "University Health News"
     } else if (IfContains(this.url, "verywellmind.com")) {
@@ -125,6 +127,8 @@ class VimBrowser {
       this.source := "BlackRock"
     } else if (IfContains(this.Url, "growbeansprout.com")) {
       this.source := "Beansprout"
+    } else if (IfContains(this.Url, "researchgate.net")) {
+      this.source := "ResearchGate"
 
     ; Sites that require special attention
     ; Video sites
@@ -183,7 +187,11 @@ class VimBrowser {
     } else if (this.Title ~= " \| The Economist$") {
       this.Source := "The Economist", this.title := RegExReplace(this.title, " \| The Economist$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "\r\n(\w+ \d+\w+ \d+)\r\n\r\n", v), this.date := v1
+        RegExMatch(FullPageText, "\r\n(\w+ \d+\w+ \d+)( \| .*)?\r\n\r\n", v), this.date := v1
+    } else if (IfContains(this.Url, "investopedia.com")) {
+      this.Source := "Investopedia"
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Updated (.*)", v), this.date := v1
 
     } else {
       ReversedTitle := StrReverse(this.Title)
@@ -200,8 +208,7 @@ class VimBrowser {
       } else if (IfContains(ReversedTitle, " • ")) {
         separator := " • "
       }
-      pos := separator ? InStr(ReversedTitle, separator) : 0
-      if (pos) {
+      if (pos := separator ? InStr(ReversedTitle, separator) : 0) {
         TitleLength := StrLen(this.Title) - pos - StrLen(separator) + 1
         this.Source := SubStr(this.Title, TitleLength + 1, StrLen(this.Title))
         this.Source := StrReplace(this.Source, separator,,, 1)
@@ -319,6 +326,7 @@ class VimBrowser {
   }
 
   ClickBtn() {
+    critical
     this.url := this.url ? this.url : this.GetParsedUrl()
     if (IfContains(this.url, "youtube.com/watch")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
@@ -326,7 +334,10 @@ class VimBrowser {
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show more'")
       if (btn)
         btn.FindByPath("P3").click()  ; click the description box, so the webpage doesn't scroll down
+    } else {
+      return false
     }
+    return true
   }
 }
 

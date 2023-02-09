@@ -185,8 +185,7 @@ InvertCaseClipped:
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
   clip(Lab_Invert_Char_Out,, false, html)
-  Clipboard := ClipSaved
-  Vim.State.SetMode("Vim_Normal")
+  Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
 o::  ; move to other end of marked area; not perfect with line breaks

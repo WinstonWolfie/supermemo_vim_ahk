@@ -132,14 +132,12 @@ class VimSM {
   }
 
   SetRandPrio(min, max) {
-    global ImportGuiHwnd
     prio := Random(min, max)
+    global ImportGuiHwnd
     if (WinGet() == ImportGuiHwnd) {
+      ControlFocus, Edit1, A
       ControlSetText, Edit1, % prio, A
-      ControlFocus, Edit2, A
-      WinActivate % "ahk_id " . ImportGuiHwnd
-      WinWaitActive % "ahk_id " . ImportGuiHwnd
-      send ^a
+      send {tab}
     } else if (WinActive("Priority") && WinActive("ahk_class #32770")) {  ; input dialogue
       ControlSetText, Edit1, % prio, A
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
@@ -565,7 +563,7 @@ class VimSM {
     if (!title && !prio && !template)
       return
 		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
-		ControlSend, ahk_parent, {ShiftDown}{CtrlDown}p{CtrlUp}{ShiftUp}, ahk_class TElWind
+		ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
     WinWait, ahk_class TElParamDlg
     if (template) {
       ControlSetText, Edit1, % SubStr(template, 2), ahk_class TElParamDlg
@@ -597,12 +595,10 @@ class VimSM {
   }
 
   CheckDup(text, ClearHighlight:=true) {  ; try to find duplicates
-    while (WinExist("ahk_class TBrowser") || WinExist("ahk_class TMsgDialog"))
-      WinClose
     ContLearn := this.IsLearning()
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
     ; Can't just encode uri, Chinese characters will be encoded
-    if ((text ~= "^file:\/\/") || (text ~= "^https?:\/\/"))
+    if (IsUrl(text))
       text := StrReplace(text, "%20", " "), text := StrReplace(text, "%3F", "?")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if ((ContLearn == 1) && !ret)
@@ -611,6 +607,8 @@ class VimSM {
   }
 
   CtrlF(text, ClearHighlight:=true, ToolTip:="Not found.") {
+    while (WinExist("ahk_class TBrowser") || WinExist("ahk_class TMsgDialog"))
+      WinClose
     this.PostMsg(144)
     WinWait, ahk_class TMyFindDlg
     ControlSetText, TEdit1, % text, ahk_class TMyFindDlg

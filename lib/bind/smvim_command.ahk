@@ -23,7 +23,7 @@ return
 NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
-  KeyWait shift
+  send {Blind}{Shift Up}
   if (Vim.SM.IsEditingPlainText())
     return
 	send ^{f7}  ; save read point
@@ -119,19 +119,6 @@ i::  ; learn outstanding *i*tems only
   send ^l
 return
 
-+i::  ; learn current element's outstanding child item
-  Vim.State.SetMode("Vim_Normal")
-  send ^{space}
-  Vim.SM.WaitBrowser()
-  send {AppsKey}ci
-  Vim.SM.WaitBrowser()
-  send {AppsKey}co
-  Vim.SM.WaitBrowser()
-  send ^s
-  Vim.SM.WaitBrowser()
-  send ^+l
-return
-
 o::  ; c*o*mpress images
   send ^{enter}^a  ; open commander
   send {text}co  ; Compress images
@@ -162,7 +149,7 @@ s::  ; turn active language item to passive (*s*witch)
 return
 
 +s::
-  KeyWait shift
+  Send {Blind}{Shift Up}
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
@@ -280,12 +267,24 @@ return
 
 d::
   Vim.State.SetMode("Vim_Normal")
-  if (!Vim.SM.CtrlF("#audio"))
-    return
-  goto SMLearnChildActiveBrowser
+  if (Vim.SM.CtrlF("#audio"))
+    goto SMLearnChildActiveBrowser
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
++i::  ; learn current element's outstanding child item
+  Vim.State.SetMode("Vim_Normal")
+  send ^{space}
+  Vim.SM.WaitBrowser()
+  send {AppsKey}ci
+  Vim.SM.WaitBrowser()
+  send {AppsKey}co
+  Vim.SM.WaitBrowser()
+  send ^s
+  Vim.SM.WaitBrowser()
+  send ^l
+return
+
 SMLearnChild:
 c::  ; learn child
   Vim.State.SetMode("Vim_Normal")

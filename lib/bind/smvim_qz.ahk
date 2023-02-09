@@ -1,22 +1,22 @@
 ﻿; Editing text only
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
-^q::Vim.State.SetMode("SMVim_ExtractStay", 0, -1, 0,,,-1)
-^z::Vim.State.SetMode("SMVim_ClozeStay", 0, -1, 0,,,-1)
-q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0,,,-1)
-z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0,,,-1)
-+q::Vim.State.SetMode("SMVim_ExtractPriority", 0, -1, 0,,,-1)
+^q::Vim.State.SetMode("SMVim_ExtractStay", 0, -1, 0,,, -1)
+^z::Vim.State.SetMode("SMVim_ClozeStay", 0, -1, 0,,, -1)
+q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0,,, -1)
+z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0,,, -1)
++q::Vim.State.SetMode("SMVim_ExtractPriority", 0, -1, 0,,, -1)
 +z::
 ^+z::
-  Vim.State.SetMode("SMVim_ClozeHinter", 0, -1, 0,,,-1)
+  Vim.State.SetMode("SMVim_ClozeHinter", 0, -1, 0,,, -1)
   ClozeHinterCtrlState := IfContains(A_ThisHotkey, "^")
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText() && ((ClozeNoBracketCtrlState := GetKeyState("ctrl")) || true))
-CapsLock & z::Vim.State.SetMode("SMVim_ClozeNoBracket", 0, -1, 0,,,-1)
+CapsLock & z::Vim.State.SetMode("SMVim_ClozeNoBracket", 0, -1, 0,,, -1)
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText() && Vim.State.g)
-!t::Vim.State.SetMode("SMVim_AltT", 0, -1, 0,,,-1)
-!q::Vim.State.SetMode("SMAltQ_Command", 0, -1, 0,,,-1)
+!t::Vim.State.SetMode("SMVim_AltT", 0, -1, 0,,, -1)
+!q::Vim.State.SetMode("SMAltQ_Command", 0, -1, 0,,, -1)
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMVim_AltT") && Vim.SM.IsEditingText())
 !t::
@@ -126,7 +126,7 @@ _::
 space::
   Vim.Move.KeyAfterSMAltQ := A_ThisHotkey
   if (SMAltQYdcMove) {
-    KeyWait shift
+    Send {Blind}{Shift Up}
     Vim.Move.YDCMove(), SMAltQYdcMove := false
   } else {
     Vim.State.SetMode("SMVim_AltQ", 0, -1, 0)

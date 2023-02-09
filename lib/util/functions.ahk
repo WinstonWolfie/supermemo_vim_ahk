@@ -514,9 +514,8 @@ SetDefaultKeyboard(LocaleID) {  ; https://www.autohotkey.com/boards/viewtopic.ph
     PostMessage 0x50, 0, % Lan, , %  "ahk_id " windows%A_Index%
   }
 }
-return
 
-ToolTip(text:="", perma:=false, period:=-2000, command:="", n:=20) {
+ToolTip(text, perma:=false, period:=-2000, command:="", n:=20) {
   PrevCoordModeTT := A_CoordModeToolTip
   CoordMode, ToolTip, Screen
   if (command = "center") {
@@ -1065,3 +1064,11 @@ CopyAll(Timeout:=2.5) {
   ClipWait % Timeout
   return !ErrorLevel
 }
+
+IsUrl(text) {
+  return (text ~= "^(file|https?):\/\/")
+}
+
+SetNormalReturn:
+  Vim.State.SetNormal()
+return

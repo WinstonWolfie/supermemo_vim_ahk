@@ -41,50 +41,51 @@ Return
     return
   }
   hwnd := WinGet()
-  gui, VimCommander:Add, Text,, &Command:
+  Gui, VimCommander:Add, Text,, &Command:
 
   list := "Plan||Wiktionary|Regex101|SearchWeb|YT|ScriptSettings|MoveMouseToCaret"
         . "|LaTeX|WaybackMachine|DeepL|YouGlish|KillIE|DefineGoogle|WindowSpy"
         . "|Bilibili|CopyTitle|CopyHTML|Forvo|Sci-Hub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
-        . "|CopyPosition|ZLibrary"
+        . "|CopyPosition|ZLibrary|GetInfoFromContextMenu"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
     if (WinActive("ahk_class TElWind")) {
-      list := "NukeHTML|ReformatVocab|ImportFirstFile|" . list
+      list := "NukeHTML|ReformatVocab|ImportFirstFile|ShowReference|" . list
       if (Vim.SM.IsPassive(, -1))
         list := "ReformatScriptComponent|SearchLinkInYT|" . list
       if (Vim.SM.IsEditingText())
         list := "ClozeAndDone!|" . list
     }
-  } else if (WinActive("ahk_class TBrowser")) {
+  } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
     list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceRegistry|" . list
-  } else if (WinActive("ahk_group Browser")) {
-    list := "IWBNewTopic|IWBPriorityAndConcept|" . list
+  } else if (WinActive("ahk_group Browser")) {  ; web browsers
+    list := "IWBPriorityAndConcept|IWBNewTopic|" . list
   }
 
-  gui, VimCommander:Add, Combobox, vCommand gAutoComplete w144, % list
-  gui, VimCommander:Add, Button, default, &Execute
-  gui, VimCommander:Show,, Vim Commander
-  gui, VimCommander:+HwndCommanderHwnd
+  Gui, VimCommander:Add, Combobox, vCommand gAutoComplete w144, % list
+  Gui, VimCommander:Add, Button, default, &Execute
+  send {Blind}{CtrlUp}
+  Gui, VimCommander:Show,, Vim Commander
+  Gui, VimCommander:+HwndCommanderHwnd
 Return
 
 VimCommanderGuiEscape:
 VimCommanderGuiClose:
-  gui destroy
+  Gui destroy
 return
 
 VimCommanderButtonExecute:
-  gui submit
-  gui destroy
+  Gui submit
+  Gui destroy
   if (IfContains("|" . list . "|", "|" . command . "|")) {
     Vim.State.SetMode("Insert")
     WinActivate % "ahk_id " . hwnd
     goto % RegExReplace(command, "\W")
   } else {
-    if (command ~= "^https?:\/\/") {
+    if (IsUrl(command)) {
       run % command
     } else {
       run % "https://www.google.com/search?q=" . EncodeDecodeURI(command)
@@ -95,10 +96,9 @@ return
 FindSearch(title, prompt, text:="") {
   if (!Default := trim(copy()))
     Default := text ? text : Clipboard
-  v := InputBox(title, prompt,,,,,,,, Default)
-  if (ErrorLevel)
-    return
-  return v
+  ret := InputBox(title, prompt,,,,,,,, Default)
+  ; If the user closed the input box without submitting, return nothing
+  return ErrorLevel ? "" : ret
 }
 
 WindowSpy:
@@ -112,10 +112,10 @@ return
 SearchWeb:
   if (!text := FindSearch("Google Search", "Enter your search."))
     return
-  if (text ~= "^https?:\/\/") {
+  if (IsUrl(text)) {
     run % text
   } else {
-    run % "https://www.google.com/search?q=" . text
+    run % "https://www.google.com/search?q=" . EncodeDecodeURI(text)
   }
 return
 
@@ -147,24 +147,24 @@ Return
 
 YouGlish:
   term := trim(Copy())
-  gui, YouGlish:Add, Text,, &Term:
-  gui, YouGlish:Add, Edit, vTerm w136 r1 -WantReturn, % term
-  gui, YouGlish:Add, Text,, &Language:
+  Gui, YouGlish:Add, Text,, &Term:
+  Gui, YouGlish:Add, Edit, vTerm w136 r1 -WantReturn, % term
+  Gui, YouGlish:Add, Text,, &Language:
   list := "English||Spanish|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|American Sign Language"
-  gui, YouGlish:Add, Combobox, vLanguage gAutoComplete w136, % list
-  gui, YouGlish:Add, Button, default, &Search
-  gui, YouGlish:Show,, YouGlish
+  Gui, YouGlish:Add, Combobox, vLanguage gAutoComplete w136, % list
+  Gui, YouGlish:Add, Button, default, &Search
+  Gui, YouGlish:Show,, YouGlish
 Return
 
 YouGlishGuiEscape:
 YouGlishGuiClose:
-  gui destroy
+  Gui destroy
 return
 
 YouGlishButtonSearch:
-  gui submit
-  gui destroy
+  Gui submit
+  Gui destroy
   if (language == "American Sign Language")
     language := "signlanguage"
   run % "https://youglish.com/pronounce/" . term . "/" . StrLower(language) . "?"
@@ -177,24 +177,24 @@ return
 
 DefineGoogle:
   term := trim(Copy())
-  gui, GoogleDefine:Add, Text,, &Term:
-  gui, GoogleDefine:Add, Edit, vTerm w136 r1 -WantReturn, % term
-  gui, GoogleDefine:Add, Text,, &Language Code:
+  Gui, GoogleDefine:Add, Text,, &Term:
+  Gui, GoogleDefine:Add, Edit, vTerm w136 r1 -WantReturn, % term
+  Gui, GoogleDefine:Add, Text,, &Language Code:
   list := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
-  gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete w136, % list
-  gui, GoogleDefine:Add, Button, default, &Search
-  gui, GoogleDefine:Show,, Google Define
+  Gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete w136, % list
+  Gui, GoogleDefine:Add, Button, default, &Search
+  Gui, GoogleDefine:Show,, Google Define
   SetDefaultKeyboard(0x0409)  ; English-US
 Return
 
 GoogleDefineGuiEscape:
 GoogleDefineGuiClose:
-  gui destroy
+  Gui destroy
 return
 
 GoogleDefineButtonSearch:
-  gui submit
-  gui destroy
+  Gui submit
+  Gui destroy
   if (LangCode) {
     run % "https://www.google.com/search?hl=" . LangCode . "&q=" . term
         . "&forcedict=" . term . "&dictcorpus=" . LangCode . "&expnd=1"
@@ -224,24 +224,24 @@ return
 
 Wiktionary:
   term := trim(Copy())
-  gui, Wiktionary:Add, Text,, &Term:
-  gui, Wiktionary:Add, Edit, vTerm w136 r1 -WantReturn, % term
-  gui, Wiktionary:Add, Text,, &Language:
+  Gui, Wiktionary:Add, Text,, &Term:
+  Gui, Wiktionary:Add, Edit, vTerm w136 r1 -WantReturn, % term
+  Gui, Wiktionary:Add, Text,, &Language:
   list := "Spanish||English|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|Latin|Ancient Greek|Chinese"
-  gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete w136, % list
-  gui, Wiktionary:Add, Button, default, &Search
-  gui, Wiktionary:Show,, Wiktionary
+  Gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete w136, % list
+  Gui, Wiktionary:Add, Button, default, &Search
+  Gui, Wiktionary:Show,, Wiktionary
 return
 
 WiktionaryGuiEscape:
 WiktionaryGuiClose:
-  gui destroy
+  Gui destroy
 return
 
 WiktionaryButtonSearch:
-  gui submit
-  gui destroy
+  Gui submit
+  Gui destroy
   if (language == "Ancient Greek")
     language := "Ancient_Greek"
   if (language == "Latin") {
@@ -255,8 +255,7 @@ WiktionaryButtonSearch:
 return
 
 CopyTitle:
-  Clipboard := title := WinGetTitle()
-  ToolTip("Copied " . title)
+  Clipboard := WinGetTitle(), ToolTip("Copied " . Clipboard)
 return
 
 CopyHTML:
@@ -393,8 +392,8 @@ return
 
 CopyPosition:
   WinGetPos, x, y, w, h, A
-  Clipboard := pos := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h
-  ToolTip("Copied " . pos)
+  Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h
+  ToolTip("Copied " . Clipboard)
 return
 
 MassReplaceRegistry:
@@ -467,7 +466,7 @@ ReformatVocab:
   def := SubStr(data, 1, SynPos - 1)
   SynAndAnt := SubStr(data, SynPos)
   SynAndAnt := StrReplace(SynAndAnt, "; ", ", ")
-  SynAndAnt := RegExReplace(SynAndAnt, "(<BR>)?((Similar:?)<BR>|Synonyms ?(\r\n)?(<\/P>\r\n<P>|<BR>))", "<P>syn: ")
+  SynAndAnt := RegExReplace(SynAndAnt, "(<BR>)?(\r\n)?((Similar:?)<BR>|Synonyms ?(\r\n)?(<\/P>\r\n<P>|<BR>))", "<P>syn: ")
   SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?|Opuesta)<BR>", "ant: ")
   WinClip.Paste(def . SynAndAnt,, false)
   send ^a^+1
@@ -490,7 +489,11 @@ ZLibrary:
   uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Message' AND AutomationId='editable-message-text'") ; SetValue(text) doesn't work
   send {tab}
   send % "{text}" . text
-  uiaBrowser.FindFirstBy("ControlType=Button AND Name='Send Message'").Click()
+  if (uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='waiting for network'",,,, 2000)) {
+    uiaBrowser.FindFirstBy("ControlType=Button AND Name='Send Message'").Click()
+  } else {
+    ToolTip("Timed out.")
+  }
 return
 
 ImportFirstFile:
@@ -570,4 +573,12 @@ return
 
 WatchLaterYT:
   run https://www.youtube.com/playlist?list=WL
+return
+
+ShowReference:
+  Send !{F10}fs
+Return
+
+GetInfoFromContextMenu:
+  run % A_ScriptDir . "\lib\util\Get Info from Context Menu.ahk"
 return

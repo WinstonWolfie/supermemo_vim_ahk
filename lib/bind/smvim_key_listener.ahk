@@ -37,8 +37,7 @@ capslock::
       return
     v := aHints[ArrayIndex]
     if (HinterMode == "YankLink") {
-      Clipboard := v.Link
-      ToolTip("Copied " . v.Link)
+      Clipboard := v.Link, ToolTip("Copied " . v.Link)
     } else if (IfIn(HinterMode, "Visual,Normal")) {
       IE2 := ControlGet(,, "Internet Explorer_Server2")
       IE1 := ControlGet(,, "Internet Explorer_Server1")
@@ -61,9 +60,9 @@ capslock::
       if (HinterMode == "Visual")
         send {right}{left}^+{right}
     } else {
-      if (!Vim.SM.RunLink(v.Link, OpenInIE))
+      if (e := !Vim.SM.RunLink(v.Link, OpenInIE))
         ToolTip("An error occured when running " . v.Link)
-      if (IfContains(HinterMode, "Persistent,OpenLinkInNew")) {
+      if (!e && IfContains(HinterMode, "Persistent,OpenLinkInNew")) {
         WinWaitNotActive, ahk_class TElWind
         WinActivate, ahk_class TElWind
       }

@@ -23,8 +23,7 @@ return
 +z::Vim.State.SetMode("Z")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::
-  send ^s
-  send !{F4}
+  send ^s!{F4}
   Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -37,15 +36,14 @@ Return
 ; Period
 ; .::send +^{Right}{BS}^v  ; original vim_ahk; no idea what that means
 .::
-  Vim.State.n := Vim.Move.LastN
-  Vim.State.Mode := Vim.Move.LastMode
+  Vim.State.n := Vim.Move.LastN, Vim.State.Mode := Vim.Move.LastMode
   if (Vim.Move.LastFtsChar)
     Vim.State.FtsChar := Vim.Move.LastFtsChar
   if (Vim.Move.LastInOrOut == "Inner") {
     Vim.Move.Inner(Vim.Move.LastKey)
   } else if (Vim.Move.LastInOrOut == "Outer") {
     Vim.Move.Outer(Vim.Move.LastKey)
-  } else if (Vim.Move.LastRepeat == true) {
+  } else if (Vim.Move.LastRepeat) {
     Vim.Move.Repeat(Vim.Move.LastKey)
   } else {
     Vim.Move.Move(Vim.Move.LastKey)

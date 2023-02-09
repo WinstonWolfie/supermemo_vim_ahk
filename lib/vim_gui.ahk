@@ -8,21 +8,21 @@ class VimGui {
 
   ShowGui() {
     if (this.hwnd == 0) {
-      gui, New, +HwndGuiHwnd
+      Gui, New, +HwndGuiHwnd
       this.Hwnd := GuiHwnd
       this.HwndAll.Push(GuiHwnd)
       this.MakeGui()
-      gui, % this.Hwnd ":Show", , % this.Title
+      Gui, % this.Hwnd ":Show", , % this.Title
       OnMessage(0x112, ObjBindMethod(this, "OnClose"))
       OnMessage(0x100, ObjBindMethod(this, "OnEscape"))
     }
     this.UpdateGui()
-    gui, % this.Hwnd ":Show", , % this.Title
+    Gui, % this.Hwnd ":Show", , % this.Title
     Return
   }
 
   MakeGui() {
-    gui, % this.Hwnd ":Add", Button, +HwndOK X200 W100 Default, &OK
+    Gui, % this.Hwnd ":Add", Button, +HwndOK X200 W100 Default, &OK
     this.HwndAll.Push(OK)
     ok := ObjBindMethod(this, "OK")
     GuiControl, +G, % OK, % ok
@@ -33,7 +33,7 @@ class VimGui {
 
   Hide() {
     this.Vim.VimToolTip.RemoveToolTip()
-    gui, % this.Hwnd ":Hide"
+    Gui, % this.Hwnd ":Hide"
   }
 
   OK() {

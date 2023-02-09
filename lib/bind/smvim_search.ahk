@@ -37,30 +37,30 @@ CapsLock & /::
     send ^{Home}
   CurrFocus := ControlGetFocus("ahk_class TElWind")
   if (AltState) {
-    gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
+    Gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
   } else if (ShiftState) {
-    gui, Search:Add, Text,, &Find text:`n(will go to visual mode after the search)
+    Gui, Search:Add, Text,, &Find text:`n(will go to visual mode after the search)
   } else {
-    gui, Search:Add, Text,, &Find text:
+    Gui, Search:Add, Text,, &Find text:
   }
-  gui, Search:Add, Edit, vUserInput w196 r1 -WantReturn, % VimLastSearch
-  gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
+  Gui, Search:Add, Edit, vUserInput w196 r1 -WantReturn, % VimLastSearch
+  Gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
   if (AltState) {
-    gui, Search:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), S&tay in clozed item
-    gui, Search:Add, CheckBox, % "vShiftState " . (ShiftState ? "checked" : ""), Cloze &hinter
+    Gui, Search:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), S&tay in clozed item
+    Gui, Search:Add, CheckBox, % "vShiftState " . (ShiftState ? "checked" : ""), Cloze &hinter
   }
-  gui, Search:Add, Button, default, &Search
-  gui, Search:Show,, Search
+  Gui, Search:Add, Button, default, &Search
+  Gui, Search:Show,, Search
 return
 
 SearchGuiEscape:
 SearchGuiClose:
-  gui destroy
+  Gui destroy
 return
 
 SearchButtonSearch:
-  gui submit
-  gui destroy
+  Gui submit
+  Gui destroy
   if (!UserInput)
     Return
   VimLastSearch := UserInput  ; register UserInput into VimLastSearch
@@ -74,16 +74,14 @@ SMSearchAgain:
     if (A_ThisLabel != "SMSearchAgain") {
       if (Vim.State.n)
         Vim.State.n--
-      n := Vim.State.n ? Vim.State.n : 0
-      Vim.State.n := 0
+      n := Vim.State.n ? Vim.State.n : 0, Vim.State.n := 0
     }
     if (WholeWord) {
       match := "s)(\b(" . UserInput . ")\b.*?){" . n . "}\K\b" . UserInput . "\b"
     } else {
       match := "s)((" . UserInput . ").*?){" . n . "}\K" . UserInput
     }
-    selection := Vim.ParseLineBreaks(Copy())
-    pos := RegExMatch(selection, match)
+    pos := RegExMatch(selection := Vim.ParseLineBreaks(Copy()), match)
     if (pos == 1) {
       if (WholeWord) {
         match := "s)(\b(" . UserInput . ")\b.*?){" . n + 1 . "}\K\b" . UserInput . "\b"
@@ -93,8 +91,7 @@ SMSearchAgain:
       pos := RegExMatch(selection, match)
     }
     if (pos) {
-      pos--
-      send % "{left}{right " . pos . "}"
+      send % "{left}{right " . pos-- . "}"
       InputLen := StrLen(UserInput)
       if (RShiftState) {
         send % "{right " . InputLen . "}"
@@ -121,8 +118,7 @@ SMSearchAgain:
     if (!Vim.SM.HandleF3(1))
       return
     ; Left spaces need to be trimmed otherwise SM might eat the spaces in text
-    UserInput := LTrim(UserInput)
-    ControlSetText, TEdit1, % UserInput, ahk_class TMyFindDlg
+    ControlSetText, TEdit1, % LTrim(UserInput), ahk_class TMyFindDlg
     if (WholeWord)
       Control, Check,, TCheckBox2, ahk_class TMyFindDlg  ; match whole word
     Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
@@ -155,6 +151,11 @@ SMSearchAgain:
       } else if (CtrlState) {
         gosub ClozeStay
       }
+    } else {
+      if (!CtrlState && !ShiftState && !CapsState)
+        send {down}{up}
+      loop 4
+        SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A  ; scroll down
     }
   }
 return

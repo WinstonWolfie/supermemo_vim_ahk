@@ -1,6 +1,5 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 .::  ; selected text becomes [...]
-  KeyWait ctrl
   copy(false)
   if (Vim.SM.IsEditingHTML()) {
     clip("<span class=""Cloze"">[...]</span>",,, "sm")
@@ -22,25 +21,25 @@ return
 !a::  ; p*a*rse html
   Vim.State.SetMode("Vim_Normal")
   SetDefaultKeyboard(0x0409)  ; English-US
-  gui, HTMLTag:Add, Text,, &HTML tag:
+  Gui, HTMLTag:Add, Text,, &HTML tag:
   list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
         . "|sup|blockquote|ruby|hint|note|ignore|headers|RefText|reference|highlight"
         . "|SearchHighlight|TableLabel|AntiMerge"
-  gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
-  gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
-  gui, HTMLTag:Add, Button, default, &Add
+  Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
+  Gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
+  Gui, HTMLTag:Add, Button, default, &Add
   KeyWait alt
-  gui, HTMLTag:Show,, Add HTML Tag
+  Gui, HTMLTag:Show,, Add HTML Tag
 Return
 
 HTMLTagGuiEscape:
 HTMLTagGuiClose:
-  gui destroy
+  Gui destroy
 return
 
 HTMLTagButtonAdd:
-  gui submit
-  gui destroy
+  Gui submit
+  Gui destroy
   ClipSaved := ClipboardAll
   WinActivate, ahk_class TElWind
   if (!copy(false))
@@ -78,21 +77,21 @@ q::  ; extract (*q*uote)
 return
 
 +h::  ; move to top of screen
-  send {ShiftDown}
+  send {shift down}
   Vim.SM.ClickTop()
-  send {ShiftUp}
+  send {shift up}
 Return
 
 +m::  ; move to middle of screen
-  send {ShiftDown}
+  send {shift down}
   Vim.SM.ClickMid()
-  send {ShiftUp}
+  send {shift up}
 Return
 
 +l::  ; move to bottom of screen
-  send {ShiftDown}
+  send {shift down}
   Vim.SM.ClickBottom()
-  send {ShiftUp}
+  send {shift up}
 Return
 
 ExtractStay:
@@ -100,7 +99,7 @@ ExtractStay:
 ^!x::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 ^q::  ; extract (*q*uote)
-  KeyWait ctrl
+  send {Blind}{CtrlUp}
   send !x
   Vim.SM.WaitExtractProcessing()
   send !{left}
@@ -122,12 +121,11 @@ ClozeStay:
 ^!z::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 ^z::
-  KeyWait ctrl
+  send {Blind}{CtrlUp}
   send !z
   Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
-    return
-  send !{left}
+  if (Vim.SM.WaitClozeProcessing() != -1)  ; warning on trying to cloze on items
+    send !{left}
 Return
 
 ~!t::
@@ -140,68 +138,67 @@ ClozeHinter:
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 ^+z::
 +z::  ; cloze hinter
-  if (ClozeHinterCtrlState && A_ThisLabel == "ClozeHinter") {  ; from cloze hinter label and ctrl is down
+  if (ClozeHinterCtrlState && (A_ThisLabel == "ClozeHinter")) {  ; from cloze hinter label and ctrl is down
     CtrlState := 1, ClozeHinterCtrlState := 0
   } else {
     CtrlState := IfContains(A_ThisHotkey, "^")
   }
-  KeyWait ctrl
-  KeyWait shift
+  Send {Blind}{CtrlUp}{Shift Up}
   if (!InitText := Copy())
     return
   CurrFocus := ControlGetFocus("ahk_class TElWind"), inside := true
-  if (InitText ~= "^(more|less)$") {
+  if (InitText ~= "i)^(more|less)$") {
     InitText := "more/less"
-  } else if (InitText ~= "^(faster|slower)$") {
+  } else if (InitText ~= "i)^(faster|slower)$") {
     InitText := "faster/slower"
-  } else if (InitText ~= "^(fast|slow)$") {
+  } else if (InitText ~= "i)^(fast|slow)$") {
     InitText := "fast/slow"
-  } else if (InitText ~= "^(higher|lower)$") {
+  } else if (InitText ~= "i)^(higher|lower)$") {
     InitText := "higher/lower"
-  } else if (InitText ~= "^(high|low)$") {
+  } else if (InitText ~= "i)^(high|low)$") {
     InitText := "high/low"
-  } else if (InitText ~= "^(increased|decreased)$") {
+  } else if (InitText ~= "i)^(increased|decreased)$") {
     InitText := "increased/decreased"
-  } else if (InitText ~= "^(increases|decreases)$") {
+  } else if (InitText ~= "i)^(increases|decreases)$") {
     InitText := "increases/decreases"
-  } else if (InitText ~= "^(increase|decrease)$") {
+  } else if (InitText ~= "i)^(increase|decrease)$") {
     InitText := "increase/decrease"
-  } else if (InitText ~= "^(reduced)$") {
+  } else if (InitText ~= "i)^(reduced)$") {
     InitText := "increased/reduced"
-  } else if (InitText ~= "^(reduces)$") {
+  } else if (InitText ~= "i)^(reduces)$") {
     InitText := "increases/reduces"
-  } else if (InitText ~= "^(reduce)$") {
+  } else if (InitText ~= "i)^(reduce)$") {
     InitText := "increase/reduce"
-  } else if (InitText ~= "^(positive|negative)$") {
+  } else if (InitText ~= "i)^(positive|negative)$") {
     InitText := "positive/negative"
-  } else if (InitText ~= "^(acidic|alkaline)$") {
+  } else if (InitText ~= "i)^(acidic|alkaline)$") {
     InitText := "acidic/alkaline"
-  } else if (InitText ~= "^(same|different)$") {
+  } else if (InitText ~= "i)^(same|different)$") {
     InitText := "same/different"
-  } else if (InitText ~= "^(inside|outside)$") {
+  } else if (InitText ~= "i)^(inside|outside)$") {
     InitText := "inside/outside"
   } else if (!IfContains(InitText, "/")) {
     inside := false
   }
-  gui, ClozeHinter:Add, Text,, &Hint:
-  gui, ClozeHinter:Add, Edit, vHint w196 r1 -WantReturn, % InitText
-  gui, ClozeHinter:Add, CheckBox, % "vInside " . (inside ? "checked" : ""), &Inside square brackets
-  gui, ClozeHinter:Add, CheckBox, vFullWidthParen, Use &fullwidth parentheses
-  gui, ClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
-  gui, ClozeHinter:Add, Button, default, Clo&ze
-  gui, ClozeHinter:Show,, Cloze Hinter
+  Gui, ClozeHinter:Add, Text,, &Hint:
+  Gui, ClozeHinter:Add, Edit, vHint w196 r1 -WantReturn, % InitText
+  Gui, ClozeHinter:Add, CheckBox, % "vInside " . (inside ? "checked" : ""), &Inside square brackets
+  Gui, ClozeHinter:Add, CheckBox, vFullWidthParen, Use &fullwidth parentheses
+  Gui, ClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
+  Gui, ClozeHinter:Add, Button, default, Clo&ze
+  Gui, ClozeHinter:Show,, Cloze Hinter
 Return
 
 ClozeHinterGuiEscape:
 ClozeHinterGuiClose:
-  gui destroy
+  Gui destroy
   Vim.State.SetMode("Vim_Normal")
 return
 
 ClozeHinterButtonCloze:
   KeyWait alt
-  gui submit
-  gui destroy
+  Gui submit
+  Gui destroy
   WinActivate, ahk_class TElWind
 ClozeNoBracket:
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind") && (CtrlState := GetKeyState("ctrl")))
@@ -228,7 +225,7 @@ CapsLock & z::  ; delete [...]
     return
   send !{left}
   Vim.SM.WaitFileLoad()
-  if (WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 100)) {
+  if (WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 200)) {
     if (!Vim.SM.SpamQ(, 1500))
       return
   } else {

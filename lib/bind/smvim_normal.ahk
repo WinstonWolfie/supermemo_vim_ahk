@@ -50,10 +50,9 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
     }
     if (CurrLink) {
       if (A_ThisHotkey == "u") {
-        Clipboard := CurrLink
-        ToolTip("Copied " . CurrLink)
+        Clipboard := CurrLink, ToolTip("Copied " . CurrLink)
       } else if (IfContains(A_ThisHotkey, "x")) {
-        vim.sm.runlink(currlink)
+        Vim.SM.RunLink(Currlink)
       }
     }
   }

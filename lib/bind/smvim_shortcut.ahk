@@ -1,30 +1,26 @@
 ﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
-  KeyWait ctrl
+  Send {Blind}{CtrlUp}
   Vim.SM.ExitText()
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
-  ; this is to make sure this finds in the question field
   if (Vim.SM.IsEditingPlainText()) {
     send ^a
-    pos := InStr(Copy(), "[...]")
-    if (pos) {
-      pos += 4
-      send % "{left}{right " . pos . "}"
+    if (pos := InStr(Copy(), "[...]")) {
+      send % "{left}{right " . pos + 4 . "}"
     } else {
       ToolTip("Not found.")
-      Vim.State.SetNormal()
-      Return
+      goto SetNormalReturn
     }
   } else if (Vim.SM.IsEditingHTML()) {
     if (!Vim.SM.HandleF3(1))
-      return
+      goto SetNormalReturn
     ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
     send {enter}
     WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
     send {right}  ; put caret on the right
     if (!Vim.SM.HandleF3(2))
-      return
+      goto SetNormalReturn
   }
   Vim.State.SetMode("Insert")
 return
@@ -45,9 +41,8 @@ return
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
   Vim.State.SetNormal()
+  send {Blind}{CtrlUp}{Shift Up}
   KeyWait alt
-  KeyWait ctrl
-  KeyWait shift
   if (IfContains(A_ThisHotkey, "\")) {
     send ^+{enter}
     WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
@@ -68,21 +63,15 @@ return
 return
 
 ^!+g::  ; change element's concept *g*roup
-  KeyWait Alt
-  KeyWait Shift
   Vim.State.SetMode("Insert")
   SetDefaultKeyboard(0x0409)  ; English-US
-  send ^+p
-  ; WinWaitActive, ahk_class TElParamDlg
-  send !g  ; focus to concept group
+  send {CtrlUp}{AltUp}^+p!g  ; focus to concept group
   Vim.State.BackToNormal := 1
 return
 
 ^!t::
-  KeyWait alt
-  KeyWait ctrl
   if (t := Vim.SM.IsEditingText())
-    send {right}  ; so no text is selected
+    send {CtrlUp}{AltUp}{right}  ; so no text is selected
   Vim.SM.SetTitle()
   if (t)
     ControlSend,, {esc}, ahk_class TElWind
@@ -99,15 +88,12 @@ return
 
 ~^enter::
   SetDefaultKeyboard(0x0409)  ; English-US
-  Vim.State.SetMode("Insert")
-  vim.state.BackToNormal := 1
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
 return
 
 ^!p::  ; convert to a *p*lain-text template
-  KeyWait alt
-  KeyWait ctrl
   ContLearn := Vim.SM.IsLearning()
-  send ^+p  ; much faster than ^+m
+  send {AltUp}{CtrlUp}^+p  ; much faster than ^+m
   WinWaitActive, ahk_class TElParamDlg
   send !t
   send {text}cl  ; my plain-text template name is classic
@@ -131,7 +117,7 @@ SMCtrlN:
     Vim.SM.WaitFileLoad()
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
-    KeyWait ctrl
+    ; KeyWait Ctrl
     send ^a{bs}{esc}
     Vim.SM.WaitTextExit()
     Clip(text,, false)
@@ -151,10 +137,10 @@ return
 ^!m::
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
-  if (!btn := el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'"))
-    return
-  btn.Click()
-  Vim.Caret.SwitchToSameWindow()  ; refresh caret
+  if (btn := el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'")) {
+    btn.Click()
+    Vim.Caret.SwitchToSameWindow()  ; refresh caret
+  }
 return
 
 ^!space::
@@ -174,7 +160,7 @@ return
 !+c::
   Vim.SM.EditFirstQuestion()
   send ^t{f9}
-  WinWaitActive, ahk_class TScriptEditor,, 0
+  WinWaitActive, ahk_class TScriptEditor,, 1.5
   if (ErrorLevel) {
     ToolTip("Script editor not found.")
     return
@@ -188,7 +174,7 @@ return
   }
   send {AltDown}oo{AltUp}
   ToolTip("Cloning successful.")
-  Vim.SM.Reload()
+  send {esc}
 return
 
 ; More intuitive inter-element linking, inspired by Obsidian
@@ -201,8 +187,7 @@ return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())
 ^!k::
-  link := ""
-  if (Clipboard ~= "^(https?:\/\/|file:\/\/\/)") {
+  if (link := IsUrl(Clipboard)) {
     link := Clipboard
   } else if (RegExMatch(Clipboard, "^#(\d+)", v)) {
     link := "SuperMemoElementNo=(" . v1 . ")"
@@ -224,9 +209,8 @@ return
   CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   ClipSaved := ClipboardAll
-  KeyWait Ctrl
+  Send {Blind}{CtrlUp}
   KeyWait Alt
-  KeyWait l
   if (!data := copy(false, true, 1))
     goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
@@ -286,8 +270,7 @@ return
     FileDelete % LatexPath
     Vim.State.SetMode("Vim_Visual")
   }
-  Clipboard := ClipSaved
-  RemoveToolTip()
+  Clipboard := ClipSaved, RemoveToolTip()
 return
 
 ProcessLatexFormula(LatexFormula) {
@@ -322,9 +305,7 @@ return
 !t::send !mlt  ; Totals
 
 ^!b::
-  KeyWait Ctrl
-  KeyWait alt
-  send !b
+  send {CtrlUp}{AltUp}!b
   WinWait, ahk_class TMsgDialog,, 0.25
   if (!ErrorLevel) {
     WinActivate
@@ -349,22 +330,22 @@ return
 
 !a::  ; insert/append activity
   SetDefaultKeyboard(0x0409)  ; English-US
-  gui, PlanAdd:Add, Text,, A&ctivity:
+  Gui, PlanAdd:Add, Text,, A&ctivity:
   list := "Break||Gaming|Coding|Sports|Social|Family|Passive|Meal|Rest"
         . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc|Out|Singing"
         . "|Calligraphy|Drawing|Movie|TV|VC"
-  gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
-  gui, PlanAdd:Add, Text,, &Time:
-  gui, PlanAdd:Add, Edit, vTime w110
-  gui, PlanAdd:Add, Button, default x10 w50 h24, &Insert
-  gui, PlanAdd:Add, Button, x+10 w50 h24, &Append
+  Gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
+  Gui, PlanAdd:Add, Text,, &Time:
+  Gui, PlanAdd:Add, Edit, vTime w110
+  Gui, PlanAdd:Add, Button, default x10 w50 h24, &Insert
+  Gui, PlanAdd:Add, Button, x+10 w50 h24, &Append
   KeyWait Alt
-  gui, PlanAdd:Show,, Add Activity
+  Gui, PlanAdd:Show,, Add Activity
 return
 
 PlanAddGuiEscape:
 PlanAddGuiClose:
-  gui destroy
+  Gui destroy
 return
 
 PlanAddButtonInsert:
@@ -374,8 +355,8 @@ PlanAddButtonAppend:
     aTime[2]++
   CurrTime := aTime[1] . ":" . aTime[2]
   KeyWait alt
-  gui submit
-  gui destroy
+  Gui submit
+  Gui destroy
   WinActivate, ahk_class TPlanDlg
   if (IfContains(A_ThisLabel, "Insert")) {
     send ^t  ; split
@@ -401,7 +382,7 @@ PlanAddButtonAppend:
   }
   send ^s
   if activity in Break,Sports,Out,Shower,Meal
-    run b  ; my personal backup script
+    try run b  ; my personal backup script
   Vim.State.SetNormal()
 return
 
@@ -468,7 +449,7 @@ return
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan())
-d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,,-1)
+d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,, -1)
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d"))
 d::
   BlockInput, on
@@ -533,7 +514,7 @@ p::
 return
 
 ; Incremental video
-#if (Vim.State.Vim.Enabled && ((WinActive("ahk_group Browser") && WinExist("ahk_class TElWind")) || WinActive("ahk_class TElWind")))
+#if (Vim.State.Vim.Enabled && (((WinActive("ahk_group Browser") || WinActive("ahk_class mpv")) && WinExist("ahk_class TElWind")) || WinActive("ahk_class TElWind")))
 ^!s::  ; sync time
 !+s::  ; sync time but browser tab stays open
 ^+!s::  ; sync time and keep learning
@@ -541,12 +522,14 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
-  sync := (A_ThisLabel == "BrowserSyncTime"), ResetTime := IfContains(A_ThisHotkey, "``")
+  sync := (A_ThisLabel == "BrowserSyncTime")
+  ResetTime := IfContains(A_ThisHotkey, "``")
+  CloseWnd := IfContains(A_ThisHotkey, "^")
+  wMpv := WinActive("ahk_class mpv")
   KeyWait alt
-  KeyWait ctrl
-  KeyWait shift
-  if (BrowserHwnd := WinActive("ahk_group Browser")) {
-    guiaBrowser := new UIA_Browser("ahk_id " . BrowserHwnd)
+  send {Blind}{CtrlUp}{Shift Up}
+  if (wBrowser := WinActive("ahk_group Browser")) {
+    guiaBrowser := new UIA_Browser("ahk_id " . wBrowser)
     send {esc}
     Vim.Browser.GetTitleSourceDate(!sync, false,, false)  ; get title for checking later
     ; SM uses "." instead of "..." in titles
@@ -556,18 +539,18 @@ BrowserSyncTime:
       MsgBox, 4,, Titles don't match. Continue?
       WinActivate % "ahk_id " . guiaBrowser.BrowserId
       IfMsgBox no
-        goto BrowserSyncReturn
+        goto SMSyncTimeReturn
     }
     if (!ResetTime) {
       if (!Vim.Browser.VidTime := Vim.Browser.GetVidtime(Vim.Browser.FullTitle)) {
         SetDefaultKeyboard(0x0409)  ; English-US
         if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
-          goto BrowserSyncReturn
+          goto SMSyncTimeReturn
       }
     }
     ; KeyWait enter  ; without this script may get stuck
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
-    if (IfContains(A_ThisHotkey, "^")) {  ; hotkeys with ctrl will close the tab
+    if (CloseWnd) {  ; hotkeys with ctrl will close the tab
       if (ObjCount(oTabs := guiaBrowser.GetAllTabs()) == 1) {
         guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1])
       } else {
@@ -577,21 +560,23 @@ BrowserSyncTime:
   } else if (!Vim.Browser.VidTime && !IfContains(A_ThisHotkey, "``")) {
     SetDefaultKeyboard(0x0409)  ; English-US
     if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
-      goto BrowserSyncReturn
+      goto SMSyncTimeReturn
   }
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
+  if (CloseWnd && wMpv)
+    ControlSend,, {shift down}q{shift up}, % "ahk_id " . wMpv
   WinActivate, ahk_class TElWind
 
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
-  if (!EditTitle := (BrowserHwnd && (vim.browser.IsVidSite(vim.browser.fullTitle) == 3))) {
+  if (!EditTitle := ((wBrowser && (vim.browser.IsVidSite(vim.browser.fullTitle) == 3)) || wMpv)) {
     Vim.SM.EditFirstQuestion()
     send ^t{f9}
     WinWaitActive, ahk_class TScriptEditor,, 1.5
     if (ErrorLevel) {
       ToolTip("Script editor not found.")
-      goto BrowserSyncReturn
+      goto SMSyncTimeReturn
     }
     ControlGetText, script, TMemo1, A
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
@@ -615,23 +600,16 @@ BrowserSyncTime:
   if (IfContains(A_ThisHotkey, "^+!"))
     Vim.SM.Learn(,, true)
   Vim.Browser.Clear()
-BrowserSyncReturn:
+SMSyncTimeReturn:
   if (sync)
     Clipboard := ClipSaved
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
                       && (title := WinGetTitle())
-                      && (RegExMatch(title, "(?<=^p)\d+", page) || epub := IfContains(title, " | ")))
-!s::
-  if (page) {
-    clip := page
-  } else if (epub) {
-    RegExMatch(title, ".+?(?= \|)", clip)
-  }
-  Clipboard := clip := trim(clip)
-  ToolTip("Copied " . clip)
-return
+                      && (RegExMatch(title, "(?<=^p)\d+(?= \|)", page)  ; e.g. p12 | title
+                       || RegExMatch(title, ".+?(?= \|)", clip)))  ; e.g. last reading point | title
+!s::Clipboard := trim(page ? page : clip), ToolTip("Copied " . Clipboard)
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm"))
 !p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window

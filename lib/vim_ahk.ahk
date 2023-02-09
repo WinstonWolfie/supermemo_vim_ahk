@@ -2,7 +2,6 @@
 #Include %A_LineFile%\..\util\vim_ahk_setting.ahk
 #Include %A_LineFile%\..\util\vim_ime.ahk
 #Include %A_LineFile%\..\util\Clip.ahk
-#Include %A_LineFile%\..\util\FindClick.ahk
 #Include %A_LineFile%\..\util\functions.ahk
 #Include %A_LineFile%\..\util\CbAutoComplete.ahk
 #Include %A_LineFile%\..\util\unicode.ahk

@@ -19,7 +19,7 @@
 
   IsSearchKey(key) {
     return (IfIn(key, "f,t,+f,+t,(,),s,+s,/,?,e")
-         || (key == "+g" && this.Vim.SM.IsEditingHTML()))
+         || ((key == "+g") && this.Vim.SM.IsEditingHTML()))
   }
 
   IsReplace() {
@@ -27,11 +27,11 @@
   }
   
   RestoreCopy() {
-    return (!this.Vim.State.StrIsInCurrentVimMode("Vim_ydc"))
+    return !this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")
   }
 
   RestoreClipLater() {
-    return (this.Vim.State.StrIsInCurrentVimMode("Vim_g"))
+    return this.Vim.State.StrIsInCurrentVimMode("Vim_g")
   }
 
   IsMotionOnly() {
@@ -39,21 +39,20 @@
   }
 
   IsActionKey(key) {
-    return (IfIn(key, "x,+x"))
+    return IfIn(key, "x,+x")
   }
 
   RegForDot(key) {
-    if ((!this.IsMotionOnly() || this.IsActionKey(key)) && A_ThisHotkey != ".") {
+    if (this.RegForDot := ((!this.IsMotionOnly() || this.IsActionKey(key))
+                           && (A_ThisHotkey != "."))) {
       this.LastInOrOut := this.LastRepeat := false
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
       this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
-      return true
     }
   }
 
   MoveInitialize(key:="", RestoreClip:=true) {
-    this.shift := this.ExistingSelection := this.clipped := 0
-    this.RegForDot(key)
+    this.shift := this.ExistingSelection := this.clipped := 0, this.RegForDot(key)
 
     if (this.IsSearchKey(key)) {
       this.SearchOccurrence := this.Vim.State.n ? this.Vim.State.n : 1
@@ -71,60 +70,53 @@
      || this.Vim.State.StrIsInCurrentVimMode("Vim_g")) {
       this.shift := 1
       if (!this.IsSearchKey(key) && !this.IsActionKey(key))
-        send {Shift Down}
+        send {shift down}
     }
 
-    if (this.Vim.State.IsCurrentVimMode("Vim_VisualLineFirst")) and (key == "k" or key == "^u" or key == "^b" or key == "g") {
-      ; send {Shift Up}{End}
-      ; this.Zero()
-      ; send {Shift Down}
-      ; this.Up()
+    if (this.Vim.State.IsCurrentVimMode("Vim_VisualLineFirst") && IfIn(key, "k,^u,^b,g")) {
       send {shift up}{right}{shift down}
       this.Zero()
       this.Vim.State.SetMode("Vim_VisualLine",, -1)  ; -1 is needed for repeat to work
     }
 
-    if (this.Vim.State.IsCurrentVimMode("Vim_VisualLineFirst")) and (key == "j" or key == "^d" or key == "^f" or key == "+g") {
+    if (this.Vim.State.IsCurrentVimMode("Vim_VisualLineFirst") && IfIn(key, "j,^d,^f,+g"))
       this.Vim.State.SetMode("Vim_VisualLine",, -1)  ; -1 is needed for repeat to work
-    }
 
-    if (this.Vim.State.IsCurrentVimMode("Vim_VisualParagraphFirst")) and (key == "k" or key == "^u" or key == "^b" or key == "g") {
-      send {Shift Up}{right}{left}{Shift Down}
+    if (this.Vim.State.IsCurrentVimMode("Vim_VisualParagraphFirst") && IfIn(key, "k,^u,^b,g")) {
+      send {shift up}{right}{left}{shift down}
       this.Up()
       this.Vim.State.SetMode("Vim_VisualParagraph",, -1)  ; -1 is needed for repeat to work
     }
 
-    if (this.Vim.State.IsCurrentVimMode("Vim_VisualParagraphFirst")) and (key == "j" or key == "^d" or key == "^f" or key == "+g") {
+    if (this.Vim.State.IsCurrentVimMode("Vim_VisualParagraphFirst") && IfIn(key, "j,^d,^f,+g"))
       this.Vim.State.SetMode("Vim_VisualParagraph",, -1)  ; -1 is needed for repeat to work
-    }
   
-    if (this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe")) {
-      send {alt down}
-    }
+    if (this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe"))
+      send {AltDown}
 
-    if (this.Vim.State.StrIsInCurrentVimMode("Vim_ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")) and (key == "k" or key == "^u" or key == "^b" or key == "g") {
+    if ((this.Vim.State.StrIsInCurrentVimMode("Vim_ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")) && IfIn(key, "k,^u,^b,g")) {
       this.Vim.State.LineCopy := 1
-      Send,{Shift Up}
+      send {shift up}
       this.Zero()
       this.Down()
-      send {Shift Down}
+      send {shift down}
       this.Up()
     }
   
-    if (this.Vim.State.StrIsInCurrentVimMode("Vim_ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")) and (key == "j" or key == "^d" or key == "^f" or key == "+g") {
+    if ((this.Vim.State.StrIsInCurrentVimMode("Vim_ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")) && IfIn(key, "j,^d,^f,+g")) {
       this.Vim.State.LineCopy := 1
-      Send,{Shift Up}
+      send {shift up}
       this.Zero()
-      send {Shift Down}
+      send {shift down}
       this.Down()
     }
 
     if (IfIn(key, "x,+x") && !this.Vim.IsNavigating())
-      this.Vim.State.SetMode("Vim_ydc_d",, -1,,,, -1)
+      this.Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,, -1)  ; LineCopy must be 0
   }
 
   MoveFinalize() {
-    Send {Shift Up}
+    Send {shift up}
     this.Vim.State.FtsChar := ""
     if (this.clipped) {
       Clipped := "Clipped"
@@ -198,17 +190,18 @@
   }
 
   Zero() {
+    if (this.Vim.SM.IsBrowsing()) {
+      if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
+        SendMessage, 0x114, 2, 0, Internet Explorer_Server2, A  ; scroll all the way to left
+      } else {
+        SendMessage, 0x114, 2, 0, Internet Explorer_Server1, A  ; scroll all the way to left
+      }
+      return
+    }
     if (WinActive("ahk_group VimDoubleHomeGroup")) {
       send {Home}
     } else if (WinActive("ahk_exe notepad++.exe")) {
       send {end}
-    } else if (this.Vim.SM.IsBrowsing()) {
-      if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
-        SendMessage, 0x114, 2, 0, Internet Explorer_Server2, A ; scroll all the way to left
-      } else {
-        SendMessage, 0x114, 2, 0, Internet Explorer_Server1, A ; scroll all the way to left
-      }
-      return
     }
     send {Home}
   }
@@ -301,25 +294,25 @@
 
       ; 1 character
       if (key == "h") {
-        if WinActive("ahk_group VimQdir") {
+        if (WinActive("ahk_group VimQdir")) {
           send {BackSpace down}{BackSpace up}
         } else if (this.Vim.SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
-            SendMessage, 0x114, 0, 0, Internet Explorer_Server2, A ; scroll left
+            SendMessage, 0x114, 0, 0, Internet Explorer_Server2, A  ; scroll left
           } else {
-            SendMessage, 0x114, 0, 0, Internet Explorer_Server1, A ; scroll left
+            SendMessage, 0x114, 0, 0, Internet Explorer_Server1, A  ; scroll left
           }
         } else {
           send {Left}
         }
       } else if (key == "l") {
-        if WinActive("ahk_group VimQdir") {
+        if (WinActive("ahk_group VimQdir")) {
           send {Enter}
         } else if (this.Vim.SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
-            SendMessage, 0x114, 1, 0, Internet Explorer_Server2, A ; scroll right
+            SendMessage, 0x114, 1, 0, Internet Explorer_Server2, A  ; scroll right
           } else {
-            SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A ; scroll right
+            SendMessage, 0x114, 1, 0, Internet Explorer_Server1, A  ; scroll right
           }
         } else {
           send {Right}
@@ -330,9 +323,9 @@
       } else if (key == "$") {
         if (this.Vim.SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
-            SendMessage, 0x114, 3, 0, Internet Explorer_Server2, A ; scroll all the way to right
+            SendMessage, 0x114, 3, 0, Internet Explorer_Server2, A  ; scroll all the way to right
           } else {
-            SendMessage, 0x114, 3, 0, Internet Explorer_Server1, A ; scroll all the way to right
+            SendMessage, 0x114, 3, 0, Internet Explorer_Server1, A  ; scroll all the way to right
           }
         } else if (this.shift == 1) {
           send +{End}
@@ -341,7 +334,7 @@
         }
       } else if (key == "^") {
         if (this.shift == 1) {
-          if WinActive("ahk_group VimCaretMove") {
+          if (WinActive("ahk_group VimCaretMove")) {
             send +{Home}
             send +^{Right}
             send +^{Left}
@@ -349,13 +342,13 @@
             send +{Home}
           }
         } else {
-          if WinActive("ahk_group VimCaretMove") {
+          if (WinActive("ahk_group VimCaretMove")) {
             send {home}
             send ^{Right}
             send ^{Left}
           } else {
             send {home}
-            if WinActive("ahk_exe notepad++.exe")
+            if (WinActive("ahk_exe notepad++.exe"))
               send {home}
           }
         }
@@ -1051,7 +1044,7 @@
           InputBoxPrompt := "Cloze" . InputBoxPrompt
         }
         InputBox, UserInput, Visual Search, % InputBoxPrompt,, 272, % InputBoxHeight,,,,, % this.LastSearch
-        if (!UserInput)
+        if (!UserInput || ErrorLevel)
           return
         this.LastSearch := UserInput  ; register UserInput into LastSearch
         WinActivate % "ahk_id " . hwnd
@@ -1104,7 +1097,7 @@
           InputBoxPrompt := "Cloze" . InputBoxPrompt
         }
         InputBox, UserInput, Visual Search, % InputBoxPrompt,, 272, % InputBoxHeight,,,,, % this.LastSearch
-        if (!UserInput)
+        if (!UserInput || ErrorLevel)
           return
         this.LastSearch := UserInput  ; register UserInput into LastSearch
         WinActivate % "ahk_id " . hwnd
@@ -1150,9 +1143,9 @@
     if (key == "j") {
       if (this.Vim.SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2")) {
-          SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A ; scroll down
+          SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
         } else {
-          SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A ; scroll down
+          SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A  ; scroll down
         }
       } else {
         this.Down()
@@ -1161,14 +1154,14 @@
       if (WinActive("ahk_exe WINWORD.exe")) {
         send {CtrlUp}{WheelDown}
       } else {
-        SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A ; scroll down
+        SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A  ; scroll down
       }
     } else if (key == "k") {
       if (this.Vim.SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2")) {
-          SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A ; scroll up
+          SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
         } else {
-          SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A ; scroll up
+          SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A  ; scroll up
         }
       } else {
         this.Up()
@@ -1177,18 +1170,18 @@
       if (WinActive("ahk_exe WINWORD.exe")) {
         send {CtrlUp}{WheelUp}
       } else {
-        SendMessage, 0x0115, 0, 0, % ControlGetFocus(), A
+        SendMessage, 0x0115, 0, 0, % ControlGetFocus(), A  ; scroll up
       }
     ; Page Up/Down
     n := 10
     } else if (key == "^u") {
       if (this.Vim.SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2")) {
-          SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A ; scroll up
-          SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A ; scroll up
+          SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
+          SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
         } else {
-          SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A ; scroll up
-          SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A ; scroll up
+          SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A  ; scroll up
+          SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A  ; scroll up
         }
       } else {
         this.Up(10)
@@ -1196,11 +1189,11 @@
     } else if (key == "^d") {
       if (this.Vim.SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2")) {
-          SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A ; scroll down
-          SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A ; scroll down
+          SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
+          SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
         } else {
-          SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A ; scroll down
-          SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A ; scroll down
+          SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A  ; scroll down
+          SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A  ; scroll down
         }
       } else {
         this.Down(10)
@@ -1318,7 +1311,7 @@
   Repeat(key:="", initialize:=true, finalize:=true) {
     if (initialize)
       this.MoveInitialize(key)
-    if (this.RegForDot(key))
+    if (this.RegForDot)
       this.LastRepeat := true
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
@@ -1335,7 +1328,7 @@
   YDCMove() {
     this.Vim.State.LineCopy := 1
     this.Zero()
-    send {Shift Down}
+    send {shift down}
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
     this.Down(this.Vim.State.n - 1)
@@ -1354,6 +1347,7 @@
   Inner(key:="") {
     global WinClip
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
+    KeyWait Shift
     if (key == "w") {
       send ^{right}^{left}
       this.Move("e",,, false)
@@ -1455,16 +1449,15 @@
         Clipboard := ClipSaved
       finalize := true
     }
-    this.RegForDot(key)
-    this.LastInOrOut := "Inner"
+    this.RegForDot(key), this.LastInOrOut := "Inner"
     if (finalize)
       this.MoveFinalize()
   }
 
   Outer(key:="") {
     global WinClip
-    if (Vim.State.StrIsInCurrentVimMode("Vim_ydc"))
-      RestoreClip := true
+    RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
+    KeyWait Shift
     if (key == "w") {
       send ^{right}^{left}^+{right}
       finalize := true
@@ -1542,8 +1535,7 @@
         Clipboard := ClipSaved
       finalize := true
     }
-    this.RegForDot(key)
-    this.LastInOrOut := "Outer"
+    this.RegForDot(key), this.LastInOrOut := "Outer"
     if (finalize)
       this.MoveFinalize()
   }

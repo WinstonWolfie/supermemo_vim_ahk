@@ -99,7 +99,8 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::  ; reload
-  ContLearn := (ContinueGrading := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning(), CurrTitle := WinGetTitle()
+  ContLearn := (ContinueGrading := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning()
+  CurrTitle := WinGetTitle()
   send !{home}
   if (ContLearn) {
     Vim.SM.Learn()
@@ -147,42 +148,44 @@ x::send {del}  ; delete element/component
 !f::
 +f::
 f::
+  Send {Blind}{CtrlUp}{Shift Up}
   KeyWait Alt
-  KeyWait Shift
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
+  y := false
+#if (Vim.IsVimGroup() && (y := Vim.State.IsCurrentVimMode("Vim_ydc_y")) && Vim.SM.IsBrowsing())
 f::
 v::
 c::
   Vim.State.SetNormal()
-  if (Vim.State.IsCurrentVimMode("Vim_ydc_y") && (A_ThisHotkey == "f")) {
-    HinterMode := "YankLink"
-  } else if (IfIn(A_ThisHotkey, "^!+f,!f")) {
-    HinterMode := "Persistent"
-  } else if (A_ThisHotkey == "v") {
-    HinterMode := "Visual"
-  } else if (A_ThisHotkey == "c") {
-    HinterMode := "Normal"
-  } else if (A_ThisHotkey == "+f") {
-    HinterMode := "OpenLinkInNew"
-  } else {
-    HinterMode := "OpenLink", OpenInIE := IfContains(A_ThisHotkey, "!+f")
-  }
-  UIA := UIA_Interface(), LearningState := Vim.SM.IsLearning()
   if (!hCtrl := ControlGet(,, Control := "Internet Explorer_Server2")) {
     if (!hCtrl := ControlGet(,, Control := "Internet Explorer_Server1"))
       return
   }
+  BlockInput, on
+  HinterMode := "OpenLink", OpenInIE := IfContains(A_ThisHotkey, "!+f")
+  if (y && (A_ThisHotkey == "f")) {
+    HinterMode := "YankLink"
+  } else if (IfIn(A_ThisHotkey, "^!+f,!f")) {
+    HinterMode := "Persistent"
+  } else if (y && (A_ThisHotkey == "v")) {
+    HinterMode := "Visual"
+  } else if (y && (A_ThisHotkey == "c")) {
+    HinterMode := "Normal"
+  } else if (A_ThisHotkey == "+f") {
+    HinterMode := "OpenLinkInNew"
+  }
+  UIA := UIA_Interface(), LearningState := Vim.SM.IsLearning()
   Caret := IfIn(A_ThisHotkey, "v,c"), Type := Caret ? "Text" : "Hyperlink"
   aHints := CreateHintsArray(Control, hCtrl, Type, Caret)
   if ((Control == "Internet Explorer_Server2") && (LearningState != 1)) {  ; so answer isn't revealed
     if (hCtrl := ControlGet(,, Control := "Internet Explorer_Server1"))
       aHints.Push(CreateHintsArray(Control, hCtrl, Type, Caret)*)
   }
-  if (!n := ObjCount(aHints))
-    return
-  Vim.State.SetMode("KeyListener")
-  ; aHintStrings is later used in key listener
-  CreateHints(aHints, aHintStrings := hintStrings(n))
+  if (n := ObjCount(aHints)) {
+    Vim.State.SetMode("KeyListener")
+    ; aHintStrings is later used in key listener
+    CreateHints(aHints, aHintStrings := hintStrings(n))
+  }
+  BlockInput, off
 return
 
 CreateHintsArray(Control, hCtrl, Type, Caret) {
@@ -192,13 +195,14 @@ CreateHintsArray(Control, hCtrl, Type, Caret) {
   el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)
   aHints := [], HintsIndex := 0
   for i, v in auiaHints {
-    if (!v.CurrentBoundingRectangle.l || (!Caret && !v.CurrentValue))  ; some hyperlinks don't have value
+    br := v.CurrentBoundingRectangle
+    if (!br.l || (!Caret && !v.CurrentValue))  ; some hyperlinks don't have value
       continue
-    found := i, pos := v.GetCurrentPos("screen"), HintsIndex++
+		HintsIndex++
     if (Caret) {
-      aHints[HintsIndex] := {x:pos.x, y:pos.y, Control:Control}
+      aHints[HintsIndex] := {x:br.l, y:br.t, Control:Control}
     } else {
-      aHints[HintsIndex] := {x:pos.x, y:pos.y, Link:v.CurrentValue}
+      aHints[HintsIndex] := {x:br.l, y:br.t, Link:v.CurrentValue}
     }
   }
   return aHints
@@ -214,7 +218,7 @@ CreateHintsArray(Control, hCtrl, Type, Caret) {
 ; Element navigation
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && ((Vim.SM.IsBrowsing())
+  && (Vim.SM.IsBrowsing()
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 !h::
 +h::send !{left}  ; go back in history
@@ -248,10 +252,10 @@ return
 ^o::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 o::
+  BlockInput, on
   SetDefaultKeyboard(0x0409)  ; English-US
   l := Vim.SM.IsLearning()
-  KeyWait ctrl
-  BlockInput, on
+  send {Blind}{CtrlUp}
   if (l == 1) {
     send !{home}
   } else if (l == 2) {
@@ -335,7 +339,4 @@ Return
   && WinActive("ahk_class TElWind"))
 \::
   Vim.SM.PostMsg(151)
-~^f3::
-  Vim.State.SetMode("Insert")
-  Vim.State.BackToNormal := 2
-Return
+~^f3::Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 2
