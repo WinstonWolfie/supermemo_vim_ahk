@@ -61,7 +61,7 @@ return
 SearchButtonSearch:
   Gui submit
   Gui destroy
-  if (!UserInput)
+  if (UserInput == "")
     Return
   VimLastSearch := UserInput  ; register UserInput into VimLastSearch
   ; Previously, UserInput is stored in Vim.Move.LastSearch, but it turned out this would add 000... in floating numbers
@@ -93,9 +93,7 @@ SMSearchAgain:
     if (pos) {
       send % "{left}{right " . pos-- . "}"
       InputLen := StrLen(UserInput)
-      if (RShiftState) {
-        send % "{right " . InputLen . "}"
-      } else if (ShiftState || AltState) {
+      if (ShiftState || AltState) {
         send % "+{right " . InputLen . "}"
         if (ShiftState) {
           Vim.State.SetMode("Vim_Visual")
@@ -127,11 +125,10 @@ SMSearchAgain:
       send % "{f3 " . Vim.State.n - 1 . "}"
       Vim.State.n := 0
     }
-    WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
-    if (!AltState) {
-      if (RShiftState) {
-        send {right}  ; put caret on right of searched text
-      } else if (ShiftState) {
+    WinWaitNotActive, ahk_class TMyFindDlg
+    WinWaitNotActive, ahk_class TElWind,, 0.3
+    if (!AltState && ErrorLevel) {
+      if (ShiftState) {
         Vim.State.SetMode("Vim_Visual")
       } else {  ; all modifier keys are not pressed
         send {left}  ; put caret on left of searched text
@@ -154,8 +151,8 @@ SMSearchAgain:
     } else {
       if (!CtrlState && !ShiftState && !CapsState)
         send {down}{up}
-      loop 4
-        SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A  ; scroll down
+      ; loop 4
+        ; SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A  ; scroll down
     }
   }
 return

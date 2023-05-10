@@ -15,10 +15,6 @@ Return
   Vim.SM.ClickBottom()
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
-^/::send {home}//{space}
-+!a::send /*  */{left 3}
-
 ; Editing HTML
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.leader)
 q::
@@ -50,7 +46,7 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
     }
     if (CurrLink) {
       if (A_ThisHotkey == "u") {
-        Clipboard := CurrLink, ToolTip("Copied " . CurrLink)
+        ToolTip("Copied " . Clipboard := CurrLink)
       } else if (IfContains(A_ThisHotkey, "x")) {
         Vim.SM.RunLink(Currlink)
       }
@@ -67,23 +63,30 @@ s::  ; gs: go to source
 f::  ; gf: open source file
 n::  ; gn: open in Notepad
   Vim.State.SetMode()
-  hwnd := WinGet(), ContLearn := Vim.SM.IsLearning()
+  hwnd := WinGet(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
   if (Notepad := IfIn(A_ThisHotkey, "^+f6,n")) {
     Vim.SM.ExitText(true)
     send ^{f7}
     send ^+{f6}
   } else {
-    path := Vim.SM.GetFilePath()
+    ClipSaved := ClipboardAll
+    path := Vim.SM.GetFilePath(false)
     SplitPath, path,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
       run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
     } else {
       send ^{f7}  ; save read point
-      path := Vim.SM.SaveHTML(, true)  ; path may be updated
+      ; Doesn't work
+      ; path := Vim.SM.SaveHTML(, true)  ; path may be updated
+      Vim.SM.SaveHTML(, true)  ; path may be updated
+      Vim.SM.ActivateElWind()
+      path := Vim.SM.GetFilePath(false)
       Vim.SM.ExitText(true)
       run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . path
     }
   }
+  if (ClipSaved)
+    Clipboard := ClipSaved
   WinWaitNotActive % "ahk_id " . hwnd
   WinWaitActive % "ahk_id " . hwnd
   if (Notepad) {
@@ -117,7 +120,7 @@ Return
    || Vim.SM.IsLearning()
    || Vim.SM.IsGrading()
    || (WinGet() == ImportGuiHwnd)
-   || (WinActive("Priority") && WinActive("ahk_class #32770"))
+   || (WinActive("Priority ahk_class #32770 ahk_exe AutoHotkey.exe"))
    || WinActive("ahk_class TPriorityDlg")))
 ; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg

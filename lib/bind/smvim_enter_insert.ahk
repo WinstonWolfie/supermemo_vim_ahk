@@ -14,15 +14,15 @@
   Vim.State.SetMode("Insert")
 return
 
-~^g::  ; element number
-  Vim.State.SetMode("Insert")
-  Vim.State.BackToNormal := 1
-return
-
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
 !n::  ; new topic
   Vim.SM.AltN()
   Vim.State.SetMode("Insert")
+return
+
+~^g::  ; element number
+  Vim.State.SetMode("Insert")
+  Vim.State.BackToNormal := 1
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.State.g)

@@ -25,8 +25,9 @@ class VimBrowser {
       url := RegExReplace(url, "\?.*")
     } else if (IfContains(url, "youtube.com/watch")) {
       url := StrReplace(url, "app=desktop&"), url := RegExReplace(url, "&.*")
-    } else if (IfContains(url, "bilibili.com/video")) {
+    } else if (IfContains(url, "bilibili.com")) {
       url := RegExReplace(url, "(\?(?!p=\d+)|&).*")
+      url := RegExReplace(url, "\/(?=\?p=\d+)")
     } else if (IfContains(url, "netflix.com/watch")) {
       url := RegExReplace(url, "\?trackId=.*")
     } else if (IfContains(url, "finance.yahoo.com")) {
@@ -38,13 +39,13 @@ class VimBrowser {
   }
 
   GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true, FullPageText:="", GetUrl:=true) {
-    this.FullTitle := this.FullTitle ? this.FullTitle : this.RemoveBrowserName(WinGetTitle())
+    this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
     this.Title := this.title ? this.title : this.FullTitle
     if (GetUrl)
       this.url := this.url ? this.url : this.GetParsedUrl()
 
     ; Sites that should be skipped
-    SkippedList := "mp.weixin.qq.com,wind.com.cn"
+    SkippedList := "mp.weixin.qq.com,wind.com.cn,thepokerbank.com"
     if (IfContains(this.Url, SkippedList)) {
       return
 
@@ -61,6 +62,10 @@ class VimBrowser {
       this.source := "italki", this.title := RegExReplace(this.title, "^italki - ")
     } else if (this.title ~= "^CSOP - Products - ") {
       this.source := "CSOP Asset Management", this.title := RegExReplace(this.title, "^CSOP - Products - ")
+    ; } else if (this.title ~= "^GitHub - ") {
+      ; this.source := "GitHub", this.title := RegExReplace(this.title, "^GitHub - ")
+    } else if (this.title ~= "^ArtStation - ") {
+      this.source := "ArtStation", this.title := RegExReplace(this.title, "^ArtStation - ")
 
     } else if (this.Title ~= "_百度知道$") {
       this.Source := "百度知道", this.Title := RegExReplace(this.Title, "_百度知道$")
@@ -88,17 +93,35 @@ class VimBrowser {
       this.source := "SuperDataScience", this.title := RegExReplace(this.title, " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$")
     } else if (this.title ~= " \| Definición \| Diccionario de la lengua española \| RAE - ASALE$") {
       this.source := "Diccionario de la lengua española | RAE - ASALE", this.title := RegExReplace(this.title, " \| Diccionario de la lengua española \| RAE - ASALE$")
+    } else if (this.title ~= " • Zettelkasten Method$") {
+      this.source := "Zettelkasten Method", this.title := RegExReplace(this.title, " • Zettelkasten Method$")
+    } else if (this.title ~= " on JSTOR$") {
+      this.source := "JSTOR", this.title := RegExReplace(this.title, " on JSTOR$")
+    } else if (this.title ~= " - Queensland Brain Institute - University of Queensland$") {
+      this.source := "Queensland Brain Institute - University of Queensland", this.title := RegExReplace(this.title, " - Queensland Brain Institute - University of Queensland$")
+    } else if (this.title ~= " \| BMC Neuroscience \| Full Text$") {
+      this.source := "BMC Neuroscience", this.title := RegExReplace(this.title, " \| BMC Neuroscience \| Full Text$")
+    } else if (this.title ~= " \| MIT News \| Massachusetts Institute of Technology$") {
+      this.source := "MIT News | Massachusetts Institute of Technology", this.title := RegExReplace(this.title, " \| MIT News \| Massachusetts Institute of Technology$")
+
+    } else if (this.title ~= " \/ Twitter$") {
+      this.source := "Twitter", this.title := RegExReplace(this.title, """ \/ Twitter$")
+      RegExMatch(this.title, "^(.*) on Twitter: """, v), this.author := v1
+      this.title := RegExReplace(this.title,  "^.* on Twitter: """)
+
+    } else if (RegExMatch(this.title, " \| by (.*?) \| ((.*?) \| )?Medium$", v)) {
+      this.source := "Medium", this.title := RegExReplace(this.title, " \| by .*? \| Medium$"), this.author := v1
 
     } else if (IfContains(this.Url, "reddit.com")) {
-      RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(Source, "r/") . "$")
+      RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(v, "r/") . "$")
 
     ; Sites that don't include source in the title
     } else if (IfContains(this.Url, "dailystoic.com")) {
       this.Source := "Daily Stoic"
     } else if (IfContains(this.Url, "healthline.com")) {
       this.Source := "Healthline"
-    } else if (IfContains(this.Url, "webmd.com")) {
-      this.Source := "WebMD"
+    ; } else if (IfContains(this.Url, "webmd.com")) {
+      ; this.Source := "WebMD"
     } else if (IfContains(this.Url, "medicalnewstoday.com")) {
       this.Source := "Medical News Today"
     } else if (IfContains(this.Url, "universityhealthnews.com")) {
@@ -117,8 +140,8 @@ class VimBrowser {
       this.source := "Vandal"
     } else if (IfContains(this.url, "fidelity.com")) {
       this.source := "Fidelity International"
-    } else if (IfContains(this.Url, "github.com")) {
-      this.source := "Github"
+    ; } else if (IfContains(this.Url, "github.com")) {
+      ; this.source := "GitHub"
     } else if (IfContains(this.Url, "eliteguias.com")) {
       this.source := "Eliteguias"
     } else if (IfContains(this.Url, "byjus.com")) {
@@ -129,6 +152,10 @@ class VimBrowser {
       this.source := "Beansprout"
     } else if (IfContains(this.Url, "researchgate.net")) {
       this.source := "ResearchGate"
+    } else if (IfContains(this.Url, "neuroscientificallychallenged.com")) {
+      this.source := "Neuroscientifically Challenged"
+    } else if (IfContains(this.Url, "bachvereniging.nl")) {
+      this.source := "Netherlands Bach Society"
 
     ; Sites that require special attention
     ; Video sites
@@ -144,6 +171,12 @@ class VimBrowser {
       this.Source := "哔哩哔哩", this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
       if (IfContains(this.url, "bilibili.com/video") && CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         this.VidTime := this.MatchVidTime(this.FullTitle), this.date := this.MatchBLDate(FullPageText), this.author := this.MatchBLAuthor(FullPageText)
+    } else if (this.title ~= "-bilibili-哔哩哔哩$") {
+      this.source := "哔哩哔哩", this.title := RegExReplace(this.title, "-bilibili-哔哩哔哩$")
+      if (this.title ~= "-纪录片-全集-高清独家在线观看$")
+        this.source .= "：纪录片", this.title := RegExReplace(this.title, "-纪录片-全集-高清独家在线观看$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText)
     } else if (this.title ~= " 在线播放 - 小宝影院 - 在线视频$") {
       this.Source := "小宝影院", this.Title := RegExReplace(this.Title, " 在线播放 - 小宝影院 - 在线视频$")
       if (CopyFullPage)
@@ -152,10 +185,20 @@ class VimBrowser {
       this.source := "唐人街影院", this.title := RegExReplace(this.title, "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$")
       if (CopyFullPage)
         this.VidTime := this.MatchVidTime(this.FullTitle)
+    } else if (RegExMatch(this.title, "^Watch (.*) HD online$", v)) {
+      this.source := "MoviesJoy", this.title := v1
+      if (RegExMatch(this.title, " (\d+)$", v))
+        this.date := v1, this.title := RegExReplace(this.title, " (\d+)$")
+      if (CopyFullPage)
+        this.VidTime := this.MatchVidTime(this.FullTitle)
 
     ; Wikipedia or wiki format websites
     } else if (this.title ~= " - supermemo\.guru$") {
       this.source := "SuperMemo Guru", this.title := RegExReplace(this.title, " - supermemo\.guru$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
+    } else if (this.title ~= " - SuperMemopedia$") {
+      this.source := "SuperMemopedia", this.title := RegExReplace(this.title, " - SuperMemopedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
     } else if (IfContains(this.url, "en.wikipedia.org")) {
@@ -174,16 +217,32 @@ class VimBrowser {
       this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia, la enciclopedia libre$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.date := v1
+    } else if (IfContains(this.url, "es.wiktionary.org")) {
+      this.Source := "Wikcionario", this.title := RegExReplace(this.title, " - Wikcionario, el diccionario libre$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.date := v1
+    } else if (IfContains(this.url, "it.wikipedia.org")) {
+      this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Questa pagina è stata modificata per l'ultima volta il (.*?) alle", v), this.date := v1
+    } else if (IfContains(this.url, "ja.wikipedia.org")) {
+      this.Source := "ウィキペディア", this.title := RegExReplace(this.title, " - Wikipedia$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "最終更新 (.*?) \(", v), this.date := v1
+    } else if (IfContains(this.url, "github.com")) {
+      this.Source := "GitHub", this.title := RegExReplace(this.title, "^GitHub - "), this.title := RegExReplace(this.title, " · GitHub$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Latest commit .*? on (.*)", v), this.date := v1
 
     ; Others
     } else if (this.Title ~= "_百度百科$") {
       this.Source := "百度百科", this.Title := RegExReplace(this.Title, "_百度百科$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "最近更新：.*（(.*)）", v), this.date := v1
-    } else if (IfContains(this.url, "zhihu.com")) {
+    } else if (IfContains(this.url, "zhuanlan.zhihu.com")) {
       this.Source := "知乎", this.title := RegExReplace(this.title, " - 知乎$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "编辑于 (.*?) ", v), this.date := v1
+        RegExMatch(FullPageText, "(编辑|发布)于 (.*?) ", v), this.date := v2
     } else if (this.Title ~= " \| The Economist$") {
       this.Source := "The Economist", this.title := RegExReplace(this.title, " \| The Economist$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -192,15 +251,19 @@ class VimBrowser {
       this.Source := "Investopedia"
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Updated (.*)", v), this.date := v1
+      
+    ; Special cases
+    } else if (this.title ~= " - YouTube$") {  ; for getting title for timestamp syncing with SM
+      this.source := "YouTube", this.title := RegExReplace(this.title, " - YouTube$")
 
     } else {
       ReversedTitle := StrReverse(this.Title)
       if (IfContains(ReversedTitle, " | ") && (!IfContains(ReversedTitle, " - ") || (InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - ")))) {
         separator := " | "
-      } else if (IfContains(ReversedTitle, " - ")) {
-        separator := " - "
       } else if (IfContains(ReversedTitle, " – ")) {
         separator := " – "  ; sites like BetterExplained
+      } else if (IfContains(ReversedTitle, " - ")) {
+        separator := " - "
       } else if (IfContains(ReversedTitle, " — ")) {
         separator := " — "
       } else if (IfContains(ReversedTitle, " -- ")) {
@@ -236,7 +299,7 @@ class VimBrowser {
   }
 
   GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
-    title := title ? title : this.RemoveBrowserName(WinGetTitle())
+    title := title ? title : this.GetFullTitle()
     if (this.IsVidSite(title))
       return this.MatchVidTime(title, FullPageText, RestoreClip)
   }
@@ -257,7 +320,7 @@ class VimBrowser {
   }
 
   MatchYTDate(text) {
-    RegExMatch(text, "views +?((Streamed live|Premiered) on )?\K\d+ \w+ \d+", v)
+    RegExMatch(text, "views +?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", v)
     return v
   }
 
@@ -267,17 +330,18 @@ class VimBrowser {
   }
 
   MatchBLDate(text) {
-    RegExMatch(text, " (.*?) \d{2}:\d{2}:\d{2}\r\n", v)
+    RegExMatch(text, "(.*) \d\d:\d\d:\d\d", v)
     return v1
   }
 
   MatchVidTime(title:="", FullPageText:="", RestoreClip:=true) {
-    title := title ? title : this.RemoveBrowserName(WinGetTitle())
+    title := title ? title : this.GetFullTitle()
     if (title ~= " - YouTube$") {
-      FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip)
-      RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
-      ; v1 = v2 means at end of video
-      VidTime := (v1 == v2) ? "0:00" : v1
+      if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip)) {
+        RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
+        ; v1 = v2 means at end of video
+        VidTime := (v1 == v2) ? "0:00" : v1
+      }
     } else if (IfIn(this.IsVidSite(title), "2,3")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
       VidTime := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
@@ -286,9 +350,9 @@ class VimBrowser {
   }
 
   RunInIE(url) {
-    wIE := "ahk_class IEFrame ahk_exe iexplore.exe"
     if ((url ~= "file:\/\/") && (url ~= "#.*"))
       url := RegExReplace(url, "#.*")
+    wIE := "ahk_class IEFrame ahk_exe iexplore.exe"
     if (!el := WinExist(wIE)) {
       ie := ComObjCreate("InternetExplorer.Application")
       ie.Visible := true
@@ -304,17 +368,17 @@ class VimBrowser {
     WinActivate, % wIE
   }
 
-  RemoveBrowserName(title) {
-    return RegExReplace(title, "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
+  GetFullTitle() {
+    return RegExReplace(WinGetTitle(), "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
   }
 
   IsVidSite(title:="") {
-    title := title ? title : this.RemoveBrowserName(WinGetTitle())
+    title := title ? title : this.GetFullTitle()
     if (title ~= " - YouTube$") {  ; video time can be in url and ^a covers the video time
       return 1
-    } else if (title ~= "_哔哩哔哩_bilibili$") {  ; video time can be in url but ^a doesn't cover video time
+    } else if (title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {  ; video time can be in url but ^a doesn't cover video time
       return 2
-    } else if (title ~= "( 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放|-555电影)$") {  ; video time can't be in url and ^a doesn't cover video time
+    } else if (title ~= "(^Watch .* HD online$|( 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放|-555电影| – NO视频| \| 91美剧网| \| FMovies)$)") {  ; video time can't be in url and ^a doesn't cover video time
       return 3
     }
   }

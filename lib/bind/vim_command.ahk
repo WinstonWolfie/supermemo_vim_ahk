@@ -43,17 +43,18 @@ Return
   hwnd := WinGet()
   Gui, VimCommander:Add, Text,, &Command:
 
-  list := "Plan||Wiktionary|Regex101|SearchWeb|YT|ScriptSettings|MoveMouseToCaret"
-        . "|LaTeX|WaybackMachine|DeepL|YouGlish|KillIE|DefineGoogle|WindowSpy"
-        . "|Bilibili|CopyTitle|CopyHTML|Forvo|Sci-Hub|AccViewer"
+  list := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
+        . "|WaybackMachine|DeepL|YouGlish|KillIE|DefineGoogle|WindowSpy"
+        . "|BingChat|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
-        . "|CopyPosition|ZLibrary|GetInfoFromContextMenu"
+        . "|CopyPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
+        . "|Bilibili"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
     if (WinActive("ahk_class TElWind")) {
-      list := "NukeHTML|ReformatVocab|ImportFirstFile|ShowReference|" . list
+      list := "NukeHTML|ReformatVocab|ImportFile|ShowReference|LinkToPreviousElement|" . list
       if (Vim.SM.IsPassive(, -1))
         list := "ReformatScriptComponent|SearchLinkInYT|" . list
       if (Vim.SM.IsEditingText())
@@ -67,7 +68,6 @@ Return
 
   Gui, VimCommander:Add, Combobox, vCommand gAutoComplete w144, % list
   Gui, VimCommander:Add, Button, default, &Execute
-  send {Blind}{CtrlUp}
   Gui, VimCommander:Show,, Vim Commander
   Gui, VimCommander:+HwndCommanderHwnd
 Return
@@ -105,11 +105,7 @@ WindowSpy:
   run C:\Program Files\AutoHotkey\WindowSpy.ahk
 return
 
-Regex101:
-  run https://regex101.com/
-return
-
-SearchWeb:
+WebSearch:
   if (!text := FindSearch("Google Search", "Enter your search."))
     return
   if (IsUrl(text)) {
@@ -128,21 +124,15 @@ MoveMouseToCaret:
   }
 return
 
-LaTeX:
-  run https://latex.vimsky.com/
-return
-
 WaybackMachine:
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  if (!url := FindSearch("Wayback Machine", "Enter your URL.", uiaBrowser.GetCurrentURL()))
-    return
-  run % "https://web.archive.org/web/*/" . url
+  if (url := FindSearch("Wayback Machine", "Enter your URL.", uiaBrowser.GetCurrentURL()))
+    run % "https://web.archive.org/web/*/" . url
 return
 
 DeepL:
-  if (!text := FindSearch("DeepL Translate", "Enter your text."))
-    return
-  run % "https://www.deepl.com/en/translator#?/en/" . text
+  if (text := FindSearch("DeepL Translate", "Enter your text."))
+    run % "https://www.deepl.com/en/translator#?/en/" . text
 Return
 
 YouGlish:
@@ -196,10 +186,13 @@ GoogleDefineButtonSearch:
   Gui submit
   Gui destroy
   if (LangCode) {
-    run % "https://www.google.com/search?hl=" . LangCode . "&q=" . term
-        . "&forcedict=" . term . "&dictcorpus=" . LangCode . "&expnd=1"
+    define := "define"
+    if (LangCode = "es")
+      define := "definir"
+    run % "https://www.google.com/search?hl=" . LangCode . "&q=" . define . " "
+        . term . "&forcedict=" . term . "&dictcorpus=" . LangCode . "&expnd=1"
   } else {
-    run % "https://www.google.com/search?q=define:" . term
+    run % "https://www.google.com/search?q=define " . term
   }
 return
 
@@ -255,7 +248,7 @@ WiktionaryButtonSearch:
 return
 
 CopyTitle:
-  Clipboard := WinGetTitle(), ToolTip("Copied " . Clipboard)
+  ToolTip("Copied " . Clipboard := WinGetTitle())
 return
 
 CopyHTML:
@@ -266,9 +259,8 @@ CopyHTML:
 return
 
 Forvo:
-  if (!term := FindSearch("Forvo", "Enter your search term."))
-    return
-  run % "http://forvo.com/search/" . term . "/"
+  if (term := FindSearch("Forvo", "Enter your search term."))
+    run % "http://forvo.com/search/" . term . "/"
 return
 
 SetConceptHook:
@@ -297,9 +289,8 @@ UIAViewer:
 return
 
 TranslateGoogle:
-  if (!text := FindSearch("Google Translate", "Enter your text."))
-    return
-  run % "https://translate.google.com/?sl=auto&tl=en&text=" . text . "&op=translate"
+  if (text := FindSearch("Google Translate", "Enter your text."))
+    run % "https://translate.google.com/?sl=auto&tl=en&text=" . text . "&op=translate"
 return
 
 ClearClipboard:
@@ -319,21 +310,18 @@ MemoriseCurrentBrowser:
 return
 
 Forcellini:
-  if (!term := FindSearch("Forcellini", "Enter your search term."))
-    return
-  run % "http://lexica.linguax.com/forc2.php?searchedLG=" . term
+  if (term := FindSearch("Forcellini", "Enter your search term."))
+    run % "http://lexica.linguax.com/forc2.php?searchedLG=" . term
 return
 
 RAE:
-  if (!term := FindSearch("RAE", "Enter your search term."))
-    return
-  run % "https://dle.rae.es/" . term . "?m=form"
+  if (term := FindSearch("RAE", "Enter your search term."))
+    run % "https://dle.rae.es/" . term . "?m=form"
 return
 
 OALD:
-  if (!term := FindSearch("Oxford Advanced Learner's Dictionary", "Enter your search term."))
-    return
-  run % "https://www.oxfordlearnersdictionaries.com/definition/english/" . term . "?q=" . term
+  if (term := FindSearch("Oxford Advanced Learner's Dictionary", "Enter your search term."))
+    run % "https://www.oxfordlearnersdictionaries.com/definition/english/" . term . "?q=" . term
 return
 
 AlatiusLatinMacronizer:
@@ -355,8 +343,6 @@ return
 ReformatScriptComponent:
   ClipSaved := ClipboardAll
   WinWaitActive, ahk_class TElWind
-  KeyWait alt
-  KeyWait enter
   if (ContLearn := Vim.SM.IsLearning())
     send !g
   Vim.SM.ExitText()
@@ -406,8 +392,7 @@ MassReplaceRegistry:
     Vim.SM.WaitFileLoad()
     Vim.SM.EditRef()
     WinWaitActive, ahk_class TInputDlg
-    ControlGetText, ref, TMemo1, A
-    if (IfContains(ref, find)) {
+    if (IfContains(ref := ControlGetText("TMemo1"), find)) {
       ControlSetText, TMemo1, % StrReplace(ref, find, replacement), A
     } else {
       return
@@ -426,26 +411,23 @@ SciHub:
     return
   if (RegExMatch(text, "https:\/\/doi\.org\/([^ ]+)", v)) {
     run % "https://sci-hub.hkvisa.net/" . v1
-    return
   ; https://www.crossref.org/blog/dois-and-matching-regular-expressions/
   } else if (RegExMatch(text, "i)10.\d{4,9}/[-._;()/:A-Z0-9]+", v)) {
     run % "https://sci-hub.hkvisa.net/" . v
-    return
+  } else {
+    run https://sci-hub.hkvisa.net/
+    WinWaitActive, ahk_group Browser
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    uiaBrowser.WaitPageLoad()
+    el := uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
+    el.GetCurrentPatternAs("Value").SetValue(text)
+    uiaBrowser.WaitElementExist("ControlType=Text AND Name='open'").Click()
   }
-  run https://sci-hub.hkvisa.net/
-  WinWaitActive, ahk_group Browser
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  uiaBrowser.WaitPageLoad()
-  el := uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
-  ValuePattern := el.GetCurrentPatternAs("Value")
-  ValuePattern.SetValue(text)
-  uiaBrowser.WaitElementExist("ControlType=Text AND Name='open'").Click()
 return
 
 YT:
-  if (!text := FindSearch("YouTube", "Enter your search."))
-    return
-  run % "https://www.youtube.com/results?search_query=" . text
+  if (text := FindSearch("YouTube", "Enter your search."))
+    run % "https://www.youtube.com/results?search_query=" . EncodeDecodeURI(text)
 return
 
 ; Personal: Reformat my old vocabulary items
@@ -478,25 +460,31 @@ ZLibrary:
     return
   ; RIP z-lib
   ; run https://z-lib.org/
-  run https://web.telegram.org/z/#1788460589
-  WinWaitActive, ahk_group Browser
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  uiaBrowser.WaitPageLoad()
+  run % "https://lib-rc5t5df46yl4ghwlnyuzt52y.mountain.pm/s/?q=" . text
+
+  ; Telegram
+  ; run https://web.telegram.org/z/#1788460589
+
+  ; WinWaitActive, ahk_group Browser
+  ; uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  ; uiaBrowser.WaitPageLoad()
+
   ; RIP z-lib
   ; url := uiaBrowser.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
   ; uiaBrowser.SetURL(url . "s/" . EncodeDecodeURI(search) . "?", true)
 
-  uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Message' AND AutomationId='editable-message-text'") ; SetValue(text) doesn't work
-  send {tab}
-  send % "{text}" . text
-  if (uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='waiting for network'",,,, 2000)) {
-    uiaBrowser.FindFirstBy("ControlType=Button AND Name='Send Message'").Click()
-  } else {
-    ToolTip("Timed out.")
-  }
+  ; Telegram
+  ; uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Message' AND AutomationId='editable-message-text'") ; SetValue(text) doesn't work
+  ; send {tab}
+  ; send % "{text}" . text
+  ; if (uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='waiting for network|updating'",, "regex",, 2000)) {
+  ;   uiaBrowser.FindFirstBy("ControlType=Button AND Name='Send Message'").Click()
+  ; } else {
+  ;   ToolTip("Timed out.")
+  ; }
 return
 
-ImportFirstFile:
+ImportFile:
   Vim.State.SetMode("Vim_Normal")
   send ^+p
   WinWaitActive, ahk_class TElParamDlg
@@ -522,6 +510,13 @@ ImportFirstFile:
   send {text}y  ; confirm to delete the file / confirm to keep the file
   WinWaitActive, ahk_class TElWind
   Vim.SM.Reload()
+  if ((!Prio := InputBox("Priority", "Enter extract priority.")) || ErrorLevel)
+    return
+  if (Prio) {
+    if (Prio ~= "^\.")
+      Prio := "0" . Prio
+    Vim.SM.SetPrio(Prio)
+  }
 return
 
 ScriptSettings:
@@ -529,27 +524,24 @@ ScriptSettings:
 return
 
 Bilibili:
-  if (!search := FindSearch("Bilibili", "Enter your search."))
-    return
-  run % "https://search.bilibili.com/all?keyword=" . search
+  if (search := FindSearch("Bilibili", "Enter your search."))
+    run % "https://search.bilibili.com/all?keyword=" . search
 return
 
 Libgen:
-  if (!search := FindSearch("Library Genesis", "Enter your search."))
-    return
-  run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
+  if (search := FindSearch("Library Genesis", "Enter your search."))
+    run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
 return
 
 ImageGoogle:
-  if (!search := FindSearch("Image (Google)", "Enter your search."))
-    return
-  run % "https://www.google.com/search?hl=en&tbm=isch&q=" . search
+  if (search := FindSearch("Image (Google)", "Enter your search."))
+    run % "https://www.google.com/search?hl=en&tbm=isch&q=" . search
 return
 
 SearchLinkInYT:
   if (!link := Vim.SM.GetLink()) {
-    vim.sm.EditFirstQuestion()
-    vim.sm.WaitTextFocus()
+    Vim.SM.EditFirstQuestion()
+    Vim.SM.WaitTextFocus()
     send ^{home}+{right}
     RegExMatch(copy(, true), "(<A((.|\r\n)*)href="")\K[^""]+", link)
     send {esc}
@@ -567,8 +559,9 @@ SearchLinkInYT:
         return
       }
     }
+  } else {
+    ToolTip("Not found.")
   }
-  ToolTip("Not found.")
 return
 
 WatchLaterYT:
@@ -581,4 +574,55 @@ Return
 
 GetInfoFromContextMenu:
   run % A_ScriptDir . "\lib\util\Get Info from Context Menu.ahk"
+return
+
+GenerateTimeString:
+  send % "{text}" . FormatTime(, "yyyyMMddHHmmss" . A_MSec)
+return
+
+BingChat:
+  ClipSaved := link := "", wEdge := WinActive("ahk_exe msedge.exe"), ext := ".htm"
+  if (WinActive("ahk_class TElWind")) {
+    if (Vim.SM.IsBrowsing()) {
+      link := Vim.SM.GetLink()
+    } else if (Vim.SM.IsEditingText()) {
+      link := Vim.SM.GetFilePath()
+    }
+  } else if (!wEdge && (w := WinActive("ahk_group Browser"))) {
+    uiaBrowser := new UIA_Browser("ahk_id " . w)
+    link := uiaBrowser.GetCurrentURL()
+  } else {
+    ClipSaved := ClipboardAll
+    if (!text := copy(false, true))
+      text := Clipboard, ext := ".txt"
+    if (text) {
+      CurrTime := FormatTime(, "yyyy-MM-dd_HH:mm:ss:" . A_MSec)
+      link := A_Temp . "\" . StrReplace(CurrTime, ":") . ext
+      FileDelete % link
+      FileAppend, % text, % link
+    }
+  }
+  if (text || !wEdge) {
+    run % "msedge.exe " . link
+    WinWaitActive, ahk_exe msedge.exe
+  }
+  UIA := UIA_Interface()
+  el := UIA.ElementFromHandle(WinExist("ahk_exe msedge.exe"))
+  el.WaitElementExist("ControlType=Button AND Name='^Discover'",, "regex").Click()
+  if (ClipSaved)
+    Clipboard := ClipSaved
+return 
+
+LinkToPreviousElement:
+  send !c
+  WinWaitActive, ahk_class TContents
+  WinActivate, ahk_class TElWind
+  send !{left}
+  Vim.SM.WaitFileLoad()
+  send !{f10}ci  ; link contents
+  WinWaitActive, ahk_class TContents
+  sleep 100
+  send {enter}
+  WinActivate, ahk_class TElWind
+  Goto, SMListLinks
 return

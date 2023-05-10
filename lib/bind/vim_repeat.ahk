@@ -1,4 +1,4 @@
-﻿#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.SM.IsGrading())
+﻿#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("Vim_") || Vim.State.IsCurrentVimMode("SMPlanDragging")) && !Vim.SM.IsGrading())
 1::
 2::
 3::

@@ -43,8 +43,8 @@
   }
 
   RegForDot(key) {
-    if (this.RegForDot := ((!this.IsMotionOnly() || this.IsActionKey(key))
-                           && (A_ThisHotkey != "."))) {
+    this.ReggedForDot := ((!this.IsMotionOnly() || this.IsActionKey(key)) && (A_ThisHotkey != "."))
+    if (this.ReggedForDot) {
       this.LastInOrOut := this.LastRepeat := false
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
       this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
@@ -52,7 +52,8 @@
   }
 
   MoveInitialize(key:="", RestoreClip:=true) {
-    this.shift := this.ExistingSelection := this.clipped := 0, this.RegForDot(key)
+    this.shift := this.ExistingSelection := this.clipped := 0
+    this.RegForDot(key)
 
     if (this.IsSearchKey(key)) {
       this.SearchOccurrence := this.Vim.State.n ? this.Vim.State.n : 1
@@ -128,8 +129,7 @@
     global WinClip
     if (!this.Vim.State.surround || !this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")) {
       if (ydc_y := this.Vim.State.StrIsInCurrentVimMode("ydc_y")) {
-        this.YdcClipSaved := copy(false)
-        this.Vim.State.SetMode("Vim_Normal")
+        this.YdcClipSaved := copy(false), this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_d")) {
         if (!this.vim.state.leader) {
           this.YdcClipSaved := copy(false,,, "^x")
@@ -168,8 +168,7 @@
         send !z
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltT")) {
-        this.Vim.SM.AltT()
-        this.Vim.State.SetMode("Vim_Normal")
+        this.Vim.SM.AltT(), this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltQ")) {
         Send !q
         WinWaitActive, ahk_class TChoicesDlg
@@ -179,12 +178,12 @@
     }
     this.Vim.State.SetMode("", 0, 0,,, -1)
     if (ydc_y)
-      send {Left}{Right}
+      send {Left}
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
     send {CtrlUp}
-    if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe"))
-      send {alt up}
+    if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe") && GetKeyState("Alt", "P"))
+      send {AltUp}
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner") || this.Vim.State.StrIsInCurrentVimMode("Outer"))
       this.vim.state.setmode("Vim_VisualChar",,,,, -1)
   }
@@ -768,24 +767,26 @@
             DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
             if (pos) {
-              pos += StrLen(StrBefore) + 1
-              a := InStr(DetectionStr, "`n")
-              b := StrLen(DetectionStr)
-              if (a == b - 1) {
-                pos -= 2
-                this.v := SubStr(this.v, 3)
-              ; } else if (a == b) {
-                ; pos--
-                ; this.v := SubStr(this.v, 2)
-              }
-              send % "{left}+{right " . pos . "}"
+              ; pos += StrLen(StrBefore) + 1
+              ; a := InStr(DetectionStr, "`n")
+              ; b := StrLen(DetectionStr)
+              ; if (a == b - 1) {
+              ;   pos -= 2
+              ;   this.v := SubStr(this.v, 3)
+              ; ; } else if (a == b) {
+              ;   ; pos--
+              ;   ; this.v := SubStr(this.v, 2)
+              ; }
+              right := pos + 1 + StrLen(StrBefore)
+              if (StrLen(DetectionStr) == pos + 2)  ; found at end of paragraph
+                right++
+              send % "{left}+{right " . right . "}"
             } else {
               send +{left}
             }
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {  ; search in selected text
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-            pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
-            right := pos
+            right := pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
             if (pos) {
               right++
               if (pos == 1) {
@@ -1151,8 +1152,12 @@
         this.Down()
       }
     } else if (key == "^e") {
-      if (WinActive("ahk_exe WINWORD.exe")) {
+      if (WinActive("ahk_group VimForceScroll")) {
+        ; if (c := A_CaretX)
+        ;   this.Vim.SM.MoveMouse(1, A_CaretX, A_CaretY)
         send {CtrlUp}{WheelDown}
+        ; if (c)
+        ;   this.Vim.SM.MoveMouse(2)
       } else {
         SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A  ; scroll down
       }
@@ -1167,13 +1172,16 @@
         this.Up()
       }
     } else if (key == "^y") {
-      if (WinActive("ahk_exe WINWORD.exe")) {
+      if (WinActive("ahk_group VimForceScroll")) {
+        ; if (c := A_CaretX)
+        ;   this.Vim.SM.MoveMouse(1, A_CaretX, A_CaretY)
         send {CtrlUp}{WheelUp}
+        ; if (c)
+        ;   this.Vim.SM.MoveMouse(2)
       } else {
         SendMessage, 0x0115, 0, 0, % ControlGetFocus(), A  ; scroll up
       }
     ; Page Up/Down
-    n := 10
     } else if (key == "^u") {
       if (this.Vim.SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2")) {
@@ -1204,15 +1212,14 @@
       send {PgDn}
     } else if (key == "g") {
       if (this.Vim.State.n > 0) {
-        line := this.Vim.State.n - 1, this.Vim.State.n := 0
-        if (this.Vim.SM.IsBrowsing()) {  ; browsing
+        if (this.Vim.SM.IsBrowsing()) {
           send ^t
           this.Vim.SM.WaitTextFocus()
         } else {
-          this.SMClickSyncButton()
+          this.HandleClickBtn()
         }
-        send % "^{home}{down " . line . "}"
-        this.SMClickSyncButton()
+        send % "^{home}{down " . this.Vim.State.n - 1 . "}"
+        this.Vim.State.n := 0, this.HandleClickBtn()
       } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2")) {
           SendMessage, 0x115, 6, 0, Internet Explorer_Server2, A  ; scroll to top
@@ -1224,19 +1231,18 @@
       }
     } else if (key == "+g") {
         if (this.Vim.State.n > 0) {
-          line := this.Vim.State.n - 1, this.Vim.State.n := 0
           KeyWait shift
-          if (this.Vim.SM.IsBrowsing()) {  ; browsing
+          if (this.Vim.SM.IsBrowsing()) {
             this.Vim.SM.ClickTop()
             this.Vim.SM.WaitTextFocus()
           } else if (this.Vim.SM.IsEditingText()) {
             this.Vim.SM.ClickTop()
           } else {
-            this.SMClickSyncButton()
+            this.HandleClickBtn()
             send ^{home}
           }
-          send % "{down " . line . "}"
-          this.SMClickSyncButton()
+          send % "{down " . this.Vim.State.n - 1 . "}"
+          this.Vim.State.n := 0, this.HandleClickBtn()
         } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2")) {
             SendMessage, 0x115, 7, 0, Internet Explorer_Server2, A  ; scroll to bottom
@@ -1311,16 +1317,16 @@
   Repeat(key:="", initialize:=true, finalize:=true) {
     if (initialize)
       this.MoveInitialize(key)
-    if (this.RegForDot)
+    if (this.ReggedForDot)
       this.LastRepeat := true
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
     if (IfIn(key, "j,k") && (this.Vim.State.n > 1))
-      this.SMClickSyncButton(), navigate := true
+      this.HandleClickBtn(), navigate := true
 		loop % this.Vim.State.n
 			this.Move(key, true)
     if (navigate)
-      this.SMClickSyncButton()
+      this.HandleClickBtn()
     if (finalize)
       this.MoveFinalize()
   }
@@ -1558,7 +1564,14 @@
   }
 
   FindPos(DetectionStr, text, Occurrence:=1) {
-    if (AltText := this.GetAltKey(text)) {
+    if (StrLen(text) == 2) {
+      AltText1 := this.GetAltKey(text1 := SubStr(text, 1, 1))
+      AltText2 := this.GetAltKey(text2 := SubStr(text, 2, 1))
+      text1 := AltText1 ? AltText1 : text1
+      text2 := AltText2 ? AltText2 : text2
+      regex := AltText := text1 . text2
+    }
+    if (regex || (AltText := this.GetAltKey(text))) {
       pos := RegExMatch(DetectionStr, "s)((" . AltText . ").*?){" . Occurrence - 1 . "}\K(" . AltText . ")")
     } else {
       pos := InStr(DetectionStr, text, true,, Occurrence)
@@ -1602,11 +1615,11 @@
     return pos
   }
 
-  SMClickSyncButton() {
+  HandleClickBtn() {
     if (WinActive("ahk_class TContents")) {
-      ClickDPIAdjusted(295, 50)
+      ControlClickWinCoordDPIAdjusted(295, 50)
     } else if (WinActive("ahk_class TBrowser")) {
-      ClickDPIAdjusted(638, 46)
+      ControlClickWinCoordDPIAdjusted(638, 46)
     }
   }
 
@@ -1635,6 +1648,8 @@
       ret := "\[|【"
     } else if (key == "]") {
       ret := "\]|】"
+    } else if (key == "-") {
+      ret := "-|—|–"
     }
     return ret
   }

@@ -37,7 +37,7 @@ capslock::
       return
     v := aHints[ArrayIndex]
     if (HinterMode == "YankLink") {
-      Clipboard := v.Link, ToolTip("Copied " . v.Link)
+      ToolTip("Copied " . Clipboard := v.Link)
     } else if (IfIn(HinterMode, "Visual,Normal")) {
       IE2 := ControlGet(,, "Internet Explorer_Server2")
       IE1 := ControlGet(,, "Internet Explorer_Server1")

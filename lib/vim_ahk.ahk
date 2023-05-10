@@ -101,7 +101,9 @@ class VimAhk {
   
     GroupAdd, HTML, ahk_exe iexplore.exe  ; Internet Explorer
     GroupAdd, HTML, ahk_exe WINWORD.exe  ; Word
+    GroupAdd, HTML, ahk_exe OUTLOOK.exe
   
+    GroupAdd, SuperMemo, ahk_exe sm19.exe
     GroupAdd, SuperMemo, ahk_exe sm18.exe
     GroupAdd, SuperMemo, ahk_exe sm17.exe
     GroupAdd, SuperMemo, ahk_exe sm16.exe
@@ -111,7 +113,10 @@ class VimAhk {
     GroupAdd, Browser, ahk_exe firefox.exe
     GroupAdd, Browser, ahk_exe msedge.exe  ; Microsoft Edge
     
-    GroupAdd, Excluded, ahk_class #32770  ; windows + r
+    GroupAdd, VimExcluded, ahk_class #32770  ; windows + r
+
+    GroupAdd, VimForceScroll, ahk_exe WINWORD.exe
+    GroupAdd, VimForceScroll, ahk_exe OUTLOOK.exe
 
     ; Configuration values for Read/Write ini
     ; setting, default, val, description, info
@@ -332,9 +337,9 @@ class VimAhk {
     if (not this.Enabled) {
       Return False
     } else if (this.Conf["VimAppList"]["val"] == "Allow List") {
-      Return ((WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded")) || this.IsExceptionWindow())
+      Return ((WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group VimExcluded")) || this.IsExceptionWindow())
     } else if (this.Conf["VimAppList"]["val"] == "Deny List") {
-      Return (!WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group Excluded") && !this.IsExceptionWindow())
+      Return (!WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group VimExcluded") && !this.IsExceptionWindow())
     }
     Return True
   }
@@ -347,6 +352,9 @@ class VimAhk {
   }
 
   IsExceptionWindow() {
+    ; When you change the reference of an element that shares the reference with other elements
+    ; no shortcuts there, so movement keys are used for up/down navigation
+    ; if more windows are found without shortcuts in the future, they will be all added here
     return this.SM.IsChangeRefWind()
   }
   

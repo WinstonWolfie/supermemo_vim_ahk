@@ -69,7 +69,7 @@ IfMsgBox(ByRef ButtonName) {
     return true
 }
 
-ControlGet(Cmd:="hwnd", Value:="", Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+ControlGet(Cmd:="Hwnd", Value:="", Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   Control := Control ? Control : ControlGetFocus()
   ControlGet, v, % Cmd, % Value, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
@@ -493,7 +493,7 @@ WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=0) {
     MouseGetPos,, OriginalY
   StartTime := A_TickCount
   loop {
-    if (A_CaretX != OriginalX || A_CaretY != OriginalY) {
+    if ((A_CaretX != OriginalX) || (A_CaretY != OriginalY)) {
       return true
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       return false
@@ -972,7 +972,8 @@ RestoreClipReturn:
 return
 
 ReleaseModifierKeys() {
-  send {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}
+  ; send {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}
+  send {CtrlUp}{Shift Up}{AltUp}
 }
 
 ControlReleaseModifierKeys(Control:="", WinTitle:="") {
@@ -1058,6 +1059,7 @@ EncodeHTML(String, Flags := 1)
 }
 
 CopyAll(Timeout:=2.5) {
+  ReleaseModifierKeys()
   global WinClip
   WinClip.Clear()
   send {CtrlDown}a{Ins}{CtrlUp}{Esc}
@@ -1066,7 +1068,7 @@ CopyAll(Timeout:=2.5) {
 }
 
 IsUrl(text) {
-  return (text ~= "^(file|https?):\/\/")
+  return (text ~= "^((file|https?):\/\/|[A-Z]:(\\|\/))")
 }
 
 SetNormalReturn:

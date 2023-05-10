@@ -55,7 +55,7 @@
     this.CheckValidMode(Mode)
     if (Mode != "") {
       this.Mode := Mode
-      if (PrevMode == "SMPlanDragging" && this.IsCurrentVimMode("Vim_Normal"))
+      if ((PrevMode == "SMPlanDragging") && this.IsCurrentVimMode("Vim_Normal"))
         this.HandlePlanDraggingSetNormal()
       if (this.IsCurrentVimMode("Insert") && this.Vim.SM.IsNavigatingPlan() && !GetKeyState("alt", "P"))
         send {f2}^a

@@ -23,7 +23,6 @@ return
 NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
-  send {Blind}{Shift Up}
   if (Vim.SM.IsEditingPlainText())
     return
 	send ^{f7}  ; save read point
@@ -31,15 +30,17 @@ NukeHTML:
     send ^t
     Vim.SM.WaitTextFocus()
     if (!Vim.SM.IsEditingHTML()) {
-      ToolTip("Text not found.")
+      ToolTip("HTML not found.")
       return
     }
   }
-  send {esc}
-  Vim.SM.WaitTextExit()
-  if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath()))
+  Vim.SM.ExitText(true)
+  if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())) {
+    ToolTip("File not found.")
     return
-  if ((A_ThisLabel == "NukeHTML") && (HTML ~= "i)<.*?\K class=(extract|clozed?)(?=.*?>)")) {
+  }
+  if ((A_ThisLabel == "NukeHTML")
+   && (HTML ~= "i)<.*?\K class=(extract|clozed?)(?=.*?>)")) {
     MsgBox, 4,, HTML has SM classes. Continue?
     IfMsgBox, no
       return
@@ -56,6 +57,7 @@ l::  ; *l*ink concept
   Vim.State.SetMode("Vim_Normal")
 return
 
+SMListLinks:
 +l::  ; list links
   send !{f10}cs
   Vim.State.SetMode("Vim_Normal")
@@ -149,7 +151,6 @@ s::  ; turn active language item to passive (*s*witch)
 return
 
 +s::
-  Send {Blind}{Shift Up}
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
@@ -171,6 +172,7 @@ return
   Vim.SM.WaitTextFocus()
   send % "{text}" . text
   send {left 2}{esc}
+  ReleaseModifierKeys()
 return
 
 +p::
@@ -179,8 +181,7 @@ p::  ; hyperlink to scri*p*t component
   ClipSaved := ClipboardAll
   Vim.Browser.url := Clipboard
   WinClip.Clear()
-  add := (CollName = "bgm") ? Vim.Browser.Url . "`n" : ""
-  Clipboard := add . Vim.SM.MakeReference()
+  Vim.SM.RefToClipForTopic()
   ClipWait
   Vim.SM.AltN()
   Vim.SM.WaitFileLoad()
@@ -226,13 +227,13 @@ r::  ; set *r*eference's link to what's in the clipboard
   Vim.SM.ExitText()
 
 SMSetLinkFromClipboard:
-  ; Has to edit title first, in case of multiple references change
+  ; Had to edit title first, in case of multiple references change
   if (Vim.Browser.title)
     Vim.SM.SetTitle(Vim.Browser.title)
   Vim.SM.EditRef()
   WinWait, ahk_class TInputDlg
-  ControlGetText, Ref, TMemo1, ahk_class TInputDlg
-  Ref := RegExReplace(Ref, "#Link: .*|$", "`r`n#Link: " . Clipboard,, 1)
+  Ref := RegExReplace(ControlGetText("TMemo1", "ahk_class TInputDlg")
+                    , "#Link: .*|$", "`r`n#Link: " . Clipboard,, 1)
   if (Vim.Browser.title)
     Ref := RegExReplace(Ref, "#Title: .*|$", "`r`n#Title: " . Vim.Browser.title,, 1)
   if (Vim.Browser.Source)
@@ -246,21 +247,18 @@ SMSetLinkFromClipboard:
   ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
   ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}, ahk_class TInputDlg  ; submit
   WinWaitClose, ahk_class TInputDlg
-
-  if (A_ThisLabel == "r")
-    Vim.Browser.Clear()
 return
 
 m::
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.EditRef()
   WinWait, ahk_class TInputDlg
-  ControlGetText, Ref, TMemo1, ahk_class TInputDlg
+  Ref := ControlGetText("TMemo1", "ahk_class TInputDlg")
   if (Ref ~= "#Comment: .*#audio") {
     ControlSend, TMemo1, {esc}, ahk_class TInputDlg
     return
   }
-  Ref := RegExReplace(Ref, "#Comment: (.*)|$", "`r`n#Comment: $1 #audio ",, 1)
+  Ref := RegExReplace(Ref, "#Comment:(.*)|$", "`r`n#Comment:$1 #audio ",, 1)
   ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
   ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}, ahk_class TInputDlg  ; submit
 return

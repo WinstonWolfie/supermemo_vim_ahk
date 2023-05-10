@@ -88,15 +88,15 @@ class VimSM {
   }
 
   IsEditingHTML() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server"))
   }
 
   IsEditingPlainText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "TMemo"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "TMemo"))
   }
 
   IsEditingText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server,TMemo"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server,TMemo"))
   }
 
   IsBrowsing() {
@@ -104,7 +104,7 @@ class VimSM {
   }
 
   IsGrading() {
-    CurrFocus := ControlGetFocus()
+    CurrFocus := ControlGetFocus("A")
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
     return (WinActive("ahk_class TElWind")
          && (CurrFocus == "TBitBtn4"
@@ -116,47 +116,47 @@ class VimSM {
   }
  
   IsNavigatingPlan() {
-    return (WinActive("ahk_class TPlanDlg") && ControlGetFocus() == "TStringGrid1")
+    return (WinActive("ahk_class TPlanDlg") && ControlGetFocus("A") == "TStringGrid1")
   }
  
   IsNavigatingTask() {
-    return (WinActive("ahk_class TTaskManager") && ControlGetFocus() == "TStringGrid1")
+    return (WinActive("ahk_class TTaskManager") && ControlGetFocus("A") == "TStringGrid1")
   }
 
   IsNavigatingContentWindow() {
-    return (WinActive("ahk_class TContents") && ControlGetFocus() == "TVirtualStringTree1")
+    return (WinActive("ahk_class TContents") && ControlGetFocus("A") == "TVirtualStringTree1")
   }
 
   IsNavigatingBrowser() {
-    return (WinActive("ahk_class TBrowser") && ControlGetFocus() == "TStringGrid1")
+    return (WinActive("ahk_class TBrowser") && ControlGetFocus("A") == "TStringGrid1")
   }
 
   SetRandPrio(min, max) {
-    prio := Random(min, max)
+    Prio := Random(min, max)
     global ImportGuiHwnd
     if (WinGet() == ImportGuiHwnd) {
       ControlFocus, Edit1, A
-      ControlSetText, Edit1, % prio, A
+      ControlSetText, Edit1, % Prio, A
       send {tab}
-    } else if (WinActive("Priority") && WinActive("ahk_class #32770")) {  ; input dialogue
-      ControlSetText, Edit1, % prio, A
+    } else if (WinActive("Priority ahk_class #32770 ahk_exe AutoHotkey.exe")) {  ; input dialogue
+      ControlSetText, Edit1, % Prio, A
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
-      ControlSetText, TEdit5, % prio, A
+      ControlSetText, TEdit5, % Prio, A
       ControlFocus, TEdit1, A
     } else if (WinExist("ahk_class TElWind")) {
-      this.SetPrio(prio)
+      this.SetPrio(Prio)
     }
     this.Vim.State.SetNormal()
   }
 
-  SetPrio(prio, WinWait:=false) {
+  SetPrio(Prio, WinWait:=false) {
     if (WinActive("ahk_class TElWind")) {
       send !p  ; open priority window
       if (!WinWait) {
-        send % prio . "{enter}"
+        send % Prio . "{enter}"
       } else {
         WinWaitActive, ahk_class TPriorityDlg
-        ControlSetText, TEdit5, % prio, ahk_class TPriorityDlg
+        ControlSetText, TEdit5, % Prio, ahk_class TPriorityDlg
         ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
       }
     } else if (WinExist("ahk_class TElWind")) {
@@ -165,7 +165,7 @@ class VimSM {
       PostMessage, 0x0105, 0x50, 1<<29,, ahk_class TElWind
       send {AltUp}
       WinWait, ahk_class TPriorityDlg
-      ControlSetText, TEdit5, % prio, ahk_class TPriorityDlg
+      ControlSetText, TEdit5, % Prio, ahk_class TPriorityDlg
       ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
     }
   }
@@ -427,9 +427,9 @@ class VimSM {
 
   GetTemplCode(RestoreClip:=true) {
     this.ActivateElWind()
-    global WinClip
     if (RestoreClip)
       ClipSaved := ClipboardAll
+    global WinClip
     WinClip.Clear()
     send % this.IsBrowsing() ? "^c" : "!{f10}tc"
     ClipWait
@@ -439,15 +439,15 @@ class VimSM {
     return code
   }
 
-  MoveMouse(step) {
+  MoveMouse(step, x:=0, y:=0) {
     static
     if (step == 1) {
       PrevCoordModeMouse := A_CoordModeMouse
       CoordMode, Mouse, Screen
-      MouseGetPos, x, y
-      MouseMove, 0, 0, 0
+      MouseGetPos, xSaved, ySaved
+      MouseMove, % x, % y, 0
     } else if (step == 2) {
-      MouseMove, x, y, 0
+      MouseMove, xSaved, ySaved, 0
       CoordMode, Mouse, % PrevCoordModeMouse
     }
   }
@@ -518,6 +518,7 @@ class VimSM {
   }
 
   ChangeDefaultConcept(concept:="", send:=0, CurrConcept:="", check:=true) {
+    ; No need for changing if entered concept = current concept
     if (concept && check) {
       CurrConcept := CurrConcept ? CurrConcept : this.GetCurrConcept()
       if (CurrConcept = concept)
@@ -559,12 +560,14 @@ class VimSM {
     ControlClickWinCoordDPIAdjusted(294, 45, "ahk_class TBrowser")
   }
 
-  SetElParam(title:="", prio:="", template:="") {
-    if (!title && !prio && !template)
+  SetElParam(title:="", Prio:="", template:="", Submit:=true) {
+    if (!title && !Prio && !template)
       return
-		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
-		ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
-    WinWait, ahk_class TElParamDlg
+    if (!WinExist("ahk_class TElParamDlg")) {
+      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
+      ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
+      WinWait, ahk_class TElParamDlg
+    }
     if (template) {
       ControlSetText, Edit1, % SubStr(template, 2), ahk_class TElParamDlg
       ControlSend, Edit1, % "{text}" . SubStr(template, 1, 1), ahk_class TElParamDlg
@@ -574,32 +577,33 @@ class VimSM {
       ControlSetText, TEdit2, % SubStr(title, 2), ahk_class TElParamDlg
       ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1), ahk_class TElParamDlg
     }
-    if (prio) {
-      ControlSetText, TEdit1, % SubStr(prio, 2), ahk_class TElParamDlg
-      ControlSend, TEdit1, % "{text}" . SubStr(prio, 1, 1), ahk_class TElParamDlg
+    if (Prio >= 0) {
+      ControlSetText, TEdit1, % SubStr(Prio, 2), ahk_class TElParamDlg
+      ControlSend, TEdit1, % "{text}" . SubStr(Prio, 1, 1), ahk_class TElParamDlg
     }
-    ControlFocus, TMemo1, ahk_class TElParamDlg  ; needed, otherwise the window won't close sometimes
-    ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{enter}, ahk_class TElParamDlg
+    if (Submit) {
+      ControlFocus, TMemo1, ahk_class TElParamDlg  ; needed, otherwise the window won't close sometimes
+      ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{enter}, ahk_class TElParamDlg
+    }
   }
 
   IsChangeRefWind() {
     if (WinActive("ahk_class TChoicesDlg")) {
-      ; When you change the reference of an element that shares the reference with other elements
-      ; no shortcuts there, so movement keys are used for up/down navigation
-      ; if more windows are found without shortcuts in the future, they will be all added here
-      return (ControlGetText("TGroupButton1") == "Cancel (i.e. restore the old version of references)"
-           && ControlGetText("TGroupButton2") == "Combine old and new references for this element"
-           && ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article"
-           && ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element")
+      return ((ControlGetText("TGroupButton1") == "Cancel (i.e. restore the old version of references)")
+           && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
+           && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
+           && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
     }
   }
 
   CheckDup(text, ClearHighlight:=true) {  ; try to find duplicates
     ContLearn := this.IsLearning()
+    text := LTrim(text)
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
-    ; Can't just encode uri, Chinese characters will be encoded
+    ; Can't just encode URI, Chinese characters will be encoded
+    ; For some reason, SuperMemo only encodes some part of the url
     if (IsUrl(text))
-      text := StrReplace(text, "%20", " "), text := StrReplace(text, "%3F", "?")
+      text := StrReplace(text, "%20", " "), text := StrReplace(text, "%3F", "?"), text := StrReplace(text, "%27", "'"), text := StrReplace(text, "%21", "!")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if ((ContLearn == 1) && !ret)
       this.Learn()
@@ -668,11 +672,11 @@ class VimSM {
   HandleF3(step) {
     if (step == 1) {
       send {f3}
-      WinWaitActive, ahk_class TMyFindDlg,, 0
+      WinWaitActive, ahk_class TMyFindDlg,, 1
       if (ErrorLevel) {  ; SM goes to the next found without opening find dialogue
         this.ClearHighlight()  ; clears highlight so it opens find dialogue
         ControlSend,, {f3}, ahk_class TElWind
-        WinWaitActive, ahk_class TMyFindDlg,, 1
+        WinWaitActive, ahk_class TMyFindDlg,, 3.5
         if (ErrorLevel) {
           ToolTip("F3 window cannot be launched.")
           return false
@@ -684,7 +688,7 @@ class VimSM {
       GroupAdd, SMF3, ahk_class TMyFindDlg
       GroupAdd, SMF3, ahk_class TCommanderDlg
       WinWaitActive, ahk_group SMF3
-      if (WinActive("ahk_class TMyFindDlg")) {  ; ^enter closed "not found" window
+      if (WinGetClass("") == "TMyFindDlg") {  ; ^enter closed "not found" window
         WinClose
         this.ClearHighlight()
         send {esc}
@@ -693,8 +697,8 @@ class VimSM {
         return false
       }
       this.ClearHighlight(false)
-      if (WinExist("ahk_class TMyFindDlg"))  ; clears search box window
-        WinClose
+      WinClose, ahk_class TMyFindDlg
+      sleep -1
       this.Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
       return true
     }
@@ -780,6 +784,14 @@ class VimSM {
     this.PostMsg(98)
   }
 
+  CtrlN() {
+    this.PostMsg(96)
+  }
+
+  AltA() {
+    this.PostMsg(95)
+  }
+
   WaitBrowser(timeout:=1) {
     WinWaitActive, ahk_class TProgressBox,, % timeout
     if (!ErrorLevel)
@@ -827,5 +839,12 @@ class VimSM {
   ActivateElWind() {
     if (!WinActive("ahk_class TElWind"))
       WinActivate
+  }
+
+  RefToClipForTopic() {
+    global CollName
+    if (!IfContains(this.Vim.Browser.Url, "youtube.com/playlist"))
+      add := (CollName = "bgm") ? this.Vim.Browser.Url . "`n" : ""
+    Clipboard := add . this.MakeReference()
   }
 }

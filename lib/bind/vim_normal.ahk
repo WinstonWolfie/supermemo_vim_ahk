@@ -10,12 +10,13 @@ u::Send,^z
 
 ; Change case
 ~::
+  KeyWait Shift
   send +{right}
-  selection := Copy()
-  if selection is lower
-    StringUpper, selection, selection
-  else if selection is upper
-    StringLower, selection, selection
+  if (IfIs(selection := Copy(), "lower")) {
+    selection := StrUpper(selection)
+  } else if (IfIs(selection, "upper")) {
+    selection := StrLower(selection)
+  }
   send % "{text}" . selection
 return
 
@@ -25,6 +26,7 @@ return
 +z::
   send ^s!{F4}
   Vim.State.SetMode("Vim_Normal")
+  ReleaseModifierKeys()
 Return
 
 +q::
@@ -36,7 +38,8 @@ Return
 ; Period
 ; .::send +^{Right}{BS}^v  ; original vim_ahk; no idea what that means
 .::
-  Vim.State.n := Vim.Move.LastN, Vim.State.Mode := Vim.Move.LastMode
+  Vim.State.n := Vim.State.n ? Vim.State.n : Vim.Move.LastN
+  Vim.State.Mode := Vim.Move.LastMode
   if (Vim.Move.LastFtsChar)
     Vim.State.FtsChar := Vim.Move.LastFtsChar
   if (Vim.Move.LastInOrOut == "Inner") {

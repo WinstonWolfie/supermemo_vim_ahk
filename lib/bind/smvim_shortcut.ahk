@@ -1,6 +1,7 @@
 ﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
-  Send {Blind}{CtrlUp}
+  KeyWait Alt
+  KeyWait Ctrl
   Vim.SM.ExitText()
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
@@ -41,8 +42,6 @@ return
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
   Vim.State.SetNormal()
-  send {Blind}{CtrlUp}{Shift Up}
-  KeyWait alt
   if (IfContains(A_ThisHotkey, "\")) {
     send ^+{enter}
     WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
@@ -60,21 +59,25 @@ return
   Vim.SM.WaitFileLoad()
   if (WinActive("ahk_class TElWind"))
     Vim.SM.Learn(, true)
+  ReleaseModifierKeys()
 return
 
 ^!+g::  ; change element's concept *g*roup
   Vim.State.SetMode("Insert")
   SetDefaultKeyboard(0x0409)  ; English-US
-  send {CtrlUp}{AltUp}^+p!g  ; focus to concept group
+  KeyWait Alt
+  KeyWait Ctrl
+  KeyWait Shift
+  send ^+p!g  ; focus to concept group
   Vim.State.BackToNormal := 1
 return
 
 ^!t::
   if (t := Vim.SM.IsEditingText())
-    send {CtrlUp}{AltUp}{right}  ; so no text is selected
+    send {right}  ; so no text is selected
   Vim.SM.SetTitle()
   if (t)
-    ControlSend,, {esc}, ahk_class TElWind
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, ahk_class TElWind
 return
 
 ^!f::  ; use IE's search
@@ -93,7 +96,7 @@ return
 
 ^!p::  ; convert to a *p*lain-text template
   ContLearn := Vim.SM.IsLearning()
-  send {AltUp}{CtrlUp}^+p  ; much faster than ^+m
+  send ^+p  ; much faster than ^+m
   WinWaitActive, ahk_class TElParamDlg
   send !t
   send {text}cl  ; my plain-text template name is classic
@@ -104,13 +107,13 @@ return
 return
 
 SMCtrlN:
-  Vim.SM.PostMsg(96)  ; ctrl+N
+  Vim.SM.CtrlN()
 ~^n::
   Vim.State.SetMode("Vim_Normal")
-  if (IfContains(Clipboard, "youtube.com")) {
+  if (IsUrl(Clipboard) && IfContains(Clipboard, "youtube.com")) {
     if (A_ThisHotkey == "~^n") {
       ClipSaved := ClipboardAll
-      prio := ""
+      Prio := ""
     }
     vim.browser.url := Clipboard
     text := vim.browser.title . "`n" . Vim.SM.MakeReference()
@@ -123,8 +126,8 @@ SMCtrlN:
     Clip(text,, false)
     Vim.SM.WaitTextFocus()
     KeyWait Ctrl
-    Vim.SM.SetElParam(vim.browser.title, prio, "YouTube")
-    vim.browser.title := prio := ""
+    Vim.SM.SetElParam(vim.browser.title, Prio, "YouTube")
+    vim.browser.title := Prio := ""
     if (A_ThisHotkey == "~^n") {
       Vim.Browser.Clear()
       Clipboard := ClipSaved
@@ -158,31 +161,38 @@ return
 return
 
 !+c::
+  BlockInput, on
   Vim.SM.EditFirstQuestion()
   send ^t{f9}
   WinWaitActive, ahk_class TScriptEditor,, 1.5
   if (ErrorLevel) {
     ToolTip("Script editor not found.")
+    BlockInput, off
     return
   }
   send !c
   WinWaitActive, ahk_class TInputDlg,, 0.25
   if (ErrorLevel) {
     Send {esc}
+    BlockInput, off
     ToolTip("Can't be cloned because this script registry is the only instance in this collection.",, -5000)
     return
   }
   send {AltDown}oo{AltUp}
   ToolTip("Cloning successful.")
   send {esc}
+  BlockInput, off
 return
 
 ; More intuitive inter-element linking, inspired by Obsidian
 ; 1. Go to the element you want to link to and press ctrl+alt+g
 ; 2. Go to the element you want to have the hyperlink, select text and press ctrl+alt+k
 ^!g::
+  Clipboard := ""
   send ^g^c{esc}
+  ClipWait
   Vim.State.SetNormal()
+  ToolTip("Copied " . Clipboard)
 return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())
@@ -192,6 +202,8 @@ return
   } else if (RegExMatch(Clipboard, "^#(\d+)", v)) {
     link := "SuperMemoElementNo=(" . v1 . ")"
   }
+  KeyWait Alt
+  KeyWait Ctrl
   if (!link || !copy())  ; no selection or no link
     return
   send ^k
@@ -201,16 +213,17 @@ return
   el.WaitElementExist("ControlType=Edit AND Name='URL: ' AND AutomationId='txtURL'").SetValue(link)
   send {enter}
   WinWaitClose, ahk_class Internet Explorer_TridentDlgFrame
-  Vim.State.SetNormal()
-  Vim.Caret.SwitchToSameWindow()
+  Vim.State.SetNormal(), Vim.Caret.SwitchToSameWindow()
+  send {left}
+  ReleaseModifierKeys()
 return
 
 ^!l::
   CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   ClipSaved := ClipboardAll
-  Send {Blind}{CtrlUp}
   KeyWait Alt
+  KeyWait Ctrl
   if (!data := copy(false, true, 1))
     goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
@@ -305,7 +318,7 @@ return
 !t::send !mlt  ; Totals
 
 ^!b::
-  send {CtrlUp}{AltUp}!b
+  send !b
   WinWait, ahk_class TMsgDialog,, 0.25
   if (!ErrorLevel) {
     WinActivate
@@ -330,17 +343,21 @@ return
 
 !a::  ; insert/append activity
   SetDefaultKeyboard(0x0409)  ; English-US
+  if (WinExist("ahk_id " . PlanAddHwnd)) {
+    WinActivate
+    return
+  }
   Gui, PlanAdd:Add, Text,, A&ctivity:
   list := "Break||Gaming|Coding|Sports|Social|Family|Passive|Meal|Rest"
-        . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc|Out|Singing"
-        . "|Calligraphy|Drawing|Movie|TV|VC"
+        . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc"
+        . "|Out|Singing|Calligraphy|Drawing|Movie|TV|VC|GF|Music"
   Gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
   Gui, PlanAdd:Add, Text,, &Time:
   Gui, PlanAdd:Add, Edit, vTime w110
   Gui, PlanAdd:Add, Button, default x10 w50 h24, &Insert
   Gui, PlanAdd:Add, Button, x+10 w50 h24, &Append
-  KeyWait Alt
   Gui, PlanAdd:Show,, Add Activity
+  Gui, PlanAdd:+HwndPlanAddHwnd
 return
 
 PlanAddGuiEscape:
@@ -354,7 +371,7 @@ PlanAddButtonAppend:
   if (aTime[3] >= 30)
     aTime[2]++
   CurrTime := aTime[1] . ":" . aTime[2]
-  KeyWait alt
+  KeyWait Alt
   Gui submit
   Gui destroy
   WinActivate, ahk_class TPlanDlg
@@ -381,9 +398,10 @@ PlanAddButtonAppend:
       send {text}y
   }
   send ^s
-  if activity in Break,Sports,Out,Shower,Meal
+  if (IfIn(activity, "Break,Sports,Out,Shower,Meal"))
     try run b  ; my personal backup script
   Vim.State.SetNormal()
+  ReleaseModifierKeys()
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
@@ -434,9 +452,9 @@ NumpadPgup::Vim.SM.SetRandTaskVal(0,360.76)
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg"))  ; priority window (alt+p)
 enter::
-  prio := ControlGetText("TEdit5")
-  if (prio ~= "^\.")
-    ControlSetText, TEdit5, % "0" . prio
+  Prio := ControlGetText("TEdit5")
+  if (Prio ~= "^\.")
+    ControlSetText, TEdit5, % "0" . Prio
   send {enter}
 return
 
@@ -509,8 +527,7 @@ p::
   if ((XCoord == IniXCoord) && (YCoord == IniYCoord) && (A_ThisHotkey == "+p"))  ; no change
     click  ; to unfix
   MouseMove, XCoordSaved, YCoordSaved, 0
-  SMPlanDraggingPut := true
-  Vim.State.SetMode("Vim_Normal")
+  SMPlanDraggingPut := true, Vim.State.SetMode("Vim_Normal")
 return
 
 ; Incremental video
@@ -525,18 +542,28 @@ BrowserSyncTime:
   sync := (A_ThisLabel == "BrowserSyncTime")
   ResetTime := IfContains(A_ThisHotkey, "``")
   CloseWnd := IfContains(A_ThisHotkey, "^")
-  wMpv := WinActive("ahk_class mpv")
-  KeyWait alt
-  send {Blind}{CtrlUp}{Shift Up}
-  if (wBrowser := WinActive("ahk_group Browser")) {
-    guiaBrowser := new UIA_Browser("ahk_id " . wBrowser)
-    send {esc}
+  wMpv := WinActive("ahk_class mpv"), wSMElWnd := ""
+  KeyWait Alt
+  KeyWait Ctrl
+  KeyWait Shift
+  if (wBrowserId := WinActive("ahk_group Browser")) {
+    Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
+    ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
     Vim.Browser.GetTitleSourceDate(!sync, false,, false)  ; get title for checking later
-    ; SM uses "." instead of "..." in titles
-    SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind"), "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
-    if (SMTitle != StrReplace(Vim.Browser.title, "...", ".")) {
+    WinGet, paSMTitles, List, ahk_class TElWind  ; can't get pseudo-array by WinGet()
+    loop % paSMTitles {
+      SMTitle := WinGetTitle("ahk_id " . hWnd := paSMTitles%A_Index%)
+      if (SMTitle ~= "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
+        SMTitle := RegExReplace(SMTitle, "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
+      ; SM uses "." instead of "..." in titles
+      if (ret := (SMTitle == StrReplace(Vim.Browser.Title, "...", "."))) {
+        wSMElWnd := hWnd
+        break
+      }
+    }
+    if (!ret) {
       WinActivate, ahk_class TElWind
-      MsgBox, 4,, Titles don't match. Continue?
+      MsgBox, 4,, % "Titles don't match. Continue?`nBrowser title: " . Vim.Browser.Title
       WinActivate % "ahk_id " . guiaBrowser.BrowserId
       IfMsgBox no
         goto SMSyncTimeReturn
@@ -557,7 +584,7 @@ BrowserSyncTime:
         guiaBrowser.CloseTab()
       }
     }
-  } else if (!Vim.Browser.VidTime && !IfContains(A_ThisHotkey, "``")) {
+  } else if (!Vim.Browser.VidTime && !ResetTime) {
     SetDefaultKeyboard(0x0409)  ; English-US
     if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
       goto SMSyncTimeReturn
@@ -565,12 +592,13 @@ BrowserSyncTime:
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
   if (CloseWnd && wMpv)
-    ControlSend,, {shift down}q{shift up}, % "ahk_id " . wMpv
-  WinActivate, ahk_class TElWind
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}q{shift up}, % "ahk_id " . wMpv
+  WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
 
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
-  if (!EditTitle := ((wBrowser && (vim.browser.IsVidSite(vim.browser.fullTitle) == 3)) || wMpv)) {
+
+  if (!EditTitle := (wMpv || (wBrowserId && (Vim.Browser.IsVidSite(vim.browser.fullTitle) == 3)))) {
     Vim.SM.EditFirstQuestion()
     send ^t{f9}
     WinWaitActive, ahk_class TScriptEditor,, 1.5
@@ -578,10 +606,16 @@ BrowserSyncTime:
       ToolTip("Script editor not found.")
       goto SMSyncTimeReturn
     }
-    ControlGetText, script, TMemo1, A
+
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-    if (IfContains(script, "youtube.com,bilibili.com")) {
-      match := "t=\d+", replacement := "t=" . sec
+    if (IfContains(script := ControlGetText("TMemo1"), "bilibili.com")) {
+      if (script ~= "\?p=\d+") {
+        match := "&t=.*", replacement := "&t=" . sec
+      } else {
+        match := "\?t=.*", replacement := "?t=" . sec
+      }
+    } else if (IfContains(script, "youtube.com")) {
+      match := "&t=.*s", replacement := "&t=" . sec . "s"
     } else if (EditTitle := true) {
       WinClose, ahk_class TScriptEditor
       send {esc}
@@ -593,7 +627,8 @@ BrowserSyncTime:
     send !o{esc}  ; close script editor
     ToolTip("Time stamp in script component set as " . sec . "s")
   } else {  ; time in title
-    SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind"), "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
+    SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind")
+                          , "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
     Vim.SM.SetTitle(Vim.Browser.VidTime . " | " . SMTitle)
   }
   WinWaitActive, ahk_class TElWind
@@ -609,15 +644,13 @@ return
                       && (title := WinGetTitle())
                       && (RegExMatch(title, "(?<=^p)\d+(?= \|)", page)  ; e.g. p12 | title
                        || RegExMatch(title, ".+?(?= \|)", clip)))  ; e.g. last reading point | title
-!s::Clipboard := trim(page ? page : clip), ToolTip("Copied " . Clipboard)
+!s::ToolTip("Copied " . Clipboard := trim(page ? page : clip))
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm"))
-!p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
+!p::ControlFocus, TEdit1, A  ; set priority for current selected concept in registry window
+
 SMRegAltG:
-!g::
-  accButton := Acc_Get("Object", "4.5.4.2.4",, "ahk_id " . WinGet())
-  accButton.accDoDefaultAction()
-return
+!g::Acc_Get("Object", "4.5.4.2.4",, "ahk_id " . WinGet()).accDoDefaultAction()
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
 ; Use English input method for choosing concept when import
@@ -633,3 +666,9 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TMsgDialog"))
 y::send {text}y
 n::send {text}n
+
+#if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
+^/::send {home}//{space}
++!a::send /*  */{left 3}
+^+!a::send /*{enter 2}*/{up}
+^!+h::send {text}==================================================

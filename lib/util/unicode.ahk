@@ -29214,3 +29214,17 @@ return
 send {U+1F6D1}
 return
 
+#if EmacsCase() && EmacsEnabled
+::\sqrt::
+send √
+return
+
+#if GtkApplicationCase()
+::\sqrt::
+send √
+return
+
+#if OtherCase()
+::\sqrt::
+send √
+return

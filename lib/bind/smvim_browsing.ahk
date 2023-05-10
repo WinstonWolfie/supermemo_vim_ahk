@@ -102,6 +102,7 @@ r::  ; reload
   ContLearn := (ContinueGrading := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning()
   CurrTitle := WinGetTitle()
   send !{home}
+  Vim.SM.WaitFileLoad()
   if (ContLearn) {
     Vim.SM.Learn()
     Vim.SM.WaitFileLoad()
@@ -114,7 +115,6 @@ r::  ; reload
     ControlTextWait("TBitBtn3", "Show answer")
     ControlSend, TBitBtn3, {enter}, A
   } else {
-    Vim.SM.WaitFileLoad()
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame"))  ; sometimes could happen on YT videos
       WinClose
     ; If current element is home element
@@ -138,7 +138,7 @@ return
 +p::send q^{t}{f9}  ; play video in default system player / edit script component
 
 n::Vim.SM.AltN()
-+n::Vim.SM.PostMsg(95)  ; = alt+A
++n::Vim.SM.AltA()
 x::send {del}  ; delete element/component
 
 ^i::send ^{f8}  ; download images
@@ -148,8 +148,6 @@ x::send {del}  ; delete element/component
 !f::
 +f::
 f::
-  Send {Blind}{CtrlUp}{Shift Up}
-  KeyWait Alt
   y := false
 #if (Vim.IsVimGroup() && (y := Vim.State.IsCurrentVimMode("Vim_ydc_y")) && Vim.SM.IsBrowsing())
 f::
@@ -174,7 +172,10 @@ c::
     HinterMode := "OpenLinkInNew"
   }
   UIA := UIA_Interface(), LearningState := Vim.SM.IsLearning()
-  Caret := IfIn(A_ThisHotkey, "v,c"), Type := Caret ? "Text" : "Hyperlink"
+  Caret := IfIn(A_ThisHotkey, "v,c")
+  ; Some hyperlinks seem to be text type
+  ; Type := Caret ? "Text" : "Hyperlink"
+  Type := "Text"
   aHints := CreateHintsArray(Control, hCtrl, Type, Caret)
   if ((Control == "Internet Explorer_Server2") && (LearningState != 1)) {  ; so answer isn't revealed
     if (hCtrl := ControlGet(,, Control := "Internet Explorer_Server1"))
@@ -186,6 +187,7 @@ c::
     CreateHints(aHints, aHintStrings := hintStrings(n))
   }
   BlockInput, off
+  ReleaseModifierKeys()
 return
 
 CreateHintsArray(Control, hCtrl, Type, Caret) {
@@ -195,14 +197,13 @@ CreateHintsArray(Control, hCtrl, Type, Caret) {
   el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)
   aHints := [], HintsIndex := 0
   for i, v in auiaHints {
-    br := v.CurrentBoundingRectangle
-    if (!br.l || (!Caret && !v.CurrentValue))  ; some hyperlinks don't have value
-      continue
-		HintsIndex++
-    if (Caret) {
-      aHints[HintsIndex] := {x:br.l, y:br.t, Control:Control}
-    } else {
-      aHints[HintsIndex] := {x:br.l, y:br.t, Link:v.CurrentValue}
+    if (v.CurrentBoundingRectangle.l && (Caret || v.CurrentValue)) {  ; some hyperlinks don't have value
+      HintsIndex++
+      if (Caret) {
+        aHints[HintsIndex] := {x:v.CurrentBoundingRectangle.l, y:v.CurrentBoundingRectangle.t, Control:Control}
+      } else {
+        aHints[HintsIndex] := {x:v.CurrentBoundingRectangle.l, y:v.CurrentBoundingRectangle.t, Link:v.CurrentValue}
+      }
     }
   }
   return aHints
@@ -250,21 +251,21 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^o::
+  KeyWait Ctrl
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 o::
   BlockInput, on
   SetDefaultKeyboard(0x0409)  ; English-US
   l := Vim.SM.IsLearning()
-  send {Blind}{CtrlUp}
   if (l == 1) {
     send !{home}
   } else if (l == 2) {
     Vim.SM.Reload()
     Vim.SM.WaitFileLoad()
   }
-  Vim.State.SetMode("Insert")
-  Vim.SM.PostMsg(3)  ; favourites
+  Vim.State.SetMode("Insert"), Vim.SM.PostMsg(3)  ; favourites
   BlockInput, off
+  send {CtrlUp}
   Vim.State.BackToNormal := 1
 return
 
@@ -279,7 +280,7 @@ y::  ; yy: copy current source url
   if (!link) {
     ToolTip("Link not found.")
   } else {
-    Clipboard := link, ToolTip("Copied " . link)
+    ToolTip("Copied " . Clipboard := link)
   }
   Vim.State.SetNormal()
 return

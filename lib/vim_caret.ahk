@@ -37,12 +37,7 @@ class VimCaret {
   }
 
   SwitchToSameWindow(WinTitle:="") {
-    if (WinTitle) {
-      WinActivate % WinTitle
-    } else {
-      ; Get ID of active window
-      WinTitle := "ahk_id " . WinGet()
-    }
+    WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
     ; Activate desktop
     ; WinActivate, ahk_class WorkerW  ; doesn't work in Win 11
     WinActivate, ahk_class Progman

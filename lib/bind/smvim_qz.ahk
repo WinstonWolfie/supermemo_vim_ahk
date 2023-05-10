@@ -126,9 +126,9 @@ _::
 space::
   Vim.Move.KeyAfterSMAltQ := A_ThisHotkey
   if (SMAltQYdcMove) {
-    Send {Blind}{Shift Up}
     Vim.Move.YDCMove(), SMAltQYdcMove := false
   } else {
     Vim.State.SetMode("SMVim_AltQ", 0, -1, 0)
   }
+  ReleaseModifierKeys()
 return

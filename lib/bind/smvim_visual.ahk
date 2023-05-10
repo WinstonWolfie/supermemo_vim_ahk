@@ -28,7 +28,6 @@ return
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
   Gui, HTMLTag:Add, Button, default, &Add
-  KeyWait alt
   Gui, HTMLTag:Show,, Add HTML Tag
 Return
 
@@ -99,7 +98,6 @@ ExtractStay:
 ^!x::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 ^q::  ; extract (*q*uote)
-  send {Blind}{CtrlUp}
   send !x
   Vim.SM.WaitExtractProcessing()
   send !{left}
@@ -121,7 +119,6 @@ ClozeStay:
 ^!z::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 ^z::
-  send {Blind}{CtrlUp}
   send !z
   Vim.State.SetMode("Vim_Normal")
   if (Vim.SM.WaitClozeProcessing() != -1)  ; warning on trying to cloze on items
@@ -143,7 +140,6 @@ ClozeHinter:
   } else {
     CtrlState := IfContains(A_ThisHotkey, "^")
   }
-  Send {Blind}{CtrlUp}{Shift Up}
   if (!InitText := Copy())
     return
   CurrFocus := ControlGetFocus("ahk_class TElWind"), inside := true
@@ -196,7 +192,6 @@ ClozeHinterGuiClose:
 return
 
 ClozeHinterButtonCloze:
-  KeyWait alt
   Gui submit
   Gui destroy
   WinActivate, ahk_class TElWind
