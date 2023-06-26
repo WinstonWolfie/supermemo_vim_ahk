@@ -1,4 +1,4 @@
-﻿#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("ydc") || Vim.State.StrIsInCurrentVimMode("Command") || Vim.State.IsCurrentVimMode("Z") || Vim.State.IsCurrentVimMode("KeyListener")))
+﻿#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("ydc") || Vim.State.StrIsInCurrentVimMode("Command") || Vim.State.IsCurrentVimMode("Z") || Vim.State.IsCurrentVimMode("KeyListener") || Vim.State.IsCurrentVimMode("SMPlanDragging")))
 *a::
 *b::
 *c::
@@ -68,7 +68,7 @@ _::
 .::
 >::
 Space::
-  if (!Vim.State.IsCurrentVimMode("KeyListener"))
+  if (!Vim.State.IsCurrentVimMode("KeyListener") && !Vim.State.IsCurrentVimMode("SMPlanDragging"))
     Vim.State.SetMode("Vim_Normal")
 Return
 

@@ -73,9 +73,13 @@ return
 return
 
 ^!t::
-  if (t := Vim.SM.IsEditingText())
+  KeyWait Alt
+  KeyWait Ctrl
+  if (t := Vim.SM.IsEditingText()) {
     send {right}  ; so no text is selected
-  Vim.SM.SetTitle()
+    sleep 50
+  }
+  Vim.SM.SetTitle(, 0.5)
   if (t)
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, ahk_class TElWind
 return
@@ -161,6 +165,8 @@ return
 return
 
 !+c::
+  KeyWait Alt
+  KeyWait Shift
   BlockInput, on
   Vim.SM.EditFirstQuestion()
   send ^t{f9}
@@ -192,6 +198,7 @@ return
   send ^g^c{esc}
   ClipWait
   Vim.State.SetNormal()
+  Clipboard := (Clipboard ~= "^#") ? Clipboard : "#" . Clipboard
   ToolTip("Copied " . Clipboard)
 return
 
@@ -240,7 +247,9 @@ return
     SetTimer, DownloadLatex, -1
     FileCreateDir % LatexFolderPath
     clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>",, false, true)
-    HTMLPath := Vim.SM.SaveHTML(true, true)
+    Vim.SM.SaveHTML(true)
+    WinWaitActive, ahk_class TElWind
+    HTMLPath := Vim.SM.GetFilePath(false)
     ; VarSetCapacity(HTML, 10240000)  ; ~10 MB
     if (!HTML := FileRead(HTMLPath))
       HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
@@ -481,24 +490,23 @@ d::
   x := A_CaretX, y := A_CaretY
   send {f2}  ; sometimes A_Caret isn't accurate
   ControlFocusWait("TInplaceEdit1")
-  WaitCaretMove(x, y)
+  sleep 50
+  coords := StrSplit(WaitCaretMove(x, y), " ")
 
   ; Move to the next entry
-  x := A_CaretX, IniYCoord := A_CaretY
   send +{tab}{down}{right}
-  WaitCaretMove(x, IniYCoord)
+  coords := StrSplit(WaitCaretMove(coords[1], IniYCoord := coords[2]), " ")
 
   ; Show caret in next entry
-  x := A_CaretX, y := A_CaretY
   send {f2}
   ControlFocusWait("TInplaceEdit1")
-  WaitCaretMove(x, y)
+  sleep 50
+  coords := StrSplit(WaitCaretMove(coords[1], coords[2]), " ")
 
   ; Calculate entry height
-  x := A_CaretX, y := A_CaretY
   PlanEntryGap := A_CaretY - IniYCoord
   send {up}{left}  ; go back
-  WaitCaretMove(x, y)
+  WaitCaretMove(coords[1], coords[2])
 
   ; Move to position
   MouseMove, 20, % IniYCoord + PlanEntryGap / 2, 0
@@ -539,6 +547,8 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
+  while (WinExist("ahk_class TMsgDialog"))
+    WinClose
   sync := (A_ThisLabel == "BrowserSyncTime")
   ResetTime := IfContains(A_ThisHotkey, "``")
   CloseWnd := IfContains(A_ThisHotkey, "^")
@@ -556,7 +566,7 @@ BrowserSyncTime:
       if (SMTitle ~= "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
         SMTitle := RegExReplace(SMTitle, "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
       ; SM uses "." instead of "..." in titles
-      if (ret := (SMTitle == StrReplace(Vim.Browser.Title, "...", "."))) {
+      if (ret := (SMTitle == RegExReplace(Vim.Browser.Title, "\.\.\.?", "."))) {
         wSMElWnd := hWnd
         break
       }
@@ -633,7 +643,9 @@ BrowserSyncTime:
   }
   WinWaitActive, ahk_class TElWind
   if (IfContains(A_ThisHotkey, "^+!"))
-    Vim.SM.Learn(,, true)
+    Vim.SM.Learn(false,, true)
+  if ((A_ThisHotkey == "!+s") || (A_ThisHotkey == "!+``"))
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
   Vim.Browser.Clear()
 SMSyncTimeReturn:
   if (sync)
@@ -642,7 +654,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
                       && (title := WinGetTitle())
-                      && (RegExMatch(title, "(?<=^p)\d+(?= \|)", page)  ; e.g. p12 | title
+                      && (RegExMatch(title, "i)(?<=^p)(\d+|[MDCLXVI]+)(?= \|)", page)  ; e.g. p12 | title
                        || RegExMatch(title, ".+?(?= \|)", clip)))  ; e.g. last reading point | title
 !s::ToolTip("Copied " . Clipboard := trim(page ? page : clip))
 

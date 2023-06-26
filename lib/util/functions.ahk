@@ -493,8 +493,9 @@ WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=0) {
     MouseGetPos,, OriginalY
   StartTime := A_TickCount
   loop {
-    if ((A_CaretX != OriginalX) || (A_CaretY != OriginalY)) {
-      return true
+    x := A_CaretX, y := A_CaretY
+    if ((x != OriginalX) || (y != OriginalY)) {
+      return x . " " . y
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       return false
     }
@@ -524,10 +525,8 @@ ToolTip(text, perma:=false, period:=-2000, command:="", n:=20) {
     x := A_ScreenWidth / 3, y := A_ScreenHeight / 4 * 3
   }
   ToolTip, % text, % x, % y, % n
-  if (!perma) {
-    RemoveTTFunc := Func("RemoveToolTip").Bind(n)
-    SetTimer, % RemoveTTFunc, % period
-  }
+  RemoveTTFunc := Func("RemoveToolTip").Bind(n)
+  SetTimer, % RemoveTTFunc, % perma ? "off" : period
   CoordMode, ToolTip, % PrevCoordModeTT
 }
 
@@ -1068,9 +1067,33 @@ CopyAll(Timeout:=2.5) {
 }
 
 IsUrl(text) {
-  return (text ~= "^((file|https?):\/\/|[A-Z]:(\\|\/))")
+  return (text ~= "^((file|https?):\/\/|[A-Z]:(\\|\/)|^www\.)")
 }
 
 SetNormalReturn:
   Vim.State.SetNormal()
 return
+
+DefaultBrowser() {
+	; Find the Registry key name for the default browser
+	RegRead, BrowserKeyName, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.html\UserChoice, Progid
+
+	; Find the executable command associated with the above Registry key
+	RegRead, BrowserFullCommand, HKEY_CLASSES_ROOT, %BrowserKeyName%\shell\open\command
+
+	; The above RegRead will return the path and executable name of the brower contained within quotes and optional parameters
+	; We only want the text contained inside the first set of quotes which is the path and executable
+	; Find the ending quote position (we know the beginning quote is in position 0 so start searching at position 1)
+	StringGetPos, pos, BrowserFullCommand, ",,1
+
+	; Decrement the found position by one to work correctly with the StringMid function
+	pos := --pos
+
+	; Extract and return the path and executable of the browser
+	StringMid, BrowserPathandEXE, BrowserFullCommand, 2, %pos%
+	Return BrowserPathandEXE
+}
+
+IsWhitespaceOnly(str) {
+  return !RegExMatch(str, "[\S]")
+}

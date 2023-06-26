@@ -31,6 +31,8 @@ return
 #f::run D:\OneDrive\Miscellany\Programs\Everything\Everything64.exe
 ^#h::send ^#{left}
 ^#l::send ^#{right}
++#h::send +#{left}
++#l::send +#{right}
 
 ^+!p::
 Plan:
@@ -220,10 +222,11 @@ IWBNewTopic:
     Gui, SMImport:Add, Text,, % "Current collection: " . CollName
     Gui, SMImport:Add, Text,, &Priority:
     Gui, SMImport:Add, Edit, vPrio w196
-    Gui, SMImport:Add, Text,, &Concept:
+    Gui, SMImport:Add, Text,, Concept &group:  ; like in default import dialog
     list := ConceptBefore . "||Online|Sources|ToDo"
     Gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % list
-    Gui, SMImport:Add, Checkbox, % "vCloseTab " . (IWB ? "" : "checked"), Close &tab
+    ; Gui, SMImport:Add, Checkbox, % "vCloseTab " . (IWB ? "" : "checked"), Close &tab
+    Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
     if (!IWB)
       Gui, SMImport:Add, Checkbox, vDownloadHTML, Import fullpage &HTML
     if (bVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
@@ -329,6 +332,8 @@ SMImportButtonImport:
   if (Prio ~= "^\.")
     Prio := "0" . Prio
   WinActivate, ahk_class TElWind
+  while (WinExist("ahk_class TMsgDialog"))
+    WinClose
 
   if (Concept) {
     Vim.SM.ChangeDefaultConcept(Concept,, ConceptBefore)
@@ -486,6 +491,8 @@ return
   }
   extract := ClipboardAll
   WinActivate, ahk_class TElWind  ; focus to element window
+  while (WinExist("ahk_class TMsgDialog"))
+    WinClose
 
 ExtractToSM:
   if (Vim.SM.IsEditingPlainText()) {
@@ -605,8 +612,8 @@ return
   && ((pdf := WinActive("ahk_class SUMATRA_PDF_FRAME")) || WinActive("ahk_exe WinDjView.exe"))
   && (page := ControlGetText("Edit1")))
 ^!p::
-  if (pdf && !RegExMatch(page, "\d+"))
-    RegExMatch(WinGetText(), " \((\d+)", v), page := v1
+  ; if (pdf && !RegExMatch(page, "\d+"))
+    ; RegExMatch(WinGetText(), " \((\d+)", v), page := v1
   Clipboard := "p" . page, ToolTip("Copied p" . page)
 return
 
@@ -626,15 +633,16 @@ return
 
 ; Syncing page number / marker
 #if (Vim.State.Vim.Enabled
-  && !Vim.SM.IsPassive(, -1)  ; current concept doesn't matter
   && (WinActive("ahk_class SUMATRA_PDF_FRAME")
    || WinActive("ahk_exe ebook-viewer.exe")
-   || WinActive("ahk_group Browser")
+   || (WinActive("ahk_group Browser") && !Vim.Browser.IsVidSite() && !Vim.SM.IsPassive(, -1))
    || WinActive("ahk_exe WinDjView.exe"))
   && WinExist("ahk_class TElWind"))
 !+s::
 ^!s::
 ^+!s::
+  while (WinExist("ahk_class TMsgDialog"))
+    WinClose
   ClipSaved := ClipboardAll
   CloseWnd := IfContains(A_ThisHotkey, "^")
   KeyWait Alt
@@ -645,8 +653,8 @@ return
   marker := trim(copy(false), " `t`r`n")
   if ((wPdf := WinActive("ahk_class SUMATRA_PDF_FRAME")) || WinActive("ahk_exe WinDjView.exe")) {
     if (!marker && (page := ControlGetText("Edit1"))) {
-      if (wPdf && !RegExMatch(page, "\d+"))
-        RegExMatch(WinGetText(), " \((\d+)", v), page := v1
+      ; if (wPdf && !RegExMatch(page, "\d+"))
+        ; RegExMatch(WinGetText(), " \((\d+)", v), page := v1
       marker := "p" . page
     }
     if (!marker) {
@@ -715,7 +723,7 @@ MarkInSMTitle:
   SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind"), "^Duplicate: ")
   Vim.SM.SetTitle(RegExReplace(SMTitle, "((^.+ \| )|^)", marker . " | "))
   if (IfContains(A_ThisHotkey, "^+!"))
-    Vim.SM.Learn(, true)
+    Vim.SM.Learn(false, true)
   Clipboard := ClipSaved
 return
 

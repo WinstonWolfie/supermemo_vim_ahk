@@ -372,11 +372,7 @@ class VimAhk {
     }
     return str
   }
-  
-  IsWhitespaceOnly(str) {
-    return !RegExMatch(str, "[\S]")
-  }
-  
+
   IsHTML() {
     return (this.SM.IsEditingHTML() || WinActive("ahk_group HTML"))
   }

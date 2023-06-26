@@ -76,10 +76,8 @@ n::  ; gn: open in Notepad
       run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
     } else {
       send ^{f7}  ; save read point
-      ; Doesn't work
-      ; path := Vim.SM.SaveHTML(, true)  ; path may be updated
-      Vim.SM.SaveHTML(, true)  ; path may be updated
-      Vim.SM.ActivateElWind()
+      Vim.SM.SaveHTML()  ; path may be updated
+      WinWaitActive, ahk_class TElWind
       path := Vim.SM.GetFilePath(false)
       Vim.SM.ExitText(true)
       run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . path

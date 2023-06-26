@@ -329,19 +329,19 @@ class VimSM {
     }
   }
 
-  SaveHTML(SendEsc:=true, ReturnPath:=false, timeout:=0) {
+  SaveHTML(SendEsc:=true, timeout:=0) {
     if (SendEsc && this.IsEditingHTML())
       this.ExitText(true, timeout)
     send ^+{f6}  ; opens notepad
-    if (ReturnPath) {
-      WinWaitActive, ahk_class Notepad,, % timeout ? timeout / 1000 : ""
-      for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where Name='notepad.exe'")
-        ret := RegExReplace(process.CommandLine, """.*?"" ")
-    } else {
+    ; if (ReturnPath) {
+    ;   WinWaitActive, ahk_class Notepad,, % timeout ? timeout / 1000 : ""
+    ;   for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where Name='notepad.exe'")
+    ;     ret := RegExReplace(process.CommandLine, """.*?"" ")
+    ; } else {
       WinWaitNotActive, ahk_class TElWind,, % timeout ? timeout / 1000 : ""
       if (!ErrorLevel)
         ret := true
-    }
+    ; }
     WinClose, ahk_class Notepad
     WinActivate, ahk_class TElWind
     return ret
@@ -386,20 +386,20 @@ class VimSM {
     return path
   }
 
-  SetTitle(title:="") {
+  SetTitle(title:="", timeout:="") {
     if (WinGetTitle("ahk_class TElWind") == title)
       return true
     this.AltT()
     GroupAdd, SMAltT, ahk_class TChoicesDlg
     GroupAdd, SMAltT, ahk_class TTitleEdit
-    WinWait, ahk_group SMAltT
+    WinWait, ahk_group SMAltT,, % timeout
     if (WinExist("ahk_class TChoicesDlg")) {
       if (!title)
         ControlFocus, TGroupButton2, ahk_class TChoicesDlg
       while (WinExist("ahk_class TChoicesDlg"))
         ControlClick, TBitBtn2, ahk_class TChoicesDlg,,,, NA
       if (title)
-        WinWait, ahk_class TTitleEdit
+        WinWait, ahk_class TTitleEdit, % timeout
     }
     if (WinExist("ahk_class TTitleEdit")) {
       if (title)
@@ -566,7 +566,14 @@ class VimSM {
     if (!WinExist("ahk_class TElParamDlg")) {
       ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
       ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
-      WinWait, ahk_class TElParamDlg
+      WinWait, ahk_class TElParamDlg,, 0
+      if (ErrorLevel) {
+        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
+        ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
+        WinWait, ahk_class TElParamDlg,, 0
+        if (ErrorLevel)
+          return
+      }
     }
     if (template) {
       ControlSetText, Edit1, % SubStr(template, 2), ahk_class TElParamDlg

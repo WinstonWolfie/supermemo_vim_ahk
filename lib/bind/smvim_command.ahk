@@ -118,7 +118,13 @@ i::  ; learn outstanding *i*tems only
   Vim.SM.WaitBrowser()
   send {AppsKey}ci
   Vim.SM.WaitBrowser()
-  send ^l
+  wBrowser := WinGet(, "ahk_class TBrowser")
+  sleep 200
+  while (WinExist("ahk_id " . wBrowser)) {
+    WinActivate, % "ahk_id " . wBrowser
+    send ^l
+    sleep 200
+  }
 return
 
 o::  ; c*o*mpress images

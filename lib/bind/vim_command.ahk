@@ -49,7 +49,7 @@ Return
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CopyPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
-        . "|Bilibili"
+        . "|Bilibili|AlwaysOnTop"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -187,8 +187,11 @@ GoogleDefineButtonSearch:
   Gui destroy
   if (LangCode) {
     define := "define"
-    if (LangCode = "es")
+    if (LangCode = "es") {
       define := "definir"
+    } else if (LangCode = "fr") {
+      define := "définir"
+    }
     run % "https://www.google.com/search?hl=" . LangCode . "&q=" . define . " "
         . term . "&forcedict=" . term . "&dictcorpus=" . LangCode . "&expnd=1"
   } else {
@@ -530,7 +533,8 @@ return
 
 Libgen:
   if (search := FindSearch("Library Genesis", "Enter your search."))
-    run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
+    ; run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
+    run % "https://libgen.li/index.php?req=" . search . "&columns%5B%5D=t&columns%5B%5D=a&columns%5B%5D=s&columns%5B%5D=y&columns%5B%5D=p&columns%5B%5D=i&objects%5B%5D=f&objects%5B%5D=e&objects%5B%5D=s&objects%5B%5D=a&objects%5B%5D=p&objects%5B%5D=w&topics%5B%5D=l&topics%5B%5D=c&topics%5B%5D=f&topics%5B%5D=a&topics%5B%5D=m&topics%5B%5D=r&topics%5B%5D=s&res=25&filesuns=all"
 return
 
 ImageGoogle:
@@ -546,8 +550,9 @@ SearchLinkInYT:
     RegExMatch(copy(, true), "(<A((.|\r\n)*)href="")\K[^""]+", link)
     send {esc}
   }
+  SMTitle := WinGetTitle("ahk_class TElWind")
   if (link) {
-    run % "https://www.youtube.com/results?search_query=" . link
+    run % "https://www.youtube.com/results?search_query=" . SMTitle
     WinWaitActive, ahk_group Browser
     uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
     uiaBrowser.WaitPageLoad()
@@ -625,4 +630,8 @@ LinkToPreviousElement:
   send {enter}
   WinActivate, ahk_class TElWind
   Goto, SMListLinks
+return
+
+AlwaysOnTop:
+  WinSet, AlwaysOnTop, Toggle, A
 return

@@ -37,9 +37,9 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.Move.LastKey)
 ; Period
 ; .::send +^{Right}{BS}^v  ; original vim_ahk; no idea what that means
-.::
+.::  ; dot repeat
   Vim.State.n := Vim.State.n ? Vim.State.n : Vim.Move.LastN
-  Vim.State.Mode := Vim.Move.LastMode
+  Vim.State.Mode := Vim.Move.LastMode, Vim.State.Surround := Vim.Move.LastSurround
   if (Vim.Move.LastFtsChar)
     Vim.State.FtsChar := Vim.Move.LastFtsChar
   if (Vim.Move.LastInOrOut == "Inner") {
@@ -51,6 +51,8 @@ Return
   } else {
     Vim.Move.Move(Vim.Move.LastKey)
   }
+  if (Vim.Move.LastSurround)
+    Goto Surround
 return
 
 #if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))

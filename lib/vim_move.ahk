@@ -45,7 +45,7 @@
   RegForDot(key) {
     this.ReggedForDot := ((!this.IsMotionOnly() || this.IsActionKey(key)) && (A_ThisHotkey != "."))
     if (this.ReggedForDot) {
-      this.LastInOrOut := this.LastRepeat := false
+      this.LastInOrOut := this.LastRepeat := this.LastSurround := this.LastSurroundKey := ""
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
       this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
     }
@@ -470,7 +470,7 @@
             send {right}
             this.SelectParagraphDown(, true)
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-          } else if this.Vim.IsWhitespaceOnly(DetectionStr) {
+          } else if IsWhitespaceOnly(DetectionStr) {
             send {right 2}
             this.SelectParagraphDown(, true)
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
@@ -536,7 +536,7 @@
           if !DetectionStr {  ; end of line
             send {right}+{end}  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-          } else if this.Vim.IsWhitespaceOnly(DetectionStr) {
+          } else if IsWhitespaceOnly(DetectionStr) {
             send {right 2}+{end}  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
           }
@@ -603,7 +603,7 @@
           if !DetectionStr {  ; end of line
             send {right}+{end}  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-          } else if this.Vim.IsWhitespaceOnly(DetectionStr) {
+          } else if IsWhitespaceOnly(DetectionStr) {
             send {right 2}+{end}  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
           }
@@ -801,7 +801,7 @@
         } else {
           this.SelectParagraphDown(, true)
           DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-          if (!DetectionStr || this.Vim.IsWhitespaceOnly(DetectionStr)) {  ; end of paragraph
+          if (!DetectionStr || IsWhitespaceOnly(DetectionStr)) {  ; end of paragraph
             send {right}
             this.SelectParagraphDown(, true)  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
@@ -956,7 +956,7 @@
             send {right}
             this.SelectParagraphDown(, true)
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-          } else if (this.Vim.IsWhitespaceOnly(DetectionStr)) {
+          } else if (IsWhitespaceOnly(DetectionStr)) {
             send {right 2}
             this.SelectParagraphDown(, true)
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
@@ -1437,7 +1437,7 @@
           send {right}  ; to the next paragraph
           this.SelectParagraphDown(, true)
           DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-        } else if (this.Vim.IsWhitespaceOnly(DetectionStr)) {
+        } else if (IsWhitespaceOnly(DetectionStr)) {
           send {right 2}  ; to the next paragraph
           this.SelectParagraphDown(, true)
           DetectionStr := this.Vim.ParseLineBreaks(copy(false))
@@ -1524,7 +1524,7 @@
           send {right}  ; to the next paragraph
           this.SelectParagraphDown(, true)
           DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-        } else if (this.Vim.IsWhitespaceOnly(DetectionStr)) {
+        } else if (IsWhitespaceOnly(DetectionStr)) {
           send {right 2}  ; to the next paragraph
           this.SelectParagraphDown(, true)
           DetectionStr := this.Vim.ParseLineBreaks(copy(false))
@@ -1617,9 +1617,9 @@
 
   HandleClickBtn() {
     if (WinActive("ahk_class TContents")) {
-      ControlClickWinCoordDPIAdjusted(295, 50)
+      ClickDPIAdjusted(295, 50)
     } else if (WinActive("ahk_class TBrowser")) {
-      ControlClickWinCoordDPIAdjusted(638, 46)
+      ClickDPIAdjusted(638, 46)
     }
   }
 

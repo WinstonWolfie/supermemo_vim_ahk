@@ -141,12 +141,11 @@
     if (SMPlanDraggingPut) {
       SMPlanDraggingPut := false
     } else {
-      MouseGetPos,, YCoord
+      MouseGetPos, XCoord, YCoord
       MouseMove, IniXCoord, IniYCoord  ; speed can't be 0 otherwise returning won't work reliably
       click up
-      click  ; to uncheck the "fix"
-      ControlClickWinCoordDPIAdjusted(114, YCoord)
-      send {tab}+{tab 2}
+      MouseGetPos, x, y
+      ControlClickWinCoord(x, y)  ; to uncheck the "fix"
       MouseMove, XCoordSaved, YCoordSaved, 0
     }
   }

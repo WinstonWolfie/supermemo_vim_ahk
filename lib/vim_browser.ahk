@@ -45,7 +45,7 @@ class VimBrowser {
       this.url := this.url ? this.url : this.GetParsedUrl()
 
     ; Sites that should be skipped
-    SkippedList := "mp.weixin.qq.com,wind.com.cn,thepokerbank.com"
+    SkippedList := "wind.com.cn,thepokerbank.com"
     if (IfContains(this.Url, SkippedList)) {
       return
 
@@ -156,6 +156,8 @@ class VimBrowser {
       this.source := "Neuroscientifically Challenged"
     } else if (IfContains(this.Url, "bachvereniging.nl")) {
       this.source := "Netherlands Bach Society"
+    } else if (IfContains(this.Url, "tutorialspoint.com")) {
+      this.source := "Tutorials Point"
 
     ; Sites that require special attention
     ; Video sites
@@ -209,6 +211,10 @@ class VimBrowser {
       this.Source := "Wiktionary", this.title := RegExReplace(this.title, " - Wiktionary$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
+    } else if (IfContains(this.url, "en.wikiversity.org")) {
+      this.Source := "Wikiversity", this.title := RegExReplace(this.title, " - Wikiversity$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
     } else if (IfContains(this.url, "zh.wikipedia.org")) {
       this.Source := "维基百科", this.title := RegExReplace(this.title, " - 维基百科，自由的百科全书$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -229,6 +235,10 @@ class VimBrowser {
       this.Source := "ウィキペディア", this.title := RegExReplace(this.title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "最終更新 (.*?) \(", v), this.date := v1
+    } else if (IfContains(this.url, "la.wikipedia.org")) {
+      this.Source := "Vicipaedia", this.title := RegExReplace(this.title, " - Vicipaedia$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Novissima mutatio die (.*?) hora", v), this.date := v1
     } else if (IfContains(this.url, "github.com")) {
       this.Source := "GitHub", this.title := RegExReplace(this.title, "^GitHub - "), this.title := RegExReplace(this.title, " · GitHub$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -243,7 +253,7 @@ class VimBrowser {
       this.Source := "知乎", this.title := RegExReplace(this.title, " - 知乎$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "(编辑|发布)于 (.*?) ", v), this.date := v2
-    } else if (this.Title ~= " \| The Economist$") {
+    } else if (IfContains(this.url, "economist.com")) {
       this.Source := "The Economist", this.title := RegExReplace(this.title, " \| The Economist$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "\r\n(\w+ \d+\w+ \d+)( \| .*)?\r\n\r\n", v), this.date := v1
@@ -251,6 +261,9 @@ class VimBrowser {
       this.Source := "Investopedia"
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Updated (.*)", v), this.date := v1
+    } else if (IfContains(this.Url, "mp.weixin.qq.com")) {
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, " ([0-9]{4}-[0-9]{2}-[0-9]{2}) ", v), this.date := v1
       
     ; Special cases
     } else if (this.title ~= " - YouTube$") {  ; for getting title for timestamp syncing with SM
@@ -300,7 +313,7 @@ class VimBrowser {
 
   GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     title := title ? title : this.GetFullTitle()
-    if (this.IsVidSite(title))
+    ; if (this.IsVidSite(title))
       return this.MatchVidTime(title, FullPageText, RestoreClip)
   }
 
@@ -345,6 +358,10 @@ class VimBrowser {
     } else if (IfIn(this.IsVidSite(title), "2,3")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
       VidTime := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
+    } else {
+      ; For now, all websites can use this function in case there are videos in them
+      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+      VidTime := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
     }
     return RegExReplace(VidTime, "^0(?=\d)")
   }
@@ -386,7 +403,7 @@ class VimBrowser {
   Highlight() {
     ; ControlSend doesn't work reliably because browser can't highlight in background
     send !+h
-    sleep 100
+    sleep 200
   }
 
   ClickBtn() {

@@ -22,10 +22,23 @@ s::  ; gs: go to link
   Vim.State.SetMode()
   if (link := Vim.SM.GetLink()) {
     if (IfContains(A_ThisHotkey, "+")) {
-      ; run % "iexplore.exe " . Link  ; RIP IE
+      ; run % "iexplore.exe " . link  ; RIP IE
       Vim.Browser.RunInIE(link)
     } else {
-      run % Link
+      try run % link
+      catch {
+        RegExMatch(DefaultBrowser := DefaultBrowser(), ".*\\\K.*$", v)
+        if (WinExist("ahk_exe " . v)) {
+          WinActivate
+        } else {
+          run % DefaultBrowser
+        }
+        WinWaitActive, ahk_group Browser
+        uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+        if (Vim.Browser.GetFullTitle() != "new tab")
+          uiaBrowser.NewTab()
+        uiaBrowser.Navigate(link)
+      }
     }
   } else {
     ToolTip("No link found.")
@@ -176,7 +189,11 @@ c::
   ; Some hyperlinks seem to be text type
   ; Type := Caret ? "Text" : "Hyperlink"
   Type := "Text"
-  aHints := CreateHintsArray(Control, hCtrl, Type, Caret)
+  if (!aHints := CreateHintsArray(Control, hCtrl, Type, Caret)) {
+    BlockInput, off
+    ReleaseModifierKeys(), ToolTip("Text too long.")
+    return
+  }    
   if ((Control == "Internet Explorer_Server2") && (LearningState != 1)) {  ; so answer isn't revealed
     if (hCtrl := ControlGet(,, Control := "Internet Explorer_Server1"))
       aHints.Push(CreateHintsArray(Control, hCtrl, Type, Caret)*)
@@ -185,6 +202,8 @@ c::
     Vim.State.SetMode("KeyListener")
     ; aHintStrings is later used in key listener
     CreateHints(aHints, aHintStrings := hintStrings(n))
+  } else {
+    ToolTip("No link found.")
   }
   BlockInput, off
   ReleaseModifierKeys()
@@ -195,6 +214,8 @@ CreateHintsArray(Control, hCtrl, Type, Caret) {
   if (Caret)
     Vim.SM.ClickMid(Control)
   el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)
+  if (ObjCount(auiaHints) > 1000)
+    return
   aHints := [], HintsIndex := 0
   for i, v in auiaHints {
     if (v.CurrentBoundingRectangle.l && (Caret || v.CurrentValue)) {  ; some hyperlinks don't have value
