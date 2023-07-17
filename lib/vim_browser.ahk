@@ -66,6 +66,10 @@ class VimBrowser {
       ; this.source := "GitHub", this.title := RegExReplace(this.title, "^GitHub - ")
     } else if (this.title ~= "^ArtStation - ") {
       this.source := "ArtStation", this.title := RegExReplace(this.title, "^ArtStation - ")
+    } else if (this.title ~= "^Art... When I Feel Like It - ") {
+      this.source := "Art... When I Feel Like It ", this.title := RegExReplace(this.title, "^Art... When I Feel Like It - ")
+    } else if (this.title ~= "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ") {
+      this.author := "Henry George Liddell, Robert Scott", this.source := "An Intermediate Greek-English Lexicon", this.title := RegExReplace(this.title, "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ")
 
     } else if (this.Title ~= "_百度知道$") {
       this.Source := "百度知道", this.Title := RegExReplace(this.Title, "_百度知道$")
@@ -103,6 +107,8 @@ class VimBrowser {
       this.source := "BMC Neuroscience", this.title := RegExReplace(this.title, " \| BMC Neuroscience \| Full Text$")
     } else if (this.title ~= " \| MIT News \| Massachusetts Institute of Technology$") {
       this.source := "MIT News | Massachusetts Institute of Technology", this.title := RegExReplace(this.title, " \| MIT News \| Massachusetts Institute of Technology$")
+    } else if (RegExMatch(this.title, " \| (.*) Wiki \| Fandom$", v)) {
+      this.source := v1 . " Wiki | Fandom", this.title := RegExReplace(this.title, " \| (.*) Wiki \| Fandom$")
 
     } else if (this.title ~= " \/ Twitter$") {
       this.source := "Twitter", this.title := RegExReplace(this.title, """ \/ Twitter$")
@@ -158,6 +164,8 @@ class VimBrowser {
       this.source := "Netherlands Bach Society"
     } else if (IfContains(this.Url, "tutorialspoint.com")) {
       this.source := "Tutorials Point"
+    } else if (IfContains(this.Url, "fourminutebooks.com")) {
+      this.source := "Four Minute Books"
 
     ; Sites that require special attention
     ; Video sites
@@ -215,15 +223,23 @@ class VimBrowser {
       this.Source := "Wikiversity", this.title := RegExReplace(this.title, " - Wikiversity$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (IfContains(this.url, "zh.wikipedia.org")) {
+    } else if (this.title ~= " - 维基百科，自由的百科全书$") {
       this.Source := "维基百科", this.title := RegExReplace(this.title, " - 维基百科，自由的百科全书$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "本页面最后修订于(.*?) \(", v), this.date := v1
-    } else if (IfContains(this.url, "es.wikipedia.org")) {
+    } else if (this.title ~= " - 维基文库，自由的图书馆$") {
+      this.Source := "维基文库", this.title := RegExReplace(this.title, " - 维基文库，自由的图书馆$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.date := v1
+    } else if (this.title ~= " - 维基词典，自由的多语言词典$") {
+      this.Source := "维基词典", this.title := RegExReplace(this.title, " - 维基词典，自由的多语言词典$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.date := v1
+    } else if (this.title ~= " - Wikipedia, la enciclopedia libre$") {
       this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia, la enciclopedia libre$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.date := v1
-    } else if (IfContains(this.url, "es.wiktionary.org")) {
+    } else if (this.title ~= " - Wikcionario, el diccionario libre$") {
       this.Source := "Wikcionario", this.title := RegExReplace(this.title, " - Wikcionario, el diccionario libre$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.date := v1
@@ -235,7 +251,7 @@ class VimBrowser {
       this.Source := "ウィキペディア", this.title := RegExReplace(this.title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "最終更新 (.*?) \(", v), this.date := v1
-    } else if (IfContains(this.url, "la.wikipedia.org")) {
+    } else if (this.title ~= " - Vicipaedia$") {
       this.Source := "Vicipaedia", this.title := RegExReplace(this.title, " - Vicipaedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Novissima mutatio die (.*?) hora", v), this.date := v1

@@ -444,14 +444,14 @@ ReformatVocab:
   if (!data := copy(false, true))
     goto RestoreClipReturn
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
-  data := RegExReplace(data, "(\.<BR>""|\. <BR>(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
+  data := RegExReplace(data, "(\.<BR>""|\. ?<BR>(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
   data := RegExReplace(data, "(""|\.?’)", "</P>")
   data := StrReplace(data, "<P></P>")
   SynPos := RegExMatch(data, "<(P|BR)>(Similar|Synonyms)")
   def := SubStr(data, 1, SynPos - 1)
   SynAndAnt := SubStr(data, SynPos)
   SynAndAnt := StrReplace(SynAndAnt, "; ", ", ")
-  SynAndAnt := RegExReplace(SynAndAnt, "(<BR>)?(\r\n)?((Similar:?)<BR>|Synonyms ?(\r\n)?(<\/P>\r\n<P>|<BR>))", "<P>syn: ")
+  SynAndAnt := RegExReplace(SynAndAnt, "(<BR>)?(\n)?((Similar:?)<BR>|Synonyms ?(\r\n)?(<\/P>\r\n<P>|<BR>))", "<P>syn: ")
   SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?|Opuesta)<BR>", "ant: ")
   WinClip.Paste(def . SynAndAnt,, false)
   send ^a^+1

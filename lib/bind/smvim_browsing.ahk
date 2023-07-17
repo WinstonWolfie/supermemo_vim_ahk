@@ -342,7 +342,7 @@ Return
 !f7::
 `::
   send !{f7}  ; go to read point
-  ToolTip("Go to read point")
+  ToolTip("Going to read point")
 Return
 
 !m::
@@ -355,9 +355,11 @@ Return
 !+k::send !+{pgup}  ; go to previous sibling
 
 #if (Vim.IsVimGroup()
-  && (Vim.State.IsCurrentVimMode("Vim_Normal") || (Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.Surround && !Vim.State.fts))
+  && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
   && !Vim.State.StrIsInCurrentVimMode("Inner")
   && !Vim.State.StrIsInCurrentVimMode("Outer")
+  && !Vim.State.Surround 
+  && !Vim.State.fts
   && WinActive("ahk_class TElWind"))
 \::
   Vim.SM.PostMsg(151)

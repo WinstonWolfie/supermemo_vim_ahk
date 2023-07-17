@@ -92,11 +92,11 @@ class VimSM {
   }
 
   IsEditingPlainText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "TMemo"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "TMemo,TRichEdit"))
   }
 
   IsEditingText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server,TMemo"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server,TMemo,TRichEdit"))
   }
 
   IsBrowsing() {

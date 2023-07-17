@@ -34,7 +34,7 @@ NukeHTML:
       return
     }
   }
-  Vim.SM.ExitText(true)
+  Vim.SM.ExitText(true, 1)
   if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())) {
     ToolTip("File not found.")
     return
@@ -113,7 +113,8 @@ return
 i::  ; learn outstanding *i*tems only
   Vim.State.SetMode("Vim_Normal")
   send !{home}
-  send {esc 4}  ; clear any hidden windows
+  SMPID := WinGet("PID")
+  WinClose, % "ahk_class TBrowser ahk_pid " . SMPID
   Vim.SM.PostMsg(202)  ; View - Outstanding
   Vim.SM.WaitBrowser()
   send {AppsKey}ci

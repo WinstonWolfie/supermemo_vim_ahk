@@ -5,7 +5,8 @@
   && (Vim.State.StrIsInCurrentVimMode("Vim_ydc")
    || Vim.State.IsCurrentVimMode("Vim_VisualChar")
    || Vim.State.IsCurrentVimMode("Vim_VisualFirst")
-   || Vim.State.StrIsInCurrentVimMode("SMVim_")))
+   || Vim.State.StrIsInCurrentVimMode("SMVim_")
+   || Vim.State.StrIsInCurrentVimMode("Vim_g")))
 i::Vim.State.SetInner()
 a::Vim.State.SetOuter()
 

@@ -11,17 +11,17 @@
       send % "{left}{right " . pos + 4 . "}"
     } else {
       ToolTip("Not found.")
-      goto SetNormalReturn
+      goto SetModeNormalReturn
     }
   } else if (Vim.SM.IsEditingHTML()) {
     if (!Vim.SM.HandleF3(1))
-      goto SetNormalReturn
+      goto SetModeNormalReturn
     ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
     send {enter}
     WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
     send {right}  ; put caret on the right
     if (!Vim.SM.HandleF3(2))
-      goto SetNormalReturn
+      goto SetModeNormalReturn
   }
   Vim.State.SetMode("Insert")
 return
@@ -58,7 +58,7 @@ return
   send !{home}
   Vim.SM.WaitFileLoad()
   if (WinActive("ahk_class TElWind"))
-    Vim.SM.Learn(, true)
+    Vim.SM.Learn(false, true)
   ReleaseModifierKeys()
 return
 
@@ -326,22 +326,25 @@ return
 
 !t::send !mlt  ; Totals
 
+^b::
 ^!b::
   send !b
-  WinWait, ahk_class TMsgDialog,, 0.25
+  WinWait, ahk_class TMsgDialog,, 0.3
   if (!ErrorLevel) {
     WinActivate
     send {text}y
     WinWaitClose, ahk_class TMsgDialog
-    Vim.SM.Command("")
+    if (A_ThisHotkey != "^b")
+      Vim.SM.Command("")
   } else {
-    Vim.SM.Command("")
+    if (A_ThisHotkey != "^b")
+      Vim.SM.Command("")
     WinWaitClose, ahk_class TCommanderDlg
     WinActivate, ahk_class TPlanDlg
     send ^s
     return
   }
-  WinWait, ahk_class TMsgDialog,, 0.25
+  WinWait, ahk_class TMsgDialog,, 0.3
   if (!ErrorLevel) {
     WinActivate
     send {text}y
@@ -663,6 +666,9 @@ return
 
 SMRegAltG:
 !g::Acc_Get("Object", "4.5.4.2.4",, "ahk_id " . WinGet()).accDoDefaultAction()
+
+!i::Acc_Get("Object", "4.6.4.3.4.9.4",, "ahk_id " . WinGet()).accDoDefaultAction()  ; default item template
+!t::Acc_Get("Object", "4.6.4.3.4.10.4",, "ahk_id " . WinGet()).accDoDefaultAction()  ; default topic template
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
 ; Use English input method for choosing concept when import

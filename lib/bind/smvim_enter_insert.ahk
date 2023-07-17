@@ -7,7 +7,7 @@
 ~Insert::
 ~NumpadIns::
 ~!m::  ; menu
-#if (Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")))
+#if (Vim.State.IsCurrentVimMode("Vim_Normal") && ((WinActive("ahk_class TElWind") && !Vim.State.g) || WinActive("ahk_class TRegistryForm")))
 ~!a::  ; new item and new registry entry
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TTaskManager"))
 ~!f1::  ; new task

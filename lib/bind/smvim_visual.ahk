@@ -18,13 +18,15 @@ return
   Vim.State.SetMode("Vim_Normal")
 return
 
+ParseHTML:
 !a::  ; p*a*rse html
+  GAltA := (A_ThisLabel == "ParseHTML")
   Vim.State.SetMode("Vim_Normal")
   SetDefaultKeyboard(0x0409)  ; English-US
   Gui, HTMLTag:Add, Text,, &HTML tag:
   list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
         . "|sup|blockquote|ruby|hint|note|ignore|headers|RefText|reference|highlight"
-        . "|SearchHighlight|TableLabel|AntiMerge"
+        . "|SearchHighlight|TableLabel|AntiMerge|AE"
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
   Gui, HTMLTag:Add, Button, default, &Add
@@ -39,6 +41,10 @@ return
 HTMLTagButtonAdd:
   Gui submit
   Gui destroy
+  if (GAltA) {
+    GAltA := false, Vim.State.SetMode("SMVim_GAltA", 0, -1, 0,,, -1)
+    return
+  }
   ClipSaved := ClipboardAll
   WinActivate, ahk_class TElWind
   if (!copy(false))

@@ -526,7 +526,9 @@ ToolTip(text, perma:=false, period:=-2000, command:="", n:=20) {
   }
   ToolTip, % text, % x, % y, % n
   RemoveTTFunc := Func("RemoveToolTip").Bind(n)
-  SetTimer, % RemoveTTFunc, % perma ? "off" : period
+  SetTimer, % RemoveTTFunc, off
+  if (!perma)
+    SetTimer, % RemoveTTFunc, % period
   CoordMode, ToolTip, % PrevCoordModeTT
 }
 
@@ -1070,8 +1072,8 @@ IsUrl(text) {
   return (text ~= "^((file|https?):\/\/|[A-Z]:(\\|\/)|^www\.)")
 }
 
-SetNormalReturn:
-  Vim.State.SetNormal()
+SetModeNormalReturn:
+  Vim.State.SetMode("Vim_Normal")
 return
 
 DefaultBrowser() {

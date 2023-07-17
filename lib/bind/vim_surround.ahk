@@ -11,7 +11,7 @@ return
   && !Vim.State.StrIsInCurrentVimMode("Inner")
   && !Vim.State.StrIsInCurrentVimMode("Outer")
   && (Vim.State.surround || ChangeEntered))
-Surround:
+VimSurround:
 (::
 )::
 {::

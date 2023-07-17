@@ -246,10 +246,10 @@
   ToggleEnabled() {
     if (this.Vim.Enabled) {
       this.Vim.Enabled := False
-      ToolTip("vim_ahk disabled.")
+      ToolTip("supermemo_vim_ahk disabled.")
     } else {
       this.Vim.Enabled := True
-      ToolTip("vim_ahk enabled.")
+      ToolTip("supermemo_vim_ahk enabled.")
     }
   }
 }

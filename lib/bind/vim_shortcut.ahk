@@ -131,9 +131,9 @@ return
 ^!c::  ; copy and register references
   Vim.Browser.Clear()
   guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  ClipSaved := ClipboardAll
+  WinClip.Snap(data)
   if (!copy(false))
-    ToolTip("No text selected."), Clipboard := ClipSaved
+    ToolTip("No text selected."), WinClip.Restore(data)
   Vim.Browser.GetInfo()
   ToolTip("Copied " . Clipboard . "`n"
         . "Link: " . Vim.Browser.Url . "`n"
@@ -446,7 +446,7 @@ return
   ToolTip("Searching " . vToolTip . " in " . Vim.SM.GetCollName() . "...", true)
   if (Vim.SM.CheckDup(text))
     RemoveToolTip()
-  ReleaseModifierKeys()
+  ReleaseModifierKeys(), VimLastSearch := text
 return
 
 ; SumatraPDF/Calibre/MS Word to SuperMemo
@@ -783,7 +783,11 @@ return
     send {text}Listening comprehension:
   }
   Vim.SM.InvokeFileBrowser()
-  ControlSend, TDriveComboBox1, c, A
+  t := ControlGetText("TDriveComboBox1")
+  if (!t ~= "^c:") {
+    ControlSend, TDriveComboBox1, c, A
+    ControlTextWaitChange("TDriveComboBox1", t)
+  }
   ControlSetText, TEdit1, % TempPath, A
   ControlSend, TEdit1, {enter}, A
   WinWaitActive, ahk_class TInputDlg

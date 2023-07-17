@@ -45,7 +45,7 @@
   RegForDot(key) {
     this.ReggedForDot := ((!this.IsMotionOnly() || this.IsActionKey(key)) && (A_ThisHotkey != "."))
     if (this.ReggedForDot) {
-      this.LastInOrOut := this.LastRepeat := this.LastSurround := this.LastSurroundKey := ""
+      this.LastInOrOut := this.LastRepeat := this.LastSurround := this.LastSurroundKey := this.LastLineCopy := ""
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
       this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
     }
@@ -168,11 +168,19 @@
         send !z
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltT")) {
+        sleep 20
         this.Vim.SM.AltT(), this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltQ")) {
+        sleep 20
         Send !q
         WinWaitActive, ahk_class TChoicesDlg
         send % this.KeyAfterSMAltQ . "{enter}"
+        this.Vim.State.SetMode("Vim_Normal")
+      } else if (this.Vim.State.StrIsInCurrentVimMode("GAltA")) {
+        Gosub HTMLTagButtonAdd
+        this.Vim.State.SetMode("Vim_Normal")
+      } else if (this.Vim.State.StrIsInCurrentVimMode("ParseHTML")) {
+        send ^+1
         this.Vim.State.SetMode("Vim_Normal")
       }
     }
@@ -470,7 +478,7 @@
             send {right}
             this.SelectParagraphDown(, true)
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-          } else if IsWhitespaceOnly(DetectionStr) {
+          } else if (IsWhitespaceOnly(DetectionStr)) {
             send {right 2}
             this.SelectParagraphDown(, true)
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
@@ -536,7 +544,7 @@
           if !DetectionStr {  ; end of line
             send {right}+{end}  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-          } else if IsWhitespaceOnly(DetectionStr) {
+          } else if (IsWhitespaceOnly(DetectionStr)) {
             send {right 2}+{end}  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
           }
@@ -588,10 +596,11 @@
               if (pos == 2 || pos == 1) {
                 this.SearchOccurrence++
                 NextOccurrence := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
-                if (NextOccurrence > 1)
+                if (NextOccurrence > 1) {
                   right := NextOccurrence - 2
-                else
+                } else {
                   right := 0
+                }
               }
               KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
@@ -603,7 +612,7 @@
           if !DetectionStr {  ; end of line
             send {right}+{end}  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
-          } else if IsWhitespaceOnly(DetectionStr) {
+          } else if (IsWhitespaceOnly(DetectionStr)) {
             send {right 2}+{end}  ; to the next line
             DetectionStr := this.Vim.ParseLineBreaks(copy(false))
           }
@@ -1348,6 +1357,7 @@
     } else {
       this.Move("")
     }
+    this.LastLineCopy := true
   }
 
   Inner(key:="") {
