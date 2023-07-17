@@ -1,4 +1,4 @@
-class VimBrowser {
+﻿class VimBrowser {
   __New(Vim) {
     this.Vim := Vim
   }
