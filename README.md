@@ -13,6 +13,7 @@ Vim notations:
 - Capitalised letters need to be pressed with `Shift`, eg, `T = Shift + T`. CapsLock is disabled because [CapsLock.ahk](https://github.com/Vonng/Capslock) is included.
 - `<C-{key}>` means `Ctrl + {key}`, eg, `<C-v>` = `Ctrl + V`.
 - `<A-{key}>` means `Alt + {key}`, eg, `<A-s>` = `Ctrl + S`.
+- Similarly, `<S-{key}>` means `Shift + {key}`, so `<C-S-A-a>` = `Ctrl + Shift + Alt + A`
 
 At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R`) to reload it.
 

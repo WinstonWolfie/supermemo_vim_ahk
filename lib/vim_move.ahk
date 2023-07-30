@@ -1563,12 +1563,13 @@
       key := (key == "}") ? "{" : key
       key := (key == "]") ? "[" : key
       key := (key == ">") ? "<" : key
+      key := (key == "»") ? "«" : key
     } else if (step == 2) {
       key := (key == "(") ? ")" : key
       key := (key == "（") ? "）" : key
       key := (key == "{") ? "}" : key
       key := (key == "[") ? "]" : key
-      key := (key == "<") ? ">" : key
+      key := (key == "«") ? "»" : key
     }
     return key
   }
@@ -1635,7 +1636,7 @@
 
   GetAltKey(key) {  ; return is regex compatible
     if (key == """") {
-      ret := """|“|”"
+      ret := """|“|”|«|»"
     } else if (key == "'") {
       ret := "'|‘|’"
     } else if (key == "(") {

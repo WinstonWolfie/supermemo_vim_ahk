@@ -26,9 +26,10 @@ return
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.State.g)
-!t::  ; new topic
+!t::
   Vim.SM.AltT()
   Vim.State.SetMode("Insert")
+  Vim.State.BackToNormal := 2
 return
 
 #if (Vim.State.Vim.Enabled && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")) && !Vim.SM.IsEditingText())

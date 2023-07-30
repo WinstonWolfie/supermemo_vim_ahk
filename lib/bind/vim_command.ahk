@@ -49,12 +49,12 @@ Return
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CopyPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
-        . "|Bilibili|AlwaysOnTop"
+        . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
     if (WinActive("ahk_class TElWind")) {
-      list := "NukeHTML|ReformatVocab|ImportFile|ShowReference|LinkToPreviousElement|" . list
+      list := "NukeHTML|ReformatVocab|ImportFile|ShowReference|LinkToPreviousElement|OpenInAcrobat|" . list
       if (Vim.SM.IsPassive(, -1))
         list := "ReformatScriptComponent|SearchLinkInYT|" . list
       if (Vim.SM.IsEditingText())
@@ -342,7 +342,7 @@ SetBrowserPosition:
   WinMove, ahk_class TBrowser,, 0, 0, 846, 1026
 return
 
-; Personal: Reformat my old incremental video topics
+; Personal: reformat my old incremental video topics
 ReformatScriptComponent:
   ClipSaved := ClipboardAll
   WinWaitActive, ahk_class TElWind
@@ -433,7 +433,7 @@ YT:
     run % "https://www.youtube.com/results?search_query=" . EncodeDecodeURI(text)
 return
 
-; Personal: Reformat my old vocabulary items
+; Personal: reformat my old vocabulary items
 ReformatVocab:
   Vim.State.SetMode("Vim_Normal")
   ClipSaved := ClipboardAll
@@ -634,4 +634,22 @@ return
 
 AlwaysOnTop:
   WinSet, AlwaysOnTop, Toggle, A
+return
+
+OpenInAcrobat:
+  send q^{t}{f9}
+  if (path := Vim.SM.GetFilePath())
+    run % "acrobat.exe " . path
+return
+
+Larousse:
+  if (word := FindSearch("Larousse", "Enter your word."))
+    run % "https://www.larousse.fr/dictionnaires/francais/" . word
+return
+
+GraecoLatinum:
+  if (word := FindSearch("Graeco-Latinum", "Enter your word.")) {
+    run % "http://lexica.linguax.com/nlm.php?searchedGL=" . word
+    run % "http://lexica.linguax.com/schrevel.php?searchedGL=" . word
+  }
 return

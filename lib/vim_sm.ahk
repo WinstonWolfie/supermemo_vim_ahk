@@ -149,8 +149,8 @@ class VimSM {
     this.Vim.State.SetNormal()
   }
 
-  SetPrio(Prio, WinWait:=false) {
-    if (WinActive("ahk_class TElWind")) {
+  SetPrio(Prio, WinWait:=false, ForceBG:=false) {
+    if (WinActive("ahk_class TElWind") && !ForceBG) {
       send !p  ; open priority window
       if (!WinWait) {
         send % Prio . "{enter}"
@@ -159,7 +159,7 @@ class VimSM {
         ControlSetText, TEdit5, % Prio, ahk_class TPriorityDlg
         ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
       }
-    } else if (WinExist("ahk_class TElWind")) {
+    } else if (WinExist("ahk_class TElWind") || ForceBG) {
       send {AltDown}
       PostMessage, 0x0104, 0x50, 1<<29,, ahk_class TElWind  ; P key
       PostMessage, 0x0105, 0x50, 1<<29,, ahk_class TElWind
@@ -534,7 +534,7 @@ class VimSM {
       ; send = -1 means must not send
       ; send = 0 means let string length decide
       ; ControlSend is faster when string length smaller than 20
-      if (send == 1 || (send != -1 && StrLen(concept) <= 20)) {
+      if ((send == 1) || ((send != -1) && (StrLen(concept) <= 20))) {
         ControlSend, Edit1, % "{text}" . concept, ahk_class TRegistryForm
       } else {
         ControlSetText, Edit1, % SubStr(concept, 2), ahk_class TRegistryForm
@@ -561,16 +561,27 @@ class VimSM {
   }
 
   SetElParam(title:="", Prio:="", template:="", Submit:=true) {
-    if (!title && !Prio && !template)
+    if (!title && !(prio >= 0) && !template) {
       return
-    if (!WinExist("ahk_class TElParamDlg")) {
+    } else if (title && (prio >= 0) && !template) {
+      this.SetPrio(prio,, true)
+      this.SetTitle(title)
+      return
+    } else if (title && !(prio >= 0) && !template) {
+      this.SetTitle(title)
+      return
+    } else if (!title && (prio >= 0) && !template) {
+      this.SetPrio(prio,, true)
+      return
+    }
+    if (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
       ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
       ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
-      WinWait, ahk_class TElParamDlg,, 0
+      WinWait, % w,, 0
       if (ErrorLevel) {
         ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
         ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
-        WinWait, ahk_class TElParamDlg,, 0
+        WinWait, % w,, 0
         if (ErrorLevel)
           return
       }
@@ -590,7 +601,8 @@ class VimSM {
     }
     if (Submit) {
       ControlFocus, TMemo1, ahk_class TElParamDlg  ; needed, otherwise the window won't close sometimes
-      ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{enter}, ahk_class TElParamDlg
+      while (WinExist(w))
+        ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{enter}, ahk_class TElParamDlg
     }
   }
 
@@ -654,8 +666,8 @@ class VimSM {
       ControlSetText, TEdit2, % text, ahk_class TCommanderDlg
       ControlTextWait("TEdit2", text, "ahk_class TCommanderDlg")
     }
-    while (WinExist("ahk_class TCommanderDlg"))
-      ControlClick, TButton4, ahk_class TCommanderDlg,,,, NA
+    while (WinExist(w := "ahk_class TCommanderDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")))
+      ControlClick, TButton4, % w,,,, NA
   }
 
   MakeReference(html:=false) {

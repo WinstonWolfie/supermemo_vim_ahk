@@ -109,22 +109,45 @@ return
   ReleaseModifierKeys()
 return
 
-^!d::  ; parse similar and opposite in google *d*efine
+^!d::  ; parse word definitions
   ClipSaved := ClipboardAll
   if (!copy(false)) {
     ToolTip("Text not found.")
     goto RestoreClipReturn
   }
-  TempClip := RegExReplace(Clipboard, "(Similar|Synonymes|Synonyms)(.*\r\n)?", "`r`nsyn: ")
-  TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
-  TempClip := RegExReplace(TempClip, "(?![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
-  TempClip := RegExReplace(TempClip, "\.\r\n", "`r`n")
-  TempClip := RegExReplace(TempClip, "(\r\n\K""|""(\r\n)?(?=\r\n))", "`r`n")
-  TempClip := RegExReplace(TempClip, """$(?!\r\n)")
-  TempClip := StrLower(SubStr(TempClip, 1, 1)) . SubStr(TempClip, 2)  ; make the first letter lower case
-  TempClip := StrReplace(TempClip, "Vulgar slang:", "vulgar slang: ")
-  TempClip := StrReplace(TempClip, "Derogatory:", "derogatory: ")
-  TempClip := StrReplace(TempClip, "Offensive:", "offensive: ")
+  TempClip := Clipboard, Vim.HTML.ClipboardGet_HTML(HTML)
+  RegExMatch(HTML, "SourceURL:(.*)", v), url := v1
+  if (IfContains(url, "larousse.fr")) {
+    TempClip := Vim.HTML.Clean(HTML, true)
+    RegExMatch(TempClip, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", TempClip)
+    TempClip := RegExReplace(TempClip, "is)<\/?(zzz)?(mark|span)( .*?)?>")
+    TempClip := RegExReplace(TempClip, "( | )-( | )", ", ")
+    TempClip := StrLower(SubStr(TempClip, 1, 1)) . SubStr(TempClip, 2)  ; make the first letter lower case
+    SynPos := RegExMatch(TempClip, "( | ):( | )") + 2
+    TempClip := RegExReplace(TempClip, "( | ):( | )", "<p>")
+    def := SubStr(TempClip, 1, SynPos)
+    AfterDef := SubStr(TempClip, SynPos + 1)
+    AfterDef := StrLower(SubStr(AfterDef, 1, 1)) . SubStr(AfterDef, 2)  ; make the first letter lower case
+    TempClip := def . AfterDef
+    TempClip := StrReplace(TempClip, ".<p>", "<p>")
+    TempClip := StrReplace(TempClip, "Synonymes :</p><p>", "syn: ")
+    TempClip := StrReplace(TempClip, "Contraires :</p><p>", "ant: ")
+  } else if (IfContains(url, "google.com/search")) {
+    TempClip := RegExReplace(TempClip, "(Similar|Synonymes|Synonyms)(.*\r\n)?", "`r`nsyn: ")
+    TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
+    TempClip := RegExReplace(TempClip, "(?![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
+    TempClip := RegExReplace(TempClip, "\.\r\n", "`r`n")
+    TempClip := RegExReplace(TempClip, "(\r\n\K""|""(\r\n)?(?=\r\n))", "`r`n")
+    TempClip := RegExReplace(TempClip, """$(?!\r\n)")
+    TempClip := StrLower(SubStr(TempClip, 1, 1)) . SubStr(TempClip, 2)  ; make the first letter lower case
+    TempClip := StrReplace(TempClip, "Vulgar slang:", "vulgar slang: ")
+    TempClip := StrReplace(TempClip, "Derogatory:", "derogatory: ")
+    TempClip := StrReplace(TempClip, "Offensive:", "offensive: ")
+  } else if (IfContains(url, "merriam-webster.com/thesaurus")) {
+    TempClip := StrReplace(TempClip, "`r`n", ", ")
+    TempClip := RegExReplace(TempClip, "Synonyms & Similar Words, , (Relevance, )?", "syn: ")
+    TempClip := StrReplace(TempClip, ", Antonyms & Near Antonyms, , ", "`r`n`r`nant: ")
+  }
   ToolTip("Copied:`n" . Clipboard := TempClip)
 return
 
@@ -362,19 +385,13 @@ SMImportButtonImport:
         goto ImportReturn
     }
   }
-  ; Process above contains references (in text). For this reason, element title
-  ; has to be set later; otherwise, references that have the same titles will
-  ; be merged.
 
-  if (vim.browser.title && !IWB && (Prio == "")) {
-    Vim.SM.SetTitle(Vim.Browser.title)
-  } else if ((IWB || !vim.browser.title) && (Prio >= 0)) {
-    Vim.SM.SetPrio(Prio, true)  ; WinWait=true in case priority get sent into other windows
-  } else if (vim.browser.title && (Prio >= 0)) {
-    Vim.SM.SetElParam(vim.browser.title, Prio)
-  }
+  Vim.SM.Reload()
+  Vim.SM.WaitFileLoad()
+  if (IWB)
+    Vim.Browser.Title := ""
+  Vim.SM.SetElParam(Vim.Browser.Title, Prio)
 
-  Vim.SM.Reload(, true)
   if (CloseTab) {
     TabCount := ObjCount(oTabs := guiaBrowser.GetAllTabs())
     if (TabCount == 1) {
@@ -416,6 +433,7 @@ return
 #if (Vim.State.Vim.Enabled && ((wBrowser := WinActive("ahk_group Browser")) ; browser group (Chrome, Edge, Firefox)
                             || WinActive("ahk_exe ebook-viewer.exe")        ; Calibre (an epub viewer)
                             || WinActive("ahk_class SUMATRA_PDF_FRAME")     ; SumatraPDF
+                            || WinActive("ahk_class AcrobatSDIWindow")      ; Acrobat
                             || WinActive("ahk_exe WINWORD.exe")             ; MS Word
                             || WinActive("ahk_exe WinDjView.exe")))         ; djvu viewer
 !+d::  ; check duplicates in SM
@@ -487,6 +505,9 @@ return
       send ^h
       WinWaitActive, ahk_class #32770  ; create annotations
       send {enter}
+    } else if (WinActive("ahk_class AcrobatSDIWindow")) {
+      send {AppsKey}h
+      sleep 100
     }
   }
   extract := ClipboardAll
@@ -600,6 +621,21 @@ return
   send {enter 2}^a
 return
 
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class AcrobatSDIWindow") && (v := A_TickCount - CurrTimeAcrobatPage) && (v <= 400))
+!p:: AcrobatPagePaste := true
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class AcrobatSDIWindow"))
+!p::  ; focus to page number field so you can enter a number
+  AcrobatPagePaste := false, CurrTimeAcrobatPage := A_TickCount
+  GetAcrobatPageBtn().ControlClick()
+  sleep 100
+  if (AcrobatPagePaste) {
+    send ^a
+    send % Clipboard
+    send {enter}
+  }
+return
+
 #if (Vim.State.Vim.Enabled
   && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe"))
   && (ControlGetFocus() == "Edit1"))
@@ -633,10 +669,11 @@ return
 
 ; Syncing page number / marker
 #if (Vim.State.Vim.Enabled
-  && (WinActive("ahk_class SUMATRA_PDF_FRAME")
+  && ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME"))
    || WinActive("ahk_exe ebook-viewer.exe")
-   || (WinActive("ahk_group Browser") && !Vim.Browser.IsVidSite() && !Vim.SM.IsPassive(, -1))
-   || WinActive("ahk_exe WinDjView.exe"))
+   || ((wBrowser := WinActive("ahk_group Browser")) && !Vim.Browser.IsVidSite() && !Vim.SM.IsPassive(, -1))
+   || (wDJVU := WinActive("ahk_exe WinDjView.exe"))
+   || (wAcrobat := WinActive("ahk_class AcrobatSDIWindow")))
   && WinExist("ahk_class TElWind"))
 !+s::
 ^!s::
@@ -651,26 +688,30 @@ return
   if (WinActive("ahk_class SUMATRA_PDF_FRAME") && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := trim(copy(false), " `t`r`n")
-  if ((wPdf := WinActive("ahk_class SUMATRA_PDF_FRAME")) || WinActive("ahk_exe WinDjView.exe")) {
-    if (!marker && (page := ControlGetText("Edit1"))) {
-      ; if (wPdf && !RegExMatch(page, "\d+"))
-        ; RegExMatch(WinGetText(), " \((\d+)", v), page := v1
-      marker := "p" . page
+  if (wSumatra || wDJVU || wAcrobat) {
+    if (wAcrobat) {
+      marker := "p" . GetAcrobatPageBtn().Value
     }
+    if (!marker && (page := ControlGetText("Edit1")))
+      marker := "p" . page
     if (!marker) {
       ToolTip("No text selected and page number not found.")
       goto RestoreClipReturn
     }
     if (CloseWnd) {
-      if (wPdf) {
+      if (wSumatra) {
         send {text}q
         WinWait, Unsaved annotations,, 0
         if (!ErrorLevel)
           ControlClick, Button1,,,,, NA
-      } else {  ; djvu
+      } else if (wDJVU) {
         send ^w
-        WinWaitTitle("WinDjView")
-        WinClose, A
+        WinWaitTitle("WinDjView", 1500)
+        WinClose, % "ahk_id " . wDJVUj
+      } else if (wAcrobat) {
+        send ^s^w
+        WinWaitTitle("Adobe Acrobat Pro DC (32-bit)", 1500)
+        WinClose, % "ahk_id " . wAcrobat
       }
     }
   } else {
@@ -681,7 +722,7 @@ return
       goto RestoreClipReturn
     }
     if (CloseWnd) {
-      if (b := WinActive("ahk_group Browser")) {
+      if (wBrowser) {
         send ^w
       } else {  ; epub viewer
         WinClose, A
@@ -864,11 +905,13 @@ return
   WinClose, ahk_class TBrowser
   IfMsgBox no
     goto HBImportReturn
-  if (Prio := IfContains(A_ThisHotkey, "+")) {
-    if ((!Prio := InputBox("Priority", "Enter extract priority.")) || ErrorLevel)
-      return
-    if (Prio ~= "^\.")
+  if (IfContains(A_ThisHotkey, "+")) {
+    Prio := InputBox("Priority", "Enter extract priority.")
+    if (!(Prio >= 0) || ErrorLevel) {
+      prio := ""
+    } else if (Prio ~= "^\.") {
       Prio := "0" . Prio
+    }
   }
   WinClip.Clear()
   Clipboard := "#SuperMemo Reference:"
@@ -879,12 +922,8 @@ return
   ClipWait
   WinActivate, ahk_class TElWind
   Vim.SM.CtrlN()
-  if (title && !prio) {
-    Vim.SM.SetTitle(title)
-  } else if (title && prio) {
-    Vim.SM.SetElParam(title, prio)
-  }
-  Vim.SM.Reload(, true)
+  Vim.SM.Reload()
+  Vim.SM.SetElParam(title, prio)
 
 HBImportReturn:
   Vim.SM.ClearHighlight()

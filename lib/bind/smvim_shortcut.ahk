@@ -79,7 +79,7 @@ return
     send {right}  ; so no text is selected
     sleep 50
   }
-  Vim.SM.SetTitle(, 0.5)
+  Vim.SM.SetTitle(, 1.5)
   if (t)
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, ahk_class TElWind
 return
@@ -87,10 +87,25 @@ return
 ^!f::  ; use IE's search
   if (!Vim.SM.IsEditingText()) {
     send ^t
-    Vim.SM.WaitTextFocus(500)
+    Vim.SM.WaitTextFocus(1500)
   }
   if (Vim.SM.IsEditingHTML())
     send {right}{left}{CtrlDown}cf{CtrlUp}  ; discovered by Harvey from the SuperMemo.wiki Discord server
+  WinWaitActive, ahk_class #32770,, 1.5
+  if (VimLastSearch) {
+    ControlSetText, Edit1, % SubStr(VimLastSearch, 2), A
+    ControlSend, Edit1, % "{text}" . SubStr(VimLastSearch, 1, 1), A
+    ControlSend, Edit1, {end}, A
+  }
+  SetTimer, RegisterVimLastSearchForSMCtrlAltF, -1
+return
+
+RegisterVimLastSearchForSMCtrlAltF:
+  while (WinExist("ahk_class #32770")) {
+    if (v := ControlGetText("Edit1", "ahk_class #32770"))
+      VimLastSearch := v
+    sleep 100
+  }
 return
 
 ~^enter::
@@ -236,7 +251,7 @@ return
   ToolTip("LaTeX converting...", true)
   if (!IfContains(data, "<IMG")) {  ; text
     send {bs}^{f7}  ; set read point
-    LatexFormula := ProcessLatexFormula(Clipboard)
+    LatexFormula := trim(ProcessLatexFormula(Clipboard), "$")
     ; After almost a year since I wrote this script, I finially figured out this f**ker website encodes the formula twice. Well, I suppose I don't use math that often in SM
     LatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
     LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cbg_white%2520%255Chuge%2520" . LatexFormula . "&dl=1"
@@ -362,7 +377,7 @@ return
   Gui, PlanAdd:Add, Text,, A&ctivity:
   list := "Break||Gaming|Coding|Sports|Social|Family|Passive|Meal|Rest"
         . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc"
-        . "|Out|Singing|Calligraphy|Drawing|Movie|TV|VC|GF|Music"
+        . "|Out|Singing|Calligraphy|Drawing|Movie|TV|VC|GF|Music|AE"
   Gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
   Gui, PlanAdd:Add, Text,, &Time:
   Gui, PlanAdd:Add, Edit, vTime w110
@@ -471,7 +486,7 @@ enter::
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TMyFindDlg"))
-; So ctrl+ff (hold ctrl and press f twice) could be a shorthand for search clipboard
+; So holding ctrl and press f twice could be a shorthand for searching clipboard
 ^f::
   ControlSetText, TEdit1, % Clipboard, ahk_class TMyFindDlg
   ControlFocus, TEdit1, ahk_class TMyFindDlg

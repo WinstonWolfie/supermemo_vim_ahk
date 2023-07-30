@@ -363,4 +363,10 @@ Return
   && WinActive("ahk_class TElWind"))
 \::
   Vim.SM.PostMsg(151)
-~^f3::Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 2
+~^f3::Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 2, SMCtrlF3 := true
+
+#if (Vim.IsVimGroup() && SMCtrlF3 && WinActive("ahk_class TInputDlg"))
+enter::
+  VimLastSearch := ControlGetText("TMemo1"), SMCtrlF3 := false
+  send {enter}
+return

@@ -166,11 +166,16 @@
       this.source := "Tutorials Point"
     } else if (IfContains(this.Url, "fourminutebooks.com")) {
       this.source := "Four Minute Books"
+    } else if (IfContains(this.Url, "forvo.com")) {
+      this.source := "Forvo"
+    } else if (IfContains(this.Url, "gutenberg.org")) {
+      this.source := "Project Gutenberg"
 
     ; Sites that require special attention
     ; Video sites
     } else if (IfContains(this.url, "youtube.com/watch")) {
       this.source := "YouTube", this.title := RegExReplace(this.title, " - YouTube$")
+      this.title := RegExReplace(this.title, "^\(\d+\) ")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText), this.date := this.MatchYTDate(FullPageText), this.author := this.MatchYTVidAuthor(FullPageText)
     } else if (IfContains(this.url, "youtube.com/playlist")) {
@@ -221,6 +226,10 @@
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
     } else if (IfContains(this.url, "en.wikiversity.org")) {
       this.Source := "Wikiversity", this.title := RegExReplace(this.title, " - Wikiversity$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
+    } else if (IfContains(this.url, "en.wikisource.org")) {
+      this.Source := "Wikisource", this.title := RegExReplace(this.title, " - Wikisource, the free online library$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
     } else if (this.title ~= " - 维基百科，自由的百科全书$") {

@@ -22,6 +22,10 @@ VimSurround:
 >::
 "::
 '::
+`::
+$::
+*::
+_::
   ClipSaved := ClipboardAll
   KeyWait shift
   CurrKey := (A_ThisLabel == "Surround") ? Vim.Move.LastSurroundKey : A_ThisHotkey
