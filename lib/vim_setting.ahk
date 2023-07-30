@@ -5,8 +5,8 @@ class VimSetting Extends VimGui {
     base.__New(vim, "Vim Ahk Settings")
   }
 
-  MakeGui() {
-    global VimRestoreIME, VimJJ, VimEscNormal, VimSendEscNormal, VimLongEscNormal, VimCtrlBracketToEsc, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimChangeCaretWidth, VimCheckChr
+  MakeGui(){
+    global VimRestoreIME, VimJJ, VimEscNormal, VimSendEscNormal, VimLongEscNormal, VimCtrlBracketToEsc, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimChangeCaretWidth
     global VimDisableUnused, VimSetTitleMatchMode, VimSetTitleMatchModeFS, VimIconCheckInterval, VimVerbose, VimAppList, VimGroup, VimGroupList, VimTwoLetterList
     global VimDisableUnusedText, VimSetTitleMatchModeText, VimIconCheckIntervalText, VimIconCheckIntervalEdit, VimVerboseText, VimAppListText, VimGroupText, VimHomepage, VimSettingOK, VimSettingReset, VimSettingCancel, VimTwoLetterText
     this.VimVal2V()
@@ -92,8 +92,8 @@ class VimSetting Extends VimGui {
     this.UpdateGuiValue()
   }
 
-  UpdateGuiValue() {
-    global VimRestoreIME, VimJJ, VimEscNormal, VimSendEscNormal, VimLongEscNormal, VimCtrlBracketToEsc, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimChangeCaretWidth, VimCheckChr
+  UpdateGuiValue(){
+    global VimRestoreIME, VimJJ, VimEscNormal, VimSendEscNormal, VimLongEscNormal, VimCtrlBracketToEsc, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimChangeCaretWidth
     global VimDisableUnused, VimSetTitleMatchMode, VimSetTitleMatchModeFS, VimIconCheckInterval, VimVerbose, VimAppList, VimGroup, VimGroupList, VimTwoLetter, VimTwoLetterList
     for i, k in this.Vim.Checkboxes {
       GuiControl, % this.Hwnd ":", % k, % %k%
@@ -140,8 +140,8 @@ class VimSetting Extends VimGui {
   GroupText() {
   }
 
-  VimV2Conf() {
-    global VimRestoreIME, VimJJ, VimEscNormal, VimSendEscNormal, VimLongEscNormal, VimCtrlBracketToEsc, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimChangeCaretWidth, VimCheckChr
+  VimV2Conf(){
+    global VimRestoreIME, VimJJ, VimEscNormal, VimSendEscNormal, VimLongEscNormal, VimCtrlBracketToEsc, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimChangeCaretWidth
     global VimDisableUnused, VimSetTitleMatchMode, VimSetTitleMatchModeFS, VimIconCheckInterval, VimVerbose, VimAppList, VimGroup, VimGroupList, VimTwoLetter, VimTwoLetterList
     VimGroup := this.VimParseList(VimGroupList)
     VimTwoLetter := this.VimParseList(VimTwoLetterList)
@@ -167,8 +167,8 @@ class VimSetting Extends VimGui {
     return result
   }
 
-  VimConf2V(vd) {
-    global VimRestoreIME, VimJJ, VimEscNormal, VimSendEscNormal, VimLongEscNormal, VimCtrlBracketToEsc, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimChangeCaretWidth, VimCheckChr
+  VimConf2V(vd){
+    global VimRestoreIME, VimJJ, VimEscNormal, VimSendEscNormal, VimLongEscNormal, VimCtrlBracketToEsc, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimChangeCaretWidth
     global VimDisableUnused, VimSetTitleMatchMode, VimSetTitleMatchModeFS, VimIconCheckInterval, VimVerbose, VimAppList, VimGroup, VimGroupList, VimTwoLetterList
     StringReplace, VimGroupList, % this.Vim.Conf["VimGroup"][vd], % this.Vim.GroupDel, `n, All
     StringReplace, VimTwoLetterList, % this.Vim.Conf["VimTwoLetter"][vd], % this.Vim.GroupDel, `n, All
