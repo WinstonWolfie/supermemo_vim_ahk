@@ -390,6 +390,8 @@ SMImportButtonImport:
   Vim.SM.WaitFileLoad()
   if (IWB)
     Vim.Browser.Title := ""
+  if (Passive || esc)
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
   Vim.SM.SetElParam(Vim.Browser.Title, Prio)
 
   if (CloseTab) {
@@ -423,6 +425,10 @@ ImportReturn:
   Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal"), RemoveToolTip()
   if (!esc)
     Clipboard := ClipSaved
+  if (Passive || esc) {
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+    send {esc}
+  }
 return
 
 ^+e::

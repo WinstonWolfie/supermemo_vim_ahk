@@ -44,6 +44,9 @@
     if (GetUrl)
       this.url := this.url ? this.url : this.GetParsedUrl()
 
+    if (this.title ~= " - YouTube$")
+      this.title := RegExReplace(this.title, "^\(\d+\) ")
+
     ; Sites that should be skipped
     SkippedList := "wind.com.cn,thepokerbank.com"
     if (IfContains(this.Url, SkippedList)) {
@@ -175,7 +178,6 @@
     ; Video sites
     } else if (IfContains(this.url, "youtube.com/watch")) {
       this.source := "YouTube", this.title := RegExReplace(this.title, " - YouTube$")
-      this.title := RegExReplace(this.title, "^\(\d+\) ")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText), this.date := this.MatchYTDate(FullPageText), this.author := this.MatchYTVidAuthor(FullPageText)
     } else if (IfContains(this.url, "youtube.com/playlist")) {
