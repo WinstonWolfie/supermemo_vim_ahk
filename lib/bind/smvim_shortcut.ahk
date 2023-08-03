@@ -270,19 +270,19 @@ return
       HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
     
     /*
-      Recommended css setting for AntiMerge class:
-      .AntiMerge {
+      Recommended css setting for anti-merge class:
+      .anti-merge {
         position: absolute;
         left: -9999px;
         top: -9999px;
       }
     */
     
-    AntiMerge := "<SPAN class=AntiMerge>Last LaTeX to image conversion: " . CurrTimeDisplay . "</SPAN>"
+    AntiMerge := "<SPAN class=anti-merge>Last LaTeX to image conversion: " . CurrTimeDisplay . "</SPAN>"
     send {esc}
     Vim.SM.WaitTextExit()
 
-    HTML := RegExReplace(HTML, "<SPAN class=AntiMerge>Last LaTeX to image conversion: .*?(<\/SPAN>|$)", AntiMerge, v)
+    HTML := RegExReplace(HTML, "<SPAN class=anti-merge>Last LaTeX to image conversion: .*?(<\/SPAN>|$)", AntiMerge, v)
     if (!v)
       HTML .= "`n" . AntiMerge
     FileDelete % HTMLPath

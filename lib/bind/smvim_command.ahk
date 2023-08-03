@@ -40,7 +40,7 @@ NukeHTML:
     return
   }
   if ((A_ThisLabel == "NukeHTML")
-   && (HTML ~= "i)<.*?\K class=(extract|clozed?)(?=.*?>)")) {
+   && (HTML ~= "i)<.*?\K class=(" . Vim.SM.CssClass . ")(?=.*?>)")) {
     MsgBox, 4,, HTML has SM classes. Continue?
     IfMsgBox, no
       return

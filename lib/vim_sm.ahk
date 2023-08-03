@@ -1,6 +1,9 @@
 class VimSM {
   __New(Vim) {
     this.Vim := Vim
+    this.CssClass := "cloze|extract|clozed|hint|note|ignore|headers|RefText"
+                   . "|reference|highlight|TableLabel|anti-merge|uppercase"
+                   . "|italic|bold"
   }
 
   ClickTop(Control:="") {
@@ -514,8 +517,7 @@ class VimSM {
   }
 
   IsCssClass(text) {
-    if text in cloze,extract,clozed,hint,note,ignore,headers,RefText,reference,highlight,SearchHighlight,TableLabel,AntiMerge
-      return true
+    return (text ~= this.CssClass)
   }
 
   ChangeDefaultConcept(concept:="", send:=0, CurrConcept:="", check:=true) {

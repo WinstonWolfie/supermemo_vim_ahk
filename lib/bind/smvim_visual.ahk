@@ -27,9 +27,9 @@ ParseHTML:
   Vim.State.SetMode("Vim_Normal")
   SetDefaultKeyboard(0x0409)  ; English-US
   Gui, HTMLTag:Add, Text,, &HTML tag:
+  RegExMatch(Vim.SM.CssClass, "(hint.*$)", v)
   list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
-        . "|sup|blockquote|ruby|hint|note|ignore|headers|RefText|reference|highlight"
-        . "|SearchHighlight|TableLabel|AntiMerge|AE"
+        . "|sup|blockquote|ruby|" . v1
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
   Gui, HTMLTag:Add, Button, default, &Add

@@ -30,22 +30,24 @@ class VimHTML {
 
     ToolTip("Cleaning HTML...", true)
 
+    while (IfContains(str, "<span>"))
+      str := RegExReplace(str, "is)<span>(.*?)<\/span>", "$1")
+
     if (nuke) {
       ; Classes
       str := RegExReplace(str, "is)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
       str := RegExReplace(str, "is)<([^<>]+)?\K class=[^ >]+(?=([^<>]+)?>)")
     }
-    
-    if (LineBreak) {
+
+    if (LineBreak)
       str := RegExReplace(str, "i)<(BR|DIV)", "<P")
-    }
 
     if (IfContains(url, "economist.com"))
-      str := RegExReplace(str, "is)(<.*? .*?font-family: var\(--ds-type-system-serif-smallcaps\).*?>)(.*?)(<\/.*?>)", "$1<span class=Uppercase>$2</span>$3")
+      str := RegExReplace(str, "is)(<[^\/]+? .*?font-family: var\(--ds-type-system-.*?-smallcaps\).*?)>", "$1 class=uppercase>")
 
     ; Converts font-style to tags
-    str := RegExReplace(str, "is)(<.*? .*?font-style: italic.*?>)(.*?)(<\/.*?>)", "$1<i>$2</i>$3")
-    str := RegExReplace(str, "is)(<.*? .*?font-weight: bold.*?>)(.*?)(<\/.*?>)", "$1<b>$2</b>$3")
+    str := RegExReplace(str, "is)(<[^\/]+? .*?font-style: italic.*?)>", "$1 class=italic>")
+    str := RegExReplace(str, "is)(<[^\/]+? .*?font-weight: bold.*?)>", "$1 class=bold>")
 
     ; Styles and fonts
     str := RegExReplace(str, "is)<([^<>]+)?\K (zzz)?style="".*?""(?=([^<>]+)?>)")
