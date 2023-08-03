@@ -30,9 +30,6 @@ class VimHTML {
 
     ToolTip("Cleaning HTML...", true)
 
-    while (IfContains(str, "<span>"))
-      str := RegExReplace(str, "is)<span>(.*?)<\/span>", "$1")
-
     if (nuke) {
       ; Classes
       str := RegExReplace(str, "is)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
@@ -64,10 +61,6 @@ class VimHTML {
     str := RegExReplace(str, "is)<([^<>]+)?\K (onMouseOver|onMouseOut)=.*?;(?=([^<>]+)?>)")
 
     str := RegExReplace(str, "is)<p( [^>]+)?>(&nbsp;|\s| )<\/p>")
-
-    ; Removing all empty span tags
-    while (IfContains(str, "<span>"))
-      str := RegExReplace(str, "is)<span>(.*?)<\/span>", "$1")
 
     RemoveToolTip()
     return str

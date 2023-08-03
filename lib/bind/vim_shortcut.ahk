@@ -147,9 +147,9 @@ return
     TempClip := StrReplace(TempClip, "`r`n", ", ")
     TempClip := RegExReplace(TempClip, "Synonyms & Similar Words, , (Relevance, )?", "syn: ")
     TempClip := StrReplace(TempClip, ", Antonyms & Near Antonyms, , ", "`r`n`r`nant: ")
-  } else if (IfContains(url, "wiktionary.org/wiki")) {
-    TempClip := StrReplace(TempClip, "Synonym:", "syn:")
-    TempClip := StrReplace(TempClip, "Antonym:", "ant:")
+  } else if (IfContains(url, "en.wiktionary.org/wiki")) {
+    TempClip := RegExReplace(TempClip, "Synonyms?:", "syn:")
+    TempClip := RegExReplace(TempClip, "Antonyms?:", "ant:")
   }
   ToolTip("Copied:`n" . Clipboard := TempClip)
 return
