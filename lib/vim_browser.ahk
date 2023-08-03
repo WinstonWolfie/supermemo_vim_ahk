@@ -110,8 +110,10 @@
       this.source := "BMC Neuroscience", this.title := RegExReplace(this.title, " \| BMC Neuroscience \| Full Text$")
     } else if (this.title ~= " \| MIT News \| Massachusetts Institute of Technology$") {
       this.source := "MIT News | Massachusetts Institute of Technology", this.title := RegExReplace(this.title, " \| MIT News \| Massachusetts Institute of Technology$")
-    } else if (RegExMatch(this.title, " \| (.*) Wiki \| Fandom$", v)) {
-      this.source := v1 . " Wiki | Fandom", this.title := RegExReplace(this.title, " \| (.*) Wiki \| Fandom$")
+    } else if (RegExMatch(this.title, " \| (.*) \| Fandom$", v)) {
+      this.source := v1 . " | Fandom", this.title := RegExReplace(this.title, " \| (.*) \| Fandom$")
+    } else if (RegExMatch(this.title, " \| (.*) \| The Guardian$", v)) {
+      this.source := v1 . " | The Guardian", this.title := RegExReplace(this.title, " \| (.*) \| The Guardian$")
 
     } else if (this.title ~= " \/ Twitter$") {
       this.source := "Twitter", this.title := RegExReplace(this.title, """ \/ Twitter$")
@@ -173,6 +175,8 @@
       this.source := "Forvo"
     } else if (IfContains(this.Url, "gutenberg.org")) {
       this.source := "Project Gutenberg"
+    } else if (IfContains(this.Url, "finty.com")) {
+      this.source := "Finty"
 
     ; Sites that require special attention
     ; Video sites
@@ -427,9 +431,14 @@
     }
   }
 
-  Highlight() {
+  Highlight(CollName:="") {
+    CollName := CollName ? CollName : this.Vim.SM.GetCollName()
     ; ControlSend doesn't work reliably because browser can't highlight in background
-    send !+h
+    if (CollName = "zen") {
+      send ^+h
+    } else {
+      send !+h
+    }
     sleep 200
   }
 
@@ -438,8 +447,8 @@
     this.url := this.url ? this.url : this.GetParsedUrl()
     if (IfContains(this.url, "youtube.com/watch")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-      if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show more' AND AutomationId='expand'"))
-        btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show more'")
+      if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
+        btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
       if (btn)
         btn.FindByPath("P3").click()  ; click the description box, so the webpage doesn't scroll down
     } else {

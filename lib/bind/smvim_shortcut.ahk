@@ -93,9 +93,9 @@ return
     send {right}{left}{CtrlDown}cf{CtrlUp}  ; discovered by Harvey from the SuperMemo.wiki Discord server
   WinWaitActive, ahk_class #32770,, 1.5
   if (VimLastSearch) {
-    ControlSetText, Edit1, % SubStr(VimLastSearch, 2), A
-    ControlSend, Edit1, % "{text}" . SubStr(VimLastSearch, 1, 1), A
-    ControlSend, Edit1, {end}, A
+    ControlSetText, Edit1, % SubStr(VimLastSearch, 2)
+    ControlSend, Edit1, % "{text}" . SubStr(VimLastSearch, 1, 1)
+    send ^a
   }
   SetTimer, RegisterVimLastSearchForSMCtrlAltF, -1
 return
@@ -672,8 +672,8 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
                       && (title := WinGetTitle())
-                      && (RegExMatch(title, "i)(?<=^p)(\d+|[MDCLXVI]+)(?= \|)", page)  ; e.g. p12 | title
-                       || RegExMatch(title, ".+?(?= \|)", clip)))  ; e.g. last reading point | title
+                      && (RegExMatch(title, "i)(?<=^p)(\d+|[MDCLXVI]+)(?= \|)", page)  ; eg, p12 | title
+                       || RegExMatch(title, ".+?(?= \|)", clip)))  ; eg, last reading point | title
 !s::ToolTip("Copied " . Clipboard := trim(page ? page : clip))
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm"))

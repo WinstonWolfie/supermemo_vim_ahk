@@ -49,7 +49,8 @@ Return
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CopyPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
-        . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum"
+        . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
+        . "|MerriamWebster"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -106,7 +107,7 @@ WindowSpy:
 return
 
 WebSearch:
-  if (!text := FindSearch("Google Search", "Enter your search."))
+  if (!text := FindSearch("Google Search", "Search:"))
     return
   if (IsUrl(text)) {
     run % text
@@ -126,19 +127,19 @@ return
 
 WaybackMachine:
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
-  if (url := FindSearch("Wayback Machine", "Enter your URL.", uiaBrowser.GetCurrentURL()))
+  if (url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL()))
     run % "https://web.archive.org/web/*/" . url
 return
 
 DeepL:
-  if (text := FindSearch("DeepL Translate", "Enter your text."))
+  if (text := FindSearch("DeepL Translate", "Text:"))
     run % "https://www.deepl.com/en/translator#?/en/" . text
 Return
 
 YouGlish:
-  term := trim(Copy())
-  Gui, YouGlish:Add, Text,, &Term:
-  Gui, YouGlish:Add, Edit, vTerm w136 r1 -WantReturn, % term
+  search := trim(Copy())
+  Gui, YouGlish:Add, Text,, &Search:
+  Gui, YouGlish:Add, Edit, vSearch w136 r1 -WantReturn, % search
   Gui, YouGlish:Add, Text,, &Language:
   list := "English||Spanish|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|American Sign Language"
@@ -157,7 +158,7 @@ YouGlishButtonSearch:
   Gui destroy
   if (language == "American Sign Language")
     language := "signlanguage"
-  run % "https://youglish.com/pronounce/" . term . "/" . StrLower(language) . "?"
+  run % "https://youglish.com/pronounce/" . search . "/" . StrLower(language) . "?"
 Return
 
 KillIE:
@@ -166,9 +167,9 @@ KillIE:
 return
 
 DefineGoogle:
-  term := trim(Copy())
-  Gui, GoogleDefine:Add, Text,, &Term:
-  Gui, GoogleDefine:Add, Edit, vTerm w136 r1 -WantReturn, % term
+  search := trim(Copy())
+  Gui, GoogleDefine:Add, Text,, &Search:
+  Gui, GoogleDefine:Add, Edit, vSearch w136 r1 -WantReturn, % search
   Gui, GoogleDefine:Add, Text,, &Language Code:
   list := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
   Gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete w136, % list
@@ -186,16 +187,18 @@ GoogleDefineButtonSearch:
   Gui submit
   Gui destroy
   if (LangCode) {
-    define := "define"
-    if (LangCode = "es") {
-      define := "definir"
-    } else if (LangCode = "fr") {
-      define := "définir"
+    define := "define", add := ""
+    if (LangCode = "fr") {
+      define := "définis"
+    } else if (LangCode = "it") {
+      define := "definisci"
+    } else if (LangCode = "en") {
+      LangCode := "en-uk", add := "&gl=gb"
     }
     run % "https://www.google.com/search?hl=" . LangCode . "&q=" . define . " "
-        . term . "&forcedict=" . term . "&dictcorpus=" . LangCode . "&expnd=1"
+        . search . "&forcedict=" . search . "&dictcorpus=" . LangCode . "&expnd=1" . add
   } else {
-    run % "https://www.google.com/search?q=define " . term
+    run % "https://www.google.com/search?q=define " . search
   }
 return
 
@@ -219,9 +222,9 @@ return
 ; return
 
 Wiktionary:
-  term := trim(Copy())
-  Gui, Wiktionary:Add, Text,, &Term:
-  Gui, Wiktionary:Add, Edit, vTerm w136 r1 -WantReturn, % term
+  search := trim(Copy())
+  Gui, Wiktionary:Add, Text,, &Search:
+  Gui, Wiktionary:Add, Edit, vSearch w136 r1 -WantReturn, % search
   Gui, Wiktionary:Add, Text,, &Language:
   list := "Spanish||English|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|Latin|Ancient Greek|Chinese"
@@ -241,13 +244,13 @@ WiktionaryButtonSearch:
   if (language == "Ancient Greek")
     language := "Ancient_Greek"
   if (language == "Latin") {
-    term := StrReplace(term, "ā", "a")
-    term := StrReplace(term, "ē", "e")
-    term := StrReplace(term, "ī", "i")
-    term := StrReplace(term, "ū", "u")
-    term := StrReplace(term, "ō", "o")
+    search := StrReplace(search, "ā", "a")
+    search := StrReplace(search, "ē", "e")
+    search := StrReplace(search, "ī", "i")
+    search := StrReplace(search, "ū", "u")
+    search := StrReplace(search, "ō", "o")
   }
-  run % "https://en.wiktionary.org/wiki/" . term . "#" . language
+  run % "https://en.wiktionary.org/wiki/" . search . "#" . language
 return
 
 CopyTitle:
@@ -262,8 +265,8 @@ CopyHTML:
 return
 
 Forvo:
-  if (term := FindSearch("Forvo", "Enter your search term."))
-    run % "http://forvo.com/search/" . term . "/"
+  if (search := FindSearch("Forvo", "Word/phrase:"))
+    run % "http://forvo.com/search/" . search . "/"
 return
 
 SetConceptHook:
@@ -292,7 +295,7 @@ UIAViewer:
 return
 
 TranslateGoogle:
-  if (text := FindSearch("Google Translate", "Enter your text."))
+  if (text := FindSearch("Google Translate", "Text:"))
     run % "https://translate.google.com/?sl=auto&tl=en&text=" . text . "&op=translate"
 return
 
@@ -313,22 +316,22 @@ MemoriseCurrentBrowser:
 return
 
 Forcellini:
-  if (term := FindSearch("Forcellini", "Enter your search term."))
-    run % "http://lexica.linguax.com/forc2.php?searchedLG=" . term
+  if (word := FindSearch("Forcellini", "Word:"))
+    run % "http://lexica.linguax.com/forc2.php?searchedLG=" . word
 return
 
 RAE:
-  if (term := FindSearch("RAE", "Enter your search term."))
-    run % "https://dle.rae.es/" . term . "?m=form"
+  if (word := FindSearch("RAE", "Word:"))
+    run % "https://dle.rae.es/" . word . "?m=form"
 return
 
 OALD:
-  if (term := FindSearch("Oxford Advanced Learner's Dictionary", "Enter your search term."))
-    run % "https://www.oxfordlearnersdictionaries.com/definition/english/" . term . "?q=" . term
+  if (word := FindSearch("Oxford Advanced Learner's Dictionary", "Word:"))
+    run % "https://www.oxfordlearnersdictionaries.com/definition/english/" . word . "?q=" . word
 return
 
 AlatiusLatinMacronizer:
-  if (!Latin := FindSearch("Alatius: a Latin macronizer", "Enter your Latin sentences."))
+  if (!Latin := FindSearch("Alatius: a Latin macronizer", "Latin:"))
     return
   run https://alatius.com/macronizer/
   WinWaitActive, ahk_group Browser
@@ -410,7 +413,7 @@ MassReplaceRegistry:
 return
 
 SciHub:
-  if (!text := FindSearch("Sci-Hub", "Enter your search."))
+  if (!text := FindSearch("Sci-Hub", "Search:"))
     return
   if (RegExMatch(text, "https:\/\/doi\.org\/([^ ]+)", v)) {
     run % "https://sci-hub.hkvisa.net/" . v1
@@ -429,7 +432,7 @@ SciHub:
 return
 
 YT:
-  if (text := FindSearch("YouTube", "Enter your search."))
+  if (text := FindSearch("YouTube", "Search:"))
     run % "https://www.youtube.com/results?search_query=" . EncodeDecodeURI(text)
 return
 
@@ -459,7 +462,7 @@ ReformatVocab:
 return
 
 ZLibrary:
-  if (!text := FindSearch("Z-Library", "Enter your search."))
+  if (!text := FindSearch("Z-Library", "Search:"))
     return
   ; RIP z-lib
   ; run https://z-lib.org/
@@ -527,18 +530,18 @@ ScriptSettings:
 return
 
 Bilibili:
-  if (search := FindSearch("Bilibili", "Enter your search."))
+  if (search := FindSearch("Bilibili", "Search:"))
     run % "https://search.bilibili.com/all?keyword=" . search
 return
 
 Libgen:
-  if (search := FindSearch("Library Genesis", "Enter your search."))
+  if (search := FindSearch("Library Genesis", "Search:"))
     ; run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
     run % "https://libgen.li/index.php?req=" . search . "&columns%5B%5D=t&columns%5B%5D=a&columns%5B%5D=s&columns%5B%5D=y&columns%5B%5D=p&columns%5B%5D=i&objects%5B%5D=f&objects%5B%5D=e&objects%5B%5D=s&objects%5B%5D=a&objects%5B%5D=p&objects%5B%5D=w&topics%5B%5D=l&topics%5B%5D=c&topics%5B%5D=f&topics%5B%5D=a&topics%5B%5D=m&topics%5B%5D=r&topics%5B%5D=s&res=25&filesuns=all"
 return
 
 ImageGoogle:
-  if (search := FindSearch("Image (Google)", "Enter your search."))
+  if (search := FindSearch("Image (Google)", "Search:"))
     run % "https://www.google.com/search?hl=en&tbm=isch&q=" . search
 return
 
@@ -643,13 +646,23 @@ OpenInAcrobat:
 return
 
 Larousse:
-  if (word := FindSearch("Larousse", "Enter your word."))
+  if (word := FindSearch("Larousse", "Word:"))
     run % "https://www.larousse.fr/dictionnaires/francais/" . word
 return
 
 GraecoLatinum:
-  if (word := FindSearch("Graeco-Latinum", "Enter your word.")) {
+  if (word := FindSearch("Graeco-Latinum", "Word:")) {
     run % "http://lexica.linguax.com/nlm.php?searchedGL=" . word
     run % "http://lexica.linguax.com/schrevel.php?searchedGL=" . word
   }
+return
+
+Linguee:
+  if (word := FindSearch("Linguee", "Word:"))
+    run % "https://www.linguee.com/search?query=" . word
+return
+
+MerriamWebster:
+  if (word := FindSearch("Merriam-Webster", "Word:"))
+    run % "https://www.merriam-webster.com/dictionary/" . word
 return

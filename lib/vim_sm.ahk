@@ -156,8 +156,8 @@ class VimSM {
         send % Prio . "{enter}"
       } else {
         WinWaitActive, ahk_class TPriorityDlg
-        ControlSetText, TEdit5, % Prio, ahk_class TPriorityDlg
-        ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
+        ControlSetText, TEdit5, % Prio
+        ControlSend, TEdit5, {enter}
       }
     } else if (WinExist("ahk_class TElWind") || ForceBG) {
       send {AltDown}
@@ -165,8 +165,9 @@ class VimSM {
       PostMessage, 0x0105, 0x50, 1<<29,, ahk_class TElWind
       send {AltUp}
       WinWait, ahk_class TPriorityDlg
-      ControlSetText, TEdit5, % Prio, ahk_class TPriorityDlg
-      ControlSend, TEdit5, {enter}, ahk_class TPriorityDlg
+      ControlSetText, TEdit5, % Prio
+      while (WinExist())
+        ControlSend, TEdit5, {enter}
     }
   }
 

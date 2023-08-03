@@ -65,7 +65,7 @@ SearchButtonSearch:
     Return
   VimLastSearch := UserInput  ; register UserInput into VimLastSearch
   ; Previously, UserInput is stored in Vim.Move.LastSearch, but it turned out this would add 000... in floating numbers
-  ; i.e. 3.8 would become 3.80000
+  ; ie, 3.8 would become 3.80000
   WinActivate, ahk_class TElWind
 
 SMSearchAgain:

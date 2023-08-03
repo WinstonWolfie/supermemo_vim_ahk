@@ -46,7 +46,7 @@ NukeHTML:
       return
   }
   FileDelete % HTMLPath
-  FileAppend, % Vim.HTML.Clean(HTML, (A_ThisLabel == "NukeHTML")), % HTMLPath
+  FileAppend, % Vim.HTML.Clean(HTML, (A_ThisLabel == "NukeHTML"),, Vim.SM.GetLink()), % HTMLPath
   Vim.SM.SaveHTML()
   Vim.SM.ClickMid()
   send {esc}

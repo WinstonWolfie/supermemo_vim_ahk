@@ -3,7 +3,7 @@
     this.Vim := vim
     this.shift := 0
     this.hr := "--------------------------------------------------------------------------------"  ; <hr> tag
-    this.InnerKeys := "(,),{,},[,],<,>,"",',="
+    this.InnerKeys := "(,),{,},[,],<,>,"",',=,«,»,“,”,`"
   }
   
   NoSelection() {
@@ -1497,6 +1497,7 @@
       }
       finalize := true
     } else if (key == "p") {
+      this.Vim.State.LineCopy := 1
       this.ParagraphDown()
       this.ParagraphUp()
       this.SelectParagraphDown()
@@ -1523,6 +1524,7 @@
       key := this.RevSurrKey(key)
       if (AltKey := this.GetAltKey(key)) {
         pos := RegExMatch(DetectionStr, AltKey)
+        key := SubStr(DetectionStr, pos, 1)
       } else {
         pos := InStr(DetectionStr, key)
       }
@@ -1540,11 +1542,7 @@
           DetectionStr := this.Vim.ParseLineBreaks(copy(false))
         }
         key := this.RevSurrKey(key, 2)
-        if (AltKey := this.GetAltKey(key)) {
-          pos := RegExMatch(DetectionStr, AltKey)
-        } else {
-          pos := InStr(DetectionStr, key,, 2)
-        }
+        pos := InStr(DetectionStr, key,, 2)
         send % "{left}+{right " . pos . "}"
       }
       if (RestoreClip)
@@ -1564,12 +1562,15 @@
       key := (key == "]") ? "[" : key
       key := (key == ">") ? "<" : key
       key := (key == "»") ? "«" : key
+      key := (key == "”") ? "“" : key
     } else if (step == 2) {
       key := (key == "(") ? ")" : key
       key := (key == "（") ? "）" : key
       key := (key == "{") ? "}" : key
       key := (key == "[") ? "]" : key
+      key := (key == "<") ? ">" : key
       key := (key == "«") ? "»" : key
+      key := (key == "“") ? "”" : key
     }
     return key
   }

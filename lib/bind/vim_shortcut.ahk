@@ -132,7 +132,7 @@ return
     TempClip := StrReplace(TempClip, ".<p>", "<p>")
     TempClip := StrReplace(TempClip, "Synonymes :</p><p>", "syn: ")
     TempClip := StrReplace(TempClip, "Contraires :</p><p>", "ant: ")
-  } else if (IfContains(url, "google.com/search")) {
+  } else if (IfContains(url, "google.com")) {
     TempClip := RegExReplace(TempClip, "(Similar|Synonymes|Synonyms)(.*\r\n)?", "`r`nsyn: ")
     TempClip := RegExReplace(TempClip, "(Opposite|Opuesta).*\r\n", "`r`nant: ")
     TempClip := RegExReplace(TempClip, "(?![:]|(?<![^.])|(?<![^""]))\r\n(?!(syn:|ant:|\r\n))", ", ")
@@ -147,6 +147,9 @@ return
     TempClip := StrReplace(TempClip, "`r`n", ", ")
     TempClip := RegExReplace(TempClip, "Synonyms & Similar Words, , (Relevance, )?", "syn: ")
     TempClip := StrReplace(TempClip, ", Antonyms & Near Antonyms, , ", "`r`n`r`nant: ")
+  } else if (IfContains(url, "wiktionary.org/wiki")) {
+    TempClip := StrReplace(TempClip, "Synonym:", "syn:")
+    TempClip := StrReplace(TempClip, "Antonym:", "ant:")
   }
   ToolTip("Copied:`n" . Clipboard := TempClip)
 return
@@ -280,7 +283,7 @@ SMImportButtonImport:
       ToolTip("Text not found.")
       goto ImportReturn
     }
-    Vim.Browser.Highlight()
+    Vim.Browser.Highlight(CollName)
   }
   Online := (Passive || (!HTMLText && bVidSite))
   if (FullPage := (DownloadHTML || (!HTMLText && !Online))) {
@@ -332,7 +335,7 @@ SMImportButtonImport:
   } else {
     LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,webmd.com"
     LineBreak := IfContains(Vim.Browser.Url, LineBreakList)
-    HTMLText := Vim.HTML.Clean(HTMLText, true, LineBreak)
+    HTMLText := Vim.HTML.Clean(HTMLText, true, LineBreak, Vim.Browser.Url)
     if (!IWB && !vim.browser.date)
       vim.browser.date := "Imported on " . CurrTime
     Clipboard := HTMLText . "<br>" . Vim.SM.MakeReference(true)
@@ -354,21 +357,21 @@ SMImportButtonImport:
 
   if (Prio ~= "^\.")
     Prio := "0" . Prio
-  WinActivate, ahk_class TElWind
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
 
   if (Concept) {
     Vim.SM.ChangeDefaultConcept(Concept,, ConceptBefore)
     WinWaitClose, ahk_class TRegistryForm
-    WinWaitActive, ahk_class TElWind
     if (InStr(Vim.SM.GetCurrConcept(), Concept) != 1) {
+      WinActivate, ahk_class TElWind
       MsgBox, 4,, Current concept doesn't seem like your entered concept. Continue?
       IfMsgBox, no
         goto ImportReturn
     }
   }
 
+  WinActivate, ahk_class TElWind
   if (Online && !Passive) {
     gosub SMCtrlN
   } else {
@@ -386,13 +389,21 @@ SMImportButtonImport:
     }
   }
 
-  Vim.SM.Reload()
-  Vim.SM.WaitFileLoad()
-  if (IWB)
-    Vim.Browser.Title := ""
   if (Passive || esc)
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  Vim.SM.ClearHighlight()
+  if (Passive || esc)
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  Vim.SM.Reload(, true)
+  if (Passive || esc)
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  Vim.SM.WaitFileLoad()
+  if (Passive || esc)
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  Vim.Browser.Title := IWB ? "" : Vim.Browser.Title
   Vim.SM.SetElParam(Vim.Browser.Title, Prio)
+  if (Passive || esc)
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId
 
   if (CloseTab) {
     TabCount := ObjCount(oTabs := guiaBrowser.GetAllTabs())
@@ -409,15 +420,19 @@ SMImportButtonImport:
 SMImportGuiEscape:
 SMImportGuiClose:
 ImportReturn:
-  if (esc := IfContains(A_ThisLabel, "SMImportGui"))
+  if (esc := IfContains(A_ThisLabel, "SMImportGui,ImportReturn")) {
     Gui destroy
-  Vim.SM.ClearHighlight()
+    Vim.SM.ClearHighlight()
+  }
   if (Passive || esc) {
-    WinWaitNotActive % "ahk_id " . guiaBrowser.BrowserId,, 0.1  ; needed, otherwise ClearHighlight() might focus to SM
+    critical
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
+    send {esc 2}
   } else if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
+  ; if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a") && !Passive && !esc) {
+    ; WinActivate, ahk_class TElWind
     sleep -1
-    ReleaseModifierKeys()  ; sometimes SM would focus to context menu (i.e. pressed alt once)
+    ReleaseModifierKeys()  ; sometimes SM would focus to context menu (ie, pressed alt once)
     sleep -1
     WinWaitNotActive, ahk_class TElWind,, 0.1
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
@@ -425,10 +440,11 @@ ImportReturn:
   Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal"), RemoveToolTip()
   if (!esc)
     Clipboard := ClipSaved
-  if (Passive || esc) {
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
-    send {esc}
-  }
+  ; if (Passive || esc) {
+  ;   critical
+  ;   WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  ;   send {esc}
+  ; }
 return
 
 ^+e::
@@ -473,7 +489,7 @@ return
   ReleaseModifierKeys(), VimLastSearch := text
 return
 
-; SumatraPDF/Calibre/MS Word to SuperMemo
+; Browser / SumatraPDF / Calibre / MS Word to SuperMemo
 ^+!x::
 ^!x::
 !+x::

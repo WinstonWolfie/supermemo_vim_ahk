@@ -1,10 +1,13 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 .::  ; selected text becomes [...]
-  copy(false)
+  Clipboard := ""
+  send ^c
+  ClipWait
   if (Vim.SM.IsEditingHTML()) {
-    clip("<span class=""Cloze"">[...]</span>",,, "sm")
+    send % "<span class=""Cloze"">[...]</span>"
+    send +{left 32}^+1
   } else if (Vim.SM.IsEditingPlainText()) {
-    clip("[...]")
+    send [...]
   }
   Vim.State.SetMode("Vim_Normal")
 return
@@ -60,7 +63,7 @@ HTMLTagButtonAdd:
     StartingTag := "<SPAN class=" . tag, EndingTag := "SPAN>", tag := ""
   } else if (tag = "ruby") {
     Clipboard := ClipSaved
-    InputBox, UserInput, Ruby tag annotation, Enter your annotations.`nAnnotations will appear above your selection`, like Pinyin,, 200, 180
+    InputBox, UserInput, Ruby tag annotation, Annotations:`n(annotations will appear above your selection`, like Pinyin),, 200, 180
     if (ErrorLevel || !UserInput)
       return
     clip("<RUBY>" . content . "<RP>(</RP><RT>" . UserInput

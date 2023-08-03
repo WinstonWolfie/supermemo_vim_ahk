@@ -151,7 +151,8 @@ u::
 ConvertToLowercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
   clip(StrLower(copy(false, html)),, false, html)
-  sleep 20
+  while (WinClipAPI.GetOpenClipboardWindow())
+    sleep 1
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -162,7 +163,8 @@ ConvertToUppercase:
 ConvertToUppercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
   clip(StrUpper(copy(false, html)),, false, html)
-  sleep 20
+  while (WinClipAPI.GetOpenClipboardWindow())
+    sleep 1
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -185,7 +187,8 @@ InvertCaseClipped:
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
   clip(Lab_Invert_Char_Out,, false, html)
-  sleep 20
+  while (WinClipAPI.GetOpenClipboardWindow())
+    sleep 1
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 

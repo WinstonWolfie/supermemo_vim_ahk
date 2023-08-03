@@ -18,15 +18,34 @@ class VimHTML {
    Return dataL ? dataL : 0
   }
 
-  Clean(str, nuke:=false, LineBreak:=false) {
+  Clean(str, nuke:=false, LineBreak:=false, Url:="") {
     ; zzz in case you used f6 in SuperMemo to remove format before,
-    ; which disables the tag by adding zzz (e.g. <FONT> -> <ZZZFONT>)
+    ; which disables the tag by adding zzz (eg, <FONT> -> <ZZZFONT>)
 
     ; All attributes removal detects for <> surrounding
     ; however, sometimes if a text attribute is used, and it has HTML tag
     ; style and others removal might not be working
     ; Example: https://www.scientificamerican.com/article/can-newborn-neurons-prevent-addiction/
     ; This will likely not be fixed
+
+    ToolTip("Cleaning HTML...", true)
+
+    if (nuke) {
+      ; Classes
+      str := RegExReplace(str, "is)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
+      str := RegExReplace(str, "is)<([^<>]+)?\K class=[^ >]+(?=([^<>]+)?>)")
+    }
+    
+    if (LineBreak) {
+      str := RegExReplace(str, "i)<(BR|DIV)", "<P")
+    }
+
+    if (IfContains(url, "economist.com"))
+      str := RegExReplace(str, "is)(<.*? .*?font-family: var\(--ds-type-system-serif-smallcaps\).*?>)(.*?)(<\/.*?>)", "$1<span class=Uppercase>$2</span>$3")
+
+    ; Converts font-style to tags
+    str := RegExReplace(str, "is)(<.*? .*?font-style: italic.*?>)(.*?)(<\/.*?>)", "$1<i>$2</i>$3")
+    str := RegExReplace(str, "is)(<.*? .*?font-weight: bold.*?>)(.*?)(<\/.*?>)", "$1<b>$2</b>$3")
 
     ; Styles and fonts
     str := RegExReplace(str, "is)<([^<>]+)?\K (zzz)?style="".*?""(?=([^<>]+)?>)")
@@ -38,22 +57,17 @@ class VimHTML {
     str := RegExReplace(str, "is)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
     str := RegExReplace(str, "is)<(zzz)?script( .*?)?>.*?<\/(zzz)?script>")
     str := RegExReplace(str, "is)<(zzz)?input( .*?)?"">")
-    ; str := RegExReplace(str, "i)<(input)", "<ZZZ$1")
     str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)="".*?""(?=([^<>]+)?>)")
     str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)=[^ >]+(?=([^<>]+)?>)")
-    str := RegExReplace(str, "is)<([^<>]+)?\K (onmouseover|onmouseout)=.*?;(?=([^<>]+)?>)")
+    str := RegExReplace(str, "is)<([^<>]+)?\K (onMouseOver|onMouseOut)=.*?;(?=([^<>]+)?>)")
 
     str := RegExReplace(str, "is)<p( [^>]+)?>(&nbsp;|\s| )<\/p>")
 
-    if (nuke) {
-      ; Classes
-      str := RegExReplace(str, "is)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
-      str := RegExReplace(str, "is)<([^<>]+)?\K class=[^ >]+(?=([^<>]+)?>)")
-    }
-    
-    if (LineBreak) {
-      str := RegExReplace(str, "i)<(BR|DIV)", "<P")
-    }
+    ; Removing all empty span tags
+    while (IfContains(str, "<span>"))
+      str := RegExReplace(str, "is)<span>(.*?)<\/span>", "$1")
+
+    RemoveToolTip()
     return str
   }
 
