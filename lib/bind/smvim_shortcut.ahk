@@ -325,6 +325,16 @@ DownloadLatex:
   UrlDownloadToFile, % LatexLink, % LatexPath
 return
 
+^+k::  ; numbered list
+  UIA := UIA_Interface()
+  el := UIA.ElementFromHandle(WinGet())
+  KeyWait Shift
+  el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
+  el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath("19").ControlClick()
+  el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
+  Vim.Caret.SwitchToSameWindow(), Vim.State.SetMode("Vim_Normal")
+return
+
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
 !r::
   if (refresh := Vim.SM.IsNavigatingPlan()) {

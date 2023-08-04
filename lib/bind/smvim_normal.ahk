@@ -109,22 +109,15 @@ return
 <::Vim.State.SetMode("SMHTMLDecreaseIndent")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLIncreaseIndent") && Vim.SM.IsEditingHTML())
 >::
-  UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinGet())
-  KeyWait Shift
-  el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
-  el.WaitElementExist("ControlType=ToolBar AND Name='Format' AND AutomationId='14227088'").FindByPath("21").ControlClick()  ; 21st child
-  Vim.State.SetMode("Vim_Normal")
-return
-
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLDecreaseIndent") && Vim.SM.IsEditingHTML())
 <::
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinGet())
   KeyWait Shift
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
-  el.WaitElementExist("ControlType=ToolBar AND Name='Format' AND AutomationId='14227088'").FindByPath("20").ControlClick()  ; 20th child
-  Vim.State.SetMode("Vim_Normal")
+  el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath((A_ThisHotkey == ">") ? "21" : "20").ControlClick()
+  el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
+  Vim.Caret.SwitchToSameWindow(), Vim.State.SetMode("Vim_Normal")
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser") && Vim.State.g)

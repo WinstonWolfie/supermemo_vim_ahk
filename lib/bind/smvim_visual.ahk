@@ -29,7 +29,7 @@ ParseHTML:
   Gui, HTMLTag:Add, Text,, &HTML tag:
   RegExMatch(Vim.SM.CssClass, "(hint.*$)", v)
   list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
-        . "|sup|blockquote|ruby|" . v1
+        . "|sup|blockquote|ruby|" . v1 . "|small"
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
   Gui, HTMLTag:Add, Button, default, &Add
