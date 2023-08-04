@@ -17,7 +17,11 @@ Vim notations:
 
 At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R`) to reload it.
 
+Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/cheatsheet/)
+
 ## First steps
+
+### Motions
 
 `h`: left
 
@@ -35,7 +39,15 @@ At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R
 
 `ge`: end of previous word
 
+### Going to other modes
+
 `i`: go to insert mode (remember you can use [CapsLock.ahk](https://github.com/Vonng/Capslock) to fast navigate in insert mode (eg, `CapsLK + w` = `Ctrl + Right`, `CapsLK + b` = `Ctrl + Left` and so on)
+
+`a`: go to insert mode after the cursor (append)
+
+`v`: go to visual mode
+
+`:`: go to command mode (does not need to press `Enter` after the letter, ie, the two keys `:F` are sufficient to initiate the cleaning HTML command)
 
 `<C-[>` / `CapsLock` / `Esc`: go back to normal mode (long pressing `<C-[>` sends the actual `<C-[>` keys)
 
@@ -61,7 +73,7 @@ At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R
 
 `0` / `^`: go to the start of a line
 
-`$`: go to the end of a line
+`$` / `g_`: go to the end of a line
 
 `}`: jump entire paragraphs downwards
 
@@ -74,3 +86,105 @@ At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R
 `+`: go to the start of the nth next line
 
 `-`: go to the start of the nth previous line
+
+## Searching
+
+### In HTML only
+
+`<C-A-f>`: search using IE's search window
+
+### In both HTML and plain-text components (could fail in long articles!)
+
+`/`: normal search (uses `F3` in HTML)
+
+`?`: visual search (selects the first result and goes to visual mode)
+
+`<A-/>`: cloze search (makes a cloze out of the first result)
+
+`<A-S-/>`: cloze search but with a cloze hinter
+
+### Additional searching in non-SuperMemo softwares (from the original [vim_ahk](https://github.com/rcmdnk/vim_ahk))
+
+|Key/Commands|Function|
+|:----------:|:-------|
+|/| Start search (search box will be opened)|
+|n/N| Search next/previous (Some applications support only next search)|
+|*| Search the word under the cursor.|
+
+## Move faster with counts
+
+`{count}{motion}`: repeat {motion} {count} times
+
+`2w`: jump to second word
+
+`4f"`: jump to fourth occurrence of the `"` character
+
+`3/cucumber`: jump to third match of "cucumber"
+
+## Going outer spaces
+
+### Editing
+
+`gx`: going to the link under cursor (only works in HTML)
+
+`gn`: open the text/HTML file in notepad
+
+`gs` / `gf`: open the text/HTML file in VSCode
+
+### Browsing (not focused to any text component)
+
+`gs`: go to current reference link (`gS` to open it in IE)
+
+`gn`: open the last focused text/HTML file in notepad
+
+`gf`: open the last focused text/HTML file in VSCode
+
+`gu`: click the "go to the source" button
+
+## More motions
+
+`gg`: go to the top
+
+`{line}gg`: go to {line}
+
+`{line}G`: go to {line} on screen
+
+`G`: go to the end
+
+## Vim operations
+
+`{operator}{count}{motion}`: apply operator on bit of text covered by motion
+
+`d`: delete
+
+`c`: change
+
+`y`: yank (copy)
+
+`p`: p (paste text after the cursor)
+
+`g~`: switch case
+
+## Linewise operators
+
+`dd`: delete a line
+
+`cc`: change a line
+
+`yy`: yank (copy) a line
+
+`g~~`: switch case of a line
+
+`>>`: shift paragraph right
+
+`<<`: shift paragraph left
+
+## Capital case (stronger version) operators
+
+`D`: delete from cursor to the end of the line
+
+`C`: change from cursor to the end of the line (like `D` but going to insert)
+
+`Y`: yank (copy) a line. Like `yy`
+
+`P`: put (paste) at the cursor

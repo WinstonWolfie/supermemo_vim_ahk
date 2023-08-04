@@ -57,13 +57,17 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
 return
 
 s::  ; gs: go to source
-#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && (hWnd := WinActive("ahk_class TElWind")))
 ^+f6::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (hWnd := WinActive("ahk_class TElWind")) && Vim.State.g)
 f::  ; gf: open source file
 n::  ; gn: open in Notepad
   Vim.State.SetMode()
-  hWnd := WinGet(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
+  if (!Vim.SM.DoesTextExist()) {
+    ToolTip("Text not found.")
+    return
+  }
+  ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
   if (Notepad := IfIn(A_ThisHotkey, "^+f6,n")) {
     Vim.SM.ExitText(true)
     send ^{f7}
@@ -100,11 +104,32 @@ n::  ; gn: open in Notepad
   }
 return
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML())
+>::Vim.State.SetMode("SMHTMLIncreaseIndent")
+<::Vim.State.SetMode("SMHTMLDecreaseIndent")
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLIncreaseIndent") && Vim.SM.IsEditingHTML())
+>::
+  UIA := UIA_Interface()
+  el := UIA.ElementFromHandle(WinGet())
+  KeyWait Shift
+  el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
+  el.WaitElementExist("ControlType=ToolBar AND Name='Format' AND AutomationId='14227088'").FindByPath("21").ControlClick()  ; 21st child
+  Vim.State.SetMode("Vim_Normal")
+return
+
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLDecreaseIndent") && Vim.SM.IsEditingHTML())
+<::
+  UIA := UIA_Interface()
+  el := UIA.ElementFromHandle(WinGet())
+  KeyWait Shift
+  el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
+  el.WaitElementExist("ControlType=ToolBar AND Name='Format' AND AutomationId='14227088'").FindByPath("20").ControlClick()  ; 20th child
+  Vim.State.SetMode("Vim_Normal")
+return
+
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser") && Vim.State.g)
-+u::  ; gU: click source button
-  Vim.SM.ClickBrowserSourceButton()
-  Vim.State.SetMode()
-Return
+; gU: click source button
++u::Vim.SM.ClickBrowserSourceButton(), Vim.State.SetMode()
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))
 !h::send !{left}

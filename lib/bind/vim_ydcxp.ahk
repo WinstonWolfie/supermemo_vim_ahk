@@ -4,6 +4,7 @@ d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,, -1)
 c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0,,, -1)
 +y::
   Vim.State.SetMode("Vim_ydc_y", 0, 0, 1,,, -1)
+  KeyWait Shift
   if (WinActive("ahk_group VimDoubleHomeGroup"))
     send {Home}
   send {Home}+{End}

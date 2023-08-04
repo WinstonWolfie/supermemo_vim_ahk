@@ -6,6 +6,10 @@ class VimSM {
                    . "|italic|bold"
   }
 
+  DoesTextExist() {
+    return (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind") || ControlGet(,, "TMemo1", "ahk_class TElWind"))
+  }
+
   ClickTop(Control:="") {
     if (Control) {
       ControlClick, % Control, ahk_class TElWind,,,, NA x1 y1
@@ -529,6 +533,7 @@ class VimSM {
     }
     UIA := UIA_Interface()
     el := UIA.ElementFromHandle(WinExist("ahk_class TElWind"))
+    ; Just using ControlClick() cannot operate in background
     pos := el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").GetCurrentPos("screen")
     ControlClickScreen(pos.x, pos.y, "ahk_class TElWind")
     if (concept) {
@@ -555,6 +560,7 @@ class VimSM {
   ClickElWindSourceBtn() {
     UIA := UIA_Interface()
     el := UIA.ElementFromHandle(WinExist("ahk_class TElWind"))
+    ; Just using ControlClick() cannot operate in background
     pos := el.FindFirstBy("ControlType=Button AND Name='ReferenceBtn'").GetCurrentPos("screen")
     ControlClickScreen(pos.x, pos.y, "ahk_class TElWind")
   }

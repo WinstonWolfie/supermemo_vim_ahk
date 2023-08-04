@@ -45,6 +45,7 @@ p::
 g::Vim.State.SetMode("", 1, -1)
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g)
 g::Vim.Move.Move("g")
+_::Vim.Move.Move("$")
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("j", "P") && Vim.SM.IsEditingText())
 k::send {up}{esc}
