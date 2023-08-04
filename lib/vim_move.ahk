@@ -1036,7 +1036,7 @@
           send % "{right}{left " . pos . "}"
         }
       } else if (key == "/") {
-        hwnd := WinGet()
+        hWnd := WinGet()
         InputBoxPrompt := " text until:`n(case sensitive)"
         InputBoxHeight := 144
         if (this.Vim.State.StrIsInCurrentVimMode("Visual")) {
@@ -1057,7 +1057,7 @@
         if (!UserInput || ErrorLevel)
           return
         this.LastSearch := UserInput  ; register UserInput into LastSearch
-        WinActivate % "ahk_id " . hwnd
+        WinActivate % "ahk_id " . hWnd
         if (!this.NoSelection()) {  ; determine caret position
           StrBefore := this.Vim.ParseLineBreaks(copy(false))
           send +{right}
@@ -1089,7 +1089,7 @@
           send % "+{right " . pos . "}"
         }
       } else if (key == "?") {
-        hwnd := WinGet()
+        hWnd := WinGet()
         InputBoxPrompt := " text until:`n(case sensitive)"
         InputBoxHeight := 144
         if (this.Vim.State.StrIsInCurrentVimMode("Visual")) {
@@ -1110,7 +1110,7 @@
         if (!UserInput || ErrorLevel)
           return
         this.LastSearch := UserInput  ; register UserInput into LastSearch
-        WinActivate % "ahk_id " . hwnd
+        WinActivate % "ahk_id " . hWnd
         if (!this.NoSelection()) {  ; determine caret position
           StrBefore := this.Vim.ParseLineBreaks(copy(false))
           send +{right}

@@ -40,7 +40,7 @@ Return
     WinActivate
     return
   }
-  hwnd := WinGet()
+  hWnd := WinGet()
   Gui, VimCommander:Add, Text,, &Command:
 
   list := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
@@ -83,7 +83,7 @@ VimCommanderButtonExecute:
   Gui destroy
   if (IfContains("|" . list . "|", "|" . command . "|")) {
     Vim.State.SetMode("Insert")
-    WinActivate % "ahk_id " . hwnd
+    WinActivate % "ahk_id " . hWnd
     goto % RegExReplace(command, "\W")
   } else {
     if (IsUrl(command)) {
@@ -555,7 +555,7 @@ SearchLinkInYT:
   }
   SMTitle := WinGetTitle("ahk_class TElWind")
   if (link) {
-    run % "https://www.youtube.com/results?search_query=" . SMTitle
+    run % "https://www.youtube.com/results?search_query=" . EncodeDecodeURI(SMTitle)
     WinWaitActive, ahk_group Browser
     uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
     uiaBrowser.WaitPageLoad()

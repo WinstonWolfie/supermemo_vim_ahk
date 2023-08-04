@@ -307,12 +307,12 @@ ControlTextWaitChange(Control, text:="", WinTitle:="A", WinText:="", ExcludeTitl
   }
 }
 
-ControlWaitHwndChange(Control, hwnd:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
-  hwnd := hwnd ? hwnd : ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
+ControlWaitHwndChange(Control, hWnd:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+  hWnd := hWnd ? hWnd : ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
   StartTime := A_TickCount
   Loop {
     NewHwnd := ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
-    if (NewHwnd && (NewHwnd != hwnd)) {
+    if (NewHwnd && (NewHwnd != hWnd)) {
       Return True
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False

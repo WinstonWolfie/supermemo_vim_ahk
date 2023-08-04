@@ -550,7 +550,8 @@ p::
 +p::  ; put before
   click up
   MouseGetPos, XCoord, YCoord
-  if ((XCoord == IniXCoord) && (YCoord == IniYCoord) && (A_ThisHotkey == "+p"))  ; no change
+  ; If the slot remains in the same place as before, it will be fixed
+  if ((XCoord == IniXCoord) && (YCoord == IniYCoord))  ; no change
     click  ; to unfix
   MouseMove, XCoordSaved, YCoordSaved, 0
   SMPlanDraggingPut := true, Vim.State.SetMode("Vim_Normal")
@@ -676,28 +677,27 @@ return
                        || RegExMatch(title, ".+?(?= \|)", clip)))  ; eg, last reading point | title
 !s::ToolTip("Copied " . Clipboard := trim(page ? page : clip))
 
-#if (Vim.State.Vim.Enabled && (hwnd := WinActive("ahk_class TRegistryForm")) && (WinGetTitle() ~= "^Concept Registry \(\d+ members\)"))
+#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_class TRegistryForm")) && (WinGetTitle() ~= "^Concept Registry \(\d+ members\)"))
 !p::ControlFocus, TEdit1, A  ; set priority for current selected concept in registry window
 
 SMRegAltG:
-!g::Acc_Get("Object", "4.5.4.2.4",, "ahk_id " . hwnd).accDoDefaultAction()
+!g::Acc_Get("Object", "4.5.4.2.4",, "ahk_id " . hWnd).accDoDefaultAction()
 
-!i::Acc_Get("Object", "4.6.4.3.4.9.4",, "ahk_id " . hwnd).accDoDefaultAction()  ; default item template
-!t::Acc_Get("Object", "4.6.4.3.4.10.4",, "ahk_id " . hwnd).accDoDefaultAction()  ; default topic template
+!i::Acc_Get("Object", "4.6.4.3.4.9.4",, "ahk_id " . hWnd).accDoDefaultAction()  ; default item template
+!t::Acc_Get("Object", "4.6.4.3.4.10.4",, "ahk_id " . hWnd).accDoDefaultAction()  ; default topic template
 
-#if (Vim.State.Vim.Enabled && (hwnd := WinActive("ahk_class TRegistryForm")) && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)"))
-!i::Acc_Get("Object", "4.5.4.8.4",, "ahk_id " . hwnd).accDoDefaultAction()
-
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
-; Use English input method for choosing concept when import
-~!g::SetDefaultKeyboard(0x0409)  ; English-US
-
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Concept Registry"))
 ^l::
   gosub SMRegAltG
   WinWaitActive, ahk_class TElWind
   goto SMLearnChild
 return
+
+#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_class TRegistryForm")) && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)"))
+!i::Acc_Get("Object", "4.5.4.8.4",, "ahk_id " . hWnd).accDoDefaultAction()
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
+; Use English input method for choosing concept when import
+~!g::SetDefaultKeyboard(0x0409)  ; English-US
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TMsgDialog"))
 y::send {text}y

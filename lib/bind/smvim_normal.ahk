@@ -63,7 +63,7 @@ s::  ; gs: go to source
 f::  ; gf: open source file
 n::  ; gn: open in Notepad
   Vim.State.SetMode()
-  hwnd := WinGet(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
+  hWnd := WinGet(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
   if (Notepad := IfIn(A_ThisHotkey, "^+f6,n")) {
     Vim.SM.ExitText(true)
     send ^{f7}
@@ -85,8 +85,8 @@ n::  ; gn: open in Notepad
   }
   if (ClipSaved)
     Clipboard := ClipSaved
-  WinWaitNotActive % "ahk_id " . hwnd
-  WinWaitActive % "ahk_id " . hwnd
+  WinWaitNotActive % "ahk_id " . hWnd
+  WinWaitActive % "ahk_id " . hWnd
   if (Notepad) {
     send !{f7}
   } else {

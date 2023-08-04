@@ -906,7 +906,7 @@ return
   ReleaseModifierKeys()
 return
 
-#if (Vim.State.Vim.Enabled && (hwnd := WinActive("ahk_exe HiborClient.exe")) && WinExist("ahk_class TElWind"))
+#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_exe HiborClient.exe")) && WinExist("ahk_class TElWind"))
 ^+!a::
 ^!a::  ; import
   ClipSaved := ClipboardAll
@@ -923,7 +923,7 @@ return
   title := StrReplace(title, "-" . date,,, 1)
   if (Vim.SM.CheckDup(link, false))
     MsgBox, 4,, Continue import?
-  WinActivate % "ahk_id " . hwnd
+  WinActivate % "ahk_id " . hWnd
   WinClose, ahk_class TBrowser
   IfMsgBox no
     goto HBImportReturn

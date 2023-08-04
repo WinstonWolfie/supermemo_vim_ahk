@@ -107,9 +107,9 @@ Return
   ClipSaved := ClipboardAll
   KeyWait shift
   copy(false)
-  hwnd := WinGet()
+  hWnd := WinGet()
   send ^f
-  WinWaitNotActive, % "ahk_id " . hwnd,, 0.25
+  WinWaitNotActive, % "ahk_id " . hWnd,, 0.25
   send ^v!f
   Clipboard := ClipSaved
   Vim.State.SetMode("Vim_Normal")
