@@ -114,6 +114,8 @@
       this.source := v1 . " | Fandom", this.title := RegExReplace(this.title, " \| (.*) \| Fandom$")
     } else if (RegExMatch(this.title, " \| (.*) \| The Guardian$", v)) {
       this.source := v1 . " | The Guardian", this.title := RegExReplace(this.title, " \| (.*) \| The Guardian$")
+    } else if (RegExMatch(this.title, " - (.*) \| OpenStax$", v)) {
+      this.source := v1 . " | OpenStax", this.title := RegExReplace(this.title, " - (.*) \| OpenStax$")
 
     } else if (this.title ~= " \/ Twitter$") {
       this.source := "Twitter", this.title := RegExReplace(this.title, """ \/ Twitter$")
@@ -131,8 +133,8 @@
       this.Source := "Daily Stoic"
     } else if (IfContains(this.Url, "healthline.com")) {
       this.Source := "Healthline"
-    ; } else if (IfContains(this.Url, "webmd.com")) {
-      ; this.Source := "WebMD"
+    } else if (IfContains(this.Url, "webmd.com")) {
+      this.Source := "WebMD"
     } else if (IfContains(this.Url, "medicalnewstoday.com")) {
       this.Source := "Medical News Today"
     } else if (IfContains(this.Url, "universityhealthnews.com")) {
@@ -226,15 +228,15 @@
       this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (IfContains(this.url, "en.wiktionary.org")) {
-      this.Source := "Wiktionary", this.title := RegExReplace(this.title, " - Wiktionary$")
+    } else if (this.title ~= " - Wiktionary, the free dictionary$") {
+      this.Source := "Wiktionary", this.title := RegExReplace(this.title, " - Wiktionary, the free dictionary$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
     } else if (IfContains(this.url, "en.wikiversity.org")) {
       this.Source := "Wikiversity", this.title := RegExReplace(this.title, " - Wikiversity$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (IfContains(this.url, "en.wikisource.org")) {
+    } else if (this.title ~= " - Wikisource, the free online library$") {
       this.Source := "Wikisource", this.title := RegExReplace(this.title, " - Wikisource, the free online library$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
@@ -344,8 +346,7 @@
 
   GetVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     title := title ? title : this.GetFullTitle()
-    ; if (this.IsVidSite(title))
-      return this.MatchVidTime(title, FullPageText, RestoreClip)
+    return this.MatchVidTime(title, FullPageText, RestoreClip)
   }
 
   GetParsedUrl() {

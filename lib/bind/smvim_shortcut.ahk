@@ -2,9 +2,11 @@
 ^!.::  ; find [...] and insert
   KeyWait Alt
   KeyWait Ctrl
-  Vim.SM.ExitText()
-  Vim.SM.EditFirstQuestion()
-  Vim.SM.WaitTextFocus()
+  if !(Vim.SM.IsItem() && (ControlGetFocus() == "Internet Explorer_Server2")) {
+    Vim.SM.ExitText()
+    Vim.SM.EditFirstQuestion()
+    Vim.SM.WaitTextFocus()
+  }
   if (Vim.SM.IsEditingPlainText()) {
     send ^a
     if (pos := InStr(Copy(), "[...]")) {
@@ -95,7 +97,7 @@ return
   if (VimLastSearch) {
     ControlSetText, Edit1, % SubStr(VimLastSearch, 2)
     ControlSend, Edit1, % "{text}" . SubStr(VimLastSearch, 1, 1)
-    send ^a
+    send !f  ; select all text
   }
   SetTimer, RegisterVimLastSearchForSMCtrlAltF, -1
 return
@@ -215,6 +217,9 @@ return
   Vim.State.SetNormal()
   Clipboard := (Clipboard ~= "^#") ? Clipboard : "#" . Clipboard
   ToolTip("Copied " . Clipboard)
+  WinWaitActive, Error! ahk_class TMsgDialog,, 0
+  if (!ErrorLevel)
+    WinClose
 return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())

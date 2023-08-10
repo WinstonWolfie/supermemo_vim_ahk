@@ -1,16 +1,13 @@
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("ydc_y") && Vim.state.surround && !Vim.State.StrIsInCurrentVimMode("Inner") && !Vim.State.StrIsInCurrentVimMode("Outer") && !Vim.State.g)
 s::Vim.Move.YDCMove()
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc") && !Vim.State.StrIsInCurrentVimMode("Inner") && !Vim.State.StrIsInCurrentVimMode("Outer") && !Vim.State.g)
-s::
-  Vim.State.SetMode("",, -1,,, 1)
-  Vim.Move.LastMode := Vim.State.Mode
-return
+s::Vim.State.SetMode("",, -1,,, 1), Vim.Move.LastMode := Vim.State.Mode, Vim.Move.SurroundKeyEntered := false
 
 #if (Vim.IsVimGroup()
   && (Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("Vim_ydc"))
   && !Vim.State.StrIsInCurrentVimMode("Inner")
   && !Vim.State.StrIsInCurrentVimMode("Outer")
-  && (Vim.State.surround || ChangeEntered))
+  && ((Vim.State.surround && Vim.Move.SurroundKeyEntered) || ChangeEntered))
 VimSurround:
 (::
 )::
@@ -61,6 +58,5 @@ _::
       send % "{text}" . Vim.Move.RevSurrKey(CurrKey, 2)
   }
   Vim.Move.LastSurround := true, Vim.Move.LastSurroundKey := CurrKey
-  Vim.State.SetMode("Vim_Normal")
-  Clipboard := ClipSaved
+  Vim.State.SetMode("Vim_Normal"), Clipboard := ClipSaved
 return

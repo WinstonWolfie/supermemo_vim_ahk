@@ -437,14 +437,12 @@ ImportReturn:
     WinWaitNotActive, ahk_class TElWind,, 0.1
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
   }
-  Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal"), RemoveToolTip()
-  if (!esc)
-    Clipboard := ClipSaved
-  ; if (Passive || esc) {
-  ;   critical
-  ;   WinActivate % "ahk_id " . guiaBrowser.BrowserId
-  ;   send {esc}
-  ; }
+  Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal")
+  if (!esc) {
+    Clipboard := ClipSaved, ToolTip("Import completed.")
+  } else {
+    RemoveToolTip()
+  }
 return
 
 ^+e::
@@ -669,11 +667,7 @@ return
 #if (Vim.State.Vim.Enabled
   && ((pdf := WinActive("ahk_class SUMATRA_PDF_FRAME")) || WinActive("ahk_exe WinDjView.exe"))
   && (page := ControlGetText("Edit1")))
-^!p::
-  ; if (pdf && !RegExMatch(page, "\d+"))
-    ; RegExMatch(WinGetText(), " \((\d+)", v), page := v1
-  Clipboard := "p" . page, ToolTip("Copied p" . page)
-return
+^!p::Clipboard := "p" . page, ToolTip("Copied p" . page)
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && (ControlGetFocus() == "Edit2"))
 ^f::
@@ -691,11 +685,11 @@ return
 
 ; Syncing page number / marker
 #if (Vim.State.Vim.Enabled
-  && ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME"))
+  && (WinActive("ahk_class SUMATRA_PDF_FRAME")
    || WinActive("ahk_exe ebook-viewer.exe")
-   || ((wBrowser := WinActive("ahk_group Browser")) && !Vim.Browser.IsVidSite() && !Vim.SM.IsPassive(, -1))
-   || (wDJVU := WinActive("ahk_exe WinDjView.exe"))
-   || (wAcrobat := WinActive("ahk_class AcrobatSDIWindow")))
+   || (WinActive("ahk_group Browser") && !Vim.Browser.IsVidSite() && !Vim.SM.IsPassive(, -1))
+   || WinActive("ahk_exe WinDjView.exe")
+   || WinActive("ahk_class AcrobatSDIWindow"))
   && WinExist("ahk_class TElWind"))
 !+s::
 ^!s::
@@ -707,10 +701,10 @@ return
   KeyWait Alt
   KeyWait Ctrl
   KeyWait Shift
-  if (WinActive("ahk_class SUMATRA_PDF_FRAME") && IfContains(ControlGetFocus(), "Edit"))
+  if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := trim(copy(false), " `t`r`n")
-  if (wSumatra || wDJVU || wAcrobat) {
+  if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))) {
     if (wAcrobat) {
       marker := "p" . GetAcrobatPageBtn().Value
     }
@@ -744,7 +738,7 @@ return
       goto RestoreClipReturn
     }
     if (CloseWnd) {
-      if (wBrowser) {
+      if (WinActive("ahk_group Browser")) {
         send ^w
       } else {  ; epub viewer
         WinClose, A

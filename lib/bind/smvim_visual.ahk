@@ -102,6 +102,12 @@ Return
   send {shift up}
 Return
 
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())
+b::
+  send ^{space}
+  Vim.State.SetMode("Vim_Normal")
+return
+
 ExtractStay:
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!x::
@@ -168,20 +174,44 @@ ClozeHinter:
     InitText := "increases/decreases"
   } else if (InitText ~= "i)^(increase|decrease)$") {
     InitText := "increase/decrease"
-  } else if (InitText ~= "i)^(reduced)$") {
+  } else if (InitText ~= "i)^reduced$") {
     InitText := "increased/reduced"
-  } else if (InitText ~= "i)^(reduces)$") {
+  } else if (InitText ~= "i)^reduces$") {
     InitText := "increases/reduces"
-  } else if (InitText ~= "i)^(reduce)$") {
+  } else if (InitText ~= "i)^reduce$") {
     InitText := "increase/reduce"
   } else if (InitText ~= "i)^(positive|negative)$") {
     InitText := "positive/negative"
+  } else if (InitText ~= "i)^(acid|alkaloid)$") {
+    InitText := "acid/alkaloid"
   } else if (InitText ~= "i)^(acidic|alkaline)$") {
     InitText := "acidic/alkaline"
   } else if (InitText ~= "i)^(same|different)$") {
     InitText := "same/different"
   } else if (InitText ~= "i)^(inside|outside)$") {
     InitText := "inside/outside"
+  } else if (InitText ~= "i)^(monetary|fiscal)$") {
+    InitText := "monetary/fiscal"
+  } else if (InitText ~= "i)^(activator|inhibitor)$") {
+    InitText := "activator/inhibitor"
+  } else if (InitText ~= "i)^elevate$") {
+    InitText := "elevate/lower"
+  } else if (InitText ~= "i)^(elevates|lowers)$") {
+    InitText := "elevates/lowers"
+  } else if (InitText ~= "i)^(elevated|lowered)$") {
+    InitText := "elevated/lowered"
+  } else if (InitText ~= "i)^raise$") {
+    InitText := "raise/lower"
+  } else if (InitText ~= "i)^raises$") {
+    InitText := "raises/lowers"
+  } else if (InitText ~= "i)^raised$") {
+    InitText := "raised/lowered"
+  } else if (InitText ~= "i)^(activate|inhibit)$") {
+    InitText := "activate/inhibit"
+  } else if (InitText ~= "i)^(activates|inhibits)$") {
+    InitText := "activates/inhibits"
+  } else if (InitText ~= "i)^(greater|smaller)$") {
+    InitText := "greater/smaller"
   } else if (!IfContains(InitText, "/")) {
     inside := false
   }
@@ -255,21 +285,38 @@ CapsLock & z::  ; delete [...]
     }
     Clipboard := ClipSaved
   } else if (Vim.SM.IsEditingHTML()) {
-    if (!Vim.SM.HandleF3(1))
-      return
-    ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
-    send {enter}
-    WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
-    if (!Vim.SM.HandleF3(2))
-      return
-    WinWaitActive, ahk_class TElWind
-    if (copy() = " [...")  ; a bug in SM
-      send {left}{right}+{right 5}
-    send % ClozeNoBracket ? "{bs}" : "{text}" . cloze
-		if (WinExist("ahk_class TMyFindDlg")) ; clears search box window
-			WinClose
+    ; Using F3 method
+    ; if (!Vim.SM.HandleF3(1))
+    ;   return
+    ; ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
+    ; send {enter}
+    ; WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
+    ; if (!Vim.SM.HandleF3(2))
+    ;   return
+    ; WinWaitActive, ahk_class TElWind
+    ; ; Keeps reporting errors that SM can't access clipboard!
+    ; ; if (copy() = " [...")  ; a bug in SM
+    ; ;   send {left}{right}+{right 5}
+    ; send % ClozeNoBracket ? "{bs}" : "{text}" . cloze
+		; if (WinExist("ahk_class TMyFindDlg")) ; clears search box window
+		; 	WinClose
+
+    ; Replacing [...] directly in HTML. Much faster! but could be unreliable
+    HTMLPath := Vim.SM.GetFilePath()
+    Vim.SM.ExitText(), HTML := FileRead(HTMLPath)
+    HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>" . cloze . "</SPAN>", v)
+    if (v) {
+      FileDelete % HTMLPath
+      FileAppend, % HTML, % HTMLPath
+    } else {
+      ToolTip("Cloze not found!"), CtrlState := true
+    }
   }
-  if (!CtrlState)  ; only goes back to topic if ctrl is up
-    send !{right}  ; add a ctrl to keep editing the clozed item
+  if (!CtrlState) {  ; only goes back to topic if ctrl is up
+    send !{right}  ; so add a ctrl in the hotkey to keep editing the clozed item
+  } else {
+    ; If replacing [...] directly in HTML
+    Vim.SM.Reload()
+  }
   RemoveToolTip()
 return

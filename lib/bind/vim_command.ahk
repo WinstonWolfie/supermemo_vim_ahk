@@ -45,10 +45,10 @@ Return
 
   list := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
         . "|WaybackMachine|DeepL|YouGlish|KillIE|DefineGoogle|WindowSpy"
-        . "|BingChat|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
+        . "|BingChat|CTitle|CHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
-        . "|CopyPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
+        . "|CWPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
         . "|MerriamWebster"
 
@@ -342,7 +342,7 @@ AlatiusLatinMacronizer:
 return
 
 SetBrowserPosition:
-  WinMove, ahk_class TBrowser,, 0, 0, 846, 1026
+  WinMove, ahk_class TBrowser,, 0, 0, 846, 680
 return
 
 ; Personal: reformat my old incremental video topics
@@ -378,14 +378,12 @@ ReformatScriptComponent:
   if (ContLearn)
     Vim.SM.Learn()
   Clipboard := ClipSaved
-  Vim.Browser.Clear()
-  Vim.State.SetMode("Vim_Normal")
+  Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal")
 return
 
-CopyPosition:
+CWPosition:
   WinGetPos, x, y, w, h, A
-  Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h
-  ToolTip("Copied " . Clipboard)
+  ToolTip("Copied " . Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h)
 return
 
 MassReplaceRegistry:

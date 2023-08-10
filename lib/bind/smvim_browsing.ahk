@@ -98,7 +98,6 @@ d::Vim.Move.Repeat("^d")
 u::Vim.Move.Repeat("^u")
 0::Vim.Move.Move("0")
 $::Vim.Move.Move("$")
-Return
 
 ; "Browsing" mode
 ; Unlike Vim, 3gg and 3G work differently
@@ -121,8 +120,11 @@ r::  ; reload
     Vim.SM.WaitFileLoad()
     ; When r is pressed, the review score in an item is submitted,
     ; thus refreshing and learning takes SM to a new element
-    if ((ContLearn == 2) && (CurrTitle != WinGetTitle()))
-      send !{left 2}
+    if ((ContLearn == 2) && (CurrTitle != WinGetTitle())) {
+      send !{left}
+      Vim.SM.WaitFileLoad()
+      send !{left}
+    }
   } else if (ContinueGrading) {
     Vim.SM.Learn()
     ControlTextWait("TBitBtn3", "Show answer")
@@ -255,7 +257,7 @@ CreateHintsArray(Control, hCtrl, Type, Caret) {
 ; Open windows
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && ((Vim.SM.IsBrowsing())
+  && (Vim.SM.IsBrowsing()
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 c::send !c  ; open content window
 b::
@@ -268,6 +270,12 @@ b::
     ; SetDefaultKeyboard(0x0409)  ; English-US
     send ^{space}  ; open browser
   }
+return
+
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser"))
+c::
+  WinActivate, ahk_class TElWind
+  send !c
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))

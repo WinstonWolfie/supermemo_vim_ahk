@@ -522,7 +522,7 @@ ToolTip(text, perma:=false, period:=-2000, command:="", n:=20) {
   if (command = "center") {
     x := A_ScreenWidth / 3, y := A_ScreenHeight / 2
   } else {
-    x := A_ScreenWidth / 3, y := A_ScreenHeight / 4 * 3
+    x := A_ScreenWidth / 3, y := A_ScreenHeight / 5 * 4
   }
   ToolTip, % text, % x, % y, % n
   RemoveTTFunc := Func("RemoveToolTip").Bind(n)
@@ -1060,7 +1060,6 @@ EncodeHTML(String, Flags := 1)
 }
 
 CopyAll(Timeout:=2.5) {
-  ReleaseModifierKeys()
   global WinClip
   WinClip.Clear()
   send {CtrlDown}a{Ins}{CtrlUp}{Esc}

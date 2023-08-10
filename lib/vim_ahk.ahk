@@ -117,6 +117,7 @@ class VimAhk {
 
     GroupAdd, VimForceScroll, ahk_exe WINWORD.exe
     GroupAdd, VimForceScroll, ahk_exe OUTLOOK.exe
+    GroupAdd, VimForceScroll, ahk_class AcrobatSDIWindow
 
     ; Configuration values for Read/Write ini
     ; setting, default, val, description, info
@@ -311,6 +312,7 @@ class VimAhk {
                   , "ahk_exe Q-Dir.exe"      ; Q-dir
                   , "ahk_exe notepad++.exe"  ; Notepad++
                   , "ahk_exe iexplore.exe"   ; Internet Explorer
+                  , "ahk_class AcrobatSDIWindow"  ; Adobe Acrobat
                   , "ahk_class TElWind"      ; SM element window
                   , "ahk_class TContents"    ; SM content window
                   , "ahk_class TBrowser"     ; SM browser

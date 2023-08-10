@@ -212,7 +212,8 @@ SMHyperLinkToTopic:
     } else if (IfContains(Vim.Browser.url, "bilibili.com")) {
       script .= (script ~= "\?p=\d+") ? "&t=" . sec : "?t=" . sec
     }
-    ToolTip("Time stamp in script component set as " . sec . "s")
+    if (A_ThisLabel != "SMHyperLinkToTopic")
+      ToolTip("Time stamp in script component set as " . sec . "s")
   }
   ControlSetText, TMemo1, % script, A
   send !o{esc 2}  ; close script editor

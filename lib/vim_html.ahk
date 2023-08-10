@@ -28,8 +28,6 @@ class VimHTML {
     ; Example: https://www.scientificamerican.com/article/can-newborn-neurons-prevent-addiction/
     ; This will likely not be fixed
 
-    ToolTip("Cleaning HTML...", true)
-
     if (nuke) {
       ; Classes
       str := RegExReplace(str, "is)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
@@ -40,11 +38,11 @@ class VimHTML {
       str := RegExReplace(str, "i)<(BR|DIV)", "<P")
 
     if (IfContains(url, "economist.com"))
-      str := RegExReplace(str, "is)(<[^\/]+? .*?font-family: var\(--ds-type-system-.*?-smallcaps\).*?)>", "$1 class=uppercase>")
+      str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^<>]+>)", " class=uppercase ")
 
     ; Converts font-style to tags
-    str := RegExReplace(str, "is)(<[^\/]+? .*?font-style: italic.*?)>", "$1 class=italic>")
-    str := RegExReplace(str, "is)(<[^\/]+? .*?font-weight: bold.*?)>", "$1 class=bold>")
+    str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-style: italic)(?=[^<>]+>)", " class=italic ")
+    str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-weight: bold)(?=[^<>]+>)", " class=bold ")
 
     ; Styles and fonts
     str := RegExReplace(str, "is)<([^<>]+)?\K (zzz)?style="".*?""(?=([^<>]+)?>)")
@@ -55,14 +53,13 @@ class VimHTML {
     str := RegExReplace(str, "is)<(zzz)?iframe( .*?)?>.*?<\/(zzz)?iframe>")
     str := RegExReplace(str, "is)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
     str := RegExReplace(str, "is)<(zzz)?script( .*?)?>.*?<\/(zzz)?script>")
-    str := RegExReplace(str, "is)<(zzz)?input( .*?)?"">")
+    str := RegExReplace(str, "is)<(zzz)?input( .*?)?>")
     str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)="".*?""(?=([^<>]+)?>)")
     str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)=[^ >]+(?=([^<>]+)?>)")
     str := RegExReplace(str, "is)<([^<>]+)?\K (onMouseOver|onMouseOut)=.*?;(?=([^<>]+)?>)")
 
     str := RegExReplace(str, "is)<p( [^>]+)?>(&nbsp;|\s| )<\/p>")
 
-    RemoveToolTip()
     return str
   }
 

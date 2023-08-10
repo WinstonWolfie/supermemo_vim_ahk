@@ -10,7 +10,6 @@ u::Send,^z
 
 ; Change case
 ~::
-  KeyWait Shift
   send +{right}
   if (IfIs(selection := Copy(), "lower")) {
     selection := StrUpper(selection)
