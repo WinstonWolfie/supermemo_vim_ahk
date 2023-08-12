@@ -1,6 +1,10 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
 ; Undo/Redo
-u::Send,^z
+u::
+  n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
+  Send % "^{z " . n . "}"
+return
+
 ^r::Send,^y
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g && !Vim.IsNavigating())

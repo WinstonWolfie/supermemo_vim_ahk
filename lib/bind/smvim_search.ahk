@@ -92,9 +92,8 @@ SMSearchAgain:
     }
     if (pos) {
       send % "{left}{right " . pos-- . "}"
-      InputLen := StrLen(UserInput)
       if (ShiftState || AltState) {
-        send % "+{right " . InputLen . "}"
+        send % "+{right " . StrLen(UserInput) . "}"
         if (ShiftState) {
           Vim.State.SetMode("Vim_Visual")
         } else if (AltState) {
@@ -108,8 +107,7 @@ SMSearchAgain:
         ToolTip("Search started from the beginning.")
         goto SMSearchAgain
       }
-      ToolTip("Not found.")
-      Vim.State.SetNormal()
+      ToolTip("Not found."), Vim.State.SetNormal()
       Return
     }
   } else if (IfContains(CurrFocus, "Internet Explorer_Server")) {
@@ -120,39 +118,29 @@ SMSearchAgain:
     if (WholeWord)
       Control, Check,, TCheckBox2, ahk_class TMyFindDlg  ; match whole word
     Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
-    ControlSend, TEdit1, {enter}, ahk_class TMyFindDlg
+    send {enter}
     if (Vim.State.n) {
       send % "{f3 " . Vim.State.n - 1 . "}"
       Vim.State.n := 0
     }
     WinWaitNotActive, ahk_class TMyFindDlg
-    WinWaitNotActive, ahk_class TElWind,, 0.3
-    if (!AltState && ErrorLevel) {
-      if (ShiftState) {
-        Vim.State.SetMode("Vim_Visual")
-      } else {  ; all modifier keys are not pressed
-        send {left}  ; put caret on left of searched text
-      }
+    if (ShiftState && !AltState) {
+      Vim.State.SetMode("Vim_Visual")
+    } else if (!AltState) {  ; all modifier keys are not pressed
+      send {left}  ; put caret on left of searched text
     }
     if (!Vim.SM.HandleF3(2))
       return
-    if (AltState) {
-      if (!CtrlState && !ShiftState && !CapsState) {
-        send !z
-      } else if (ShiftState) {
-        ClozeHinterCtrlState := CtrlState
-        gosub ClozeHinter
-      } else if (CapsState) {
-        ClozeHinterCtrlState := CtrlState
-        gosub ClozeNoBracket
-      } else if (CtrlState) {
-        gosub ClozeStay
-      }
-    } else {
-      if (!CtrlState && !ShiftState && !CapsState)
-        send {down}{up}
-      ; loop 4
-        ; SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A  ; scroll down
+    if (AltState && !CtrlState && !ShiftState && !CapsState) {
+      send !z
+    } else if (AltState && ShiftState) {
+      ClozeHinterCtrlState := CtrlState
+      gosub ClozeHinter
+    } else if (AltState && CapsState) {
+      ClozeHinterCtrlState := CtrlState
+      gosub ClozeNoBracket
+    } else if (AltState && CtrlState) {
+      gosub ClozeStay
     }
   }
 return

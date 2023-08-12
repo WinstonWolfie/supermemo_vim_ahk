@@ -23,6 +23,7 @@ p::
 <::
 >::
 '::Vim.Move.Inner(A_ThisHotkey)
+t::Vim.Move.Inner("<")
 "::Vim.Move.Inner("""")
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Outer"))
@@ -38,6 +39,7 @@ p::
 <::
 >::
 '::Vim.Move.Outer(A_ThisHotkey)
+t::Vim.Move.Outer("<")
 "::Vim.Move.Outer("""")
 
 ; gg
@@ -84,7 +86,6 @@ x::Vim.Move.Repeat("x")
 ; Sentence
 (::
 )::
-  KeyWait Shift
   Vim.Move.Move(A_ThisHotkey)
 Return
 

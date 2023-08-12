@@ -25,7 +25,7 @@ CapsLock & z::Vim.State.SetMode("SMVim_ClozeNoBracket", 0, -1, 0,,, -1)
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMVim_AltT") && Vim.SM.IsEditingText())
 !t::
-  KeyWait Alt
+  ReleaseModifierKeys()
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_Extract") && Vim.SM.IsEditingText())
 q::
 ^q::

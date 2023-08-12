@@ -24,7 +24,6 @@ $::
 *::
 _::
   ClipSaved := ClipboardAll
-  KeyWait shift
   CurrKey := (A_ThisLabel == "Surround") ? Vim.Move.LastSurroundKey : A_ThisHotkey
   if (!ChangeEntered && (Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("ydc_y"))) {
     if (!selection := copy(false))

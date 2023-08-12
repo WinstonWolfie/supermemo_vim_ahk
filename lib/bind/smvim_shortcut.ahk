@@ -1,7 +1,5 @@
 ﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
-  KeyWait Alt
-  KeyWait Ctrl
   if !(Vim.SM.IsItem() && (ControlGetFocus() == "Internet Explorer_Server2")) {
     Vim.SM.ExitText()
     Vim.SM.EditFirstQuestion()
@@ -67,16 +65,13 @@ return
 ^!+g::  ; change element's concept *g*roup
   Vim.State.SetMode("Insert")
   SetDefaultKeyboard(0x0409)  ; English-US
-  KeyWait Alt
-  KeyWait Ctrl
-  KeyWait Shift
+  ReleaseModifierKeys()
   send ^+p!g  ; focus to concept group
   Vim.State.BackToNormal := 1
 return
 
 ^!t::
-  KeyWait Alt
-  KeyWait Ctrl
+  ReleaseModifierKeys()
   if (t := Vim.SM.IsEditingText()) {
     send {right}  ; so no text is selected
     sleep 50
@@ -141,12 +136,10 @@ SMCtrlN:
     Vim.SM.WaitFileLoad()
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
-    ; KeyWait Ctrl
     send ^a{bs}{esc}
     Vim.SM.WaitTextExit()
     Clip(text,, false)
     Vim.SM.WaitTextFocus()
-    KeyWait Ctrl
     Vim.SM.SetElParam(vim.browser.title, Prio, "YouTube")
     vim.browser.title := Prio := ""
     if (A_ThisHotkey == "~^n") {
@@ -182,8 +175,7 @@ return
 return
 
 !+c::
-  KeyWait Alt
-  KeyWait Shift
+  ReleaseModifierKeys()
   BlockInput, on
   Vim.SM.EditFirstQuestion()
   send ^t{f9}
@@ -229,8 +221,7 @@ return
   } else if (RegExMatch(Clipboard, "^#(\d+)", v)) {
     link := "SuperMemoElementNo=(" . v1 . ")"
   }
-  KeyWait Alt
-  KeyWait Ctrl
+  ReleaseModifierKeys()
   if (!link || !copy())  ; no selection or no link
     return
   send ^k
@@ -249,8 +240,7 @@ return
   CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   ClipSaved := ClipboardAll
-  KeyWait Alt
-  KeyWait Ctrl
+  ReleaseModifierKeys()
   if (!data := copy(false, true, 1))
     goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
@@ -333,7 +323,6 @@ return
 ^+k::  ; numbered list
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinGet())
-  KeyWait Shift
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
   el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath("19").ControlClick()
   el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
@@ -413,9 +402,8 @@ PlanAddButtonAppend:
   if (aTime[3] >= 30)
     aTime[2]++
   CurrTime := aTime[1] . ":" . aTime[2]
-  KeyWait Alt
-  Gui submit
-  Gui destroy
+  Gui Submit
+  Gui Destroy
   WinActivate, ahk_class TPlanDlg
   if (IfContains(A_ThisLabel, "Insert")) {
     send ^t  ; split
@@ -587,9 +575,7 @@ BrowserSyncTime:
   ResetTime := IfContains(A_ThisHotkey, "``")
   CloseWnd := IfContains(A_ThisHotkey, "^")
   wMpv := WinActive("ahk_class mpv"), wSMElWnd := ""
-  KeyWait Alt
-  KeyWait Ctrl
-  KeyWait Shift
+  ReleaseModifierKeys()
   if (wBrowserId := WinActive("ahk_group Browser")) {
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser

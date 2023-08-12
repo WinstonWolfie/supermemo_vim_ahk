@@ -188,3 +188,43 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 `Y`: yank (copy) a line. Like `yy`
 
 `P`: put (paste) at the cursor
+
+## Text objects
+
+`{operator}a{text-object}`: apply operator to all text-object including trailing whitespace
+
+`{operator}i{text-object}`: apply operator inside text-object
+
+`diw`: delete inner word
+
+`daw`: delete a word
+
+`dis`: delete inner sentence
+
+`das`: delete a sentence
+
+`dip`: delete inner paragraph
+
+`dap`: delete a paragraph
+
+`di(dib`: delete inside parentheses
+
+`da(dab`: delete text inside parentheses (including parentheses)
+
+`di{diB`: delete inside braces
+
+`da{daB`: delete text inside braces (including braces)
+
+`di[`: delete inside brackets
+
+`da[`: delete text inside brackets (including brackets)
+
+`di"`: delete inside quotes
+
+`da"`: delete a quoted text (including quotes)
+
+`dit`: delete inside tag
+
+`dat`: delete a tag (including tag)
+
+`ciw`: same goes for other operators...

@@ -469,7 +469,7 @@
                 if (NextOccurrence)
                   right := NextOccurrence
               }
-              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
             }
           }
@@ -536,7 +536,7 @@
                 if (NextOccurrence)
                   right := NextOccurrence - 1
               }
-              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
             }
           }
@@ -604,7 +604,7 @@
                   right := 0
                 }
               }
-              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
             }
           }
@@ -651,7 +651,7 @@
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             right := StrLen(DetectionStr) - pos
-            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
             send % "+{right " . right . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrReverse(StrBefore)
@@ -666,7 +666,7 @@
               }
               if (StrLen(StrAfter) == StrLen(StrBefore))
                 left++
-              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
               send % "+{left " . left . "}"
             }
           }
@@ -709,7 +709,7 @@
                   right := StrLen(DetectionStr) - NextOccurrence + 1
               }
             }
-            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
             send % "+{right " . right . "}"
           } else if StrLen(StrAfter) <= StrLen(StrBefore) {
             DetectionStr := StrReverse(StrBefore)
@@ -732,7 +732,7 @@
               }
               if (StrLen(StrAfter) == StrLen(StrBefore))
                 left++
-              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
               send % "+{left " . left . "}"
             }
           }
@@ -778,16 +778,6 @@
             DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
             if (pos) {
-              ; pos += StrLen(StrBefore) + 1
-              ; a := InStr(DetectionStr, "`n")
-              ; b := StrLen(DetectionStr)
-              ; if (a == b - 1) {
-              ;   pos -= 2
-              ;   this.v := SubStr(this.v, 3)
-              ; ; } else if (a == b) {
-              ;   ; pos--
-              ;   ; this.v := SubStr(this.v, 2)
-              ; }
               right := pos + 1 + StrLen(StrBefore)
               if (StrLen(DetectionStr) == pos + 2)  ; found at end of paragraph
                 right++
@@ -956,7 +946,7 @@
                   right := 0
                 }
               }
-              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
             }
           }
@@ -1007,7 +997,7 @@
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             right := StrLen(DetectionStr) - pos - 1
-            KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+            KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
             send % "+{right " . right . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrReverse(StrBefore)
@@ -1020,7 +1010,7 @@
                 if (NextOccurrence)
                   left := NextOccurrence + 2
               }
-              KeyWait shift  ; keys that need shift (like "(") would mess up the shift below
+              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
               send % "+{left " . left . "}"
             }
           }
@@ -1165,10 +1155,10 @@
     } else if (key == "^e") {
       if (WinActive("ahk_group VimForceScroll")) {
         ; if (c := A_CaretX)
-        ;   this.Vim.SM.MoveMouse(1, A_CaretX, A_CaretY)
+        ;   this.Vim.SM.PrepareStatBar(1, A_CaretX, A_CaretY)
         send {CtrlUp}{WheelDown}
         ; if (c)
-        ;   this.Vim.SM.MoveMouse(2)
+        ;   this.Vim.SM.PrepareStatBar(2)
       } else {
         SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A  ; scroll down
       }
@@ -1185,10 +1175,10 @@
     } else if (key == "^y") {
       if (WinActive("ahk_group VimForceScroll")) {
         ; if (c := A_CaretX)
-        ;   this.Vim.SM.MoveMouse(1, A_CaretX, A_CaretY)
+        ;   this.Vim.SM.PrepareStatBar(1, A_CaretX, A_CaretY)
         send {CtrlUp}{WheelUp}
         ; if (c)
-        ;   this.Vim.SM.MoveMouse(2)
+        ;   this.Vim.SM.PrepareStatBar(2)
       } else {
         SendMessage, 0x0115, 0, 0, % ControlGetFocus(), A  ; scroll up
       }
@@ -1242,7 +1232,7 @@
       }
     } else if (key == "+g") {
         if (this.Vim.State.n > 0) {
-          KeyWait shift
+          KeyWait Shift
           if (this.Vim.SM.IsBrowsing()) {
             this.Vim.SM.ClickTop()
             this.Vim.SM.WaitTextFocus()
@@ -1310,7 +1300,7 @@
       }
     } else if (key == "}") {
       if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
-        KeyWait shift
+        KeyWait Shift
         this.Vim.SM.ClickTop()
         this.Vim.SM.WaitTextFocus()
         this.ParagraphDown(this.Vim.State.n - 1), this.Vim.State.n := 0
@@ -1365,7 +1355,6 @@
   Inner(key:="") {
     global WinClip
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
-    KeyWait Shift
     if (key == "w") {
       send ^{right}^{left}
       this.Move("e",,, false)
@@ -1417,6 +1406,7 @@
       this.RegForDot(key)
       if (RestoreClip)
         ClipSaved := ClipboardAll
+      KeyWait Shift
       send +{right}
       if (copy(false) ~= "`n") {
         send {left}
@@ -1424,7 +1414,6 @@
         send {right}
       }
       this.SelectParagraphUp(, true)
-      KeyWait shift
       DetectionStr := this.Vim.ParseLineBreaks(copy(false))
       if (!DetectionStr) {  ; start of paragraph
         send {left}
@@ -1475,7 +1464,6 @@
   Outer(key:="") {
     global WinClip
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
-    KeyWait Shift
     if (key == "w") {
       send ^{right}^{left}^+{right}
       finalize := true
@@ -1509,6 +1497,7 @@
     } else if (IfIn(key, this.InnerKeys)) {
       if (RestoreClip)
         ClipSaved := ClipboardAll
+      KeyWait Shift
       send +{right}
       if (copy(false) ~= "`n") {
         send {left}
@@ -1578,12 +1567,16 @@
   }
 
   FindPos(DetectionStr, text, Occurrence:=1) {
-    if (StrLen(text) == 2) {
+    if (StrLen(text) == 2) {  ; vim-sneak search
       AltText1 := this.GetAltKey(text1 := SubStr(text, 1, 1))
       AltText2 := this.GetAltKey(text2 := SubStr(text, 2, 1))
-      text1 := AltText1 ? AltText1 : text1
-      text2 := AltText2 ? AltText2 : text2
-      regex := AltText := text1 . text2
+      if (regex := (AltText1 || AltText2)) {
+        AltText1 := AltText1 ? AltText1 : text1
+        AltText2 := AltText2 ? AltText2 : text2
+        AltText1 := (IsRegExChar(AltText1)) ? "\" . AltText1 : AltText1
+        AltText2 := (IsRegExChar(AltText2)) ? "\" . AltText2 : AltText2
+        AltText := "(" . AltText1 . ")(" . AltText2 . ")"
+      }
     }
     if (regex || (AltText := this.GetAltKey(text))) {
       pos := RegExMatch(DetectionStr, "s)((" . AltText . ").*?){" . Occurrence - 1 . "}\K(" . AltText . ")")

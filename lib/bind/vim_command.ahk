@@ -44,7 +44,7 @@ Return
   Gui, VimCommander:Add, Text,, &Command:
 
   list := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
-        . "|WaybackMachine|DeepL|YouGlish|KillIE|DefineGoogle|WindowSpy"
+        . "|WaybackMachine|DefineGoogle|YouGlish|KillIE|DeepL|WindowSpy"
         . "|BingChat|CTitle|CHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
@@ -253,11 +253,11 @@ WiktionaryButtonSearch:
   run % "https://en.wiktionary.org/wiki/" . search . "#" . language
 return
 
-CopyTitle:
+CTitle:
   ToolTip("Copied " . Clipboard := WinGetTitle())
 return
 
-CopyHTML:
+CHTML:
   ClipSaved := ClipboardAll
   if (!Clipboard := copy(false, true))
     goto RestoreClipReturn

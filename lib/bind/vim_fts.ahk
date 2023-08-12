@@ -110,9 +110,7 @@ space::
   } else {
     Vim.State.LastFtsChar := Vim.State.FtsChar := CurrHotkey
   }
-  Vim.State.LastFts := Vim.State.fts
-  KeyWait shift
-  Vim.Move.Move(Vim.State.fts)
+  Vim.Move.Move(Vim.State.LastFts := Vim.State.fts)
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
@@ -138,7 +136,7 @@ s::Vim.State.SetMode("",, -1,, "s")
 z::Vim.State.SetMode("",, -1,, "s", -1)
 +z::Vim.State.SetMode("",, -1,, "+s", -1)
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.g && !Vim.State.StrIsInCurrentVimMode("Inner") && !Vim.State.StrIsInCurrentVimMode("Outer"))
 f::Vim.State.SetMode("",, -1,, "f", -1)
 +f::Vim.State.SetMode("",, -1,, "+f", -1)
 t::Vim.State.SetMode("",, -1,, "t", -1)

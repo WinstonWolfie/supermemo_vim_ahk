@@ -304,7 +304,8 @@ CapsLock & z::  ; delete [...]
     ; Replacing [...] directly in HTML. Much faster! but could be unreliable
     HTMLPath := Vim.SM.GetFilePath()
     Vim.SM.ExitText(), HTML := FileRead(HTMLPath)
-    HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>", "<SPAN class=cloze>" . cloze . "</SPAN>", v)
+    r := ClozeNoBracket ? "" : "<SPAN class=cloze>" . cloze . "</SPAN>"
+    HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>", r, v)
     if (v) {
       FileDelete % HTMLPath
       FileAppend, % HTML, % HTMLPath

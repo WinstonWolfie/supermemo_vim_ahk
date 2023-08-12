@@ -244,7 +244,7 @@ class VimSM {
   }
 
   WaitClozeProcessing(timeout:=0) {
-    this.MoveMouse(1)
+    this.PrepareStatBar(1)
     StartTime := A_TickCount
     loop {
       if (!A_CaretX) {
@@ -252,29 +252,29 @@ class VimSM {
       } else if (A_CaretX && this.WaitFileLoad(-1, "|Please wait", false)) {  ; prevent looping forever
         break
       } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
-        this.MoveMouse(2)
+        this.PrepareStatBar(2)
         return 0
       }
     }
     if (WinActive("ahk_class TMsgDialog")) {  ; warning on trying to cloze on items
-      this.MoveMouse(2)
+      this.PrepareStatBar(2)
       return -1
     }
     loop {
       if (A_CaretX) {
         this.WaitFileLoad(timeout, "|Please wait", false)
         sleep 200
-        this.MoveMouse(2)
+        this.PrepareStatBar(2)
         return 1
       } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
-        this.MoveMouse(2)
+        this.PrepareStatBar(2)
         Return 0
       }
     }
   }
 
   WaitExtractProcessing(timeout:=0) {
-    this.MoveMouse(1)
+    this.PrepareStatBar(1)
     StartTime := A_TickCount
     loop {
       if (!A_CaretX) {
@@ -282,7 +282,7 @@ class VimSM {
       } else if (A_CaretX && this.WaitFileLoad(-1, "|Loading file", false)) {  ; prevent looping forever
         break
       } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
-        this.MoveMouse(2)
+        this.PrepareStatBar(2)
         return false
       }
     }
@@ -290,10 +290,10 @@ class VimSM {
       if (A_CaretX) {
         this.WaitFileLoad(timeout, "|Loading file", false)
         sleep 200
-        this.MoveMouse(2)
+        this.PrepareStatBar(2)
         return true
       } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
-        this.MoveMouse(2)
+        this.PrepareStatBar(2)
         Return false
       }
     }
@@ -382,16 +382,7 @@ class VimSM {
 
   GetFilePath(RestoreClip:=true) {
     this.ActivateElWind()
-    global WinClip
-    if (RestoreClip)
-      ClipSaved := ClipboardAll
-    WinClip.Clear()
-    send !{f12}fc
-    ClipWait
-    path := Clipboard
-    if (RestoreClip)
-      Clipboard := ClipSaved
-    return path
+    return Copy(RestoreClip,,, "!{f12}fc")
   }
 
   SetTitle(title:="", timeout:="") {
@@ -447,9 +438,12 @@ class VimSM {
     return code
   }
 
-  MoveMouse(step, x:=0, y:=0) {
+  PrepareStatBar(step, x:=0, y:=0) {
     static
+    RestoreStatBar := false
     if (step == 1) {
+      if (!WinGetText("ahk_class TStatBar"))
+        this.PostMsg(313), RestoreStatBar := true
       PrevCoordModeMouse := A_CoordModeMouse
       CoordMode, Mouse, Screen
       MouseGetPos, xSaved, ySaved
@@ -457,15 +451,15 @@ class VimSM {
     } else if (step == 2) {
       MouseMove, xSaved, ySaved, 0
       CoordMode, Mouse, % PrevCoordModeMouse
+      if (RestoreStatBar)
+        this.PostMsg(313)
     }
   }
 
-  WaitFileLoad(timeout:=0, add:="", MoveMouse:=true) {  ; used for reloading or waiting for an element to load
+  WaitFileLoad(timeout:=0, add:="", PrepareStatBar:=true) {  ; used for reloading or waiting for an element to load
     ; Move mouse because this function requires status bar text detection
-    if (MoveMouse)
-      this.MoveMouse(1)
-    if (!WinGetText("ahk_class TStatBar"))
-      this.PostMsg(313), StatBar := 0
+    if (PrepareStatBar)
+      this.PrepareStatBar(1)
     match := "^(\s+)?(Priority|Int|Downloading|\(\d+ item\(s\)" . add . ")"
     if (timeout == -1) {
       ret := (WinGetText("ahk_class TStatBar") ~= match)
@@ -483,10 +477,8 @@ class VimSM {
         }
       }
     }
-    if (StatBar == 0)
-      this.PostMsg(313)
-    if (MoveMouse)
-      this.MoveMouse(2)
+    if (PrepareStatBar)
+      this.PrepareStatBar(2)
     return ret
   }
 

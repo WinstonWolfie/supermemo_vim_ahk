@@ -37,9 +37,7 @@ return
 ^+!p::
 Plan:
   Vim.State.SetMode("Vim_Normal")
-  KeyWait Alt
-  KeyWait Ctrl
-  KeyWait Shift
+  ReleaseModifierKeys()
   if (!WinExist("ahk_group SuperMemo")) {
     run C:\SuperMemo\systems\all.kno
     WinWait, ahk_class TElWind,, 3
@@ -150,6 +148,12 @@ return
   } else if (IfContains(url, "en.wiktionary.org/wiki")) {
     TempClip := RegExReplace(TempClip, "Synonyms?:", "syn:")
     TempClip := RegExReplace(TempClip, "Antonyms?:", "ant:")
+  } else if (IfContains(url, "collinsdictionary.com")) {
+    pos := InStr(TempClip, "`r`n")
+    TempClip := SubStr(TempClip, 1, pos) . "`r`n" . StrLower(SubStr(TempClip, pos + 2, 1)) . SubStr(TempClip, pos + 3)
+    TempClip := StrReplace(TempClip, ".`r`n", "`r`n`r`n")
+    TempClip := StrReplace(TempClip, "Synonyms`r`n", "syn: ")
+    TempClip := StrReplace(TempClip, " `r`n", ", ")
   }
   ToolTip("Copied:`n" . Clipboard := TempClip)
 return
@@ -238,7 +242,6 @@ IWBNewTopic:
     goto ImportReturn
   while (!PressBrowserBtnDone)
     continue
-  KeyWait alt
 
   Prio := Concept := CloseTab := DownloadHTML := ResetVidTime := ""
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
@@ -251,7 +254,6 @@ IWBNewTopic:
     Gui, SMImport:Add, Text,, Concept &group:  ; like in default import dialog
     list := ConceptBefore . "||Online|Sources|ToDo"
     Gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % list
-    ; Gui, SMImport:Add, Checkbox, % "vCloseTab " . (IWB ? "" : "checked"), Close &tab
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
     if (!IWB)
       Gui, SMImport:Add, Checkbox, vDownloadHTML, Import fullpage &HTML
@@ -267,16 +269,15 @@ SMImportButtonImport:
   CurrTime := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   if (A_ThisLabel == "SMImportButtonImport") {
     ; Without KeyWait Enter SwitchToSameWindow() below could fail???
-    KeyWait enter
-    KeyWait alt
-    Gui submit
+    KeyWait Enter
+    KeyWait I
+    Gui Submit
     if (Passive != 2)
       Passive := (IfIn(Concept, "online,sources")) ? true : false
-    Gui destroy
+    Gui Destroy
     Vim.Caret.SwitchToSameWindow("ahk_id " . guiaBrowser.BrowserId)
   }
 
-  ; VarSetCapacity(HTMLText, "40960000")  ; ~40 MB
   HTMLText := (DownloadHTML || Passive) ? "" : copy(false, true)
   if (IWB) {
     if (!HTMLText) {
@@ -287,8 +288,6 @@ SMImportButtonImport:
   }
   Online := (Passive || (!HTMLText && bVidSite))
   if (FullPage := (DownloadHTML || (!HTMLText && !Online))) {
-    ; DownloadHTMLList := "webmd.com,nytimes.com"
-    ; if (DownloadHTML || IfContains(Vim.Browser.Url, DownloadHTMLList)) {
     if (DownloadHTML) {
       ToolTip("Attempting to download website...", true)
 
@@ -297,14 +296,6 @@ SMImportButtonImport:
       UrlDownloadToFile, % Vim.Browser.Url, % TempPath
       HTMLText := FileRead(TempPath)
       FileDelete, % TempPath
-
-      ; Using ComObj  ; not reliable?
-      ; whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-      ; whr.Open("GET", Vim.Browser.Url, true)
-      ; whr.Send()
-      ; ; Using 'true' above and the call below allows the script to remain responsive.
-      ; whr.WaitForResponse()
-      ; HTMLText := whr.ResponseText
 
       ; Fixing links
       RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
@@ -425,15 +416,10 @@ ImportReturn:
     Vim.SM.ClearHighlight()
   }
   if (Passive || esc) {
-    critical
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+    WinWaitNotActive, % "ahk_id " . guiaBrowser.BrowserId,, 0.1
+    Vim.Caret.SwitchToSameWindow("ahk_id " . guiaBrowser.BrowserId)
     send {esc 2}
   } else if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
-  ; if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a") && !Passive && !esc) {
-    ; WinActivate, ahk_class TElWind
-    sleep -1
-    ReleaseModifierKeys()  ; sometimes SM would focus to context menu (ie, pressed alt once)
-    sleep -1
     WinWaitNotActive, ahk_class TElWind,, 0.1
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
   }
@@ -457,7 +443,6 @@ return
                             || WinActive("ahk_exe WINWORD.exe")             ; MS Word
                             || WinActive("ahk_exe WinDjView.exe")))         ; djvu viewer
 !+d::  ; check duplicates in SM
-  KeyWait Alt
   if (!WinExist("ahk_class TElWind")) {
     ToolTip("Please open SuperMemo and try again."), ReleaseModifierKeys()
     return
@@ -494,9 +479,7 @@ return
 !x::
   CtrlState := IfContains(A_ThisHotkey, "^")
   ClipSaved := ClipboardAll
-  KeyWait Alt
-  KeyWait Ctrl
-  KeyWait Shift
+  ReleaseModifierKeys()
   if (!copy(false)) {
     ToolTip("Nothing is selected.")
     goto RestoreClipReturn
@@ -549,8 +532,9 @@ ExtractToSM:
     ToolTip("This script requires HTML component to work.")
     goto RestoreClipReturn
   }
-  send ^{home}^+{down}  ; go to top and select first paragraph below
-  if (ret := (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
+  ; send ^{home}^+{down}  ; go to top and select first paragraph below
+  ; if (ret := (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
+  if (ret := Vim.SM.GetFilePath()) {
     send {left}
     if (A_ThisLabel != "ExtractToSM") {
       MsgBox, 3,, Go to source and try again? (press no to paste in current topic)
@@ -698,9 +682,7 @@ return
     WinClose
   ClipSaved := ClipboardAll
   CloseWnd := IfContains(A_ThisHotkey, "^")
-  KeyWait Alt
-  KeyWait Ctrl
-  KeyWait Shift
+  ReleaseModifierKeys()
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := trim(copy(false), " `t`r`n")
@@ -800,8 +782,7 @@ return
 ^!x::
 !x::
   CurrTime := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
-  KeyWait Alt
-  KeyWait Ctrl
+  ReleaseModifierKeys()
   if (A_ThisHotkey == "^!x") {
     send ^a
     PostMessage, 0x0111, 17200,,, A  ; truncate silence
@@ -904,9 +885,7 @@ return
 ^+!a::
 ^!a::  ; import
   ClipSaved := ClipboardAll
-  KeyWait Alt
-  KeyWait Ctrl
-  KeyWait Shift
+  ReleaseModifierKeys()
   if (!CopyAll())
     goto RestoreClipReturn
   link := MatchHiborLink(Clipboard)

@@ -1106,3 +1106,7 @@ GetAcrobatPageBtn() {
     uiaAcrobatPage := el.FindFirstByName("AVQuickToolsTopBarCluster").FindByPath("+2")
   return uiaAcrobatPage
 }
+
+IsRegExChar(char) {
+  return (IfIn(char, ".,+,*,?,^,$,(,),[,],{,},|,\"))
+}

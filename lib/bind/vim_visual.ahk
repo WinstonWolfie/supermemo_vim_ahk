@@ -34,11 +34,9 @@ Return
       Vim.Move.ParagraphDown()
       Vim.Move.ParagraphUp()
       if (Vim.State.n) {
-        Vim.Move.SelectParagraphDown(Vim.State.n)
-        Vim.State.SetMode("Vim_VisualParagraph")
+        Vim.Move.SelectParagraphDown(Vim.State.n), Vim.State.SetMode("Vim_VisualParagraph")
       } else {
-        Vim.Move.SelectParagraphDown()
-        Vim.State.SetMode("Vim_VisualParagraphFirst")
+        Vim.Move.SelectParagraphDown(), Vim.State.SetMode("Vim_VisualParagraphFirst")
       }
     } else if (WinActive("ahk_group SuperMemo")) {
       goto VisualLine
@@ -105,23 +103,28 @@ Return
 
 *::
   ClipSaved := ClipboardAll
-  KeyWait shift
-  copy(false)
-  hWnd := WinGet()
-  send ^f
-  WinWaitNotActive, % "ahk_id " . hWnd,, 0.25
-  send ^v!f
-  Clipboard := ClipSaved
-  Vim.State.SetMode("Vim_Normal")
+  KeyWait Shift
+  Copy(false)
+  if (WinActive("ahk_class TElWind")) {
+    UserInput := Clipboard, CurrFocus := ControlGetFocus("ahk_class TElWind")
+    CapsState := CtrlState := AltState := ShiftState := ""
+    Gosub SMSearchAgain
+  } else {
+    hWnd := WinGet()
+    send ^f
+    WinWaitNotActive, % "ahk_id " . hWnd,, 0.25
+    send ^v!f
+  }
+  Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
 ^p::
 +p::
 ^+p::
 p::
-  JustPaste := Vim.State.Leader
+  PasteOnly := Vim.State.Leader
   ; Get selection
-  if (!JustPaste) {
+  if (!PasteOnly) {
     PrevClip := ClipboardAll
     copy(false)
     NewClip := ClipboardAll
@@ -138,7 +141,7 @@ p::
   send ^v
   Vim.State.SetMode("Vim_Normal")
 
-  if (!JustPaste) {
+  if (!PasteOnly) {
     while (WinClipAPI.GetOpenClipboardWindow())
       sleep 1
     Clipboard := NewClip
@@ -146,34 +149,28 @@ p::
 Return
 
 ConvertToLowercase:
+ConvertToUppercase:
 u::
++u::
   ClipSaved := ClipboardAll
 ConvertToLowercaseClipped:
-  html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  clip(StrLower(copy(false, html)),, false, html)
-  sleep 100
-  Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
-Return
-
-ConvertToUppercase:
-+u::
-  KeyWait Shift
-  ClipSaved := ClipboardAll
 ConvertToUppercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  clip(StrUpper(copy(false, html)),, false, html)
-  sleep 100
+  if (IfIn(A_ThisLabel, "ConvertToLowercase,u,ConvertToLowercaseClipped")) {
+    clip(StrLower(copy(false, html)),, false, html)
+  } else if (IfIn(A_ThisLabel, "ConvertToLowercase,u,ConvertToUppercaseClipped")) {
+    clip(StrUpper(copy(false, html)),, false, html)
+  }
+  sleep 100  ; while (WinClipAPI.GetOpenClipboardWindow()) doesn't work for some reason
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
 ; https://www.autohotkey.com/board/topic/24431-convert-text-uppercase-lowercase-capitalized-or-inverted/
 InvertCase:
 ~::
-  KeyWait Shift
   ClipSaved := ClipboardAll
 InvertCaseClipped:
-  html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
-  selection := copy(false, html)
+  selection := copy(false, html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(selection) {
     Lab_Invert_Char:= Substr(selection, A_Index, 1)
@@ -185,8 +182,7 @@ InvertCaseClipped:
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
   clip(Lab_Invert_Char_Out,, false, html)
-  while (WinClipAPI.GetOpenClipboardWindow())
-    sleep 1
+  sleep 100  ; while (WinClipAPI.GetOpenClipboardWindow()) doesn't work for some reason
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 

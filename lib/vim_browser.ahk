@@ -128,6 +128,9 @@
     } else if (IfContains(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(v, "r/") . "$")
 
+    } else if (IfContains(this.Url, "podcasts.google.com")) {
+      RegExMatch(this.Title, "^(.*) - ", v), this.Author := v1, this.Title := RegExReplace(this.Title, "^(.*) - "), this.Source := "Google Podcasts"
+
     ; Sites that don't include source in the title
     } else if (IfContains(this.Url, "dailystoic.com")) {
       this.Source := "Daily Stoic"
@@ -153,8 +156,6 @@
       this.source := "Vandal"
     } else if (IfContains(this.url, "fidelity.com")) {
       this.source := "Fidelity International"
-    ; } else if (IfContains(this.Url, "github.com")) {
-      ; this.source := "GitHub"
     } else if (IfContains(this.Url, "eliteguias.com")) {
       this.source := "Eliteguias"
     } else if (IfContains(this.Url, "byjus.com")) {
@@ -450,8 +451,16 @@
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
-      if (btn)
+      if (btn) {
         btn.FindByPath("P3").click()  ; click the description box, so the webpage doesn't scroll down
+      } else {
+        el := guiaBrowser.FindFirstBy("ControlType=Text AND Name='^\d+(\.\d+)?(K|M|B)? views'",, "regex")
+        if (el.FindByPath("+1").Name == "•") {
+          return false
+        } else {
+          el.click()
+        }
+      }
     } else {
       return false
     }
