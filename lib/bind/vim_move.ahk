@@ -24,6 +24,8 @@ p::
 >::
 '::Vim.Move.Inner(A_ThisHotkey)
 t::Vim.Move.Inner("<")
+b::Vim.Move.Inner("(")
++b::Vim.Move.Inner("{")
 "::Vim.Move.Inner("""")
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Outer"))
@@ -40,6 +42,8 @@ p::
 >::
 '::Vim.Move.Outer(A_ThisHotkey)
 t::Vim.Move.Outer("<")
+b::Vim.Move.Outer("(")
++b::Vim.Move.Outer("{")
 "::Vim.Move.Outer("""")
 
 ; gg
