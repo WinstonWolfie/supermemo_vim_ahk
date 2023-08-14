@@ -94,8 +94,6 @@
       this.source := "清华大学医学院", this.title := RegExReplace(this.title, "-清华大学医学院$")
     } else if (this.title ~= "- 雪球$") {
       this.source := "雪球", this.title := RegExReplace(this.title, "- 雪球$")
-    } else if (this.title ~= "\| Neuron Glia Biology \| Cambridge Core$") {
-      this.source := "Neuron Glia Biology | Cambridge Core", this.title := RegExReplace(this.title, "\| Neuron Glia Biology \| Cambridge Core$")
     } else if (this.title ~= " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$") {
       this.source := "SuperDataScience", this.title := RegExReplace(this.title, " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$")
     } else if (this.title ~= " \| Definición \| Diccionario de la lengua española \| RAE - ASALE$") {
@@ -110,6 +108,8 @@
       this.source := "BMC Neuroscience", this.title := RegExReplace(this.title, " \| BMC Neuroscience \| Full Text$")
     } else if (this.title ~= " \| MIT News \| Massachusetts Institute of Technology$") {
       this.source := "MIT News | Massachusetts Institute of Technology", this.title := RegExReplace(this.title, " \| MIT News \| Massachusetts Institute of Technology$")
+    } else if (RegExMatch(this.title, " \| (.*) \| Cambridge Core$", v)) {
+      this.source := v1 . " | Cambridge Core", this.title := RegExReplace(this.title, "\| (.*) \| Cambridge Core$")
     } else if (RegExMatch(this.title, " \| (.*) \| Fandom$", v)) {
       this.source := v1 . " | Fandom", this.title := RegExReplace(this.title, " \| (.*) \| Fandom$")
     } else if (RegExMatch(this.title, " \| (.*) \| The Guardian$", v)) {

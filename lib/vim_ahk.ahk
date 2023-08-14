@@ -254,10 +254,8 @@ class VimAhk {
 
   TwoLetterNormalMapsEnabled() {
     Return (this.IsVimGroup()
-         && (this.State.StrIsInCurrentVimMode("Insert")
-          || this.State.StrIsInCurrentVimMode("Visual")
-          || (this.State.IsCurrentVimMode("Vim_Normal")
-           && this.SM.IsEditingText()))
+         && (this.State.StrIsInCurrentVimMode("Insert,Visual")
+          || (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText()))
          && this.TwoLetterNormalIsSet)
   }
 

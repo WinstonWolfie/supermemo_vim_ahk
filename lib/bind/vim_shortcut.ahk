@@ -397,6 +397,8 @@ SMImportButtonImport:
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
 
   if (CloseTab) {
+    if (IWB)
+      sleep 200
     TabCount := ObjCount(oTabs := guiaBrowser.GetAllTabs())
     if (TabCount == 1) {
       guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1]), Passive := false
@@ -532,8 +534,6 @@ ExtractToSM:
     ToolTip("This script requires HTML component to work.")
     goto RestoreClipReturn
   }
-  ; send ^{home}^+{down}  ; go to top and select first paragraph below
-  ; if (ret := (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
   if (ret := Vim.SM.GetFilePath()) {
     send {left}
     if (A_ThisLabel != "ExtractToSM") {
@@ -735,8 +735,7 @@ MarkInSMTitle:
     ToolTip("No text component.")
     goto RestoreClipReturn
   }
-  send ^{home}^+{down}  ; go to top and select first paragraph below
-  if (ret := (copy(false) ~= "(?=.*[^\S])(?=[^-])(?=.*[^\r\n])")) {
+  if (ret := Vim.SM.GetFilePath()) {
     send {left}
     if (A_ThisLabel != "MarkInSMTitle") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)

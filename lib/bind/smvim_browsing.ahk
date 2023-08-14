@@ -364,10 +364,8 @@ Return
 
 #if (Vim.IsVimGroup()
   && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
-  && !Vim.State.StrIsInCurrentVimMode("Inner")
-  && !Vim.State.StrIsInCurrentVimMode("Outer")
-  && !Vim.State.Surround 
-  && !Vim.State.fts
+  && !Vim.State.StrIsInCurrentVimMode("Inner,Outer")
+  && !Vim.State.Surround && !Vim.State.fts
   && WinActive("ahk_class TElWind"))
 \::
   Vim.SM.PostMsg(151)

@@ -35,7 +35,7 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert"))
 ~j::LastJPressed := A_TickCount
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && A_PriorKey == "j" && A_TickCount - LastJPressed < 1000)
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && (A_PriorKey == "j") && (A_TickCount - LastJPressed < 1000))
 :*:jk::
   Vim.State.SetNormal()
 return

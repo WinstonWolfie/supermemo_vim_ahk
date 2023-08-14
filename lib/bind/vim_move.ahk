@@ -1,12 +1,8 @@
 ﻿; Inner mode
 #if (Vim.IsVimGroup()
-  && !Vim.State.StrIsInCurrentVimMode("Inner")
-  && !Vim.State.StrIsInCurrentVimMode("Outer")
-  && (Vim.State.StrIsInCurrentVimMode("Vim_ydc")
-   || Vim.State.IsCurrentVimMode("Vim_VisualChar")
-   || Vim.State.IsCurrentVimMode("Vim_VisualFirst")
-   || Vim.State.StrIsInCurrentVimMode("SMVim_")
-   || Vim.State.StrIsInCurrentVimMode("Vim_g")))
+  && !Vim.State.StrIsInCurrentVimMode("Inner,Outer")
+  && (Vim.State.StrIsInCurrentVimMode("Vim_ydc,SMVim_,Vim_g")
+   || Vim.State.IsCurrentVimMode("Vim_VisualChar,Vim_VisualFirst")))
 i::Vim.State.SetInner()
 a::Vim.State.SetOuter()
 

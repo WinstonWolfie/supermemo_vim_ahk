@@ -3,27 +3,22 @@
     this.Vim := vim
     this.shift := 0
     this.hr := "--------------------------------------------------------------------------------"  ; <hr> tag
-    this.InnerKeys := "(,),{,},[,],<,>,"",',=,«,»,“,”,`"
+    this.SurroundKeys := ",$,*,_"
+    this.InnerKeys := "(,),{,},[,],<,>,"",',=,«,»,“,”,``" . this.SurroundKeys
   }
   
   NoSelection() {
-    if (!this.ExistingSelection
-     && (this.Vim.State.StrIsInCurrentVimMode("VisualFirst")
-      || this.Vim.State.StrIsInCurrentVimMode("ydc")
-      || this.Vim.State.StrIsInCurrentVimMode("SMVim_")
-      || this.Vim.State.StrIsInCurrentVimMode("Inner"))) {
-      this.ExistingSelection := true  ; so it only returns true once in repeat
-      Return true
-    }
+    if (!this.ExistingSelection && this.Vim.State.StrIsInCurrentVimMode("VisualFirst,ydc,SMVim_,Inner"))
+      Return this.ExistingSelection := true  ; so it only returns true once in repeat
   }
 
   IsSearchKey(key) {
-    return (IfIn(key, "f,t,+f,+t,(,),s,+s,/,?,e")
+    return (IfIn(key, "f,t,+f,+t,(,),s,+s,/,?,e,gn")
          || ((key == "+g") && this.Vim.SM.IsEditingHTML()))
   }
 
   IsReplace() {
-    return (this.Vim.State.StrIsInCurrentVimMode("ydc_c") || this.Vim.State.surround || this.Vim.State.StrIsInCurrentVimMode("SMVim_"))
+    return (this.Vim.State.StrIsInCurrentVimMode("ydc_c,SMVim_") || this.Vim.State.surround)
   }
   
   RestoreCopy() {
@@ -65,10 +60,7 @@
       }
     }
     
-    if (this.Vim.State.StrIsInCurrentVimMode("Visual")
-     || this.Vim.State.StrIsInCurrentVimMode("ydc")
-     || this.Vim.State.StrIsInCurrentVimMode("SMVim_")
-     || this.Vim.State.StrIsInCurrentVimMode("Vim_g")) {
+    if (this.Vim.State.StrIsInCurrentVimMode("Visual,ydc,SMVim_,Vim_g")) {
       this.shift := 1
       if (!this.IsSearchKey(key) && !this.IsActionKey(key))
         send {shift down}
@@ -95,7 +87,7 @@
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe"))
       send {AltDown}
 
-    if ((this.Vim.State.StrIsInCurrentVimMode("Vim_ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")) && IfIn(key, "k,^u,^b,g")) {
+    if (this.Vim.State.StrIsInCurrentVimMode("Vim_ydc,SMVim_") && IfIn(key, "k,^u,^b,g")) {
       this.Vim.State.LineCopy := 1
       send {shift up}
       this.Zero()
@@ -104,7 +96,7 @@
       this.Up()
     }
   
-    if ((this.Vim.State.StrIsInCurrentVimMode("Vim_ydc") || this.Vim.State.StrIsInCurrentVimMode("SMVim_")) && IfIn(key, "j,^d,^f,+g")) {
+    if (this.Vim.State.StrIsInCurrentVimMode("Vim_ydc,SMVim_") && IfIn(key, "j,^d,^f,+g")) {
       this.Vim.State.LineCopy := 1
       send {shift up}
       this.Zero()
@@ -194,7 +186,7 @@
     send {CtrlUp}
     if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe") && GetKeyState("Alt", "P"))
       send {AltUp}
-    if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner") || this.Vim.State.StrIsInCurrentVimMode("Outer"))
+    if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner,Outer"))
       this.vim.state.setmode("Vim_VisualChar",,,,, -1)
   }
 
@@ -296,7 +288,7 @@
       this.shift := 0
 
     ; Left/Right
-    if (!this.Vim.State.StrIsInCurrentVimMode("Line") && !this.Vim.State.StrIsInCurrentVimMode("Paragraph")) {
+    if (!this.Vim.State.StrIsInCurrentVimMode("Line,Paragraph")) {
       ; For some cases, need '+' directly to continue to select
       ; especially for cases using shift as original keys
       ; For now, caret does not work even add + directly
@@ -1309,6 +1301,15 @@
       } else {
         this.ParagraphDown()
       }
+    } else if (key == "gn") {
+      global VimLastSearch
+      global CapsState := CtrlState := AltState := ""
+      global ShiftState := true
+      if (!this.Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
+        PrevMode := this.Vim.State.Mode
+      Gosub SMSearch
+      if (!this.Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
+        this.Vim.State.SetMode(PrevMode)
     }
 
     if (!repeat && finalize)
@@ -1339,7 +1340,7 @@
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
     this.Down(this.Vim.State.n - 1)
-    if (WinActive("ahk_group VimLBSelectGroup") && this.Vim.State.n == 2)
+    if (WinActive("ahk_group VimLBSelectGroup") && (this.Vim.State.n == 2))
       send {right}
     send {End}
     if (this.IsReplace())
@@ -1357,8 +1358,7 @@
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
     if (key == "w") {
       send ^{right}^{left}
-      this.Move("e",,, false)
-      finalize := true
+      this.Move("e",,, false), finalize := true
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1600,13 +1600,13 @@
       return pos
     }
     if (!reversed) {
-      pos := RegExMatch(DetectionStr, "s)((\.|!|\?)((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ,.\]]+).*?){" . Occurrence - 1 . "}\K(\.|!|\?)((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ,.\]]+)", v)
+      pos := RegExMatch(DetectionStr, "s)((\.|!|\?)((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡόί,.\]]+).*?){" . Occurrence - 1 . "}\K(\.|!|\?)((\[.*?\])+\s|[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡόί,.\]]+)", v)
       if (pos)
         pos += StrLen(v) - 2
       this.v := v
       this.DetectionStr := DetectionStr
     } else {
-      pos := RegExMatch(DetectionStr, "s)((\s(\].*?\[)+|[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ,.\[]+)(\.|!|\?).*?){" . Occurrence - 1 . "}\K(\s(\].*?\[)+|[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ,.\[]+)(\.|!|\?)")
+      pos := RegExMatch(DetectionStr, "s)((\s(\].*?\[)+|[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡόί,.\[]+)(\.|!|\?).*?){" . Occurrence - 1 . "}\K(\s(\].*?\[)+|[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡόί,.\[]+)(\.|!|\?)")
     }
     return pos
   }
@@ -1615,9 +1615,9 @@
     ; Can't use \b for word boundary. Somehow, the letter "ó" counts as word boundary,
     ; so words like cicatrización wouldn't correctly match
     if (!reversed) {
-      pos := RegExMatch(DetectionStr, "s)(([\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ][^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ]).*?){" . Occurrence - 1 . "}\K[\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ][^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ]")
+      pos := RegExMatch(DetectionStr, "s)(([\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ][^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡόί]).*?){" . Occurrence - 1 . "}\K[\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ][^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡόί]")
     } else {
-      pos := RegExMatch(DetectionStr, "s)(([^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ][\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ]).*?){" . Occurrence . "}\K[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ][\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ]")
+      pos := RegExMatch(DetectionStr, "s)(([^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡόί][\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ]).*?){" . Occurrence . "}\K[^\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡόί][\wÀ-ÖØ-öø-ÿα-ωΑ-ΩœāēīōūίϊΐόάέύϋΰήώΊΪΌΆΈΎΫΉΏᾼᾳῌῃῼῳἈἀᾈᾀἘἐἨἠᾘᾐἸἰὈὀὐὨὠᾨᾠἉἁᾉᾁἙἑἩἡᾙᾑἹἱὉὁὙὑὩὡᾩᾡἊἂᾊᾂἚἒἪἢᾚᾒἺἲὊὂὒὪὢᾪᾢἋἃᾋᾃἛἓἫἣᾛᾓἻἳὋὃὛὓὫὣᾫᾣἌἄᾌᾄἜἔἬἤᾜᾔἼἴὌὄὔὬὤᾬᾤἍἅᾍᾅἝἕἭἥᾝᾕἽἵὍὅὝὕὭὥᾭᾥἎἆᾎᾆἮἦᾞᾖἾἶὖὮὦᾮᾦἏἇᾏᾇἯἧᾟᾗἿἷὟὗὯὧᾯᾧᾺὰᾲῈὲῊὴῂῚὶῸὸῪὺῺὼῲᾶᾷῆῇῖῦῶῷᾴῄῴῗῧῒῢΐΰᾸᾰῘῐῨῠᾹᾱῙῑῩῡ]")
     }
     return pos
   }

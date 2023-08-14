@@ -405,6 +405,7 @@ PlanAddButtonAppend:
   Gui Submit
   Gui Destroy
   WinActivate, ahk_class TPlanDlg
+  KeyWait Alt
   if (IfContains(A_ThisLabel, "Insert")) {
     send ^t  ; split
     WinWaitActive, ahk_class TInputDlg
@@ -431,7 +432,6 @@ PlanAddButtonAppend:
   if (IfIn(activity, "Break,Sports,Out,Shower,Meal"))
     try run b  ; my personal backup script
   Vim.State.SetNormal()
-  ReleaseModifierKeys()
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))

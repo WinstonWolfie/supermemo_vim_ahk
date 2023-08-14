@@ -1,4 +1,4 @@
-﻿#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("ydc") || Vim.State.StrIsInCurrentVimMode("Command") || Vim.State.IsCurrentVimMode("Z") || Vim.State.IsCurrentVimMode("KeyListener") || Vim.State.IsCurrentVimMode("SMPlanDragging")))
+﻿#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("ydc,Command") || Vim.State.IsCurrentVimMode("Z,KeyListener,SMPlanDragging")))
 *a::
 *b::
 *c::
@@ -68,11 +68,11 @@ _::
 .::
 >::
 Space::
-  if (!Vim.State.IsCurrentVimMode("KeyListener") && !Vim.State.IsCurrentVimMode("SMPlanDragging"))
+  if (!Vim.State.IsCurrentVimMode("KeyListener,SMPlanDragging"))
     Vim.State.SetMode("Vim_Normal")
 Return
 
-#if Vim.IsVimGroup() and Vim.State.StrIsInCurrentVimMode("Vim_") and (Vim.Conf["VimDisableUnused"]["val"] == 2)
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && (Vim.Conf["VimDisableUnused"]["val"] == 2))
 a::
 b::
 c::

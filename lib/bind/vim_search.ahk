@@ -4,7 +4,7 @@
   Vim.State.SetMode("Insert")
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
 *::
   ClipSaved := ClipboardAll
   KeyWait Shift
@@ -15,7 +15,7 @@ Return
   if (WinActive("ahk_class TElWind")) {
     UserInput := Clipboard, CurrFocus := ControlGetFocus("ahk_class TElWind")
     CapsState := CtrlState := AltState := ShiftState := ""
-    Gosub SMSearchAgain
+    Gosub SMSearch
   } else {
     hWnd := WinGet()
     send ^f

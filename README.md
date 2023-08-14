@@ -103,6 +103,8 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 
 `<A-S-/>`: cloze search but with a cloze hinter
 
+`gn`: repeat last search and go to visual mode
+
 ### Additional searching in non-SuperMemo softwares (from the original [vim_ahk](https://github.com/rcmdnk/vim_ahk))
 
 |Key/Commands|Function|
@@ -228,3 +230,47 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 `dat`: delete a tag (including tag)
 
 `ciw`: same goes for other operators...
+
+## Repeat last change
+
+`.`: repeat the last change
+
+## Character editing commands
+
+`x`: delete a character after the cursor
+
+`X`: delete character before the cursor
+
+`~`: switch case of the character after the cursor
+
+## Undo and redo
+
+`u`: undo last change
+
+`C-R`: redo last undo
+
+`{count}u`: undo last {count} changes
+
+## More ways to insert
+
+`I`: go into insert mode at the beginning of a line
+
+`A`: go into insert mode at the end of a line
+
+`o`: insert new line below current line and go into insert mode
+
+`O`: insert new line above current line and go into insert mode
+
+## More ways to go to visual mode
+
+`V`: go into line-wise visual mode
+
+`C-V`: go into paragraph-wise visual mode
+
+`{trigger visual mode}{motion}{operator}`: visual mode operates in kind of the opposite way to normal mode. First you specify the motion to select text, and then you apply the operator
+
+## Operate on next search match
+
+`{operator}gn`: apply operator on next match
+
+`.`: after using {op}gn, the dot commant repeats the last change on the next match

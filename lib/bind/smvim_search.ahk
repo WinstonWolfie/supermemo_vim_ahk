@@ -1,4 +1,4 @@
-CapsLock & alt::return  ; so you can press CapsLock first and alt without triggering context menue
+CapsLock & alt::return  ; so you can press CapsLock first and alt without triggering context menu
 #if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ?::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
@@ -68,6 +68,7 @@ SearchButtonSearch:
   ; ie, 3.8 would become 3.80000
   WinActivate, ahk_class TElWind
 
+SMSearch:
 SMSearchAgain:
   if (IfContains(CurrFocus, "TMemo")) {
     send ^+{end}

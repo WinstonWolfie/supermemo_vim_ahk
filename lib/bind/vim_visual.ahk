@@ -3,7 +3,7 @@
 v::
   if (Vim.State.IsCurrentVimMode("Vim_Normal")) {
     Vim.State.SetMode("Vim_VisualFirst")
-  } else if (Vim.State.IsCurrentVimMode("Vim_VisualChar") || Vim.State.IsCurrentVimMode("Vim_VisualFirst")) {
+  } else if (Vim.State.IsCurrentVimMode("Vim_VisualChar,Vim_VisualFirst")) {
     Vim.State.SetNormal()
   } else {
     Vim.State.SetMode("Vim_VisualChar")

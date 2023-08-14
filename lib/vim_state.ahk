@@ -90,7 +90,7 @@
       }
     }
     if (A_CaretX && !this.Vim.IsNavigating()) {
-      if ((this.StrIsInCurrentVimMode("Visual") || this.StrIsInCurrentVimMode("ydc")) && !this.StrIsInCurrentVimMode("VisualFirst")) {
+      if (this.StrIsInCurrentVimMode("Visual,ydc") && !this.StrIsInCurrentVimMode("VisualFirst")) {
         send {Right}
         if (WinActive("ahk_group VimCursorSameAfterSelect"))
           send {Left}
@@ -176,12 +176,12 @@
 
   IsCurrentVimMode(mode) {
     this.CheckValidMode(mode)
-    Return (mode == this.Mode)
+    Return IfIn(this.mode, mode, true)
   }
 
   StrIsInCurrentVimMode(mode) {
     this.CheckValidMode(mode, false)
-    Return InStr(this.Mode, mode, true)
+    Return IfContains(this.Mode, mode, true)
   }
 
   CheckValidMode(mode, fullMatch=true) {

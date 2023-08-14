@@ -118,33 +118,29 @@ s::Vim.State.SetMode("",, -1,, "s")
 +s::Vim.State.SetMode("",, -1,, "+s")
 
 #if (Vim.IsVimGroup()
-  && (Vim.State.StrIsInCurrentVimMode("Visual") || Vim.State.StrIsInCurrentVimMode("Cloze"))
-  && !Vim.State.StrIsInCurrentVimMode("Inner")
-  && !Vim.State.StrIsInCurrentVimMode("Outer")
+  && Vim.State.StrIsInCurrentVimMode("Visual,Cloze")
+  && !Vim.State.StrIsInCurrentVimMode("Inner,Outer")
   && !Vim.State.g)
 s::Vim.State.SetMode("",, -1,, "s")
 !s::Vim.State.SetMode("",, -1,, "+s")
 
 #if (Vim.IsVimGroup()
   && Vim.State.StrIsInCurrentVimMode("Vim_")
+  && !Vim.State.StrIsInCurrentVimMode("Visual,Cloze,Inner,Outer")
   && !Vim.State.IsCurrentVimMode("Vim_Normal")
-  && !Vim.State.StrIsInCurrentVimMode("Visual")
-  && !Vim.State.StrIsInCurrentVimMode("Cloze")
-  && !Vim.State.g
-  && !Vim.State.StrIsInCurrentVimMode("Inner")
-  && !Vim.State.StrIsInCurrentVimMode("Outer"))
+  && !Vim.State.g)
 z::Vim.State.SetMode("",, -1,, "s", -1)
 +z::Vim.State.SetMode("",, -1,, "+s", -1)
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.g && !Vim.State.StrIsInCurrentVimMode("Inner") && !Vim.State.StrIsInCurrentVimMode("Outer"))
+#if (Vim.IsVimGroup()
+  && Vim.State.StrIsInCurrentVimMode("Vim_")
+  && !Vim.State.StrIsInCurrentVimMode("Inner,Outer")
+  && !Vim.State.g && !Vim.State.Surround && !Vim.State.SurroundChangeEntered)
 f::Vim.State.SetMode("",, -1,, "f", -1)
 +f::Vim.State.SetMode("",, -1,, "+f", -1)
 t::Vim.State.SetMode("",, -1,, "t", -1)
 +t::Vim.State.SetMode("",, -1,, "+t", -1)
-`;::
-  Vim.State.FtsChar := Vim.State.LastFtsChar
-  Vim.Move.Move(Vim.State.LastFts)
-Return
+`;::Vim.State.FtsChar := Vim.State.LastFtsChar, Vim.Move.Move(Vim.State.LastFts)
 
 ,::
   Vim.State.FtsChar := Vim.State.LastFtsChar

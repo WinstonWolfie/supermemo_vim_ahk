@@ -15,6 +15,21 @@ Return
   Vim.SM.ClickBottom()
 Return
 
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.SM.IsEditingText() && Vim.State.g && VimLastSearch)
+n::Vim.Move.Move("gn")
+  UserInput := VimLastSearch, CurrFocus := ControlGetFocus("ahk_class TElWind")
+  CapsState := CtrlState := AltState := "", ShiftState := true
+  if (!Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
+    PrevMode := Vim.State.Mode
+  Vim.State.SetMode("Vim_Normal")
+  Gosub SMSearch
+  ; sleep 500
+  ; if (!Vim.State.StrIsInCurrentVimMode("Vim_Visual")) {
+  ;   Vim.State.SetMode(PrevMode)
+  ;   Vim.Move.MoveFinalze()
+  ; }
+return
+
 ; Editing HTML
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.leader)
 q::
@@ -61,14 +76,14 @@ s::  ; gs: go to source
 ^+f6::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (hWnd := WinActive("ahk_class TElWind")) && Vim.State.g)
 f::  ; gf: open source file
-n::  ; gn: open in Notepad
+t::  ; gt: open in Notepad
   Vim.State.SetMode()
   if (!Vim.SM.DoesTextExist()) {
     ToolTip("Text not found.")
     return
   }
   ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
-  if (Notepad := IfIn(A_ThisHotkey, "^+f6,n")) {
+  if (Notepad := IfIn(A_ThisHotkey, "^+f6,t")) {
     Vim.SM.ExitText(true)
     send ^{f7}
     send ^+{f6}
