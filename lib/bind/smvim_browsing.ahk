@@ -193,7 +193,7 @@ c::
   Type := "Text"
   if (!aHints := CreateHintsArray(Control, hCtrl, Type, Caret)) {
     BlockInput, off
-    ReleaseModifierKeys(), ToolTip("Text too long.")
+    ToolTip("Text too long.")
     return
   }    
   if ((Control == "Internet Explorer_Server2") && (LearningState != 1)) {  ; so answer isn't revealed
@@ -208,7 +208,6 @@ c::
     ToolTip("No link found.")
   }
   BlockInput, off
-  ReleaseModifierKeys()
 return
 
 CreateHintsArray(Control, hCtrl, Type, Caret) {

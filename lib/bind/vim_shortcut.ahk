@@ -246,7 +246,6 @@ IWBNewTopic:
   Prio := Concept := CloseTab := DownloadHTML := ResetVidTime := ""
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
   if (IfContains(A_ThisLabel, "+,Prio")) {
-    sleep -1
     SetDefaultKeyboard(0x0409)  ; English-US
     Gui, SMImport:Add, Text,, % "Current collection: " . CollName
     Gui, SMImport:Add, Text,, &Priority:
@@ -921,9 +920,6 @@ return
 
 HBImportReturn:
   Vim.SM.ClearHighlight()
-  sleep -1
-  ReleaseModifierKeys()  ; sometimes SM would focus to context menu (i.e. pressed alt once)
-  sleep -1
   WinWaitNotActive, ahk_class TElWind,, 0.1
   Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
   Clipboard := ClipSaved

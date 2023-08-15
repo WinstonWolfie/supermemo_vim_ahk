@@ -13,7 +13,6 @@
     this.url := this.GetParsedUrl()
     if (PressButton)
       this.ClickBtn()
-    sleep -1
     this.GetTitleSourceDate(RestoreClip, CopyFullPage)
   }
 

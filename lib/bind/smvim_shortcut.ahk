@@ -404,8 +404,12 @@ PlanAddButtonAppend:
   CurrTime := aTime[1] . ":" . aTime[2]
   Gui Submit
   Gui Destroy
-  WinActivate, ahk_class TPlanDlg
   KeyWait Alt
+  KeyWait A
+  KeyWait I
+  KeyWait Enter
+  WinActivate, ahk_class TPlanDlg
+  WinWaitActive, ahk_class TPlanDlg
   if (IfContains(A_ThisLabel, "Insert")) {
     send ^t  ; split
     WinWaitActive, ahk_class TInputDlg
@@ -538,13 +542,14 @@ return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.IsCurrentVimMode("SMPlanDragging"))
 j::
-  n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
-  MouseMove, 0, % n * PlanEntryGap,, R
-return
-
 k::
   n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
-  MouseMove, 0, % -1 * n * PlanEntryGap,, R
+  if (A_ThisHotkey == "j") {
+    c := 1
+  } else if (A_ThisHotkey == "k") {
+    c := -1
+  }
+  MouseMove, 0, % c * n * PlanEntryGap,, R
 return
 
 p::

@@ -15,25 +15,30 @@ Return
   Vim.SM.ClickBottom()
 Return
 
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.SM.IsBrowsing() && Vim.State.g && VimLastSearch)
+n::
+  Vim.SM.EditFirstQuestion()
+  Vim.SM.WaitTextFocus()
+  if (Vim.SM.IsEditingHTML())
+    sleep 50  ; short sleep so the element window won't try to regain focus
+  if (!Vim.SM.IsEditingText()) {  ; still found no text
+    ToolTip("Text not found.")
+    Vim.State.SetNormal()
+    return
+  }
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.SM.IsEditingText() && Vim.State.g && VimLastSearch)
 n::Vim.Move.Move("gn")
-  UserInput := VimLastSearch, CurrFocus := ControlGetFocus("ahk_class TElWind")
-  CapsState := CtrlState := AltState := "", ShiftState := true
-  if (!Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
-    PrevMode := Vim.State.Mode
-  Vim.State.SetMode("Vim_Normal")
-  Gosub SMSearch
-  ; sleep 500
-  ; if (!Vim.State.StrIsInCurrentVimMode("Vim_Visual")) {
-  ;   Vim.State.SetMode(PrevMode)
-  ;   Vim.Move.MoveFinalze()
-  ; }
-return
 
 ; Editing HTML
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.leader)
 q::
-  send {home}>{space}  ; add comment; useful when replying emails
+  n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
+  loop % n {
+    send {home}>{space}  ; add comment; useful when replying emails
+    if (n > 1)
+      send ^{down}
+    n--
+  }
   Vim.State.SetMode()
 return
 

@@ -667,8 +667,11 @@ class VimSM {
       ControlSetText, TEdit2, % text, ahk_class TCommanderDlg
       ControlTextWait("TEdit2", text, "ahk_class TCommanderDlg")
     }
-    while (WinExist(w := "ahk_class TCommanderDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")))
+    while (WinExist(w := "ahk_class TCommanderDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
       ControlClick, TButton4, % w,,,, NA
+      if (WinExist("ahk_class #32770"))
+        ControlSend,, {esc}, ahk_class #32770
+    }
   }
 
   MakeReference(html:=false) {
@@ -705,6 +708,7 @@ class VimSM {
       return true
     } else if (step == 2) {
       send ^{enter}  ; open commander; convienently, if a "not found" window pops up, this would close it
+      sleep 100  ; without it sometimes TMyFindDlg will still pop up
       GroupAdd, SMF3, ahk_class TMyFindDlg
       GroupAdd, SMF3, ahk_class TCommanderDlg
       WinWaitActive, ahk_group SMF3
@@ -712,13 +716,12 @@ class VimSM {
         WinClose
         this.ClearHighlight()
         send {esc}
-        this.Vim.State.SetNormal()
-        ToolTip("Text not found.")
+        this.Vim.State.SetNormal(), ToolTip("Text not found.")
         return false
       }
       this.ClearHighlight(false)
       WinClose, ahk_class TMyFindDlg
-      sleep -1
+      sleep 100  ; important to wait for caret to refresh
       this.Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
       return true
     }
