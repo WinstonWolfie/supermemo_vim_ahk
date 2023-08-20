@@ -58,8 +58,9 @@
       this.source := "Frontiers", this.title := RegExReplace(this.title, "^Frontiers \| ")
     } else if (this.title ~= "^NIMH » ") {
       this.source := "NIMH", this.title := RegExReplace(this.title, "^NIMH » ")
-    } else if (this.title ~= "^• Discord \| ") {
-      this.source := "Discord", this.title := RegExReplace(this.title, "^• Discord \| ")
+    } else if (this.title ~= "^(• )?Discord \| ") {
+      this.title := RegExReplace(this.title, "^(• )?Discord \| "), RegexMatch(this.title, "^.* \| (.*)$", v), this.source := "Discord: " . v1
+      this.title := RegexReplace(this.title , "^.*\K \| .*$")
     } else if (this.title ~= "^italki - ") {
       this.source := "italki", this.title := RegExReplace(this.title, "^italki - ")
     } else if (this.title ~= "^CSOP - Products - ") {
@@ -107,6 +108,7 @@
       this.source := "BMC Neuroscience", this.title := RegExReplace(this.title, " \| BMC Neuroscience \| Full Text$")
     } else if (this.title ~= " \| MIT News \| Massachusetts Institute of Technology$") {
       this.source := "MIT News | Massachusetts Institute of Technology", this.title := RegExReplace(this.title, " \| MIT News \| Massachusetts Institute of Technology$")
+
     } else if (RegExMatch(this.title, " \| (.*) \| Cambridge Core$", v)) {
       this.source := v1 . " | Cambridge Core", this.title := RegExReplace(this.title, "\| (.*) \| Cambridge Core$")
     } else if (RegExMatch(this.title, " \| (.*) \| Fandom$", v)) {
@@ -115,6 +117,10 @@
       this.source := v1 . " | The Guardian", this.title := RegExReplace(this.title, " \| (.*) \| The Guardian$")
     } else if (RegExMatch(this.title, " - (.*) \| OpenStax$", v)) {
       this.source := v1 . " | OpenStax", this.title := RegExReplace(this.title, " - (.*) \| OpenStax$")
+    } else if (RegExMatch(this.title, " : Free Download, Borrow, and Streaming : Internet Archive$", v)) {
+      this.source := "Internet Archive", this.title := RegExReplace(this.title, "( : .*?)? : Free Download, Borrow, and Streaming : Internet Archive$")
+      if (RegexMatch(this.FullTitle, " : (.*?) : Free Download, Borrow, and Streaming : Internet Archive$", v))
+        this.author := v1
 
     } else if (this.title ~= " \/ Twitter$") {
       this.source := "Twitter", this.title := RegExReplace(this.title, """ \/ Twitter$")
@@ -228,6 +234,10 @@
       this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
+    } else if (this.title ~= " - Simple English Wikipedia, the free encyclopedia$") {
+      this.Source := "Simple English Wikipedia", this.title := RegExReplace(this.title, " - Simple English Wikipedia, the free encyclopedia")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "This page was last changed on (.*?),", v), this.date := v1
     } else if (this.title ~= " - Wiktionary, the free dictionary$") {
       this.Source := "Wiktionary", this.title := RegExReplace(this.title, " - Wiktionary, the free dictionary$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -281,7 +291,7 @@
     } else if (this.Title ~= "_百度百科$") {
       this.Source := "百度百科", this.Title := RegExReplace(this.Title, "_百度百科$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "最近更新：.*（(.*)）", v), this.date := v1
+        RegExMatch(FullPageText, "s)最近更新：.*（(.*)）", v), this.date := v1
     } else if (IfContains(this.url, "zhuanlan.zhihu.com")) {
       this.Source := "知乎", this.title := RegExReplace(this.title, " - 知乎$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -297,6 +307,10 @@
     } else if (IfContains(this.Url, "mp.weixin.qq.com")) {
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, " ([0-9]{4}-[0-9]{2}-[0-9]{2}) ", v), this.date := v1
+    } else if (this.title ~= " \| Britannica$") {
+      this.source := "Britannica", this.title := RegExReplace(this.title, " \| Britannica$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Last Updated: (.*) • ", v), this.date := v1
       
     ; Special cases
     } else if (this.title ~= " - YouTube$") {  ; for getting title for timestamp syncing with SM
@@ -440,7 +454,7 @@
     } else {
       send !+h
     }
-    sleep 200
+    sleep 500
   }
 
   ClickBtn() {

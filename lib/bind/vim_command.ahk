@@ -50,7 +50,7 @@ Return
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CWPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
-        . "|MerriamWebster"
+        . "|MerriamWebster|WordSense"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -612,9 +612,10 @@ BingChat:
     run % "msedge.exe " . link
     WinWaitActive, ahk_exe msedge.exe
   }
-  UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinExist("ahk_exe msedge.exe"))
-  el.WaitElementExist("ControlType=Button AND Name='^Discover'",, "regex").Click()
+  send ^+.
+  ; UIA := UIA_Interface()
+  ; el := UIA.ElementFromHandle(WinExist("ahk_exe msedge.exe"))
+  ; el.WaitElementExist("ControlType=Button AND Name='^Discover'",, "regex").Click()
   if (ClipSaved)
     Clipboard := ClipSaved
 return 
@@ -663,4 +664,9 @@ return
 MerriamWebster:
   if (word := FindSearch("Merriam-Webster", "Word:"))
     run % "https://www.merriam-webster.com/dictionary/" . word
+return
+
+WordSense:
+  if (word := FindSearch("WordSense", "Word:"))
+    run % "https://www.wordsense.eu/" . word . "/"
 return

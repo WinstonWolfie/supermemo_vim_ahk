@@ -41,7 +41,7 @@ return
 >^>+bs::  ; for processing pending queue Advanced English 2018: delete element and keep learning
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
-  Vim.State.SetNormal()
+  Vim.State.SetNormal(), ReleaseModifierKeys()
   if (IfContains(A_ThisHotkey, "\")) {
     send ^+{enter}
     WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
@@ -59,13 +59,11 @@ return
   Vim.SM.WaitFileLoad()
   if (WinActive("ahk_class TElWind"))
     Vim.SM.Learn(false, true)
-  ReleaseModifierKeys()
 return
 
 ^!+g::  ; change element's concept *g*roup
-  Vim.State.SetMode("Insert")
+  ReleaseModifierKeys(), Vim.State.SetMode("Insert")
   SetDefaultKeyboard(0x0409)  ; English-US
-  ReleaseModifierKeys()
   send ^+p!g  ; focus to concept group
   Vim.State.BackToNormal := 1
 return
@@ -175,7 +173,7 @@ return
 return
 
 !+c::
-  ReleaseModifierKeys()
+  KeyWait Shift  ; shift always gets stuck
   BlockInput, on
   Vim.SM.EditFirstQuestion()
   send ^t{f9}
@@ -233,7 +231,6 @@ return
   WinWaitClose, ahk_class Internet Explorer_TridentDlgFrame
   Vim.State.SetNormal(), Vim.Caret.SwitchToSameWindow()
   send {left}
-  ReleaseModifierKeys()
 return
 
 ^!l::
@@ -250,8 +247,8 @@ return
     ; After almost a year since I wrote this script, I finially figured out this f**ker website encodes the formula twice. Well, I suppose I don't use math that often in SM
     LatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
     LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cbg_white%2520%255Chuge%2520" . LatexFormula . "&dl=1"
-    text := WinGetText("ahk_class TElWind")
-    LatexFolderPath := Vim.SM.GetCollPath(text) . Vim.SM.GetCollName(text) . "\elements\LaTeX"
+    LatexFolderPath := Vim.SM.GetCollPath(text := WinGetText("ahk_class TElWind"))
+                     . Vim.SM.GetCollName(text) . "\elements\LaTeX"
     LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     SetTimer, DownloadLatex, -1
@@ -260,7 +257,6 @@ return
     Vim.SM.SaveHTML(true)
     WinWaitActive, ahk_class TElWind
     HTMLPath := Vim.SM.GetFilePath(false)
-    ; VarSetCapacity(HTML, 10240000)  ; ~10 MB
     if (!HTML := FileRead(HTMLPath))
       HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
     
@@ -393,7 +389,7 @@ return
 
 PlanAddGuiEscape:
 PlanAddGuiClose:
-  Gui destroy
+  Gui Destroy
 return
 
 PlanAddButtonInsert:
@@ -404,12 +400,7 @@ PlanAddButtonAppend:
   CurrTime := aTime[1] . ":" . aTime[2]
   Gui Submit
   Gui Destroy
-  KeyWait Alt
-  KeyWait A
-  KeyWait I
-  KeyWait Enter
-  WinActivate, ahk_class TPlanDlg
-  WinWaitActive, ahk_class TPlanDlg
+  Vim.Caret.SwitchToSameWindow("ahk_class TPlanDlg")
   if (IfContains(A_ThisLabel, "Insert")) {
     send ^t  ; split
     WinWaitActive, ahk_class TInputDlg
@@ -495,9 +486,9 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TMyFindDlg"))
 ; So holding ctrl and press f twice could be a shorthand for searching clipboard
 ^f::
-  ControlSetText, TEdit1, % Clipboard, ahk_class TMyFindDlg
-  ControlFocus, TEdit1, ahk_class TMyFindDlg
-  ControlClick, TButton3, ahk_class TMyFindDlg
+  ControlSetText, TEdit1, % Clipboard
+  ControlFocus, TEdit1
+  ControlClick, TButton3
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan())
@@ -543,13 +534,12 @@ return
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.IsCurrentVimMode("SMPlanDragging"))
 j::
 k::
-  n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
   if (A_ThisHotkey == "j") {
     c := 1
   } else if (A_ThisHotkey == "k") {
     c := -1
   }
-  MouseMove, 0, % c * n * PlanEntryGap,, R
+  MouseMove, 0, % c * Vim.State.GetN() * PlanEntryGap,, R
 return
 
 p::
@@ -610,7 +600,6 @@ BrowserSyncTime:
           goto SMSyncTimeReturn
       }
     }
-    ; KeyWait enter  ; without this script may get stuck
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
     if (CloseWnd) {  ; hotkeys with ctrl will close the tab
       if (ObjCount(oTabs := guiaBrowser.GetAllTabs()) == 1) {
@@ -684,7 +673,7 @@ return
 !s::ToolTip("Copied " . Clipboard := trim(page ? page : clip))
 
 #if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_class TRegistryForm")) && (WinGetTitle() ~= "^Concept Registry \(\d+ members\)"))
-!p::ControlFocus, TEdit1, A  ; set priority for current selected concept in registry window
+!p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
 
 SMRegAltG:
 !g::Acc_Get("Object", "4.5.4.2.4",, "ahk_id " . hWnd).accDoDefaultAction()

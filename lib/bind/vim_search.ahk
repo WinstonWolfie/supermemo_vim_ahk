@@ -4,10 +4,9 @@
   Vim.State.SetMode("Insert")
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g && !Vim.State.fts)
 *::
   ClipSaved := ClipboardAll
-  KeyWait Shift
   Vim.State.SetMode("Vim_Visual")
   send ^{right}^{left}
   Vim.Move.Move("e",,,,, false)

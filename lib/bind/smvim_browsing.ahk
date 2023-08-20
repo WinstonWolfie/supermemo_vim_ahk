@@ -46,22 +46,11 @@ s::  ; gs: go to link
 Return
 
 ; Element/content window
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) && !Vim.SM.IsEditingText() && Vim.State.g)
-u::  ; gu: go up
-  send ^{up}
-  Vim.State.SetMode()
-Return
-
-+e::  ; K, gE: go up one *e*lement
-  send !{pgup}
-  Vim.State.SetMode()
-Return
-
-e::  ; J, ge: go down one *e*lement
-  send !{pgdn}
-  Vim.State.SetMode()
-Return
-
+#if (Vim.IsVimGroup()
+  && Vim.State.IsCurrentVimMode("Vim_Normal")
+  && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
+  && !Vim.SM.IsEditingText()
+  && Vim.State.g)
 0::  ; g0: go to root element
   send !{home}
   Vim.State.SetMode()
@@ -201,6 +190,7 @@ c::
       aHints.Push(CreateHintsArray(Control, hCtrl, Type, Caret)*)
   }
   if (n := ObjCount(aHints)) {
+    critical  ; adding critical increases performance
     Vim.State.SetMode("KeyListener")
     ; aHintStrings is later used in key listener
     CreateHints(aHints, aHintStrings := hintStrings(n))
@@ -238,20 +228,63 @@ CreateHintsArray(Control, hCtrl, Type, Caret) {
    || WinActive("ahk_class TBrowser")))
 +x::send ^+{enter}  ; Done!
 
+
+; Element/content window
+#if (Vim.IsVimGroup()
+  && Vim.State.IsCurrentVimMode("Vim_Normal")
+  && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
+  && !Vim.SM.IsEditingText()
+  && Vim.State.g)
++e::  ; K, gE: go up one *e*lement
+e::  ; J, ge: go down one *e*lement
+u::  ; gu: go to parent
+#if (Vim.IsVimGroup()
+  && Vim.State.IsCurrentVimMode("Vim_Normal")
+  && (WinActive("ahk_class TElWind")
+   || WinActive("ahk_class TContents")
+   || WinActive("ahk_class TBrowser")))
+!h::
+!l::
+!j::
+!k::
+!u::
 ; Element navigation
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (Vim.SM.IsBrowsing()
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 !h::
-+h::send !{left}  ; go back in history
++h::  ; go back in history
 !l::
-+l::send !{right}  ; go forward in history
++l::  ; go forward in history
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
 !j::
-+j::send !{pgdn}  ; J, ge: go down one element
++j::  ; J, ge: go down one element
 !k::
-+k::send !{pgup}  ; K, gE: go up one element
++k::  ; K, gE: go up one element
+  n := Vim.State.GetN()
+  if (n > 1)
+    Vim.SM.PrepareStatBar(1)
+  loop % n {
+    if (A_ThisHotkey ~= "h$") {
+      send !{left}
+    } else if (A_ThisHotkey ~= "l$") {
+      send !{right}
+    } else if (A_ThisHotkey ~= "j$|^\+e$") {
+      send !{pgdn}
+    } else if (A_ThisHotkey ~= "k$|^e$") {
+      send !{pgup}
+    } else if (A_ThisHotkey ~= "u$") {
+      send ^{up}
+    }
+    if (n > 1)
+      Vim.SM.WaitFileLoad(,, false)
+  }
+  if (n > 1)
+    Vim.SM.PrepareStatBar(2)
+  if (Vim.State.g)
+    Vim.State.SetMode()
+return
 
 ; Open windows
 #if (Vim.IsVimGroup()
@@ -286,15 +319,16 @@ o::
   SetDefaultKeyboard(0x0409)  ; English-US
   l := Vim.SM.IsLearning()
   if (l == 1) {
-    send !{home}
+    send {AltDown}
+    PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
+    PostMessage, 0x0105, 0x24, 1<<29,, ahk_class TElWind
+    send {AltUp}
   } else if (l == 2) {
-    Vim.SM.Reload()
+    Vim.SM.Reload(, true)
     Vim.SM.WaitFileLoad()
   }
-  Vim.State.SetMode("Insert"), Vim.SM.PostMsg(3)  ; favourites
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1, Vim.SM.PostMsg(3)  ; favourites
   BlockInput, off
-  send {CtrlUp}
-  Vim.State.BackToNormal := 1
 return
 
 t::Vim.SM.ClickMid()  ; *t*ext

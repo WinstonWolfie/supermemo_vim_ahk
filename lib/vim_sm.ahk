@@ -2,8 +2,8 @@ class VimSM {
   __New(Vim) {
     this.Vim := Vim
     this.CssClass := "cloze|extract|clozed|hint|note|ignore|headers|RefText"
-                   . "|reference|highlight|TableLabel|anti-merge|uppercase"
-                   . "|italic|bold"
+                   . "|reference|highlight|tablelabel|anti-merge|uppercase"
+                   . "|italic|bold|small-caps"
   }
 
   DoesTextExist() {
@@ -694,11 +694,11 @@ class VimSM {
 
   HandleF3(step) {
     if (step == 1) {
-      send {f3}
+      this.PostMsg(146)  ; f3
       WinWaitActive, ahk_class TMyFindDlg,, 1
       if (ErrorLevel) {  ; SM goes to the next found without opening find dialogue
         this.ClearHighlight()  ; clears highlight so it opens find dialogue
-        ControlSend,, {f3}, ahk_class TElWind
+        this.PostMsg(146)
         WinWaitActive, ahk_class TMyFindDlg,, 3.5
         if (ErrorLevel) {
           ToolTip("F3 window cannot be launched.")
@@ -708,7 +708,7 @@ class VimSM {
       return true
     } else if (step == 2) {
       send ^{enter}  ; open commander; convienently, if a "not found" window pops up, this would close it
-      sleep 100  ; without it sometimes TMyFindDlg will still pop up
+      WinWait, ahk_class TMyFindDlg,, 0.3  ; without it sometimes TMyFindDlg will still pop up
       GroupAdd, SMF3, ahk_class TMyFindDlg
       GroupAdd, SMF3, ahk_class TCommanderDlg
       WinWaitActive, ahk_group SMF3
@@ -718,12 +718,15 @@ class VimSM {
         send {esc}
         this.Vim.State.SetNormal(), ToolTip("Text not found.")
         return false
+      } else {  ; ^enter opened commander
+        this.ClearHighlight(false)
+        this.PostMsg(146)
+        WinWaitActive, ahk_class TMyFindDlg
+        WinClose
+        WinWaitNotActive, ahk_class TElWind,, 0.1
+        this.Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
+        return true
       }
-      this.ClearHighlight(false)
-      WinClose, ahk_class TMyFindDlg
-      sleep 100  ; important to wait for caret to refresh
-      this.Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
-      return true
     }
   }
 

@@ -1,8 +1,6 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 .::  ; selected text becomes [...]
-  Clipboard := ""
-  send ^c
-  ClipWait
+  Copy(false)
   if (Vim.SM.IsEditingHTML()) {
     send % "<span class=""Cloze"">[...]</span>"
     send +{left 32}^+1
@@ -21,10 +19,9 @@ return
   Vim.State.SetMode("Vim_Normal")
 return
 
-ParseHTML:
+SMParseHTMLGUI:
 !a::  ; p*a*rse html
-  GAltA := (A_ThisLabel == "ParseHTML")
-  Vim.State.SetMode("Vim_Normal")
+  GAltA := (A_ThisLabel == "SMParseHTMLGUI"), Vim.State.SetMode("Vim_Normal")
   SetDefaultKeyboard(0x0409)  ; English-US
   Gui, HTMLTag:Add, Text,, &HTML tag:
   RegExMatch(Vim.SM.CssClass, "(hint.*$)", v)
@@ -32,6 +29,7 @@ ParseHTML:
         . "|sup|blockquote|ruby|" . v1 . "|small"
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
+  Gui, HTMLTag:Add, CheckBox, vCopyText, &Copy the text
   Gui, HTMLTag:Add, Button, default, &Add
   Gui, HTMLTag:Show,, Add HTML Tag
 Return
@@ -46,10 +44,17 @@ HTMLTagButtonAdd:
   Gui destroy
   if (GAltA) {
     GAltA := false, Vim.State.SetMode("SMVim_GAltA", 0, -1, 0,,, -1)
+    Vim.Move.SMLastGAltATag := tag
     return
   }
-  ClipSaved := ClipboardAll
+
+SMParseHTML:
+  if (A_ThisLabel == "SMParseHTML")
+    tag := Vim.Move.SMLastGAltATag
   WinActivate, ahk_class TElWind
+  if (CopyText)
+    copy(false)
+  ClipSaved := ClipboardAll
   if (!copy(false))
     goto RestoreClipReturn
   if (OriginalHTML) {

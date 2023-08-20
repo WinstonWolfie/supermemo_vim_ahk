@@ -32,8 +32,7 @@ n::Vim.Move.Move("gn")
 ; Editing HTML
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.leader)
 q::
-  n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
-  loop % n {
+  loop % n := Vim.State.GetN() {
     send {home}>{space}  ; add comment; useful when replying emails
     if (n > 1)
       send ^{down}
@@ -132,23 +131,16 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLDecreaseIndent") && Vim.SM.IsEditingHTML())
 <::
   UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinGet())
+  el := UIA.ElementFromHandle(WinGet()), ReleaseModifierKeys()
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
   el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath((A_ThisHotkey == ">") ? "21" : "20").ControlClick()
   el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
-  Vim.Caret.SwitchToSameWindow(), Vim.State.SetMode("Vim_Normal"), ReleaseModifierKeys()
+  Vim.Caret.SwitchToSameWindow(), Vim.State.SetMode("Vim_Normal")
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser") && Vim.State.g)
 ; gU: click source button
 +u::Vim.SM.ClickBrowserSourceButton(), Vim.State.SetMode()
-
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))
-!h::send !{left}
-!l::send !{right}
-!j::send !{pgdn}
-!k::send !{pgup}
-!u::send ^{up}
 
 #if (Vim.State.Vim.Enabled
   && ((Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key

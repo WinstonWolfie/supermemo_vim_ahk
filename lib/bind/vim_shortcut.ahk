@@ -36,13 +36,11 @@ return
 
 ^+!p::
 Plan:
-  Vim.State.SetMode("Vim_Normal")
-  ReleaseModifierKeys()
+  Vim.State.SetMode("Vim_Normal"), ReleaseModifierKeys()
   if (!WinExist("ahk_group SuperMemo")) {
     run C:\SuperMemo\systems\all.kno
     WinWait, ahk_class TElWind,, 3
     if (ErrorLevel) {
-      ReleaseModifierKeys()
       return
     }
     WinActivate
@@ -53,7 +51,6 @@ Plan:
       WinWaitClose, ahk_class TMsgDialog
     }
     WinActivate, ahk_class TPlanDlg
-    ReleaseModifierKeys()
     return
   }
   while (WinExist("ahk_class TMsgDialog"))
@@ -68,7 +65,6 @@ Plan:
     Vim.SM.PostMsg(243)  ; Plan
     WinWait, ahk_class TPlanDlg,, 0
     if (ErrorLevel) {
-      ReleaseModifierKeys()
       return
     }
   }
@@ -95,6 +91,7 @@ return
 ^!l::  ; copy link and parse *l*ink if if's from YT
   Vim.Browser.Clear()
   guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinGet())
+  ReleaseModifierKeys()
   ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
   Vim.Browser.GetInfo(false)
   ToolTip("Copied " . Vim.Browser.Url . "`n"
@@ -104,7 +101,6 @@ return
         . (Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : "")
         . (Vim.Browser.VidTime ? "`nTime stamp: " . Vim.Browser.VidTime : ""))
   Clipboard := Vim.Browser.Url, guiaBrowser := ""
-  ReleaseModifierKeys()
 return
 
 ^!d::  ; parse word definitions
@@ -444,8 +440,9 @@ return
                             || WinActive("ahk_exe WINWORD.exe")             ; MS Word
                             || WinActive("ahk_exe WinDjView.exe")))         ; djvu viewer
 !+d::  ; check duplicates in SM
+  ReleaseModifierKeys()
   if (!WinExist("ahk_class TElWind")) {
-    ToolTip("Please open SuperMemo and try again."), ReleaseModifierKeys()
+    ToolTip("Please open SuperMemo and try again.")
     return
   }
   vToolTip := "selected text", skip := false, url := ""
@@ -457,20 +454,20 @@ return
   if (!skip && (!text := copy())) {
     if (wBrowser) {
       if (!url) {
-        ToolTip("Url not found."), ReleaseModifierKeys()
+        ToolTip("Url not found.")
         return
       }
       text := Vim.Browser.ParseUrl(url), vToolTip := "url"
     }
   }
   if (!text) {
-    ToolTip("Text not found."), ReleaseModifierKeys()
+    ToolTip("Text not found.")
     return
   }
   ToolTip("Searching " . vToolTip . " in " . Vim.SM.GetCollName() . "...", true)
   if (Vim.SM.CheckDup(text))
     RemoveToolTip()
-  ReleaseModifierKeys(), VimLastSearch := text
+  VimLastSearch := text
 return
 
 ; Browser / SumatraPDF / Calibre / MS Word to SuperMemo
@@ -873,10 +870,10 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe HiborClient.exe"))
 !+d::  ; check duplicates
   ClipSaved := ClipboardAll
+  ReleaseModifierKeys()
   if (CopyAll())
     Vim.SM.CheckDup(MatchHiborLink(Clipboard))
   Clipboard := ClipSaved
-  ReleaseModifierKeys()
 return
 
 #if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_exe HiborClient.exe")) && WinExist("ahk_class TElWind"))

@@ -1,9 +1,6 @@
 ﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
 ; Undo/Redo
-u::
-  n := Vim.State.n ? Vim.State.n : 1, Vim.State.n := 0
-  Send % "^{z " . n . "}"
-return
+u::Send % "^{z " . Vim.State.GetN() . "}"
 
 ^r::Send,^y
 
@@ -27,9 +24,9 @@ return
 +z::Vim.State.SetMode("Z")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::
+  ReleaseModifierKeys()
   send ^s!{F4}
   Vim.State.SetMode("Vim_Normal")
-  ReleaseModifierKeys()
 Return
 
 +q::

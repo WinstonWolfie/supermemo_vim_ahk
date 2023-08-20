@@ -158,13 +158,11 @@ s::  ; turn active language item to passive (*s*witch)
 return
 
 +s::
-  Vim.State.SetMode("Vim_Normal")
-  Vim.SM.ExitText()
+  Vim.State.SetMode("Vim_Normal"), Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
     send {esc}
   Vim.SM.EditFirstQuestion()
-  Vim.SM.WaitTextFocus()
-  WinClip.Clear()
+  Vim.SM.WaitTextFocus(), WinClip.Clear()
   if (Vim.SM.IsEditingHTML()) {
     send ^{home}^+{right 2}
   } else if (Vim.SM.IsEditingPlainText()) {
@@ -179,7 +177,6 @@ return
   Vim.SM.WaitTextFocus()
   send % "{text}" . text
   send {left 2}{esc}
-  ReleaseModifierKeys()
 return
 
 +p::

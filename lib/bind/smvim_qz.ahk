@@ -136,16 +136,15 @@ _::
 .::
 >::
 space::
-  Vim.Move.KeyAfterSMAltQ := A_ThisHotkey
+  Vim.Move.KeyAfterSMAltQ := A_ThisHotkey, ReleaseModifierKeys()
   if (SMAltQYdcMove) {
     Vim.Move.YDCMove(), SMAltQYdcMove := false
   } else {
     Vim.State.SetMode("SMVim_AltQ", 0, -1, 0)
   }
-  ReleaseModifierKeys()
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
-!a::Goto ParseHTML
+!a::Goto SMParseHTMLGUI
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_GAltA") && Vim.SM.IsEditingHTML())
 !a::Vim.Move.YDCMove()

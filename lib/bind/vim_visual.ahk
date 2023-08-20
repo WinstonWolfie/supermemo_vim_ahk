@@ -103,7 +103,6 @@ Return
 
 *::
   ClipSaved := ClipboardAll
-  KeyWait Shift
   Copy(false)
   if (WinActive("ahk_class TElWind")) {
     UserInput := Clipboard, CurrFocus := ControlGetFocus("ahk_class TElWind")

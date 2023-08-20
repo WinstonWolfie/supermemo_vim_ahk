@@ -252,4 +252,9 @@
       ToolTip("supermemo_vim_ahk enabled.")
     }
   }
+
+  GetN() {
+    n := this.n ? this.n : 1, this.n := 0
+    return n
+  }
 }

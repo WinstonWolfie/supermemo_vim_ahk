@@ -11,13 +11,15 @@ CapsLock & alt::return  ; so you can press CapsLock first and alt without trigge
   AltState := IfContains(A_ThisHotkey, "!")  ; followed by a cloze
   CtrlState := IfContains(A_ThisHotkey, "^")
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && AltState := GetKeyState("alt") && ShiftState := GetKeyState("shift"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")) && (ShiftState := GetKeyState("shift")))
 CapsLock & /::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && ShiftState := GetKeyState("shift"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (ShiftState := GetKeyState("shift")))
 CapsLock & /::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && AltState := GetKeyState("alt"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")))
 CapsLock & /::
-  CapsState := IfContains(A_ThisHotkey, "CapsLock")
+  CapsState := IfContains(A_ThisHotkey, "CapsLock"), ReleaseModifierKeys()
+  KeyWait Alt
+  BlockInput, on
   if (!Vim.SM.IsEditingText()) {
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()  ; make sure CurrFocus is updated    
@@ -26,6 +28,7 @@ CapsLock & /::
     if (!Vim.SM.IsEditingText()) {  ; still found no text
       ToolTip("Text not found.")
       Vim.State.SetNormal()
+      BlockInput, off
       return
     }
   } 
@@ -33,8 +36,6 @@ CapsLock & /::
     send {right}
     Vim.State.SetNormal()
   }
-  if (LShiftState)
-    send ^{Home}
   CurrFocus := ControlGetFocus("ahk_class TElWind")
   if (AltState) {
     Gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
@@ -46,10 +47,11 @@ CapsLock & /::
   Gui, Search:Add, Edit, vUserInput w196 r1 -WantReturn, % VimLastSearch
   Gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
   if (AltState) {
-    Gui, Search:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), S&tay in clozed item
+    Gui, Search:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
     Gui, Search:Add, CheckBox, % "vShiftState " . (ShiftState ? "checked" : ""), Cloze &hinter
   }
-  Gui, Search:Add, Button, default, &Search
+  Gui, Search:Add, Button, default, &Find
+  BlockInput, off
   Gui, Search:Show,, Search
 return
 
@@ -58,7 +60,7 @@ SearchGuiClose:
   Gui destroy
 return
 
-SearchButtonSearch:
+SearchButtonFind:
   Gui submit
   Gui destroy
   if (UserInput == "")
@@ -120,10 +122,8 @@ SMSearchAgain:
       Control, Check,, TCheckBox2, ahk_class TMyFindDlg  ; match whole word
     Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
     send {enter}
-    if (Vim.State.n) {
-      send % "{f3 " . Vim.State.n - 1 . "}"
-      Vim.State.n := 0
-    }
+    if (Vim.State.n)
+      send % "{f3 " . Vim.State.GetN() - 1 . "}"
     WinWaitNotActive, ahk_class TMyFindDlg
     if (ShiftState && !AltState) {
       Vim.State.SetMode("Vim_Visual")
