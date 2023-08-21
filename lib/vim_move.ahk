@@ -39,8 +39,7 @@
   }
 
   RegForDot(key) {
-    this.ReggedForDot := ((!this.IsMotionOnly() || this.IsActionKey(key)) && (A_ThisHotkey != "."))
-    if (this.ReggedForDot) {
+    if (this.ReggedForDot := ((!this.IsMotionOnly() || this.IsActionKey(key)) && !((A_ThisHotkey == ".") && !this.Vim.State.fts))) {
       this.LastInOrOut := this.LastRepeat := this.LastSurround := this.LastSurroundKey := this.LastLineCopy := ""
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
       this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
