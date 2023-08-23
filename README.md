@@ -4,7 +4,7 @@ Setting file to emulate vim with AutoHotkey, works with SuperMemo
 
 # To Do
 
-I apologise for still not *finished* writing a documentation (it's being written incrementally!), the keybinds are fairly similar to Vim, except `q` for extract and `z` for cloze, so you can do stuff like `zt.` to cloze until end of sentence, and `qip` to extract inner paragraph. Vim-Sneak plugin is added as well, so you can do `d2sth` to delete until the 2nd "th".
+I apologise for still not *finished* writing a documentation (it's being written incrementally!), the keybinds are fairly similar to Vim, except `q` for extract and `z` for cloze, so you can do stuff like `zt.` to cloze until a full stop, and `qip` to extract inner paragraph. [vim-sneak](https://github.com/justinmk/vim-sneak) is added as well, so you can do `d2zth` to delete until the 2nd "th".
 
 # Cheat sheet
 
