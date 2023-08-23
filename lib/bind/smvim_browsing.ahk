@@ -105,7 +105,7 @@ r::  ; reload
   send !{home}
   Vim.SM.WaitFileLoad()
   if (ContLearn) {
-    Vim.SM.Learn()
+    Vim.SM.Learn(false)
     Vim.SM.WaitFileLoad()
     ; When r is pressed, the review score in an item is submitted,
     ; thus refreshing and learning takes SM to a new element

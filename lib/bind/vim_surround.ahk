@@ -31,22 +31,21 @@ t::
   ClipSaved := ClipboardAll
   CurrKey := (A_ThisLabel == "Surround") ? Vim.Move.LastSurroundKey : A_ThisHotkey
   if (CurrKey == "b") {
-    CurrKey := "("
+    CurrKey := ")"
   } else if (CurrKey == "+b") {
-    CurrKey := "{"
+    CurrKey := "}"
   } else if (CurrKey == "t") {
     CurrKey := "<"
   }
   if (!Vim.State.SurroundChangeEntered && Vim.State.StrIsInCurrentVimMode("Visual,ydc_y")) {
-    if (!selection := copy(false))
+    if (!selection := copy(false)) {
+      ToolTip("Text not found.")
       goto RestoreClipReturn
+    }
     SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
     send {left}
-    key := Vim.Move.RevSurrKey(CurrKey)
-    send % "{text}" . key
-    send % "{right " . SelectionLen . "}"
-    key := Vim.Move.RevSurrKey(CurrKey, 2)
-    send % "{text}" . key
+    if (!VimSurround(CurrKey, SelectionLen,, true))
+      return
   } else if (Vim.State.SurroundChangeEntered || ((c := Vim.State.StrIsInCurrentVimMode("ydc_c")) || Vim.State.StrIsInCurrentVimMode("ydc_d"))) {
     if (!Vim.State.SurroundChangeEntered) {
       Vim.State.SetMode("Vim_Visual")
@@ -59,13 +58,38 @@ t::
         return
       }
     }
-    send {left}{bs}
-    if (c)
-      send % "{text}" . Vim.Move.RevSurrKey(CurrKey)
-    send % "{right " . SelectionLen . "}{del}"
-    if (c)
-      send % "{text}" . Vim.Move.RevSurrKey(CurrKey, 2)
+    send {left}
+    if (!VimSurround(CurrKey, SelectionLen, true, c))
+      return
   }
   Vim.Move.LastSurround := true, Vim.Move.LastSurroundKey := CurrKey
   Vim.State.SetMode("Vim_Normal"), Clipboard := ClipSaved
 return
+
+VimSurround(CurrKey, SelectionLen, d:=false, c:=false) {
+  global Vim
+  tag := (CurrKey == "<") ? InputBox("vim-surround", "Enter tag") : ""
+  if ((CurrKey == "<") && (!tag || ErrorLevel))
+    return
+  if (d)
+    send {bs}
+  if (tag && c) {
+    send % "{text}<" . tag . ">"
+  } else if (c) {
+    send % "{text}" . key := Vim.Move.RevSurrKey(CurrKey)
+    if (s := IfIn(CurrKey, "(,[,{"))
+      send {space}
+  }
+  send % "{right " . SelectionLen . "}"
+  if (d)
+    send {del}
+  if (tag && c) {
+    send % "{text}</" . tag . ">"
+  } else if (c) {
+    key := Vim.Move.RevSurrKey(CurrKey, 2)
+    if (s)
+      send {space}
+    send % "{text}" . key
+  }
+  return true
+}

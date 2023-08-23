@@ -48,7 +48,7 @@ Return
   }
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.fts && !Vim.State.Surround)
 ; Visual to insert
 +i::
   send {left}

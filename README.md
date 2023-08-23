@@ -14,6 +14,7 @@ Vim notations:
 - `<C-{key}>` means `Ctrl + {key}`, eg, `<C-v>` = `Ctrl + V`.
 - `<A-{key}>` means `Alt + {key}`, eg, `<A-s>` = `Ctrl + S`.
 - Similarly, `<S-{key}>` means `Shift + {key}`, so `<C-S-A-a>` = `Ctrl + Shift + Alt + A`
+- `<CR>` means the `Enter` key
 
 At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R`) to reload it.
 
@@ -274,3 +275,47 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 `{operator}gn`: apply operator on next match
 
 `.`: after using {op}gn, the dot commant repeats the last change on the next match
+
+## Copying and pasting
+
+`y{motion}`: yank (copy) text covered by motion
+
+`p`: put (paste) after cursor
+
+`P`: paste at the cursor
+
+`yy` / `Y`: copy line
+
+`yyp` duplicate line
+
+`ddp`: swap lines
+
+`xp`: swap characters
+
+## [vim-surround](https://github.com/tpope/vim-surround)
+
+`ds`: delete surroundings, eg, `ds[` (delete the surrounding square brackets)
+
+`cs`: change surroundings, eg, `cs*(` (change surrounding asterisks to parentheses)
+
+`ys`: add surroundings, eg, `ysiw"` (add quotes to the current word)
+
+`ds"`: delete surrounding quotes
+
+`cs_ti<CR>`: change surrounding _ for the <i> tag (= `cs_<i<CR>`)
+
+`ysiw"`: surround word under the cursor with quotes
+
+`S` (in visual mode): add surroundings, eg, `S}` (add curly brackets to the current selection)
+
+## [vim-sneak](https://github.com/justinmk/vim-sneak)
+
+`s{char}{char}`: jump to the next ocurrence of `{char}{char}`
+
+`S{char}{char}`: jump to the previous ocurrence of `{char}{char}` (note: in visual mode it's `<A-s>` because `S` is taken by vim-surround)
+
+`;`: go to next occurrence of `{char}{char}`
+
+`,`: go to previous occurrence of `{char}{char}`
+
+`{op}z{char}{char}`: apply operator on text traversed by vim sneak motion (`Z` if previous ocurrence)

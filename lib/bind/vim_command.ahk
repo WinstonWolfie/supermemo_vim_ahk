@@ -159,7 +159,7 @@ YouGlish:
   Gui, YouGlish:Add, Edit, vSearch w136 r1 -WantReturn, % search
   Gui, YouGlish:Add, Text,, &Language:
   list := "English||Spanish|French|Italian|Japanese|German|Russian|Greek|Hebrew"
-        . "|Arabic|Polish|Portuguese|Korean|Turkish|American Sign Language"
+        . "|Arabic|Polish|Portuguese|Korean|Turkish|American Sign Language|Dutch"
   Gui, YouGlish:Add, Combobox, vLanguage gAutoComplete w136, % list
   Gui, YouGlish:Add, Button, default, &Search
   Gui, YouGlish:Show,, YouGlish
