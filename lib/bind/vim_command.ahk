@@ -107,12 +107,29 @@ WindowSpy:
 return
 
 WebSearch:
-  if (!text := FindSearch("Google Search", "Search:"))
-    return
-  if (IsUrl(text)) {
-    run % text
+  search := trim(Copy())
+  Gui, WebSearch:Add, Text,, &Search:
+  Gui, WebSearch:Add, Edit, vSearch w136 r1 -WantReturn, % search
+  Gui, WebSearch:Add, Text,, &Language Code:
+  list := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
+  Gui, WebSearch:Add, Combobox, vLangCode gAutoComplete w136, % list
+  Gui, WebSearch:Add, Button, default, &Search
+  Gui, WebSearch:Show,, Google Define
+  SetDefaultKeyboard(0x0409)  ; English-US
+Return
+
+WebSearchGuiEscape:
+WebSearchGuiClose:
+  Gui Destroy
+return
+
+WebSearchButtonSearch:
+  Gui Submit
+  Gui Destroy
+  if (IsUrl(search)) {
+    run % search
   } else {
-    run % "https://www.google.com/search?q=" . EncodeDecodeURI(text)
+    run % "https://www.google.com/search?hl=" . LangCode . "&q=" . EncodeDecodeURI(search)
   }
 return
 

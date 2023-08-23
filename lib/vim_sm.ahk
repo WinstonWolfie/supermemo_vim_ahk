@@ -10,6 +10,10 @@ class VimSM {
     return (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind") || ControlGet(,, "TMemo1", "ahk_class TElWind"))
   }
 
+  DoesHTMLExist() {
+    return ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")
+  }
+
   ClickTop(Control:="") {
     if (Control) {
       ControlClick, % Control, ahk_class TElWind,,,, NA x1 y1
@@ -25,7 +29,7 @@ class VimSM {
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
         } else {  ; no html field found
           this.EditFirstQuestion()
-          if (!this.WaitTextFocus(1000))
+          if (!this.WaitTextFocus(1500))
             return false
           control := ControlGetFocus("ahk_class TElWind")
           ControlGetPos,,,, Height, % control, ahk_class TElWind
@@ -54,7 +58,7 @@ class VimSM {
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
         } else {  ; no html field found
           this.EditFirstQuestion()
-          if (!this.WaitTextFocus(1000))
+          if (!this.WaitTextFocus(1500))
             return false
           control := ControlGetFocus("ahk_class TElWind")
           ControlGetPos,,,, Height, % control, ahk_class TElWind
@@ -83,7 +87,7 @@ class VimSM {
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
         } else {  ; no html field found
           this.EditFirstQuestion()
-          if (!this.WaitTextFocus(1000))
+          if (!this.WaitTextFocus(1500))
             return false
           control := ControlGetFocus("ahk_class TElWind")
           ControlGetPos,,,, Height, % control, ahk_class TElWind
@@ -95,15 +99,15 @@ class VimSM {
   }
 
   IsEditingHTML() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server"))
   }
 
   IsEditingPlainText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "TMemo,TRichEdit"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "TMemo,TRichEdit"))
   }
 
   IsEditingText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server,TMemo,TRichEdit"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server,TMemo,TRichEdit"))
   }
 
   IsBrowsing() {
@@ -111,45 +115,45 @@ class VimSM {
   }
 
   IsGrading() {
-    CurrFocus := ControlGetFocus("A")
+    CurrFocus := ControlGetFocus()
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
     return (WinActive("ahk_class TElWind")
-         && (CurrFocus == "TBitBtn4"
-          || CurrFocus == "TBitBtn5"
-          || CurrFocus == "TBitBtn6"
-          || CurrFocus == "TBitBtn7"
-          || CurrFocus == "TBitBtn8"
-          || CurrFocus == "TBitBtn9"))
+         && ((CurrFocus == "TBitBtn4")
+          || (CurrFocus == "TBitBtn5")
+          || (CurrFocus == "TBitBtn6")
+          || (CurrFocus == "TBitBtn7")
+          || (CurrFocus == "TBitBtn8")
+          || (CurrFocus == "TBitBtn9")))
   }
  
   IsNavigatingPlan() {
-    return (WinActive("ahk_class TPlanDlg") && ControlGetFocus("A") == "TStringGrid1")
+    return (WinActive("ahk_class TPlanDlg") && (ControlGetFocus() == "TStringGrid1"))
   }
  
   IsNavigatingTask() {
-    return (WinActive("ahk_class TTaskManager") && ControlGetFocus("A") == "TStringGrid1")
+    return (WinActive("ahk_class TTaskManager") && (ControlGetFocus() == "TStringGrid1"))
   }
 
   IsNavigatingContentWindow() {
-    return (WinActive("ahk_class TContents") && ControlGetFocus("A") == "TVirtualStringTree1")
+    return (WinActive("ahk_class TContents") && (ControlGetFocus() == "TVirtualStringTree1"))
   }
 
   IsNavigatingBrowser() {
-    return (WinActive("ahk_class TBrowser") && ControlGetFocus("A") == "TStringGrid1")
+    return (WinActive("ahk_class TBrowser") && (ControlGetFocus() == "TStringGrid1"))
   }
 
   SetRandPrio(min, max) {
     Prio := Random(min, max)
     global ImportGuiHwnd
-    if (WinGet() == ImportGuiHwnd) {
-      ControlFocus, Edit1, A
-      ControlSetText, Edit1, % Prio, A
+    if (WinActive("A") == ImportGuiHwnd) {
+      ControlFocus, Edit1
+      ControlSetText, Edit1, % Prio
       send {tab}
     } else if (WinActive("Priority ahk_class #32770 ahk_exe AutoHotkey.exe")) {  ; input dialogue
-      ControlSetText, Edit1, % Prio, A
+      ControlSetText, Edit1, % Prio
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
-      ControlSetText, TEdit5, % Prio, A
-      ControlFocus, TEdit1, A
+      ControlSetText, TEdit5, % Prio
+      ControlFocus, TEdit1
     } else if (WinExist("ahk_class TElWind")) {
       this.SetPrio(Prio)
     }
@@ -872,5 +876,15 @@ class VimSM {
     if (!IfContains(this.Vim.Browser.Url, "youtube.com/playlist"))
       add := (CollName = "bgm") ? this.Vim.Browser.Url . "`n" : ""
     Clipboard := add . this.MakeReference()
+  }
+
+  DoesHTMLContainText() {
+    UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1")
+    el := UIA.ElementFromHandle(hCtrl).FindFirstByType("text")
+    return !(el.Name == "#SuperMemo Reference:")
+  }
+
+  IsEmptyTopic() {
+    return (!this.IsItem() && this.DoesTextExist() && !this.DoesHTMLContainText())
   }
 }

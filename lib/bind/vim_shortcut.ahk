@@ -517,21 +517,7 @@ return
     WinClose
 
 ExtractToSM:
-  if (Vim.SM.IsEditingPlainText()) {
-    ToolTip("This script requires HTML component to work.")
-    goto RestoreClipReturn
-  }
-  Vim.SM.EditFirstQuestion()
-  if (!Vim.SM.WaitTextFocus(1500)) {
-    ToolTip("No HTML component found; the text you selected is on your clipboard.")
-    goto RestoreClipReturn
-  }
-  if (Vim.SM.IsEditingPlainText()) {
-    ToolTip("This script requires HTML component to work.")
-    goto RestoreClipReturn
-  }
-  if (ret := Vim.SM.GetFilePath()) {
-    send {left}
+  if (ret := !Vim.SM.IsEmptyTopic()) {
     if (A_ThisLabel != "ExtractToSM") {
       MsgBox, 3,, Go to source and try again? (press no to paste in current topic)
       if (IfMsgbox("yes")) {
@@ -541,8 +527,7 @@ ExtractToSM:
         goto ExtractToSM
       } else if (IfMsgBox("no")) {
         WinWaitActive, ahk_class TElWind
-        Vim.SM.EditFirstQuestion()
-        ret := !Vim.SM.WaitTextFocus(1500)
+        ret := false
       }
     }
     if (ret) {
@@ -551,7 +536,8 @@ ExtractToSM:
       return
     }
   }
-  send {left}
+  Vim.SM.EditFirstQuestion()
+  Vim.SM.WaitTextFocus(1500)
 
   if (!CleanHTML) {
     clip(extract,, false)
@@ -677,16 +663,14 @@ return
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
   ClipSaved := ClipboardAll
-  CloseWnd := IfContains(A_ThisHotkey, "^")
-  ReleaseModifierKeys()
+  CloseWnd := IfContains(A_ThisHotkey, "^"), ReleaseModifierKeys()
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := trim(copy(false), " `t`r`n")
   if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))) {
-    if (wAcrobat) {
+    if (wAcrobat)
       marker := "p" . GetAcrobatPageBtn().Value
-    }
-    if (!marker && (page := ControlGetText("Edit1")))
+    if (!wAcrobat && !marker && (page := ControlGetText("Edit1")))
       marker := "p" . page
     if (!marker) {
       ToolTip("No text selected and page number not found.")
@@ -726,13 +710,11 @@ return
   WinActivate, ahk_class TElWind
 
 MarkInSMTitle:
-  Vim.SM.EditFirstQuestion()
-  if (!Vim.SM.WaitTextFocus(1500)) {
-    ToolTip("No text component.")
-    goto RestoreClipReturn
-  }
-  if (ret := Vim.SM.GetFilePath()) {
-    send {left}
+  SMTitle := RegExReplace(ElWindTitle := WinGetTitle("ahk_class TElWind"), "^Duplicate: ")
+  NewTitle := RegExReplace(SMTitle, "((^.+ \| )|^)", marker . " | ")
+  if (ElWindTitle == NewTitle)
+    return
+  if (ret := !Vim.SM.IsEmptyTopic()) {
     if (A_ThisLabel != "MarkInSMTitle") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
       if (IfMsgbox("yes")) {
@@ -742,8 +724,7 @@ MarkInSMTitle:
         goto MarkInSMTitle
       } else if (IfMsgBox("no")) {
         WinWaitActive, ahk_class TElWind
-        Vim.SM.EditFirstQuestion()
-        ret := !Vim.SM.WaitTextFocus(1500)
+        ret := false
       }
     }
     if (ret) {
@@ -752,10 +733,7 @@ MarkInSMTitle:
       return
     }
   }
-  send {left}{esc}
-  Vim.SM.WaitTextExit()
-  SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind"), "^Duplicate: ")
-  Vim.SM.SetTitle(RegExReplace(SMTitle, "((^.+ \| )|^)", marker . " | "))
+  Vim.SM.SetTitle(NewTitle)
   if (IfContains(A_ThisHotkey, "^+!"))
     Vim.SM.Learn(false, true)
   Clipboard := ClipSaved
