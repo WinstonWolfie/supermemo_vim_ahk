@@ -81,16 +81,14 @@ s::  ; gs: go to source
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (hWnd := WinActive("ahk_class TElWind")) && Vim.State.g)
 f::  ; gf: open source file
 t::  ; gt: open in Notepad
-  Vim.State.SetMode()
-  if (!Vim.SM.DoesTextExist()) {
-    ToolTip("Text not found.")
-    return
-  }
-  ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
+  Vim.State.SetMode(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
   if (Notepad := IfIn(A_ThisHotkey, "^+f6,t")) {
-    Vim.SM.ExitText(true)
-    send ^{f7}
-    send ^+{f6}
+    send ^{f7}  ; save read point
+    if (Vim.SM.IsEditingText()) {
+      send !{f12}fw
+    } else {
+      send ^+{f6}
+    }
   } else {
     ClipSaved := ClipboardAll
     path := Vim.SM.GetFilePath(false)
@@ -111,15 +109,15 @@ t::  ; gt: open in Notepad
   WinWaitNotActive % "ahk_id " . hWnd
   WinWaitActive % "ahk_id " . hWnd
   if (Notepad) {
-    send !{f7}
+    send !{f7}  ; go to read point
   } else {
-    send !{home}
+    Vim.SM.GoHome(true)
   }
   if (ContLearn == 1) {
     Vim.SM.Learn()
   } else if (!Notepad) {
     Vim.SM.WaitFileLoad()
-    send !{left}
+    Vim.SM.GoBack(true)
   }
 return
 

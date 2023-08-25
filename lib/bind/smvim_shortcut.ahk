@@ -55,7 +55,7 @@ return
   WinWaitNotActive, ahk_class TElWind,, 0.4
   if (!ErrorLevel)  ; "Warning! The last child of the displayed element has been moved or deleted"
     return
-  send !{home}
+  Vim.SM.GoHome()
   Vim.SM.WaitFileLoad()
   if (WinActive("ahk_class TElWind"))
     Vim.SM.Learn(false, true)

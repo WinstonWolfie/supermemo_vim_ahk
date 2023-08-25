@@ -120,8 +120,7 @@ ExtractStay:
 ^q::  ; extract (*q*uote)
   send !x
   Vim.SM.WaitExtractProcessing()
-  send !{left}
-  Vim.State.SetMode("Vim_Normal")
+  Vim.SM.GoBack(), Vim.State.SetMode("Vim_Normal")
 return
 
 +q::  ; extract with priority
@@ -142,7 +141,7 @@ ClozeStay:
   send !z
   Vim.State.SetMode("Vim_Normal")
   if (Vim.SM.WaitClozeProcessing() != -1)  ; warning on trying to cloze on items
-    send !{left}
+    Vim.SM.GoBack()
 Return
 
 ~!t::
@@ -262,7 +261,7 @@ CapsLock & z::  ; delete [...]
   ToolTip("Cloze processing...", true)
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
-  send !{left}
+  Vim.SM.GoBack()
   Vim.SM.WaitFileLoad()
   if (WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 200)) {
     if (!Vim.SM.SpamQ(, 1500))

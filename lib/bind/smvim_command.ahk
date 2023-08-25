@@ -111,10 +111,8 @@ w::  ; prepare *w*ikipedia articles in languages other than English
 return
 
 i::  ; learn outstanding *i*tems only
-  Vim.State.SetMode("Vim_Normal")
-  send !{home}
-  SMPID := WinGet("PID")
-  WinClose, % "ahk_class TBrowser ahk_pid " . SMPID
+  Vim.State.SetMode("Vim_Normal"), Vim.SM.GoHome()
+  WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID")
   Vim.SM.PostMsg(202)  ; View - Outstanding
   Vim.SM.WaitBrowser()
   send {AppsKey}ci
@@ -185,7 +183,7 @@ p::  ; hyperlink to scri*p*t component
   ClipSaved := ClipboardAll
   Vim.Browser.url := Clipboard
   WinClip.Clear()
-  Vim.SM.RefToClipForTopic()
+  Vim.SM.RefToClipForTopic(CollName)
   ClipWait
   Vim.SM.AltN()
   Vim.SM.WaitFileLoad()
@@ -228,8 +226,7 @@ SMHyperLinkToTopic:
 return
 
 r::  ; set *r*eference's link to what's in the clipboard
-  Vim.State.SetMode("Vim_Normal")
-  Vim.SM.ExitText()
+  Vim.State.SetMode("Vim_Normal"), Vim.SM.ExitText()
 
 SMSetLinkFromClipboard:
   ; Had to edit title first, in case of multiple references change
@@ -249,9 +246,11 @@ SMSetLinkFromClipboard:
     Ref := RegExReplace(Ref, "#Date: .*|$", "`r`n#Date: " . Vim.Browser.Date,, 1)
   if (Vim.Browser.Comment)
     Ref := RegExReplace(Ref, "#Comment: .*|$", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
-  ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
-  ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}, ahk_class TInputDlg  ; submit
-  WinWaitClose, ahk_class TInputDlg
+  ControlSetText, TMemo1, % Ref
+  ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
+  WinWaitClose
+  if ((A_ThisHotkey == "r") && !Vim.SM.AskPrio())
+    return
 return
 
 m::

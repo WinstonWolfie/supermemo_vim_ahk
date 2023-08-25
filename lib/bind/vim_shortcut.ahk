@@ -60,7 +60,7 @@ Plan:
     if (l == 2) {
       Vim.SM.Reload()
     } else if (l == 1) {
-      Vim.SM.GoToFirstEl()
+      Vim.SM.GoHome()
     }
     Vim.SM.PostMsg(243)  ; Plan
     WinWait, ahk_class TPlanDlg,, 0
@@ -315,7 +315,7 @@ SMImportButtonImport:
 
   WinClip.Clear()
   if (Online && Passive) {
-    Vim.SM.RefToClipForTopic()
+    Vim.SM.RefToClipForTopic(CollName)
   } else if (Online) {
     Clipboard := Vim.Browser.Url
   } else {
@@ -375,6 +375,7 @@ SMImportButtonImport:
     }
   }
 
+  ; Making sure the browser is shown for the maximum amount of time
   if (Passive || esc)
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
   Vim.SM.ClearHighlight()
@@ -482,6 +483,13 @@ return
     ToolTip("Nothing is selected.")
     goto RestoreClipReturn
   } else {
+    if (CleanHTML) {
+      Vim.HTML.ClipboardGet_HTML(data)
+      RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
+      WinClip.Clear()
+      Clipboard := Vim.HTML.Clean(data, true)
+      ClipWait
+    }
     if (!WinExist("ahk_group SuperMemo")) {
       ToolTip("SuperMemo is not open; the text you selected is on your clipboard.")
       return
@@ -511,7 +519,6 @@ return
       sleep 100
     }
   }
-  extract := ClipboardAll
   WinActivate, ahk_class TElWind  ; focus to element window
   while (WinExist("ahk_class TMsgDialog"))
     WinClose
@@ -532,24 +539,16 @@ ExtractToSM:
     }
     if (ret) {
       ToolTip("Please make sure current element is an empty HTML topic. Your extract is now on your clipboard.")
-      Clipboard := extract
       return
     }
   }
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus(1500)
+  send ^{home}
 
   if (!CleanHTML) {
-    clip(extract,, false)
+    send ^v
   } else {
-    WinClip.Clear()
-    Clipboard := extract
-    ClipWait
-    Vim.HTML.ClipboardGet_HTML(data)
-    RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
-    WinClip.Clear()
-    Clipboard := Vim.HTML.Clean(data, true)
-    ClipWait
     send {AppsKey}xp  ; paste HTML
     WinClip._waitClipReady()
     WinWaitActive, ahk_class TElWind
@@ -573,7 +572,7 @@ ExtractToSM:
   WinWaitClose, ahk_class TMsgDialog
   send {esc}
   if (CtrlState) {
-    send !{left}
+    Vim.SM.GoBack()
   } else {
     WinActivate % "ahk_id " . hWnd
   }
@@ -712,8 +711,10 @@ return
 MarkInSMTitle:
   SMTitle := RegExReplace(ElWindTitle := WinGetTitle("ahk_class TElWind"), "^Duplicate: ")
   NewTitle := RegExReplace(SMTitle, "((^.+ \| )|^)", marker . " | ")
-  if (ElWindTitle == NewTitle)
+  if (ElWindTitle == NewTitle) {
+    ToolTip("No need to change current title.")
     return
+  }
   if (ret := !Vim.SM.IsEmptyTopic()) {
     if (A_ThisLabel != "MarkInSMTitle") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)

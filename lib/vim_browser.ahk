@@ -468,7 +468,7 @@
         btn.FindByPath("P3").click()  ; click the description box, so the webpage doesn't scroll down
       } else {
         el := guiaBrowser.FindFirstBy("ControlType=Text AND Name='^\d+(\.\d+)?(K|M|B)? views'",, "regex")
-        if (el.FindByPath("+1").Name == "•") {
+        if (el.FindByPath("+1").Name == "•") {  ; not video time from the current video (instead, suggestion box)
           return false
         } else {
           el.click()

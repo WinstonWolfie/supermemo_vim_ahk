@@ -300,7 +300,7 @@ CapsLock & F6::send {Media_Stop}                                     ;|
 ;=====================================================================o
 ;                      CapsLock Window Controller                    ;|
 ;-----------------------------------o---------------------------------o
-;                     CapsLock + s  |  Ctrl + Tab (Swith Tag)        ;|
+;                     CapsLock + s  |  Insert key                    ;|
 ;                     CapsLock + g  |  AppsKey    (Menu Key)         ;|
 ;-----------------------------------o---------------------------------o
 CapsLock & s::                                                       ;|
@@ -320,8 +320,9 @@ CapsLock & tab::send !{tab}
 
 !f4::
 CapsLock & q::
-    send !{f4}
-    if (WinActive("ahk_exe HiborClient.exe")) {
+    HB := WinActive("ahk_exe HiborClient.exe")
+    WinClose, A
+    if (HB) {
         WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0
         if (!ErrorLevel)
             send {enter}

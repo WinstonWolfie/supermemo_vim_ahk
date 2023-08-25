@@ -38,17 +38,17 @@ CapsLock & /::
   }
   CurrFocus := ControlGetFocus("ahk_class TElWind")
   if (AltState) {
-    Gui, Search:Add, Text,, &Find text:`n(your search result will be clozed)
+    Gui, Search:Add, Text,, Find te&xt:`n(your search result will be clozed)
   } else if (ShiftState) {
-    Gui, Search:Add, Text,, &Find text:`n(will go to visual mode after the search)
+    Gui, Search:Add, Text,, Find te&xt:`n(will go to visual mode after the search)
   } else {
-    Gui, Search:Add, Text,, &Find text:
+    Gui, Search:Add, Text,, Find te&xt:
   }
   Gui, Search:Add, Edit, vUserInput w196 r1 -WantReturn, % VimLastSearch
   Gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
   if (AltState) {
     Gui, Search:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
-    Gui, Search:Add, CheckBox, % "vShiftState " . (ShiftState ? "checked" : ""), Cloze &hinter
+    Gui, Search:Add, CheckBox, % "vShiftState " . (ShiftState ? "checked" : ""), &Cloze hinter
   }
   Gui, Search:Add, Button, default, &Find
   BlockInput, off

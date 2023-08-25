@@ -60,11 +60,15 @@ Return
         list := "ReformatScriptComponent|SearchLinkInYT|" . list
       if (Vim.SM.IsEditingText())
         list := "ClozeAndDone!|" . list
+      if (Vim.SM.IsEditingHTML())
+        list := "MakeHTMLUnique|" . list
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
     list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceRegistry|" . list
   } else if (WinActive("ahk_group Browser")) {  ; web browsers
     list := "IWBPriorityAndConcept|IWBNewTopic|" . list
+  } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
+    list := "SetPlanPosition|" . list
   }
 
   Gui, VimCommander:Add, Combobox, vCommand gAutoComplete w144, % list
@@ -531,13 +535,8 @@ ImportFile:
   send {text}y  ; confirm to delete the file / confirm to keep the file
   WinWaitActive, ahk_class TElWind
   Vim.SM.Reload()
-  if ((!Prio := InputBox("Priority", "Enter extract priority.")) || ErrorLevel)
+  if (!Vim.SM.AskPrio())
     return
-  if (Prio) {
-    if (Prio ~= "^\.")
-      Prio := "0" . Prio
-    Vim.SM.SetPrio(Prio)
-  }
 return
 
 ScriptSettings:
@@ -641,7 +640,7 @@ LinkToPreviousElement:
   send !c
   WinWaitActive, ahk_class TContents
   WinActivate, ahk_class TElWind
-  send !{left}
+  Vim.SM.GoBack()
   Vim.SM.WaitFileLoad()
   send !{f10}ci  ; link contents
   WinWaitActive, ahk_class TContents
@@ -686,4 +685,15 @@ return
 WordSense:
   if (word := FindSearch("WordSense", "Word:"))
     run % "https://www.wordsense.eu/" . word . "/"
+return
+
+SetPlanPosition:
+  WinGetPos, x, y, w, h, ahk_class TElWind
+  WinMove, ahk_class TPlanDlg,, x, y, w, h
+return
+
+MakeHTMLUnique:
+  CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
+  AntiMerge := "<SPAN class=anti-merge>HTML made unique at " . CurrTimeDisplay . "</SPAN>"
+  clip(AntiMerge,,, "sm")
 return

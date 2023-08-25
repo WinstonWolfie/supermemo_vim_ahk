@@ -500,11 +500,11 @@ class VimSM {
       this.PlayIfCertainColl()
   }
 
-  Reload(timeout:=0, ForceBackground:=false) {
-    if (!ForceBackground && WinActive("ahk_class TElWind")) {
-      send !{home}
+  Reload(timeout:=0, ForceBG:=false) {
+    if (!ForceBG && WinActive("ahk_class TElWind")) {
+      this.GoHome()
       this.WaitFileLoad(timeout)
-      send !{left}
+      this.GoBack()
     } else if (WinExist("ahk_class TElWind")) {
       send {AltDown}
       PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
@@ -737,16 +737,27 @@ class VimSM {
   GoToTopIfLearning(LearningState:=0) {
     if ((!LearningState && this.IsLearning())
      || (LearningState && (this.IsLearning() == LearningState)))
-      this.GoToFirstEl()
+      this.GoHome()
   }
 
-  GoToFirstEl() {
-    if (WinActive("ahk_class TElWind")) {
+  GoHome(ForceBG:=false) {
+    if (!ForceBG && WinActive("ahk_class TElWind")) {
       send !{home}
-    } else if (WinExist("ahk_class TElWind")) {
+    } else if (ForceBG || WinExist("ahk_class TElWind")) {
       send {AltDown}
-      PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
-      PostMessage, 0x0105, 0x24, 1<<29,, ahk_class TElWind
+      PostMessage, 0x0104, 0x24, 1<<29  ; home key
+      PostMessage, 0x0105, 0x24, 1<<29
+      send {AltUp}
+    }
+  }
+
+  GoBack(ForceBG:=false) {
+    if (!ForceBG && WinActive("ahk_class TElWind")) {
+      send !{left}
+    } else if (ForceBG || WinExist("ahk_class TElWind")) {
+      send {AltDown}
+      PostMessage, 0x0104, 0x25, 1<<29  ; left arrow key
+      PostMessage, 0x0105, 0x25, 1<<29
       send {AltUp}
     }
   }
@@ -797,17 +808,6 @@ class VimSM {
   EditRef() {
     this.ActivateElWind()
     send !{f10}fe
-  }
-
-  GoBack() {
-    if (WinActive("ahk_class TElWind")) {
-      send !{left}
-    } else if (WinExist("ahk_class TElWind")) {
-      send {AltDown}
-      PostMessage, 0x0104, 0x25, 1<<29,, ahk_class TElWind  ; left arrow key
-      PostMessage, 0x0105, 0x25, 1<<29,, ahk_class TElWind
-      send {AltUp}
-    }
   }
 
   AltN() {
@@ -871,8 +871,8 @@ class VimSM {
       WinActivate
   }
 
-  RefToClipForTopic() {
-    global CollName
+  RefToClipForTopic(CollName:="") {
+    CollName := CollName ? CollName : this.GetCollName()
     if (!IfContains(this.Vim.Browser.Url, "youtube.com/playlist"))
       add := (CollName = "bgm") ? this.Vim.Browser.Url . "`n" : ""
     Clipboard := add . this.MakeReference()
@@ -886,5 +886,17 @@ class VimSM {
 
   IsEmptyTopic() {
     return (!this.IsItem() && this.DoesTextExist() && !this.DoesHTMLContainText())
+  }
+
+  AskPrio() {
+    this.ActivateElWind()
+    if ((!Prio := InputBox("Priority", "Enter priority.")) || ErrorLevel)
+      return
+    if (Prio) {
+      if (Prio ~= "^\.")
+        Prio := "0" . Prio
+      this.SetPrio(Prio)
+      return true
+    }
   }
 }

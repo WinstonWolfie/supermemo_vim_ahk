@@ -51,10 +51,7 @@ Return
   && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
   && !Vim.SM.IsEditingText()
   && Vim.State.g)
-0::  ; g0: go to root element
-  send !{home}
-  Vim.State.SetMode()
-Return
+0::Vim.SM.Gohome(), Vim.State.SetMode()  ; g0: go to root element
 
 $::  ; g$: go to last element
   send !{end}
@@ -101,8 +98,7 @@ i::Vim.State.SetMode("Insert")
 ; Browser-like actions
 r::  ; reload
   ContLearn := (ContinueGrading := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning()
-  CurrTitle := WinGetTitle()
-  send !{home}
+  CurrTitle := WinGetTitle(), Vim.SM.GoHome()
   Vim.SM.WaitFileLoad()
   if (ContLearn) {
     Vim.SM.Learn(false)
@@ -110,9 +106,9 @@ r::  ; reload
     ; When r is pressed, the review score in an item is submitted,
     ; thus refreshing and learning takes SM to a new element
     if ((ContLearn == 2) && (CurrTitle != WinGetTitle())) {
-      send !{left}
+      Vim.SM.GoBack()
       Vim.SM.WaitFileLoad()
-      send !{left}
+      Vim.SM.GoBack()
     }
   } else if (ContinueGrading) {
     Vim.SM.Learn()
@@ -123,11 +119,11 @@ r::  ; reload
       WinClose
     ; If current element is home element
     if ((CurrTitle ~= "^Concept: ") && (CurrTitle == WinGetTitle())) {
-      send !{left}
+      Vim.SM.GoBack()
       Vim.SM.WaitFileLoad()
       send !{right}
     } else {
-      send !{left}
+      Vim.SM.GoBack()
     }
   }
 return
@@ -267,7 +263,7 @@ u::  ; gu: go to parent
     Vim.SM.PrepareStatBar(1)
   loop % n {
     if (A_ThisHotkey ~= "h$") {
-      send !{left}
+      Vim.SM.GoBack()
     } else if (A_ThisHotkey ~= "l$") {
       send !{right}
     } else if (A_ThisHotkey ~= "j$|^\+e$") {

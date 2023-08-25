@@ -7,6 +7,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
     ClipSaved := ClipboardAll
   If (Text = "") {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+    ReleaseModifierKeys()
     send % KeysToSend ? KeysToSend : (Method ? "^{Ins}" : "^c")
     ClipWait, LongCopy ? 0.6 : 0.2, True
     if (!ErrorLevel) {
@@ -25,6 +26,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
       Clipboard := Text
       ClipWait
     }
+    ReleaseModifierKeys()
     send % KeysToSend ? KeysToSend : (Method ? "+{Ins}" : "^v")
     while (WinClipAPI.GetOpenClipboardWindow())
       sleep 1
