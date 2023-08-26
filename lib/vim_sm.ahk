@@ -395,19 +395,19 @@ class VimSM {
     this.AltT()
     GroupAdd, SMAltT, ahk_class TChoicesDlg
     GroupAdd, SMAltT, ahk_class TTitleEdit
-    WinWait, ahk_group SMAltT,, % timeout
-    if (WinExist("ahk_class TChoicesDlg")) {
+    WinWait, % "ahk_group SMAltT ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind"),, % timeout
+    if (WinGetClass("") == "TChoicesDlg") {  ; window from the last WinWait
       if (!title)
-        ControlFocus, TGroupButton2, ahk_class TChoicesDlg
-      while (WinExist("ahk_class TChoicesDlg"))
-        ControlClick, TBitBtn2, ahk_class TChoicesDlg,,,, NA
+        ControlFocus, TGroupButton2
+      while (WinExist("ahk_class TChoicesDlg ahk_pid " . pidSM))
+        ControlClick, TBitBtn2,,,,, NA
       if (title)
-        WinWait, ahk_class TTitleEdit, % timeout
+        WinWait, "ahk_class TTitleEdit ahk_pid " . pidSM, % timeout
     }
-    if (WinExist("ahk_class TTitleEdit")) {
+    if (WinGetClass("") == "TTitleEdit") {  ; window from the last WinWait
       if (title)
-        ControlSetText, TMemo1, % title, ahk_class TTitleEdit
-      ControlSend, TMemo1, {enter}, ahk_class TTitleEdit
+        ControlSetText, TMemo1, % title
+      ControlSend, TMemo1, {enter}
     }
   }
 
@@ -635,23 +635,23 @@ class VimSM {
   }
 
   CtrlF(text, ClearHighlight:=true, ToolTip:="Not found.") {
-    while (WinExist("ahk_class TBrowser") || WinExist("ahk_class TMsgDialog"))
-      WinClose
+    if (!WinExist("ahk_class TElWind"))
+      return
+    this.CloseMsgWind()
     this.PostMsg(144)
-    WinWait, ahk_class TMyFindDlg
-    ControlSetText, TEdit1, % text, ahk_class TMyFindDlg
-    ControlFocus, TEdit1, ahk_class TMyFindDlg
-    ControlSend, TEdit1, {enter}, ahk_class TMyFindDlg
+    WinWait, % "ahk_class TMyFindDlg ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind")
+    ControlSetText, TEdit1, % text
+    ControlFocus, TEdit1
+    ControlSend, TEdit1, {enter}
     GroupAdd, SMCtrlF, ahk_class TMsgDialog
     GroupAdd, SMCtrlF, ahk_class TBrowser
-    WinWait, ahk_group SMCtrlF
-    if (ret := WinExist("ahk_class TBrowser")) {
+    WinWait, % "ahk_group SMCtrlF ahk_pid " . pidSM
+    if (ret := (WinGetClass("") == "TBrowser")) {  ; window from the last WinWait
       if (ClearHighlight)
         this.ClearHighlight()
-      WinActivate, ahk_class TBrowser
-    } else if (WinExist("ahk_class TMsgDialog")) {
-      while (WinExist("ahk_class TMsgDialog"))
-        WinClose
+      WinActivate, % "ahk_class TBrowser ahk_pid " . pidSM
+    } else if (WinGetClass("") == "TMsgDialog") {
+      WinClose
       ToolTip(ToolTip,, -3000)
       if (ClearHighlight)
         this.ClearHighlight()
@@ -671,10 +671,10 @@ class VimSM {
       ControlSetText, TEdit2, % text, ahk_class TCommanderDlg
       ControlTextWait("TEdit2", text, "ahk_class TCommanderDlg")
     }
-    while (WinExist(w := "ahk_class TCommanderDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
-      ControlClick, TButton4, % w,,,, NA
+    while (WinExist("ahk_class TCommanderDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
+      ControlClick, TButton4,,,,, NA
       if (WinExist("ahk_class #32770"))
-        ControlSend,, {esc}, ahk_class #32770
+        ControlSend,, {esc}
     }
   }
 
@@ -712,7 +712,7 @@ class VimSM {
       return true
     } else if (step == 2) {
       send ^{enter}  ; open commander; convienently, if a "not found" window pops up, this would close it
-      WinWait, ahk_class TMyFindDlg,, 0.3  ; without it sometimes TMyFindDlg will still pop up
+      WinWait, % "ahk_class TMyFindDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.3  ; without it sometimes TMyFindDlg will still pop up
       GroupAdd, SMF3, ahk_class TMyFindDlg
       GroupAdd, SMF3, ahk_class TCommanderDlg
       WinWaitActive, ahk_group SMF3
@@ -722,7 +722,7 @@ class VimSM {
         send {esc}
         this.Vim.State.SetNormal(), ToolTip("Text not found.")
         return false
-      } else {  ; ^enter opened commander
+      } else if (WinGetClass("") == "TCommanderDlg") {  ; ^enter opened commander
         this.ClearHighlight(false)
         this.PostMsg(146)
         WinWaitActive, ahk_class TMyFindDlg
@@ -830,15 +830,14 @@ class VimSM {
   }
 
   InvokeFileBrowser() {
-    if (!WinActive("ahk_class TElWind"))
-      WinActivate
+    this.ActivateElWind()
     send {CtrlDown}ttq{CtrlUp}
     GroupAdd, SMCtrlQ, ahk_class TFileBrowser
     GroupAdd, SMCtrlQ, ahk_class TMsgDialog
     WinWaitActive, ahk_group SMCtrlQ
     while (!WinActive("ahk_class TFileBrowser")) {
       while (WinActive("ahk_class TMsgDialog"))
-        send {text}n  ; Directory not found; Create?
+        WinClose  ; Directory not found; Create?
       WinWaitActive, ahk_group SMCtrlQ
     }
   }
@@ -898,5 +897,10 @@ class VimSM {
       this.SetPrio(Prio)
       return true
     }
+  }
+
+  CloseMsgWind() {
+    while (WinExist("ahk_class TMsgDialog"))
+      WinClose
   }
 }

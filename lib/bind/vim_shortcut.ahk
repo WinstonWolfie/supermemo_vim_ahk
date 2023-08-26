@@ -53,8 +53,7 @@ Plan:
     WinActivate, ahk_class TPlanDlg
     return
   }
-  while (WinExist("ahk_class TMsgDialog"))
-    WinClose
+  Vim.SM.CloseMsgWind()
   if (!WinExist("ahk_class TPlanDlg")) {
     l := Vim.SM.IsLearning()
     if (l == 2) {
@@ -343,8 +342,7 @@ SMImportButtonImport:
 
   if (Prio ~= "^\.")
     Prio := "0" . Prio
-  while (WinExist("ahk_class TMsgDialog"))
-    WinClose
+  Vim.SM.CloseMsgWind()
 
   if (Concept) {
     Vim.SM.ChangeDefaultConcept(Concept,, ConceptBefore)
@@ -519,9 +517,8 @@ return
       sleep 100
     }
   }
+  Vim.SM.CloseMsgWind()
   WinActivate, ahk_class TElWind  ; focus to element window
-  while (WinExist("ahk_class TMsgDialog"))
-    WinClose
 
 ExtractToSM:
   if (ret := !Vim.SM.IsEmptyTopic()) {
@@ -659,8 +656,6 @@ return
 !+s::
 ^!s::
 ^+!s::
-  while (WinExist("ahk_class TMsgDialog"))
-    WinClose
   ClipSaved := ClipboardAll
   CloseWnd := IfContains(A_ThisHotkey, "^"), ReleaseModifierKeys()
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
@@ -706,6 +701,7 @@ return
       }
     }
   }
+  Vim.SM.CloseMsgWind()
   WinActivate, ahk_class TElWind
 
 MarkInSMTitle:
@@ -759,12 +755,12 @@ return
   ReleaseModifierKeys()
   if (A_ThisHotkey == "^!x") {
     send ^a
-    PostMessage, 0x0111, 17200,,, A  ; truncate silence
+    PostMessage, 0x0111, 17216,,, A  ; truncate silence
     WinWaitActive, Truncate Silence
     ; Settings for truncate complete silence
-    ControlSetText, Edit1, -80, A
-    ControlSetText, Edit2, 0.001, A
-    ControlSetText, Edit3, 0, A
+    ControlSetText, Edit1, -80
+    ControlSetText, Edit2, 0.001
+    ControlSetText, Edit3, 0
     send {enter}
     WinWaitNotActive, Truncate Silence
     WinWaitActive, ahk_class wxWindowNR  ; audacity main window
@@ -785,6 +781,7 @@ return
     WinWaitClose
   }
   send ^a{bs}
+  Vim.SM.CloseMsgWind()
   WinActivate, ahk_class TElWind
   Vim.SM.AltA()
   Vim.SM.WaitFileLoad()

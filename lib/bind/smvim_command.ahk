@@ -120,7 +120,7 @@ i::  ; learn outstanding *i*tems only
   wBrowser := WinGet(, "ahk_class TBrowser")
   sleep 200
   while (WinExist("ahk_id " . wBrowser)) {
-    WinActivate, % "ahk_id " . wBrowser
+    WinActivate
     send ^l
     sleep 200
   }

@@ -1075,7 +1075,7 @@ SetModeNormalReturn:
   Vim.State.SetMode("Vim_Normal")
 return
 
-DefaultBrowser() {
+DefaultBrowser() {  ; https://www.autohotkey.com/board/topic/84785-default-browser-path-and-executable/
 	; Find the Registry key name for the default browser
 	RegRead, BrowserKeyName, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.html\UserChoice, Progid
 
@@ -1109,4 +1109,10 @@ GetAcrobatPageBtn() {
 
 IsRegExChar(char) {
   return (IfIn(char, ".,+,*,?,^,$,(,),[,],{,},|,\"))
+}
+
+GetDetailedTime() {
+  CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
+  RegRead, TimeZone, HKEY_LOCAL_MACHINE, SYSTEM\ControlSet001\Control\TimeZoneInformation, TimeZoneKeyName  ; https://www.autohotkey.com/board/topic/43828-finding-correct-time-zone/
+  return CurrTimeDisplay . ", " . TimeZone
 }

@@ -302,7 +302,7 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 
 `ds"`: delete surrounding quotes
 
-`cs_ti<CR>`: change surrounding _ for the <i> tag (= `cs_<i<CR>`)
+`cs_ti<CR>`: change surrounding `_` for the `<i>` tag (= `cs_<i<CR>`)
 
 `ysiw"`: surround word under the cursor with quotes
 

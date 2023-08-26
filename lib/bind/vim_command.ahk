@@ -693,7 +693,6 @@ SetPlanPosition:
 return
 
 MakeHTMLUnique:
-  CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
-  AntiMerge := "<SPAN class=anti-merge>HTML made unique at " . CurrTimeDisplay . "</SPAN>"
+  AntiMerge := "<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>"
   clip(AntiMerge,,, "sm")
 return

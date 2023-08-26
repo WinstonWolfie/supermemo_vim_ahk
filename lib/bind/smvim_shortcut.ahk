@@ -269,11 +269,11 @@ return
       }
     */
     
-    AntiMerge := "<SPAN class=anti-merge>Last LaTeX to image conversion: " . CurrTimeDisplay . "</SPAN>"
+    AntiMerge := "<SPAN class=anti-merge>Last LaTeX to image conversion at " . CurrTimeDisplay . "</SPAN>"
     send {esc}
     Vim.SM.WaitTextExit()
 
-    HTML := RegExReplace(HTML, "<SPAN class=anti-merge>Last LaTeX to image conversion: .*?(<\/SPAN>|$)", AntiMerge, v)
+    HTML := RegExReplace(HTML, "<SPAN class=anti-merge>Last LaTeX to image conversion at .*?(<\/SPAN>|$)", AntiMerge, v)
     if (!v)
       HTML .= "`n" . AntiMerge
     FileDelete % HTMLPath
@@ -564,8 +564,6 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
-  while (WinExist("ahk_class TMsgDialog"))
-    WinClose
   sync := (A_ThisLabel == "BrowserSyncTime")
   ResetTime := IfContains(A_ThisHotkey, "``")
   CloseWnd := IfContains(A_ThisHotkey, "^")
@@ -613,10 +611,10 @@ BrowserSyncTime:
     if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
       goto SMSyncTimeReturn
   }
-  while (WinExist("ahk_class TMsgDialog"))
-    WinClose
+  Vim.SM.CloseMsgWind()
   if (CloseWnd && wMpv)
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}q{shift up}, % "ahk_id " . wMpv
+  Vim.SM.CloseMsgWind()
   WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
 
   if (ResetTime)
