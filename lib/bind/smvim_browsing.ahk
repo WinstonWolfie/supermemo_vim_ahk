@@ -58,8 +58,6 @@ $::  ; g$: go to last element
   Vim.State.SetMode()
 Return
 
-; Element window / browser
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TBrowser")) && !Vim.SM.IsEditingText() && Vim.State.g)
 ; g state, for both browsing and editing
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 c::  ; gc: go to next *c*omponent
@@ -68,7 +66,8 @@ c::  ; gc: go to next *c*omponent
 Return
 
 +c::  ; gC: go to previous *c*omponent
-  send !{f12}fl
+  this.CompMenu()
+  send fl
   Vim.State.SetMode()
 Return
 
@@ -135,7 +134,10 @@ p::
     send {text}y 
 return
 
-+p::send q^{t}{f9}  ; play video in default system player / edit script component
++p::  ; play video in default system player / edit script component
+  Vim.SM.EditFirstQuestion()
+  send ^{t}{f9}
+return
 
 n::Vim.SM.AltN()
 +n::Vim.SM.AltA()

@@ -34,7 +34,8 @@ NukeHTML:
       return
     }
   }
-  Vim.SM.ExitText(true, 1)
+  Vim.SM.ExitText(true, 1.5)
+  sleep 20  ; making sure the file path is updated
   if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())) {
     ToolTip("File not found.")
     return
@@ -53,13 +54,15 @@ NukeHTML:
 Return
 
 l::  ; *l*ink concept
-  send !{f10}cl
+  Vim.SM.ElMenu()
+  send cl
   Vim.State.SetMode("Vim_Normal")
 return
 
 SMListLinks:
 +l::  ; list links
-  send !{f10}cs
+  Vim.SM.ElMenu()
+  send cs
   Vim.State.SetMode("Vim_Normal")
 return
 

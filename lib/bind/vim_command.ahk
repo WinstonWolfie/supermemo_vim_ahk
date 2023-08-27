@@ -591,7 +591,8 @@ WatchLaterYT:
 return
 
 ShowReference:
-  Send !{F10}fs
+  Vim.SM.ElMenu()
+  Send fs
 Return
 
 GetInfoFromContextMenu:
@@ -642,7 +643,8 @@ LinkToPreviousElement:
   WinActivate, ahk_class TElWind
   Vim.SM.GoBack()
   Vim.SM.WaitFileLoad()
-  send !{f10}ci  ; link contents
+  Vim.SM.ElMenu()
+  send ci  ; link contents
   WinWaitActive, ahk_class TContents
   sleep 100
   send {enter}

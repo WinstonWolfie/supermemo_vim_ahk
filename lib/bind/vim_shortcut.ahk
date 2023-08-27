@@ -816,7 +816,8 @@ return
     Vim.SM.SetTitle(Vim.Browser.Title)
   CurrFocus := ControlGetFocus("ahk_class TElWind")
   WinActivate, ahk_class TElWind
-  send !{f12}fl  ; previous component
+  this.CompMenu()
+  send fl  ; previous component
   ControlWaitNotFocus(CurrFocus, "ahk_class TElWind")
   send +{Ins}  ; paste: text or image
   aClipFormat := WinClip.GetFormats()

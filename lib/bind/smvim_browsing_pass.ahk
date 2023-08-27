@@ -1,4 +1,4 @@
-﻿; making sure grading works (in case VimDisableUnused > 1)
+﻿; Making sure grading works (in case VimDisableUnused > 1)
 #if (Vim.IsVimGroup() && Vim.SM.IsGrading())
 ; cannot use ~ here to send the key itself
 0::

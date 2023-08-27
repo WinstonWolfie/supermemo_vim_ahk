@@ -202,8 +202,10 @@ class VimSM {
     if (this.IsEditingText()) {
       if (this.IsItem()) {
         send ^t
-        if (ReturnToComp)
-          send !{f12}fl
+        if (ReturnToComp) {
+          this.CompMenu()
+          send fl
+        }
         ret := 2
       }
       send {esc}
@@ -386,7 +388,8 @@ class VimSM {
 
   GetFilePath(RestoreClip:=true) {
     this.ActivateElWind()
-    return Copy(RestoreClip,,, "!{f12}fc")
+    this.CompMenu()
+    return Copy(RestoreClip,,, "fc")
   }
 
   SetTitle(title:="", timeout:="") {
@@ -430,16 +433,9 @@ class VimSM {
 
   GetTemplCode(RestoreClip:=true) {
     this.ActivateElWind()
-    if (RestoreClip)
-      ClipSaved := ClipboardAll
-    global WinClip
-    WinClip.Clear()
-    send % this.IsBrowsing() ? "^c" : "!{f10}tc"
-    ClipWait
-    code := Clipboard
-    if (RestoreClip)
-      Clipboard := ClipSaved
-    return code
+    if (!b := this.IsBrowsing())
+      this.ElMenu()
+    return copy(RestoreClip,,, b ? "^c" : "tc")
   }
 
   PrepareStatBar(step, x:=0, y:=0) {
@@ -807,7 +803,8 @@ class VimSM {
 
   EditRef() {
     this.ActivateElWind()
-    send !{f10}fe
+    this.ElMenu()
+    send fe
   }
 
   AltN() {
@@ -902,5 +899,13 @@ class VimSM {
   CloseMsgWind() {
     while (WinExist("ahk_class TMsgDialog"))
       WinClose
+  }
+
+  ElMenu() {
+    send !{f10}
+  }
+
+  CompMenu() {
+    send !{f12}
   }
 }

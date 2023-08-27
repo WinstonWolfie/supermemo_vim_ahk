@@ -20,6 +20,64 @@ At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R
 
 Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/cheatsheet/)
 
+## SuperMemo only
+
+First things first, all the SuperMemo and its additional hotkeys. If you are unfamiliar with Vim, you might wanna jump this section first.
+
+### Browsing (not focused on any text component)
+
+Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
+
+`gg`: go to top
+
+`G`: go to bottom
+
+`{count}gg`: go to the `{count}`th line (eg, `3gg` goes to the third line)
+
+`gU`: click the source button
+
+`gS`: open link in IE
+
+`gs`: open link in default browser
+
+`g0`: go to root element
+
+`g$`: go to last element
+
+`gc`: go to next component
+
+`gC`: go to previous component
+
+`h`: scroll left
+
+`j` / `<C-e>`: scroll down
+
+`k` / `<C-y>`: scroll up
+
+`l`: scroll right
+
+`d`: scroll down 2 times
+
+`u`: scroll up 2 times
+
+`0`: scroll to top left
+
+`$`: scoll to top right
+
+`r`: reload (go to top element and back)
+
+`p`: play (= `Ctrl + F10`)
+
+`P`: play video in default system player / edit script component (= `q -> Ctrl + T -> F9`)
+
+`n`: add topic (= `Alt + N`)
+
+`N`: add item (= `Alt + A`)
+
+`x`: delete element/component (= `Delete` key)
+
+`<C-i>`: download images (= `Ctrl + F8`)
+
 ## First steps
 
 ### Motions
@@ -116,7 +174,7 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 
 ## Move faster with counts
 
-`{count}{motion}`: repeat {motion} {count} times
+`{count}{motion}`: repeat `{motion}` `{count}` times
 
 `2w`: jump to second word
 

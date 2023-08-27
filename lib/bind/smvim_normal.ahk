@@ -85,7 +85,8 @@ t::  ; gt: open in Notepad
   if (Notepad := IfIn(A_ThisHotkey, "^+f6,t")) {
     send ^{f7}  ; save read point
     if (Vim.SM.IsEditingText()) {
-      send !{f12}fw
+      this.CompMenu()
+      send fw
     } else {
       send ^+{f6}
     }
