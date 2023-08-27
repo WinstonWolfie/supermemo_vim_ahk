@@ -670,14 +670,14 @@ return
                        || RegExMatch(title, ".+?(?= \|)", clip)))  ; eg, last reading point | title
 !s::ToolTip("Copied " . Clipboard := trim(page ? page : clip))
 
-#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_class TRegistryForm")) && (WinGetTitle() ~= "^Concept Registry \(\d+ members\)"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Concept Registry \(\d+ members\)"))
 !p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
 
 SMRegAltG:
-!g::Acc_Get("Object", "4.5.4.2.4",, "ahk_id " . hWnd).accDoDefaultAction()
+!g::Acc_Get("Object", "4.5.4.2.4",, "A").accDoDefaultAction()
 
-!i::Acc_Get("Object", "4.6.4.3.4.9.4",, "ahk_id " . hWnd).accDoDefaultAction()  ; default item template
-!t::Acc_Get("Object", "4.6.4.3.4.10.4",, "ahk_id " . hWnd).accDoDefaultAction()  ; default topic template
+!i::Acc_Get("Object", "4.6.4.3.4.9.4",, "A").accDoDefaultAction()  ; default item template
+!t::Acc_Get("Object", "4.6.4.3.4.10.4",, "A").accDoDefaultAction()  ; default topic template
 
 ^l::
   gosub SMRegAltG
@@ -685,8 +685,8 @@ SMRegAltG:
   goto SMLearnChild
 return
 
-#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_class TRegistryForm")) && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)"))
-!i::Acc_Get("Object", "4.5.4.8.4",, "ahk_id " . hWnd).accDoDefaultAction()
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)"))
+!i::Acc_Get("Object", "4.5.4.8.4",, "A").accDoDefaultAction()
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
 ; Use English input method for choosing concept when import

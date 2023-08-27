@@ -474,14 +474,14 @@ return
 ^!x::
 !+x::
 !x::
-  CtrlState := IfContains(A_ThisHotkey, "^")
+  CtrlState := IfContains(A_ThisHotkey, "^"), hWnd := WinGet()
   ClipSaved := ClipboardAll
   ReleaseModifierKeys()
   if (!copy(false)) {
     ToolTip("Nothing is selected.")
     goto RestoreClipReturn
   } else {
-    if (CleanHTML) {
+    if (CleanHTML := (WinActive("ahk_group Browser") || WinActive("ahk_exe ebook-viewer.exe"))) {
       Vim.HTML.ClipboardGet_HTML(data)
       RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
       WinClip.Clear()
@@ -489,23 +489,23 @@ return
       ClipWait
     }
     if (!WinExist("ahk_group SuperMemo")) {
-      ToolTip("SuperMemo is not open; the text you selected is on your clipboard.")
+      a := CleanHTML ? " (in HTML)" : ""
+      ToolTip("SuperMemo is not open; the text you selected" . a . " is on your clipboard.")
       return
     }
-    hWnd := WinGet()
     if (Prio := IfContains(A_ThisHotkey, "+")) {
       if ((!Prio := InputBox("Priority", "Enter extract priority.")) || ErrorLevel)
         return
       if (Prio ~= "^\.")
         Prio := "0" . Prio
-      WinWaitActive, % "ahk_id " . hWnd
+      WinActivate, % "ahk_id " . hWnd
     }
-    if (CleanHTML := WinActive("ahk_group Browser")) {
+    if (WinActive("ahk_group Browser")) {
       Vim.Browser.Highlight()
-    } else if (CleanHTML := WinActive("ahk_exe ebook-viewer.exe")) {
-      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % "ahk_id " . hWnd  ; need to enable this shortcut in settings
+    } else if (WinActive("ahk_exe ebook-viewer.exe")) {
+      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
-      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}a, % "ahk_id " . hWnd
+      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}a
     } else if (WinActive("ahk_exe WINWORD.exe")) {
       send ^!h
     } else if (WinActive("ahk_exe WinDjView.exe")) {
@@ -894,8 +894,7 @@ return
 HBImportReturn:
   Vim.SM.ClearHighlight()
   WinWaitNotActive, ahk_class TElWind,, 0.1
-  Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
-  Clipboard := ClipSaved
+  Vim.Caret.SwitchToSameWindow("ahk_class TElWind"), Clipboard := ClipSaved
 return
 
 MatchHiborTitle(text) {
@@ -908,21 +907,21 @@ MatchHiborLink(text) {
   return v
 }
 
-#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_exe Discord.exe")))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_exe Discord.exe"))
 ^!l::  ; go live
-  if (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.3.1.2.1.1.2.1.1.2.1.6",, "ahk_id " . hWnd))
+  if (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.3.1.2.1.1.2.1.1.2.1.6",, "A"))
     return
   accBtn.accDoDefaultAction(0)
-  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.4.2.1.1.2.2.1.1.3",, "ahk_id " . hWnd))
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.4.2.1.1.2.2.1.1.3",, "A"))
     sleep 40
   accBtn.accDoDefaultAction(0)
-  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.4.2.1.1.2.2.1.2.1.1",, "ahk_id " . hWnd))
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.4.2.1.1.2.2.1.2.1.1",, "A"))
     sleep 40
   accBtn.accDoDefaultAction(0)
-  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.4.2.1.1.2.2.1.13.1",, "ahk_id " . hWnd))
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.4.2.1.1.2.2.1.13.1",, "A"))
     sleep 40
   accBtn.accDoDefaultAction(0)
-  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.4.2.1.1.2.3.1",, "ahk_id " . hWnd))
+  while (!accBtn := Acc_Get("Object", "4.1.1.1.1.1.2.1.2.4.2.1.1.2.3.1",, "A"))
     sleep 40
   accBtn.accDoDefaultAction(0)
 return

@@ -196,12 +196,12 @@ c::
   BlockInput, off
 return
 
-CreateHintsArray(Control, hCtrl, Type, Caret) {
+CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
   global Vim, UIA
   if (Caret)
     Vim.SM.ClickMid(Control)
   el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)
-  if (ObjCount(auiaHints) > 1000)
+  if (ObjCount(auiaHints) > Limit)
     return
   aHints := [], HintsIndex := 0
   for i, v in auiaHints {
@@ -334,8 +334,7 @@ t::Vim.SM.ClickMid()  ; *t*ext
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
 y::  ; yy: copy current source url
-  link := Vim.SM.GetLink()
-  if (!link) {
+  if (!link := Vim.SM.GetLink()) {
     ToolTip("Link not found.")
   } else {
     ToolTip("Copied " . Clipboard := link)
@@ -351,14 +350,14 @@ Return
 ; Plan/tasklist window
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan())
 s::
-  Acc_Get("Object", "4.1.4.1.4.1.4",, "ahk_id " . WinGet()).accDoDefaultAction(2)
+  Acc_Get("Object", "4.1.4.1.4.1.4",, "A").accDoDefaultAction(2)
   ControlFocus, Edit1, A
 return
 
 b::send !b  ; begin
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingTask())
 s::
-  Acc_Get("Object", "4.3.4.1.4",, "ahk_id " . WinGet()).accDoDefaultAction(2)
+  Acc_Get("Object", "4.3.4.1.4",, "A").accDoDefaultAction(2)
   ControlFocus, Edit1, A
 return
 

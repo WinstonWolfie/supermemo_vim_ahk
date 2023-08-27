@@ -85,13 +85,11 @@ x::Vim.Move.Repeat("x")
 +x::Vim.Move.Repeat("+x")
 ; Sentence
 (::
-)::
-  Vim.Move.Move(A_ThisHotkey)
-Return
+)::Vim.Move.Move(A_ThisHotkey)
 
 '::Vim.State.SetMode("",, -1,,, -1, 1)  ; leader key
 
 ; Search
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.StrIsInCurrentVimMode("Vim_Normal"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.State.fts)
 /::Vim.Move.Move("/")
 ?::Vim.Move.Move("?")
