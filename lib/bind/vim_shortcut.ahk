@@ -498,8 +498,8 @@ return
         return
       if (Prio ~= "^\.")
         Prio := "0" . Prio
-      WinActivate, % "ahk_id " . hWnd
     }
+    WinActivate, % "ahk_id " . hWnd
     if (WinActive("ahk_group Browser")) {
       Vim.Browser.Highlight()
     } else if (WinActive("ahk_exe ebook-viewer.exe")) {

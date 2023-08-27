@@ -402,7 +402,7 @@ class VimSM {
       while (WinExist("ahk_class TChoicesDlg ahk_pid " . pidSM))
         ControlClick, TBitBtn2,,,,, NA
       if (title)
-        WinWait, "ahk_class TTitleEdit ahk_pid " . pidSM, % timeout
+        WinWait, % "ahk_class TTitleEdit ahk_pid " . pidSM, % timeout
     }
     if (WinGetClass("") == "TTitleEdit") {  ; window from the last WinWait
       if (title)
