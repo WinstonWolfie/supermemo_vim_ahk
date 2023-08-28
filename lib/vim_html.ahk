@@ -40,6 +40,9 @@ class VimHTML {
     if (IfContains(url, "economist.com"))
       str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^<>]+>)", " class=uppercase ")
 
+    ; Ilya Frank
+    ; str := RegExReplace(str, "is)<\w+\K (?=[^<>]+COLOR: green)(?=[^<>]+>)", " class=ilya-frank-translation ")
+
     ; Converts font-style to tags
     str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-style: italic)(?=[^<>]+>)", " class=italic ")
     str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-weight: bold)(?=[^<>]+>)", " class=bold ")

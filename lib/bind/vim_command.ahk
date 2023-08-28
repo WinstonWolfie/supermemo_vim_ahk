@@ -55,7 +55,7 @@ Return
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
     if (WinActive("ahk_class TElWind")) {
-      list := "NukeHTML|ReformatVocab|ImportFile|ShowReference|LinkToPreviousElement|OpenInAcrobat|" . list
+      list := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement|OpenInAcrobat|" . list
       if (Vim.SM.IsPassive(, -1))
         list := "ReformatScriptComponent|SearchLinkInYT|" . list
       if (Vim.SM.IsEditingText())
@@ -590,9 +590,9 @@ WatchLaterYT:
   run https://www.youtube.com/playlist?list=WL
 return
 
-ShowReference:
+EditReference:
   Vim.SM.ElMenu()
-  Send fs
+  Send fe
 Return
 
 GetInfoFromContextMenu:

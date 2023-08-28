@@ -233,8 +233,8 @@ CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
   && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
   && !Vim.SM.IsEditingText()
   && Vim.State.g)
-+e::  ; K, gE: go up one *e*lement
-e::  ; J, ge: go down one *e*lement
++e::  ; K, gE: go up *e*lements
+e::  ; J, ge: go down *e*lements
 u::  ; gu: go to parent
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")

@@ -113,7 +113,7 @@ return
   send ^+p  ; much faster than ^+m
   WinWaitActive, ahk_class TElParamDlg
   send !t
-  send {text}cl  ; my plain-text template name is classic
+  send {text}classic  ; my plain-text template name is classic
   send {enter 2}
   if (ContLearn == 1)
     vim.sm.learn()
@@ -401,6 +401,7 @@ PlanAddButtonAppend:
   Gui Submit
   Gui Destroy
   Vim.Caret.SwitchToSameWindow("ahk_class TPlanDlg")
+  BlockInput, on
   if (IfContains(A_ThisLabel, "Insert")) {
     send ^t  ; split
     WinWaitActive, ahk_class TInputDlg
@@ -426,6 +427,7 @@ PlanAddButtonAppend:
   send ^s
   if (IfIn(activity, "Break,Sports,Out,Shower,Meal"))
     try run b  ; my personal backup script
+  BlockInput, off
   Vim.State.SetNormal()
 return
 

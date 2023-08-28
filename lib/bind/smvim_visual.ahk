@@ -216,7 +216,7 @@ ClozeHinter:
     InitText := "activates/inhibits"
   } else if (InitText ~= "i)^(greater|smaller)$") {
     InitText := "greater/smaller"
-  } else if (!IfContains(InitText, "/")) {
+  } else {
     inside := false
   }
   Gui, ClozeHinter:Add, Text,, &Hint:

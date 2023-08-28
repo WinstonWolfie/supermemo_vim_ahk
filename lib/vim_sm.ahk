@@ -218,7 +218,7 @@ class VimSM {
   WaitTextExit(Timeout:=0) {
     StartTime := A_TickCount
     loop {
-      if (WinActive("ahk_class TElWind") && !this.IsEditingText()) {
+      if (WinActive("ahk_class TElWind") && this.IsBrowsing()) {
         return true
       ; Choices because reference could update
       } else if (this.IsChangeRefWind() || (TimeOut && (A_TickCount - StartTime > TimeOut))) {
@@ -329,7 +329,7 @@ class VimSM {
 
   PlayIfCertainColl(CollName:="", timeout:=0) {
     CollName := CollName ? CollName : this.GetCollName()
-    if (CollName = "bgm")
+    if (CollName ~= "i)^(bgm|piano)$")
       return
     if (this.IsPassive(CollName, -1)) {
       StartTime := A_TickCount
@@ -343,11 +343,11 @@ class VimSM {
     }
   }
 
-  SaveHTML(SendEsc:=true, timeout:=0) {
-    if (SendEsc && this.IsEditingHTML())
+  SaveHTML(SendEsc:=false, timeout:=0) {
+    if (SendEsc)
       this.ExitText(true, timeout)
-    send ^+{f6}  ; opens notepad
-    ; if (ReturnPath) {
+    this.OpenNotepad()
+    ; if (ReturnPath) {  ; doesn't work in Win 11
     ;   WinWaitActive, ahk_class Notepad,, % timeout ? timeout / 1000 : ""
     ;   for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where Name='notepad.exe'")
     ;     ret := RegExReplace(process.CommandLine, """.*?"" ")
@@ -891,7 +891,7 @@ class VimSM {
     if (Prio) {
       if (Prio ~= "^\.")
         Prio := "0" . Prio
-      this.SetPrio(Prio)
+      this.SetPrio(Prio,, true)
       return true
     }
   }
@@ -907,5 +907,15 @@ class VimSM {
 
   CompMenu() {
     send !{f12}
+  }
+
+  OpenNotepad() {
+    this.ActivateElWind()
+    if (this.IsEditingText()) {
+      this.CompMenu()
+      send fw
+    } else if (this.IsBrowsing()) {
+      send ^+{f6}
+    }
   }
 }

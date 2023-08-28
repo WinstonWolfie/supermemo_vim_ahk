@@ -84,12 +84,7 @@ t::  ; gt: open in Notepad
   Vim.State.SetMode(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
   if (Notepad := IfIn(A_ThisHotkey, "^+f6,t")) {
     send ^{f7}  ; save read point
-    if (Vim.SM.IsEditingText()) {
-      this.CompMenu()
-      send fw
-    } else {
-      send ^+{f6}
-    }
+    Vim.SM.OpenNotepad()
   } else {
     ClipSaved := ClipboardAll
     path := Vim.SM.GetFilePath(false)

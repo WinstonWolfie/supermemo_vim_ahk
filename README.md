@@ -78,6 +78,72 @@ Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
 
 `<C-i>`: download images (= `Ctrl + F8`)
 
+`f`: open links
+
+`F`: open links in background
+
+`<A-f>`: open multiple links
+
+`<A-S-f>`: open links in IE
+
+`<C-A-S-f>`: open multiple links in IE
+
+`yf`: copy links
+
+`yv`: select texts
+
+`yc`: go to texts
+
+`X`: Done!
+
+`J` / `ge`: go down elements
+
+`K` / `gE`: go up elements
+
+`gu` / `<A-u>`: go to parents
+
+`H` / `<A-h>`: go back in history
+
+`L` / `<A-l>`: go forward in history
+
+`c`: open content window
+
+`b`: open browser
+
+`o`: open favourites
+
+`t`: click first text component
+
+`yy`: copy reference link
+
+`ye`: duplicate curernt element
+
+`{count}g{`: go to the `{count}`th paragraph
+
+`{count}g}`: go to the `{count}`th paraggraph on screen
+
+`m`: set read point
+
+`` ` ``: go to read point
+
+`<A-m>`: clear read point
+
+`<A-S-j>`: go to next sibling (= `Alt + Shift + PgDn`)
+
+`<A-S-k>`: go to previous sibling (= `Alt + Shift + PgUp`)
+
+`\`: SuperMemo search (= `Ctrl + F3`)
+
+#### In plan window
+
+`s`: switch plans
+
+`b`: begin (= `Alt + B`)
+
+#### In tasklist window
+
+`s`: switch tasklists
+
 ## First steps
 
 ### Motions
