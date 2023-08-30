@@ -484,7 +484,11 @@ class VimSM {
 
   Learn(CtrlL:=true, EnterInsert:=false, AutoPlay:=false) {
     if (CtrlL) {
-      this.PostMsg(180)
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        this.PostMsg(178)
+      } else {
+        this.PostMsg(180)
+      }
     } else if (ControlGetText("TBitBtn2", "ahk_class TElWind") == "Learn") {
       ControlSend, TBitBtn2, {enter}, ahk_class TElWind
     } else if (IfIn(ControlGetText("TBitBtn3", "ahk_class TElWind"), "Learn,Show answer,Next repetition", true)) {
@@ -634,7 +638,11 @@ class VimSM {
     if (!WinExist("ahk_class TElWind"))
       return
     this.CloseMsgWind()
-    this.PostMsg(144)
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(143)
+    } else {
+      this.PostMsg(144)
+    }
     WinWait, % "ahk_class TMyFindDlg ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind")
     ControlSetText, TEdit1, % text
     ControlFocus, TEdit1
@@ -660,8 +668,13 @@ class VimSM {
   }
 
   Command(text, OpenCommander:=true) {
-    if (OpenCommander)
-      this.PostMsg(240)  ; open commander
+    if (OpenCommander) {
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        this.PostMsg(238)
+      } else {
+        this.PostMsg(240)
+      }
+    }
     WinWait, ahk_class TCommanderDlg
     if (text) {
       ControlSetText, TEdit2, % text, ahk_class TCommanderDlg
@@ -693,12 +706,17 @@ class VimSM {
   }
 
   HandleF3(step) {
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      msg := 145
+    } else {
+      msg := 146
+    }
     if (step == 1) {
-      this.PostMsg(146)  ; f3
+      this.PostMsg(msg)  ; f3
       WinWaitActive, ahk_class TMyFindDlg,, 1
       if (ErrorLevel) {  ; SM goes to the next found without opening find dialogue
         this.ClearHighlight()  ; clears highlight so it opens find dialogue
-        this.PostMsg(146)
+        this.PostMsg(msg)
         WinWaitActive, ahk_class TMyFindDlg,, 3.5
         if (ErrorLevel) {
           ToolTip("F3 window cannot be launched.")
@@ -720,7 +738,7 @@ class VimSM {
         return false
       } else if (WinGetClass("") == "TCommanderDlg") {  ; ^enter opened commander
         this.ClearHighlight(false)
-        this.PostMsg(146)
+        this.PostMsg(msg)
         WinWaitActive, ahk_class TMyFindDlg
         WinClose
         WinWaitNotActive, ahk_class TElWind,, 0.1
@@ -764,7 +782,11 @@ class VimSM {
   }
 
   AltT() {
-    this.PostMsg(116)
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(115)
+    } else {
+      this.PostMsg(116)
+    }
   }
 
   RunLink(url, RunInIE:=false) {
@@ -790,15 +812,27 @@ class VimSM {
   }
 
   EditFirstQuestion() {
-    this.PostMsg(118)
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(117)
+    } else {
+      this.PostMsg(118)
+    }
   }
 
   EditFirstAnswer() {
-    this.PostMsg(119)
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(118)
+    } else {
+      this.PostMsg(119)
+    }
   }
 
   EditAll() {
-    this.PostMsg(120)
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(119)
+    } else {
+      this.PostMsg(120)
+    }
   }
 
   EditRef() {
@@ -807,16 +841,28 @@ class VimSM {
     send fe
   }
 
-  AltN() {
-    this.PostMsg(98)
+  AltA() {
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(93)
+    } else {
+      this.PostMsg(95)
+    }
   }
 
   CtrlN() {
-    this.PostMsg(96)
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(94)
+    } else {
+      this.PostMsg(96)
+    }
   }
 
-  AltA() {
-    this.PostMsg(95)
+  AltN() {
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(96)
+    } else {
+      this.PostMsg(98)
+    }
   }
 
   WaitBrowser(timeout:=1) {
@@ -916,6 +962,14 @@ class VimSM {
       send fw
     } else if (this.IsBrowsing()) {
       send ^+{f6}
+    }
+  }
+
+  Plan() {
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(241)
+    } else {
+      this.PostMsg(243)
     }
   }
 }

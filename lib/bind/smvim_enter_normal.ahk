@@ -21,17 +21,10 @@ Return
 return
 
 #if (Vim.IsVimGroup() && !Vim.State.StrIsInCurrentVimMode("Visual,Command") && Vim.SM.IsEditingHTML())  ; SuperMemo element window
-^l::  ; learn
-  Vim.SM.PostMsg(180)  ; learn
-  Vim.State.SetMode("Vim_Normal")
-  Vim.SM.EnterInsertIfSpelling()
-return
+^l::Vim.SM.Learn(, true), Vim.State.SetMode("Vim_Normal")
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && Vim.SM.IsEditingHTML())  ; SuperMemo element window
-^p::
-  Vim.SM.PostMsg(243)  ; plan
-  Vim.State.SetMode("Vim_Normal")
-return
+^p::Vim.SM.Plan(), Vim.State.SetMode("Vim_Normal")
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TContents"))
 ~enter::Vim.State.SetNormal()

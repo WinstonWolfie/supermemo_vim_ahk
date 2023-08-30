@@ -28,7 +28,7 @@ LAlt & RAlt::  ; for laptop
     Vim.State.SetMode("Insert")
 return
 
-#f::run D:\OneDrive\Miscellany\Programs\Everything\Everything64.exe
+#f::run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Everything 1.5a.lnk
 ^#h::send ^#{left}
 ^#l::send ^#{right}
 +#h::send +#{left}
@@ -44,7 +44,7 @@ Plan:
       return
     }
     WinActivate
-    Vim.SM.PostMsg(243)  ; Plan
+    Vim.SM.Plan()
     WinWait, ahk_class TMsgDialog,, 1.5
     if (!ErrorLevel) {
       WinClose
@@ -61,7 +61,7 @@ Plan:
     } else if (l == 1) {
       Vim.SM.GoHome()
     }
-    Vim.SM.PostMsg(243)  ; Plan
+    Vim.SM.Plan()
     WinWait, ahk_class TPlanDlg,, 0
     if (ErrorLevel) {
       return

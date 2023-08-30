@@ -398,7 +398,11 @@ Return
   && !Vim.State.Surround && !Vim.State.fts
   && WinActive("ahk_class TElWind"))
 \::
-  Vim.SM.PostMsg(151)
+  if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    Vim.SM.PostMsg(150)
+  } else {
+    Vim.SM.PostMsg(151)
+  }
 ~^f3::Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 2, SMCtrlF3 := true
 
 #if (Vim.IsVimGroup() && SMCtrlF3 && WinActive("ahk_class TInputDlg"))

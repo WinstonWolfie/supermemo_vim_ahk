@@ -44,13 +44,13 @@ Return
   Gui, VimCommander:Add, Text,, &Command:
 
   list := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
-        . "|WaybackMachine|DefineGoogle|YouGlish|KillIE|DeepL|WindowSpy"
-        . "|BingChat|CTitle|CHTML|Forvo|SciHub|AccViewer"
+        . "|WaybackMachine|DefineGoogle|YouGlish|KillOutlook|DeepL"
+        . "|WindowSpy|BingChat|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
-        . "|CWPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
+        . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
-        . "|MerriamWebster|WordSense"
+        . "|MerriamWebster|WordSense|KillOneDrive|KillIE"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -274,11 +274,11 @@ WiktionaryButtonSearch:
   run % "https://en.wiktionary.org/wiki/" . search . "#" . language
 return
 
-CTitle:
+CopyTitle:
   ToolTip("Copied " . Clipboard := WinGetTitle())
 return
 
-CHTML:
+CopyHTML:
   ClipSaved := ClipboardAll
   if (!Clipboard := copy(false, true))
     goto RestoreClipReturn
@@ -402,7 +402,7 @@ ReformatScriptComponent:
   Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal")
 return
 
-CWPosition:
+CopyWindowPosition:
   WinGetPos, x, y, w, h, A
   ToolTip("Copied " . Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h)
 return
@@ -697,4 +697,12 @@ return
 MakeHTMLUnique:
   AntiMerge := "<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>"
   clip(AntiMerge,,, "sm")
+return
+
+KillOutlook:
+  process, close, Outlook.exe
+return
+
+KillOneDrive:
+  process, close, OneDrive.exe
 return

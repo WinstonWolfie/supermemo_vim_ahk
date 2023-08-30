@@ -35,7 +35,7 @@ q::
   loop % n := Vim.State.GetN() {
     send {home}>{space}  ; add comment; useful when replying emails
     if (n > 1)
-      send ^{down}
+      send {down}
     n--
   }
   Vim.State.SetMode()

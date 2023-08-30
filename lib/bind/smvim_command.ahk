@@ -116,7 +116,11 @@ return
 i::  ; learn outstanding *i*tems only
   Vim.State.SetMode("Vim_Normal"), Vim.SM.GoHome()
   WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID")
-  Vim.SM.PostMsg(202)  ; View - Outstanding
+  if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    Vim.SM.PostMsg(200)
+  } else {
+    Vim.SM.PostMsg(202)  ; View - Outstanding
+  }
   Vim.SM.WaitBrowser()
   send {AppsKey}ci
   Vim.SM.WaitBrowser()
@@ -312,6 +316,10 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 +c::  ; add new concept
   WinActivate, ahk_class TElWind
-  Vim.SM.PostMsg(126)
+  if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    Vim.SM.PostMsg(125)
+  } else {
+    Vim.SM.PostMsg(126)
+  }
   Vim.State.SetMode("Insert")
 return
