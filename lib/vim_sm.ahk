@@ -428,7 +428,28 @@ class VimSM {
   }
 
   PostMsg(msg) {
-    PostMessage, 0x0111, % msg,,, ahk_class TElWind
+    wSMElWnd := "ahk_class TElWind"
+    WinGet, paSMTitles, List, ahk_class TElWind
+    loop % paSMTitles {
+      SMPID := WinGet("PID", "ahk_id " . hWnd := paSMTitles%A_Index%)
+      if (WinExist("ahk_class TProgressBox ahk_pid " . SMPID)) {
+        continue
+      } else {
+        WindFind := true, wSMElWnd := "ahk_id " . hWnd
+        break
+      }
+    }
+    if (!WindFind) {
+      MsgBox, 3,, SuperMemo is processing something. Do you want to launch a new window?
+      if (IfMsgbox("yes")) {
+        run C:\SuperMemo\sm18.exe
+        WinWaitActive, ahk_class TElWind
+      } else {
+        return
+      }
+    }
+    PostMessage, 0x0111, % msg,,, % wSMElWnd
+    return true
   }
 
   GetTemplCode(RestoreClip:=true) {
@@ -621,28 +642,30 @@ class VimSM {
   }
 
   CheckDup(text, ClearHighlight:=true) {  ; try to find duplicates
-    ContLearn := this.IsLearning()
-    text := LTrim(text)
+    ContLearn := this.IsLearning(), text := LTrim(text)
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
     ; Can't just encode URI, Chinese characters will be encoded
     ; For some reason, SuperMemo only encodes some part of the url
     if (IsUrl(text))
       text := StrReplace(text, "%20", " "), text := StrReplace(text, "%3F", "?"), text := StrReplace(text, "%27", "'"), text := StrReplace(text, "%21", "!")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
-    if ((ContLearn == 1) && !ret)
+    if ((ContLearn == 1) && this.LastCtrlFNotFound)
       this.Learn()
     return ret
   }
 
   CtrlF(text, ClearHighlight:=true, ToolTip:="Not found.") {
+    this.LastCtrlFNotFound := false
     if (!WinExist("ahk_class TElWind"))
       return
     this.CloseMsgWind()
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(143)
+      r := this.PostMsg(143)
     } else {
-      this.PostMsg(144)
+      r := this.PostMsg(144)
     }
+    if (!r)
+      return false
     WinWait, % "ahk_class TMyFindDlg ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind")
     ControlSetText, TEdit1, % text
     ControlFocus, TEdit1
@@ -655,6 +678,7 @@ class VimSM {
         this.ClearHighlight()
       WinActivate, % "ahk_class TBrowser ahk_pid " . pidSM
     } else if (WinGetClass("") == "TMsgDialog") {
+      this.LastCtrlFNotFound := true
       WinClose
       ToolTip(ToolTip,, -3000)
       if (ClearHighlight)
@@ -664,17 +688,19 @@ class VimSM {
   }
 
   ClearHighlight(OpenCommander:=true) {
-    this.Command("h", OpenCommander)
+    return this.Command("h", OpenCommander)
   }
 
   Command(text, OpenCommander:=true) {
     if (OpenCommander) {
       if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        this.PostMsg(238)
+        r := this.PostMsg(238)
       } else {
-        this.PostMsg(240)
+        r := this.PostMsg(240)
       }
     }
+    if (!r)
+      return false
     WinWait, ahk_class TCommanderDlg
     if (text) {
       ControlSetText, TEdit2, % text, ahk_class TCommanderDlg
@@ -685,6 +711,7 @@ class VimSM {
       if (WinExist("ahk_class #32770"))
         ControlSend,, {esc}
     }
+    return true
   }
 
   MakeReference(html:=false) {
@@ -783,10 +810,11 @@ class VimSM {
 
   AltT() {
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(115)
+      r := this.PostMsg(115)
     } else {
-      this.PostMsg(116)
+      r := this.PostMsg(116)
     }
+    return r
   }
 
   RunLink(url, RunInIE:=false) {
@@ -967,9 +995,9 @@ class VimSM {
 
   Plan() {
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(241)
+      r := this.PostMsg(241)
     } else {
-      this.PostMsg(243)
+      r := this.PostMsg(243)
     }
   }
 }

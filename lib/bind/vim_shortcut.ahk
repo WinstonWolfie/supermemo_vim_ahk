@@ -40,11 +40,11 @@ Plan:
   if (!WinExist("ahk_group SuperMemo")) {
     run C:\SuperMemo\systems\all.kno
     WinWait, ahk_class TElWind,, 3
-    if (ErrorLevel) {
+    if (ErrorLevel)
       return
-    }
     WinActivate
-    Vim.SM.Plan()
+    if (!Vim.SM.Plan())
+      return
     WinWait, ahk_class TMsgDialog,, 1.5
     if (!ErrorLevel) {
       WinClose
@@ -61,11 +61,11 @@ Plan:
     } else if (l == 1) {
       Vim.SM.GoHome()
     }
-    Vim.SM.Plan()
-    WinWait, ahk_class TPlanDlg,, 0
-    if (ErrorLevel) {
+    if (!Vim.SM.Plan())
       return
-    }
+    WinWait, ahk_class TPlanDlg,, 0
+    if (ErrorLevel)
+      return
   }
   WinActivate, ahk_class TPlanDlg
   send {right 2}{home}
@@ -223,17 +223,16 @@ IWBNewTopic:
   }
   PressBrowserBtnDone := false
   SetTimer, PressBrowserBtn, -1
-  if (WinExist("ahk_class TMsgDialog"))
-    WinClose
+  Vim.SM.CloseMsgWind()
   ClipSaved := ClipboardAll
   IWB := IfContains(A_ThisLabel, "x,IWB")
   Passive := Vim.SM.IsPassive(CollName := Vim.SM.GetCollName()
                             , ConceptBefore := Vim.SM.GetCurrConcept())
   if (!IWB && Vim.SM.CheckDup(Vim.Browser.Url, false))
-    MsgBox, 4,, Continue import?
+    MsgBox, 3,, Continue import?
   WinClose, ahk_class TBrowser
   WinActivate % "ahk_id " . guiaBrowser.BrowserId
-  IfMsgBox, no
+  if (IfMsgbox("No") || IfMsgbox("Cancel"))
     goto ImportReturn
   while (!PressBrowserBtnDone)
     continue
@@ -349,8 +348,8 @@ SMImportButtonImport:
     WinWaitClose, ahk_class TRegistryForm
     if (InStr(Vim.SM.GetCurrConcept(), Concept) != 1) {
       WinActivate, ahk_class TElWind
-      MsgBox, 4,, Current concept doesn't seem like your entered concept. Continue?
-      IfMsgBox, no
+      MsgBox, 3,, Current concept doesn't seem like your entered concept. Continue?
+      if (IfMsgbox("No") || IfMsgbox("Cancel"))
         goto ImportReturn
     }
   }
@@ -867,10 +866,10 @@ return
   RegExMatch(title, "\d{6}$", date)
   title := StrReplace(title, "-" . date,,, 1)
   if (Vim.SM.CheckDup(link, false))
-    MsgBox, 4,, Continue import?
+    MsgBox, 3,, Continue import?
   WinActivate % "ahk_id " . hWnd
   WinClose, ahk_class TBrowser
-  IfMsgBox no
+  if (IfMsgbox("No") || IfMsgbox("Cancel"))
     goto HBImportReturn
   if (IfContains(A_ThisHotkey, "+")) {
     Prio := InputBox("Priority", "Enter extract priority.")

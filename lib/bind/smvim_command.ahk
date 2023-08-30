@@ -42,8 +42,8 @@ NukeHTML:
   }
   if ((A_ThisLabel == "NukeHTML")
    && (HTML ~= "i)<.*?\K class=(" . Vim.SM.CssClass . ")(?=.*?>)")) {
-    MsgBox, 4,, HTML has SM classes. Continue?
-    IfMsgBox, no
+    MsgBox, 3,, HTML has SM classes. Continue?
+    if (IfMsgbox("No") || IfMsgbox("Cancel"))
       return
   }
   FileDelete % HTMLPath

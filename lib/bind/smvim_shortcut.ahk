@@ -588,9 +588,9 @@ BrowserSyncTime:
     }
     if (!ret) {
       WinActivate, ahk_class TElWind
-      MsgBox, 4,, % "Titles don't match. Continue?`nBrowser title: " . Vim.Browser.Title
+      MsgBox, 3,, % "Titles don't match. Continue?`nBrowser title: " . Vim.Browser.Title
       WinActivate % "ahk_id " . guiaBrowser.BrowserId
-      IfMsgBox no
+      if (IfMsgbox("No") || IfMsgbox("Cancel"))
         goto SMSyncTimeReturn
     }
     if (!ResetTime) {

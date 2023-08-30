@@ -248,8 +248,8 @@ CapsLock & z::  ; delete [...]
     CtrlState := 1, ClozeNoBracketCtrlState := 0
   KeyWait Capslock
   if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/")) {
-    MsgBox, 4,, Your hint has a slash. Press yes to make it inside square brackets.
-    IfMsgBox yes
+    MsgBox, 3,, Your hint has a slash. Press yes to make it inside square brackets.
+    IfMsgBox, Yes
       inside := true
     WinWaitActive, ahk_class TElWind
   }

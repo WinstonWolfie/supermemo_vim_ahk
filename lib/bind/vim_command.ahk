@@ -50,7 +50,7 @@ Return
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
-        . "|MerriamWebster|WordSense|KillOneDrive|KillIE"
+        . "|MerriamWebster|WordSense|RestartOneDrive|KillIE"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -520,14 +520,16 @@ ImportFile:
   Vim.SM.InvokeFileBrowser()
   send {right}
   MsgBox, 3,, Do you want to also delete the file?
-  IfMsgBox Cancel
+  IfMsgBox, Cancel
     return
+  if (KeepFile := IfMsgBox("Yes"))
+    FilePath := WinGetTitle("ahk_class TFileBrowser")
   WinActivate, ahk_class TFileBrowser
   send {enter}
   WinWaitActive, ahk_class TInputDlg
   send {enter}
   WinWaitActive, ahk_class TMsgDialog
-  IfMsgBox, yes, {
+  if (!KeepFile) {
     send {text}n  ; not keeping the file in original position
     WinWaitClose
     WinWaitActive, ahk_class TMsgDialog
@@ -535,6 +537,13 @@ ImportFile:
   send {text}y  ; confirm to delete the file / confirm to keep the file
   WinWaitActive, ahk_class TElWind
   Vim.SM.Reload()
+  if (KeepFile) {
+    MsgBox, 3,, Do you want to add "IMPORTED_" prefix to the file?
+    if (IfMsgBox("Yes")) {
+      RegExMatch(FilePath, "[^\\]+(?=\.)", FileName)
+      FileMove, % FilePath, % StrReplace(FilePath, FileName, "IMPORTED_" . FileName)
+    }
+  }
   if (!Vim.SM.AskPrio())
     return
 return
@@ -703,6 +712,14 @@ KillOutlook:
   process, close, Outlook.exe
 return
 
-KillOneDrive:
+RestartOneDrive:
   process, close, OneDrive.exe
+  ; Cannot just run, OneDrive cannot run with admin rights
+  send #r
+  WinWaitActive, ahk_class #32770  ; run window
+  ControlSetText, Edit1, C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk
+  ControlClick, Button2,,,,, NA
+  WinWaitActive, OneDrive ahk_class CabinetWClass
+  WinClose
+  WinActivate, % "ahk_id " . hWnd
 return
