@@ -306,15 +306,24 @@ CapsLock & z::  ; delete [...]
 		; 	WinClose
 
     ; Replacing [...] directly in HTML. Much faster! but could be unreliable
-    HTMLPath := Vim.SM.GetFilePath()
-    Vim.SM.ExitText(), HTML := FileRead(HTMLPath)
-    r := ClozeNoBracket ? "" : "<SPAN class=cloze>" . cloze . "</SPAN>"
-    HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>", r, v)
-    if (v) {
-      FileDelete % HTMLPath
-      FileAppend, % HTML, % HTMLPath
+    HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())
+    if (HTML = "<SPAN class=cloze>[...]</SPAN>") {
+      if (ClozeNoBracket) {
+        send {del 5}
+      } else {
+        send +{right 5}
+        send % "{text}" . cloze
+      }
     } else {
-      ToolTip("Cloze not found!"), CtrlState := true
+      Vim.SM.ExitText()
+      r := ClozeNoBracket ? "" : "<SPAN class=cloze>" . cloze . "</SPAN>"
+      HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>", r, v)
+      if (v) {
+        FileDelete % HTMLPath
+        FileAppend, % HTML, % HTMLPath
+      } else {
+        ToolTip("Cloze not found!"), CtrlState := true
+      }
     }
   }
   if (!CtrlState) {  ; only goes back to topic if ctrl is up

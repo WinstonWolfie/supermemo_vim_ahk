@@ -23,8 +23,10 @@ return
 NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.IsEditingPlainText())
+  if (Vim.SM.IsEditingPlainText() || !Vim.SM.DoesHTMLExist()) {
+    ToolTip("This script only works on HTML.")
     return
+  }
 	send ^{f7}  ; save read point
   if (!Vim.SM.IsEditingHTML()) {
     send ^t
@@ -34,7 +36,10 @@ NukeHTML:
       return
     }
   }
-  Vim.SM.ExitText(true, 1.5)
+  if (!Vim.SM.SaveHTML(, 2500)) {
+    ToolTip("Time out.")
+    return
+  }
   sleep 20  ; making sure the file path is updated
   if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())) {
     ToolTip("File not found.")

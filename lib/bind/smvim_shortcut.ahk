@@ -74,7 +74,7 @@ return
     send {right}  ; so no text is selected
     sleep 50
   }
-  Vim.SM.SetTitle(, 1.5)
+  Vim.SM.SetTitle(, 1500)
   if (t)
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, ahk_class TElWind
 return
@@ -254,7 +254,7 @@ return
     SetTimer, DownloadLatex, -1
     FileCreateDir % LatexFolderPath
     clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>",, false, true)
-    Vim.SM.SaveHTML(true)
+    Vim.SM.SaveHTML()
     WinWaitActive, ahk_class TElWind
     HTMLPath := Vim.SM.GetFilePath(false)
     if (!HTML := FileRead(HTMLPath))

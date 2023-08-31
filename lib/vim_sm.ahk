@@ -198,6 +198,7 @@ class VimSM {
   }
 
   ExitText(ReturnToComp:=false, timeout:=0) {
+    this.ActivateElWind()
     ret := 1
     if (this.IsEditingText()) {
       if (this.IsItem()) {
@@ -343,22 +344,13 @@ class VimSM {
     }
   }
 
-  SaveHTML(SendEsc:=false, timeout:=0) {
-    if (SendEsc)
-      this.ExitText(true, timeout)
-    this.OpenNotepad()
-    ; if (ReturnPath) {  ; doesn't work in Win 11
-    ;   WinWaitActive, ahk_class Notepad,, % timeout ? timeout / 1000 : ""
-    ;   for process in ComObjGet("winmgmts:").ExecQuery("Select * from Win32_Process where Name='notepad.exe'")
-    ;     ret := RegExReplace(process.CommandLine, """.*?"" ")
-    ; } else {
-      WinWaitNotActive, ahk_class TElWind,, % timeout ? timeout / 1000 : ""
-      if (!ErrorLevel)
-        ret := true
-    ; }
-    WinClose, ahk_class Notepad
+  SaveHTML(method:=0, timeout:=0) {
+    timeout := timeout ? timeout / 1000 : ""
+    this.OpenNotepad(method, timeout)
+    WinWaitNotActive, ahk_class TElWind,, % timeout
+    WinClose
     WinActivate, ahk_class TElWind
-    return ret
+    return !ErrorLevel
   }
 
   GetCollName(text:="") {
@@ -395,6 +387,7 @@ class VimSM {
   SetTitle(title:="", timeout:="") {
     if (WinGetTitle("ahk_class TElWind") == title)
       return true
+    timeout := timeout ? timeout / 1000 : ""
     this.AltT()
     GroupAdd, SMAltT, ahk_class TChoicesDlg
     GroupAdd, SMAltT, ahk_class TTitleEdit
@@ -983,14 +976,20 @@ class VimSM {
     send !{f12}
   }
 
-  OpenNotepad() {
-    this.ActivateElWind()
-    if (this.IsEditingText()) {
+  OpenNotepad(method:=0, timeout:=0) {
+    this.ExitText(true, timeout)
+    if (method) {
       this.CompMenu()
       send fw
-    } else if (this.IsBrowsing()) {
+    } else {
       send ^+{f6}
     }
+    ; if (this.IsEditingText()) {  ; does not work reliably!
+    ;   this.CompMenu()
+    ;   send fw
+    ; } else if (this.IsBrowsing()) {
+      ; send ^+{f6}
+    ; }
   }
 
   Plan() {
