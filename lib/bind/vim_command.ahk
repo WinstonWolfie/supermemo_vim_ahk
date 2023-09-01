@@ -514,7 +514,7 @@ ImportFile:
   send ^+p
   WinWaitActive, ahk_class TElParamDlg
   send !t
-  send {text}b  ; my template for pdf/epub file is binary
+  send {text}binary  ; my template for pdf/epub file is binary
   send {enter 2}
   WinWaitActive, ahk_class TElWind
   Vim.SM.InvokeFileBrowser()
@@ -522,7 +522,7 @@ ImportFile:
   MsgBox, 3,, Do you want to also delete the file?
   IfMsgBox, Cancel
     return
-  if (KeepFile := IfMsgBox("Yes"))
+  if (KeepFile := IfMsgBox("No"))
     FilePath := WinGetTitle("ahk_class TFileBrowser")
   WinActivate, ahk_class TFileBrowser
   send {enter}

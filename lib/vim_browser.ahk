@@ -485,5 +485,4 @@
 
 PressBrowserBtn:
   Vim.Browser.ClickBtn()
-  PressBrowserBtnDone := true
 return

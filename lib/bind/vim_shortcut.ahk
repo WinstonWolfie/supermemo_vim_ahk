@@ -221,7 +221,6 @@ IWBNewTopic:
     ToolTip("Url not found.")
     return
   }
-  PressBrowserBtnDone := false
   SetTimer, PressBrowserBtn, -1
   Vim.SM.CloseMsgWind()
   ClipSaved := ClipboardAll
@@ -234,9 +233,6 @@ IWBNewTopic:
   WinActivate % "ahk_id " . guiaBrowser.BrowserId
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
     goto ImportReturn
-  while (!PressBrowserBtnDone)
-    continue
-
   Prio := Concept := CloseTab := DownloadHTML := ResetVidTime := ""
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
   if (IfContains(A_ThisLabel, "+,Prio")) {

@@ -15,9 +15,7 @@ return
 
 ^h::  ; parse *h*tml
   send ^+1
-~^+1::
-  Vim.State.SetMode("Vim_Normal")
-return
+~^+1::Vim.State.SetMode("Vim_Normal")
 
 SMParseHTMLGUI:
 !a::  ; p*a*rse html
@@ -238,12 +236,14 @@ ClozeHinterButtonCloze:
   Gui submit
   Gui destroy
   WinActivate, ahk_class TElWind
+
 ClozeNoBracket:
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind") && (CtrlState := GetKeyState("ctrl")))
 CapsLock & z::  ; delete [...]
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
 CapsLock & z::  ; delete [...]
-  ClozeNoBracket := IfIn(A_ThisLabel, "ClozeNoBracket,CapsLock & z"), TopicTitle := WinGetTitle("ahk_class TElWind")
+  ClozeNoBracket := IfIn(A_ThisLabel, "ClozeNoBracket,CapsLock & z")
+  TopicTitle := WinGetTitle("ahk_class TElWind")
   if ((A_ThisLabel == "ClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
   KeyWait Capslock
