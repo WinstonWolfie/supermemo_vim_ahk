@@ -40,7 +40,6 @@ NukeHTML:
     ToolTip("Time out.")
     return
   }
-  sleep 20  ; making sure the file path is updated
   if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())) {
     ToolTip("File not found.")
     return
@@ -53,8 +52,8 @@ NukeHTML:
   }
   FileDelete % HTMLPath
   FileAppend, % Vim.HTML.Clean(HTML, (A_ThisLabel == "NukeHTML"),, Vim.SM.GetLink()), % HTMLPath
-  Vim.SM.SaveHTML()
-  Vim.SM.ClickMid()
+  Vim.SM.Reload()
+  Vim.SM.WaitFileLoad()
   send {esc}
 Return
 

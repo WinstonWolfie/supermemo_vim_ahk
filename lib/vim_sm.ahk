@@ -348,8 +348,9 @@ class VimSM {
     timeout := timeout ? timeout / 1000 : ""
     this.OpenNotepad(method, timeout)
     WinWaitNotActive, ahk_class TElWind,, % timeout
-    WinClose
+    WinClose, ahk_class Notepad
     WinActivate, ahk_class TElWind
+    WinWaitActive, ahk_class TElWind
     return !ErrorLevel
   }
 
