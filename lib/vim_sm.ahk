@@ -201,7 +201,7 @@ class VimSM {
     this.ActivateElWind()
     ret := 1
     if (this.IsEditingText()) {
-      if (this.IsItem()) {
+      if (this.HasTwoComp()) {
         send ^t
         if (ReturnToComp) {
           this.CompMenu()
@@ -681,28 +681,26 @@ class VimSM {
     return ret
   }
 
-  ClearHighlight(OpenCommander:=true) {
-    return this.Command("h", OpenCommander)
+  ClearHighlight() {
+    return this.Command("h")
   }
 
-  Command(text, OpenCommander:=true) {
-    if (OpenCommander) {
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        r := this.PostMsg(238)
-      } else {
-        r := this.PostMsg(240)
-      }
+  Command(text) {
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      r := this.PostMsg(238)
+    } else {
+      r := this.PostMsg(240)
     }
     if (!r)
       return false
-    WinWait, ahk_class TCommanderDlg
+    WinWait, % "ahk_class TCommanderDlg ahk_pid " . SMPID := WinGet("PID", "ahk_class TElWind")
     if (text) {
-      ControlSetText, TEdit2, % text, ahk_class TCommanderDlg
-      ControlTextWait("TEdit2", text, "ahk_class TCommanderDlg")
+      ControlSetText, TEdit2, % text
+      ControlTextWait("TEdit2", text, "")
     }
-    while (WinExist("ahk_class TCommanderDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
+    while (WinExist("ahk_class TCommanderDlg ahk_pid " . SMPID)) {
       ControlClick, TButton4,,,,, NA
-      if (WinExist("ahk_class #32770"))
+      if (WinExist("ahk_class #32770 ahk_pid " . SMPID))
         ControlSend,, {esc}
     }
     return true
@@ -758,7 +756,9 @@ class VimSM {
         this.Vim.State.SetNormal(), ToolTip("Text not found.")
         return false
       } else if (WinGetClass("") == "TCommanderDlg") {  ; ^enter opened commander
-        this.ClearHighlight(false)
+        ReleaseModifierKeys()
+        send h{enter}  ; clear highlight
+        WinWaitNotActive
         this.PostMsg(msg)
         WinWaitActive, ahk_class TMyFindDlg
         WinClose
@@ -920,7 +920,7 @@ class VimSM {
     }
   }
 
-  IsItem() {
+  HasTwoComp() {
     return ((ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind") && ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind"))
          || (ControlGet(,, "TMemo2", "ahk_class TElWind") && ControlGet(,, "TMemo1", "ahk_class TElWind")))
   }
@@ -949,7 +949,7 @@ class VimSM {
   }
 
   IsEmptyTopic() {
-    return (!this.IsItem() && this.DoesTextExist() && !this.DoesHTMLContainText())
+    return (!this.HasTwoComp() && this.DoesTextExist() && !this.DoesHTMLContainText())
   }
 
   AskPrio() {
@@ -999,5 +999,10 @@ class VimSM {
     } else {
       r := this.PostMsg(243)
     }
+  }
+
+  IsItem(TemplCode:="") {
+    TemplCode := TemplCode ? TemplCode : this.GetTemplCode()
+    return InStr(TemplCode, "`r`nType=Item`r`n", true)
   }
 }

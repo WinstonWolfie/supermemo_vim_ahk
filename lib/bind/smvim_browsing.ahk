@@ -97,17 +97,15 @@ i::Vim.State.SetMode("Insert")
 ; Browser-like actions
 r::  ; reload
   ContLearn := (ContinueGrading := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning()
+  if (ContLearn == 2)
+    bItem := Vim.SM.IsItem()
   CurrTitle := WinGetTitle(), Vim.SM.GoHome()
   Vim.SM.WaitFileLoad()
   if (ContLearn) {
-    Vim.SM.Learn(false)
-    Vim.SM.WaitFileLoad()
-    ; When r is pressed, the review score in an item is submitted,
-    ; thus refreshing and learning takes SM to a new element
-    if ((ContLearn == 2) && (CurrTitle != WinGetTitle())) {
+    if ((ContLearn == 2) && bItem) {  ; item and just finished grading
       Vim.SM.GoBack()
-      Vim.SM.WaitFileLoad()
-      Vim.SM.GoBack()
+    } else {
+      Vim.SM.Learn(false)
     }
   } else if (ContinueGrading) {
     Vim.SM.Learn()
@@ -117,7 +115,7 @@ r::  ; reload
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame"))  ; sometimes could happen on YT videos
       WinClose
     ; If current element is home element
-    if ((CurrTitle ~= "^Concept: ") && (CurrTitle == WinGetTitle())) {
+    if ((CurrTitle == WinGetTitle()) && (CurrTitle ~= "^Concept: ")) {
       Vim.SM.GoBack()
       Vim.SM.WaitFileLoad()
       send !{right}

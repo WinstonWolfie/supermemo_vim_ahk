@@ -50,7 +50,7 @@ Return
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
-        . "|MerriamWebster|WordSense|RestartOneDrive|KillIE"
+        . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -722,4 +722,11 @@ RestartOneDrive:
   WinWaitActive, OneDrive ahk_class CabinetWClass
   WinClose
   WinActivate, % "ahk_id " . hWnd
+return
+
+RestartICloudDrive:
+  process, close, iCloudDrive.exe
+  run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk
+  WinWaitActive, iCloud ahk_class PreferencesWnd ahk_exe iCloud.exe
+  WinClose
 return

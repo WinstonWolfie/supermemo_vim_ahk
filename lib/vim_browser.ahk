@@ -110,6 +110,8 @@
       this.source := "MIT News | Massachusetts Institute of Technology", this.title := RegExReplace(this.title, " \| MIT News \| Massachusetts Institute of Technology$")
     } else if (this.title ~= " - StatPearls - NCBI Bookshelf$") {
       this.source := "StatPearls - NCBI Bookshelf", this.title := RegExReplace(this.title, " - StatPearls - NCBI Bookshelf$")
+    } else if (this.title ~= "：剑桥词典$") {
+      this.source := "剑桥词典", this.title := RegExReplace(this.title, "：剑桥词典$")
 
     } else if (RegExMatch(this.title, " \| (.*) \| Cambridge Core$", v)) {
       this.source := v1 . " | Cambridge Core", this.title := RegExReplace(this.title, "\| (.*) \| Cambridge Core$")

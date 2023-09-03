@@ -1,6 +1,6 @@
 ﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
-  if !(Vim.SM.IsItem() && (ControlGetFocus() == "Internet Explorer_Server2")) {
+  if !(Vim.SM.HasTwoComp() && (ControlGetFocus() == "Internet Explorer_Server2")) {
     Vim.SM.ExitText()
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
@@ -603,9 +603,11 @@ BrowserSyncTime:
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
     if (CloseWnd) {  ; hotkeys with ctrl will close the tab
       if (ObjCount(oTabs := guiaBrowser.GetAllTabs()) == 1) {
-        guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1])
+        ; guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1])
+        ControlSend, ahk_parent, {CtrlDown}t{tab}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
       } else {
-        guiaBrowser.CloseTab()
+        ; guiaBrowser.CloseTab()
+        ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
       }
     }
   } else if (!Vim.Browser.VidTime && !ResetTime) {

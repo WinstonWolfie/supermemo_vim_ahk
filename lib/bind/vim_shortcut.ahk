@@ -390,9 +390,12 @@ SMImportButtonImport:
       sleep 200
     TabCount := ObjCount(oTabs := guiaBrowser.GetAllTabs())
     if (TabCount == 1) {
-      guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1]), Passive := false
+      ; guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1]), Passive := false
+      Passive := false
+      ControlSend, ahk_parent, {CtrlDown}t{tab}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
     } else {
-      guiaBrowser.CloseTab()
+      ; guiaBrowser.CloseTab()
+      ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
       if ((TabCount == 2)
        && ((oTabs[1].CurrentName = "new tab") || oTabs[2].CurrentName = "new tab"))
         Passive := false
@@ -690,7 +693,7 @@ return
     }
     if (CloseWnd) {
       if (WinActive("ahk_group Browser")) {
-        send ^w
+        ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}
       } else {  ; epub viewer
         WinClose, A
       }
