@@ -32,8 +32,12 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
       sleep 1
     ; Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
   }
-  If (Text && (Reselect || (HTML = "sm")))
-    send % "+{Left " . StrLen(Vim.ParseLineBreaks(text)) . "}"
+  If (Text && (Reselect || (HTML = "sm"))) {
+    StrLen := StrLen(Vim.ParseLineBreaks(text))
+    if ((HTML = "sm") && (IfContains(text, "<p")))
+      StrLen++
+    send % "+{Left " . StrLen . "}"
+  }
   if (text && (html = "sm"))
     send ^+1
   if (RestoreClip)  ; for scripts that restore clipboard at the end

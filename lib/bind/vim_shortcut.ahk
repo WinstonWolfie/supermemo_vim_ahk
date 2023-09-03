@@ -558,14 +558,24 @@ ExtractToSM:
     send !x  ; extract
   }
   Vim.SM.WaitExtractProcessing()
-  x := A_CaretX, y := A_CaretY
-  send {down}
-  WaitCaretMove(x, y)
-  send !\\
-  WinWaitNotActive, ahk_class TElWind
-  send {enter}
-  WinWaitClose, ahk_class TMsgDialog
-  send {esc}
+
+  ; Delete text via Delete before cursor
+  ; x := A_CaretX, y := A_CaretY
+  ; send {down}
+  ; WaitCaretMove(x, y)
+  ; send !\\
+
+  loop {
+    Vim.SM.CompMenu()
+    send kd  ; delete registry link
+    WinWaitActive, ahk_class TMsgDialog,, 0.1
+    if (!ErrorLevel) {
+      send {enter}
+      break
+    }
+  }
+  Vim.SM.ActivateElWind()
+  send ^+{f7}  ; clear read point
   if (CtrlState) {
     Vim.SM.GoBack()
   } else {

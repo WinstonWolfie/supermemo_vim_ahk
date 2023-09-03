@@ -121,9 +121,11 @@ return
 >::Vim.State.SetMode("SMHTMLIncreaseIndent")
 <::Vim.State.SetMode("SMHTMLDecreaseIndent")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLIncreaseIndent") && Vim.SM.IsEditingHTML())
+>::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
 >::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLDecreaseIndent") && Vim.SM.IsEditingHTML())
+<::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
 <::
   UIA := UIA_Interface()
