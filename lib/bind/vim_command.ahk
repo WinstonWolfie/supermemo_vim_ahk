@@ -719,14 +719,15 @@ RestartOneDrive:
   WinWaitActive, ahk_class #32770  ; run window
   ControlSetText, Edit1, C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk
   ControlClick, Button2,,,,, NA
-  WinWaitActive, OneDrive ahk_class CabinetWClass
+  WinWait, OneDrive ahk_class CabinetWClass ahk_exe explorer.exe
   WinClose
   WinActivate, % "ahk_id " . hWnd
 return
 
 RestartICloudDrive:
   process, close, iCloudDrive.exe
-  run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk
-  WinWaitActive, iCloud ahk_class PreferencesWnd ahk_exe iCloud.exe
+  process, close, iCloudServices.exe
+  run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk,, hide
+  WinWait, iCloud ahk_class PreferencesWnd ahk_exe iCloud.exe
   WinClose
 return
