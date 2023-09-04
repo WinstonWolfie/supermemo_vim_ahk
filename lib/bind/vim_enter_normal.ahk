@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() || (Vim.State.Vim.Enabled && Vim.State.BackToNormal))
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() || (Vim.State.Vim.Enabled && Vim.State.BackToNormal))
 CapsLock::
 Esc::
   Vim.State.HandleEsc()

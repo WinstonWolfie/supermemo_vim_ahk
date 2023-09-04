@@ -1,4 +1,5 @@
-﻿; Q-dir
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Q-dir
 #if Vim.IsVimGroup() and WinActive("ahk_group VimQdir") and (Vim.State.Mode == "Vim_Normal")
 ; Enter insert mode to quickly locate the file/folder by using the first letter
 /::Vim.State.SetMode("Insert")

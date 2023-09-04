@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 CapsLock & alt::return  ; so you can press CapsLock first and alt without triggering context menu
 #if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ?::

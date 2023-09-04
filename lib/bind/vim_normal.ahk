@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
 ; Undo/Redo
 u::Send % "^{z " . Vim.State.GetN() . "}"
 

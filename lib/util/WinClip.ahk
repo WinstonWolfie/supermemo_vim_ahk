@@ -1,4 +1,5 @@
-﻿class WinClip extends WinClip_base
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+class WinClip extends WinClip_base
 {
   __New()
   {
@@ -754,9 +755,9 @@ SourceURL:%source%
     DllCall( "GetObject", "Ptr", hBitmap, "Uint", size, "ptr", &bm )
     biBitCount := NumGet( bm, 16, "UShort" )*NumGet( bm, 18, "UShort" )
     nColors := (1 << biBitCount)
-	if ( nColors > 256 ) 
-		nColors := 0
-	bmiLen  := 40 + nColors * 4
+  if ( nColors > 256 ) 
+    nColors := 0
+  bmiLen  := 40 + nColors * 4
     VarSetCapacity( bmi, bmiLen, 0 )
     ;BITMAPINFOHEADER initialization
     NumPut( 40, bmi, 0, "Uint" )

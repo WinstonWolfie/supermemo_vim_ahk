@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ;; -*- mode: text; coding: utf-8 -*-
 ;;
 ;;              DO NOT EDIT MANUALLY!

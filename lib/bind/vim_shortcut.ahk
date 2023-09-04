@@ -1,4 +1,5 @@
-﻿; Launch Settings
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Launch Settings
 ; #if (Vim.State.Vim.Enabled)
 ; ^!+c::Vim.Setting.ShowGui()
 
@@ -89,7 +90,7 @@ return
 
 ^!l::  ; copy link and parse *l*ink if if's from YT
   Vim.Browser.Clear()
-  guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinGet(, "A"))
+  guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinActive("A"))
   ReleaseModifierKeys()
   ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
   Vim.Browser.GetInfo(false)
@@ -216,7 +217,7 @@ IWBNewTopic:
     ToolTip("Web page not found.")
     return
   }
-  Vim.Browser.Clear(), guiaBrowser := new UIA_Browser("ahk_id " . WinGet(, "A"))
+  Vim.Browser.Clear(), guiaBrowser := new UIA_Browser("ahk_id " . WinActive("A"))
   if (!Vim.Browser.Url := Vim.Browser.GetParsedUrl()) {
     ToolTip("Url not found.")
     return
@@ -273,7 +274,7 @@ SMImportButtonImport:
       ToolTip("Text not found.")
       goto ImportReturn
     }
-    Vim.Browser.Highlight(CollName)
+    Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML format but is in plain-text
   }
   Online := (Passive || (!HTMLText && bVidSite))
   if (FullPage := (DownloadHTML || (!HTMLText && !Online))) {
@@ -389,6 +390,7 @@ SMImportButtonImport:
     if (IWB)
       sleep 200
     TabCount := ObjCount(oTabs := guiaBrowser.GetAllTabs())
+    ControlReleaseModifierKeys("ahk_parent", "ahk_id " . guiaBrowser.BrowserId)
     if (TabCount == 1) {
       ; guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1]), Passive := false
       Passive := false
@@ -472,14 +474,14 @@ return
 ^!x::
 !+x::
 !x::
-  CtrlState := IfContains(A_ThisHotkey, "^"), hWnd := WinGet(, "A")
+  CtrlState := IfContains(A_ThisHotkey, "^"), hWnd := WinActive("A")
   ClipSaved := ClipboardAll
-  ReleaseModifierKeys()
   if (!copy(false)) {
     ToolTip("Nothing is selected.")
     goto RestoreClipReturn
   } else {
     if (CleanHTML := (WinActive("ahk_group Browser") || WinActive("ahk_exe ebook-viewer.exe"))) {
+      PlainText := Clipboard
       Vim.HTML.ClipboardGet_HTML(data)
       RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
       WinClip.Clear()
@@ -499,7 +501,7 @@ return
     }
     WinActivate, % "ahk_id " . hWnd
     if (WinActive("ahk_group Browser")) {
-      Vim.Browser.Highlight()
+      Vim.Browser.Highlight(, PlainText)
     } else if (WinActive("ahk_exe ebook-viewer.exe")) {
       ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
@@ -703,7 +705,8 @@ return
     }
     if (CloseWnd) {
       if (WinActive("ahk_group Browser")) {
-        ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}
+        ControlReleaseModifierKeys("ahk_parent", "ahk_id " . guiaBrowser.BrowserId)
+        ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
       } else {  ; epub viewer
         WinClose, A
       }

@@ -1,4 +1,5 @@
-﻿; Grading
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Grading
 ; Inspired by MasterHowToLearn's SuperMemoVim
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsGrading())
 ; Conflict with focusing to answer

@@ -1,4 +1,5 @@
-﻿; https://www.autohotkey.com/boards/viewtopic.php?t=15002
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; https://www.autohotkey.com/boards/viewtopic.php?t=15002
 ;=======================================================================================
 ;
 ; Function:      CbAutoComplete

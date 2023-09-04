@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 class VimCaret {
   __New(vim) {
     global VimScriptPath
@@ -37,11 +38,10 @@ class VimCaret {
   }
 
   SwitchToSameWindow(WinTitle:="") {
-    WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
+    WinTitle := WinTitle ? WinTitle : "ahk_id " . WinActive("A")
     ; Activate desktop
     ; WinActivate, ahk_class WorkerW  ; doesn't work in Win 11
     WinActivate, ahk_class Progman
     WinActivate % WinTitle
   }
 }
-

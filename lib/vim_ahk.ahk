@@ -1,4 +1,5 @@
-﻿; Utilities
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Utilities
 #Include %A_LineFile%\..\util\vim_ahk_setting.ahk
 #Include %A_LineFile%\..\util\vim_ime.ahk
 #Include %A_LineFile%\..\util\Clip.ahk

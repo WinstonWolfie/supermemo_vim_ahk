@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ;AHK v1.1 x64/x32 compatible update by jeeswg of:
 ;Get Info from Context Menu - Scripts and Functions - AutoHotkey Community
 ;https://autohotkey.com/board/topic/19754-get-info-from-context-menu/
@@ -9,7 +10,7 @@
 ; Author:         micha
 ;
 ; Script Function:
-;	Demonstrates how to retrieve infos from a context/ popup menu
+;  Demonstrates how to retrieve infos from a context/ popup menu
 ;
 
 /*

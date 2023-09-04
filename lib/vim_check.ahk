@@ -1,4 +1,5 @@
-﻿class VimCheck {
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+class VimCheck {
   __New(Vim) {
     this.Vim := Vim
   }
@@ -30,4 +31,3 @@
     }
   }
 }
-

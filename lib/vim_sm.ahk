@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 class VimSM {
   __New(Vim) {
     this.Vim := Vim
@@ -745,7 +746,7 @@ class VimSM {
       return true
     } else if (step == 2) {
       send ^{enter}  ; open commander; convienently, if a "not found" window pops up, this would close it
-      WinWait, % "ahk_class TMyFindDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.3  ; without it sometimes TMyFindDlg will still pop up
+      WinWait, % "ahk_class TMyFindDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.3  ; sometimes TMyFindDlg will still pop up
       GroupAdd, SMF3, ahk_class TMyFindDlg
       GroupAdd, SMF3, ahk_class TCommanderDlg
       WinWaitActive, ahk_group SMF3
@@ -943,7 +944,7 @@ class VimSM {
   }
 
   DoesHTMLContainText() {
-    UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1")
+    UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1", "A")
     el := UIA.ElementFromHandle(hCtrl).FindFirstByType("text")
     return !(el.Name == "#SuperMemo Reference:")
   }
@@ -1011,7 +1012,7 @@ class VimSM {
       return false
     RegexMatch(path, "^(.):", v), drive := v1
     t := ControlGetText("TDriveComboBox1", "A")
-    if (!t ~= "i)^" . v) {
+    if !(t ~= "i)^" . v) {
       ControlSend, TDriveComboBox1, % drive
       ControlTextWaitChange("TDriveComboBox1", t, "A")
     }

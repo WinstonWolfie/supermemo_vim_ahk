@@ -1,4 +1,5 @@
-﻿; Making sure grading works (in case VimDisableUnused > 1)
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Making sure grading works (in case VimDisableUnused > 1)
 #if (Vim.IsVimGroup() && Vim.SM.IsGrading())
 ; cannot use ~ here to send the key itself
 0::

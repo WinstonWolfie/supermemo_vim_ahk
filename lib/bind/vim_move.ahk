@@ -1,4 +1,5 @@
-﻿; Inner mode
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Inner mode
 #if (Vim.IsVimGroup()
   && !Vim.State.StrIsInCurrentVimMode("Inner,Outer")
   && (Vim.State.StrIsInCurrentVimMode("Vim_ydc,SMVim_,Vim_g")

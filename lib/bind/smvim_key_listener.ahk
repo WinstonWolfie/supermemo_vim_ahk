@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("KeyListener"))
 s::
 a::
@@ -39,8 +40,8 @@ capslock::
     if (HinterMode == "YankLink") {
       ToolTip("Copied " . Clipboard := v.Link)
     } else if (IfIn(HinterMode, "Visual,Normal")) {
-      IE2 := ControlGet(,, "Internet Explorer_Server2")
-      IE1 := ControlGet(,, "Internet Explorer_Server1")
+      IE2 := ControlGet(,, "Internet Explorer_Server2", "A")
+      IE1 := ControlGet(,, "Internet Explorer_Server1", "A")
       if (IE2 && IE1) {
         send ^t{esc}
         Vim.SM.WaitTextExit()

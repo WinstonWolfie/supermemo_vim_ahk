@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ; Disable
 ^+j::
 ^m::

@@ -1,4 +1,5 @@
-﻿class VimIni {
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+class VimIni {
   static IniDir_Default := A_AppData "\AutoHotkey"
   static Ini_Default := "vim_ahk.ini"
   static Section_Default := "Vim Ahk Settings"

@@ -1,4 +1,5 @@
-﻿#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if Vim.IsVimGroup() and (Vim.State.IsCurrentVimMode("Vim_Normal"))
 r::Vim.State.SetMode("r_once")
 +r::Vim.State.SetMode("r_repeat")
 

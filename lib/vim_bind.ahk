@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 #Include %A_LineFile%\..\bind\smvim_key_listener.ahk
 #Include %A_LineFile%\..\bind\vim_shortcut.ahk
 #Include %A_LineFile%\..\bind\smvim_grading.ahk

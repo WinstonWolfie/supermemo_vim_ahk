@@ -1,4 +1,5 @@
-﻿; Ref for IME: http://www6.atwiki.jp/eamat/pages/17.html
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Ref for IME: http://www6.atwiki.jp/eamat/pages/17.html
 
 ; Get IME Status. 0: Off, 1: On
 VIM_IME_GET(WinTitle="A") {

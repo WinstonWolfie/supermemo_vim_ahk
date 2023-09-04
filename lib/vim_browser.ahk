@@ -1,4 +1,5 @@
-﻿class VimBrowser {
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+class VimBrowser {
   __New(Vim) {
     this.Vim := Vim
   }
@@ -450,15 +451,20 @@
     }
   }
 
-  Highlight(CollName:="") {
+  Highlight(CollName:="", PlainText:="") {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
+    if (RegexMatch(PlainText, "(\[\d+\])+$", v)) {
+      this.url := this.url ? this.url : this.GetParsedUrl()
+      if (IfContains(this.url, "wikipedia.org"))
+        send % "+{left " . StrLen(v) . "}"
+    }
     ; ControlSend doesn't work reliably because browser can't highlight in background
     if (CollName = "zen") {
       send ^+h
     } else {
       send !+h
     }
-    sleep 500
+    sleep 500  ; time for visual feedback
   }
 
   ClickBtn() {

@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 .::  ; selected text becomes [...]
   Copy(false)
   if (Vim.SM.IsEditingHTML()) {

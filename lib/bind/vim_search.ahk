@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))
 /::
   send ^f
   Vim.State.SetMode("Insert")
@@ -16,7 +17,7 @@ Return
     CapsState := CtrlState := AltState := ShiftState := ""
     Gosub SMSearch
   } else {
-    hWnd := WinGet(, "A")
+    hWnd := WinActive("A")
     send ^f
     WinWaitNotActive, % "ahk_id " . hWnd,, 0.25
     send ^v!f

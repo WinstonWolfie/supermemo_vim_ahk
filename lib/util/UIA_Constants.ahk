@@ -1,4 +1,5 @@
-﻿; UIA Constants, credit to LarsJ from https://www.autoitscript.com/forum/topic/201683-ui-automation-udfs/
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; UIA Constants, credit to LarsJ from https://www.autoitscript.com/forum/topic/201683-ui-automation-udfs/
 ; Variant types for Property Ids: https://docs.microsoft.com/en-us/windows/win32/winauto/uiauto-automation-element-propids
 
 global sCLSID_UIAutomationClient := "{944DE083-8FB8-45CF-BCB7-C477ACB2F897}"

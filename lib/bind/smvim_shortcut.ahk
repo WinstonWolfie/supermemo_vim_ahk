@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
   if !(Vim.SM.HasTwoComp() && (ControlGetFocus() == "Internet Explorer_Server2")) {
     Vim.SM.ExitText()
@@ -318,7 +319,7 @@ return
 
 ^+k::  ; numbered list
   UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinGet(, "A"))
+  el := UIA.ElementFromHandle(WinActive("A"))
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
   el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath("19").ControlClick()
   el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
@@ -333,7 +334,7 @@ return
     send {f2}
     WaitCaretMove(x, y)
   }
-	WinTitle := "ahk_id " . WinGet(, "A")
+	WinTitle := "ahk_id " . WinActive("A")
 	ControlClick, % "x" . 39 * A_ScreenDPI / 96 . " y" . A_CaretY, % WinTitle,,,, NA
   if (refresh)
     send {tab}+{tab}
@@ -400,6 +401,7 @@ PlanAddButtonAppend:
   CurrTime := aTime[1] . ":" . aTime[2]
   Gui Submit
   Gui Destroy
+  KeyWait Alt
   Vim.Caret.SwitchToSameWindow("ahk_class TPlanDlg")
   BlockInput, on
   if (IfContains(A_ThisLabel, "Insert")) {
@@ -425,7 +427,7 @@ PlanAddButtonAppend:
       send {text}y
   }
   send ^s
-  if (IfIn(activity, "Break,Sports,Out,Shower,Meal"))
+  if (IfIn(activity, "Break,Sports,Out,Shower"))
     try run b  ; my personal backup script
   BlockInput, off
   Vim.State.SetNormal()
@@ -575,7 +577,7 @@ BrowserSyncTime:
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
     Vim.Browser.GetTitleSourceDate(!sync, false,, false)  ; get title for checking later
-    WinGet, paSMTitles, List, ahk_class TElWind  ; can't get pseudo-array by WinGet(, "A")
+    WinGet, paSMTitles, List, ahk_class TElWind  ; can't get pseudo-array by WinActive("A")
     loop % paSMTitles {
       SMTitle := WinGetTitle("ahk_id " . hWnd := paSMTitles%A_Index%)
       if (SMTitle ~= "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
@@ -602,6 +604,7 @@ BrowserSyncTime:
     }
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
     if (CloseWnd) {  ; hotkeys with ctrl will close the tab
+      ControlReleaseModifierKeys("ahk_parent", "ahk_id " . guiaBrowser.BrowserId)
       if (ObjCount(oTabs := guiaBrowser.GetAllTabs()) == 1) {
         ; guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1])
         ControlSend, ahk_parent, {CtrlDown}t{tab}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId

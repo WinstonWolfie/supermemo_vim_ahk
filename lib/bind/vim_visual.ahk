@@ -1,4 +1,5 @@
-﻿; Visual Char/Block/Line
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Visual Char/Block/Line
 #if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))
 v::
   if (Vim.State.IsCurrentVimMode("Vim_Normal")) {
@@ -109,7 +110,7 @@ Return
     CapsState := CtrlState := AltState := ShiftState := ""
     Gosub SMSearchAgain
   } else {
-    hWnd := WinGet(, "A")
+    hWnd := WinActive("A")
     send ^f
     WinWaitNotActive, % "ahk_id " . hWnd,, 0.25
     send ^v!f

@@ -1,4 +1,5 @@
-﻿class VimMove {
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+class VimMove {
   __New(vim) {
     this.Vim := vim
     this.shift := 0
@@ -1020,7 +1021,7 @@
           send % "{right}{left " . pos . "}"
         }
       } else if (key == "/") {
-        hWnd := WinGet(, "A")
+        hWnd := WinActive("A")
         InputBoxPrompt := " text until:`n(case sensitive)"
         InputBoxHeight := 144
         if (this.Vim.State.StrIsInCurrentVimMode("Visual")) {
@@ -1073,7 +1074,7 @@
           send % "+{right " . pos . "}"
         }
       } else if (key == "?") {
-        hWnd := WinGet(, "A")
+        hWnd := WinActive("A")
         InputBoxPrompt := " text until:`n(case sensitive)"
         InputBoxHeight := 144
         if (this.Vim.State.StrIsInCurrentVimMode("Visual")) {
@@ -1136,7 +1137,7 @@
     ; Up/Down 1 character
     if (key == "j") {
       if (this.Vim.SM.IsBrowsing()) {
-        if (ControlGet(,, "Internet Explorer_Server2")) {
+        if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
         } else {
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server1, A  ; scroll down
@@ -1156,7 +1157,7 @@
       }
     } else if (key == "k") {
       if (this.Vim.SM.IsBrowsing()) {
-        if (ControlGet(,, "Internet Explorer_Server2")) {
+        if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
         } else {
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server1, A  ; scroll up
@@ -1177,7 +1178,7 @@
     ; Page Up/Down
     } else if (key == "^u") {
       if (this.Vim.SM.IsBrowsing()) {
-        if (ControlGet(,, "Internet Explorer_Server2")) {
+        if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
         } else {
@@ -1189,7 +1190,7 @@
       }
     } else if (key == "^d") {
       if (this.Vim.SM.IsBrowsing()) {
-        if (ControlGet(,, "Internet Explorer_Server2")) {
+        if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
         } else {
@@ -1214,7 +1215,7 @@
         send % "^{home}{down " . this.Vim.State.n - 1 . "}"
         this.Vim.State.n := 0, this.HandleClickBtn()
       } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
-        if (ControlGet(,, "Internet Explorer_Server2")) {
+        if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x115, 6, 0, Internet Explorer_Server2, A  ; scroll to top
         } else {
           SendMessage, 0x115, 6, 0, Internet Explorer_Server1, A  ; scroll to top
@@ -1237,7 +1238,7 @@
           send % "{down " . this.Vim.State.n - 1 . "}"
           this.Vim.State.n := 0, this.HandleClickBtn()
         } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
-          if (ControlGet(,, "Internet Explorer_Server2")) {
+          if (ControlGet(,, "Internet Explorer_Server2", "A")) {
             SendMessage, 0x115, 7, 0, Internet Explorer_Server2, A  ; scroll to bottom
           } else {
             SendMessage, 0x115, 7, 0, Internet Explorer_Server1, A  ; scroll to bottom
@@ -1325,8 +1326,8 @@
       this.Vim.State.n := 1
     if (IfIn(key, "j,k") && (this.Vim.State.n > 1))
       this.HandleClickBtn(), navigate := true
-		loop % this.Vim.State.n
-			this.Move(key, true)
+    loop % this.Vim.State.n
+      this.Move(key, true)
     if (navigate)
       this.HandleClickBtn()
     if (finalize)

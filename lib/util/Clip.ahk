@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ; Clip() - Send and Retrieve Text Using the Clipboard
 ; Originally by berban - updated February 18, 2019 - modified by Winston
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156

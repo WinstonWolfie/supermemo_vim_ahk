@@ -1,4 +1,5 @@
-﻿; Hotkeys in this file are inspired by Vimium: https://github.com/philc/vimium
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Hotkeys in this file are inspired by Vimium: https://github.com/philc/vimium
 
 ; g state on top to have higher priority
 ; putting those below would make gu stops working (u also triggers scroll up)
@@ -29,12 +30,7 @@ s::  ; gs: go to link
     } else {
       try run % link
       catch {
-        RegExMatch(DefaultBrowser := DefaultBrowser(), ".*\\\K.*$", v)
-        if (WinExist("ahk_exe " . v)) {
-          WinActivate
-        } else {
-          run % DefaultBrowser
-        }
+        RunDefaultBrowser()
         WinWaitActive, ahk_group Browser
         uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
         if (Vim.Browser.GetFullTitle() != "new tab")

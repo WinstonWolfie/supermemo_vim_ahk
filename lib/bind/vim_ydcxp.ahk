@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0,,, -1)
 d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,, -1)
 c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0,,, -1)

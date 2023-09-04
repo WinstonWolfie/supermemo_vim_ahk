@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TElWind"))
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TElWind"))
 b::  ; remove all text *b*efore cursor
   send !\\
   WinWaitNotActive, ahk_class TElWind,, 0

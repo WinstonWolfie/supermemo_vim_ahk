@@ -1,4 +1,5 @@
-﻿#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("ydc,Command") || Vim.State.IsCurrentVimMode("Z,KeyListener,SMPlanDragging")))
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+#if (Vim.IsVimGroup() && (Vim.State.StrIsInCurrentVimMode("ydc,Command") || Vim.State.IsCurrentVimMode("Z,KeyListener,SMPlanDragging")))
 *a::
 *b::
 *c::

@@ -1,4 +1,5 @@
-﻿; http://www.autohotkey.com/board/topic/77303-acc-library-ahk-l-updated-09272012/
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; http://www.autohotkey.com/board/topic/77303-acc-library-ahk-l-updated-09272012/
 ; https://dl.dropbox.com/u/47573473/Web%20Server/AHK_L/Acc.ahk
 ;------------------------------------------------------------------------------
 ; Acc.ahk Standard Library

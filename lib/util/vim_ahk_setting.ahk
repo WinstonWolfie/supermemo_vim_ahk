@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #UseHook On  ; Make it a bit slow, but can avoid infinitude loop
             ; Same as "$" for each hotkey

@@ -1,4 +1,5 @@
-﻿/*
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+/*
   Title: Command Functions
     A wrapper set of functions for commands which have an output variable.
 
@@ -446,6 +447,17 @@ WinWaitTitle(title, TimeOut:=0, WinTitle:="") {
   }
 }
 
+WinWaitTitleRegEx(title, TimeOut:=0, WinTitle:="") {
+  StartTime := A_TickCount
+  loop {
+    if (WinGetTitle(WinTitle) ~= title) {
+      return true
+    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      return false
+    }
+  }
+}
+
 Click(XCoord, YCoord, WhichButton:="") {
   MouseDelay := A_MouseDelay
   MouseGetPos, XSaved, YSaved
@@ -465,23 +477,23 @@ ClickDPIAdjusted(XCoord, YCoord) {
 }
 
 ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinActive("A")
   ControlClick, % "x" . XCoord . " y" . YCoord, % WinTitle,,,, NA
 }
 
 ControlClickWinCoordDPIAdjusted(XCoord, YCoord, WinTitle:="") {
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinActive("A")
   ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
 }
 
 ControlClickDPIAdjusted(XCoord, YCoord, Control:="", WinTitle:="") {
   Control := Control ? Control : ControlGetFocus("A")
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinActive("A")
   ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
 }
 
 ControlClickScreen(x, y, WinTitle:="") {
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinActive("A")
   WinGetPos, wX, wY,,, % WinTitle
   ControlClick, % "x" . x - wX . " y" . y - wY, % WinTitle,,,, NA
 }
@@ -978,7 +990,6 @@ ReleaseModifierKeys() {
 }
 
 ControlReleaseModifierKeys(Control:="", WinTitle:="") {
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
   ControlSend, % Control, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % WinTitle
 }
 
@@ -1077,23 +1088,23 @@ SetModeNormalReturn:
 return
 
 DefaultBrowser() {  ; https://www.autohotkey.com/board/topic/84785-default-browser-path-and-executable/
-	; Find the Registry key name for the default browser
-	RegRead, BrowserKeyName, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.html\UserChoice, Progid
+  ; Find the Registry key name for the default browser
+  RegRead, BrowserKeyName, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.html\UserChoice, Progid
 
-	; Find the executable command associated with the above Registry key
-	RegRead, BrowserFullCommand, HKEY_CLASSES_ROOT, %BrowserKeyName%\shell\open\command
+  ; Find the executable command associated with the above Registry key
+  RegRead, BrowserFullCommand, HKEY_CLASSES_ROOT, %BrowserKeyName%\shell\open\command
 
-	; The above RegRead will return the path and executable name of the brower contained within quotes and optional parameters
-	; We only want the text contained inside the first set of quotes which is the path and executable
-	; Find the ending quote position (we know the beginning quote is in position 0 so start searching at position 1)
-	StringGetPos, pos, BrowserFullCommand, ",,1
+  ; The above RegRead will return the path and executable name of the brower contained within quotes and optional parameters
+  ; We only want the text contained inside the first set of quotes which is the path and executable
+  ; Find the ending quote position (we know the beginning quote is in position 0 so start searching at position 1)
+  StringGetPos, pos, BrowserFullCommand, ",,1
 
-	; Decrement the found position by one to work correctly with the StringMid function
-	pos := --pos
+  ; Decrement the found position by one to work correctly with the StringMid function
+  pos := --pos
 
-	; Extract and return the path and executable of the browser
-	StringMid, BrowserPathandEXE, BrowserFullCommand, 2, %pos%
-	Return BrowserPathandEXE
+  ; Extract and return the path and executable of the browser
+  StringMid, BrowserPathandEXE, BrowserFullCommand, 2, %pos%
+  Return BrowserPathandEXE
 }
 
 IsWhitespaceOnly(str) {
@@ -1165,4 +1176,15 @@ ShellRun(prms*)
 
 GetCurrTimeForFileName() {
   return RegExReplace(FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec), "[^a-zA-Z0-9\\.\\-]", "_")
+}
+
+RunDefaultBrowser() {
+  RegExMatch(DefaultBrowser := DefaultBrowser(), ".*\\\K.*$", v)
+  if (WinExist("ahk_exe " . v)) {
+    WinActivate
+    return 1
+  } else {
+    run % DefaultBrowser
+    return 2
+  }
 }

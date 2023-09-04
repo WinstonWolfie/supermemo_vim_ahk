@@ -1,3 +1,4 @@
+#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ; https://autohotkey.com/board/topic/76062-ahk-l-how-to-get-callstack-solution/
 FileReadLine( file, line ) {
   FileReadLine, data,% file,% line
@@ -19,4 +20,3 @@ CallStack( deepness = 5, printLines = 1 ) {
   }
   return stack
 }
-

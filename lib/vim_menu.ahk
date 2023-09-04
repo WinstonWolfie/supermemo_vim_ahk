@@ -1,4 +1,5 @@
-﻿class VimMenu {
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+class VimMenu {
   __New(Vim) {
     this.Vim := Vim
   }

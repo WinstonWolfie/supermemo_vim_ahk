@@ -1,4 +1,5 @@
-﻿; Editing text only
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Editing text only
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
 q::Vim.State.SetMode("SMVim_Extract", 0, -1, 0,,, -1)
 z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0,,, -1)

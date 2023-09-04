@@ -1,4 +1,5 @@
-﻿class WinClip_base
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+class WinClip_base
 {
   __Call( aTarget, aParams* ) {
     if ObjHasKey( WinClip_base, aTarget )
@@ -13,14 +14,14 @@
   ErrorFormat( error_id ) {
     VarSetCapacity(msg,1000,0)
     if !len := DllCall("FormatMessageW"
-          ,"UInt",FORMAT_MESSAGE_FROM_SYSTEM := 0x00001000 | FORMAT_MESSAGE_IGNORE_INSERTS := 0x00000200		;dwflags
-          ,"Ptr",0		;lpSource
-          ,"UInt",error_id	;dwMessageId
-          ,"UInt",0			;dwLanguageId
-          ,"Ptr",&msg			;lpBuffer
-          ,"UInt",500)			;nSize
+          ,"UInt",FORMAT_MESSAGE_FROM_SYSTEM := 0x00001000 | FORMAT_MESSAGE_IGNORE_INSERTS := 0x00000200    ;dwflags
+          ,"Ptr",0    ;lpSource
+          ,"UInt",error_id  ;dwMessageId
+          ,"UInt",0      ;dwLanguageId
+          ,"Ptr",&msg      ;lpBuffer
+          ,"UInt",500)      ;nSize
       return
-    return 	strget(&msg,len)
+    return   strget(&msg,len)
   }
 }
 
@@ -94,14 +95,14 @@ class WinClipAPI extends WinClip_base
   ErrorFormat(error_id) {
     VarSetCapacity(msg,1000,0)
     if !len := DllCall("FormatMessageW"
-          ,"UInt",FORMAT_MESSAGE_FROM_SYSTEM := 0x00001000 | FORMAT_MESSAGE_IGNORE_INSERTS := 0x00000200		;dwflags
-          ,"Ptr",0		;lpSource
-          ,"UInt",error_id	;dwMessageId
-          ,"UInt",0			;dwLanguageId
-          ,"Ptr",&msg			;lpBuffer
-          ,"UInt",500)			;nSize
+          ,"UInt",FORMAT_MESSAGE_FROM_SYSTEM := 0x00001000 | FORMAT_MESSAGE_IGNORE_INSERTS := 0x00000200    ;dwflags
+          ,"Ptr",0    ;lpSource
+          ,"UInt",error_id  ;dwMessageId
+          ,"UInt",0      ;dwLanguageId
+          ,"Ptr",&msg      ;lpBuffer
+          ,"UInt",500)      ;nSize
       return
-    return 	strget(&msg,len)
+    return   strget(&msg,len)
   }
   IsInteger( var ) {
     if var is integer
@@ -130,7 +131,7 @@ class WinClipAPI extends WinClip_base
   }
   WinGetFocus( hwnd ) {
     GUITHREADINFO_cbsize := 24 + A_PtrSize*6
-    VarSetCapacity( GuiThreadInfo, GUITHREADINFO_cbsize, 0 )	;GuiThreadInfoSize = 48
+    VarSetCapacity( GuiThreadInfo, GUITHREADINFO_cbsize, 0 )  ;GuiThreadInfoSize = 48
     NumPut(GUITHREADINFO_cbsize, GuiThreadInfo, 0, "UInt")
     threadWnd := this.GetWindowThreadProcessId( hwnd )
     if not DllCall( "GetGUIThreadInfo", "uint", threadWnd, "UPtr", &GuiThreadInfo )
@@ -186,7 +187,7 @@ class WinClipAPI extends WinClip_base
   StrSplit(str,delim,omit = "") {
     if (strlen(delim) > 1)
     {
-      StringReplace,str,str,% delim,ƒ,1 		;■¶╬
+      StringReplace,str,str,% delim,ƒ,1     ;■¶╬
       delim = ƒ
     }
     ra := Array()

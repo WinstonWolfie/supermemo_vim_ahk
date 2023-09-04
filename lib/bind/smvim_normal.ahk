@@ -1,4 +1,5 @@
-﻿; Editing text only
+﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; Editing text only
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
 +h::  ; move to top of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
@@ -132,7 +133,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
 <::
   UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinGet(, "A")), ReleaseModifierKeys()
+  el := UIA.ElementFromHandle(WinActive("A")), ReleaseModifierKeys()
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
   el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath((A_ThisHotkey == ">") ? "21" : "20").ControlClick()
   el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
@@ -147,7 +148,7 @@ return
   && ((Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key
    || Vim.SM.IsLearning()
    || Vim.SM.IsGrading()
-   || (WinGet(, "A") == ImportGuiHwnd)
+   || (WinActive("A") == ImportGuiHwnd)
    || (WinActive("Priority ahk_class #32770 ahk_exe AutoHotkey.exe"))
    || WinActive("ahk_class TPriorityDlg")))
 ; Priority script, originally made by Naess and modified by Guillem
