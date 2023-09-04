@@ -16,7 +16,7 @@ g::
   } else if (A_ThisHotkey == "g") {
     send 5
   }
-  ControlTextWait("TBitBtn3", "Next repetition")
-  ControlSend, TBitBtn3, {enter}
+  ControlTextWait("TBitBtn3", "Next repetition", "A")
+  ControlSend, TBitBtn3, {enter}, A
   Vim.SM.EnterInsertIfSpelling()
 return

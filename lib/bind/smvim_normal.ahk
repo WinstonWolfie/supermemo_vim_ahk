@@ -85,35 +85,38 @@ t::  ; gt: open in Notepad
   if (Notepad := IfIn(A_ThisHotkey, "^+f6,t")) {
     send ^{f7}  ; save read point
     Vim.SM.OpenNotepad()
+    w := "ahk_class Notepad ahk_exe Notepad.exe"
   } else {
     ClipSaved := ClipboardAll
     path := Vim.SM.GetFilePath(false)
     SplitPath, path,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
       run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
+      w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       send ^{f7}  ; save read point
       Vim.SM.SaveHTML()  ; path may be updated
       WinWaitActive, ahk_class TElWind
       path := Vim.SM.GetFilePath(false)
-      Vim.SM.ExitText(true)
-      run % StrReplace(A_AppData, "Roaming") . "Local\Programs\Microsoft VS Code\Code.exe " . path
+      Vim.SM.ExitText(true), ShellRun("vim", path)
+      w := "ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe"
     }
   }
   if (ClipSaved)
     Clipboard := ClipSaved
-  WinWaitNotActive % "ahk_id " . hWnd
-  WinWaitActive % "ahk_id " . hWnd
+  WinWait, % w
+  WinWaitClose
+  Vim.SM.ActivateElWind()
   if (Notepad) {
     send !{f7}  ; go to read point
   } else {
-    Vim.SM.GoHome(true)
+    Vim.SM.GoHome()
   }
   if (ContLearn == 1) {
     Vim.SM.Learn()
   } else if (!Notepad) {
     Vim.SM.WaitFileLoad()
-    Vim.SM.GoBack(true)
+    Vim.SM.GoBack()
   }
 return
 
@@ -129,7 +132,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
 <::
   UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinGet()), ReleaseModifierKeys()
+  el := UIA.ElementFromHandle(WinGet(, "A")), ReleaseModifierKeys()
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
   el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath((A_ThisHotkey == ">") ? "21" : "20").ControlClick()
   el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
@@ -144,7 +147,7 @@ return
   && ((Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key
    || Vim.SM.IsLearning()
    || Vim.SM.IsGrading()
-   || (WinGet() == ImportGuiHwnd)
+   || (WinGet(, "A") == ImportGuiHwnd)
    || (WinActive("Priority ahk_class #32770 ahk_exe AutoHotkey.exe"))
    || WinActive("ahk_class TPriorityDlg")))
 ; Priority script, originally made by Naess and modified by Guillem

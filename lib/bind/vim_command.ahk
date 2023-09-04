@@ -40,7 +40,7 @@ Return
     WinActivate
     return
   }
-  hWnd := WinGet()
+  hWnd := WinGet(, "A")
   Gui, VimCommander:Add, Text,, &Command:
 
   list := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
@@ -51,6 +51,7 @@ Return
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
+        . "|CalculateTodaysPassRate"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -147,7 +148,7 @@ MoveMouseToCaret:
 return
 
 WaybackMachine:
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   if (url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL()))
     run % "https://web.archive.org/web/*/" . url
 return
@@ -275,7 +276,7 @@ WiktionaryButtonSearch:
 return
 
 CopyTitle:
-  ToolTip("Copied " . Clipboard := WinGetTitle())
+  ToolTip("Copied " . Clipboard := WinGetTitle("A"))
 return
 
 CopyHTML:
@@ -295,9 +296,9 @@ SetConceptHook:
     send !c
     WinWaitActive, ahk_class TContents
   }
-  if (ControlGetFocus() == "TVTEdit1")
+  if (ControlGetFocus("A") == "TVTEdit1")
     send {enter}
-  ControlFocusWait("TVirtualStringTree1")
+  ControlFocusWait("TVirtualStringTree1", "A")
   send {AppsKey}ce
   WinWaitActive, ahk_class TMsgDialog  ; either asking for confirmation or "no change"
   if (!ErrorLevel)
@@ -356,7 +357,7 @@ AlatiusLatinMacronizer:
     return
   run https://alatius.com/macronizer/
   WinWaitActive, ahk_group Browser
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   uiaBrowser.WaitPageLoad()
   uiaBrowser.WaitElementExist("ControlType=Edit AND FrameworkId=Chrome").SetValue(Latin)
   uiaBrowser.WaitElementExist("ControlType=Button AND Name='Submit'").Click()
@@ -377,7 +378,7 @@ ReformatScriptComponent:
   send ^a^x
   ClipWait
   aOriginalText := StrSplit(Clipboard, "`n`r")
-  Vim.Browser.url := trim(aOriginalText[1], " `r`n"), Vim.Browser.title := WinGetTitle()
+  Vim.Browser.url := trim(aOriginalText[1], " `r`n"), Vim.Browser.title := WinGetTitle("A")
   Vim.Browser.VidTime := trim(aOriginalText[2], " `r`n")
   if (IfContains(Vim.Browser.url, "youtube.com")) {
     YTTime := Vim.Browser.VidTime ? "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s" : ""
@@ -385,7 +386,7 @@ ReformatScriptComponent:
     if (YTTime) {
       send ^t{f9}  ; opens script editor
       WinWaitActive, ahk_class TScriptEditor
-      ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime, A
+      ControlSetText, TMemo1, % ControlGetText("TMemo1", "A") . YTTime, A
       send !o{esc}  ; close script editor
     }
   } else {
@@ -417,7 +418,7 @@ MassReplaceRegistry:
     Vim.SM.WaitFileLoad()
     Vim.SM.EditRef()
     WinWaitActive, ahk_class TInputDlg
-    if (IfContains(ref := ControlGetText("TMemo1"), find)) {
+    if (IfContains(ref := ControlGetText("TMemo1", "A"), find)) {
       ControlSetText, TMemo1, % StrReplace(ref, find, replacement), A
     } else {
       return
@@ -442,7 +443,7 @@ SciHub:
   } else {
     run https://sci-hub.hkvisa.net/
     WinWaitActive, ahk_group Browser
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     uiaBrowser.WaitPageLoad()
     el := uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
     el.GetCurrentPatternAs("Value").SetValue(text)
@@ -491,7 +492,7 @@ ZLibrary:
   ; run https://web.telegram.org/z/#1788460589
 
   ; WinWaitActive, ahk_group Browser
-  ; uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  ; uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   ; uiaBrowser.WaitPageLoad()
 
   ; RIP z-lib
@@ -580,7 +581,7 @@ SearchLinkInYT:
   if (link) {
     run % "https://www.youtube.com/results?search_query=" . EncodeDecodeURI(SMTitle)
     WinWaitActive, ahk_group Browser
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     uiaBrowser.WaitPageLoad()
     uiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
     auiaLinks := uiaBrowser.FindAllByType("Hyperlink")
@@ -714,11 +715,7 @@ return
 
 RestartOneDrive:
   process, close, OneDrive.exe
-  ; Cannot just run, OneDrive cannot run with admin rights
-  send #r
-  WinWaitActive, ahk_class #32770  ; run window
-  ControlSetText, Edit1, C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk
-  ControlClick, Button2,,,,, NA
+  ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk")
   WinWait, OneDrive ahk_class CabinetWClass ahk_exe explorer.exe
   WinClose
   WinActivate, % "ahk_id " . hWnd
@@ -727,7 +724,29 @@ return
 RestartICloudDrive:
   process, close, iCloudDrive.exe
   process, close, iCloudServices.exe
-  run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk,, hide
+  run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk
   WinWait, iCloud ahk_class PreferencesWnd ahk_exe iCloud.exe
   WinClose
+return
+
+CalculateTodaysPassRate:
+  ToolTip("Executing...", true)
+  BlockInput, on
+  Vim.SM.PostMsg(31)  ; export rep history
+  WinWaitActive, ahk_class TFileBrowser
+  TempPath := A_Temp . "\Repetition History_" . Vim.SM.GetCollName() . "_"
+            . GetCurrTimeForFileName() ".txt"
+  Vim.SM.FileBrowserSetPath(TempPath, true)
+  WinWaitActive, Information ahk_class TMsgDialog
+  send {enter}
+  RepHistory := FileRead(TempPath)
+  date := "Date=" . FormatTime(, "dd.MM.yyyy")
+  dateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
+  StrReplace(RepHistory, date,, TodayRepCount)
+  RegExReplace(RepHistory, dateRegEx . ".*?Grade=[3-5]",, TodayPassCount)
+  BlockInput, off
+  RemoveToolTip()
+  msgbox % "Today's rep count: " . TodayRepCount
+         . "`nToday's pass (grade > 3) count: " . TodayPassCount
+         . "`nToday's pass rate: " . ForMat("{:g}", TodayPassCount / TodayRepCount * 100) . "%"
 return

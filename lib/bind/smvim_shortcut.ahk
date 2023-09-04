@@ -318,7 +318,7 @@ return
 
 ^+k::  ; numbered list
   UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinGet())
+  el := UIA.ElementFromHandle(WinGet(, "A"))
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
   el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath("19").ControlClick()
   el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
@@ -333,7 +333,7 @@ return
     send {f2}
     WaitCaretMove(x, y)
   }
-	WinTitle := "ahk_id " . WinGet()
+	WinTitle := "ahk_id " . WinGet(, "A")
 	ControlClick, % "x" . 39 * A_ScreenDPI / 96 . " y" . A_CaretY, % WinTitle,,,, NA
   if (refresh)
     send {tab}+{tab}
@@ -479,7 +479,7 @@ NumpadPgup::Vim.SM.SetRandTaskVal(0,360.76)
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TPriorityDlg"))  ; priority window (alt+p)
 enter::
-  Prio := ControlGetText("TEdit5")
+  Prio := ControlGetText("TEdit5", "A")
   if (Prio ~= "^\.")
     ControlSetText, TEdit5, % "0" . Prio
   send {enter}
@@ -507,7 +507,7 @@ d::
   ; Get current entry coords
   x := A_CaretX, y := A_CaretY
   send {f2}  ; sometimes A_Caret isn't accurate
-  ControlFocusWait("TInplaceEdit1")
+  ControlFocusWait("TInplaceEdit1", "A")
   sleep 50
   coords := StrSplit(WaitCaretMove(x, y), " ")
 
@@ -517,7 +517,7 @@ d::
 
   ; Show caret in next entry
   send {f2}
-  ControlFocusWait("TInplaceEdit1")
+  ControlFocusWait("TInplaceEdit1", "A")
   sleep 50
   coords := StrSplit(WaitCaretMove(coords[1], coords[2]), " ")
 
@@ -575,7 +575,7 @@ BrowserSyncTime:
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
     Vim.Browser.GetTitleSourceDate(!sync, false,, false)  ; get title for checking later
-    WinGet, paSMTitles, List, ahk_class TElWind  ; can't get pseudo-array by WinGet()
+    WinGet, paSMTitles, List, ahk_class TElWind  ; can't get pseudo-array by WinGet(, "A")
     loop % paSMTitles {
       SMTitle := WinGetTitle("ahk_id " . hWnd := paSMTitles%A_Index%)
       if (SMTitle ~= "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
@@ -634,7 +634,7 @@ BrowserSyncTime:
     }
 
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-    if (IfContains(script := ControlGetText("TMemo1"), "bilibili.com")) {
+    if (IfContains(script := ControlGetText("TMemo1", "A"), "bilibili.com")) {
       if (script ~= "\?p=\d+") {
         match := "&t=.*", replacement := "&t=" . sec
       } else {
@@ -669,12 +669,12 @@ SMSyncTimeReturn:
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
-                      && (title := WinGetTitle())
+                      && (title := WinGetTitle("A"))
                       && (RegExMatch(title, "i)(?<=^p)(\d+|[MDCLXVI]+)(?= \|)", page)  ; eg, p12 | title
                        || RegExMatch(title, ".+?(?= \|)", clip)))  ; eg, last reading point | title
 !s::ToolTip("Copied " . Clipboard := trim(page ? page : clip))
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Concept Registry \(\d+ members\)"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Concept Registry \(\d+ members\)"))
 !p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
 
 SMRegAltG:
@@ -689,7 +689,7 @@ SMRegAltG:
   goto SMLearnChild
 return
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Reference Registry \(\d+ members\)"))
 !i::Acc_Get("Object", "4.5.4.8.4",, "A").accDoDefaultAction()
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))

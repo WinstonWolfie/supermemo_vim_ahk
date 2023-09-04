@@ -9,7 +9,7 @@
   }
 
   GetInfo(RestoreClip:=true, CopyFullPage:=true, PressButton:=true) {
-    global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     this.url := this.GetParsedUrl()
     if (PressButton)
       this.ClickBtn()
@@ -368,7 +368,7 @@
   }
 
   GetParsedUrl() {
-    global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+    global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     return this.ParseUrl(guiaBrowser.GetCurrentURL())
   }
 
@@ -406,11 +406,11 @@
         VidTime := (v1 == v2) ? "0:00" : v1
       }
     } else if (IfIn(this.IsVidSite(title), "2,3")) {
-      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       VidTime := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
     } else {
       ; For now, all websites can use this function in case there are videos in them
-      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       VidTime := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
     }
     return RegExReplace(VidTime, "^0(?=\d)")
@@ -436,7 +436,7 @@
   }
 
   GetFullTitle() {
-    return RegExReplace(WinGetTitle(), "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
+    return RegExReplace(WinGetTitle("A"), "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
   }
 
   IsVidSite(title:="") {
@@ -465,7 +465,7 @@
     critical
     this.url := this.url ? this.url : this.GetParsedUrl()
     if (IfContains(this.url, "youtube.com/watch")) {
-      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
       if (btn) {

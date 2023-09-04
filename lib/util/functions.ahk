@@ -69,17 +69,17 @@ IfMsgBox(ByRef ButtonName) {
     return true
 }
 
-ControlGet(Cmd:="Hwnd", Value:="", Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-  Control := Control ? Control : ControlGetFocus()
+ControlGet(Cmd:="Hwnd", Value:="", Control:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+  Control := Control ? Control : ControlGetFocus("A")
   ControlGet, v, % Cmd, % Value, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
-ControlGetFocus(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+ControlGetFocus(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   ControlGetFocus, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
-ControlGetText(Control:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-  Control := Control ? Control : ControlGetFocus()
+ControlGetText(Control:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+  Control := Control ? Control : ControlGetFocus("A")
   ControlGetText, v, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
@@ -183,7 +183,7 @@ SoundGetWaveVolume(DeviceNumber:="") {
   SoundGetWaveVolume, v, % DeviceNumber
   Return, v
 }
-StatusBarGetText(Part:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+StatusBarGetText(Part:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   StatusBarGetText, v, % Part, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
@@ -202,7 +202,7 @@ SysGet(Subcommand, Param3:="") {
   SysGet, v, % Subcommand, % Param3
   Return, v
 }
-WinGet(Cmd:="ID", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+WinGet(Cmd:="ID", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   WinGet, v, % Cmd, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
@@ -210,15 +210,15 @@ WinGetActiveTitle() {
   WinGetActiveTitle, v
   Return, v
 }
-WinGetClass(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+WinGetClass(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   WinGetClass, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
-WinGetText(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+WinGetText(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   WinGetText, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
-WinGetTitle(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+WinGetTitle(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   WinGetTitle, v, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
@@ -230,7 +230,7 @@ UrlDownloadToFile(URL, Filename) {
 ; This function wraps a loop that continuously uses ControlGetFocus to test if a particular 
 ; control is active. For more info see ControlGetFocus in the docs.
 ; An optional timeout can be included.
-ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlFocusWait(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) == Control) {
@@ -241,7 +241,7 @@ ControlFocusWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeT
   }
 }
 
-ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlWait(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
@@ -252,7 +252,7 @@ ControlWait(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:=
   }
 }
 
-ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlWaitNotFocus(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) != Control) {
@@ -263,7 +263,7 @@ ControlWaitNotFocus(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", Exclu
   }
 }
 
-WinTextWaitExist(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+WinTextWaitExist(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (text := WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)) {
@@ -274,7 +274,7 @@ WinTextWaitExist(WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", 
   }
 }
 
-ControlTextWaitExist(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlTextWaitExist(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
@@ -285,7 +285,7 @@ ControlTextWaitExist(Control, WinTitle:="A", WinText:="", ExcludeTitle:="", Excl
   }
 }
 
-ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlTextWait(Control, text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == text) {
@@ -296,7 +296,7 @@ ControlTextWait(Control, text, WinTitle:="A", WinText:="", ExcludeTitle:="", Exc
   }
 }
 
-ControlTextWaitChange(Control, text:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlTextWaitChange(Control, text:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
@@ -307,7 +307,7 @@ ControlTextWaitChange(Control, text:="", WinTitle:="A", WinText:="", ExcludeTitl
   }
 }
 
-ControlWaitHwndChange(Control, hWnd:="", WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlWaitHwndChange(Control, hWnd:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   hWnd := hWnd ? hWnd : ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
   StartTime := A_TickCount
   Loop {
@@ -320,7 +320,7 @@ ControlWaitHwndChange(Control, hWnd:="", WinTitle:="A", WinText:="", ExcludeTitl
   }
 }
 
-WinTextWaitChange(text, WinTitle:="A", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+WinTextWaitChange(text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
     if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
@@ -423,7 +423,7 @@ StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
   return String
 }
 
-WinWaitTitleChange(OriginalTitle:="", WinTitle:="A", TimeOut:=0) {
+WinWaitTitleChange(OriginalTitle:="", WinTitle:="", TimeOut:=0) {
   OriginalTitle := OriginalTitle ? OriginalTitle : WinGetTitle(WinTitle)
   StartTime := A_TickCount
   loop {
@@ -435,7 +435,7 @@ WinWaitTitleChange(OriginalTitle:="", WinTitle:="A", TimeOut:=0) {
   }
 }
 
-WinWaitTitle(title, TimeOut:=0, WinTitle:="A") {
+WinWaitTitle(title, TimeOut:=0, WinTitle:="") {
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) == title) {
@@ -465,23 +465,23 @@ ClickDPIAdjusted(XCoord, YCoord) {
 }
 
 ControlClickWinCoord(XCoord, YCoord, WinTitle:="") {
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
   ControlClick, % "x" . XCoord . " y" . YCoord, % WinTitle,,,, NA
 }
 
 ControlClickWinCoordDPIAdjusted(XCoord, YCoord, WinTitle:="") {
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
   ControlClick, % "x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96, % WinTitle,,,, NA
 }
 
 ControlClickDPIAdjusted(XCoord, YCoord, Control:="", WinTitle:="") {
-  Control := Control ? Control : ControlGetFocus()
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  Control := Control ? Control : ControlGetFocus("A")
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
   ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
 }
 
 ControlClickScreen(x, y, WinTitle:="") {
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
   WinGetPos, wX, wY,,, % WinTitle
   ControlClick, % "x" . x - wX . " y" . y - wY, % WinTitle,,,, NA
 }
@@ -978,7 +978,7 @@ ReleaseModifierKeys() {
 }
 
 ControlReleaseModifierKeys(Control:="", WinTitle:="") {
-  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet()
+  WinTitle := WinTitle ? WinTitle : "ahk_id " . WinGet(, "A")
   ControlSend, % Control, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % WinTitle
 }
 
@@ -1116,4 +1116,53 @@ GetDetailedTime() {
   CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   RegRead, TimeZone, HKEY_LOCAL_MACHINE, SYSTEM\ControlSet001\Control\TimeZoneInformation, TimeZoneKeyName  ; https://www.autohotkey.com/board/topic/43828-finding-correct-time-zone/
   return CurrTimeDisplay . ", " . TimeZone
+}
+
+/*
+  ShellRun by Lexikos
+    requires: AutoHotkey v1.1
+    license: http://creativecommons.org/publicdomain/zero/1.0/
+
+  Credit for explaining this method goes to BrandonLive:
+  http://brandonlive.com/2008/04/27/getting-the-shell-to-run-an-application-for-you-part-2-how/
+
+  Shell.ShellExecute(File [, Arguments, Directory, Operation, Show])
+  http://msdn.microsoft.com/en-us/library/windows/desktop/gg537745
+*/
+ShellRun(prms*)
+{
+    shellWindows := ComObjCreate("Shell.Application").Windows
+    VarSetCapacity(_hwnd, 4, 0)
+    desktop := shellWindows.FindWindowSW(0, "", 8, ComObj(0x4003, &_hwnd), 1)
+
+    ; Retrieve top-level browser object.
+    if ptlb := ComObjQuery(desktop
+        , "{4C96BE40-915C-11CF-99D3-00AA004AE837}"  ; SID_STopLevelBrowser
+        , "{000214E2-0000-0000-C000-000000000046}") ; IID_IShellBrowser
+    {
+        ; IShellBrowser.QueryActiveShellView -> IShellView
+        if DllCall(NumGet(NumGet(ptlb+0)+15*A_PtrSize), "ptr", ptlb, "ptr*", psv:=0) = 0
+        {
+            ; Define IID_IDispatch.
+            VarSetCapacity(IID_IDispatch, 16)
+            NumPut(0x46000000000000C0, NumPut(0x20400, IID_IDispatch, "int64"), "int64")
+
+            ; IShellView.GetItemObject -> IDispatch (object which implements IShellFolderViewDual)
+            DllCall(NumGet(NumGet(psv+0)+15*A_PtrSize), "ptr", psv
+                , "uint", 0, "ptr", &IID_IDispatch, "ptr*", pdisp:=0)
+
+            ; Get Shell object.
+            shell := ComObj(9,pdisp,1).Application
+
+            ; IShellDispatch2.ShellExecute
+            shell.ShellExecute(prms*)
+
+            ObjRelease(psv)
+        }
+        ObjRelease(ptlb)
+    }
+}
+
+GetCurrTimeForFileName() {
+  return RegExReplace(FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec), "[^a-zA-Z0-9\\.\\-]", "_")
 }

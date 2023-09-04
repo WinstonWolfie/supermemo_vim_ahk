@@ -76,7 +76,7 @@ return
 ^!w::send ^w!{tab}  ; close tab and switch back
 
 ^!i::  ; open in *I*E
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   Vim.Browser.RunInIE(Vim.Browser.ParseUrl(uiaBrowser.GetCurrentURL()))
   ; run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL())  ; RIP old method
 Return
@@ -89,7 +89,7 @@ return
 
 ^!l::  ; copy link and parse *l*ink if if's from YT
   Vim.Browser.Clear()
-  guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinGet())
+  guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinGet(, "A"))
   ReleaseModifierKeys()
   ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
   Vim.Browser.GetInfo(false)
@@ -155,7 +155,7 @@ return
 
 ^!c::  ; copy and register references
   Vim.Browser.Clear()
-  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   WinClip.Snap(data)
   if (!copy(false))
     ToolTip("No text selected."), WinClip.Restore(data)
@@ -216,7 +216,7 @@ IWBNewTopic:
     ToolTip("Web page not found.")
     return
   }
-  Vim.Browser.Clear(), guiaBrowser := new UIA_Browser("ahk_id " . WinGet())
+  Vim.Browser.Clear(), guiaBrowser := new UIA_Browser("ahk_id " . WinGet(, "A"))
   if (!Vim.Browser.Url := Vim.Browser.GetParsedUrl()) {
     ToolTip("Url not found.")
     return
@@ -426,7 +426,7 @@ ImportReturn:
 return
 
 ^+e::
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   run % "msedge.exe " . uiaBrowser.GetCurrentUrl()
 return
 
@@ -472,7 +472,7 @@ return
 ^!x::
 !+x::
 !x::
-  CtrlState := IfContains(A_ThisHotkey, "^"), hWnd := WinGet()
+  CtrlState := IfContains(A_ThisHotkey, "^"), hWnd := WinGet(, "A")
   ClipSaved := ClipboardAll
   ReleaseModifierKeys()
   if (!copy(false)) {
@@ -585,9 +585,9 @@ ExtractToSM:
 return
 
 ; SumatraPDF
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && !Vim.State.IsCurrentVimMode("Z") && !ControlGetFocus())
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && !Vim.State.IsCurrentVimMode("Z") && !ControlGetFocus("A"))
 +z::Vim.State.SetMode("Z")
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z") && !ControlGetFocus())
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z") && !ControlGetFocus("A"))
 +z::  ; exit and save annotations
   ControlSend,, q, ahk_class SUMATRA_PDF_FRAME
   WinActivate, ahk_class TElWind
@@ -600,8 +600,8 @@ return
 return
 
 #if (Vim.State.Vim.Enabled
-  && ((WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus())
-   || (WinActive("ahk_exe WinDjView.exe") && (ControlGetFocus() != "Edit1"))))
+  && ((WinActive("ahk_class SUMATRA_PDF_FRAME") && !ControlGetFocus("A"))
+   || (WinActive("ahk_exe WinDjView.exe") && (ControlGetFocus("A") != "Edit1"))))
 !p::ControlFocus, Edit1, A  ; focus to page number field so you can enter a number
 ^!f::
   if (!selection := Copy())
@@ -628,7 +628,7 @@ return
 
 #if (Vim.State.Vim.Enabled
   && (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe"))
-  && (ControlGetFocus() == "Edit1"))
+  && (ControlGetFocus("A") == "Edit1"))
 !p::
   ControlSetText, Edit1, % Clipboard, A
   send {enter}
@@ -636,10 +636,10 @@ return
 
 #if (Vim.State.Vim.Enabled
   && ((pdf := WinActive("ahk_class SUMATRA_PDF_FRAME")) || WinActive("ahk_exe WinDjView.exe"))
-  && (page := ControlGetText("Edit1")))
+  && (page := ControlGetText("Edit1", "A")))
 ^!p::Clipboard := "p" . page, ToolTip("Copied p" . page)
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && (ControlGetFocus() == "Edit2"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && (ControlGetFocus("A") == "Edit2"))
 ^f::
   ControlSetText, Edit2, % Clipboard, A
   send {enter}
@@ -666,13 +666,13 @@ return
 ^+!s::
   ClipSaved := ClipboardAll
   CloseWnd := IfContains(A_ThisHotkey, "^"), ReleaseModifierKeys()
-  if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
+  if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus("A"), "Edit"))
     send {esc}
   marker := trim(copy(false), " `t`r`n")
   if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))) {
     if (wAcrobat)
       marker := "p" . GetAcrobatPageBtn().Value
-    if (!wAcrobat && !marker && (page := ControlGetText("Edit1")))
+    if (!wAcrobat && !marker && (page := ControlGetText("Edit1", "A")))
       marker := "p" . page
     if (!marker) {
       ToolTip("No text selected and page number not found.")
@@ -686,11 +686,11 @@ return
           ControlClick, Button1,,,,, NA
       } else if (wDJVU) {
         send ^w
-        WinWaitTitle("WinDjView", 1500)
+        WinWaitTitle("WinDjView", 1500, "A")
         WinClose, % "ahk_id " . wDJVUj
       } else if (wAcrobat) {
         send ^s^w
-        WinWaitTitle("Adobe Acrobat Pro DC (32-bit)", 1500)
+        WinWaitTitle("Adobe Acrobat Pro DC (32-bit)", 1500, "A")
         WinClose, % "ahk_id " . wAcrobat
       }
     }
@@ -747,12 +747,12 @@ return
 ; IE
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ; Open in default browser (in my case, Chrome); similar to default shortcut ^+e to open in ms edge
-^+c::run % ControlGetText("Edit1")  ; browser url field
-^+e::run % "msedge.exe " . ControlGetText("Edit1")
-^!l::ToolTip("Copied " . Clipboard := ControlGetText("Edit1"))
+^+c::run % ControlGetText("Edit1", "A")  ; browser url field
+^+e::run % "msedge.exe " . ControlGetText("Edit1", "A")
+^!l::ToolTip("Copied " . Clipboard := ControlGetText("Edit1", "A"))
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))
 ^+c::
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   run % uiaBrowser.GetCurrentUrl()
 return
 
@@ -780,8 +780,8 @@ return
   }
   FileName := RegExReplace(Vim.Browser.title . CurrTime, "[^a-zA-Z0-9\\.\\-]", "_")
   TempPath := A_Temp . "\" . FileName . ".mp3"
-  Control, Choose, 3, ComboBox3, A  ; choose mp3 from file type
-  ControlSetText, Edit1, % TempPath, A
+  Control, Choose, 3, ComboBox3  ; choose mp3 from file type
+  ControlSetText, Edit1, % TempPath
   send {enter}
   WinWaitActive, Warning,, 0
   if (!ErrorLevel) {
@@ -793,20 +793,14 @@ return
   WinActivate, ahk_class TElWind
   Vim.SM.AltA()
   Vim.SM.WaitFileLoad()
-  QuestionFieldName := ControlGetFocus()
+  QuestionFieldName := ControlGetFocus("A")
   if (Vim.Browser.title) {
     send % "{text}" . Vim.SM.MakeReference()
   } else {
     send {text}Listening comprehension:
   }
   Vim.SM.InvokeFileBrowser()
-  t := ControlGetText("TDriveComboBox1")
-  if (!t ~= "^c:") {
-    ControlSend, TDriveComboBox1, c, A
-    ControlTextWaitChange("TDriveComboBox1", t)
-  }
-  ControlSetText, TEdit1, % TempPath, A
-  ControlSend, TEdit1, {enter}, A
+  Vim.SM.FileBrowserSetPath(TempPath, true)
   WinWaitActive, ahk_class TInputDlg
   if (Vim.Browser.title) {
     ControlSetText, TMemo1, % Vim.Browser.title . " (excerpt)", A

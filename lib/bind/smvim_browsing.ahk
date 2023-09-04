@@ -36,7 +36,7 @@ s::  ; gs: go to link
           run % DefaultBrowser
         }
         WinWaitActive, ahk_group Browser
-        uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+        uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
         if (Vim.Browser.GetFullTitle() != "new tab")
           uiaBrowser.NewTab()
         uiaBrowser.Navigate(link)
@@ -101,7 +101,7 @@ r::  ; reload
   ContLearn := (ContinueGrading := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning()
   if (ContLearn == 2)
     bItem := Vim.SM.IsItem()
-  CurrTitle := WinGetTitle(), Vim.SM.GoHome()
+  CurrTitle := WinGetTitle("A"), Vim.SM.GoHome()
   Vim.SM.WaitFileLoad()
   if (ContLearn) {
     if ((ContLearn == 2) && bItem) {  ; item and just finished grading
@@ -111,13 +111,13 @@ r::  ; reload
     }
   } else if (ContinueGrading) {
     Vim.SM.Learn()
-    ControlTextWait("TBitBtn3", "Show answer")
+    ControlTextWait("TBitBtn3", "Show answer", "A")
     ControlSend, TBitBtn3, {enter}, A
   } else {
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame"))  ; sometimes could happen on YT videos
       WinClose
     ; If current element is home element
-    if ((CurrTitle == WinGetTitle()) && (CurrTitle ~= "^Concept: ")) {
+    if ((CurrTitle == WinGetTitle("A")) && (CurrTitle ~= "^Concept: ")) {
       Vim.SM.GoBack()
       Vim.SM.WaitFileLoad()
       send !{right}
@@ -407,6 +407,6 @@ Return
 
 #if (Vim.IsVimGroup() && SMCtrlF3 && WinActive("ahk_class TInputDlg"))
 enter::
-  VimLastSearch := ControlGetText("TMemo1"), SMCtrlF3 := false
+  VimLastSearch := ControlGetText("TMemo1", "A"), SMCtrlF3 := false
   send {enter}
 return

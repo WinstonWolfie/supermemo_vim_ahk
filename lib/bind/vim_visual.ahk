@@ -109,7 +109,7 @@ Return
     CapsState := CtrlState := AltState := ShiftState := ""
     Gosub SMSearchAgain
   } else {
-    hWnd := WinGet()
+    hWnd := WinGet(, "A")
     send ^f
     WinWaitNotActive, % "ahk_id " . hWnd,, 0.25
     send ^v!f

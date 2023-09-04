@@ -64,7 +64,7 @@ return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class Notepad"))
 ~^h::
-  if (ControlFocusWait("Windows.UI.Input.InputSite.WindowClass1",,,,, 500))  ; search window
+  if (ControlFocusWait("Windows.UI.Input.InputSite.WindowClass1", "A",,,, 500))  ; search window
     Vim.State.SetMode("Insert")
 return
 

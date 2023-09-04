@@ -99,15 +99,15 @@ class VimSM {
   }
 
   IsEditingHTML() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server"))
   }
 
   IsEditingPlainText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "TMemo,TRichEdit"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "TMemo,TRichEdit"))
   }
 
   IsEditingText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server,TMemo,TRichEdit"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server,TMemo,TRichEdit"))
   }
 
   IsBrowsing() {
@@ -115,7 +115,7 @@ class VimSM {
   }
 
   IsGrading() {
-    CurrFocus := ControlGetFocus()
+    CurrFocus := ControlGetFocus("A")
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
     return (WinActive("ahk_class TElWind")
          && ((CurrFocus == "TBitBtn4")
@@ -127,19 +127,19 @@ class VimSM {
   }
  
   IsNavigatingPlan() {
-    return (WinActive("ahk_class TPlanDlg") && (ControlGetFocus() == "TStringGrid1"))
+    return (WinActive("ahk_class TPlanDlg") && (ControlGetFocus("A") == "TStringGrid1"))
   }
  
   IsNavigatingTask() {
-    return (WinActive("ahk_class TTaskManager") && (ControlGetFocus() == "TStringGrid1"))
+    return (WinActive("ahk_class TTaskManager") && (ControlGetFocus("A") == "TStringGrid1"))
   }
 
   IsNavigatingContentWindow() {
-    return (WinActive("ahk_class TContents") && (ControlGetFocus() == "TVirtualStringTree1"))
+    return (WinActive("ahk_class TContents") && (ControlGetFocus("A") == "TVirtualStringTree1"))
   }
 
   IsNavigatingBrowser() {
-    return (WinActive("ahk_class TBrowser") && (ControlGetFocus() == "TStringGrid1"))
+    return (WinActive("ahk_class TBrowser") && (ControlGetFocus("A") == "TStringGrid1"))
   }
 
   SetRandPrio(min, max) {
@@ -628,10 +628,10 @@ class VimSM {
 
   IsChangeRefWind() {
     if (WinActive("ahk_class TChoicesDlg")) {
-      return ((ControlGetText("TGroupButton1") == "Cancel (i.e. restore the old version of references)")
-           && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
-           && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
-           && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
+      return ((ControlGetText("TGroupButton1", "A") == "Cancel (i.e. restore the old version of references)")
+           && (ControlGetText("TGroupButton2", "A") == "Combine old and new references for this element")
+           && (ControlGetText("TGroupButton3", "A") == "Change references in all elements produced from the original article")
+           && (ControlGetText("TGroupButton4", "A") == "Change only the references of the currently displayed element"))
     }
   }
 
@@ -825,7 +825,7 @@ class VimSM {
           return false
         if (v) {
           WinWaitActive, ahk_group Browser
-          uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName"))
+          uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
           uiaBrowser.SetUrl(v, true)
         }
       }
@@ -1004,5 +1004,19 @@ class VimSM {
   IsItem(TemplCode:="") {
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode()
     return InStr(TemplCode, "`r`nType=Item`r`n", true)
+  }
+
+  FileBrowserSetPath(path, enter:=false) {
+    if (!WinActive("ahk_class TFileBrowser"))
+      return false
+    RegexMatch(path, "^(.):", v), drive := v1
+    t := ControlGetText("TDriveComboBox1", "A")
+    if (!t ~= "i)^" . v) {
+      ControlSend, TDriveComboBox1, % drive
+      ControlTextWaitChange("TDriveComboBox1", t, "A")
+    }
+    ControlSetText, TEdit1, % path
+    if (enter)
+      ControlSend, TEdit1, {enter}
   }
 }

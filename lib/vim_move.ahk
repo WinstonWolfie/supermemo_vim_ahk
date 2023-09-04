@@ -1020,7 +1020,7 @@
           send % "{right}{left " . pos . "}"
         }
       } else if (key == "/") {
-        hWnd := WinGet()
+        hWnd := WinGet(, "A")
         InputBoxPrompt := " text until:`n(case sensitive)"
         InputBoxHeight := 144
         if (this.Vim.State.StrIsInCurrentVimMode("Visual")) {
@@ -1073,7 +1073,7 @@
           send % "+{right " . pos . "}"
         }
       } else if (key == "?") {
-        hWnd := WinGet()
+        hWnd := WinGet(, "A")
         InputBoxPrompt := " text until:`n(case sensitive)"
         InputBoxHeight := 144
         if (this.Vim.State.StrIsInCurrentVimMode("Visual")) {
@@ -1152,7 +1152,7 @@
         ; if (c)
         ;   this.Vim.SM.PrepareStatBar(2)
       } else {
-        SendMessage, 0x0115, 1, 0, % ControlGetFocus(), A  ; scroll down
+        SendMessage, 0x0115, 1, 0, % ControlGetFocus("A"), A  ; scroll down
       }
     } else if (key == "k") {
       if (this.Vim.SM.IsBrowsing()) {
@@ -1172,7 +1172,7 @@
         ; if (c)
         ;   this.Vim.SM.PrepareStatBar(2)
       } else {
-        SendMessage, 0x0115, 0, 0, % ControlGetFocus(), A  ; scroll up
+        SendMessage, 0x0115, 0, 0, % ControlGetFocus("A"), A  ; scroll up
       }
     ; Page Up/Down
     } else if (key == "^u") {

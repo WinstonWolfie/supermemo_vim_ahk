@@ -119,7 +119,7 @@ return
 
 i::  ; learn outstanding *i*tems only
   Vim.State.SetMode("Vim_Normal"), Vim.SM.GoHome()
-  WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID")
+  WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "A")
   if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
     Vim.SM.PostMsg(200)
   } else {
@@ -168,7 +168,7 @@ return
 
 +s::
   Vim.State.SetMode("Vim_Normal"), Vim.SM.ExitText()
-  if (ControlGetText("TBitBtn3") != "Learn")  ; if learning (on "next repitition")
+  if (ControlGetText("TBitBtn3", "A") != "Learn")  ; if learning (on "next repitition")
     send {esc}
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus(), WinClip.Clear()
