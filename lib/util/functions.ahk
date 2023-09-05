@@ -985,8 +985,7 @@ RestoreClipReturn:
 return
 
 ReleaseModifierKeys() {
-  ; send {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}
-  send {CtrlUp}{Shift Up}{AltUp}
+  send {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}
 }
 
 ControlReleaseModifierKeys(Control:="", WinTitle:="") {
@@ -1140,7 +1139,7 @@ GetDetailedTime() {
   Shell.ShellExecute(File [, Arguments, Directory, Operation, Show])
   http://msdn.microsoft.com/en-us/library/windows/desktop/gg537745
 */
-ShellRun(prms*)
+ShellRun(prms*)  ; execute without admin privileges
 {
     shellWindows := ComObjCreate("Shell.Application").Windows
     VarSetCapacity(_hwnd, 4, 0)

@@ -198,6 +198,15 @@ class VimSM {
     }
   }
 
+  MoveToLast(RestoreClip:=true) {
+    send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
+    if (InStr(copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
+      send {up}{left}
+    } else {
+      send ^{end}
+    }
+  }
+
   ExitText(ReturnToComp:=false, timeout:=0) {
     this.ActivateElWind()
     ret := 1
@@ -643,6 +652,8 @@ class VimSM {
     ; For some reason, SuperMemo only encodes some part of the url
     if (IsUrl(text))
       text := StrReplace(text, "%20", " "), text := StrReplace(text, "%3F", "?"), text := StrReplace(text, "%27", "'"), text := StrReplace(text, "%21", "!")
+    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(text, "youtube.com"))  ; sm19 deletes www from www.youtube.com
+      text := RegExReplace(text, "^.*?(?=youtube.com)")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if ((ContLearn == 1) && this.LastCtrlFNotFound)
       this.Learn()

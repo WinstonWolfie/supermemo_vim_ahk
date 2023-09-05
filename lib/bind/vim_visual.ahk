@@ -158,7 +158,7 @@ ConvertToUppercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
   if (IfIn(A_ThisLabel, "ConvertToLowercase,u,ConvertToLowercaseClipped")) {
     clip(StrLower(copy(false, html)),, false, html)
-  } else if (IfIn(A_ThisLabel, "ConvertToLowercase,u,ConvertToUppercaseClipped")) {
+  } else if (IfIn(A_ThisLabel, "ConvertToUppercase,+u,ConvertToUppercaseClipped")) {
     clip(StrUpper(copy(false, html)),, false, html)
   }
   sleep 100  ; while (WinClipAPI.GetOpenClipboardWindow()) doesn't work for some reason

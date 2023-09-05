@@ -71,6 +71,8 @@ Return
     list := "IWBPriorityAndConcept|IWBNewTopic|" . list
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
     list := "SetPlanPosition|" . list
+  } else if (WinActive("Google Drive error list ahk_class ATL:00007FF6647D5028 ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
+    list := "RetryAllSyncErrors|" . list
   }
 
   Gui, VimCommander:Add, Combobox, vCommand gAutoComplete w144, % list
@@ -706,8 +708,11 @@ SetPlanPosition:
 return
 
 MakeHTMLUnique:
+  ClipSaved := ClipboardAll
+  Vim.SM.MoveToLast(false)
   AntiMerge := "<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>"
-  clip(AntiMerge,,, "sm")
+  clip(AntiMerge,, false, "sm")
+  Clipboard := ClipSaved
 return
 
 KillOutlook:
@@ -760,4 +765,15 @@ PerplexityAI:
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   uiaBrowser.WaitPageLoad()
   uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Ask anything...'").SetValue(search)
+return
+
+RetryAllSyncErrors:
+  UIA := UIA_Interface()
+  el := UIA.ElementFromHandle(WinActive("A"))
+  while (dot := el.FindFirstBy("ControlType=MenuItem AND Name='More options menu icon'")) {
+    dot.Click()
+    el.FindFirstBy("ControlType=MenuItem AND Name='Retry' AND AutomationId='retry-id'").Click()
+    sleep 100
+  }
+  ToolTip("Finished.")
 return

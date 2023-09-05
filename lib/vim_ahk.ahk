@@ -353,7 +353,7 @@ class VimAhk {
     ; if more windows are found without shortcuts in the future, they will be all added here
     return this.SM.IsChangeRefWind()
   }
-  
+
   ParseLineBreaks(str) {
     if (this.SM.IsEditingHTML()) {  ; not perfect
       if (StrLen(str) != InStr(str, "`r`n") + 1) {  ; first matched `r`n not at the end
