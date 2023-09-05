@@ -316,9 +316,9 @@ SMImportButtonImport:
   } else {
     LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,webmd.com"
     LineBreak := IfContains(Vim.Browser.Url, LineBreakList)
-    HTMLText := Vim.HTML.Clean(HTMLText, true, LineBreak, Vim.Browser.Url)
-    if (!IWB && !vim.browser.date)
-      vim.browser.date := "Imported on " . CurrTime
+    HTMLText := Vim.HTML.Clean(HTMLText,, LineBreak, Vim.Browser.Url)
+    if (!IWB && !Vim.Browser.Date)
+      Vim.Browser.Date := "Imported on " . CurrTime
     Clipboard := HTMLText . "<br>" . Vim.SM.MakeReference(true)
   }
   ClipWait
@@ -485,7 +485,7 @@ return
       Vim.HTML.ClipboardGet_HTML(data)
       RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
       WinClip.Clear()
-      Clipboard := Vim.HTML.Clean(data, true)
+      Clipboard := Vim.HTML.Clean(data)
       ClipWait
     }
     if (!WinExist("ahk_group SuperMemo")) {
@@ -573,6 +573,7 @@ ExtractToSM:
     WinWaitActive, ahk_class TMsgDialog,, 0.1
     if (!ErrorLevel) {
       send {enter}
+      WinWaitClose
       break
     }
   }

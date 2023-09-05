@@ -52,7 +52,7 @@ Return
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
-        . "|CalculateTodaysPassRate"
+        . "|CalculateTodaysPassRate|PerplexityAI"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -750,4 +750,14 @@ CalculateTodaysPassRate:
   msgbox % "Today's rep count: " . TodayRepCount
          . "`nToday's pass (grade > 3) count: " . TodayPassCount
          . "`nToday's pass rate: " . ForMat("{:g}", TodayPassCount / TodayRepCount * 100) . "%"
+return
+
+PerplexityAI:
+  if (!search := FindSearch("Perplexity AI", "Search:"))
+    return
+  run https://www.perplexity.ai/
+  WinWaitActive, ahk_group Browser
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+  uiaBrowser.WaitPageLoad()
+  uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Ask anything...'").SetValue(search)
 return

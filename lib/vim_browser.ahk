@@ -453,7 +453,7 @@ class VimBrowser {
 
   Highlight(CollName:="", PlainText:="") {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
-    if (RegexMatch(PlainText, "(\[\d+\])+$", v)) {
+    if (RegexMatch(PlainText, "(\[\d+\])+$|\[\d+\]: \d+$", v)) {
       this.url := this.url ? this.url : this.GetParsedUrl()
       if (IfContains(this.url, "wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"
