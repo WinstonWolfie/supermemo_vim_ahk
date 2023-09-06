@@ -130,8 +130,8 @@ SMCtrlN:
       ClipSaved := ClipboardAll
       Prio := ""
     }
-    vim.browser.url := Clipboard
-    text := vim.browser.title . "`n" . Vim.SM.MakeReference()
+    Vim.Browser.Url := Clipboard
+    text := Vim.Browser.Title . "`n" . Vim.SM.MakeReference()
     Vim.SM.WaitFileLoad()
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
@@ -139,8 +139,8 @@ SMCtrlN:
     Vim.SM.WaitTextExit()
     Clip(text,, false)
     Vim.SM.WaitTextFocus()
-    Vim.SM.SetElParam(vim.browser.title, Prio, "YouTube")
-    vim.browser.title := Prio := ""
+    Vim.SM.SetElParam(Vim.Browser.Title, Prio, "YouTube")
+    Vim.Browser.Title := Prio := ""
     if (A_ThisHotkey == "~^n") {
       Vim.Browser.Clear()
       Clipboard := ClipSaved
@@ -221,7 +221,7 @@ return
     link := "SuperMemoElementNo=(" . v1 . ")"
   }
   ReleaseModifierKeys()
-  if (!link || !copy())  ; no selection or no link
+  if (!link || !Copy())  ; no selection or no link
     return
   send ^k
   WinWaitActive, ahk_class Internet Explorer_TridentDlgFrame
@@ -239,7 +239,7 @@ return
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   ClipSaved := ClipboardAll
   ReleaseModifierKeys()
-  if (!data := copy(false, true, 1))
+  if (!data := Copy(false, true, 1))
     goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
   if (!IfContains(data, "<IMG")) {  ; text
@@ -254,7 +254,7 @@ return
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     SetTimer, DownloadLatex, -1
     FileCreateDir % LatexFolderPath
-    clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>",, false, true)
+    Clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>",, false, true)
     Vim.SM.SaveHTML()
     WinWaitActive, ahk_class TElWind
     HTMLPath := Vim.SM.GetFilePath(false)
@@ -295,7 +295,7 @@ return
     if (!v)
       RegExMatch(data, "src=(.*?) ", v)
     LatexPath := StrReplace(v1, "file:///"), LatexFormula := HTML_decode(LatexFormula)
-    clip(LatexFormula, true, false)
+    Clip(LatexFormula, true, false)
     FileDelete % LatexPath
     Vim.State.SetMode("Vim_Visual")
   }
@@ -390,7 +390,7 @@ return
 
 PlanAddGuiEscape:
 PlanAddGuiClose:
-  Gui Destroy
+  Gui, Destroy
 return
 
 PlanAddButtonInsert:
@@ -399,8 +399,8 @@ PlanAddButtonAppend:
   if (aTime[3] >= 30)
     aTime[2]++
   CurrTime := aTime[1] . ":" . aTime[2]
-  Gui Submit
-  Gui Destroy
+  Gui, Submit
+  Gui, Destroy
   KeyWait Alt
   Vim.Caret.SwitchToSameWindow("ahk_class TPlanDlg")
   BlockInput, on

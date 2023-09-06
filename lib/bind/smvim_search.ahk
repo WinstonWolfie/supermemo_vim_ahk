@@ -58,12 +58,12 @@ return
 
 SearchGuiEscape:
 SearchGuiClose:
-  Gui destroy
+  Gui, Destroy
 return
 
 SearchButtonFind:
-  Gui submit
-  Gui destroy
+  Gui, Submit
+  Gui, Destroy
   if (UserInput == "")
     Return
   VimLastSearch := UserInput  ; register UserInput into VimLastSearch

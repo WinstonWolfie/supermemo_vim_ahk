@@ -113,7 +113,7 @@
   this.MainPaneElement -- element that doesn't contain page content: this element includes URL bar, navigation buttons, setting buttons etc
   this.NavigationBarElement -- smallest element (usually a Toolbar element) that contains the URL bar and navigation buttons
   this.TabBarElement -- contains only tabs
-  this.URLEditElement -- the URL bar element
+  this.UrlEditElement -- the URL bar element
   this.ReloadButton
 */
 
@@ -127,11 +127,11 @@ class UIA_Chrome extends UIA_Browser {
     this.BrowserElement.WaitElementExist("ControlType=Document")
     Loop, 2 
     {
-      try this.URLEditElement := this.BrowserElement.FindFirstWithOptions(4, this.EditControlCondition, 2)
+      try this.UrlEditElement := this.BrowserElement.FindFirstWithOptions(4, this.EditControlCondition, 2)
       try {
-        if !this.URLEditElement
-          this.URLEditElement := this.UIA.CreateTreeWalker(this.EditControlCondition).GetLastChildElement(this.BrowserElement)
-        this.NavigationBarElement := this.UIA.CreateTreeWalker(this.ToolbarControlCondition).GetParentElement(this.URLEditElement)
+        if !this.UrlEditElement
+          this.UrlEditElement := this.UIA.CreateTreeWalker(this.EditControlCondition).GetLastChildElement(this.BrowserElement)
+        this.NavigationBarElement := this.UIA.CreateTreeWalker(this.ToolbarControlCondition).GetParentElement(this.UrlEditElement)
         this.MainPaneElement := this.TWT.GetParentElement(this.NavigationBarElement)
         if !this.NavigationBarElement
           this.NavigationBarElement := this.BrowserElement
@@ -172,17 +172,17 @@ class UIA_Edge extends UIA_Browser {
     Loop, 2 
     {
       try {
-        if !(this.URLEditElement := this.BrowserElement.FindFirst(this.EditControlCondition)) {
+        if !(this.UrlEditElement := this.BrowserElement.FindFirst(this.EditControlCondition)) {
           this.ToolbarElements := this.BrowserElement.FindAll(this.ToolbarControlCondition), topCoord := 10000000
           for k, v in this.ToolbarElements {
             if ((bT := v.CurrentBoundingRectangle.t) && (bt < topCoord))
               topCoord := bT, this.NavigationBarElement := v
           }
-          this.URLEditElement := this.NavigationBarElement.FindFirst(this.EditControlCondition)
-          if this.URLEditElement.GetChildren().MaxIndex()
-            this.URLEditElement := (el := this.URLEditElement.FindFirst(this.EditControlCondition)) ? el : this.URLEditElement
+          this.UrlEditElement := this.NavigationBarElement.FindFirst(this.EditControlCondition)
+          if this.UrlEditElement.GetChildren().MaxIndex()
+            this.UrlEditElement := (el := this.UrlEditElement.FindFirst(this.EditControlCondition)) ? el : this.UrlEditElement
         } Else {
-          this.NavigationBarElement := this.UIA.CreateTreeWalker(this.ToolbarControlCondition).GetParentElement(this.URLEditElement)
+          this.NavigationBarElement := this.UIA.CreateTreeWalker(this.ToolbarControlCondition).GetParentElement(this.UrlEditElement)
         }
         this.MainPaneElement := this.TWT.GetParentElement(this.NavigationBarElement)
         if !this.NavigationBarElement
@@ -225,7 +225,7 @@ class UIA_Mozilla extends UIA_Browser {
       try {
         this.TabBarElement := this.ToolbarTreeWalker.GetNextSiblingElement(this.ToolbarTreeWalker.GetFirstChildElement(this.BrowserElement))
         this.NavigationBarElement := this.ToolbarTreeWalker.GetNextSiblingElement(this.TabBarElement)
-        this.URLEditElement := this.NavigationBarElement.FindFirst(this.EditControlCondition)
+        this.UrlEditElement := this.NavigationBarElement.FindFirst(this.EditControlCondition)
         this.MainPaneElement := this.TWT.GetParentElement(this.NavigationBarElement)
         if !this.NavigationBarElement
           this.NavigationBarElement := this.BrowserElement
@@ -264,10 +264,10 @@ class UIA_Mozilla extends UIA_Browser {
 
   ; Sets the URL bar to newUrl, optionally also navigates to it if navigateToNewUrl=True
   SetURL(newUrl, navigateToNewUrl := False) { 
-    this.URLEditElement.SetFocus()
-    valuePattern := this.URLEditElement.GetCurrentPatternAs("Value")
+    this.UrlEditElement.SetFocus()
+    valuePattern := this.UrlEditElement.GetCurrentPatternAs("Value")
     valuePattern.SetValue(newUrl " ")
-    if (navigateToNewUrl&&InStr(this.URLEditElement.CurrentValue, newUrl)) {
+    if (navigateToNewUrl&&InStr(this.UrlEditElement.CurrentValue, newUrl)) {
       ControlFocus, ahk_parent, % "ahk_id" this.BrowserId
       ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Enter}, % "ahk_id" this.BrowserId
     }
@@ -416,11 +416,11 @@ class UIA_Browser {
     ; combination of two, so if finding by name fails, all toolbar elements are evaluated.
     Loop, 2 
     {
-      try this.URLEditElement := (this.BrowserType = "Chrome") ? this.BrowserElement.FindFirstWithOptions(4, this.EditControlCondition, 2) : this.BrowserElement.FindFirst(this.EditControlCondition)
+      try this.UrlEditElement := (this.BrowserType = "Chrome") ? this.BrowserElement.FindFirstWithOptions(4, this.EditControlCondition, 2) : this.BrowserElement.FindFirst(this.EditControlCondition)
       try {
-        if (this.BrowserType = "Chrome") && !this.URLEditElement
-          this.URLEditElement := this.UIA.CreateTreeWalker(this.EditControlCondition).GetLastChildElement(this.BrowserElement)
-        this.NavigationBarElement := this.UIA.CreateTreeWalker(this.ToolbarControlCondition).GetParentElement(this.URLEditElement)
+        if (this.BrowserType = "Chrome") && !this.UrlEditElement
+          this.UrlEditElement := this.UIA.CreateTreeWalker(this.EditControlCondition).GetLastChildElement(this.BrowserElement)
+        this.NavigationBarElement := this.UIA.CreateTreeWalker(this.ToolbarControlCondition).GetParentElement(this.UrlEditElement)
         this.MainPaneElement := this.TWT.GetParentElement(this.NavigationBarElement)
         if !this.NavigationBarElement
           this.NavigationBarElement := this.BrowserElement
@@ -691,7 +691,7 @@ class UIA_Browser {
   GetCurrentURL(fromAddressBar:=False) { 
     local
     if fromAddressBar {
-      URL := this.URLEditElement.CurrentValue
+      URL := this.UrlEditElement.CurrentValue
       return URL ? (RegexMatch(URL, "^https?:\/\/") ? URL : "https://" URL) : ""
     } else {
       ; This can be used in Chrome and Edge, but works only if the window is active
@@ -704,15 +704,15 @@ class UIA_Browser {
   ; Sets the URL bar to newUrl, optionally also navigates to it if navigateToNewUrl=True
   SetURL(newUrl, navigateToNewUrl := False) { 
     local
-    this.URLEditElement.SetFocus()
-    valuePattern := this.URLEditElement.GetCurrentPatternAs("Value")
+    this.UrlEditElement.SetFocus()
+    valuePattern := this.UrlEditElement.GetCurrentPatternAs("Value")
     valuePattern.SetValue(newUrl " ")
-    if !InStr(this.URLEditElement.CurrentValue, newUrl) {
-      legacyPattern := this.URLEditElement.GetCurrentPatternAs("LegacyIAccessible")
+    if !InStr(this.UrlEditElement.CurrentValue, newUrl) {
+      legacyPattern := this.UrlEditElement.GetCurrentPatternAs("LegacyIAccessible")
       legacyPattern.SetValue(newUrl " ")
       legacyPattern.Select()
     }
-    if (navigateToNewUrl&&InStr(this.URLEditElement.CurrentValue, newUrl)) {
+    if (navigateToNewUrl&&InStr(this.UrlEditElement.CurrentValue, newUrl)) {
       if (this.BrowserType = "Mozilla")
         ControlFocus, ahk_parent, % "ahk_id" this.BrowserId
       ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Enter}, % "ahk_id" this.BrowserId ; Or would it be better to use BlockInput instead of releasing modifier keys?

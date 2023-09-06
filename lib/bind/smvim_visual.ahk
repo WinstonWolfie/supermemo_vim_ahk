@@ -35,12 +35,12 @@ Return
 
 HTMLTagGuiEscape:
 HTMLTagGuiClose:
-  Gui destroy
+  Gui, Destroy
 return
 
 HTMLTagButtonAdd:
-  Gui submit
-  Gui destroy
+  Gui, Submit
+  Gui, Destroy
   if (GAltA) {
     GAltA := false, Vim.State.SetMode("SMVim_GAltA", 0, -1, 0,,, -1)
     Vim.Move.SMLastGAltATag := tag
@@ -52,9 +52,9 @@ SMParseHTML:
     tag := Vim.Move.SMLastGAltATag
   WinActivate, ahk_class TElWind
   if (CopyText)
-    copy(false)
+    Copy(false)
   ClipSaved := ClipboardAll
-  if (!copy(false))
+  if (!Copy(false))
     goto RestoreClipReturn
   if (OriginalHTML) {
     Vim.HTML.ClipboardGet_HTML(data)
@@ -70,11 +70,11 @@ SMParseHTML:
     InputBox, UserInput, Ruby tag annotation, Annotations:`n(annotations will appear above your selection`, like Pinyin),, 200, 180
     if (ErrorLevel || !UserInput)
       return
-    clip("<RUBY>" . content . "<RP>(</RP><RT>" . UserInput
+    Clip("<RUBY>" . content . "<RP>(</RP><RT>" . UserInput
        . "</RT><RP>)</RP></RUBY>",,, "sm")
     return
   }
-  clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag,, false, "sm")
+  Clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag,, false, "sm")
   Clipboard := ClipSaved
 return
 
@@ -229,13 +229,13 @@ Return
 
 ClozeHinterGuiEscape:
 ClozeHinterGuiClose:
-  Gui destroy
+  Gui, Destroy
   Vim.State.SetMode("Vim_Normal")
 return
 
 ClozeHinterButtonCloze:
-  Gui submit
-  Gui destroy
+  Gui, Submit
+  Gui, Destroy
   WinActivate, ahk_class TElWind
 
 ClozeNoBracket:
@@ -284,9 +284,9 @@ CapsLock & z::  ; delete [...]
     send ^a
     ClipSaved := ClipboardAll
     if (ClozeNoBracket) {
-      clip(RegExReplace(copy(false), "\s?[...]"),, false)
+      Clip(RegExReplace(Copy(false), "\s?[...]"),, false)
     } else {
-      clip(StrReplace(copy(false), "[...]", cloze),, false)
+      Clip(StrReplace(Copy(false), "[...]", cloze),, false)
     }
     Clipboard := ClipSaved
   } else if (Vim.SM.IsEditingHTML()) {
@@ -300,7 +300,7 @@ CapsLock & z::  ; delete [...]
     ;   return
     ; WinWaitActive, ahk_class TElWind
     ; ; Keeps reporting errors that SM can't access clipboard!
-    ; ; if (copy() = " [...")  ; a bug in SM
+    ; ; if (Copy() = " [...")  ; a bug in SM
     ; ;   send {left}{right}+{right 5}
     ; send % ClozeNoBracket ? "{bs}" : "{text}" . cloze
 		; if (WinExist("ahk_class TMyFindDlg")) ; clears search box window

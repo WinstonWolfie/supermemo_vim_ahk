@@ -120,7 +120,7 @@ return
 
 i::  ; learn outstanding *i*tems only
   Vim.State.SetMode("Vim_Normal"), Vim.SM.GoHome()
-  WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "A")
+  WinClose, % w := "ahk_class TBrowser ahk_pid " . WinGet("PID", "A")
   if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
     Vim.SM.PostMsg(200)
   } else {
@@ -129,7 +129,7 @@ i::  ; learn outstanding *i*tems only
   Vim.SM.WaitBrowser()
   send {AppsKey}ci
   Vim.SM.WaitBrowser()
-  wBrowser := WinGet(, "ahk_class TBrowser")
+  wBrowser := WinExist(w)
   sleep 200
   while (WinExist("ahk_id " . wBrowser)) {
     WinActivate
@@ -178,7 +178,7 @@ return
   } else if (Vim.SM.IsEditingPlainText()) {
     send ^{home}^+{right}
   }
-  text := clip()
+  text := Clip()
   send {bs}{esc}
   Vim.SM.WaitTextExit()
   send ^+s
@@ -193,7 +193,7 @@ return
 p::  ; hyperlink to scri*p*t component
   Vim.State.SetMode("Vim_Normal")
   ClipSaved := ClipboardAll
-  Vim.Browser.url := Clipboard
+  Vim.Browser.Url := Clipboard
   WinClip.Clear()
   Vim.SM.RefToClipForTopic(CollName)
   ClipWait
@@ -211,12 +211,12 @@ SMHyperLinkToTopic:
     }
     return
   }
-  script := "url " . vim.browser.url
+  script := "url " . Vim.Browser.Url
   if (Vim.Browser.VidTime && IfIn(Vim.Browser.IsVidSite(vim.browser.FullTitle), "1,2")) {
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-    if (IfContains(Vim.Browser.url, "youtube.com")) {
+    if (IfContains(Vim.Browser.Url, "youtube.com")) {
       script .= "&t=" . sec . "s"
-    } else if (IfContains(Vim.Browser.url, "bilibili.com")) {
+    } else if (IfContains(Vim.Browser.Url, "bilibili.com")) {
       script .= (script ~= "\?p=\d+") ? "&t=" . sec : "?t=" . sec
     }
     if (A_ThisLabel != "SMHyperLinkToTopic")
@@ -230,8 +230,8 @@ SMHyperLinkToTopic:
   if (A_ThisLabel == "SMHyperLinkToTopic")
     return
 
-  if (Vim.Browser.title)
-    Vim.SM.SetTitle(Vim.browser.title)
+  if (Vim.Browser.Title)
+    Vim.SM.SetTitle(Vim.Browser.Title)
   Clipboard := ClipSaved
   Vim.Browser.Clear()
   Vim.SM.Reload()
@@ -242,18 +242,18 @@ r::  ; set *r*eference's link to what's in the clipboard
 
 SMSetLinkFromClipboard:
   ; Had to edit title first, in case of multiple references change
-  if (Vim.Browser.title)
-    Vim.SM.SetTitle(Vim.Browser.title)
+  if (Vim.Browser.Title)
+    Vim.SM.SetTitle(Vim.Browser.Title)
   Vim.SM.EditRef()
   WinWait, ahk_class TInputDlg
   Ref := RegExReplace(ControlGetText("TMemo1", "ahk_class TInputDlg")
                     , "#Link: .*|$", "`r`n#Link: " . Clipboard,, 1)
-  if (Vim.Browser.title)
-    Ref := RegExReplace(Ref, "#Title: .*|$", "`r`n#Title: " . Vim.Browser.title,, 1)
+  if (Vim.Browser.Title)
+    Ref := RegExReplace(Ref, "#Title: .*|$", "`r`n#Title: " . Vim.Browser.Title,, 1)
   if (Vim.Browser.Source)
     Ref := RegExReplace(Ref, "#Source: .*|$", "`r`n#Source: " . Vim.Browser.Source,, 1)
-  if (Vim.Browser.author)
-    Ref := RegExReplace(Ref, "#Author: .*|$", "`r`n#Author: " . Vim.Browser.author,, 1)
+  if (Vim.Browser.Author)
+    Ref := RegExReplace(Ref, "#Author: .*|$", "`r`n#Author: " . Vim.Browser.Author,, 1)
   if (Vim.Browser.Date)
     Ref := RegExReplace(Ref, "#Date: .*|$", "`r`n#Date: " . Vim.Browser.Date,, 1)
   if (Vim.Browser.Comment)

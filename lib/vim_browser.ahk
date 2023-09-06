@@ -5,13 +5,13 @@ class VimBrowser {
   }
 
   Clear() {
-    this.title := this.url := this.source := this.date := this.comment := this.VidTime := this.author := this.FullTitle := ""
+    this.Title := this.Url := this.Source := this.Date := this.Comment := this.VidTime := this.Author := this.FullTitle := ""
     global guiaBrowser := ""
   }
 
   GetInfo(RestoreClip:=true, CopyFullPage:=true, PressButton:=true) {
     global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-    this.url := this.GetParsedUrl()
+    this.Url := this.GetParsedUrl()
     if (PressButton)
       this.ClickBtn()
     this.GetTitleSourceDate(RestoreClip, CopyFullPage)
@@ -40,12 +40,12 @@ class VimBrowser {
 
   GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true, FullPageText:="", GetUrl:=true) {
     this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
-    this.Title := this.title ? this.title : this.FullTitle
+    this.Title := this.Title ? this.Title : this.FullTitle
     if (GetUrl)
-      this.url := this.url ? this.url : this.GetParsedUrl()
+      this.Url := this.Url ? this.Url : this.GetParsedUrl()
 
-    if (this.title ~= " - YouTube$")
-      this.title := RegExReplace(this.title, "^\(\d+\) ")
+    if (this.Title ~= " - YouTube$")
+      this.Title := RegExReplace(this.Title, "^\(\d+\) ")
 
     ; Sites that should be skipped
     SkippedList := "wind.com.cn,thepokerbank.com"
@@ -55,88 +55,88 @@ class VimBrowser {
     ; Sites that have source in their title
     } else if (this.Title ~= "^很帅的日报") {
       this.Date := RegExReplace(this.Title, "^很帅的日报 "), this.Title := "很帅的日报"
-    } else if (this.title ~= "^Frontiers \| ") {
-      this.source := "Frontiers", this.title := RegExReplace(this.title, "^Frontiers \| ")
-    } else if (this.title ~= "^NIMH » ") {
-      this.source := "NIMH", this.title := RegExReplace(this.title, "^NIMH » ")
-    } else if (this.title ~= "^(• )?Discord \| ") {
-      this.title := RegExReplace(this.title, "^(• )?Discord \| "), RegexMatch(this.title, "^.* \| (.*)$", v), this.source := "Discord: " . v1
-      this.title := RegexReplace(this.title , "^.*\K \| .*$")
-    } else if (this.title ~= "^italki - ") {
-      this.source := "italki", this.title := RegExReplace(this.title, "^italki - ")
-    } else if (this.title ~= "^CSOP - Products - ") {
-      this.source := "CSOP Asset Management", this.title := RegExReplace(this.title, "^CSOP - Products - ")
-    ; } else if (this.title ~= "^GitHub - ") {
-      ; this.source := "GitHub", this.title := RegExReplace(this.title, "^GitHub - ")
-    } else if (this.title ~= "^ArtStation - ") {
-      this.source := "ArtStation", this.title := RegExReplace(this.title, "^ArtStation - ")
-    } else if (this.title ~= "^Art... When I Feel Like It - ") {
-      this.source := "Art... When I Feel Like It ", this.title := RegExReplace(this.title, "^Art... When I Feel Like It - ")
-    } else if (this.title ~= "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ") {
-      this.author := "Henry George Liddell, Robert Scott", this.source := "An Intermediate Greek-English Lexicon", this.title := RegExReplace(this.title, "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ")
+    } else if (this.Title ~= "^Frontiers \| ") {
+      this.Source := "Frontiers", this.Title := RegExReplace(this.Title, "^Frontiers \| ")
+    } else if (this.Title ~= "^NIMH » ") {
+      this.Source := "NIMH", this.Title := RegExReplace(this.Title, "^NIMH » ")
+    } else if (this.Title ~= "^(• )?Discord \| ") {
+      this.Title := RegExReplace(this.Title, "^(• )?Discord \| "), RegexMatch(this.Title, "^.* \| (.*)$", v), this.Source := "Discord: " . v1
+      this.Title := RegexReplace(this.Title , "^.*\K \| .*$")
+    } else if (this.Title ~= "^italki - ") {
+      this.Source := "italki", this.Title := RegExReplace(this.Title, "^italki - ")
+    } else if (this.Title ~= "^CSOP - Products - ") {
+      this.Source := "CSOP Asset Management", this.Title := RegExReplace(this.Title, "^CSOP - Products - ")
+    ; } else if (this.Title ~= "^GitHub - ") {
+      ; this.Source := "GitHub", this.Title := RegExReplace(this.Title, "^GitHub - ")
+    } else if (this.Title ~= "^ArtStation - ") {
+      this.Source := "ArtStation", this.Title := RegExReplace(this.Title, "^ArtStation - ")
+    } else if (this.Title ~= "^Art... When I Feel Like It - ") {
+      this.Source := "Art... When I Feel Like It ", this.Title := RegExReplace(this.Title, "^Art... When I Feel Like It - ")
+    } else if (this.Title ~= "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ") {
+      this.Author := "Henry George Liddell, Robert Scott", this.Source := "An Intermediate Greek-English Lexicon", this.Title := RegExReplace(this.Title, "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ")
 
     } else if (this.Title ~= "_百度知道$") {
       this.Source := "百度知道", this.Title := RegExReplace(this.Title, "_百度知道$")
     } else if (this.Title ~= "-新华网$") {
       this.Source := "新华网", this.Title := RegExReplace(this.Title, "-新华网$")
-    } else if (this.title ~= ": MedlinePlus Medical Encyclopedia$") {
-      this.source := "MedlinePlus Medical Encyclopedia", this.title := RegExReplace(this.title, ": MedlinePlus Medical Encyclopedia$")
-    } else if (this.title ~= "_英为财情Investing.com$") {
-      this.source := "英为财情", this.title := RegExReplace(this.title, "_英为财情Investing.com$")
-    } else if (this.title ~= " \| OSUCCC - James$") {
-      this.source := "OSUCCC - James", this.title := RegExReplace(this.title, " \| OSUCCC - James$")
-    } else if (this.title ~= " · GitBook$") {
-      this.source := "GitBook", this.title := RegExReplace(this.title, " · GitBook$")
-    } else if (this.title ~= " \| SLEEP \| Oxford Academic$") {
-      this.source := "SLEEP | Oxford Academic", this.title := RegExReplace(this.title, " \| SLEEP \| Oxford Academic$")
-    } else if (this.title ~= " \| Microbiome \| Full Text$") {
-      this.source := "Microbiome", this.title := RegExReplace(this.title, " \| Microbiome \| Full Text$")
-    } else if (this.title ~= "-清华大学医学院$") {
-      this.source := "清华大学医学院", this.title := RegExReplace(this.title, "-清华大学医学院$")
-    } else if (this.title ~= "- 雪球$") {
-      this.source := "雪球", this.title := RegExReplace(this.title, "- 雪球$")
-    } else if (this.title ~= " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$") {
-      this.source := "SuperDataScience", this.title := RegExReplace(this.title, " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$")
-    } else if (this.title ~= " \| Definición \| Diccionario de la lengua española \| RAE - ASALE$") {
-      this.source := "Diccionario de la lengua española | RAE - ASALE", this.title := RegExReplace(this.title, " \| Diccionario de la lengua española \| RAE - ASALE$")
-    } else if (this.title ~= " • Zettelkasten Method$") {
-      this.source := "Zettelkasten Method", this.title := RegExReplace(this.title, " • Zettelkasten Method$")
-    } else if (this.title ~= " on JSTOR$") {
-      this.source := "JSTOR", this.title := RegExReplace(this.title, " on JSTOR$")
-    } else if (this.title ~= " - Queensland Brain Institute - University of Queensland$") {
-      this.source := "Queensland Brain Institute - University of Queensland", this.title := RegExReplace(this.title, " - Queensland Brain Institute - University of Queensland$")
-    } else if (this.title ~= " \| BMC Neuroscience \| Full Text$") {
-      this.source := "BMC Neuroscience", this.title := RegExReplace(this.title, " \| BMC Neuroscience \| Full Text$")
-    } else if (this.title ~= " \| MIT News \| Massachusetts Institute of Technology$") {
-      this.source := "MIT News | Massachusetts Institute of Technology", this.title := RegExReplace(this.title, " \| MIT News \| Massachusetts Institute of Technology$")
-    } else if (this.title ~= " - StatPearls - NCBI Bookshelf$") {
-      this.source := "StatPearls - NCBI Bookshelf", this.title := RegExReplace(this.title, " - StatPearls - NCBI Bookshelf$")
-    } else if (this.title ~= "：剑桥词典$") {
-      this.source := "剑桥词典", this.title := RegExReplace(this.title, "：剑桥词典$")
+    } else if (this.Title ~= ": MedlinePlus Medical Encyclopedia$") {
+      this.Source := "MedlinePlus Medical Encyclopedia", this.Title := RegExReplace(this.Title, ": MedlinePlus Medical Encyclopedia$")
+    } else if (this.Title ~= "_英为财情Investing.com$") {
+      this.Source := "英为财情", this.Title := RegExReplace(this.Title, "_英为财情Investing.com$")
+    } else if (this.Title ~= " \| OSUCCC - James$") {
+      this.Source := "OSUCCC - James", this.Title := RegExReplace(this.Title, " \| OSUCCC - James$")
+    } else if (this.Title ~= " · GitBook$") {
+      this.Source := "GitBook", this.Title := RegExReplace(this.Title, " · GitBook$")
+    } else if (this.Title ~= " \| SLEEP \| Oxford Academic$") {
+      this.Source := "SLEEP | Oxford Academic", this.Title := RegExReplace(this.Title, " \| SLEEP \| Oxford Academic$")
+    } else if (this.Title ~= " \| Microbiome \| Full Text$") {
+      this.Source := "Microbiome", this.Title := RegExReplace(this.Title, " \| Microbiome \| Full Text$")
+    } else if (this.Title ~= "-清华大学医学院$") {
+      this.Source := "清华大学医学院", this.Title := RegExReplace(this.Title, "-清华大学医学院$")
+    } else if (this.Title ~= "- 雪球$") {
+      this.Source := "雪球", this.Title := RegExReplace(this.Title, "- 雪球$")
+    } else if (this.Title ~= " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$") {
+      this.Source := "SuperDataScience", this.Title := RegExReplace(this.Title, " - Podcasts - SuperDataScience \| Machine Learning \| AI \| Data Science Career \| Analytics \| Success$")
+    } else if (this.Title ~= " \| Definición \| Diccionario de la lengua española \| RAE - ASALE$") {
+      this.Source := "Diccionario de la lengua española | RAE - ASALE", this.Title := RegExReplace(this.Title, " \| Diccionario de la lengua española \| RAE - ASALE$")
+    } else if (this.Title ~= " • Zettelkasten Method$") {
+      this.Source := "Zettelkasten Method", this.Title := RegExReplace(this.Title, " • Zettelkasten Method$")
+    } else if (this.Title ~= " on JSTOR$") {
+      this.Source := "JSTOR", this.Title := RegExReplace(this.Title, " on JSTOR$")
+    } else if (this.Title ~= " - Queensland Brain Institute - University of Queensland$") {
+      this.Source := "Queensland Brain Institute - University of Queensland", this.Title := RegExReplace(this.Title, " - Queensland Brain Institute - University of Queensland$")
+    } else if (this.Title ~= " \| BMC Neuroscience \| Full Text$") {
+      this.Source := "BMC Neuroscience", this.Title := RegExReplace(this.Title, " \| BMC Neuroscience \| Full Text$")
+    } else if (this.Title ~= " \| MIT News \| Massachusetts Institute of Technology$") {
+      this.Source := "MIT News | Massachusetts Institute of Technology", this.Title := RegExReplace(this.Title, " \| MIT News \| Massachusetts Institute of Technology$")
+    } else if (this.Title ~= " - StatPearls - NCBI Bookshelf$") {
+      this.Source := "StatPearls - NCBI Bookshelf", this.Title := RegExReplace(this.Title, " - StatPearls - NCBI Bookshelf$")
+    } else if (this.Title ~= "：剑桥词典$") {
+      this.Source := "剑桥词典", this.Title := RegExReplace(this.Title, "：剑桥词典$")
 
-    } else if (RegExMatch(this.title, " \| (.*) \| Cambridge Core$", v)) {
-      this.source := v1 . " | Cambridge Core", this.title := RegExReplace(this.title, "\| (.*) \| Cambridge Core$")
-    } else if (RegExMatch(this.title, " \| (.*) \| Fandom$", v)) {
-      this.source := v1 . " | Fandom", this.title := RegExReplace(this.title, " \| (.*) \| Fandom$")
-    } else if (RegExMatch(this.title, " \| (.*) \| The Guardian$", v)) {
-      this.source := v1 . " | The Guardian", this.title := RegExReplace(this.title, " \| (.*) \| The Guardian$")
-    } else if (RegExMatch(this.title, " - (.*) \| OpenStax$", v)) {
-      this.source := v1 . " | OpenStax", this.title := RegExReplace(this.title, " - (.*) \| OpenStax$")
-    } else if (RegExMatch(this.title, " : Free Download, Borrow, and Streaming : Internet Archive$", v)) {
-      this.source := "Internet Archive", this.title := RegExReplace(this.title, "( : .*?)? : Free Download, Borrow, and Streaming : Internet Archive$")
+    } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {
+      this.Source := v1 . " | Cambridge Core", this.Title := RegExReplace(this.Title, "\| (.*) \| Cambridge Core$")
+    } else if (RegExMatch(this.Title, " \| (.*) \| Fandom$", v)) {
+      this.Source := v1 . " | Fandom", this.Title := RegExReplace(this.Title, " \| (.*) \| Fandom$")
+    } else if (RegExMatch(this.Title, " \| (.*) \| The Guardian$", v)) {
+      this.Source := v1 . " | The Guardian", this.Title := RegExReplace(this.Title, " \| (.*) \| The Guardian$")
+    } else if (RegExMatch(this.Title, " - (.*) \| OpenStax$", v)) {
+      this.Source := v1 . " | OpenStax", this.Title := RegExReplace(this.Title, " - (.*) \| OpenStax$")
+    } else if (RegExMatch(this.Title, " : Free Download, Borrow, and Streaming : Internet Archive$", v)) {
+      this.Source := "Internet Archive", this.Title := RegExReplace(this.Title, "( : .*?)? : Free Download, Borrow, and Streaming : Internet Archive$")
       if (RegexMatch(this.FullTitle, " : (.*?) : Free Download, Borrow, and Streaming : Internet Archive$", v))
-        this.author := v1
+        this.Author := v1
 
-    } else if (this.title ~= " \/ Twitter$") {
-      this.source := "Twitter", this.title := RegExReplace(this.title, """ \/ Twitter$")
-      RegExMatch(this.title, "^(.*) on Twitter: """, v), this.author := v1
-      this.title := RegExReplace(this.title,  "^.* on Twitter: """)
+    } else if (this.Title ~= " \/ Twitter$") {
+      this.Source := "Twitter", this.Title := RegExReplace(this.Title, """ \/ Twitter$")
+      RegExMatch(this.Title, "^(.*) on Twitter: """, v), this.Author := v1
+      this.Title := RegExReplace(this.Title,  "^.* on Twitter: """)
 
-    } else if (RegExMatch(this.title, " \| by (.*?) \| ((.*?) \| )?Medium$", v)) {
-      this.source := "Medium", this.title := RegExReplace(this.title, " \| by .*? \| Medium$"), this.author := v1
+    } else if (RegExMatch(this.Title, " \| by (.*?) \| ((.*?) \| )?Medium$", v)) {
+      this.Source := "Medium", this.Title := RegExReplace(this.Title, " \| by .*? \| Medium$"), this.Author := v1
 
     } else if (IfContains(this.Url, "reddit.com")) {
-      RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(v, "r/") . "$")
+      RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.Source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(v, "r/") . "$")
 
     } else if (IfContains(this.Url, "podcasts.google.com")) {
       RegExMatch(this.Title, "^(.*) - ", v), this.Author := v1, this.Title := RegExReplace(this.Title, "^(.*) - "), this.Source := "Google Podcasts"
@@ -151,175 +151,175 @@ class VimBrowser {
     } else if (IfContains(this.Url, "medicalnewstoday.com")) {
       this.Source := "Medical News Today"
     } else if (IfContains(this.Url, "universityhealthnews.com")) {
-      this.source := "University Health News"
-    } else if (IfContains(this.url, "verywellmind.com")) {
-      this.source := "Verywell Mind"
-    } else if (IfContains(this.url, "cliffsnotes.com")) {
-      this.source := "CliffsNotes", this.title := RegExReplace(this.title, " \| CliffsNotes$")
-    } else if (IfContains(this.url, "w3schools.com")) {
-      this.source := "W3Schools"
-    } else if (IfContains(this.url, "news-medical.net")) {
-      this.source := "News-Medical"
-    } else if (IfContains(this.url, "ods.od.nih.gov")) {
-      this.source := "National Institutes of Health: Office of Dietary Supplements"
-    } else if (IfContains(this.url, "vandal.elespanol.com")) {
-      this.source := "Vandal"
-    } else if (IfContains(this.url, "fidelity.com")) {
-      this.source := "Fidelity International"
+      this.Source := "University Health News"
+    } else if (IfContains(this.Url, "verywellmind.com")) {
+      this.Source := "Verywell Mind"
+    } else if (IfContains(this.Url, "cliffsnotes.com")) {
+      this.Source := "CliffsNotes", this.Title := RegExReplace(this.Title, " \| CliffsNotes$")
+    } else if (IfContains(this.Url, "w3schools.com")) {
+      this.Source := "W3Schools"
+    } else if (IfContains(this.Url, "news-medical.net")) {
+      this.Source := "News-Medical"
+    } else if (IfContains(this.Url, "ods.od.nih.gov")) {
+      this.Source := "National Institutes of Health: Office of Dietary Supplements"
+    } else if (IfContains(this.Url, "vandal.elespanol.com")) {
+      this.Source := "Vandal"
+    } else if (IfContains(this.Url, "fidelity.com")) {
+      this.Source := "Fidelity International"
     } else if (IfContains(this.Url, "eliteguias.com")) {
-      this.source := "Eliteguias"
+      this.Source := "Eliteguias"
     } else if (IfContains(this.Url, "byjus.com")) {
-      this.source := "BYJU'S"
+      this.Source := "BYJU'S"
     } else if (IfContains(this.Url, "blackrock.com")) {
-      this.source := "BlackRock"
+      this.Source := "BlackRock"
     } else if (IfContains(this.Url, "growbeansprout.com")) {
-      this.source := "Beansprout"
+      this.Source := "Beansprout"
     } else if (IfContains(this.Url, "researchgate.net")) {
-      this.source := "ResearchGate"
+      this.Source := "ResearchGate"
     } else if (IfContains(this.Url, "neuroscientificallychallenged.com")) {
-      this.source := "Neuroscientifically Challenged"
+      this.Source := "Neuroscientifically Challenged"
     } else if (IfContains(this.Url, "bachvereniging.nl")) {
-      this.source := "Netherlands Bach Society"
+      this.Source := "Netherlands Bach Society"
     } else if (IfContains(this.Url, "tutorialspoint.com")) {
-      this.source := "Tutorials Point"
+      this.Source := "Tutorials Point"
     } else if (IfContains(this.Url, "fourminutebooks.com")) {
-      this.source := "Four Minute Books"
+      this.Source := "Four Minute Books"
     } else if (IfContains(this.Url, "forvo.com")) {
-      this.source := "Forvo"
+      this.Source := "Forvo"
     } else if (IfContains(this.Url, "gutenberg.org")) {
-      this.source := "Project Gutenberg"
+      this.Source := "Project Gutenberg"
     } else if (IfContains(this.Url, "finty.com")) {
-      this.source := "Finty"
+      this.Source := "Finty"
 
     ; Sites that require special attention
     ; Video sites
-    } else if (IfContains(this.url, "youtube.com/watch")) {
-      this.source := "YouTube", this.title := RegExReplace(this.title, " - YouTube$")
+    } else if (IfContains(this.Url, "youtube.com/watch")) {
+      this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText), this.date := this.MatchYTDate(FullPageText), this.author := this.MatchYTVidAuthor(FullPageText)
-    } else if (IfContains(this.url, "youtube.com/playlist")) {
-      this.source := "YouTube", this.title := RegExReplace(this.title, " - YouTube$")
+        this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText), this.Date := this.MatchYTDate(FullPageText), this.Author := this.MatchYTVidAuthor(FullPageText)
+    } else if (IfContains(this.Url, "youtube.com/playlist")) {
+      this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        this.author := this.MatchYTPLAuthor(FullPageText)
-    } else if (this.title ~= "_哔哩哔哩_bilibili$") {
+        this.Author := this.MatchYTPLAuthor(FullPageText)
+    } else if (this.Title ~= "_哔哩哔哩_bilibili$") {
       this.Source := "哔哩哔哩", this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
-      if (IfContains(this.url, "bilibili.com/video") && CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        this.VidTime := this.MatchVidTime(this.FullTitle), this.date := this.MatchBLDate(FullPageText), this.author := this.MatchBLAuthor(FullPageText)
-    } else if (this.title ~= "-bilibili-哔哩哔哩$") {
-      this.source := "哔哩哔哩", this.title := RegExReplace(this.title, "-bilibili-哔哩哔哩$")
-      if (this.title ~= "-纪录片-全集-高清独家在线观看$")
-        this.source .= "：纪录片", this.title := RegExReplace(this.title, "-纪录片-全集-高清独家在线观看$")
+      if (IfContains(this.Url, "bilibili.com/video") && CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        this.VidTime := this.MatchVidTime(this.FullTitle), this.Date := this.MatchBLDate(FullPageText), this.Author := this.MatchBLAuthor(FullPageText)
+    } else if (this.Title ~= "-bilibili-哔哩哔哩$") {
+      this.Source := "哔哩哔哩", this.Title := RegExReplace(this.Title, "-bilibili-哔哩哔哩$")
+      if (this.Title ~= "-纪录片-全集-高清独家在线观看$")
+        this.Source .= "：纪录片", this.Title := RegExReplace(this.Title, "-纪录片-全集-高清独家在线观看$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText)
-    } else if (this.title ~= " 在线播放 - 小宝影院 - 在线视频$") {
+    } else if (this.Title ~= " 在线播放 - 小宝影院 - 在线视频$") {
       this.Source := "小宝影院", this.Title := RegExReplace(this.Title, " 在线播放 - 小宝影院 - 在线视频$")
       if (CopyFullPage)
         this.VidTime := this.MatchVidTime(this.FullTitle)
-    } else if (this.title ~= "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$") {
-      this.source := "唐人街影院", this.title := RegExReplace(this.title, "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$")
+    } else if (this.Title ~= "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$") {
+      this.Source := "唐人街影院", this.Title := RegExReplace(this.Title, "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$")
       if (CopyFullPage)
         this.VidTime := this.MatchVidTime(this.FullTitle)
-    } else if (RegExMatch(this.title, "^Watch (.*) HD online$", v)) {
-      this.source := "MoviesJoy", this.title := v1
-      if (RegExMatch(this.title, " (\d+)$", v))
-        this.date := v1, this.title := RegExReplace(this.title, " (\d+)$")
+    } else if (RegExMatch(this.Title, "^Watch (.*) HD online$", v)) {
+      this.Source := "MoviesJoy", this.Title := v1
+      if (RegExMatch(this.Title, " (\d+)$", v))
+        this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
       if (CopyFullPage)
         this.VidTime := this.MatchVidTime(this.FullTitle)
 
     ; Wikipedia or wiki format websites
-    } else if (this.title ~= " - supermemo\.guru$") {
-      this.source := "SuperMemo Guru", this.title := RegExReplace(this.title, " - supermemo\.guru$")
+    } else if (this.Title ~= " - supermemo\.guru$") {
+      this.Source := "SuperMemo Guru", this.Title := RegExReplace(this.Title, " - supermemo\.guru$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (this.title ~= " - SuperMemopedia$") {
-      this.source := "SuperMemopedia", this.title := RegExReplace(this.title, " - SuperMemopedia$")
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - SuperMemopedia$") {
+      this.Source := "SuperMemopedia", this.Title := RegExReplace(this.Title, " - SuperMemopedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (IfContains(this.url, "en.wikipedia.org")) {
-      this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia$")
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (IfContains(this.Url, "en.wikipedia.org")) {
+      this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (this.title ~= " - Simple English Wikipedia, the free encyclopedia$") {
-      this.Source := "Simple English Wikipedia", this.title := RegExReplace(this.title, " - Simple English Wikipedia, the free encyclopedia")
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - Simple English Wikipedia, the free encyclopedia$") {
+      this.Source := "Simple English Wikipedia", this.Title := RegExReplace(this.Title, " - Simple English Wikipedia, the free encyclopedia")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "This page was last changed on (.*?),", v), this.date := v1
-    } else if (this.title ~= " - Wiktionary, the free dictionary$") {
-      this.Source := "Wiktionary", this.title := RegExReplace(this.title, " - Wiktionary, the free dictionary$")
+        RegExMatch(FullPageText, "This page was last changed on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - Wiktionary, the free dictionary$") {
+      this.Source := "Wiktionary", this.Title := RegExReplace(this.Title, " - Wiktionary, the free dictionary$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (IfContains(this.url, "en.wikiversity.org")) {
-      this.Source := "Wikiversity", this.title := RegExReplace(this.title, " - Wikiversity$")
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (IfContains(this.Url, "en.wikiversity.org")) {
+      this.Source := "Wikiversity", this.Title := RegExReplace(this.Title, " - Wikiversity$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (this.title ~= " - Wikisource, the free online library$") {
-      this.Source := "Wikisource", this.title := RegExReplace(this.title, " - Wikisource, the free online library$")
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - Wikisource, the free online library$") {
+      this.Source := "Wikisource", this.Title := RegExReplace(this.Title, " - Wikisource, the free online library$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.date := v1
-    } else if (this.title ~= " - 维基百科，自由的百科全书$") {
-      this.Source := "维基百科", this.title := RegExReplace(this.title, " - 维基百科，自由的百科全书$")
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - 维基百科，自由的百科全书$") {
+      this.Source := "维基百科", this.Title := RegExReplace(this.Title, " - 维基百科，自由的百科全书$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "本页面最后修订于(.*?) \(", v), this.date := v1
-    } else if (this.title ~= " - 维基文库，自由的图书馆$") {
-      this.Source := "维基文库", this.title := RegExReplace(this.title, " - 维基文库，自由的图书馆$")
+        RegExMatch(FullPageText, "本页面最后修订于(.*?) \(", v), this.Date := v1
+    } else if (this.Title ~= " - 维基文库，自由的图书馆$") {
+      this.Source := "维基文库", this.Title := RegExReplace(this.Title, " - 维基文库，自由的图书馆$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.date := v1
-    } else if (this.title ~= " - 维基词典，自由的多语言词典$") {
-      this.Source := "维基词典", this.title := RegExReplace(this.title, " - 维基词典，自由的多语言词典$")
+        RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.Date := v1
+    } else if (this.Title ~= " - 维基词典，自由的多语言词典$") {
+      this.Source := "维基词典", this.Title := RegExReplace(this.Title, " - 维基词典，自由的多语言词典$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.date := v1
-    } else if (this.title ~= " - Wikipedia, la enciclopedia libre$") {
-      this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia, la enciclopedia libre$")
+        RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.Date := v1
+    } else if (this.Title ~= " - Wikipedia, la enciclopedia libre$") {
+      this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia, la enciclopedia libre$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.date := v1
-    } else if (this.title ~= " - Wikcionario, el diccionario libre$") {
-      this.Source := "Wikcionario", this.title := RegExReplace(this.title, " - Wikcionario, el diccionario libre$")
+        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.Date := v1
+    } else if (this.Title ~= " - Wikcionario, el diccionario libre$") {
+      this.Source := "Wikcionario", this.Title := RegExReplace(this.Title, " - Wikcionario, el diccionario libre$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.date := v1
-    } else if (IfContains(this.url, "it.wikipedia.org")) {
-      this.Source := "Wikipedia", this.title := RegExReplace(this.title, " - Wikipedia$")
+        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.Date := v1
+    } else if (IfContains(this.Url, "it.wikipedia.org")) {
+      this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Questa pagina è stata modificata per l'ultima volta il (.*?) alle", v), this.date := v1
-    } else if (IfContains(this.url, "ja.wikipedia.org")) {
-      this.Source := "ウィキペディア", this.title := RegExReplace(this.title, " - Wikipedia$")
+        RegExMatch(FullPageText, "Questa pagina è stata modificata per l'ultima volta il (.*?) alle", v), this.Date := v1
+    } else if (IfContains(this.Url, "ja.wikipedia.org")) {
+      this.Source := "ウィキペディア", this.Title := RegExReplace(this.Title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "最終更新 (.*?) \(", v), this.date := v1
-    } else if (this.title ~= " - Vicipaedia$") {
-      this.Source := "Vicipaedia", this.title := RegExReplace(this.title, " - Vicipaedia$")
+        RegExMatch(FullPageText, "最終更新 (.*?) \(", v), this.Date := v1
+    } else if (this.Title ~= " - Vicipaedia$") {
+      this.Source := "Vicipaedia", this.Title := RegExReplace(this.Title, " - Vicipaedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Novissima mutatio die (.*?) hora", v), this.date := v1
-    } else if (IfContains(this.url, "github.com")) {
-      this.Source := "GitHub", this.title := RegExReplace(this.title, "^GitHub - "), this.title := RegExReplace(this.title, " · GitHub$")
+        RegExMatch(FullPageText, "Novissima mutatio die (.*?) hora", v), this.Date := v1
+    } else if (IfContains(this.Url, "github.com")) {
+      this.Source := "GitHub", this.Title := RegExReplace(this.Title, "^GitHub - "), this.Title := RegExReplace(this.Title, " · GitHub$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Latest commit .*? on (.*)", v), this.date := v1
+        RegExMatch(FullPageText, "Latest commit .*? on (.*)", v), this.Date := v1
 
     ; Others
     } else if (this.Title ~= "_百度百科$") {
       this.Source := "百度百科", this.Title := RegExReplace(this.Title, "_百度百科$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "s)最近更新：.*（(.*)）", v), this.date := v1
-    } else if (IfContains(this.url, "zhuanlan.zhihu.com")) {
-      this.Source := "知乎", this.title := RegExReplace(this.title, " - 知乎$")
+        RegExMatch(FullPageText, "s)最近更新：.*（(.*)）", v), this.Date := v1
+    } else if (IfContains(this.Url, "zhuanlan.zhihu.com")) {
+      this.Source := "知乎", this.Title := RegExReplace(this.Title, " - 知乎$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "(编辑|发布)于 (.*?) ", v), this.date := v2
-    } else if (IfContains(this.url, "economist.com")) {
-      this.Source := "The Economist", this.title := RegExReplace(this.title, " \| The Economist$")
+        RegExMatch(FullPageText, "(编辑|发布)于 (.*?) ", v), this.Date := v2
+    } else if (IfContains(this.Url, "economist.com")) {
+      this.Source := "The Economist", this.Title := RegExReplace(this.Title, " \| The Economist$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "\r\n(\w+ \d+\w+ \d+)( \| .*)?\r\n\r\n", v), this.date := v1
+        RegExMatch(FullPageText, "\r\n(\w+ \d+\w+ \d+)( \| .*)?\r\n\r\n", v), this.Date := v1
     } else if (IfContains(this.Url, "investopedia.com")) {
       this.Source := "Investopedia"
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Updated (.*)", v), this.date := v1
+        RegExMatch(FullPageText, "Updated (.*)", v), this.Date := v1
     } else if (IfContains(this.Url, "mp.weixin.qq.com")) {
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, " ([0-9]{4}-[0-9]{2}-[0-9]{2}) ", v), this.date := v1
-    } else if (this.title ~= " \| Britannica$") {
-      this.source := "Britannica", this.title := RegExReplace(this.title, " \| Britannica$")
+        RegExMatch(FullPageText, " ([0-9]{4}-[0-9]{2}-[0-9]{2}) ", v), this.Date := v1
+    } else if (this.Title ~= " \| Britannica$") {
+      this.Source := "Britannica", this.Title := RegExReplace(this.Title, " \| Britannica$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Last Updated: (.*) • ", v), this.date := v1
+        RegExMatch(FullPageText, "Last Updated: (.*) • ", v), this.Date := v1
       
     ; Special cases
-    } else if (this.title ~= " - YouTube$") {  ; for getting title for timestamp syncing with SM
-      this.source := "YouTube", this.title := RegExReplace(this.title, " - YouTube$")
+    } else if (this.Title ~= " - YouTube$") {  ; for getting title for timestamp syncing with SM
+      this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
 
     } else {
       ReversedTitle := StrReverse(this.Title)
@@ -454,8 +454,8 @@ class VimBrowser {
   Highlight(CollName:="", PlainText:="") {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
     if (RegexMatch(PlainText, "(\[\d+\])+$|\[\d+\]: \d+$", v)) {
-      this.url := this.url ? this.url : this.GetParsedUrl()
-      if (IfContains(this.url, "wikipedia.org"))
+      this.Url := this.Url ? this.Url : this.GetParsedUrl()
+      if (IfContains(this.Url, "wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"
     }
     ; ControlSend doesn't work reliably because browser can't highlight in background
@@ -469,8 +469,8 @@ class VimBrowser {
 
   ClickBtn() {
     critical
-    this.url := this.url ? this.url : this.GetParsedUrl()
-    if (IfContains(this.url, "youtube.com/watch")) {
+    this.Url := this.Url ? this.Url : this.GetParsedUrl()
+    if (IfContains(this.Url, "youtube.com/watch")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")

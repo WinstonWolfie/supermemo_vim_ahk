@@ -39,7 +39,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
       StrLen++
     send % "+{Left " . StrLen . "}"
   }
-  if (text && (html = "sm"))
+  if (text && (HTML = "sm"))
     send ^+1
   if (RestoreClip)  ; for scripts that restore clipboard at the end
     Clipboard := ClipSaved
@@ -47,6 +47,6 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
     Return Clipped
 }
 
-copy(RestoreClip:=true, HTML:=false, CopyMethod:=0, KeysToSend:="") {
-  return clip(,, RestoreClip, HTML, CopyMethod, KeysToSend)
+Copy(RestoreClip:=true, HTML:=false, CopyMethod:=0, KeysToSend:="") {
+  return Clip(,, RestoreClip, HTML, CopyMethod, KeysToSend)
 }

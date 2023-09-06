@@ -65,7 +65,7 @@ Return
 
 ; ydc
 y::
-  vim.move.YdcClipSaved := copy(false,,, "^c{Right}")
+  vim.move.YdcClipSaved := Copy(false,,, "^c{Right}")
   if (WinActive("ahk_group VimCursorSameAfterSelect"))
     send {Left}
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
@@ -78,7 +78,7 @@ Return
 d::
 x::
   if (!vim.state.leader) {
-    vim.move.YdcClipSaved := copy(false,,, "^x")
+    vim.move.YdcClipSaved := Copy(false,,, "^x")
   } else {
     send {bs}
   }
@@ -91,7 +91,7 @@ Return
 
 c::
   if (!vim.state.leader) {
-    vim.move.YdcClipSaved := copy(false,,, "^x")
+    vim.move.YdcClipSaved := Copy(false,,, "^x")
   } else {
     send {bs}
   }
@@ -126,7 +126,7 @@ p::
   ; Get selection
   if (!PasteOnly) {
     PrevClip := ClipboardAll
-    copy(false)
+    Copy(false)
     NewClip := ClipboardAll
     if (PrevClip) {
       WinClip.Clear()
@@ -157,9 +157,9 @@ ConvertToLowercaseClipped:
 ConvertToUppercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
   if (IfIn(A_ThisLabel, "ConvertToLowercase,u,ConvertToLowercaseClipped")) {
-    clip(StrLower(copy(false, html)),, false, html)
+    Clip(StrLower(Copy(false, html)),, false, html)
   } else if (IfIn(A_ThisLabel, "ConvertToUppercase,+u,ConvertToUppercaseClipped")) {
-    clip(StrUpper(copy(false, html)),, false, html)
+    Clip(StrUpper(Copy(false, html)),, false, html)
   }
   sleep 100  ; while (WinClipAPI.GetOpenClipboardWindow()) doesn't work for some reason
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
@@ -170,7 +170,7 @@ InvertCase:
 ~::
   ClipSaved := ClipboardAll
 InvertCaseClipped:
-  selection := copy(false, html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
+  selection := Copy(false, html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(selection) {
     Lab_Invert_Char:= Substr(selection, A_Index, 1)
@@ -181,18 +181,18 @@ InvertCaseClipped:
     else
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
-  clip(Lab_Invert_Char_Out,, false, html)
+  Clip(Lab_Invert_Char_Out,, false, html)
   sleep 100  ; while (WinClipAPI.GetOpenClipboardWindow()) doesn't work for some reason
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
 o::  ; move to other end of marked area; not perfect with line breaks
   ClipSaved := ClipboardAll
-  if (!selection := copy(false))
+  if (!selection := Copy(false))
     goto RestoreClipReturn
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
-  SelectionRight := copy(false), SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
+  SelectionRight := Copy(false), SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
   send +{left}
   if (SelectionLen < SelectionRightLen
    || (SelectionLen == SelectionRightLen && StrLen(selection) < StrLen(SelectionRight))) {  ; moving point of selection is on the right

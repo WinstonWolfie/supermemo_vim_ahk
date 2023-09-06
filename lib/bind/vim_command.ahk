@@ -83,12 +83,12 @@ Return
 
 VimCommanderGuiEscape:
 VimCommanderGuiClose:
-  Gui destroy
+  Gui, Destroy
 return
 
 VimCommanderButtonExecute:
-  Gui submit
-  Gui destroy
+  Gui, Submit
+  Gui, Destroy
   if (IfContains("|" . list . "|", "|" . command . "|")) {
     Vim.State.SetMode("Insert")
     WinActivate % "ahk_id " . hWnd
@@ -103,7 +103,7 @@ VimCommanderButtonExecute:
 return
 
 FindSearch(title, prompt, text:="") {
-  if (!Default := trim(copy()))
+  if (!Default := trim(Copy()))
     Default := text ? text : Clipboard
   ret := InputBox(title, prompt,,,,,,,, Default)
   ; If the user closed the input box without submitting, return nothing
@@ -128,12 +128,12 @@ Return
 
 WebSearchGuiEscape:
 WebSearchGuiClose:
-  Gui Destroy
+  Gui, Destroy
 return
 
 WebSearchButtonSearch:
-  Gui Submit
-  Gui Destroy
+  Gui, Submit
+  Gui, Destroy
   if (IsUrl(search)) {
     run % search
   } else {
@@ -175,12 +175,12 @@ Return
 
 YouGlishGuiEscape:
 YouGlishGuiClose:
-  Gui destroy
+  Gui, Destroy
 return
 
 YouGlishButtonSearch:
-  Gui submit
-  Gui destroy
+  Gui, Submit
+  Gui, Destroy
   if (language == "American Sign Language")
     language := "signlanguage"
   run % "https://youglish.com/pronounce/" . search . "/" . StrLower(language) . "?"
@@ -205,12 +205,12 @@ Return
 
 GoogleDefineGuiEscape:
 GoogleDefineGuiClose:
-  Gui destroy
+  Gui, Destroy
 return
 
 GoogleDefineButtonSearch:
-  Gui submit
-  Gui destroy
+  Gui, Submit
+  Gui, Destroy
   if (LangCode) {
     define := "define", add := ""
     if (LangCode = "fr") {
@@ -260,12 +260,12 @@ return
 
 WiktionaryGuiEscape:
 WiktionaryGuiClose:
-  Gui destroy
+  Gui, Destroy
 return
 
 WiktionaryButtonSearch:
-  Gui submit
-  Gui destroy
+  Gui, Submit
+  Gui, Destroy
   if (language == "Ancient Greek")
     language := "Ancient_Greek"
   if (language == "Latin") {
@@ -284,7 +284,7 @@ return
 
 CopyHTML:
   ClipSaved := ClipboardAll
-  if (!Clipboard := copy(false, true))
+  if (!Clipboard := Copy(false, true))
     goto RestoreClipReturn
   ToolTip("Copying successful.")
 return
@@ -381,11 +381,11 @@ ReformatScriptComponent:
   send ^a^x
   ClipWait
   aOriginalText := StrSplit(Clipboard, "`n`r")
-  Vim.Browser.url := trim(aOriginalText[1], " `r`n"), Vim.Browser.title := WinGetTitle("A")
+  Vim.Browser.Url := trim(aOriginalText[1], " `r`n"), Vim.Browser.Title := WinGetTitle("A")
   Vim.Browser.VidTime := trim(aOriginalText[2], " `r`n")
-  if (IfContains(Vim.Browser.url, "youtube.com")) {
+  if (IfContains(Vim.Browser.Url, "youtube.com")) {
     YTTime := Vim.Browser.VidTime ? "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s" : ""
-    Vim.Browser.source := "YouTube"
+    Vim.Browser.Source := "YouTube"
     if (YTTime) {
       send ^t{f9}  ; opens script editor
       WinWaitActive, ahk_class TScriptEditor
@@ -393,10 +393,10 @@ ReformatScriptComponent:
       send !o{esc}  ; close script editor
     }
   } else {
-    vim.browser.title := Vim.Browser.VidTime . " | " . Vim.Browser.title
+    Vim.Browser.Title := Vim.Browser.VidTime . " | " . Vim.Browser.Title
   }
   WinClip.Clear()
-  Clipboard := Vim.Browser.url
+  Clipboard := Vim.Browser.Url
   ClipWait
   gosub SMSetLinkFromClipboard
   send {esc}
@@ -467,7 +467,7 @@ ReformatVocab:
   if (!Vim.SM.WaitTextFocus(1000))
     return
   send ^a
-  if (!data := copy(false, true))
+  if (!data := Copy(false, true))
     goto RestoreClipReturn
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
   data := RegExReplace(data, "(\.<BR>""|\. ?<BR>(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
@@ -577,7 +577,7 @@ SearchLinkInYT:
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
     send ^{home}+{right}
-    RegExMatch(copy(, true), "(<A((.|\r\n)*)href="")\K[^""]+", link)
+    RegExMatch(Copy(, true), "(<A((.|\r\n)*)href="")\K[^""]+", link)
     send {esc}
   }
   SMTitle := WinGetTitle("ahk_class TElWind")
@@ -629,7 +629,7 @@ BingChat:
     link := uiaBrowser.GetCurrentURL()
   } else {
     ClipSaved := ClipboardAll
-    if (!text := copy(false, true))
+    if (!text := Copy(false, true))
       text := Clipboard, ext := ".txt"
     if (text) {
       CurrTime := FormatTime(, "yyyy-MM-dd_HH:mm:ss:" . A_MSec)
@@ -711,7 +711,7 @@ MakeHTMLUnique:
   ClipSaved := ClipboardAll
   Vim.SM.MoveToLast(false)
   AntiMerge := "<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>"
-  clip(AntiMerge,, false, "sm")
+  Clip(AntiMerge,, false, "sm")
   Clipboard := ClipSaved
 return
 

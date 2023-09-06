@@ -37,7 +37,7 @@ class WinClipAPI_base extends WinClip_base
 
 class WinClipAPI extends WinClip_base
 {
-  memcopy( dest, src, size ) {
+  memCopy( dest, src, size ) {
     return DllCall( "msvcrt\memcpy", "ptr", dest, "ptr", src, "uint", size )
   }
   GlobalSize( hObj ) {
@@ -254,7 +254,7 @@ class WinClipAPI extends WinClip_base
       if ( MimeType = format )
       {
         VarSetCapacity( CLSID, 16, 0 )
-        this.memcopy( &CLSID, pici, 16 )
+        this.memCopy( &CLSID, pici, 16 )
         return 1
       }
     }

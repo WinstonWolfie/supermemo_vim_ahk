@@ -191,7 +191,7 @@ class VimSM {
 
   MoveAboveRef(RestoreClip:=true) {
     send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-    if (IfContains(copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
+    if (IfContains(Copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
       send {up 2}
     } else {
       send ^{end}
@@ -200,7 +200,7 @@ class VimSM {
 
   MoveToLast(RestoreClip:=true) {
     send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-    if (InStr(copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
+    if (InStr(Copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
       send {up}{left}
     } else {
       send ^{end}
@@ -460,7 +460,7 @@ class VimSM {
     this.ActivateElWind()
     if (!b := this.IsBrowsing())
       this.ElMenu()
-    return copy(RestoreClip,,, b ? "^c" : "tc")
+    return Copy(RestoreClip,,, b ? "^c" : "tc")
   }
 
   PrepareStatBar(step, x:=0, y:=0) {
@@ -721,18 +721,18 @@ class VimSM {
   MakeReference(html:=false) {
     break := html ? "<br>" : "`n"
     text := "#SuperMemo Reference:"
-    if (this.Vim.Browser.url)
-      text .= break . "#Link: " . this.Vim.Browser.url
-    if (this.Vim.Browser.title)
-      text .= break . "#Title: " . this.Vim.Browser.title
-    if (this.Vim.Browser.source)
-      text .= break . "#Source: " . this.Vim.Browser.source
-    if (this.Vim.Browser.author)
-      text .= break . "#Author: " . this.Vim.Browser.author
-    if (this.Vim.Browser.date)
-      text .= break . "#Date: " . this.Vim.Browser.date
-    if (this.Vim.Browser.comment)
-      text .= break . "#Comment: " . this.Vim.Browser.comment
+    if (this.Vim.Browser.Url)
+      text .= break . "#Link: " . this.Vim.Browser.Url
+    if (this.Vim.Browser.Title)
+      text .= break . "#Title: " . this.Vim.Browser.Title
+    if (this.Vim.Browser.Source)
+      text .= break . "#Source: " . this.Vim.Browser.Source
+    if (this.Vim.Browser.Author)
+      text .= break . "#Author: " . this.Vim.Browser.Author
+    if (this.Vim.Browser.Date)
+      text .= break . "#Date: " . this.Vim.Browser.Date
+    if (this.Vim.Browser.Comment)
+      text .= break . "#Comment: " . this.Vim.Browser.Comment
     return text
   }
 

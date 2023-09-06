@@ -97,7 +97,7 @@ return
   ToolTip("Copied " . Vim.Browser.Url . "`n"
         . "Title: " . Vim.Browser.Title
         . (Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : "")
-        . (Vim.Browser.author ? "`nAuthor: " . Vim.Browser.author : "")
+        . (Vim.Browser.Author ? "`nAuthor: " . Vim.Browser.Author : "")
         . (Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : "")
         . (Vim.Browser.VidTime ? "`nTime stamp: " . Vim.Browser.VidTime : ""))
   Clipboard := Vim.Browser.Url, guiaBrowser := ""
@@ -105,7 +105,7 @@ return
 
 ^!d::  ; parse word definitions
   ClipSaved := ClipboardAll
-  if (!copy(false)) {
+  if (!Copy(false)) {
     ToolTip("Text not found.")
     goto RestoreClipReturn
   }
@@ -158,14 +158,14 @@ return
   Vim.Browser.Clear()
   guiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   WinClip.Snap(data)
-  if (!copy(false))
+  if (!Copy(false))
     ToolTip("No text selected."), WinClip.Restore(data)
   Vim.Browser.GetInfo()
   ToolTip("Copied " . Clipboard . "`n"
         . "Link: " . Vim.Browser.Url . "`n"
         . "Title: " . Vim.Browser.Title
         . (Vim.Browser.Source ? "`nSource: " . Vim.Browser.Source : "")
-        . (Vim.Browser.author ? "`nAuthor: " . Vim.Browser.author : "")
+        . (Vim.Browser.Author ? "`nAuthor: " . Vim.Browser.Author : "")
         . (Vim.Browser.Date ? "`nDate: " . Vim.Browser.Date : ""))
   guiaBrowser := ""
 return
@@ -261,14 +261,14 @@ SMImportButtonImport:
     ; Without KeyWait Enter SwitchToSameWindow() below could fail???
     KeyWait Enter
     KeyWait I
-    Gui Submit
+    Gui, Submit
     if (Passive != 2)
       Passive := (IfIn(Concept, "online,sources")) ? true : false
-    Gui Destroy
+    Gui, Destroy
     Vim.Caret.SwitchToSameWindow("ahk_id " . guiaBrowser.BrowserId)
   }
 
-  HTMLText := (DownloadHTML || Passive) ? "" : copy(false, true)
+  HTMLText := (DownloadHTML || Passive) ? "" : Copy(false, true)
   if (IWB) {
     if (!HTMLText) {
       ToolTip("Text not found.")
@@ -324,7 +324,7 @@ SMImportButtonImport:
   ClipWait
 
   InfoToolTip := "Importing:`n"
-               . "Url: " . Vim.Browser.url . "`n"
+               . "Url: " . Vim.Browser.Url . "`n"
                . "Title: " . Vim.Browser.Title
   if (Vim.Browser.Source)
     InfoToolTip .= "`nSource: " . Vim.Browser.Source
@@ -408,7 +408,7 @@ SMImportGuiEscape:
 SMImportGuiClose:
 ImportReturn:
   if (esc := IfContains(A_ThisLabel, "SMImportGui,ImportReturn")) {
-    Gui destroy
+    Gui, Destroy
     Vim.SM.ClearHighlight()
   }
   if (Passive || esc) {
@@ -450,7 +450,7 @@ return
     if (IfContains(url := uiaBrowser.GetCurrentUrl(), "youtube.com/watch"))
       text := Vim.Browser.ParseUrl(url), skip := true, vToolTip := "url"
   }
-  if (!skip && (!text := copy())) {
+  if (!skip && (!text := Copy())) {
     if (wBrowser) {
       if (!url) {
         ToolTip("Url not found.")
@@ -476,7 +476,7 @@ return
 !x::
   CtrlState := IfContains(A_ThisHotkey, "^"), hWnd := WinActive("A")
   ClipSaved := ClipboardAll
-  if (!copy(false)) {
+  if (!Copy(false)) {
     ToolTip("Nothing is selected.")
     goto RestoreClipReturn
   } else {
@@ -671,7 +671,7 @@ return
   CloseWnd := IfContains(A_ThisHotkey, "^"), ReleaseModifierKeys()
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus("A"), "Edit"))
     send {esc}
-  marker := trim(copy(false), " `t`r`n")
+  marker := trim(Copy(false), " `t`r`n")
   if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))) {
     if (wAcrobat)
       marker := "p" . GetAcrobatPageBtn().Value
@@ -782,7 +782,7 @@ return
     PostMessage, 0x0111, 17011,,, A  ; export selected audio
     WinWaitActive, Export Selected Audio
   }
-  FileName := RegExReplace(Vim.Browser.title . CurrTime, "[^a-zA-Z0-9\\.\\-]", "_")
+  FileName := RegExReplace(Vim.Browser.Title . CurrTime, "[^a-zA-Z0-9\\.\\-]", "_")
   TempPath := A_Temp . "\" . FileName . ".mp3"
   Control, Choose, 3, ComboBox3  ; choose mp3 from file type
   ControlSetText, Edit1, % TempPath
@@ -798,7 +798,7 @@ return
   Vim.SM.AltA()
   Vim.SM.WaitFileLoad()
   QuestionFieldName := ControlGetFocus("A")
-  if (Vim.Browser.title) {
+  if (Vim.Browser.Title) {
     send % "{text}" . Vim.SM.MakeReference()
   } else {
     send {text}Listening comprehension:
@@ -806,8 +806,8 @@ return
   Vim.SM.InvokeFileBrowser()
   Vim.SM.FileBrowserSetPath(TempPath, true)
   WinWaitActive, ahk_class TInputDlg
-  if (Vim.Browser.title) {
-    ControlSetText, TMemo1, % Vim.Browser.title . " (excerpt)", A
+  if (Vim.Browser.Title) {
+    ControlSetText, TMemo1, % Vim.Browser.Title . " (excerpt)", A
   } else {
     ControlSetText, TMemo1, listening comprehension_, A
   }

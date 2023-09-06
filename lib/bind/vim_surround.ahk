@@ -39,7 +39,7 @@ t::
     CurrKey := "<"
   }
   if (!Vim.State.SurroundChangeEntered && Vim.State.StrIsInCurrentVimMode("Visual,ydc_y")) {
-    if (!selection := copy(false)) {
+    if (!selection := Copy(false)) {
       ToolTip("Text not found.")
       goto RestoreClipReturn
     }
@@ -51,7 +51,7 @@ t::
     if (!Vim.State.SurroundChangeEntered) {
       Vim.State.SetMode("Vim_Visual")
       Vim.Move.Inner(CurrKey)
-      if (!selection := copy(false))
+      if (!selection := Copy(false))
         goto RestoreClipReturn
       SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
       if (c) {

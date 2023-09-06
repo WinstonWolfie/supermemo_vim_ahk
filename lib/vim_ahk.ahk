@@ -344,7 +344,7 @@ class VimAhk {
 
   ; Ref: https://www.reddit.com/r/AutoHotkey/comments/4ma5b8/identifying_end_of_line_when_typing_with_ahk_and/
   CheckChr(key) {
-    Return (copy(,,, "+{right}^c{left}") ~= key)
+    Return (Copy(,,, "+{right}^c{left}") ~= key)
   }
 
   IsExceptionWindow() {
