@@ -204,10 +204,8 @@ SMHyperLinkToTopic:
   WinWaitActive, ahk_class TScriptEditor,, 1.5
   if (ErrorLevel) {
     ToolTip("No script component found.")
-    if (A_ThisLabel != "SMHyperLinkToTopic") {
-      Clipboard := ClipSaved
-      Vim.Browser.Clear()
-    }
+    if (A_ThisLabel != "SMHyperLinkToTopic")
+      Clipboard := ClipSaved, Vim.Browser.Clear()
     return
   }
   script := "url " . Vim.Browser.Url
@@ -232,8 +230,7 @@ SMHyperLinkToTopic:
   if (Vim.Browser.Title)
     Vim.SM.SetTitle(Vim.Browser.Title)
   Clipboard := ClipSaved
-  Vim.Browser.Clear()
-  Vim.SM.Reload()
+  Vim.Browser.Clear(), Vim.SM.Reload()
 return
 
 r::  ; set *r*eference's link to what's in the clipboard
@@ -260,8 +257,8 @@ SMSetLinkFromClipboard:
   ControlSetText, TMemo1, % Ref
   ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
   WinWaitClose
-  if ((A_ThisHotkey == "r") && !Vim.SM.AskPrio())
-    return
+  if (A_ThisHotkey == "r")
+    Vim.SM.AskPrio()
 return
 
 m::

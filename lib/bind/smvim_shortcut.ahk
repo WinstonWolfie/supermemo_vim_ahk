@@ -428,7 +428,7 @@ PlanAddButtonAppend:
   }
   send ^s
   if (IfIn(activity, "Break,Sports,Out,Shower"))
-    try ShellRun("b")  ; my personal backup script
+    try run b  ; my personal backup script
   BlockInput, off
   Vim.State.SetNormal()
 return

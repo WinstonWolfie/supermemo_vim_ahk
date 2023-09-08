@@ -18,7 +18,8 @@ class VimBrowser {
   }
 
   ParseUrl(url) {
-    url := RegExReplace(url, "#.*")
+    if (!IfContains(url, "wiktionary.org/wiki"))
+      url := RegExReplace(url, "#.*")
     ; Remove everything after "?"
     QuestionMarkList := "baike.baidu.com,bloomberg.com"
     if (IfContains(url, QuestionMarkList)) {

@@ -79,7 +79,7 @@ return
 ^!i::  ; open in *I*E
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   Vim.Browser.RunInIE(Vim.Browser.ParseUrl(uiaBrowser.GetCurrentURL()))
-  ; run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL())  ; RIP old method
+  ; run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL()  ; RIP old method)
 Return
 
 ^!t::  ; copy title
@@ -752,7 +752,7 @@ return
 ; IE
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ; Open in default browser (in my case, Chrome); similar to default shortcut ^+e to open in ms edge
-^+c::run % ControlGetText("Edit1", "A")  ; browser url field
+^+c::run % ControlGetText("Edit1", "A")  ; browser url field)
 ^+e::run % "msedge.exe " . ControlGetText("Edit1", "A")
 ^!l::ToolTip("Copied " . Clipboard := ControlGetText("Edit1", "A"))
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))

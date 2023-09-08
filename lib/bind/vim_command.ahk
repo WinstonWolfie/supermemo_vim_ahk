@@ -185,7 +185,7 @@ YouGlishButtonSearch:
   Gui, Destroy
   if (language == "American Sign Language")
     language := "signlanguage"
-  run % "https://youglish.com/pronounce/" . search . "/" . StrLower(language) . "?"
+  run % "https://youglish.com/pronounce/" . search . "/" . StrLower(language)
 Return
 
 KillIE:
@@ -242,11 +242,6 @@ ClozeAndDone:
   send {enter}
   Vim.State.SetNormal()
 return
-
-; YTHistoryInIE:
-;   ; run iexplore.exe https://www.youtube.com/feed/history  ; RIP IE
-;   Vim.Browser.RunInIE("https://www.youtube.com/feed/history")
-; return
 
 Wiktionary:
   search := trim(Copy())
@@ -723,7 +718,7 @@ return
 
 RestartOneDrive:
   process, close, OneDrive.exe
-  ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk")
+  run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk
   WinWait, OneDrive ahk_class CabinetWClass ahk_exe explorer.exe
   WinClose
   WinActivate, % "ahk_id " . hWnd
@@ -787,17 +782,24 @@ MassReplaceReg:
   replacement := ""
   if (!find && !replacement)
     return
-  ControlSend, Edit1, % "{text}" . find, A
+  ; ControlSend, Edit1, % "{text}" . find, A
   loop {
     send !r
     WinWaitActive, ahk_class TInputDlg
     text := ControlGetText("TMemo1", "")
     if !(text ~= "^" . find)
       return
-    if !(text ~= ", China Standard Time$")
-      ControlSetText, TMemo1, % text . replacement
+    RegExMatch(text, "^" . find . "\K(.*?)(#.*$)", v)
+    if (v && !IfContains(v1, "%,:")) {
+      NewText := "https://en.wiktionary.org/wiki/" . EncodeDecodeURI(v1) . v2
+      if (IfContains(v1, "%") || (text != NewText))
+        ControlSetText, TMemo1, % NewText
+    }
     send !{enter}
     WinWaitActive, ahk_class TRegistryForm
-    send {down}
+    send {f3}
+    WinWaitActive, ahk_class TProgressBox,, 0
+    if (!ErrorLevel)
+      WinWaitActive, ahk_class TRegistryForm
   }
 return

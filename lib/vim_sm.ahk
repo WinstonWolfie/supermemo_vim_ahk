@@ -649,9 +649,14 @@ class VimSM {
     ContLearn := this.IsLearning(), text := LTrim(text)
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
     ; Can't just encode URI, Chinese characters will be encoded
-    ; For some reason, SuperMemo only encodes some part of the url
-    if (IsUrl(text))
-      text := StrReplace(text, "%20", " "), text := StrReplace(text, "%3F", "?"), text := StrReplace(text, "%27", "'"), text := StrReplace(text, "%21", "!")
+    ; For some reason, SuperMemo only encodes some part of the url (probably because of SuperMemo uses a lower version of IE?)
+    if (IsUrl(text)) {
+      text := RegExReplace(text, "#.*")
+      text := StrReplace(text, "%20", " ")
+      text := StrReplace(text, "%3F", "?")
+      text := StrReplace(text, "%27", "'")
+      text := StrReplace(text, "%21", "!")
+    }
     if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(text, "youtube.com"))  ; sm19 deletes www from www.youtube.com
       text := RegExReplace(text, "^.*?(?=youtube.com)")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
