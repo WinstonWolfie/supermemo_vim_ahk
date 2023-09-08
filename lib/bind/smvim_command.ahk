@@ -147,8 +147,7 @@ o::  ; c*o*mpress images
 return
 
 s::  ; turn active language item to passive (*s*witch)
-  Vim.State.SetMode("Vim_Normal")
-  Vim.SM.ExitText()
+  Vim.State.SetMode("Vim_Normal"), Vim.SM.ExitText()
   if (Vim.SM.IsLearning() == 2)  ; if learning (on "next repitition")
     send {esc}
   send ^+s

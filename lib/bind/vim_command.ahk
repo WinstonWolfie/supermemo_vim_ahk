@@ -66,12 +66,14 @@ Return
         list := "MakeHTMLUnique|" . list
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
-    list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceRegistry|" . list
+    list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceRef|" . list
   } else if (WinActive("ahk_group Browser")) {  ; web browsers
     list := "IWBPriorityAndConcept|IWBNewTopic|" . list
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
     list := "SetPlanPosition|" . list
-  } else if (WinActive("Google Drive error list ahk_class ATL:00007FF6647D5028 ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
+  } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
+    list := "MassReplaceReg|" . list
+  } else if (WinActive("Google Drive error list ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
     list := "RetryAllSyncErrors|" . list
   }
 
@@ -411,7 +413,7 @@ CopyWindowPosition:
   ToolTip("Copied " . Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h)
 return
 
-MassReplaceRegistry:
+MassReplaceRef:
   find := ""
   replacement := ""
   if (!find && !replacement)
@@ -774,6 +776,28 @@ RetryAllSyncErrors:
     dot.Click()
     el.FindFirstBy("ControlType=MenuItem AND Name='Retry' AND AutomationId='retry-id'").Click()
     sleep 100
+    if (el.FindFirstBy("ControlType=Text AND Name='Looks fine'"))
+      break
   }
   ToolTip("Finished.")
+return
+
+MassReplaceReg:
+  find := ""
+  replacement := ""
+  if (!find && !replacement)
+    return
+  ControlSend, Edit1, % "{text}" . find, A
+  loop {
+    send !r
+    WinWaitActive, ahk_class TInputDlg
+    text := ControlGetText("TMemo1", "")
+    if !(text ~= "^" . find)
+      return
+    if !(text ~= ", China Standard Time$")
+      ControlSetText, TMemo1, % text . replacement
+    send !{enter}
+    WinWaitActive, ahk_class TRegistryForm
+    send {down}
+  }
 return

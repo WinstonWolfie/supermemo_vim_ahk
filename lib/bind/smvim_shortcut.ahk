@@ -235,7 +235,7 @@ return
 return
 
 ^!l::
-  CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
+  CurrTimeDisplay := GetTimeMSec()
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   ClipSaved := ClipboardAll
   ReleaseModifierKeys()

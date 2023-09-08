@@ -256,7 +256,6 @@ IWBNewTopic:
   }
 
 SMImportButtonImport:
-  CurrTime := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
   if (A_ThisLabel == "SMImportButtonImport") {
     ; Without KeyWait Enter SwitchToSameWindow() below could fail???
     KeyWait Enter
@@ -282,7 +281,7 @@ SMImportButtonImport:
       ToolTip("Attempting to download website...", true)
 
       ; Using UrlDownloadToFile
-      TempPath := A_Temp . "\" . StrReplace(CurrTime, ":") . ".htm"
+      TempPath := A_Temp . "\" . StrReplace(GetTimeMSec(), ":") . ".htm"
       UrlDownloadToFile, % Vim.Browser.Url, % TempPath
       HTMLText := FileRead(TempPath)
       FileDelete, % TempPath
@@ -307,6 +306,8 @@ SMImportButtonImport:
   Vim.Browser.GetTitleSourceDate(false,, (FullPage ? Clipboard : ""))
   if (ResetVidTime)
     Vim.Browser.VidTime := "0:00"
+  if (Passive == 1)
+    Vim.Browser.Date := ""
 
   WinClip.Clear()
   if (Online && Passive) {
@@ -318,7 +319,7 @@ SMImportButtonImport:
     LineBreak := IfContains(Vim.Browser.Url, LineBreakList)
     HTMLText := Vim.HTML.Clean(HTMLText,, LineBreak, Vim.Browser.Url)
     if (!IWB && !Vim.Browser.Date)
-      Vim.Browser.Date := "Imported on " . CurrTime
+      Vim.Browser.Date := "Imported on " . GetDetailedTime()
     Clipboard := HTMLText . "<br>" . Vim.SM.MakeReference(true)
   }
   ClipWait
@@ -387,19 +388,19 @@ SMImportButtonImport:
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
 
   if (CloseTab) {
+    WinActivate % "ahk_id " . guiaBrowser.BrowserId  ; apparently needed for closing tab
     if (IWB)
       sleep 200
     TabCount := ObjCount(oTabs := guiaBrowser.GetAllTabs())
     ControlReleaseModifierKeys("ahk_parent", "ahk_id " . guiaBrowser.BrowserId)
     if (TabCount == 1) {
       ; guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1]), Passive := false
-      Passive := false
       ControlSend, ahk_parent, {CtrlDown}t{tab}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
+      Passive := false
     } else {
       ; guiaBrowser.CloseTab()
       ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
-      if ((TabCount == 2)
-       && ((oTabs[1].CurrentName = "new tab") || oTabs[2].CurrentName = "new tab"))
+      if ((TabCount == 2) && ((oTabs[1].CurrentName = "new tab") || oTabs[2].CurrentName = "new tab"))
         Passive := false
     }
   }
@@ -763,8 +764,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
 !x::
-  CurrTime := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
-  ReleaseModifierKeys()
+  CurrTime := GetTimeMSec(), ReleaseModifierKeys()
   if (A_ThisHotkey == "^!x") {
     send ^a
     PostMessage, 0x0111, 17216,,, A  ; truncate silence

@@ -71,7 +71,7 @@ IfMsgBox(ByRef ButtonName) {
 }
 
 ControlGet(Cmd:="Hwnd", Value:="", Control:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-  Control := Control ? Control : ControlGetFocus("A")
+  Control := Control ? Control : ControlGetFocus(WinTitle)
   ControlGet, v, % Cmd, % Value, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
@@ -80,7 +80,7 @@ ControlGetFocus(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   Return, v
 }
 ControlGetText(Control:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
-  Control := Control ? Control : ControlGetFocus("A")
+  Control := Control ? Control : ControlGetFocus(WinTitle)
   ControlGetText, v, % Control, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }
@@ -487,7 +487,7 @@ ControlClickWinCoordDPIAdjusted(XCoord, YCoord, WinTitle:="") {
 }
 
 ControlClickDPIAdjusted(XCoord, YCoord, Control:="", WinTitle:="") {
-  Control := Control ? Control : ControlGetFocus("A")
+  Control := Control ? Control : ControlGetFocus(WinTitle)
   WinTitle := WinTitle ? WinTitle : "ahk_id " . WinActive("A")
   ControlClick, % Control, % WinTitle,,,, % "NA x" . XCoord * A_ScreenDPI / 96 . " y" . YCoord * A_ScreenDPI / 96
 }
@@ -1122,10 +1122,17 @@ IsRegExChar(char) {
   return (IfIn(char, ".,+,*,?,^,$,(,),[,],{,},|,\"))
 }
 
-GetDetailedTime() {
-  CurrTimeDisplay := FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
+GetTimeMSec() {
+  return FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec)
+}
+
+GetTimeZone() {
   RegRead, TimeZone, HKEY_LOCAL_MACHINE, SYSTEM\ControlSet001\Control\TimeZoneInformation, TimeZoneKeyName  ; https://www.autohotkey.com/board/topic/43828-finding-correct-time-zone/
-  return CurrTimeDisplay . ", " . TimeZone
+  return TimeZone
+}
+
+GetDetailedTime() {
+  return GetTimeMSec() . ", " . GetTimeZone()
 }
 
 /*
@@ -1174,7 +1181,7 @@ ShellRun(prms*)  ; execute without admin privileges
 }
 
 GetCurrTimeForFileName() {
-  return RegExReplace(FormatTime(, "yyyy-MM-dd HH:mm:ss:" . A_MSec), "[^a-zA-Z0-9\\.\\-]", "_")
+  return RegExReplace(GetTimeMSec(), "[^a-zA-Z0-9\\.\\-]", "_")
 }
 
 RunDefaultBrowser() {

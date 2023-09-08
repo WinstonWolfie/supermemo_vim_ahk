@@ -424,10 +424,10 @@ class VimSM {
 
   IsPassive(CollName:="", CurrConcept:="") {
     CollName := CollName ? CollName : this.GetCollName()
-    if CollName in passive,singing,piano,calligraphy,drawing,bgm,music
+    if (IfIn(CollName, "passive,singing,piano,calligraphy,drawing,bgm,music"))
       return 2
     CurrConcept := CurrConcept ? CurrConcept : this.GetCurrConcept()
-    if (CurrConcept == "Online")
+    if (IfIn(CurrConcept, "Online,Source"))
       return 1
   }
 
@@ -439,11 +439,11 @@ class VimSM {
       if (WinExist("ahk_class TProgressBox ahk_pid " . SMPID)) {
         continue
       } else {
-        WindFind := true, wSMElWnd := "ahk_id " . hWnd
+        WindFound := true, wSMElWnd := "ahk_id " . hWnd
         break
       }
     }
-    if (!WindFind) {
+    if (!WindFound) {
       MsgBox, 3,, SuperMemo is processing something. Do you want to launch a new window?
       if (IfMsgbox("yes")) {
         run C:\SuperMemo\sm18.exe
@@ -1011,6 +1011,7 @@ class VimSM {
     } else {
       r := this.PostMsg(243)
     }
+    return r
   }
 
   IsItem(TemplCode:="") {
@@ -1022,13 +1023,14 @@ class VimSM {
     if (!WinActive("ahk_class TFileBrowser"))
       return false
     RegexMatch(path, "^(.):", v), drive := v1
-    t := ControlGetText("TDriveComboBox1", "A")
+    t := ControlGetText("TDriveComboBox1")
     if !(t ~= "i)^" . v) {
       ControlSend, TDriveComboBox1, % drive
-      ControlTextWaitChange("TDriveComboBox1", t, "A")
+      ControlTextWaitChange("TDriveComboBox1", t)
     }
     ControlSetText, TEdit1, % path
+    ControlTextWait("TEdit1", path)
     if (enter)
-      ControlSend, TEdit1, {enter}
+      ControlClick, TButton2,,,,, NA
   }
 }

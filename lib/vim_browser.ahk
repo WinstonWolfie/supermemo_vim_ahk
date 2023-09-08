@@ -135,6 +135,9 @@ class VimBrowser {
     } else if (RegExMatch(this.Title, " \| by (.*?) \| ((.*?) \| )?Medium$", v)) {
       this.Source := "Medium", this.Title := RegExReplace(this.Title, " \| by .*? \| Medium$"), this.Author := v1
 
+    } else if (RegExMatch(this.Title, "^Git - (.*?) Documentation$", v)) {
+      this.Source := "Git - Documentation", this.Title := v1
+
     } else if (IfContains(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.Source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(v, "r/") . "$")
 
@@ -259,6 +262,10 @@ class VimBrowser {
       this.Source := "维基百科", this.Title := RegExReplace(this.Title, " - 维基百科，自由的百科全书$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "本页面最后修订于(.*?) \(", v), this.Date := v1
+    } else if (this.Title ~= " - 維基百科，自由的百科全書$") {
+      this.Source := "維基百科", this.Title := RegExReplace(this.Title, " - 維基百科，自由的百科全書$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "本頁面最後修訂於(.*?) \(", v), this.Date := v1
     } else if (this.Title ~= " - 维基文库，自由的图书馆$") {
       this.Source := "维基文库", this.Title := RegExReplace(this.Title, " - 维基文库，自由的图书馆$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
