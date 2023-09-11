@@ -59,15 +59,13 @@ NukeHTML:
 Return
 
 l::  ; *l*ink concept
-  Vim.SM.ElMenu()
-  send cl
+  send !{f10}cl
   Vim.State.SetMode("Vim_Normal")
 return
 
 SMListLinks:
 +l::  ; list links
-  Vim.SM.ElMenu()
-  send cs
+  send !{f10}cs
   Vim.State.SetMode("Vim_Normal")
 return
 

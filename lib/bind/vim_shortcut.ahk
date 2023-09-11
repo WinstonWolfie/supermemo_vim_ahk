@@ -569,8 +569,7 @@ ExtractToSM:
   ; send !\\
 
   loop {
-    Vim.SM.CompMenu()
-    send kd  ; delete registry link
+    send !{f12}kd  ; delete registry link
     WinWaitActive, ahk_class TMsgDialog,, 0.1
     if (!ErrorLevel) {
       send {enter}
@@ -766,6 +765,8 @@ return
 !x::
   CurrTime := GetTimeMSec(), ReleaseModifierKeys()
   if (A_ThisHotkey == "^!x") {
+    KeyWait Ctrl
+    KeyWait Alt
     send ^a
     PostMessage, 0x0111, 17216,,, A  ; truncate silence
     WinWaitActive, Truncate Silence
@@ -822,8 +823,7 @@ return
     Vim.SM.SetTitle(Vim.Browser.Title)
   CurrFocus := ControlGetFocus("ahk_class TElWind")
   WinActivate, ahk_class TElWind
-  this.CompMenu()
-  send fl  ; previous component
+  send !{f12}fl  ; previous component
   ControlWaitNotFocus(CurrFocus, "ahk_class TElWind")
   send +{Ins}  ; paste: text or image
   aClipFormat := WinClip.GetFormats()

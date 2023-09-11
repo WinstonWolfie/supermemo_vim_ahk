@@ -52,12 +52,14 @@ Return
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
-        . "|CalculateTodaysPassRate|PerplexityAI"
+        . "|PerplexityAI|Lexico"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
     if (WinActive("ahk_class TElWind")) {
-      list := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement|OpenInAcrobat|" . list
+      list := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement"
+            . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
+            . "|ExternaliseRegistry|" . list
       if (Vim.SM.IsPassive(, -1))
         list := "ReformatScriptComponent|SearchLinkInYT|" . list
       if (Vim.SM.IsEditingText())
@@ -66,13 +68,13 @@ Return
         list := "MakeHTMLUnique|" . list
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
-    list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceRef|" . list
+    list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference|" . list
   } else if (WinActive("ahk_group Browser")) {  ; web browsers
     list := "IWBPriorityAndConcept|IWBNewTopic|" . list
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
     list := "SetPlanPosition|" . list
   } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
-    list := "MassReplaceReg|" . list
+    list := "MassReplaceRegistry|" . list
   } else if (WinActive("Google Drive error list ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
     list := "RetryAllSyncErrors|" . list
   }
@@ -304,8 +306,7 @@ SetConceptHook:
   if (!ErrorLevel)
     send {enter}
   ControlSend, TVirtualStringTree1, {esc}, ahk_class TContents
-  ToolTip("Hook set.")
-  Vim.State.SetMode("Vim_Normal")
+  ToolTip("Hook set."), Vim.State.SetMode("Vim_Normal")
 Return
 
 AccViewer:
@@ -408,7 +409,7 @@ CopyWindowPosition:
   ToolTip("Copied " . Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h)
 return
 
-MassReplaceRef:
+MassReplaceReference:
   find := ""
   replacement := ""
   if (!find && !replacement)
@@ -418,8 +419,8 @@ MassReplaceRef:
     Vim.SM.WaitFileLoad()
     Vim.SM.EditRef()
     WinWaitActive, ahk_class TInputDlg
-    if (IfContains(ref := ControlGetText("TMemo1", "A"), find)) {
-      ControlSetText, TMemo1, % StrReplace(ref, find, replacement), A
+    if (IfContains(ref := ControlGetText("TMemo1"), find)) {
+      ControlSetText, TMemo1, % StrReplace(ref, find, replacement)
     } else {
       return
     }
@@ -601,8 +602,7 @@ WatchLaterYT:
 return
 
 EditReference:
-  Vim.SM.ElMenu()
-  Send fe
+  Send !{f10}fe
 Return
 
 GetInfoFromContextMenu:
@@ -653,8 +653,7 @@ LinkToPreviousElement:
   WinActivate, ahk_class TElWind
   Vim.SM.GoBack()
   Vim.SM.WaitFileLoad()
-  Vim.SM.ElMenu()
-  send ci  ; link contents
+  send !{f10}ci  ; link contents
   WinWaitActive, ahk_class TContents
   sleep 100
   send {enter}
@@ -777,7 +776,7 @@ RetryAllSyncErrors:
   ToolTip("Finished.")
 return
 
-MassReplaceReg:
+MassReplaceRegistry:
   find := ""
   replacement := ""
   if (!find && !replacement)
@@ -801,5 +800,59 @@ MassReplaceReg:
     WinWaitActive, ahk_class TProgressBox,, 0
     if (!ErrorLevel)
       WinWaitActive, ahk_class TRegistryForm
+  }
+return
+
+AllLapsesToday:
+  ToolTip("Executing...", true)
+  BlockInput, on
+  Vim.SM.PostMsg(31)  ; export rep history
+  WinWaitActive, ahk_class TFileBrowser
+  TempPath := A_Temp . "\Repetition History_" . Vim.SM.GetCollName() . "_"
+            . t := GetCurrTimeForFileName() . ".txt"
+  TempOutputPath := A_Temp . "\All Lapses Today_" . Vim.SM.GetCollName() . "_"
+                  . t . ".txt"
+  Vim.SM.FileBrowserSetPath(TempPath, true)
+  WinWaitActive, Information ahk_class TMsgDialog
+  send {enter}
+  RepHistory := FileRead(TempPath)
+  dateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
+  pos := 1
+  while (pos := RegExMatch(RepHistory, "s)\nItem #\d+: ([^\n]+)\n[^\n]+" . dateRegEx . "[^\n]+Grade=[0-2]", v, pos + StrLen(v1)))
+    FileAppend, % v1 . "`n", % TempOutputPath
+  run % TempOutputPath
+  BlockInput, off
+  RemoveToolTip()
+return
+
+Lexico:
+  if (word := FindSearch("Lexico", "Word:"))
+    run % "https://web.archive.org/web/*/www.lexico.com/definition/" . word
+return
+
+ExternaliseRegistry:
+  ; Images, Sounds, Binary, Video
+  for i, v in [156, 157, 171, 170] {  ; sm19
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm18.exe")
+      v++
+    Vim.SM.PostMsg(v)
+    WinWaitActive, ahk_class TRegistryForm
+    if (IfContains(WinGetTitle(""), "(0 members)")) {
+      WinClose
+      continue
+    }
+    send {down}
+    if (IfContains(WinGetTitle(""), "Video Registry"))
+      ControlTextWaitExist("Edit1",,,,, 1500)
+    send {AppsKey}tt
+    WinWaitActive, ahk_class TMsgDialog
+    send {enter}
+    WinWaitActive, ahk_class TMsgDialog
+    send {enter}
+    WinWaitActive, ahk_class TProgressBox,, 0
+    if (!ErrorLevel)
+      WinWaitClose
+    WinWaitActive, ahk_class TRegistryForm
+    WinClose
   }
 return

@@ -114,6 +114,8 @@ class VimBrowser {
       this.Source := "StatPearls - NCBI Bookshelf", this.Title := RegExReplace(this.Title, " - StatPearls - NCBI Bookshelf$")
     } else if (this.Title ~= "：剑桥词典$") {
       this.Source := "剑桥词典", this.Title := RegExReplace(this.Title, "：剑桥词典$")
+    } else if (this.Title ~= " - The Skeptic's Dictionary - Skepdic\.com$") {
+      this.Source := "The Skeptic's Dictionary", this.Title := RegExReplace(this.Title, " - The Skeptic's Dictionary - Skepdic\.com$")
 
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {
       this.Source := v1 . " | Cambridge Core", this.Title := RegExReplace(this.Title, "\| (.*) \| Cambridge Core$")

@@ -64,8 +64,7 @@ c::  ; gc: go to next *c*omponent
 Return
 
 +c::  ; gC: go to previous *c*omponent
-  this.CompMenu()
-  send fl
+  send !{f12}fl
   Vim.State.SetMode()
 Return
 

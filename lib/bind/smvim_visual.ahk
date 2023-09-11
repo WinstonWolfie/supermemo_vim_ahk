@@ -60,7 +60,8 @@ SMParseHTML:
     Vim.HTML.ClipboardGet_HTML(data)
     RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", content)
   } else {
-    content := StrReplace(Clipboard, "<", "&lt;"), content := StrReplace(content, ">", "&gt;")
+    content := StrReplace(Clipboard, "<", "&lt;")
+    content := StrReplace(content, ">", "&gt;")
   }
   StartingTag := "<", EndingTag := ">"
   if (Vim.SM.IsCssClass(tag)) {

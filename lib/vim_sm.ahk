@@ -214,8 +214,7 @@ class VimSM {
       if (this.HasTwoComp()) {
         send ^t
         if (ReturnToComp) {
-          this.CompMenu()
-          send fl
+          send !{f12}fl
         }
         ret := 2
       }
@@ -391,8 +390,7 @@ class VimSM {
 
   GetFilePath(RestoreClip:=true) {
     this.ActivateElWind()
-    this.CompMenu()
-    return Copy(RestoreClip,,, "fc")
+    return Copy(RestoreClip,,, "!{f12}fc")
   }
 
   SetTitle(title:="", timeout:="") {
@@ -458,9 +456,7 @@ class VimSM {
 
   GetTemplCode(RestoreClip:=true) {
     this.ActivateElWind()
-    if (!b := this.IsBrowsing())
-      this.ElMenu()
-    return Copy(RestoreClip,,, b ? "^c" : "tc")
+    return Copy(RestoreClip,,, this.IsBrowsing() ? "^c" : "!{f10}tc")
   }
 
   PrepareStatBar(step, x:=0, y:=0) {
@@ -876,8 +872,7 @@ class VimSM {
 
   EditRef() {
     this.ActivateElWind()
-    this.ElMenu()
-    send fe
+    send !{f10}fe
   }
 
   AltA() {
@@ -986,28 +981,13 @@ class VimSM {
       WinClose
   }
 
-  ElMenu() {
-    send !{f10}
-  }
-
-  CompMenu() {
-    send !{f12}
-  }
-
   OpenNotepad(method:=0, timeout:=0) {
     this.ExitText(true, timeout)
     if (method) {
-      this.CompMenu()
-      send fw
+      send !{f12}fw
     } else {
       send ^+{f6}
     }
-    ; if (this.IsEditingText()) {  ; does not work reliably!
-    ;   this.CompMenu()
-    ;   send fw
-    ; } else if (this.IsBrowsing()) {
-      ; send ^+{f6}
-    ; }
   }
 
   Plan() {
