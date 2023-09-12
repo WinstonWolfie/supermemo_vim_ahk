@@ -96,7 +96,7 @@ VimCommanderButtonExecute:
   if (IfContains("|" . list . "|", "|" . command . "|")) {
     Vim.State.SetMode("Insert")
     WinActivate % "ahk_id " . hWnd
-    goto % RegExReplace(command, "\W")
+    Goto % RegExReplace(command, "\W")
   } else {
     if (IsUrl(command)) {
       run % command
@@ -284,7 +284,7 @@ return
 CopyHTML:
   ClipSaved := ClipboardAll
   if (!Clipboard := Copy(false, true))
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   ToolTip("Copying successful.")
 return
 
@@ -329,7 +329,7 @@ return
 MemoriseChildren:
   send ^{space}
   Vim.SM.WaitBrowser()
-  goto MemoriseCurrentBrowser
+  Goto MemoriseCurrentBrowser
 return
 
 MemoriseCurrentBrowser:
@@ -396,7 +396,7 @@ ReformatScriptComponent:
   WinClip.Clear()
   Clipboard := Vim.Browser.Url
   ClipWait
-  gosub SMSetLinkFromClipboard
+  Gosub SMSetLinkFromClipboard
   send {esc}
   if (ContLearn)
     Vim.SM.Learn()
@@ -466,7 +466,7 @@ ReformatVocab:
     return
   send ^a
   if (!data := Copy(false, true))
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
   data := RegExReplace(data, "(\.<BR>""|\. ?<BR>(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
   data := RegExReplace(data, "(""|\.?’)", "</P>")
@@ -658,7 +658,7 @@ LinkToPreviousElement:
   sleep 100
   send {enter}
   WinActivate, ahk_class TElWind
-  Goto, SMListLinks
+  Goto SMListLinks
 return
 
 AlwaysOnTop:

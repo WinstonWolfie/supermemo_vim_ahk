@@ -12,17 +12,17 @@
       send % "{left}{right " . pos + 4 . "}"
     } else {
       ToolTip("Not found.")
-      goto SetModeNormalReturn
+      Goto SetModeNormalReturn
     }
   } else if (Vim.SM.IsEditingHTML()) {
     if (!Vim.SM.HandleF3(1))
-      goto SetModeNormalReturn
+      Goto SetModeNormalReturn
     ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
     send {enter}
     WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
     send {right}  ; put caret on the right
     if (!Vim.SM.HandleF3(2))
-      goto SetModeNormalReturn
+      Goto SetModeNormalReturn
   }
   Vim.State.SetMode("Insert")
 return
@@ -240,7 +240,7 @@ return
   ClipSaved := ClipboardAll
   ReleaseModifierKeys()
   if (!data := Copy(false, true, 1))
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
   if (!IfContains(data, "<IMG")) {  ; text
     send {bs}^{f7}  ; set read point
@@ -593,13 +593,13 @@ BrowserSyncTime:
       MsgBox, 3,, % "Titles don't match. Continue?`nBrowser title: " . Vim.Browser.Title
       WinActivate % "ahk_id " . guiaBrowser.BrowserId
       if (IfMsgbox("No") || IfMsgbox("Cancel"))
-        goto SMSyncTimeReturn
+        Goto SMSyncTimeReturn
     }
     if (!ResetTime) {
       if (!Vim.Browser.VidTime := Vim.Browser.GetVidtime(Vim.Browser.FullTitle)) {
         SetDefaultKeyboard(0x0409)  ; English-US
         if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
-          goto SMSyncTimeReturn
+          Goto SMSyncTimeReturn
       }
     }
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
@@ -616,7 +616,7 @@ BrowserSyncTime:
   } else if (!Vim.Browser.VidTime && !ResetTime) {
     SetDefaultKeyboard(0x0409)  ; English-US
     if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
-      goto SMSyncTimeReturn
+      Goto SMSyncTimeReturn
   }
   Vim.SM.CloseMsgWind()
   if (CloseWnd && wMpv)
@@ -633,7 +633,7 @@ BrowserSyncTime:
     WinWaitActive, ahk_class TScriptEditor,, 1.5
     if (ErrorLevel) {
       ToolTip("Script editor not found.")
-      goto SMSyncTimeReturn
+      Goto SMSyncTimeReturn
     }
 
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
@@ -687,9 +687,9 @@ SMRegAltG:
 !t::Acc_Get("Object", "4.6.4.3.4.10.4",, "A").accDoDefaultAction()  ; default topic template
 
 ^l::
-  gosub SMRegAltG
+  Gosub SMRegAltG
   WinWaitActive, ahk_class TElWind
-  goto SMLearnChild
+  Goto SMLearnChild
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Reference Registry \(\d+ members\)"))

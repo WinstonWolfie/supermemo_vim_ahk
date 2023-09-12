@@ -109,7 +109,7 @@ SMSearchAgain:
       if (A_ThisLabel != "SMSearchAgain") {
         send ^{home}
         ToolTip("Search started from the beginning.")
-        goto SMSearchAgain
+        Goto SMSearchAgain
       }
       ToolTip("Not found."), Vim.State.SetNormal()
       Return
@@ -137,12 +137,12 @@ SMSearchAgain:
       send !z
     } else if (AltState && ShiftState) {
       ClozeHinterCtrlState := CtrlState
-      gosub ClozeHinter
+      Gosub ClozeHinter
     } else if (AltState && CapsState) {
       ClozeHinterCtrlState := CtrlState
-      gosub ClozeNoBracket
+      Gosub ClozeNoBracket
     } else if (AltState && CtrlState) {
-      gosub ClozeStay
+      Gosub ClozeStay
     }
   }
 return

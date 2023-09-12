@@ -107,7 +107,7 @@ return
   ClipSaved := ClipboardAll
   if (!Copy(false)) {
     ToolTip("Text not found.")
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   }
   TempClip := Clipboard, Vim.HTML.ClipboardGet_HTML(HTML)
   RegExMatch(HTML, "SourceURL:(.*)", v), url := v1
@@ -175,7 +175,7 @@ return
   ClipSaved := ClipboardAll
   if (!Clipboard := Vim.Browser.GetVidtime(,, false)) {
     ToolTip("Not found.")
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   }
   ToolTip("Copied " . Clipboard), Vim.Browser.Clear()
 return
@@ -233,7 +233,7 @@ IWBNewTopic:
   WinClose, ahk_class TBrowser
   WinActivate % "ahk_id " . guiaBrowser.BrowserId
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
-    goto ImportReturn
+    Goto ImportReturn
   Prio := Concept := CloseTab := DownloadHTML := ResetVidTime := ""
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
   if (IfContains(A_ThisLabel, "+,Prio")) {
@@ -247,7 +247,7 @@ IWBNewTopic:
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
     if (!IWB)
       Gui, SMImport:Add, Checkbox, vDownloadHTML, Import fullpage &HTML
-    if (bVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
+    if (IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
       Gui, SMImport:Add, Checkbox, vResetVidTime, &Reset time stamp
     Gui, SMImport:Add, Button, default, &Import
     Gui, SMImport:Show,, SuperMemo Import
@@ -271,39 +271,29 @@ SMImportButtonImport:
   if (IWB) {
     if (!HTMLText) {
       ToolTip("Text not found.")
-      goto ImportReturn
+      Goto ImportReturn
     }
     Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML format but is in plain-text
   }
-  Online := (Passive || (!HTMLText && bVidSite))
-  if (FullPage := (DownloadHTML || (!HTMLText && !Online))) {
-    if (DownloadHTML) {
+  Online := (Passive || (!HTMLText && IsVidSite))
+  if (DownloadHTML || (!HTMLText && !Online)) {
+    if (DownloadHTML || !HTMLText) {
       ToolTip("Attempting to download website...", true)
-
-      ; Using UrlDownloadToFile
       TempPath := A_Temp . "\" . StrReplace(GetTimeMSec(), ":") . ".htm"
       UrlDownloadToFile, % Vim.Browser.Url, % TempPath
       HTMLText := FileRead(TempPath)
       FileDelete, % TempPath
-
       ; Fixing links
       RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
       HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K href=""\/(?=([^<>]+)?>)", " href=""" . UrlHead)
-
-      WinClip.Clear(), RemoveToolTip()
-      ; So that Clipboard is not sent into GetTitleSourceDate() below
-    } else {
-      send {esc}
-      CopyAll()
-      Vim.HTML.ClipboardGet_HTML(clipped)
-      RegExMatch(clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
+      RemoveToolTip()
     }
     if (!HTMLText) {
       ToolTip("Text not found.")
-      goto ImportReturn
+      Goto ImportReturn
     }
   }
-  Vim.Browser.GetTitleSourceDate(false,, (FullPage ? Clipboard : ""))
+  Vim.Browser.GetTitleSourceDate(false)
   if (ResetVidTime)
     Vim.Browser.VidTime := "0:00"
   if (Passive == 1)
@@ -348,25 +338,30 @@ SMImportButtonImport:
       WinActivate, ahk_class TElWind
       MsgBox, 3,, Current concept doesn't seem like your entered concept. Continue?
       if (IfMsgbox("No") || IfMsgbox("Cancel"))
-        goto ImportReturn
+        Goto ImportReturn
     }
   }
 
   WinActivate, ahk_class TElWind
+  PrevSMTitle := WinGetTitle("ahk_class TElWind")
   if (Online && !Passive) {
-    gosub SMCtrlN
+    Gosub SMCtrlN
   } else {
     Vim.SM.AltN()
-    Vim.SM.WaitTextFocus()
+    SMNewElementTitle := WinWaitTitleChange(PrevSMTitle, "ahk_class TElWind")
     if (!Online) {
       send {AppsKey}xp  ; Paste HTML
-      WinClip._waitClipReady()
+      while (WinClipAPI.GetOpenClipboardWindow())
+        sleep 1
+      WinWaitNotActive, ahk_class TElWind,, 0.3
       WinWaitActive, ahk_class TElWind
+      Vim.SM.ExitText()
+      WinWaitTitleChange(SMNewElementTitle, "A")
     } else if (Passive) {
-      gosub SMHyperLinkToTopic
+      Gosub SMHyperLinkToTopic
       KeyWait Esc
       if (ErrorLevel)
-        goto ImportReturn
+        Goto ImportReturn
     }
   }
 
@@ -479,7 +474,7 @@ return
   ClipSaved := ClipboardAll
   if (!Copy(false)) {
     ToolTip("Nothing is selected.")
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   } else {
     if (CleanHTML := (WinActive("ahk_group Browser") || WinActive("ahk_exe ebook-viewer.exe"))) {
       PlainText := Clipboard
@@ -529,7 +524,7 @@ ExtractToSM:
         WinWaitActive, ahk_class TElWind
         Vim.SM.ClickElWindSourceBtn()
         Vim.SM.WaitFileLoad()
-        goto ExtractToSM
+        Goto ExtractToSM
       } else if (IfMsgBox("no")) {
         WinWaitActive, ahk_class TElWind
         ret := false
@@ -679,7 +674,7 @@ return
       marker := "p" . page
     if (!marker) {
       ToolTip("No text selected and page number not found.")
-      goto RestoreClipReturn
+      Goto RestoreClipReturn
     }
     if (CloseWnd) {
       if (wSumatra) {
@@ -700,9 +695,9 @@ return
   } else {
     if (!marker) {
       if (WinActive("ahk_group Browser"))
-        goto BrowserSyncTime
+        Goto BrowserSyncTime
       ToolTip("No text selected.")
-      goto RestoreClipReturn
+      Goto RestoreClipReturn
     }
     if (CloseWnd) {
       if (WinActive("ahk_group Browser")) {
@@ -730,7 +725,7 @@ MarkInSMTitle:
         WinWaitActive, ahk_class TElWind
         Vim.SM.ClickElWindSourceBtn()
         Vim.SM.WaitFileLoad()
-        goto MarkInSMTitle
+        Goto MarkInSMTitle
       } else if (IfMsgBox("no")) {
         WinWaitActive, ahk_class TElWind
         ret := false
@@ -865,7 +860,7 @@ return
   ClipSaved := ClipboardAll
   ReleaseModifierKeys()
   if (!CopyAll())
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   link := MatchHiborLink(Clipboard)
   title := MatchHiborTitle(Clipboard)
   RegExMatch(title, "^.*?(?=-)", source)
@@ -877,7 +872,7 @@ return
   WinActivate % "ahk_id " . hWnd
   WinClose, ahk_class TBrowser
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
-    goto HBImportReturn
+    Goto HBImportReturn
   if (IfContains(A_ThisHotkey, "+")) {
     Prio := InputBox("Priority", "Enter extract priority.")
     if (!(Prio >= 0) || ErrorLevel) {

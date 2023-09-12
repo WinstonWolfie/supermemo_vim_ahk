@@ -276,7 +276,7 @@ return
 d::
   Vim.State.SetMode("Vim_Normal")
   if (Vim.SM.CtrlF("#audio"))
-    goto SMLearnChildActiveBrowser
+    Goto SMLearnChildActiveBrowser
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))

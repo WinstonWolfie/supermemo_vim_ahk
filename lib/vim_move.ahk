@@ -140,11 +140,11 @@ class VimMove {
         }
         this.Vim.State.SetMode("Insert")
       } else if (this.Vim.State.StrIsInCurrentVimMode("Vim_gu")) {
-        gosub % "ConvertToLowercase" . Clipped
+        Gosub % "ConvertToLowercase" . Clipped
       } else if (this.Vim.State.StrIsInCurrentVimMode("Vim_gU")) {
-        gosub % "ConvertToUppercase" . Clipped
+        Gosub % "ConvertToUppercase" . Clipped
       } else if (this.Vim.State.StrIsInCurrentVimMode("Vim_g~")) {
-        gosub % "InvertCase" . Clipped
+        Gosub % "InvertCase" . Clipped
       } else if (this.Vim.State.StrIsInCurrentVimMode("ExtractStay")) {
         Gosub ExtractStay
       } else if (this.Vim.State.StrIsInCurrentVimMode("ExtractPriority")) {

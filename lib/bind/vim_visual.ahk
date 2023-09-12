@@ -40,7 +40,7 @@ Return
         Vim.Move.SelectParagraphDown(), Vim.State.SetMode("Vim_VisualParagraphFirst")
       }
     } else if (WinActive("ahk_group SuperMemo")) {
-      goto VisualLine
+      Goto VisualLine
     } else {
       if (!WinActive("ahk_exe notepad++.exe"))  ; notepad++ requires alt down
         send ^b
@@ -189,7 +189,7 @@ Return
 o::  ; move to other end of marked area; not perfect with line breaks
   ClipSaved := ClipboardAll
   if (!selection := Copy(false))
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
   SelectionRight := Copy(false), SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))

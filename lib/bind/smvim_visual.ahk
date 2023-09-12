@@ -55,7 +55,7 @@ SMParseHTML:
     Copy(false)
   ClipSaved := ClipboardAll
   if (!Copy(false))
-    goto RestoreClipReturn
+    Goto RestoreClipReturn
   if (OriginalHTML) {
     Vim.HTML.ClipboardGet_HTML(data)
     RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", content)

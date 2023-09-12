@@ -246,7 +246,7 @@ ControlWait(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="
   StartTime := A_TickCount
   Loop {
     if (ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
-      Return True
+      Return ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
@@ -257,7 +257,7 @@ ControlWaitNotFocus(Control, WinTitle:="", WinText:="", ExcludeTitle:="", Exclud
   StartTime := A_TickCount
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) != Control) {
-      Return True
+      Return ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
@@ -267,8 +267,8 @@ ControlWaitNotFocus(Control, WinTitle:="", WinText:="", ExcludeTitle:="", Exclud
 WinTextWaitExist(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
   StartTime := A_TickCount
   Loop {
-    if (text := WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)) {
-      Return text
+    if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)) {
+      Return WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
@@ -279,7 +279,7 @@ ControlTextWaitExist(Control, WinTitle:="", WinText:="", ExcludeTitle:="", Exclu
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
-      Return True
+      Return ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
@@ -301,7 +301,7 @@ ControlTextWaitChange(Control, text:="", WinTitle:="", WinText:="", ExcludeTitle
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
-      Return True
+      Return ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
@@ -314,7 +314,7 @@ ControlWaitHwndChange(Control, hWnd:="", WinTitle:="", WinText:="", ExcludeTitle
   Loop {
     NewHwnd := ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     if (NewHwnd && (NewHwnd != hWnd)) {
-      Return True
+      Return NewHwnd
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
@@ -325,7 +325,7 @@ WinTextWaitChange(text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText
   StartTime := A_TickCount
   Loop {
     if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
-      Return True
+      Return WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       Return False
     }
@@ -429,7 +429,7 @@ WinWaitTitleChange(OriginalTitle:="", WinTitle:="", TimeOut:=0) {
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) != OriginalTitle) {
-      return true
+      return WinGetTitle(WinTitle)
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       return false
     }
@@ -451,7 +451,7 @@ WinWaitTitleRegEx(title, TimeOut:=0, WinTitle:="") {
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) ~= title) {
-      return true
+      return WinGetTitle(WinTitle)
     } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
       return false
     }
