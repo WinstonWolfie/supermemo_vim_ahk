@@ -26,7 +26,6 @@ CapsLock & z::Vim.State.SetMode("SMVim_ClozeNoBracket", 0, -1, 0,,, -1)
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMVim_AltT") && Vim.SM.IsEditingText())
 !t::
-  ReleaseModifierKeys()
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("SMVim_Extract") && Vim.SM.IsEditingText())
 q::
 ^q::
@@ -137,7 +136,7 @@ _::
 .::
 >::
 space::
-  Vim.Move.KeyAfterSMAltQ := A_ThisHotkey, ReleaseModifierKeys()
+  Vim.Move.KeyAfterSMAltQ := A_ThisHotkey
   if (SMAltQYdcMove) {
     Vim.Move.YDCMove(), SMAltQYdcMove := false
   } else {

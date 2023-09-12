@@ -37,7 +37,7 @@ return
 
 ^+!p::
 Plan:
-  Vim.State.SetMode("Vim_Normal"), ReleaseModifierKeys()
+  Vim.State.SetMode("Vim_Normal")
   if (!WinExist("ahk_group SuperMemo")) {
     run C:\SuperMemo\systems\all.kno
     WinWait, ahk_class TElWind,, 3
@@ -88,10 +88,9 @@ Return
   ToolTip("Copied " . Clipboard := Vim.Browser.Title), Vim.Browser.Clear()
 return
 
-^!l::  ; copy link and parse *l*ink if if's from YT
+^!l::  ; copy link and parse *l*ink
   Vim.Browser.Clear()
   guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinActive("A"))
-  ReleaseModifierKeys()
   ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
   Vim.Browser.GetInfo(false)
   ToolTip("Copied " . Vim.Browser.Url . "`n"
@@ -217,7 +216,8 @@ IWBNewTopic:
     ToolTip("Web page not found.")
     return
   }
-  Vim.Browser.Clear(), guiaBrowser := new UIA_Browser("ahk_id " . WinActive("A"))
+  Vim.Browser.Clear()
+  guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinActive("A"))
   if (!Vim.Browser.Url := Vim.Browser.GetParsedUrl()) {
     ToolTip("Url not found.")
     return
@@ -231,7 +231,7 @@ IWBNewTopic:
   if (!IWB && Vim.SM.CheckDup(Vim.Browser.Url, false))
     MsgBox, 3,, Continue import?
   WinClose, ahk_class TBrowser
-  WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  WinActivate % wBrowser
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
     Goto ImportReturn
   Prio := Concept := CloseTab := DownloadHTML := ResetVidTime := ""
@@ -264,7 +264,7 @@ SMImportButtonImport:
     if (Passive != 2)
       Passive := (IfIn(Concept, "online,sources")) ? true : false
     Gui, Destroy
-    Vim.Caret.SwitchToSameWindow("ahk_id " . guiaBrowser.BrowserId)
+    Vim.Caret.SwitchToSameWindow(wBrowser)
   }
 
   HTMLText := (DownloadHTML || Passive) ? "" : Copy(false, true)
@@ -275,25 +275,36 @@ SMImportButtonImport:
     }
     Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML format but is in plain-text
   }
-  Online := (Passive || (!HTMLText && IsVidSite))
+  Online := (Passive || (!HTMLText && IsVidSite)), FullPage := ""
   if (DownloadHTML || (!HTMLText && !Online)) {
     if (DownloadHTML || !HTMLText) {
-      ToolTip("Attempting to download website...", true)
-      TempPath := A_Temp . "\" . StrReplace(GetTimeMSec(), ":") . ".htm"
-      UrlDownloadToFile, % Vim.Browser.Url, % TempPath
-      HTMLText := FileRead(TempPath)
-      FileDelete, % TempPath
-      ; Fixing links
-      RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
-      HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K href=""\/(?=([^<>]+)?>)", " href=""" . UrlHead)
-      RemoveToolTip()
+      CopyAllList := "mp.weixin.qq.com"
+      if (FullPage := IfContains(Vim.Browser.Url, CopyAllList)) {
+        send {esc}
+        CopyAll()
+        Vim.HTML.ClipboardGet_HTML(HTMLText)
+        RegExMatch(HTMLText, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
+      } else {
+        ToolTip("Attempting to download website...", true)
+        TempPath := A_Temp . "\" . StrReplace(GetTimeMSec(), ":") . ".htm"
+        UrlDownloadToFile, % Vim.Browser.Url, % TempPath
+        HTMLText := FileRead(TempPath)
+        FileDelete, % TempPath
+        ; Fixing links
+        RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
+        RegExMatch(Vim.Browser.Url, "^https?:\/\/", HTTP)
+        HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/\/(?=([^<>]+)?>)", " $2=""" . HTTP)
+        HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/(?=([^<>]+)?>)", " $2=""" . UrlHead)
+        HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""(?=#([^<>]+)?>)", " $2=""" . Vim.Browser.Url)
+        RemoveToolTip()
+      }
     }
     if (!HTMLText) {
       ToolTip("Text not found.")
       Goto ImportReturn
     }
   }
-  Vim.Browser.GetTitleSourceDate(false)
+  Vim.Browser.GetTitleSourceDate(false,, (FullPage ? Clipboard : ""))
   if (ResetVidTime)
     Vim.Browser.VidTime := "0:00"
   if (Passive == 1)
@@ -366,48 +377,35 @@ SMImportButtonImport:
   }
 
   ; Making sure the browser is shown for the maximum amount of time
-  if (Passive || esc)
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  if (Passive)
+    WinActivate % wBrowser
   Vim.SM.ClearHighlight()
-  if (Passive || esc)
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  if (Passive)
+    WinActivate % wBrowser
   Vim.SM.Reload(, true)
-  if (Passive || esc)
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  if (Passive)
+    WinActivate % wBrowser
   Vim.SM.WaitFileLoad()
-  if (Passive || esc)
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  if (Passive)
+    WinActivate % wBrowser
   Vim.Browser.Title := IWB ? "" : Vim.Browser.Title
   Vim.SM.SetElParam(Vim.Browser.Title, Prio)
-  if (Passive || esc)
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
+  if (Passive)
+    WinActivate % wBrowser
 
   if (CloseTab) {
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId  ; apparently needed for closing tab
-    if (IWB)
-      sleep 200
-    TabCount := ObjCount(oTabs := guiaBrowser.GetAllTabs())
-    ControlReleaseModifierKeys("ahk_parent", "ahk_id " . guiaBrowser.BrowserId)
-    if (TabCount == 1) {
-      ; guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1]), Passive := false
-      ControlSend, ahk_parent, {CtrlDown}t{tab}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
-      Passive := false
-    } else {
-      ; guiaBrowser.CloseTab()
-      ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
-      if ((TabCount == 2) && ((oTabs[1].CurrentName = "new tab") || oTabs[2].CurrentName = "new tab"))
-        Passive := false
-    }
+    WinActivate % wBrowser  ; apparently needed for closing tab
+    ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{CtrlDown}w{CtrlUp}, % wBrowser
   }
 
 SMImportGuiEscape:
 SMImportGuiClose:
 ImportReturn:
-  if (esc := IfContains(A_ThisLabel, "SMImportGui,ImportReturn")) {
+  if (Esc := IfContains(A_ThisLabel, "SMImportGui,ImportReturn")) {
     Gui, Destroy
     Vim.SM.ClearHighlight()
   }
-  if (Passive || esc) {
+  if (Passive || Esc) {
     WinWaitNotActive, % "ahk_id " . guiaBrowser.BrowserId,, 0.1
     Vim.Caret.SwitchToSameWindow("ahk_id " . guiaBrowser.BrowserId)
     send {esc 2}
@@ -416,7 +414,7 @@ ImportReturn:
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
   }
   Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal")
-  if (!esc) {
+  if (!Esc) {
     Clipboard := ClipSaved, ToolTip("Import completed.")
   } else {
     RemoveToolTip()
@@ -435,7 +433,6 @@ return
                             || WinActive("ahk_exe WINWORD.exe")             ; MS Word
                             || WinActive("ahk_exe WinDjView.exe")))         ; djvu viewer
 !+d::  ; check duplicates in SM
-  ReleaseModifierKeys()
   if (!WinExist("ahk_class TElWind")) {
     ToolTip("Please open SuperMemo and try again.")
     return
@@ -663,7 +660,7 @@ return
 ^!s::
 ^+!s::
   ClipSaved := ClipboardAll
-  CloseWnd := IfContains(A_ThisHotkey, "^"), ReleaseModifierKeys()
+  CloseWnd := IfContains(A_ThisHotkey, "^")
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus("A"), "Edit"))
     send {esc}
   marker := trim(Copy(false), " `t`r`n")
@@ -701,8 +698,7 @@ return
     }
     if (CloseWnd) {
       if (WinActive("ahk_group Browser")) {
-        ControlReleaseModifierKeys("ahk_parent", "ahk_id " . guiaBrowser.BrowserId)
-        ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
+        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
       } else {  ; epub viewer
         WinClose, A
       }
@@ -758,7 +754,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
 !x::
-  CurrTime := GetTimeMSec(), ReleaseModifierKeys()
+  CurrTime := GetTimeMSec()
   if (A_ThisHotkey == "^!x") {
     KeyWait Ctrl
     KeyWait Alt
@@ -848,7 +844,6 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe HiborClient.exe"))
 !+d::  ; check duplicates
   ClipSaved := ClipboardAll
-  ReleaseModifierKeys()
   if (CopyAll())
     Vim.SM.CheckDup(MatchHiborLink(Clipboard))
   Clipboard := ClipSaved
@@ -858,7 +853,6 @@ return
 ^+!a::
 ^!a::  ; import
   ClipSaved := ClipboardAll
-  ReleaseModifierKeys()
   if (!CopyAll())
     Goto RestoreClipReturn
   link := MatchHiborLink(Clipboard)

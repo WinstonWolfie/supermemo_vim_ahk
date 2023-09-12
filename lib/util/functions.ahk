@@ -984,14 +984,6 @@ RestoreClipReturn:
   Clipboard := ClipSaved
 return
 
-ReleaseModifierKeys() {
-  send {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}
-}
-
-ControlReleaseModifierKeys(Control:="", WinTitle:="") {
-  ControlSend, % Control, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % WinTitle
-}
-
 ; https://www.autohotkey.com/docs/v1/scripts/index.htm#HTML_Entities_Encoding
 ; HTML Entities Encoding
 ; https://www.autohotkey.com

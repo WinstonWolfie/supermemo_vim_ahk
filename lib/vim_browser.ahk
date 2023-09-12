@@ -474,7 +474,7 @@ class VimBrowser {
     } else {
       send !+h
     }
-    sleep 500  ; time for visual feedback
+    sleep 700  ; time for visual feedback
   }
 
   ClickBtn() {

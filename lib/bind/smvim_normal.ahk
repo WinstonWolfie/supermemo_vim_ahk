@@ -100,12 +100,13 @@ t::  ; gt: open in Notepad
       WinWaitActive, ahk_class TElWind
       path := Vim.SM.GetFilePath(false)
       Vim.SM.ExitText(true), ShellRun("vim", path)
-      w := "ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe"
+      GroupAdd, Vim, ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe  ; Win 11
+      GroupAdd, Vim, ahk_class ConsoleWindowClass ahk_exe cmd.exe  ; Win 10
     }
   }
   if (ClipSaved)
     Clipboard := ClipSaved
-  WinWait, % w
+  WinWait, ahk_group Vim
   WinWaitClose
   Vim.SM.ActivateElWind()
   if (Notepad) {
@@ -133,7 +134,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
 <::
   UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinActive("A")), ReleaseModifierKeys()
+  el := UIA.ElementFromHandle(WinActive("A"))
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
   el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath((A_ThisHotkey == ">") ? "21" : "20").ControlClick()
   el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()

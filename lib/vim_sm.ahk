@@ -601,12 +601,10 @@ class VimSM {
       return
     }
     if (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
-      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
-      ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
+      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
       WinWait, % w,, 0
       if (ErrorLevel) {
-        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, ahk_class TElWind
-        ControlSend, ahk_parent, {shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
+        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
         WinWait, % w,, 0
         if (ErrorLevel)
           return
@@ -769,7 +767,6 @@ class VimSM {
         this.Vim.State.SetNormal(), ToolTip("Text not found.")
         return false
       } else if (WinGetClass("") == "TCommanderDlg") {  ; ^enter opened commander
-        ReleaseModifierKeys()
         send h{enter}  ; clear highlight
         WinWaitNotActive
         this.PostMsg(msg)

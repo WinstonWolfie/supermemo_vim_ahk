@@ -42,7 +42,7 @@ return
 >^>+bs::  ; for processing pending queue Advanced English 2018: delete element and keep learning
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
-  Vim.State.SetNormal(), ReleaseModifierKeys()
+  Vim.State.SetNormal()
   if (IfContains(A_ThisHotkey, "\")) {
     send ^+{enter}
     WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
@@ -63,14 +63,13 @@ return
 return
 
 ^!+g::  ; change element's concept *g*roup
-  ReleaseModifierKeys(), Vim.State.SetMode("Insert")
+  Vim.State.SetMode("Insert")
   SetDefaultKeyboard(0x0409)  ; English-US
   send ^+p!g  ; focus to concept group
   Vim.State.BackToNormal := 1
 return
 
 ^!t::
-  ReleaseModifierKeys()
   if (t := Vim.SM.IsEditingText()) {
     send {right}  ; so no text is selected
     sleep 50
@@ -220,7 +219,6 @@ return
   } else if (RegExMatch(Clipboard, "^#(\d+)", v)) {
     link := "SuperMemoElementNo=(" . v1 . ")"
   }
-  ReleaseModifierKeys()
   if (!link || !Copy())  ; no selection or no link
     return
   send ^k
@@ -238,7 +236,6 @@ return
   CurrTimeDisplay := GetTimeMSec()
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   ClipSaved := ClipboardAll
-  ReleaseModifierKeys()
   if (!data := Copy(false, true, 1))
     Goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
@@ -571,8 +568,7 @@ BrowserSyncTime:
   sync := (A_ThisLabel == "BrowserSyncTime")
   ResetTime := IfContains(A_ThisHotkey, "``")
   CloseWnd := IfContains(A_ThisHotkey, "^")
-  wMpv := WinActive("ahk_class mpv"), wSMElWnd := ""
-  ReleaseModifierKeys()
+  wMpvId := WinActive("ahk_class mpv"), wSMElWnd := ""
   if (wBrowserId := WinActive("ahk_group Browser")) {
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
@@ -591,7 +587,7 @@ BrowserSyncTime:
     if (!ret) {
       WinActivate, ahk_class TElWind
       MsgBox, 3,, % "Titles don't match. Continue?`nBrowser title: " . Vim.Browser.Title
-      WinActivate % "ahk_id " . guiaBrowser.BrowserId
+      WinActivate % wBrowser
       if (IfMsgbox("No") || IfMsgbox("Cancel"))
         Goto SMSyncTimeReturn
     }
@@ -602,25 +598,17 @@ BrowserSyncTime:
           Goto SMSyncTimeReturn
       }
     }
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
-    if (CloseWnd) {  ; hotkeys with ctrl will close the tab
-      ControlReleaseModifierKeys("ahk_parent", "ahk_id " . guiaBrowser.BrowserId)
-      if (ObjCount(oTabs := guiaBrowser.GetAllTabs()) == 1) {
-        ; guiaBrowser.NewTab(), guiaBrowser.CloseTab(oTabs[1])
-        ControlSend, ahk_parent, {CtrlDown}t{tab}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
-      } else {
-        ; guiaBrowser.CloseTab()
-        ControlSend, ahk_parent, {CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
-      }
-    }
+    WinActivate % wBrowser
+    if (CloseWnd)  ; hotkeys with ctrl will close the tab
+      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{CtrlDown}w{CtrlUp}, % wBrowser
   } else if (!Vim.Browser.VidTime && !ResetTime) {
     SetDefaultKeyboard(0x0409)  ; English-US
     if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
       Goto SMSyncTimeReturn
   }
   Vim.SM.CloseMsgWind()
-  if (CloseWnd && wMpv)
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}q{shift up}, % "ahk_id " . wMpv
+  if (CloseWnd && wMpvId)
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}q{shift up}, % "ahk_id " . wMpvId
   Vim.SM.CloseMsgWind()
   WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
 

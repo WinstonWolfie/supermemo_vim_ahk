@@ -18,7 +18,7 @@ CapsLock & /::
 CapsLock & /::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")))
 CapsLock & /::
-  CapsState := IfContains(A_ThisHotkey, "CapsLock"), ReleaseModifierKeys()
+  CapsState := IfContains(A_ThisHotkey, "CapsLock")
   KeyWait Alt
   BlockInput, on
   if (!Vim.SM.IsEditingText()) {

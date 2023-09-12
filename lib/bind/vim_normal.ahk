@@ -25,7 +25,6 @@ return
 +z::Vim.State.SetMode("Z")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::
-  ReleaseModifierKeys()
   send ^s!{F4}
   Vim.State.SetMode("Vim_Normal")
 Return
