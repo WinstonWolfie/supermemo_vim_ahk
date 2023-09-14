@@ -150,7 +150,7 @@ class VimSM {
       ControlFocus, Edit1
       ControlSetText, Edit1, % Prio
       send {tab}
-    } else if (WinActive("Priority ahk_class #32770 ahk_exe AutoHotkey.exe")) {  ; input dialogue
+    } else if (WinActive("Priority ahk_class #32770")) {  ; input dialogue
       ControlSetText, Edit1, % Prio
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
       ControlSetText, TEdit5, % Prio

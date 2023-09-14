@@ -468,7 +468,7 @@ ReformatVocab:
   if (!data := Copy(false, true))
     Goto RestoreClipReturn
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
-  data := RegExReplace(data, "(\.<BR>""|\. ?<BR>(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
+  data := RegExReplace(data, "(\.<BR>""|(\. ?<BR>)?(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
   data := RegExReplace(data, "(""|\.?’)", "</P>")
   data := StrReplace(data, "<P></P>")
   SynPos := RegExMatch(data, "<(P|BR)>(Similar|Synonyms)")
@@ -538,7 +538,6 @@ ImportFile:
   }
   send {text}y  ; confirm to delete the file / confirm to keep the file
   WinWaitActive, ahk_class TElWind
-  Vim.SM.Reload()
   if (KeepFile) {
     MsgBox, 3,, Do you want to add "IMPORTED_" prefix to the file?
     if (IfMsgBox("Yes")) {
@@ -689,8 +688,10 @@ Linguee:
 return
 
 MerriamWebster:
-  if (word := FindSearch("Merriam-Webster", "Word:"))
+  if (word := FindSearch("Merriam-Webster", "Word:")) {
     run % "https://www.merriam-webster.com/dictionary/" . word
+    run % "https://www.britannica.com/dictionary/" . word
+  }
 return
 
 WordSense:

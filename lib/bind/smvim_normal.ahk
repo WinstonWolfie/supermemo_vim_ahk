@@ -150,7 +150,7 @@ return
    || Vim.SM.IsLearning()
    || Vim.SM.IsGrading()
    || (WinActive("A") == ImportGuiHwnd)
-   || (WinActive("Priority ahk_class #32770 ahk_exe AutoHotkey.exe"))
+   || (WinActive("Priority ahk_class #32770"))
    || WinActive("ahk_class TPriorityDlg")))
 ; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg

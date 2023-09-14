@@ -319,11 +319,11 @@ return                                                               ;|
 
 CapsLock & tab::send !{tab}
 
-!f4::
+~!f4::
 CapsLock & q::
-    HB := WinActive("ahk_exe HiborClient.exe")
-    WinClose, A
-    if (HB) {
+    if (A_ThisHotkey == "CapsLock & q")
+        WinClose, A
+    if (WinActive("ahk_exe HiborClient.exe")) {
         WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0
         if (!ErrorLevel)
             send {enter}

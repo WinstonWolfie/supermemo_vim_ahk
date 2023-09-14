@@ -144,11 +144,8 @@ return
     TempClip := RegExReplace(TempClip, "Synonyms?:", "syn:")
     TempClip := RegExReplace(TempClip, "Antonyms?:", "ant:")
   } else if (IfContains(url, "collinsdictionary.com")) {
-    pos := InStr(TempClip, "`r`n")
-    TempClip := SubStr(TempClip, 1, pos) . "`r`n" . StrLower(SubStr(TempClip, pos + 2, 1)) . SubStr(TempClip, pos + 3)
-    TempClip := StrReplace(TempClip, ".`r`n", "`r`n`r`n")
-    TempClip := StrReplace(TempClip, "Synonyms`r`n", "syn: ")
     TempClip := StrReplace(TempClip, " `r`n", ", ")
+    TempClip := StrReplace(TempClip, "Synonyms`r`n", "syn: ")
   }
   ToolTip("Copied:`n" . Clipboard := TempClip)
 return
