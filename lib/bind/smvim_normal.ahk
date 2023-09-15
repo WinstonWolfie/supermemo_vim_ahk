@@ -31,7 +31,7 @@ n::
 n::Vim.Move.Move("gn")
 
 ; Editing HTML
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.leader)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.Leader)
 q::
   loop % n := Vim.State.GetN() {
     send {home}>{space}  ; add comment; useful when replying emails

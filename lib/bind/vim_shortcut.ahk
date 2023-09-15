@@ -146,6 +146,9 @@ return
   } else if (IfContains(url, "collinsdictionary.com")) {
     TempClip := StrReplace(TempClip, " `r`n", ", ")
     TempClip := StrReplace(TempClip, "Synonyms`r`n", "syn: ")
+  } else if (IfContains(url, "thesaurus.com")) {
+    TempClip := StrReplace(TempClip, "`r`n", ", ")
+    TempClip := RegExReplace(TempClip, "SYNONYMS FOR, .*?, , ", "syn: ")
   }
   ToolTip("Copied:`n" . Clipboard := TempClip)
 return

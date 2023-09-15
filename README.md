@@ -20,130 +20,6 @@ At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R
 
 Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/cheatsheet/)
 
-## SuperMemo only
-
-First things first, all the SuperMemo and its additional hotkeys. If you are unfamiliar with Vim, you might wanna jump this section first.
-
-### Browsing (not focused on any text component)
-
-Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
-
-`gg`: go to top
-
-`G`: go to bottom
-
-`{count}gg`: go to the `{count}`th line (eg, `3gg` goes to the third line)
-
-`gU`: click the source button
-
-`gS`: open link in IE
-
-`gs`: open link in default browser
-
-`g0`: go to root element
-
-`g$`: go to last element
-
-`gc`: go to next component
-
-`gC`: go to previous component
-
-`h`: scroll left
-
-`j` / `<C-e>`: scroll down
-
-`k` / `<C-y>`: scroll up
-
-`l`: scroll right
-
-`d`: scroll down 2 times
-
-`u`: scroll up 2 times
-
-`0`: scroll to top left
-
-`$`: scoll to top right
-
-`r`: reload (go to top element and back)
-
-`p`: play (= `Ctrl + F10`)
-
-`P`: play video in default system player / edit script component (= `q -> Ctrl + T -> F9`)
-
-`n`: add topic (= `Alt + N`)
-
-`N`: add item (= `Alt + A`)
-
-`x`: delete element/component (= `Delete` key)
-
-`<C-i>`: download images (= `Ctrl + F8`)
-
-`f`: open links
-
-`F`: open links in background
-
-`<A-f>`: open multiple links
-
-`<A-S-f>`: open links in IE
-
-`<C-A-S-f>`: open multiple links in IE
-
-`yf`: copy links
-
-`yv`: select texts
-
-`yc`: go to texts
-
-`X`: Done!
-
-`J` / `ge`: go down elements
-
-`K` / `gE`: go up elements
-
-`gu` / `<A-u>`: go to parents
-
-`H` / `<A-h>`: go back in history
-
-`L` / `<A-l>`: go forward in history
-
-`c`: open content window
-
-`b`: open browser
-
-`o`: open favourites
-
-`t`: click first text component
-
-`yy`: copy reference link
-
-`ye`: duplicate curernt element
-
-`{count}g{`: go to the `{count}`th paragraph
-
-`{count}g}`: go to the `{count}`th paraggraph on screen
-
-`m`: set read point
-
-`` ` ``: go to read point
-
-`<A-m>`: clear read point
-
-`<A-S-j>`: go to next sibling (= `Alt + Shift + PgDn`)
-
-`<A-S-k>`: go to previous sibling (= `Alt + Shift + PgUp`)
-
-`\`: SuperMemo search (= `Ctrl + F3`)
-
-#### In plan window
-
-`s`: switch plans
-
-`b`: begin (= `Alt + B`)
-
-#### In tasklist window
-
-`s`: switch tasklists
-
 ## First steps
 
 ### Motions
@@ -443,3 +319,133 @@ Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
 `,`: go to previous occurrence of `{char}{char}`
 
 `{op}z{char}{char}`: apply operator on text traversed by vim sneak motion (`Z` if previous ocurrence)
+
+## SuperMemo only
+
+### Browsing (not focused on any text component)
+
+Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
+
+`gg`: go to top
+
+`G`: go to bottom
+
+`{count}gg`: go to the `{count}`th line (eg, `3gg` goes to the third line)
+
+`gU`: click the source button
+
+`gS`: open link in IE
+
+`gs`: open link in default browser
+
+`g0`: go to root element
+
+`g$`: go to last element
+
+`gc`: go to next component
+
+`gC`: go to previous component
+
+`h`: scroll left
+
+`j` / `<C-e>`: scroll down
+
+`k` / `<C-y>`: scroll up
+
+`l`: scroll right
+
+`d`: scroll down 2 times
+
+`u`: scroll up 2 times
+
+`0`: scroll to top left
+
+`$`: scoll to top right
+
+`r`: reload (go to top element and back)
+
+`p`: play (= `Ctrl + F10`)
+
+`P`: play video in default system player / edit script component (= `q -> Ctrl + T -> F9`)
+
+`n`: add topic (= `Alt + N`)
+
+`N`: add item (= `Alt + A`)
+
+`x`: delete element/component (= `Delete` key)
+
+`<C-i>`: download images (= `Ctrl + F8`)
+
+`f`: open links
+
+`F`: open links in background
+
+`<A-f>`: open multiple links
+
+`<A-S-f>`: open links in IE
+
+`<C-A-S-f>`: open multiple links in IE
+
+`yf`: copy links
+
+`yv`: select texts
+
+`yc`: go to texts
+
+`X`: Done!
+
+`J` / `ge`: go down elements
+
+`K` / `gE`: go up elements
+
+`gu` / `<A-u>`: go to parents
+
+`H` / `<A-h>`: go back in history
+
+`L` / `<A-l>`: go forward in history
+
+`c`: open content window
+
+`b`: open browser
+
+`o`: open favourites
+
+`t`: click first text component
+
+`yy`: copy reference link
+
+`ye`: duplicate curernt element
+
+`{count}g{`: go to the `{count}`th paragraph
+
+`{count}g}`: go to the `{count}`th paraggraph on screen
+
+`m`: set read point
+
+`` ` ``: go to read point
+
+`<A-m>`: clear read point
+
+`<A-S-j>`: go to next sibling (= `Alt + Shift + PgDn`)
+
+`<A-S-k>`: go to previous sibling (= `Alt + Shift + PgUp`)
+
+`\`: SuperMemo search (= `Ctrl + F3`)
+
+#### In plan window
+
+`s`: switch plans
+
+`b`: begin (= `Alt + B`)
+
+#### In tasklist window
+
+`s`: switch tasklists
+
+### Normal mode, editing
+
+`H`: click the top of the text
+
+`M`: click the middle of the text
+
+`L`: click the bottom of the text

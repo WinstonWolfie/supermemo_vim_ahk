@@ -1,5 +1,5 @@
 #Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("ydc_y") && Vim.state.surround && !Vim.State.StrIsInCurrentVimMode("Inner,Outer") && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("ydc_y") && Vim.State.surround && !Vim.State.StrIsInCurrentVimMode("Inner,Outer") && !Vim.State.g)
 s::Vim.Move.YDCMove(), Vim.State.SurroundChangeEntered := false
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc") && !Vim.State.StrIsInCurrentVimMode("Inner,Outer") && !Vim.State.g)
 s::

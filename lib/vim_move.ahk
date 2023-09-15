@@ -126,14 +126,14 @@ class VimMove {
       if (ydc_y := this.Vim.State.StrIsInCurrentVimMode("ydc_y")) {
         this.YdcClipSaved := Copy(false), this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_d")) {
-        if (!this.vim.state.leader) {
+        if (!this.Vim.State.Leader) {
           this.YdcClipSaved := Copy(false,,, "^x")
         } else {
           send {bs}
         }
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_c")) {
-        if (!this.vim.state.leader) {
+        if (!this.Vim.State.Leader) {
           this.YdcClipSaved := Copy(false,,, "^x")
         } else {
           send {bs}
@@ -188,7 +188,7 @@ class VimMove {
     if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe") && GetKeyState("Alt", "P"))
       send {AltUp}
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner,Outer"))
-      this.vim.state.setmode("Vim_VisualChar",,,,, -1)
+      this.Vim.State.setmode("Vim_VisualChar",,,,, -1)
   }
 
   Zero() {
@@ -1305,11 +1305,11 @@ class VimMove {
     } else if (key == "gn") {
       global VimLastSearch
       global CapsState := CtrlState := AltState := ""
-      global ShiftState := true
-      if (!this.Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
+      global ShiftState := true  ; makes SMSearch stays in visual mode
+      if (!n := this.Vim.State.IsCurrentVimMode("Vim_Normal"))
         PrevMode := this.Vim.State.Mode
       Gosub SMSearch
-      if (!this.Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
+      if (!n)
         this.Vim.State.SetMode(PrevMode)
     }
 
@@ -1484,7 +1484,7 @@ class VimMove {
       if (this.IsReplace()) {
         if (this.v)
           n := StrLen(RegExReplace(this.v, "\.\K(\[.*?\])+")) - 1
-        send % "+{left " . n . "}"  ; so that "dap" would delete an entire paragraph, whereas "cap" would empty the paragraph
+        send % "+{left " . n . "}"  ; so that `dap` would delete an entire paragraph, whereas `cap` would empty the paragraph
       }
       finalize := true
     } else if (key == "p") {
@@ -1493,7 +1493,7 @@ class VimMove {
       this.ParagraphUp()
       this.SelectParagraphDown()
       if (this.IsReplace())
-        send +{left}  ; so that "dap" would delete an entire paragraph, whereas "cap" would empty the paragraph
+        send +{left}  ; so that `dap` would delete an entire paragraph, whereas `cap` would empty the paragraph
       finalize := true
     } else if (IfIn(key, this.InnerKeys)) {
       if (RestoreClip)

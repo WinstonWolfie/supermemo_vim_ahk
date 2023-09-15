@@ -757,11 +757,7 @@ return
 PerplexityAI:
   if (!search := FindSearch("Perplexity AI", "Search:"))
     return
-  run https://www.perplexity.ai/
-  WinWaitActive, ahk_group Browser
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-  uiaBrowser.WaitPageLoad()
-  uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Ask anything...'").SetValue(search)
+  run % "https://www.perplexity.ai/search?q=" . search . "&copilot=true&s=d"
 return
 
 RetryAllSyncErrors:

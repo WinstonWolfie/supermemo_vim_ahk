@@ -632,10 +632,10 @@ class VimSM {
 
   IsChangeRefWind() {
     if (WinActive("ahk_class TChoicesDlg")) {
-      return ((ControlGetText("TGroupButton1", "A") == "Cancel (i.e. restore the old version of references)")
-           && (ControlGetText("TGroupButton2", "A") == "Combine old and new references for this element")
-           && (ControlGetText("TGroupButton3", "A") == "Change references in all elements produced from the original article")
-           && (ControlGetText("TGroupButton4", "A") == "Change only the references of the currently displayed element"))
+      return ((ControlGetText("TGroupButton1") == "Cancel (i.e. restore the old version of references)")
+           && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
+           && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
+           && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
     }
   }
 
@@ -651,8 +651,8 @@ class VimSM {
       text := StrReplace(text, "%27", "'")
       text := StrReplace(text, "%21", "!")
     }
-    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(text, "youtube.com"))  ; sm19 deletes www from www.youtube.com
-      text := RegExReplace(text, "^.*?(?=youtube.com)")
+    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(text, "youtube.com/watch?v="))  ; sm19 deletes www from www.youtube.com
+      text := RegExReplace(text, "^.*?(?=youtube\.com\/watch\?v=)")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if ((ContLearn == 1) && this.LastCtrlFNotFound)
       this.Learn()

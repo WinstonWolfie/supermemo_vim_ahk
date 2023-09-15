@@ -76,7 +76,7 @@ class VimState {
     if (surround != -1)
       this.surround := surround
     if (leader != -1)
-      this.leader := leader
+      this.Leader := leader
     this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, fts)
   }
 

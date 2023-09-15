@@ -1,12 +1,12 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 .::  ; selected text becomes [...]
-  Copy(false)
+  send ^c
   if (Vim.SM.IsEditingHTML()) {
-    send % "<span class=""Cloze"">[...]</span>"
+    send {text}<span class="Cloze">[...]</span>
     send +{left 32}^+1
   } else if (Vim.SM.IsEditingPlainText()) {
-    send [...]
+    send {text}[...]
   }
   Vim.State.SetMode("Vim_Normal")
 return

@@ -77,7 +77,7 @@ Return
 
 d::
 x::
-  if (!vim.state.leader) {
+  if (!Vim.State.Leader) {
     vim.move.YdcClipSaved := Copy(false,,, "^x")
   } else {
     send {bs}
@@ -90,7 +90,7 @@ x::
 Return
 
 c::
-  if (!vim.state.leader) {
+  if (!Vim.State.Leader) {
     vim.move.YdcClipSaved := Copy(false,,, "^x")
   } else {
     send {bs}
