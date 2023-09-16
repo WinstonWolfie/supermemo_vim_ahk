@@ -946,8 +946,9 @@ class VimSM {
 
   RefToClipForTopic(CollName:="") {
     CollName := CollName ? CollName : this.GetCollName()
-    if (!IfContains(this.Vim.Browser.Url, "youtube.com/playlist"))
-      add := (CollName = "bgm") ? this.Vim.Browser.Url . "`n" : ""
+    url := StrReplace(this.Vim.Browser.Url, "https://www.youtube.com/watch?v=", "https://youtube.com/watch?v=")
+    if (!IfContains(url, "youtube.com/playlist"))
+      add := (CollName = "bgm") ? url . "`n" : ""
     Clipboard := add . this.MakeReference()
   }
 

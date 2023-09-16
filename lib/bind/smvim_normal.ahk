@@ -86,7 +86,7 @@ t::  ; gt: open in Notepad
   if (Notepad := IfIn(A_ThisHotkey, "^+f6,t")) {
     send ^{f7}  ; save read point
     Vim.SM.OpenNotepad()
-    w := "ahk_class Notepad ahk_exe Notepad.exe"
+    w := "ahk_exe Notepad.exe"
   } else {
     ClipSaved := ClipboardAll
     path := Vim.SM.GetFilePath(false)
@@ -102,11 +102,12 @@ t::  ; gt: open in Notepad
       Vim.SM.ExitText(true), ShellRun("vim", path)
       GroupAdd, Vim, ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe  ; Win 11
       GroupAdd, Vim, ahk_class ConsoleWindowClass ahk_exe cmd.exe  ; Win 10
+      w := "ahk_group Vim"
     }
   }
   if (ClipSaved)
     Clipboard := ClipSaved
-  WinWait, ahk_group Vim
+  WinWait % w
   WinWaitClose
   Vim.SM.ActivateElWind()
   if (Notepad) {

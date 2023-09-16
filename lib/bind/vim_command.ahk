@@ -585,6 +585,7 @@ SearchLinkInYT:
     uiaBrowser.WaitPageLoad()
     uiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
     auiaLinks := uiaBrowser.FindAllByType("Hyperlink")
+    link := RegExReplace(link, "https:\/\/(www\.)?")
     for i, v in auiaLinks {
       if (IfContains(v.CurrentValue, link)) {
         v.click()
@@ -778,25 +779,17 @@ MassReplaceRegistry:
   replacement := ""
   if (!find && !replacement)
     return
-  ; ControlSend, Edit1, % "{text}" . find, A
   loop {
+    ControlSend, Edit1, % "{text}" . find, A
     send !r
     WinWaitActive, ahk_class TInputDlg
-    text := ControlGetText("TMemo1", "")
-    if !(text ~= "^" . find)
+    text := ControlGetText("TMemo1")
+    if (InStr(text, find) != 1)
       return
-    RegExMatch(text, "^" . find . "\K(.*?)(#.*$)", v)
-    if (v && !IfContains(v1, "%,:")) {
-      NewText := "https://en.wiktionary.org/wiki/" . EncodeDecodeURI(v1) . v2
-      if (IfContains(v1, "%") || (text != NewText))
-        ControlSetText, TMemo1, % NewText
-    }
+    ControlSetText, TMemo1, % StrReplace(text, find, replacement)
     send !{enter}
     WinWaitActive, ahk_class TRegistryForm
-    send {f3}
-    WinWaitActive, ahk_class TProgressBox,, 0
-    if (!ErrorLevel)
-      WinWaitActive, ahk_class TRegistryForm
+    ControlSetText, Edit1
   }
 return
 

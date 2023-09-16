@@ -562,7 +562,7 @@ ExtractToSM:
 
   loop {
     send !{f12}kd  ; delete registry link
-    WinWaitActive, ahk_class TMsgDialog,, 0.1
+    WinWaitActive, ahk_class TMsgDialog,, 0.2
     if (!ErrorLevel) {
       send {enter}
       WinWaitClose
@@ -570,6 +570,7 @@ ExtractToSM:
     }
   }
   Vim.SM.ActivateElWind()
+  WinWaitActive, ahk_class TElWind
   send ^+{f7}  ; clear read point
   if (CtrlState) {
     Vim.SM.GoBack()
