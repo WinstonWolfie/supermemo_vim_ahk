@@ -36,7 +36,7 @@ class VimHTML {
     }
 
     if (LineBreak)
-      str := RegExReplace(str, "i)<(BR|DIV)", "<P")
+      str := RegExReplace(str, "i)<(BR|(\/)?DIV)", "<$2P")
 
     if (IfContains(url, "economist.com"))
       str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^<>]+>)", " class=uppercase ")
@@ -58,8 +58,8 @@ class VimHTML {
     str := RegExReplace(str, "is)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
     str := RegExReplace(str, "is)<(zzz)?script( .*?)?>.*?<\/(zzz)?script>")
     str := RegExReplace(str, "is)<(zzz)?input( .*?)?>")
-    str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)="".*?""(?=([^<>]+)?>)")
-    str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick)=[^ >]+(?=([^<>]+)?>)")
+    str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick|onMouseOver)="".*?""(?=([^<>]+)?>)")
+    str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick|onMouseOver)=[^ >]+(?=([^<>]+)?>)")
     str := RegExReplace(str, "is)<([^<>]+)?\K (onMouseOver|onMouseOut)=.*?;(?=([^<>]+)?>)")
 
     str := RegExReplace(str, "is)<p( [^>]+)?>(&nbsp;|\s| )<\/p>")

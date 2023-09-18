@@ -1,5 +1,5 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0,,, -1)
 d::Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,, -1)
 c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0,,, -1)
@@ -37,19 +37,19 @@ Return
   }
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_y") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_y") && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 y::
   Vim.Move.YDCMove()
   send {Left}{Home}
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d") && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 d::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_c") && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 c::Vim.Move.YDCMove()
 
 ; Paste
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 ^p::
 p::
   if (IfContains(A_ThisHotkey, "^"))
@@ -74,16 +74,16 @@ Return
   KeyWait, p
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.State.g && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 u::Vim.State.SetMode("Vim_gu", 0, -1, 0)
 +u::Vim.State.SetMode("Vim_gU", 0, -1, 0)
 ~::Vim.State.SetMode("Vim_g~", 0, -1, 0)
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gu") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gu") && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 u::Vim.Move.YDCMove()
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gU") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_gU") && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 +u::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_g~") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_g~") && !Vim.IsNavigating() && Vim.SM.IsEditingText())
 ~::
   KeyWait Shift
   Vim.Move.YDCMove()

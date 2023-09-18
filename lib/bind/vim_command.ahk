@@ -107,7 +107,7 @@ VimCommanderButtonExecute:
 return
 
 FindSearch(title, prompt, text:="") {
-  if (!Default := trim(Copy()))
+  if (!Default := Trim(Copy()))
     Default := text ? text : Clipboard
   ret := InputBox(title, prompt,,,,,,,, Default)
   ; If the user closed the input box without submitting, return nothing
@@ -119,13 +119,13 @@ WindowSpy:
 return
 
 WebSearch:
-  search := trim(Copy())
+  search := Trim(Copy())
   Gui, WebSearch:Add, Text,, &Search:
-  Gui, WebSearch:Add, Edit, vSearch w136 r1 -WantReturn, % search
+  Gui, WebSearch:Add, Edit, vSearch w136 r1 -WantReturn, % Search
   Gui, WebSearch:Add, Text,, &Language Code:
-  list := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
-  Gui, WebSearch:Add, Combobox, vLangCode gAutoComplete w136, % list
-  Gui, WebSearch:Add, Button, default, &Search
+  List := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
+  Gui, WebSearch:Add, Combobox, vLangCode gAutoComplete w136, % List
+  Gui, WebSearch:Add, Button, Default, &Search
   Gui, WebSearch:Show,, Google Define
   SetDefaultKeyboard(0x0409)  ; English-US
 Return
@@ -138,10 +138,10 @@ return
 WebSearchButtonSearch:
   Gui, Submit
   Gui, Destroy
-  if (IsUrl(search)) {
-    run % search
+  if (IsUrl(Search)) {
+    run % Search
   } else {
-    run % "https://www.google.com/search?hl=" . LangCode . "&q=" . EncodeDecodeURI(search)
+    run % "https://www.google.com/search?hl=" . LangCode . "&q=" . EncodeDecodeURI(Search)
   }
 return
 
@@ -166,7 +166,7 @@ DeepL:
 Return
 
 YouGlish:
-  search := trim(Copy())
+  search := Trim(Copy())
   Gui, YouGlish:Add, Text,, &Search:
   Gui, YouGlish:Add, Edit, vSearch w136 r1 -WantReturn, % search
   Gui, YouGlish:Add, Text,, &Language:
@@ -196,7 +196,7 @@ KillIE:
 return
 
 DefineGoogle:
-  search := trim(Copy())
+  search := Trim(Copy())
   Gui, GoogleDefine:Add, Text,, &Search:
   Gui, GoogleDefine:Add, Edit, vSearch w136 r1 -WantReturn, % search
   Gui, GoogleDefine:Add, Text,, &Language Code:
@@ -246,14 +246,14 @@ ClozeAndDone:
 return
 
 Wiktionary:
-  search := trim(Copy())
-  Gui, Wiktionary:Add, Text,, &Search:
-  Gui, Wiktionary:Add, Edit, vSearch w136 r1 -WantReturn, % search
+  Word := Trim(Copy())
+  Gui, Wiktionary:Add, Text,, &Word:
+  Gui, Wiktionary:Add, Edit, vWord w136 r1 -WantReturn, % Word
   Gui, Wiktionary:Add, Text,, &Language:
-  list := "Spanish||English|French|Italian|Japanese|German|Russian|Greek|Hebrew"
+  List := "Spanish||English|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|Latin|Ancient Greek|Chinese"
-  Gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete w136, % list
-  Gui, Wiktionary:Add, Button, default, &Search
+  Gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete w136, % List
+  Gui, Wiktionary:Add, Button, default, &Word
   Gui, Wiktionary:Show,, Wiktionary
 return
 
@@ -262,19 +262,19 @@ WiktionaryGuiClose:
   Gui, Destroy
 return
 
-WiktionaryButtonSearch:
+WiktionaryButtonWord:
   Gui, Submit
   Gui, Destroy
-  if (language == "Ancient Greek")
-    language := "Ancient_Greek"
-  if (language == "Latin") {
-    search := StrReplace(search, "ā", "a")
-    search := StrReplace(search, "ē", "e")
-    search := StrReplace(search, "ī", "i")
-    search := StrReplace(search, "ū", "u")
-    search := StrReplace(search, "ō", "o")
+  if (Language == "Ancient Greek")
+    Language := "Ancient_Greek"
+  if (Language == "Latin") {
+    Word := StrReplace(Word, "ā", "a")
+    Word := StrReplace(Word, "ē", "e")
+    Word := StrReplace(Word, "ī", "i")
+    Word := StrReplace(Word, "ū", "u")
+    Word := StrReplace(Word, "ō", "o")
   }
-  run % "https://en.wiktionary.org/wiki/" . search . "#" . language
+  run % "https://en.wiktionary.org/wiki/" . Word . "#" . Language
 return
 
 CopyTitle:
@@ -289,8 +289,26 @@ CopyHTML:
 return
 
 Forvo:
-  if (search := FindSearch("Forvo", "Word/phrase:"))
-    run % "http://forvo.com/search/" . search . "/"
+  Word := Trim(Copy())
+  Gui, Forvo:Add, Text,, &Word:
+  Gui, Forvo:Add, Edit, vWord w136 r1 -WantReturn, % Word
+  Gui, Forvo:Add, Text,, &Language Code:
+  List := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr"
+  Gui, Forvo:Add, Combobox, vLangCode gAutoComplete w136, % List
+  Gui, Forvo:Add, Button, Default, &Search
+  Gui, Forvo:Show,, Forvo
+  SetDefaultKeyboard(0x0409)  ; English-US
+Return
+
+ForvoGuiEscape:
+ForvoGuiClose:
+  Gui, Destroy
+return
+
+ForvoButtonSearch:
+  Gui, Submit
+  Gui, Destroy
+  run % "http://forvo.com/word/" . Word . "/#" . LangCode
 return
 
 SetConceptHook:
@@ -379,8 +397,8 @@ ReformatScriptComponent:
   send ^a^x
   ClipWait
   aOriginalText := StrSplit(Clipboard, "`n`r")
-  Vim.Browser.Url := trim(aOriginalText[1], " `r`n"), Vim.Browser.Title := WinGetTitle("A")
-  Vim.Browser.VidTime := trim(aOriginalText[2], " `r`n")
+  Vim.Browser.Url := Trim(aOriginalText[1], " `r`n"), Vim.Browser.Title := WinGetTitle("A")
+  Vim.Browser.VidTime := Trim(aOriginalText[2], " `r`n")
   if (IfContains(Vim.Browser.Url, "youtube.com")) {
     YTTime := Vim.Browser.VidTime ? "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s" : ""
     Vim.Browser.Source := "YouTube"
@@ -640,9 +658,6 @@ BingChat:
     WinWaitActive, ahk_exe msedge.exe
   }
   send ^+.
-  ; UIA := UIA_Interface()
-  ; el := UIA.ElementFromHandle(WinExist("ahk_exe msedge.exe"))
-  ; el.WaitElementExist("ControlType=Button AND Name='^Discover'",, "regex").Click()
   if (ClipSaved)
     Clipboard := ClipSaved
 return 
@@ -744,21 +759,41 @@ CalculateTodaysPassRate:
   WinWaitActive, Information ahk_class TMsgDialog
   send {enter}
   RepHistory := FileRead(TempPath)
-  date := "Date=" . FormatTime(, "dd.MM.yyyy")
-  dateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
-  StrReplace(RepHistory, date,, TodayRepCount)
-  RegExReplace(RepHistory, dateRegEx . ".*?Grade=[3-5]",, TodayPassCount)
+  DateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
+  RegExReplace(RepHistory, "s)\nItem #\d+: [^\n]+\n[^\n]+" . DateRegEx
+                         . "[^\n]+Grade=[0-5]",, TodayRepCount)
+  RegExReplace(RepHistory, "s)\nItem #\d+: [^\n]+\n[^\n]+" . DateRegEx
+                         . "[^\n]+Grade=[3-5]",, TodayPassCount)
   BlockInput, off
   RemoveToolTip()
-  msgbox % "Today's rep count: " . TodayRepCount
+  msgbox % "Today's repetition count: " . TodayRepCount
          . "`nToday's pass (grade > 3) count: " . TodayPassCount
-         . "`nToday's pass rate: " . ForMat("{:g}", TodayPassCount / TodayRepCount * 100) . "%"
+         . "`nToday's pass rate: " . Format("{:g}", TodayPassCount / TodayRepCount * 100) . "%"
 return
 
 PerplexityAI:
-  if (!search := FindSearch("Perplexity AI", "Search:"))
-    return
-  run % "https://www.perplexity.ai/search?q=" . search . "&copilot=true&s=d"
+  search := Trim(Copy())
+  Gui, PerplexityAI:Add, Text,, &Search:
+  Gui, PerplexityAI:Add, Edit, vSearch w136 r1 -WantReturn, % search
+  Gui, PerplexityAI:Add, Text,, &Focus:
+  list := "internet||scholar|writing|wolfram|youtube|reddit"
+  Gui, PerplexityAI:Add, Combobox, vFocus gAutoComplete w136, % list
+  Gui, PerplexityAI:Add, CheckBox, vCopilot Checked, &Copilot
+  Gui, PerplexityAI:Add, Button, default, &Search
+  Gui, PerplexityAI:Show,, Perplexity AI
+  SetDefaultKeyboard(0x0409)  ; English-US
+Return
+
+PerplexityAIGuiEscape:
+PerplexityAIGuiClose:
+  Gui, Destroy
+return
+
+PerplexityAIButtonSearch:
+  Gui, Submit
+  Gui, Destroy
+  run % "https://www.perplexity.ai/search?q=" . search . "&focus=" . focus
+      . "&copilot=" . (copilot ? "true" : "false")
 return
 
 RetryAllSyncErrors:
@@ -807,8 +842,9 @@ AllLapsesToday:
   send {enter}
   RepHistory := FileRead(TempPath)
   dateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
-  pos := 1
-  while (pos := RegExMatch(RepHistory, "s)\nItem #\d+: ([^\n]+)\n[^\n]+" . dateRegEx . "[^\n]+Grade=[0-2]", v, pos + StrLen(v1)))
+  pos := 1, v1 := ""
+  while (pos := RegExMatch(RepHistory, "s)\nItem #\d+: ([^\n]+)\n[^\n]+"
+                                     . dateRegEx . "[^\n]+Grade=[0-2]", v, pos + StrLen(v1)))
     FileAppend, % v1 . "`n", % TempOutputPath
   run % TempOutputPath
   BlockInput, off

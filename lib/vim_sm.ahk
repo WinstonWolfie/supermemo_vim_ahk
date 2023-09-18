@@ -8,7 +8,9 @@ class VimSM {
   }
 
   DoesTextExist() {
-    return (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind") || ControlGet(,, "TMemo1", "ahk_class TElWind"))
+    return (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")
+         || ControlGet(,, "TMemo1", "ahk_class TElWind")
+         || ControlGet(,, "TRichEdit1", "ahk_class TElWind"))
   }
 
   DoesHTMLExist() {
@@ -111,8 +113,12 @@ class VimSM {
     return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server,TMemo,TRichEdit"))
   }
 
-  IsBrowsing() {
+  IsNotEditingText() {
     return (WinActive("ahk_class TElWind") && !this.IsEditingText())
+  }
+
+  IsBrowsing() {
+    return (WinActive("ahk_class TElWind") && this.DoesTextExist() && !this.IsEditingText())
   }
 
   IsGrading() {
@@ -456,7 +462,7 @@ class VimSM {
 
   GetTemplCode(RestoreClip:=true) {
     this.ActivateElWind()
-    return Copy(RestoreClip,,, this.IsBrowsing() ? "^c" : "!{f10}tc")
+    return Copy(RestoreClip,,, this.IsEditingText() ? "!{f10}tc" : "^c")
   }
 
   PrepareStatBar(step, x:=0, y:=0) {

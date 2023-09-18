@@ -22,7 +22,7 @@ n::
   Vim.SM.WaitTextFocus()
   if (Vim.SM.IsEditingHTML())
     sleep 50  ; short sleep so the element window won't try to regain focus
-  if (!Vim.SM.IsEditingText()) {  ; still found no text
+  if (Vim.SM.IsNotEditingText()) {  ; still found no text
     ToolTip("Text not found.")
     Vim.State.SetNormal()
     return

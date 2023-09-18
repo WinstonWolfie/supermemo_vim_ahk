@@ -80,7 +80,7 @@ return
 return
 
 ^!f::  ; use IE's search
-  if (!Vim.SM.IsEditingText()) {
+  if (Vim.SM.IsNotEditingText()) {
     send ^t
     Vim.SM.WaitTextFocus(1500)
   }
@@ -241,7 +241,7 @@ return
   ToolTip("LaTeX converting...", true)
   if (!IfContains(data, "<IMG")) {  ; text
     send {bs}^{f7}  ; set read point
-    LatexFormula := trim(ProcessLatexFormula(Clipboard), "$")
+    LatexFormula := Trim(ProcessLatexFormula(Clipboard), "$")
     ; After almost a year since I wrote this script, I finially figured out this f**ker website encodes the formula twice. Well, I suppose I don't use math that often in SM
     LatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
     LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cbg_white%2520%255Chuge%2520" . LatexFormula . "&dl=1"
@@ -379,6 +379,7 @@ return
   Gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
   Gui, PlanAdd:Add, Text,, &Time:
   Gui, PlanAdd:Add, Edit, vTime w110
+  Gui, PlanAdd:Add, CheckBox, vNoBackup, Do &not backup
   Gui, PlanAdd:Add, Button, default x10 w50 h24, &Insert
   Gui, PlanAdd:Add, Button, x+10 w50 h24, &Append
   Gui, PlanAdd:Show,, Add Activity
@@ -424,7 +425,7 @@ PlanAddButtonAppend:
       send {text}y
   }
   send ^s
-  if (IfIn(activity, "Break,Sports,Out,Shower"))
+  if (!NoBackup && IfIn(activity, "Break,Sports,Out,Shower"))
     try run b  ; my personal backup script
   BlockInput, off
   Vim.State.SetNormal()
@@ -615,27 +616,27 @@ BrowserSyncTime:
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
 
-  if (!EditTitle := (wMpv || (wBrowserId && (Vim.Browser.IsVidSite(vim.browser.fullTitle) == 3)))) {
+  if (!EditTitle := (wMpv || (wBrowserId
+                           && (Vim.Browser.IsVidSite(vim.browser.fullTitle) == 3)))) {
     Vim.SM.EditFirstQuestion()
     send ^t{f9}
-    WinWaitActive, ahk_class TScriptEditor,, 1.5
+    WinWaitActive, ahk_class TScriptEditor,, 0.3
     if (ErrorLevel) {
-      ToolTip("Script editor not found.")
-      Goto SMSyncTimeReturn
-    }
-
-    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-    if (IfContains(script := ControlGetText("TMemo1", "A"), "bilibili.com")) {
-      if (script ~= "\?p=\d+") {
-        match := "&t=.*", replacement := "&t=" . sec
-      } else {
-        match := "\?t=.*", replacement := "?t=" . sec
+      EditTitle := true
+    } else {
+      sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+      if (IfContains(script := ControlGetText("TMemo1", "A"), "bilibili.com")) {
+        if (script ~= "\?p=\d+") {
+          match := "&t=.*", replacement := "&t=" . sec
+        } else {
+          match := "\?t=.*", replacement := "?t=" . sec
+        }
+      } else if (IfContains(script, "youtube.com")) {
+        match := "&t=.*s", replacement := "&t=" . sec . "s"
+      } else if (EditTitle := true) {
+        WinClose, ahk_class TScriptEditor
+        send {esc}
       }
-    } else if (IfContains(script, "youtube.com")) {
-      match := "&t=.*s", replacement := "&t=" . sec . "s"
-    } else if (EditTitle := true) {
-      WinClose, ahk_class TScriptEditor
-      send {esc}
     }
   }
 
@@ -644,9 +645,9 @@ BrowserSyncTime:
     send !o{esc}  ; close script editor
     ToolTip("Time stamp in script component set as " . sec . "s")
   } else {  ; time in title
-    SMTitle := RegExReplace(WinGetTitle("ahk_class TElWind")
-                          , "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
-    Vim.SM.SetTitle(Vim.Browser.VidTime . " | " . SMTitle)
+    Vim.SM.SetTitle(Vim.Browser.VidTime . " | "
+                  . RegExReplace(WinGetTitle("ahk_class TElWind") 
+                               , "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| "))
   }
   WinWaitActive, ahk_class TElWind
   if (IfContains(A_ThisHotkey, "^+!"))
@@ -663,7 +664,7 @@ return
                       && (title := WinGetTitle("A"))
                       && (RegExMatch(title, "i)(?<=^p)(\d+|[MDCLXVI]+)(?= \|)", page)  ; eg, p12 | title
                        || RegExMatch(title, ".+?(?= \|)", clip)))  ; eg, last reading point | title
-!s::ToolTip("Copied " . Clipboard := trim(page ? page : clip))
+!s::ToolTip("Copied " . Clipboard := Trim(page ? page : clip))
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Concept Registry \(\d+ members\)"))
 !p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window

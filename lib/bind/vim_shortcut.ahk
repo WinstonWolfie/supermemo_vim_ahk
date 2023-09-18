@@ -46,11 +46,9 @@ Plan:
     WinActivate
     if (!Vim.SM.Plan())
       return
-    WinWait, ahk_class TMsgDialog,, 1.5
-    if (!ErrorLevel) {
+    WinWait, Information ahk_class TMsgDialog,, 1.5
+    if (!ErrorLevel)
       WinClose
-      WinWaitClose, ahk_class TMsgDialog
-    }
     WinActivate, ahk_class TPlanDlg
     return
   }
@@ -664,7 +662,7 @@ return
   CloseWnd := IfContains(A_ThisHotkey, "^")
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus("A"), "Edit"))
     send {esc}
-  marker := trim(Copy(false), " `t`r`n")
+  marker := Trim(Copy(false), " `t`r`n")
   if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))) {
     if (wAcrobat)
       marker := "p" . GetAcrobatPageBtn().Value

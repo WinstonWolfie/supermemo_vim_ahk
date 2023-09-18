@@ -1,8 +1,8 @@
 #Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 CapsLock & alt::return  ; so you can press CapsLock first and alt without triggering context menu
-#if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")) && !Vim.State.fts && WinActive("ahk_class TElWind") && Vim.SM.DoesTextExist())
 ?::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && Vim.SM.DoesTextExist())
 !/::  ; followed by a cloze
 ^!/::  ; followed by a cloze and stays in clozed item
 +!/::  ; followed by a cloze hinter
@@ -12,21 +12,21 @@ CapsLock & alt::return  ; so you can press CapsLock first and alt without trigge
   AltState := IfContains(A_ThisHotkey, "!")  ; followed by a cloze
   CtrlState := IfContains(A_ThisHotkey, "^")
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")) && (ShiftState := GetKeyState("shift")))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")) && (ShiftState := GetKeyState("shift")) && Vim.SM.DoesTextExist())
 CapsLock & /::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (ShiftState := GetKeyState("shift")))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (ShiftState := GetKeyState("shift")) && Vim.SM.DoesTextExist())
 CapsLock & /::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")) && Vim.SM.DoesTextExist())
 CapsLock & /::
   CapsState := IfContains(A_ThisHotkey, "CapsLock")
   KeyWait Alt
   BlockInput, on
-  if (!Vim.SM.IsEditingText()) {
+  if (Vim.SM.IsNotEditingText()) {
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()  ; make sure CurrFocus is updated    
     if (Vim.SM.IsEditingHTML())
       sleep 50  ; short sleep so the element window won't try to regain focus
-    if (!Vim.SM.IsEditingText()) {  ; still found no text
+    if (Vim.SM.IsNotEditingText()) {  ; still found no text
       ToolTip("Text not found.")
       Vim.State.SetNormal()
       BlockInput, off

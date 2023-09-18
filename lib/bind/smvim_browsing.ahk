@@ -47,7 +47,7 @@ Return
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
-  && !Vim.SM.IsEditingText()
+  && Vim.SM.IsNotEditingText()
   && Vim.State.g)
 0::Vim.SM.Gohome(), Vim.State.SetMode()  ; g0: go to root element
 
@@ -216,7 +216,7 @@ CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
 
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && ((Vim.SM.IsBrowsing())
+  && (Vim.SM.IsNotEditingText()
    || WinActive("ahk_class TContents")
    || WinActive("ahk_class TBrowser")))
 +x::send ^+{enter}  ; Done!
@@ -226,7 +226,7 @@ CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
-  && !Vim.SM.IsEditingText()
+  && Vim.SM.IsNotEditingText()
   && Vim.State.g)
 +e::  ; K, gE: go up *e*lements
 e::  ; J, ge: go down *e*lements
@@ -244,13 +244,13 @@ u::  ; gu: go to parent
 ; Element navigation
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && (Vim.SM.IsBrowsing()
+  && (Vim.SM.IsNotEditingText()
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 !h::
 +h::  ; go back in history
 !l::
 +l::  ; go forward in history
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNotEditingText())
 !j::
 +j::  ; J, ge: go down one element
 !k::
@@ -282,7 +282,7 @@ return
 ; Open windows
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && (Vim.SM.IsBrowsing()
+  && (Vim.SM.IsNotEditingText()
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 c::send !c  ; open content window
 b::
@@ -305,7 +305,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^o::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNotEditingText() && !Vim.State.g)
 o::
   BlockInput, on
   SetDefaultKeyboard(0x0409)  ; English-US
@@ -326,9 +326,9 @@ return
 t::Vim.SM.ClickMid()  ; *t*ext
 
 ; Copy
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNotEditingText())
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsNotEditingText())
 y::  ; yy: copy current source url
   if (!link := Vim.SM.GetLink()) {
     ToolTip("Link not found.")
@@ -401,6 +401,12 @@ Return
 
 #if (Vim.IsVimGroup() && SMCtrlF3 && WinActive("ahk_class TInputDlg"))
 enter::
-  VimLastSearch := ControlGetText("TMemo1", "A"), SMCtrlF3 := false
+  VimLastSearch := ControlGetText("TMemo1"), SMCtrlF3 := false
+  send {enter}
+return
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TMyFindDlg"))
+enter::
+  VimLastSearch := ControlGetText("TEdit1")
   send {enter}
 return
