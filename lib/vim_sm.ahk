@@ -607,10 +607,10 @@ class VimSM {
       return
     }
     if (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
-      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
+      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{CtrlDown}p{CtrlUp}{Shift Up}, ahk_class TElWind
       WinWait, % w,, 0
       if (ErrorLevel) {
-        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}{CtrlDown}p{CtrlUp}{shift up}, ahk_class TElWind
+        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{CtrlDown}p{CtrlUp}{Shift Up}, ahk_class TElWind
         WinWait, % w,, 0
         if (ErrorLevel)
           return
@@ -1021,5 +1021,16 @@ class VimSM {
     ControlTextWait("TEdit1", path)
     if (enter)
       ControlClick, TButton2,,,,, NA
+  }
+
+  EditBar(n) {
+    this.ActivateElWind()
+    UIA := UIA_Interface()
+    el := UIA.ElementFromHandle(WinActive("A"))
+    el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
+    b := el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath(n)
+    b.ControlClick()
+    el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
+    this.Vim.Caret.SwitchToSameWindow()
   }
 }

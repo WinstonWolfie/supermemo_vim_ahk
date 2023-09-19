@@ -226,6 +226,9 @@ WinGetTitle(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
 UrlDownloadToFile(URL, Filename) {
   UrlDownloadToFile, % URL, % Filename
 }
+MsgBox(Options:="", Title:="", Text:="", Timeout:="") {
+  MsgBox, % Options, % Title, % Text, % Timeout
+}
 
 ; https://www.autohotkey.com/boards/viewtopic.php?t=5484
 ; This function wraps a loop that continuously uses ControlGetFocus to test if a particular 

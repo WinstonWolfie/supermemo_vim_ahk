@@ -65,7 +65,8 @@ Return
       if (Vim.SM.IsEditingText())
         list := "ClozeAndDone!|" . list
       if (Vim.SM.IsEditingHTML())
-        list := "MakeHTMLUnique|" . list
+        list := "MakeHTMLUnique|CenterTexts|AlignTextsRight|BoldText|ItalicText"
+              . "|UnderscoreText|" . list
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
     list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference|" . list
@@ -106,10 +107,10 @@ VimCommanderButtonExecute:
   }
 return
 
-FindSearch(title, prompt, text:="") {
-  if (!Default := Trim(Copy()))
-    Default := text ? text : Clipboard
-  ret := InputBox(title, prompt,,,,,,,, Default)
+FindSearch(Title, Prompt, Text:="", ForceText:=false) {
+  if (!ForceText && (!Default := Trim(Copy())))
+    Text := Text ? Text : Clipboard
+  ret := InputBox(Title, Prompt,,,,,,,, Text)
   ; If the user closed the input box without submitting, return nothing
   return ErrorLevel ? "" : ret
 }
@@ -155,8 +156,16 @@ MoveMouseToCaret:
 return
 
 WaybackMachine:
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-  if (url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL()))
+  WinWaitActive % "ahk_id " . hWnd
+  if (WinActive("ahk_group Browser")) {
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL())
+  } else if (WinActive("ahk_class TElWind")) {
+    url := FindSearch("Wayback Machine", "URL:", Vim.SM.GetLink(), true)
+  } else if (!url := FindSearch("Wayback Machine", "URL:")) {
+    return
+  }
+  if (url)
     run % "https://web.archive.org/web/*/" . url
 return
 
@@ -725,7 +734,7 @@ MakeHTMLUnique:
   Vim.SM.MoveToLast(false)
   AntiMerge := "<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>"
   Clip(AntiMerge,, false, "sm")
-  Clipboard := ClipSaved
+  Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 return
 
 KillOutlook:
@@ -881,4 +890,23 @@ ExternaliseRegistry:
     WinWaitActive, ahk_class TRegistryForm
     WinClose
   }
+return
+
+CenterTexts:
+AlignTextsRight:
+  Vim.SM.EditBar((A_ThisLabel == "CenterTexts") ? "16" : "17")
+  Vim.State.SetMode("Vim_Normal")
+return
+
+BoldText:
+ItalicText:
+UnderscoreText:
+  if (A_ThisLabel == "BoldText") {
+    send ^b
+  } else if (A_ThisLabel == "ItalicText") {
+    send ^i
+  } else if (A_ThisLabel == "UnderscoreText") {
+    send ^u
+  }
+  Vim.State.SetMode("Vim_Normal")
 return

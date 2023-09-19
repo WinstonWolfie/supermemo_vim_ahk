@@ -134,12 +134,8 @@ return
 <::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
 <::
-  UIA := UIA_Interface()
-  el := UIA.ElementFromHandle(WinActive("A"))
-  el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
-  el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath((A_ThisHotkey == ">") ? "21" : "20").ControlClick()
-  el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
-  Vim.Caret.SwitchToSameWindow(), Vim.State.SetMode("Vim_Normal")
+  Vim.SM.EditBar((A_ThisHotkey == ">") ? "21" : "20")
+  Vim.State.SetMode("Vim_Normal")
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser") && Vim.State.g)

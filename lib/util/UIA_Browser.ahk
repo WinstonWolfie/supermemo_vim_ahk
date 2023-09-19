@@ -281,7 +281,7 @@ class UIA_Mozilla extends UIA_Browser {
     }
     ControlFocus, ahk_parent, % "ahk_id" this.BrowserId
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}, % "ahk_id" this.BrowserId
-    ControlSend, ahk_parent, {ctrl down}{shift down}k{ctrl up}{shift up}, % "ahk_id" this.BrowserId
+    ControlSend, ahk_parent, {ctrl down}{Shift Down}k{ctrl up}{Shift Up}, % "ahk_id" this.BrowserId
     this.GetCurrentDocumentElement()
     this.DocumentPanelElement.WaitElementExistByNameAndType("Switch to multi-line editor mode (Ctrl + B)", "Button")  
     ClipSave := ClipboardAll
@@ -290,7 +290,7 @@ class UIA_Mozilla extends UIA_Browser {
     WinWaitActive, % "ahk_id" this.BrowserId
     Send, {ctrl down}v{ctrl up}{enter down}{enter up}
     sleep 40
-    Send, {ctrl down}{shift down}i{ctrl up}{shift up}
+    Send, {ctrl down}{Shift Down}i{ctrl up}{Shift Up}
     Clipboard := ClipSave
     Clipsave=
   }

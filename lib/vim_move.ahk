@@ -11,7 +11,7 @@ class VimMove {
   
   NoSelection() {
     if (!this.ExistingSelection && this.Vim.State.StrIsInCurrentVimMode("VisualFirst,ydc,SMVim_,Inner"))
-      Return this.ExistingSelection := true  ; so it only returns true once in repeat
+      return this.ExistingSelection := true  ; so it only returns true once in repeat
   }
 
   IsSearchKey(key) {
@@ -64,11 +64,11 @@ class VimMove {
     if (this.Vim.State.StrIsInCurrentVimMode("Visual,ydc,SMVim_,Vim_g")) {
       this.shift := 1
       if (!this.IsSearchKey(key) && !this.IsActionKey(key))
-        send {shift down}
+        send {Shift Down}
     }
 
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualLineFirst") && IfIn(key, "k,^u,^b,g")) {
-      send {shift up}{right}{shift down}
+      send {Shift Up}{right}{Shift Down}
       this.Zero()
       this.Vim.State.SetMode("Vim_VisualLine",, -1)  ; -1 is needed for repeat to work
     }
@@ -77,7 +77,7 @@ class VimMove {
       this.Vim.State.SetMode("Vim_VisualLine",, -1)  ; -1 is needed for repeat to work
 
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualParagraphFirst") && IfIn(key, "k,^u,^b,g")) {
-      send {shift up}{right}{left}{shift down}
+      send {Shift Up}{right}{left}{Shift Down}
       this.Up()
       this.Vim.State.SetMode("Vim_VisualParagraph",, -1)  ; -1 is needed for repeat to work
     }
@@ -90,18 +90,18 @@ class VimMove {
 
     if (this.Vim.State.StrIsInCurrentVimMode("Vim_ydc,SMVim_") && IfIn(key, "k,^u,^b,g")) {
       this.Vim.State.LineCopy := 1
-      send {shift up}
+      send {Shift Up}
       this.Zero()
       this.Down()
-      send {shift down}
+      send {Shift Down}
       this.Up()
     }
   
     if (this.Vim.State.StrIsInCurrentVimMode("Vim_ydc,SMVim_") && IfIn(key, "j,^d,^f,+g")) {
       this.Vim.State.LineCopy := 1
-      send {shift up}
+      send {Shift Up}
       this.Zero()
-      send {shift down}
+      send {Shift Down}
       this.Down()
     }
 
@@ -110,7 +110,7 @@ class VimMove {
   }
 
   MoveFinalize() {
-    Send {shift up}
+    Send {Shift Up}
     this.Vim.State.FtsChar := ""
     if (this.clipped) {
       Clipped := "Clipped"
@@ -1337,7 +1337,7 @@ class VimMove {
   YDCMove() {
     this.Vim.State.LineCopy := 1
     this.Zero()
-    send {shift down}
+    send {Shift Down}
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
     this.Down(this.Vim.State.n - 1)

@@ -90,21 +90,21 @@ q::  ; extract (*q*uote)
 return
 
 +h::  ; move to top of screen
-  send {shift down}
+  send {Shift Down}
   Vim.SM.ClickTop()
-  send {shift up}
+  send {Shift Up}
 Return
 
 +m::  ; move to middle of screen
-  send {shift down}
+  send {Shift Down}
   Vim.SM.ClickMid()
-  send {shift up}
+  send {Shift Up}
 Return
 
 +l::  ; move to bottom of screen
-  send {shift down}
+  send {Shift Down}
   Vim.SM.ClickBottom()
-  send {shift up}
+  send {Shift Up}
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())

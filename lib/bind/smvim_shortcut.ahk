@@ -314,7 +314,7 @@ DownloadLatex:
   UrlDownloadToFile, % LatexLink, % LatexPath
 return
 
-^+k::  ; numbered list
+^!+l::  ; numbered list
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("A"))
   el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
@@ -609,7 +609,7 @@ BrowserSyncTime:
   }
   Vim.SM.CloseMsgWind()
   if (CloseWnd && wMpvId)
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{shift down}q{shift up}, % "ahk_id " . wMpvId
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % "ahk_id " . wMpvId
   Vim.SM.CloseMsgWind()
   WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
 
@@ -697,3 +697,5 @@ n::send {text}n
 +!a::send /*  */{left 3}
 ^+!a::send /*{enter 2}*/{up}
 ^!+h::send {text}==================================================
+
+^+k::send !{f12}kr  ; registry member
