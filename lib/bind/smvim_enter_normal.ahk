@@ -1,5 +1,5 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
-#if (Vim.IsVimGroup() && Vim.SM.IsNotEditingText())
+#if (Vim.IsVimGroup() && Vim.SM.IsBrowsing())
 ; For Learn button
 ~enter::  ; enter up doesn't work
 ~space up::

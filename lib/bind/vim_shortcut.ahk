@@ -111,7 +111,7 @@ return
   if (IfContains(url, "larousse.fr")) {
     TempClip := Vim.HTML.Clean(HTML, true)
     RegExMatch(TempClip, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", TempClip)
-    TempClip := RegExReplace(TempClip, "is)<\/?(zzz)?(mark|span)( .*?)?>")
+    TempClip := RegExReplace(TempClip, "is)<\/?(mark|span)( .*?)?>")
     TempClip := RegExReplace(TempClip, "( | )-( | )", ", ")
     TempClip := StrLower(SubStr(TempClip, 1, 1)) . SubStr(TempClip, 2)  ; make the first letter lower case
     SynPos := RegExMatch(TempClip, "( | ):( | )") + 2
@@ -168,7 +168,6 @@ return
 return
 
 ^!m::  ; copy ti*m*e stamp
-  send {esc}
   ClipSaved := ClipboardAll
   if (!Clipboard := Vim.Browser.GetVidtime(,, false)) {
     ToolTip("Not found.")
@@ -283,18 +282,23 @@ SMImportButtonImport:
         Vim.HTML.ClipboardGet_HTML(HTMLText)
         RegExMatch(HTMLText, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
       } else {
-        ToolTip("Attempting to download website...", true)
-        TempPath := A_Temp . "\" . StrReplace(GetTimeMSec(), ":") . ".htm"
-        UrlDownloadToFile, % Vim.Browser.Url, % TempPath
-        HTMLText := FileRead(TempPath)
-        FileDelete, % TempPath
-        ; Fixing links
-        RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
-        RegExMatch(Vim.Browser.Url, "^https?:\/\/", HTTP)
-        HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/\/(?=([^<>]+)?>)", " $2=""" . HTTP)
-        HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/(?=([^<>]+)?>)", " $2=""" . UrlHead)
-        HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""(?=#([^<>]+)?>)", " $2=""" . Vim.Browser.Url)
-        RemoveToolTip()
+        if (IfContains(Vim.Browser.Url, "file:///")) {
+          Vim.Browser.Url := StrReplace(Vim.Browser.Url, "file:///")
+          HTMLText := FileRead(EncodeDecodeURI(Vim.Browser.Url, false))
+        } else {
+          ToolTip("Attempting to download website...", true)
+          TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
+          UrlDownloadToFile, % Vim.Browser.Url, % TempPath
+          HTMLText := FileRead(TempPath)
+          ; FileDelete, % TempPath
+          ; Fixing links
+          RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
+          RegExMatch(Vim.Browser.Url, "^https?:\/\/", HTTP)
+          HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/\/(?=([^<>]+)?>)", " $2=""" . HTTP)
+          HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/(?=([^<>]+)?>)", " $2=""" . UrlHead)
+          HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""(?=#([^<>]+)?>)", " $2=""" . Vim.Browser.Url)
+          RemoveToolTip()
+        }
       }
     }
     if (!HTMLText) {
@@ -359,11 +363,7 @@ SMImportButtonImport:
     Vim.SM.AltN()
     SMNewElementTitle := WinWaitTitleChange(PrevSMTitle, "ahk_class TElWind")
     if (!Online) {
-      send {AppsKey}xp  ; Paste HTML
-      while (WinClipAPI.GetOpenClipboardWindow())
-        sleep 1
-      WinWaitNotActive, ahk_class TElWind,, 0.3
-      WinWaitActive, ahk_class TElWind
+      Vim.SM.PasteHTML()
       Vim.SM.ExitText()
       WinWaitTitleChange(SMNewElementTitle, "A")
     } else if (Passive) {
@@ -530,16 +530,13 @@ ExtractToSM:
       return
     }
   }
-  Vim.SM.EditFirstQuestion()
-  Vim.SM.WaitTextFocus(1500)
+  Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
   send ^{home}
 
   if (!CleanHTML) {
     send ^v
   } else {
-    send {AppsKey}xp  ; paste HTML
-    WinClip._waitClipReady()
-    WinWaitActive, ahk_class TElWind
+    Vim.SM.PasteHTML()
   }
   send ^+{home}  ; select everything
   if (Prio) {
@@ -753,7 +750,6 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
 !x::
-  CurrTime := GetTimeMSec()
   if (A_ThisHotkey == "^!x") {
     KeyWait Ctrl
     KeyWait Alt
@@ -773,7 +769,7 @@ return
     PostMessage, 0x0111, 17011,,, A  ; export selected audio
     WinWaitActive, Export Selected Audio
   }
-  FileName := RegExReplace(Vim.Browser.Title . CurrTime, "[^a-zA-Z0-9\\.\\-]", "_")
+  FileName := RegExReplace(Vim.Browser.Title . GetTimeMSec(), "[^a-zA-Z0-9\\.\\-]", "_")
   TempPath := A_Temp . "\" . FileName . ".mp3"
   Control, Choose, 3, ComboBox3  ; choose mp3 from file type
   ControlSetText, Edit1, % TempPath

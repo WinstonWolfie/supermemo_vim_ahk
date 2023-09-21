@@ -49,7 +49,7 @@ Return
 
 ; Keys that need insert mode
 ~f2::
-  sleep 50
+  sleep 70
   if (A_CaretX)
     Vim.State.SetMode("Insert")
 Return

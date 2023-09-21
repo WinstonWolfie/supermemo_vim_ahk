@@ -12,8 +12,8 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
     ClipWait, LongCopy ? 0.6 : 0.2, True
     if (!ErrorLevel) {
       if (HTML) {
-        Vim.HTML.ClipboardGet_HTML(clipped)
-        RegExMatch(clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", clipped)
+        Vim.HTML.ClipboardGet_HTML(Clipped)
+        RegExMatch(Clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", Clipped)
       } else {
         Clipped := Clipboard
       }
@@ -26,19 +26,17 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, Method:=0, KeysT
       Clipboard := Text
       ClipWait
     }
-    send % KeysToSend ? KeysToSend : (Method ? "+{Ins}" : "^v")
-    while (WinClipAPI.GetOpenClipboardWindow())
-      sleep 1
-    ; Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
+    if (HTML = "sm") {
+      Vim.SM.PasteHTML()
+    } else {
+      send % KeysToSend ? KeysToSend : (Method ? "+{Ins}" : "^v")
+      while (DllCall("GetOpenClipboardWindow"))
+        sleep 1
+      ; Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
+    }
   }
-  If (Text && (Reselect || (HTML = "sm"))) {
-    StrLen := StrLen(Vim.ParseLineBreaks(text))
-    if ((HTML = "sm") && (IfContains(text, "<p") || InStr(text, "`r")))
-      StrLen++
-    send % "+{Left " . StrLen . "}"
-  }
-  if (text && (HTML = "sm"))
-    send ^+1
+  If (Text && Reselect)
+    send % "+{Left " . StrLen(Vim.ParseLineBreaks(text)) . "}"
   if (RestoreClip)  ; for scripts that restore clipboard at the end
     Clipboard := ClipSaved
   If (Text = "")

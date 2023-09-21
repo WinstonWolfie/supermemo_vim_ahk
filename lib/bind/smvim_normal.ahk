@@ -18,15 +18,11 @@ Return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.SM.IsBrowsing() && Vim.State.g && VimLastSearch)
 n::
-  Vim.SM.EditFirstQuestion()
-  Vim.SM.WaitTextFocus()
-  if (Vim.SM.IsEditingHTML())
-    sleep 50  ; short sleep so the element window won't try to regain focus
-  if (Vim.SM.IsNotEditingText()) {  ; still found no text
+  if (!Vim.SM.DoesTextExist()) {
     ToolTip("Text not found.")
-    Vim.State.SetNormal()
     return
   }
+  Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.SM.IsEditingText() && Vim.State.g && VimLastSearch)
 n::Vim.Move.Move("gn")
 

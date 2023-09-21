@@ -122,9 +122,8 @@ Return
 +p::
 ^+p::
 p::
-  PasteOnly := Vim.State.Leader
   ; Get selection
-  if (!PasteOnly) {
+  if (!Vim.State.Leader) {
     PrevClip := ClipboardAll
     Copy(false)
     NewClip := ClipboardAll
@@ -135,17 +134,16 @@ p::
     }
   }
 
-  ; Paste clipboard
   if (IfContains(A_ThisHotkey, "^"))
     Clipboard := Clipboard  ; convert to plain text
   send ^v
-  Vim.State.SetMode("Vim_Normal")
 
-  if (!PasteOnly) {
-    while (WinClipAPI.GetOpenClipboardWindow())
+  if (!Vim.State.Leader) {
+    while (DllCall("GetOpenClipboardWindow"))
       sleep 1
     Clipboard := NewClip
   }
+  Vim.State.SetMode("Vim_Normal")
 Return
 
 ConvertToLowercase:
@@ -161,7 +159,7 @@ ConvertToUppercaseClipped:
   } else if (IfIn(A_ThisLabel, "ConvertToUppercase,+u,ConvertToUppercaseClipped")) {
     Clip(StrUpper(Copy(false, html)),, false, html)
   }
-  sleep 100  ; while (WinClipAPI.GetOpenClipboardWindow()) doesn't work for some reason
+  sleep 100  ; while (DllCall("GetOpenClipboardWindow")) doesn't work for some reason
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -182,7 +180,7 @@ InvertCaseClipped:
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
   Clip(Lab_Invert_Char_Out,, false, html)
-  sleep 100  ; while (WinClipAPI.GetOpenClipboardWindow()) doesn't work for some reason
+  sleep 100  ; while (DllCall("GetOpenClipboardWindow")) doesn't work for some reason
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -192,13 +190,16 @@ o::  ; move to other end of marked area; not perfect with line breaks
     Goto RestoreClipReturn
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
   send +{right}
-  SelectionRight := Copy(false), SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
+  SelectionRight := Copy(false)
+  SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
   send +{left}
-  if (SelectionLen < SelectionRightLen
-   || (SelectionLen == SelectionRightLen && StrLen(selection) < StrLen(SelectionRight))) {  ; moving point of selection is on the right
+  if ((SelectionLen < SelectionRightLen)
+   || ((SelectionLen == SelectionRightLen)
+    && (StrLen(selection) < StrLen(SelectionRight)))) {  ; moving point of selection is on the right
     send % "{right}+{left " . SelectionLen . "}"
-  } else if (SelectionLen > SelectionRightLen
-          || (SelectionLen == SelectionRightLen && StrLen(selection) > StrLen(SelectionRight))) {
+  } else if ((SelectionLen > SelectionRightLen)
+          || ((SelectionLen == SelectionRightLen)
+           && (StrLen(selection) > StrLen(SelectionRight)))) {
     send % "{left}+{right " . SelectionLen . "}"
   }
   Clipboard := ClipSaved

@@ -57,7 +57,7 @@ capslock::
         Vim.SM.EditFirstQuestion()
       }
       Vim.SM.WaitTextFocus()
-      sleep 20 ; needed lest text changes position when you click
+      sleep 20  ; needed lest text changes position when you click
       ControlClickScreen(v.x, v.y)
       if (HinterMode == "Visual")
         send {right}{left}^+{right}

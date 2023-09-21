@@ -29,40 +29,57 @@ class VimHTML {
     ; Example: https://www.scientificamerican.com/article/can-newborn-neurons-prevent-addiction/
     ; This will likely not be fixed
 
+    RegExMatch(str, r := "i)^<strong><font color=""?blue""?>.*? : <\/font><\/strong>", SMSplit)
+    if (SMSplit)
+      str := RegExReplace(str, r, SMSplitPlaceHolder := GetDetailedTime())
+
     if (nuke) {
       ; Classes
-      str := RegExReplace(str, "is)<([^<>]+)?\K class="".*?""(?=([^<>]+)?>)")
-      str := RegExReplace(str, "is)<([^<>]+)?\K class=[^ >]+(?=([^<>]+)?>)")
+      str := RegExReplace(str, "is)<[^>]+\K class="".*?""(?=([^>]+)?>)")
+      str := RegExReplace(str, "is)<[^>]+\K class=[^ >]+(?=([^>]+)?>)")
     }
 
     if (LineBreak)
       str := RegExReplace(str, "i)<(BR|(\/)?DIV)", "<$2P")
 
     if (IfContains(url, "economist.com"))
-      str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^<>]+>)", " class=uppercase ")
+      str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^>]+>)", " class=uppercase ")
 
     ; Ilya Frank
-    ; str := RegExReplace(str, "is)<\w+\K (?=[^<>]+COLOR: green)(?=[^<>]+>)", " class=ilya-frank-translation ")
+    ; str := RegExReplace(str, "is)<\w+\K (?=[^>]+COLOR: green)(?=[^>]+>)", " class=ilya-frank-translation ")
 
     ; Converts font-style to tags
-    str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-style: italic)(?=[^<>]+>)", " class=italic ")
-    str := RegExReplace(str, "is)<\w+\K (?=[^<>]+font-weight: bold)(?=[^<>]+>)", " class=bold ")
+    str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-style: italic)(?=[^>]+>)", " class=italic ")
+    str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-weight: bold)(?=[^>]+>)", " class=bold ")
 
     ; Styles and fonts
-    str := RegExReplace(str, "is)<([^<>]+)?\K (zzz)?style="".*?""(?=([^<>]+)?>)")
-    str := RegExReplace(str, "is)<([^<>]+)?\K (zzz)?style='.*?'(?=([^<>]+)?>)")
-    str := RegExReplace(str, "is)<\/?(zzz)?(font|form)( .*?)?>")
+    str := RegExReplace(str, "is)<[^>]+\K (zzz)?style="".*?""(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K (zzz)?style='.*?'(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K (zzz)?style=[^>]+(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<\/?(zzz)?(font|form)( [^>]+)?>")
+
+    ; SuperMemo uses IE7; svg was introduced in IE9
+    str := RegExReplace(str, "is)<\/?(svg|path)( [^>]+)?>")
 
     ; Scripts
-    str := RegExReplace(str, "is)<(zzz)?iframe( .*?)?>.*?<\/(zzz)?iframe>")
-    str := RegExReplace(str, "is)<(zzz)?button( .*?)?>.*?<\/(zzz)?button>")
-    str := RegExReplace(str, "is)<(zzz)?script( .*?)?>.*?<\/(zzz)?script>")
-    str := RegExReplace(str, "is)<(zzz)?input( .*?)?>")
-    str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick|onMouseOver)="".*?""(?=([^<>]+)?>)")
-    str := RegExReplace(str, "is)<([^<>]+)?\K (bgColor|onError|onLoad|onClick|onMouseOver)=[^ >]+(?=([^<>]+)?>)")
-    str := RegExReplace(str, "is)<([^<>]+)?\K (onMouseOver|onMouseOut)=.*?;(?=([^<>]+)?>)")
+    str := RegExReplace(str, "is)<(zzz)?iframe( [^>]+)?>.*?<\/(zzz)?iframe>")
+    str := RegExReplace(str, "is)<(zzz)?button( [^>]+)?>.*?<\/(zzz)?button>")
+    str := RegExReplace(str, "is)<(zzz)?script( [^>]+)?>.*?<\/(zzz)?script>")
+    str := RegExReplace(str, "is)<(zzz)?input( [^>]+)?>")
+    str := RegExReplace(str, "is)<[^>]+\K (bgColor|onError|onLoad|onClick|onMouseOver)="".*?""(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K (bgColor|onError|onLoad|onClick|onMouseOver)=[^ >]+(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K (onMouseOver|onMouseOut)=[^;]+;(?=([^>]+)?>)")
 
-    str := RegExReplace(str, "is)<p( [^>]+)?>(&nbsp;|\s| )<\/p>")
+    ; Remove empty paragraphs
+    str := RegExReplace(str, "is)<p( [^>]+)?>(&nbsp;|\s| )+<\/p>")
+    str := RegExReplace(str, "is)<div( [^>]+)?>(&nbsp;|\s| )+<\/div>")
+
+    v := 1
+    while (v)  ; remove <div></div>
+      str := RegExReplace(str, "is)<div( [^>]+)?>(\n+)?<\/div>",, v)
+
+    if (SMSplit)
+      str := StrReplace(str, SMSplitPlaceHolder, SMSplit)
 
     return str
   }

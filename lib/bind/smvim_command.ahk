@@ -33,7 +33,7 @@ NukeHTML:
     send ^t
     Vim.SM.WaitTextFocus()
     if (!Vim.SM.IsEditingHTML()) {
-      ToolTip("HTML not found.")
+      ToolTip("This script only works on HTML.")
       return
     }
   }
@@ -71,16 +71,12 @@ return
 
 w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.IsEditingPlainText())
+  if (Vim.SM.IsEditingPlainText() || !Vim.SM.DoesHTMLExist())
     return
 	send !g  ; in case it's learning
 	send ^{f7}  ; save read point
-  if (!Vim.SM.IsEditingHTML()) {
-    Vim.SM.EditFirstQuestion()
-    Vim.SM.WaitTextFocus()
-    if (!Vim.SM.IsEditingHTML())
-      return
-  }
+  if (!Vim.SM.IsEditingHTML())
+    Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
   Vim.SM.SaveHTML()  ; making sure the html path is correct
   send {esc}
   Vim.SM.WaitTextExit()  ; making changes to the html file requires not editing html in SM
@@ -145,7 +141,10 @@ o::  ; c*o*mpress images
 return
 
 s::  ; turn active language item to passive (*s*witch)
-  Vim.State.SetMode("Vim_Normal"), Vim.SM.ExitText()
+  Vim.State.SetMode("Vim_Normal")
+  if (!Vim.SM.IsItem())
+    return
+  Vim.SM.ExitText()
   if (Vim.SM.IsLearning() == 2)  ; if learning (on "next repitition")
     send {esc}
   send ^+s
@@ -165,7 +164,10 @@ s::  ; turn active language item to passive (*s*witch)
 return
 
 +s::
-  Vim.State.SetMode("Vim_Normal"), Vim.SM.ExitText()
+  Vim.State.SetMode("Vim_Normal")
+  if (!Vim.SM.IsItem())
+    return
+  Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3", "A") != "Learn")  ; if learning (on "next repitition")
     send {esc}
   Vim.SM.EditFirstQuestion()

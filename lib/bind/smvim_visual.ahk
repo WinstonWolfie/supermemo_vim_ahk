@@ -114,9 +114,9 @@ b::
 return
 
 ExtractStay:
-#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
 ^!x::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 ^q::  ; extract (*q*uote)
   send !x
   Vim.SM.WaitExtractProcessing()
@@ -134,9 +134,9 @@ z::  ; clo*z*e
 return
 
 ClozeStay:
-#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
 ^!z::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 ^z::
   send !z
   Vim.State.SetMode("Vim_Normal")
@@ -148,10 +148,10 @@ Return
 ~!q::Vim.State.SetMode("Vim_Normal")
 
 ClozeHinter:
-#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
 ^!+z::
 !+z::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 ^+z::
 +z::  ; cloze hinter
   if (ClozeHinterCtrlState && (A_ThisLabel == "ClozeHinter")) {  ; from cloze hinter label and ctrl is down
@@ -240,9 +240,9 @@ ClozeHinterButtonCloze:
   WinActivate, ahk_class TElWind
 
 ClozeNoBracket:
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind") && (CtrlState := GetKeyState("ctrl")))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && (CtrlState := GetKeyState("ctrl")) && Vim.SM.IsEditingText())
 CapsLock & z::  ; delete [...]
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TElWind"))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 CapsLock & z::  ; delete [...]
   ClozeNoBracket := IfIn(A_ThisLabel, "ClozeNoBracket,CapsLock & z")
   TopicTitle := WinGetTitle("ahk_class TElWind")
@@ -263,14 +263,12 @@ CapsLock & z::  ; delete [...]
   ToolTip("Cloze processing...", true)
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
-  Vim.SM.GoBack()
-  Vim.SM.WaitFileLoad()
+  Vim.SM.GoBack(), Vim.SM.WaitFileLoad()
   if (WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 200)) {
     if (!Vim.SM.SpamQ(, 1500))
       return
   } else {
-    Vim.SM.EditFirstQuestion()
-    Vim.SM.WaitTextFocus()
+    Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
   }
   if (!ClozeNoBracket && inside) {
     cloze := "[" . hint . "]"

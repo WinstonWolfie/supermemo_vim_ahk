@@ -3,8 +3,7 @@
 ^!.::  ; find [...] and insert
   if !(Vim.SM.HasTwoComp() && (ControlGetFocus() == "Internet Explorer_Server2")) {
     Vim.SM.ExitText()
-    Vim.SM.EditFirstQuestion()
-    Vim.SM.WaitTextFocus()
+    Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
   }
   if (Vim.SM.IsEditingPlainText()) {
     send ^a
@@ -71,19 +70,22 @@ return
 
 ^!t::
   if (t := Vim.SM.IsEditingText()) {
+    x := A_CaretX, y := A_CaretY
     send {right}  ; so no text is selected
-    sleep 50
+    WaitCaretMove(x, y)
+    sleep 70
+    send {left}
   }
   Vim.SM.SetTitle(, 1500)
   if (t)
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, ahk_class TElWind
 return
 
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && Vim.SM.DoesHTMLExist())
 ^!f::  ; use IE's search
-  if (Vim.SM.IsNotEditingText()) {
-    send ^t
-    Vim.SM.WaitTextFocus(1500)
-  }
+  SMPID := WinGet("PID", "A")
+  send ^t
+  Vim.SM.WaitHTMLFocus()
   if (Vim.SM.IsEditingHTML())
     send {right}{left}{CtrlDown}cf{CtrlUp}  ; discovered by Harvey from the SuperMemo.wiki Discord server
   WinWaitActive, ahk_class #32770,, 1.5
@@ -96,13 +98,14 @@ return
 return
 
 RegisterVimLastSearchForSMCtrlAltF:
-  while (WinExist("ahk_class #32770")) {
-    if (v := ControlGetText("Edit1", "ahk_class #32770"))
+  while (WinExist("ahk_class #32770 ahk_pid " . SMPID)) {
+    if (v := ControlGetText("Edit1"))
       VimLastSearch := v
     sleep 100
   }
 return
 
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ~^enter::
   SetDefaultKeyboard(0x0409)  ; English-US
   Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
@@ -341,7 +344,7 @@ return
 
 ^b::
 ^!b::
-  send !b
+  send !b^s
   WinWait, ahk_class TMsgDialog,, 0.3
   if (!ErrorLevel) {
     WinActivate
@@ -414,13 +417,14 @@ PlanAddButtonAppend:
     send {enter}
     send % "{text}" . time
     send {enter}{up}!b
-    WinWaitActive, ahk_class TMsgDialog,, 0.4
+    WinWaitActive, ahk_class TMsgDialog,, 0.3
     if (!ErrorLevel)
       WinClose, ahk_class TMsgDialog
   } else {
-    send % "+{tab}" . CurrTime
+    send +{tab}
+    send % "{text}" . CurrTime
     send {enter}
-    WinWaitActive, ahk_class TMsgDialog,, 0.4
+    WinWaitActive, ahk_class TMsgDialog,, 0.3
     if (!ErrorLevel)
       send {text}y
   }
@@ -508,7 +512,7 @@ d::
   x := A_CaretX, y := A_CaretY
   send {f2}  ; sometimes A_Caret isn't accurate
   ControlFocusWait("TInplaceEdit1", "A")
-  sleep 50
+  sleep 70
   coords := StrSplit(WaitCaretMove(x, y), " ")
 
   ; Move to the next entry
@@ -518,7 +522,7 @@ d::
   ; Show caret in next entry
   send {f2}
   ControlFocusWait("TInplaceEdit1", "A")
-  sleep 50
+  sleep 70
   coords := StrSplit(WaitCaretMove(coords[1], coords[2]), " ")
 
   ; Calculate entry height

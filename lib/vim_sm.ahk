@@ -8,9 +8,13 @@ class VimSM {
   }
 
   DoesTextExist() {
-    return (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")
-         || ControlGet(,, "TMemo1", "ahk_class TElWind")
-         || ControlGet(,, "TRichEdit1", "ahk_class TElWind"))
+    if (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")
+     || ControlGet(,, "TMemo1", "ahk_class TElWind")
+     || ControlGet(,, "TRichEdit1", "ahk_class TElWind")) {
+      return true
+    } else {
+      return IfContains(this.GetTemplCode(), "Type=Text", true)
+    }
   }
 
   DoesHTMLExist() {
@@ -31,10 +35,10 @@ class VimSM {
         if (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
         } else {  ; no html field found
-          this.EditFirstQuestion()
-          if (!this.WaitTextFocus(1500))
+          if (!this.Vim.SM.DoesTextExist())
             return false
-          control := ControlGetFocus("ahk_class TElWind")
+          this.EditFirstQuestion(), this.WaitTextFocus()
+          Control := ControlGetFocus("ahk_class TElWind")
           ControlGetPos,,,, Height, % control, ahk_class TElWind
           ControlClick, % control, ahk_class TElWind,,,, NA x1 y1
         }
@@ -60,10 +64,10 @@ class VimSM {
         if (Height) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
         } else {  ; no html field found
-          this.EditFirstQuestion()
-          if (!this.WaitTextFocus(1500))
+          if (!this.Vim.SM.DoesTextExist())
             return false
-          control := ControlGetFocus("ahk_class TElWind")
+          this.EditFirstQuestion(), this.WaitTextFocus()
+          Control := ControlGetFocus("ahk_class TElWind")
           ControlGetPos,,,, Height, % control, ahk_class TElWind
           ControlClick, % control, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
         }
@@ -89,10 +93,10 @@ class VimSM {
         if (Height) {  ; topic found
           ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
         } else {  ; no html field found
-          this.EditFirstQuestion()
-          if (!this.WaitTextFocus(1500))
+          if (!this.Vim.SM.DoesTextExist())
             return false
-          control := ControlGetFocus("ahk_class TElWind")
+          this.EditFirstQuestion(), this.WaitTextFocus()
+          Control := ControlGetFocus("ahk_class TElWind")
           ControlGetPos,,,, Height, % control, ahk_class TElWind
           ControlClick, % control, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
         }
@@ -113,12 +117,8 @@ class VimSM {
     return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server,TMemo,TRichEdit"))
   }
 
-  IsNotEditingText() {
-    return (WinActive("ahk_class TElWind") && !this.IsEditingText())
-  }
-
   IsBrowsing() {
-    return (WinActive("ahk_class TElWind") && this.DoesTextExist() && !this.IsEditingText())
+    return (WinActive("ahk_class TElWind") && !this.IsEditingText())
   }
 
   IsGrading() {
@@ -749,7 +749,7 @@ class VimSM {
     }
     if (step == 1) {
       this.PostMsg(msg)  ; f3
-      WinWaitActive, ahk_class TMyFindDlg,, 1
+      WinWaitActive, ahk_class TMyFindDlg,, 0.7
       if (ErrorLevel) {  ; SM goes to the next found without opening find dialogue
         this.ClearHighlight()  ; clears highlight so it opens find dialogue
         this.PostMsg(msg)
@@ -1032,5 +1032,14 @@ class VimSM {
     b.ControlClick()
     el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
     this.Vim.Caret.SwitchToSameWindow()
+  }
+
+  PasteHTML() {
+    this.ActivateElWind()
+    send {AppsKey}xp  ; Paste HTML
+    while (DllCall("GetOpenClipboardWindow"))
+      sleep 1
+    WinWaitNotActive, ahk_class TElWind,, 0.3
+    WinWaitActive, ahk_class TElWind
   }
 }

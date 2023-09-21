@@ -52,7 +52,7 @@ Return
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
-        . "|PerplexityAI|Lexico"
+        . "|PerplexityAI|Lexico|Tatoeba|MD2HTML"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -108,7 +108,7 @@ VimCommanderButtonExecute:
 return
 
 FindSearch(Title, Prompt, Text:="", ForceText:=false) {
-  if (!ForceText && (!Default := Trim(Copy())))
+  if (!ForceText && (!Text := Trim(Copy())))
     Text := Text ? Text : Clipboard
   ret := InputBox(Title, Prompt,,,,,,,, Text)
   ; If the user closed the input box without submitting, return nothing
@@ -487,9 +487,11 @@ return
 ; Personal: reformat my old vocabulary items
 ReformatVocab:
   Vim.State.SetMode("Vim_Normal")
+  if (!Vim.SM.DoesTextExist())
+    return
   ClipSaved := ClipboardAll
   Vim.SM.EditFirstQuestion()
-  if (!Vim.SM.WaitTextFocus(1000))
+  if (!Vim.SM.WaitTextFocus())
     return
   send ^a
   if (!data := Copy(false, true))
@@ -586,9 +588,10 @@ Bilibili:
 return
 
 Libgen:
-  if (search := FindSearch("Library Genesis", "Search:"))
-    ; run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
+  if (search := FindSearch("Library Genesis", "Search:")) {
+    run % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
     run % "https://libgen.li/index.php?req=" . search . "&columns%5B%5D=t&columns%5B%5D=a&columns%5B%5D=s&columns%5B%5D=y&columns%5B%5D=p&columns%5B%5D=i&objects%5B%5D=f&objects%5B%5D=e&objects%5B%5D=s&objects%5B%5D=a&objects%5B%5D=p&objects%5B%5D=w&topics%5B%5D=l&topics%5B%5D=c&topics%5B%5D=f&topics%5B%5D=a&topics%5B%5D=m&topics%5B%5D=r&topics%5B%5D=s&res=25&filesuns=all"
+  }
 return
 
 ImageGoogle:
@@ -597,7 +600,7 @@ ImageGoogle:
 return
 
 SearchLinkInYT:
-  if (!link := Vim.SM.GetLink()) {
+  if (!link := Vim.SM.GetLink() && Vim.SM.DoesHTMLExist()) {
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
     send ^{home}+{right}
@@ -656,8 +659,7 @@ BingChat:
     if (!text := Copy(false, true))
       text := Clipboard, ext := ".txt"
     if (text) {
-      CurrTime := FormatTime(, "yyyy-MM-dd_HH:mm:ss:" . A_MSec)
-      link := A_Temp . "\" . StrReplace(CurrTime, ":") . ext
+      link := A_Temp . "\" . GetCurrTimeForFileName() . ext
       FileDelete % link
       FileAppend, % text, % link
     }
@@ -819,21 +821,42 @@ RetryAllSyncErrors:
 return
 
 MassReplaceRegistry:
-  find := ""
+  find := "YouTube: "
   replacement := ""
   if (!find && !replacement)
     return
+  ; loop {
+  ;   ControlSend, Edit1, % "{text}" . find, A
+  ;   send !r
+  ;   WinWaitActive, ahk_class TInputDlg
+  ;   text := ControlGetText("TMemo1")
+  ;   if (InStr(text, find) != 1)
+  ;     return
+  ;   ControlSetText, TMemo1, % StrReplace(text, find, replacement)
+  ;   send !{enter}
+  ;   WinWaitActive, ahk_class TRegistryForm
+  ;   ControlSetText, Edit1  ; clear
+  ; }
   loop {
     ControlSend, Edit1, % "{text}" . find, A
-    send !r
+    Gosub SMRegAltG
+    WinWaitActive, ahk_class TElWind
+    Vim.SM.EditRef()
     WinWaitActive, ahk_class TInputDlg
     text := ControlGetText("TMemo1")
-    if (InStr(text, find) != 1)
+    if (!IfContains(text, find))
       return
-    ControlSetText, TMemo1, % StrReplace(text, find, replacement)
+    text := RegExReplace(text, "#Source: " . find . "(.*)", "#Author: $1")
+    text .= "`r`n#Source: YouTube"
+    ControlSetText, TMemo1, % text
     send !{enter}
+    WinWaitActive, ahk_class TElWind
+    ; WinWaitActive, ahk_class TChoicesDlg,, 0.3
+    ; if (!ErrorLevel)
+    ;   send {down}{enter}
+    Vim.SM.PostMsg(154)
     WinWaitActive, ahk_class TRegistryForm
-    ControlSetText, Edit1
+    ControlSetText, Edit1  ; clear
   }
 return
 
@@ -872,12 +895,12 @@ ExternaliseRegistry:
       v++
     Vim.SM.PostMsg(v)
     WinWaitActive, ahk_class TRegistryForm
-    if (IfContains(WinGetTitle(""), "(0 members)")) {
+    if (IfContains(WinGetTitle(), "(0 members)")) {
       WinClose
       continue
     }
     send {down}
-    if (IfContains(WinGetTitle(""), "Video Registry"))
+    if (IfContains(WinGetTitle(), "Video Registry"))
       ControlTextWaitExist("Edit1",,,,, 1500)
     send {AppsKey}tt
     WinWaitActive, ahk_class TMsgDialog
@@ -909,4 +932,31 @@ UnderscoreText:
     send ^u
   }
   Vim.State.SetMode("Vim_Normal")
+return
+
+Tatoeba:
+  if (word := FindSearch("Tatoeba", "Word:"))
+    run % "https://tatoeba.org/en/sentences/search?query=" . word
+return
+
+MD2HTML:
+  Vim.State.SetMode("Vim_Normal")
+  ClipSaved := ClipboardAll
+  if (!MD := Copy(false))
+    Goto RestoreClipReturn
+  TempMDPath := A_Temp . "\" . (t := GetCurrTimeForFileName()) . "_md.md"
+  FileDelete % TempMDPath
+  FileAppend, % MD, % TempMDPath
+  TempHTMLPath := A_Temp . "\" . t . "_html.html"
+  FileAppend,, % TempHTMLPath
+  ShellRun("pandoc", TempMDPath . " -s -o " . TempHTMLPath)
+  loop {
+    if (t := FileRead(TempHTMLPath))
+      break
+    sleep 100
+  }
+  RegExMatch(t, "s)<body>\K.*(?=<\/body>)", v)
+  WinWaitActive % "ahk_id " . hWnd
+  Clip(v,, false, Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
+  Clipboard := ClipSaved
 return

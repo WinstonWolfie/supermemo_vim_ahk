@@ -184,7 +184,7 @@ class VimMove {
       send {Left}
     ; Sometimes, when using `c`, the control key would be stuck down afterwards.
     ; This forces it to be up again afterwards.
-    send {CtrlUp}
+    send {LCtrl Up}{RCtrl Up}
     if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe") && GetKeyState("Alt", "P"))
       send {AltUp}
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner,Outer"))
@@ -1206,7 +1206,7 @@ class VimMove {
       send {PgDn}
     } else if (key == "g") {
       if (this.Vim.State.n > 0) {
-        if (this.Vim.SM.IsBrowsing()) {
+        if (this.Vim.SM.IsBrowsing() && this.Vim.SM.DoesTextExist()) {
           send ^t
           this.Vim.SM.WaitTextFocus()
         } else {
@@ -1217,8 +1217,10 @@ class VimMove {
       } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x115, 6, 0, Internet Explorer_Server2, A  ; scroll to top
-        } else {
+        } else if (ControlGet(,, "Internet Explorer_Server1", "A")) {
           SendMessage, 0x115, 6, 0, Internet Explorer_Server1, A  ; scroll to top
+        } else {
+          send ^{home}
         }
       } else {
         send ^{Home}
@@ -1226,7 +1228,7 @@ class VimMove {
     } else if (key == "+g") {
         if (this.Vim.State.n > 0) {
           KeyWait Shift
-          if (this.Vim.SM.IsBrowsing()) {
+          if (this.Vim.SM.IsBrowsing() && this.Vim.SM.DoesTextExist()) {
             this.Vim.SM.ClickTop()
             this.Vim.SM.WaitTextFocus()
           } else if (this.Vim.SM.IsEditingText()) {
@@ -1240,8 +1242,10 @@ class VimMove {
         } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "A")) {
             SendMessage, 0x115, 7, 0, Internet Explorer_Server2, A  ; scroll to bottom
-          } else {
+          } else if (ControlGet(,, "Internet Explorer_Server1", "A")) {
             SendMessage, 0x115, 7, 0, Internet Explorer_Server1, A  ; scroll to bottom
+          } else {
+            send ^{end}
           }
         } else {
           if (this.shift == 1) {
@@ -1250,7 +1254,7 @@ class VimMove {
               send +{home}
           } else {
             send ^{End}
-            if (this.Vim.SM.IsNavigatingPlan() || !this.vim.IsNavigating())
+            if (this.Vim.SM.IsNavigatingPlan() || !this.Vim.IsNavigating())
               send {Home}
           }
           if (this.Vim.SM.IsEditingHTML()) {
@@ -1278,7 +1282,7 @@ class VimMove {
           }
         }
     } else if (key == "{") {
-      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
+      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat && this.Vim.SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
         if (!this.Vim.SM.IsEditingText()) {
           send ^t
@@ -1292,7 +1296,7 @@ class VimMove {
         this.ParagraphUp()
       }
     } else if (key == "}") {
-      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
+      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat && this.Vim.SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
         this.Vim.SM.ClickTop()
         this.Vim.SM.WaitTextFocus()

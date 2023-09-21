@@ -34,7 +34,7 @@ return
   Vim.State.BackToNormal := 2
 return
 
-#if (Vim.State.Vim.Enabled && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")) && Vim.SM.IsNotEditingText())
+#if (Vim.State.Vim.Enabled && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")) && Vim.SM.IsBrowsing())
 ~!r::
   WinWaitActive, ahk_class TInputDlg,, 0
   if (!ErrorLevel)
