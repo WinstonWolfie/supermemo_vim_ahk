@@ -75,6 +75,8 @@ class VimBrowser {
       this.Source := "Art... When I Feel Like It ", this.Title := RegExReplace(this.Title, "^Art... When I Feel Like It - ")
     } else if (this.Title ~= "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ") {
       this.Author := "Henry George Liddell, Robert Scott", this.Source := "An Intermediate Greek-English Lexicon", this.Title := RegExReplace(this.Title, "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ")
+    } else if (RegExMatch(this.Title, "^The Project Gutenberg eBook of (.*?), by (.*?)$", v)) {
+      this.Author := v2, this.Source := "Project Gutenberg", this.Title := v1
 
     } else if (this.Title ~= "_百度知道$") {
       this.Source := "百度知道", this.Title := RegExReplace(this.Title, "_百度知道$")
@@ -192,8 +194,6 @@ class VimBrowser {
       this.Source := "Four Minute Books"
     } else if (IfContains(this.Url, "forvo.com")) {
       this.Source := "Forvo"
-    } else if (IfContains(this.Url, "gutenberg.org")) {
-      this.Source := "Project Gutenberg"
     } else if (IfContains(this.Url, "finty.com")) {
       this.Source := "Finty"
 

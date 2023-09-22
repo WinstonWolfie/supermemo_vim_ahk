@@ -67,7 +67,7 @@ Return
   if (IfContains(A_ThisHotkey, "^"))
     Clipboard := Clipboard
   if ((Vim.State.LineCopy == 1) && (Vim.Move.YdcClipSaved == Clipboard)) {
-    send {Up}{End}{Enter}^v{Home}
+    send {Home}{Enter}{Left}^v{Home}
   } else {
     send ^v
   }

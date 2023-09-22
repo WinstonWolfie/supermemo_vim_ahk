@@ -120,7 +120,7 @@ WindowSpy:
 return
 
 WebSearch:
-  search := Trim(Copy())
+  Search := Trim(Copy())
   Gui, WebSearch:Add, Text,, &Search:
   Gui, WebSearch:Add, Edit, vSearch w136 r1 -WantReturn, % Search
   Gui, WebSearch:Add, Text,, &Language Code:
@@ -141,6 +141,10 @@ WebSearchButtonSearch:
   Gui, Destroy
   if (IsUrl(Search)) {
     run % Search
+  } else if (DoesTextContainUrl(Search, v)) {
+    MsgBox, 3,, Text has url. Run it?
+    if (IfMsgBox("Yes"))
+      run % v
   } else {
     run % "https://www.google.com/search?hl=" . LangCode . "&q=" . EncodeDecodeURI(Search)
   }

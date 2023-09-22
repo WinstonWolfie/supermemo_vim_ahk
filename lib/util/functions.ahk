@@ -1074,7 +1074,11 @@ CopyAll(Timeout:=2500) {
 }
 
 IsUrl(text) {
-  return (text ~= "^((file|https?):\/\/|[A-Z]:(\\|\/)|^www\.)")
+  return (DoesTextContainUrl(text, v) == 1)
+}
+
+DoesTextContainUrl(text, byref v) {
+  return RegExMatch(text, "(file:\/\/.*|https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))", v)
 }
 
 SetModeNormalReturn:
@@ -1102,7 +1106,7 @@ DefaultBrowser() {  ; https://www.autohotkey.com/board/topic/84785-default-brows
 }
 
 IsWhitespaceOnly(str) {
-  return !RegExMatch(str, "[\S]")
+  return !(str ~= "[\S]")
 }
 
 GetAcrobatPageBtn() {

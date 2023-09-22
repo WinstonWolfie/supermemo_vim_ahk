@@ -344,29 +344,38 @@ return
 
 ^b::
 ^!b::
-  send !b^s
-  WinWait, ahk_class TMsgDialog,, 0.3
+  CancelAlarm := (A_ThisHotkey == "^!b")
+  BlockInput, On
+  send !b
+  WinActivate, ahk_class TPlanDlg
+  ControlSend, ahk_parent, {CtrlDown}s{CtrlUp}, ahk_class TPlanDlg
+  BlockInput, Off
+  WinWaitActive, Question ahk_class TMsgDialog,, 0.3
   if (!ErrorLevel) {
-    WinActivate
     send {text}y
-    WinWaitClose, ahk_class TMsgDialog
-    if (A_ThisHotkey != "^b")
+    WinWaitClose
+    if (CancelAlarm)
       Vim.SM.Command("")
   } else {
-    if (A_ThisHotkey != "^b")
+    if (CancelAlarm) {
       Vim.SM.Command("")
-    WinWaitClose, ahk_class TCommanderDlg
-    WinActivate, ahk_class TPlanDlg
-    send ^s
+      WinWaitClose, ahk_class TCommanderDlg
+    }
+    if (WinExist("ahk_class TPlanDlg")) {
+      WinActivate
+      send ^s
+    }
     return
   }
-  WinWait, ahk_class TMsgDialog,, 0.3
+  WinWaitActive, ahk_class TMsgDialog,, 0.3
   if (!ErrorLevel) {
     WinActivate
     send {text}y
   }
-  WinActivate, ahk_class TPlanDlg
-  send ^s
+  if (WinExist("ahk_class TPlanDlg")) {
+    WinActivate
+    send ^s
+  }
 return
 
 !a::  ; insert/append activity

@@ -139,8 +139,7 @@ p::
   send ^v
 
   if (!Vim.State.Leader) {
-    while (DllCall("GetOpenClipboardWindow"))
-      sleep 1
+    WinClip._waitClipReady()
     Clipboard := NewClip
   }
   Vim.State.SetMode("Vim_Normal")
@@ -159,7 +158,7 @@ ConvertToUppercaseClipped:
   } else if (IfIn(A_ThisLabel, "ConvertToUppercase,+u,ConvertToUppercaseClipped")) {
     Clip(StrUpper(Copy(false, html)),, false, html)
   }
-  sleep 100  ; while (DllCall("GetOpenClipboardWindow")) doesn't work for some reason
+  WinClip._waitClipReady()
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -180,7 +179,7 @@ InvertCaseClipped:
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
   Clip(Lab_Invert_Char_Out,, false, html)
-  sleep 100  ; while (DllCall("GetOpenClipboardWindow")) doesn't work for some reason
+  WinClip._waitClipReady()
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
 

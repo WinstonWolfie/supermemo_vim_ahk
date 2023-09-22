@@ -272,16 +272,11 @@ SMImportButtonImport:
     }
     Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML format but is in plain-text
   }
-  Online := (Passive || (!HTMLText && IsVidSite)), FullPage := ""
+  Online := (Passive || (!HTMLText && IsVidSite)), Download := ""
   if (DownloadHTML || (!HTMLText && !Online)) {
     if (DownloadHTML || !HTMLText) {
-      CopyAllList := "mp.weixin.qq.com"
-      if (FullPage := IfContains(Vim.Browser.Url, CopyAllList)) {
-        send {esc}
-        CopyAll()
-        Vim.HTML.ClipboardGet_HTML(HTMLText)
-        RegExMatch(HTMLText, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
-      } else {
+      DownloadList := "file:///,wikipedia.org,investopedia.com,webmd.com,britannica.com"
+      if (Download := (DownloadHTML || IfContains(Vim.Browser.Url, DownloadList))) {
         if (IfContains(Vim.Browser.Url, "file:///")) {
           Vim.Browser.Url := StrReplace(Vim.Browser.Url, "file:///")
           HTMLText := FileRead(EncodeDecodeURI(Vim.Browser.Url, false))
@@ -290,15 +285,22 @@ SMImportButtonImport:
           TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
           UrlDownloadToFile, % Vim.Browser.Url, % TempPath
           HTMLText := FileRead(TempPath)
-          ; FileDelete, % TempPath
+          FileDelete, % TempPath
+
           ; Fixing links
           RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
           RegExMatch(Vim.Browser.Url, "^https?:\/\/", HTTP)
           HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/\/(?=([^<>]+)?>)", " $2=""" . HTTP)
           HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/(?=([^<>]+)?>)", " $2=""" . UrlHead)
           HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""(?=#([^<>]+)?>)", " $2=""" . Vim.Browser.Url)
+
           RemoveToolTip()
         }
+      } else {
+        send {esc}
+        CopyAll()
+        Vim.HTML.ClipboardGet_HTML(HTMLText)
+        RegExMatch(HTMLText, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
       }
     }
     if (!HTMLText) {
@@ -306,7 +308,7 @@ SMImportButtonImport:
       Goto ImportReturn
     }
   }
-  Vim.Browser.GetTitleSourceDate(false,, (FullPage ? Clipboard : ""))
+  Vim.Browser.GetTitleSourceDate(false,, (Download ? "" : Clipboard))
   if (ResetVidTime)
     Vim.Browser.VidTime := "0:00"
   if (Passive == 1)
@@ -657,11 +659,11 @@ return
 ^+!s::
   ClipSaved := ClipboardAll
   CloseWnd := IfContains(A_ThisHotkey, "^")
-  if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus("A"), "Edit"))
+  if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := Trim(Copy(false), " `t`r`n")
-  if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))) {
-    if (wAcrobat)
+  if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
+    if (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))
       marker := "p" . GetAcrobatPageBtn().Value
     if (!wAcrobat && !marker && (page := ControlGetText("Edit1", "A")))
       marker := "p" . page
@@ -694,7 +696,7 @@ return
     }
     if (CloseWnd) {
       if (WinActive("ahk_group Browser")) {
-        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{CtrlDown}w{CtrlUp}, % "ahk_id " . guiaBrowser.BrowserId
+        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{CtrlDown}w{CtrlUp}
       } else {  ; epub viewer
         WinClose, A
       }
