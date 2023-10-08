@@ -61,14 +61,14 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
       }
     }
     if (CurrLink) {
-      if (A_ThisHotkey == "u") {
+      if (A_ThisLabel == "u") {
         ToolTip("Copied " . Clipboard := CurrLink)
-      } else if (IfContains(A_ThisHotkey, "x")) {
+      } else if (IfContains(A_ThisLabel, "x")) {
         Vim.SM.RunLink(Currlink)
       }
     }
   }
-  if (A_ThisHotkey != "u")
+  if (A_ThisLabel != "u")
     Clipboard := ClipSaved
 return
 
@@ -79,7 +79,7 @@ s::  ; gs: go to source
 f::  ; gf: open source file
 t::  ; gt: open in Notepad
   Vim.State.SetMode(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
-  if (Notepad := IfIn(A_ThisHotkey, "^+f6,t")) {
+  if (Notepad := IfIn(A_ThisLabel, "^+f6,t")) {
     send ^{f7}  ; save read point
     Vim.SM.OpenNotepad()
     w := "ahk_exe Notepad.exe"
@@ -130,7 +130,7 @@ return
 <::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
 <::
-  Vim.SM.EditBar((A_ThisHotkey == ">") ? "21" : "20")
+  Vim.SM.EditBar((A_ThisLabel == ">") ? "21" : "20")
   Vim.State.SetMode("Vim_Normal")
 return
 

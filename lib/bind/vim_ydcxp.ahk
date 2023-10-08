@@ -52,7 +52,7 @@ c::Vim.Move.YDCMove()
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 ^p::
 p::
-  if (IfContains(A_ThisHotkey, "^"))
+  if (IfContains(A_ThisLabel, "^"))
     Clipboard := Clipboard
   if ((Vim.State.LineCopy == 1) && (Vim.Move.YdcClipSaved == Clipboard)) {
     send {End}{Enter}^v{Home}
@@ -64,7 +64,7 @@ Return
 
 ^+p::
 +p::
-  if (IfContains(A_ThisHotkey, "^"))
+  if (IfContains(A_ThisLabel, "^"))
     Clipboard := Clipboard
   if ((Vim.State.LineCopy == 1) && (Vim.Move.YdcClipSaved == Clipboard)) {
     send {Home}{Enter}{Left}^v{Home}

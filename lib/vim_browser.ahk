@@ -196,6 +196,8 @@ class VimBrowser {
       this.Source := "Forvo"
     } else if (IfContains(this.Url, "finty.com")) {
       this.Source := "Finty"
+    } else if (IfContains(this.Url, "theconversation.com")) {
+      this.Source := "The Conversation"
 
     ; Sites that require special attention
     ; Video sites
@@ -261,6 +263,14 @@ class VimBrowser {
       this.Source := "Wikisource", this.Title := RegExReplace(this.Title, " - Wikisource, the free online library$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - Wikibooks, open books for an open world$") {
+      this.Source := "Wikibooks", this.Title := RegExReplace(this.Title, " - Wikibooks, open books for an open world$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - ProofWiki$") {
+      this.Source := "ProofWiki", this.Title := RegExReplace(this.Title, " - ProofWiki$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "This page was last modified on (.*?),", v), this.Date := v1
     } else if (this.Title ~= " - 维基百科，自由的百科全书$") {
       this.Source := "维基百科", this.Title := RegExReplace(this.Title, " - 维基百科，自由的百科全书$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))

@@ -106,15 +106,15 @@ class VimSM {
   }
 
   IsEditingHTML() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server"))
   }
 
   IsEditingPlainText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "TMemo,TRichEdit"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "TMemo,TRichEdit"))
   }
 
   IsEditingText() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus("A"), "Internet Explorer_Server,TMemo,TRichEdit"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server,TMemo,TRichEdit"))
   }
 
   IsBrowsing() {
@@ -214,14 +214,12 @@ class VimSM {
   }
 
   ExitText(ReturnToComp:=false, timeout:=0) {
-    this.ActivateElWind()
-    ret := 1
+    this.ActivateElWind(), ret := 1
     if (this.IsEditingText()) {
       if (this.HasTwoComp()) {
         send ^t
-        if (ReturnToComp) {
+        if (ReturnToComp)
           send !{f12}fl
-        }
         ret := 2
       }
       send {esc}
@@ -237,7 +235,7 @@ class VimSM {
       if (WinActive("ahk_class TElWind") && this.IsBrowsing()) {
         return true
       ; Choices because reference could update
-      } else if (this.IsChangeRefWind() || (TimeOut && (A_TickCount - StartTime > TimeOut))) {
+      } else if (this.IsVimNavWind() || (Timeout && (A_TickCount - StartTime > Timeout))) {
         return false
       }
     }
@@ -248,7 +246,7 @@ class VimSM {
     loop {
       if (this.IsEditingText()) {
         return true
-      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         return false
       }
     }
@@ -259,7 +257,18 @@ class VimSM {
     loop {
       if (this.IsEditingHTML()) {
         return true
-      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
+        return false
+      }
+    }
+  }
+
+  WaitPlainTextFocus(Timeout:=0) {
+    StartTime := A_TickCount
+    loop {
+      if (this.IsEditingPlainText()) {
+        return true
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         return false
       }
     }
@@ -273,7 +282,7 @@ class VimSM {
         break
       } else if (A_CaretX && this.WaitFileLoad(-1, "|Please wait", false)) {  ; prevent looping forever
         break
-      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         this.PrepareStatBar(2)
         return 0
       }
@@ -288,7 +297,7 @@ class VimSM {
         sleep 200
         this.PrepareStatBar(2)
         return 1
-      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         this.PrepareStatBar(2)
         Return 0
       }
@@ -303,7 +312,7 @@ class VimSM {
         break
       } else if (A_CaretX && this.WaitFileLoad(-1, "|Loading file", false)) {  ; prevent looping forever
         break
-      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         this.PrepareStatBar(2)
         return false
       }
@@ -314,7 +323,7 @@ class VimSM {
         sleep 200
         this.PrepareStatBar(2)
         return true
-      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         this.PrepareStatBar(2)
         Return false
       }
@@ -328,7 +337,7 @@ class VimSM {
       if (IfContains(ControlGetFocus("ahk_class TElWind"), "TMemo")) {
         this.Vim.State.SetMode("Insert")
         break
-      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         break
       }
     }
@@ -377,7 +386,7 @@ class VimSM {
 
   GetCollPath(text:="") {
     text := text ? text : WinGetText("ahk_class TElWind")
-    RegExMatch(text, "m)\(SuperMemo \d+: \K.+(?=\)$)", CollPath)
+    RegExMatch(text, "m)\(SuperMemo .*?: \K.+(?=\)$)", CollPath)
     return CollPath
   }
 
@@ -396,7 +405,7 @@ class VimSM {
 
   GetFilePath(RestoreClip:=true) {
     this.ActivateElWind()
-    return Copy(RestoreClip,,, "!{f12}fc")
+    return Copy(RestoreClip,,, "!{f12}fc", true)
   }
 
   SetTitle(title:="", timeout:="") {
@@ -407,7 +416,7 @@ class VimSM {
     GroupAdd, SMAltT, ahk_class TChoicesDlg
     GroupAdd, SMAltT, ahk_class TTitleEdit
     WinWait, % "ahk_group SMAltT ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind"),, % timeout
-    if (WinGetClass("") == "TChoicesDlg") {  ; window from the last WinWait
+    if (WinGetClass() == "TChoicesDlg") {  ; window from the last WinWait
       if (!title)
         ControlFocus, TGroupButton2
       while (WinExist("ahk_class TChoicesDlg ahk_pid " . pidSM))
@@ -415,7 +424,7 @@ class VimSM {
       if (title)
         WinWait, % "ahk_class TTitleEdit ahk_pid " . pidSM, % timeout
     }
-    if (WinGetClass("") == "TTitleEdit") {  ; window from the last WinWait
+    if (WinGetClass() == "TTitleEdit") {  ; window from the last WinWait
       if (title)
         ControlSetText, TMemo1, % title
       ControlSend, TMemo1, {enter}
@@ -529,6 +538,7 @@ class VimSM {
 
   Reload(timeout:=0, ForceBG:=false) {
     if (!ForceBG && WinActive("ahk_class TElWind")) {
+      critical
       this.GoHome()
       this.WaitFileLoad(timeout)
       this.GoBack()
@@ -617,31 +627,36 @@ class VimSM {
       }
     }
     if (template) {
-      ControlSetText, Edit1, % SubStr(template, 2), ahk_class TElParamDlg
-      ControlSend, Edit1, % "{text}" . SubStr(template, 1, 1), ahk_class TElParamDlg
+      ControlSetText, Edit1, % SubStr(template, 2)
+      ControlSend, Edit1, % "{text}" . SubStr(template, 1, 1)
       this.WaitFileLoad()
     }
     if (title) {
-      ControlSetText, TEdit2, % SubStr(title, 2), ahk_class TElParamDlg
-      ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1), ahk_class TElParamDlg
+      ControlSetText, TEdit2, % SubStr(title, 2)
+      ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1)
     }
     if (Prio >= 0) {
-      ControlSetText, TEdit1, % SubStr(Prio, 2), ahk_class TElParamDlg
-      ControlSend, TEdit1, % "{text}" . SubStr(Prio, 1, 1), ahk_class TElParamDlg
+      ControlSetText, TEdit1, % SubStr(Prio, 2)
+      ControlSend, TEdit1, % "{text}" . SubStr(Prio, 1, 1)
     }
     if (Submit) {
-      ControlFocus, TMemo1, ahk_class TElParamDlg  ; needed, otherwise the window won't close sometimes
+      ControlFocus, TMemo1  ; needed, otherwise the window won't close sometimes
       while (WinExist(w))
-        ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{enter}, ahk_class TElParamDlg
+        ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{enter}
     }
   }
 
-  IsChangeRefWind() {
+  IsVimNavWind() {
     if (WinActive("ahk_class TChoicesDlg")) {
       return ((ControlGetText("TGroupButton1") == "Cancel (i.e. restore the old version of references)")
            && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
            && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
            && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
+          || ((ControlGetText("TGroupButton5") == "Go to the root element of the concept")
+           && (ControlGetText("TGroupButton4") == "Transfer the current element to the concept")
+           && (ControlGetText("TGroupButton3") == "View the last child of the root")
+           && (ControlGetText("TGroupButton2") == "Review the elements in the concept")
+           && (ControlGetText("TGroupButton1") == "Cancel"))
     }
   }
 
@@ -651,7 +666,6 @@ class VimSM {
     ; Can't just encode URI, Chinese characters will be encoded
     ; For some reason, SuperMemo only encodes some part of the url (probably because of SuperMemo uses a lower version of IE?)
     if (IsUrl(text)) {
-      text := RegExReplace(text, "#.*")
       text := StrReplace(text, "%20", " ")
       text := StrReplace(text, "%3F", "?")
       text := StrReplace(text, "%27", "'")
@@ -684,11 +698,11 @@ class VimSM {
     GroupAdd, SMCtrlF, ahk_class TMsgDialog
     GroupAdd, SMCtrlF, ahk_class TBrowser
     WinWait, % "ahk_group SMCtrlF ahk_pid " . pidSM
-    if (ret := (WinGetClass("") == "TBrowser")) {  ; window from the last WinWait
+    if (ret := (WinGetClass() == "TBrowser")) {  ; window from the last WinWait
       if (ClearHighlight)
         this.ClearHighlight()
       WinActivate, % "ahk_class TBrowser ahk_pid " . pidSM
-    } else if (WinGetClass("") == "TMsgDialog") {
+    } else if (WinGetClass() == "TMsgDialog") {
       this.LastCtrlFNotFound := true
       WinClose
       ToolTip(ToolTip,, -3000)
@@ -766,13 +780,13 @@ class VimSM {
       GroupAdd, SMF3, ahk_class TMyFindDlg
       GroupAdd, SMF3, ahk_class TCommanderDlg
       WinWaitActive, ahk_group SMF3
-      if (WinGetClass("") == "TMyFindDlg") {  ; ^enter closed "not found" window
+      if (WinGetClass() == "TMyFindDlg") {  ; ^enter closed "not found" window
         WinClose
         this.ClearHighlight()
         send {esc}
         this.Vim.State.SetNormal(), ToolTip("Text not found.")
         return false
-      } else if (WinGetClass("") == "TCommanderDlg") {  ; ^enter opened commander
+      } else if (WinGetClass() == "TCommanderDlg") {  ; ^enter opened commander
         send h{enter}  ; clear highlight
         WinWaitNotActive
         this.PostMsg(msg)
@@ -929,7 +943,7 @@ class VimSM {
         return true
       } else if (!SpamInterval && this.IsEditingText()) {
         return true
-      } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+      } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         return false
       }
     }
@@ -1027,10 +1041,9 @@ class VimSM {
     this.ActivateElWind()
     UIA := UIA_Interface()
     el := UIA.ElementFromHandle(WinActive("A"))
-    el.WaitElementExist("ControlType=TabItem AND Name='Edit'").ControlClick()
-    b := el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath(n)
-    b.ControlClick()
-    el.WaitElementExist("ControlType=TabItem AND Name='Learn'").ControlClick()
+    el.FindFirstBy("ControlType=TabItem AND Name='Edit'").ControlClick()
+    el.WaitElementExist("ControlType=ToolBar AND Name='Format'").FindByPath(n).ControlClick()
+    el.FindFirstBy("ControlType=TabItem AND Name='Learn'").ControlClick()
     this.Vim.Caret.SwitchToSameWindow()
   }
 
@@ -1041,5 +1054,23 @@ class VimSM {
       sleep 1
     WinWaitNotActive, ahk_class TElWind,, 0.3
     WinWaitActive, ahk_class TElWind
+  }
+
+  HandleSM19PoundSymbUrl(url) {
+    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(url, "#")) {
+      SMPID := WinGet("PID", "ahk_class TElWind")
+      this.PostMsg(154), ShortUrl := RegExReplace(url, "#.*")
+      WinWait, % "ahk_class TRegistryForm ahk_pid " . SMPID
+      ControlSetText, Edit1, % SubStr(ShortUrl, 2)
+      ControlSend, Edit1, % "{text}" . SubStr(ShortUrl, 1, 1)
+      Acc_Get("Object", "4.5.4.6.4").accDoDefaultAction()
+      WinWait, % "ahk_class TInputDlg ahk_pid " . SMPID
+      if (ControlGetText("TMemo1") == ShortUrl)
+        ControlSetText, TMemo1, % url
+      ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
+      WinWaitClose
+      WinClose, % "ahk_class TRegistryForm ahk_pid " . SMPID
+      return true
+    }
   }
 }

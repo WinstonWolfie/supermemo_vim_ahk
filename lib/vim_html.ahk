@@ -43,7 +43,8 @@ class VimHTML {
       str := RegExReplace(str, "i)<(BR|(\/)?DIV)", "<$2P")
 
     if (IfContains(url, "economist.com"))
-      str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^>]+>)", " class=uppercase ")
+      str := StrReplace(str, "<small", "<small class=uppercase")
+      ; str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^>]+>)", " class=uppercase ")
 
     ; Ilya Frank
     ; str := RegExReplace(str, "is)<\w+\K (?=[^>]+COLOR: green)(?=[^>]+>)", " class=ilya-frank-translation ")
@@ -51,32 +52,34 @@ class VimHTML {
     ; Converts font-style to tags
     str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-style: italic)(?=[^>]+>)", " class=italic ")
     str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-weight: bold)(?=[^>]+>)", " class=bold ")
+    str := RegExReplace(str, "is)<\w+\K (?=[^>]+text-decoration: underline)(?=[^>]+>)", " class=underline ")
 
     ; Styles and fonts
     str := RegExReplace(str, "is)<[^>]+\K (zzz)?style="".*?""(?=([^>]+)?>)")
     str := RegExReplace(str, "is)<[^>]+\K (zzz)?style='.*?'(?=([^>]+)?>)")
     str := RegExReplace(str, "is)<[^>]+\K (zzz)?style=[^>]+(?=([^>]+)?>)")
-    str := RegExReplace(str, "is)<\/?(zzz)?(font|form)( [^>]+)?>")
+    str := RegExReplace(str, "is)<\/?(zzz)?(font|form)([^>]+)?>")
 
     ; SuperMemo uses IE7; svg was introduced in IE9
-    str := RegExReplace(str, "is)<\/?(svg|path)( [^>]+)?>")
+    str := RegExReplace(str, "is)<\/?(svg|path)([^>]+)?>")
+    str := StrReplace(str, "https://wikimedia.org/api/rest_v1/media/math/render/svg/", "https://wikimedia.org/api/rest_v1/media/math/render/png/")
 
     ; Scripts
-    str := RegExReplace(str, "is)<(zzz)?iframe( [^>]+)?>.*?<\/(zzz)?iframe>")
-    str := RegExReplace(str, "is)<(zzz)?button( [^>]+)?>.*?<\/(zzz)?button>")
-    str := RegExReplace(str, "is)<(zzz)?script( [^>]+)?>.*?<\/(zzz)?script>")
-    str := RegExReplace(str, "is)<(zzz)?input( [^>]+)?>")
-    str := RegExReplace(str, "is)<[^>]+\K (bgColor|onError|onLoad|onClick|onMouseOver)="".*?""(?=([^>]+)?>)")
-    str := RegExReplace(str, "is)<[^>]+\K (bgColor|onError|onLoad|onClick|onMouseOver)=[^ >]+(?=([^>]+)?>)")
-    str := RegExReplace(str, "is)<[^>]+\K (onMouseOver|onMouseOut)=[^;]+;(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<(zzz)?iframe([^>]+)?>.*?<\/(zzz)?iframe>")
+    str := RegExReplace(str, "is)<(zzz)?button([^>]+)?>.*?<\/(zzz)?button>")
+    str := RegExReplace(str, "is)<(zzz)?script([^>]+)?>.*?<\/(zzz)?script>")
+    str := RegExReplace(str, "is)<(zzz)?input([^>]+)?>")
+    str := RegExReplace(str, "is)<[^>]+\K (bgcolor|onerror|onload|onclick|onmouseover)="".*?""(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K (bgcolor|onerror|onload|onclick|onmouseover)=[^ >]+(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K (onmouseover|onmouseout)=[^;]+;(?=([^>]+)?>)")
 
     ; Remove empty paragraphs
-    str := RegExReplace(str, "is)<p( [^>]+)?>(&nbsp;|\s| )+<\/p>")
-    str := RegExReplace(str, "is)<div( [^>]+)?>(&nbsp;|\s| )+<\/div>")
+    str := RegExReplace(str, "is)<p([^>]+)?>(&nbsp;|\s| )+<\/p>")
+    str := RegExReplace(str, "is)<div([^>]+)?>(&nbsp;|\s| )+<\/div>")
 
     v := 1
     while (v)  ; remove <div></div>
-      str := RegExReplace(str, "is)<div( [^>]+)?>(\n+)?<\/div>",, v)
+      str := RegExReplace(str, "is)<div([^>]+)?>(\n+)?<\/div>",, v)
 
     if (SMSplit)
       str := StrReplace(str, SMSplitPlaceHolder, SMSplit)

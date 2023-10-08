@@ -119,6 +119,11 @@ FileRead(Filename) {
   FileRead, v, % Filename
   Return, v
 }
+FileReadAndDelete(Filename) {
+  FileRead, v, % Filename
+  FileDelete, % Filename
+  Return, v
+}
 FileReadLine(Filename, LineNum) {
   FileReadLine, v, % Filename, % LineNum
   Return, v
@@ -234,102 +239,102 @@ MsgBox(Options:="", Title:="", Text:="", Timeout:="") {
 ; This function wraps a loop that continuously uses ControlGetFocus to test if a particular 
 ; control is active. For more info see ControlGetFocus in the docs.
 ; An optional timeout can be included.
-ControlFocusWait(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlFocusWait(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) == Control) {
       Return True
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
 }
 
-ControlWait(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlWait(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
 }
 
-ControlWaitNotFocus(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlWaitNotFocus(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText) != Control) {
       Return ControlGetFocus(WinTitle, WinText, ExcludeTitle, ExcludeText)
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
 }
 
-WinTextWaitExist(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+WinTextWaitExist(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
 }
 
-ControlTextWaitExist(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlTextWaitExist(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
       Return ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
 }
 
-ControlTextWait(Control, text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlTextWait(Control, text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == text) {
       Return True
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
 }
 
-ControlTextWaitChange(Control, text:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlTextWaitChange(Control, text:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
       Return ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
 }
 
-ControlWaitHwndChange(Control, hWnd:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+ControlWaitHwndChange(Control, hWnd:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   hWnd := hWnd ? hWnd : ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
   StartTime := A_TickCount
   Loop {
     NewHwnd := ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     if (NewHwnd && (NewHwnd != hWnd)) {
       Return NewHwnd
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
 }
 
-WinTextWaitChange(text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", TimeOut:=0) {
+WinTextWaitChange(text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
       Return WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
   }
@@ -427,35 +432,35 @@ StrReverse(String) {  ; https://www.autohotkey.com/boards/viewtopic.php?t=27215
   return String
 }
 
-WinWaitTitleChange(OriginalTitle:="", WinTitle:="", TimeOut:=0) {
+WinWaitTitleChange(OriginalTitle:="", WinTitle:="", Timeout:=0) {
   OriginalTitle := OriginalTitle ? OriginalTitle : WinGetTitle(WinTitle)
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) != OriginalTitle) {
       return WinGetTitle(WinTitle)
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       return false
     }
   }
 }
 
-WinWaitTitle(title, TimeOut:=0, WinTitle:="") {
+WinWaitTitle(title, Timeout:=0, WinTitle:="") {
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) == title) {
       return true
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       return false
     }
   }
 }
 
-WinWaitTitleRegEx(title, TimeOut:=0, WinTitle:="") {
+WinWaitTitleRegEx(title, Timeout:=0, WinTitle:="") {
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) ~= title) {
       return WinGetTitle(WinTitle)
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       return false
     }
   }
@@ -501,7 +506,7 @@ ControlClickScreen(x, y, WinTitle:="") {
   ControlClick, % "x" . x - wX . " y" . y - wY, % WinTitle,,,, NA
 }
 
-WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=0) {
+WaitCaretMove(OriginalX:=0, OriginalY:=0, Timeout:=0) {
   if (!OriginalX)
     MouseGetPos, OriginalX
   if (!OriginalY)
@@ -511,7 +516,7 @@ WaitCaretMove(OriginalX:=0, OriginalY:=0, TimeOut:=0) {
     x := A_CaretX, y := A_CaretY
     if ((x != OriginalX) || (y != OriginalY)) {
       return x . " " . y
-    } else if (TimeOut && (A_TickCount - StartTime > TimeOut)) {
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       return false
     }
   }
@@ -1074,11 +1079,11 @@ CopyAll(Timeout:=2500) {
 }
 
 IsUrl(text) {
-  return (DoesTextContainUrl(text, v) == 1)
+  return ((DoesTextContainUrl(text, v) == 1) && (text == v))
 }
 
 DoesTextContainUrl(text, byref v) {
-  return RegExMatch(text, "(file:\/\/.*|https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))", v)
+  return RegExMatch(text, "((https?|file):\/\/|www\.)[^ ]+", v)
 }
 
 SetModeNormalReturn:
@@ -1192,4 +1197,13 @@ RunDefaultBrowser() {
     run % DefaultBrowser
     return 2
   }
+}
+
+PrepareLatin(word) {
+  Word := StrReplace(Word, "ā", "a")
+  Word := StrReplace(Word, "ē", "e")
+  Word := StrReplace(Word, "ī", "i")
+  Word := StrReplace(Word, "ū", "u")
+  Word := StrReplace(Word, "ō", "o")
+  return word
 }

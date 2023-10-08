@@ -18,20 +18,20 @@ bs::
 esc::
 capslock::
 ^[::
-  esc := IfIn(A_ThisHotkey, "esc,capslock,^[")
+  esc := IfIn(A_ThisLabel, "esc,capslock,^[")
   if (!esc) {
-    if (bs := (A_ThisHotkey = "bs")) {
+    if (bs := (A_ThisLabel = "bs")) {
       HintsEntered := RegExReplace(HintsEntered, ".$")
     } else {
       if (!HintsEntered) {
         for i, v in aHintStrings {
-          if (cont := (v ~= "i)^" . A_ThisHotkey))
+          if (cont := (v ~= "i)^" . A_ThisLabel))
             break
         }
         if (!cont)
           return
       }
-      HintsEntered .= A_ThisHotkey
+      HintsEntered .= A_ThisLabel
     }
     ToolTip(StrUpper(HintsEntered), true,,, 19)
     if (bs || (!ArrayIndex := HasVal(aHintStrings, HintsEntered)))

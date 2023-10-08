@@ -9,7 +9,7 @@ z::Vim.State.SetMode("SMVim_Cloze", 0, -1, 0,,, -1)
 +z::
 ^+z::
   Vim.State.SetMode("SMVim_ClozeHinter", 0, -1, 0,,, -1)
-  ClozeHinterCtrlState := IfContains(A_ThisHotkey, "^")
+  ClozeHinterCtrlState := IfContains(A_ThisLabel, "^")
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText() && ((ClozeNoBracketCtrlState := GetKeyState("ctrl")) || true))
@@ -136,7 +136,7 @@ _::
 .::
 >::
 space::
-  Vim.Move.KeyAfterSMAltQ := A_ThisHotkey
+  Vim.Move.KeyAfterSMAltQ := A_ThisLabel
   if (SMAltQYdcMove) {
     Vim.Move.YDCMove(), SMAltQYdcMove := false
   } else {

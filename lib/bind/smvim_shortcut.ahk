@@ -42,7 +42,7 @@ return
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
   Vim.State.SetNormal()
-  if (IfContains(A_ThisHotkey, "\")) {
+  if (IfContains(A_ThisLabel, "\")) {
     send ^+{enter}
     WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
     send {enter}
@@ -70,15 +70,13 @@ return
 
 ^!t::
   if (t := Vim.SM.IsEditingText()) {
-    x := A_CaretX, y := A_CaretY
-    send {right}  ; so no text is selected
-    WaitCaretMove(x, y)
-    sleep 70
-    send {left}
+    send {right}
+    while (Copy())  ; still selecting text
+      sleep 200
   }
   Vim.SM.SetTitle(, 1500)
   if (t)
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, ahk_class TElWind
+    Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && Vim.SM.DoesHTMLExist())
@@ -118,8 +116,25 @@ return
   send !t
   send {text}classic  ; my plain-text template name is classic
   send {enter 2}
+  WinWaitActive, ahk_class TElWind
+  MsgBox, 3,, Permanently remove extra components?
+  if (IfMsgBox("Yes")) {
+    WinWaitActive, ahk_class TElWind
+    send ^+{f2}  ; impose template
+    WinWaitActive, ahk_class TMsgDialog
+    send {enter}
+    WinWaitClose
+    WinWaitActive, ahk_class TMsgDialog
+    send {enter}
+    WinWaitClose
+    send ^+p  ; much faster than ^+m
+    WinWaitActive, ahk_class TElParamDlg
+    send !t
+    send {text}classic  ; my plain-text template name is classic
+    send {enter 2}
+  }
   if (ContLearn == 1)
-    vim.sm.learn()
+    Vim.SM.learn()
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -128,7 +143,7 @@ SMCtrlN:
 ~^n::
   Vim.State.SetMode("Vim_Normal")
   if (IsUrl(Clipboard) && IfContains(Clipboard, "youtube.com")) {
-    if (A_ThisHotkey == "~^n") {
+    if (A_ThisLabel == "~^n") {
       ClipSaved := ClipboardAll
       Prio := ""
     }
@@ -143,7 +158,7 @@ SMCtrlN:
     Vim.SM.WaitTextFocus()
     Vim.SM.SetElParam(Vim.Browser.Title, Prio, "YouTube")
     Vim.Browser.Title := Prio := ""
-    if (A_ThisHotkey == "~^n") {
+    if (A_ThisLabel == "~^n") {
       Vim.Browser.Clear()
       Clipboard := ClipSaved
     }
@@ -158,6 +173,8 @@ return
   if (btn := el.FindFirstBy("ControlType=Button AND Name='Start' AND AutomationId='start'")) {
     btn.Click()
     Vim.Caret.SwitchToSameWindow()  ; refresh caret
+  } else if (btn := el.FindFirstByName("Start: (\d{1,2}\.)?\d{1,2}\.\d{1,2}",, "regex")) {
+    btn.Click("left")
   }
 return
 
@@ -165,14 +182,15 @@ return
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class TElWind"))
   ; Can't detect pause/play button, sometimes not present on screen
-  ; btn := el.FindFirstBy("ControlType=Button AND Name='Play keyboard shortcut k' OR Name='Pause keyboard shortcut k'")
-  if (!btn := el.FindFirstBy("ControlType=Group AND Name='Video'"))
-    return
-  btn.Click()
-  btn := el.WaitElementExist("ControlType=Button AND Name='Hide more videos' OR Name='More videos'",,,, 1000)
-  if (btn.CurrentName == "Hide more videos")
+  if (btn := el.FindFirstBy("ControlType=Group AND Name='Video'")) {
     btn.Click()
-  Vim.Caret.SwitchToSameWindow()  ; refresh caret
+    btn := el.WaitElementExist("ControlType=Button AND Name='Hide more videos' OR Name='More videos'",,,, 1000)
+    if (btn.CurrentName == "Hide more videos")
+      btn.Click()
+    Vim.Caret.SwitchToSameWindow()  ; refresh caret
+  } else if (btn := el.FindFirstByName("^(\d{1,2}\.)?\d{1,2}\.\d{1,2}$",, "regex")) {
+    btn.ControlClick()
+  }
 return
 
 !+c::
@@ -217,10 +235,12 @@ return
 
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingHTML())
 ^!k::
-  if (link := IsUrl(Clipboard)) {
+  if (link := IsUrl(Trim(Clipboard))) {
     link := Clipboard
   } else if (RegExMatch(Clipboard, "^#(\d+)", v)) {
     link := "SuperMemoElementNo=(" . v1 . ")"
+  } else if (Clipboard ~= "^SuperMemoElementNo=\(\d+\)$") {
+    link := Clipboard
   }
   if (!link || !Copy())  ; no selection or no link
     return
@@ -239,6 +259,7 @@ return
   CurrTimeDisplay := GetTimeMSec()
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
   ClipSaved := ClipboardAll
+  send {LCtrl up}{LAlt up}{RCtrl up}{RAlt up}
   if (!data := Copy(false, true, 1))
     Goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
@@ -333,9 +354,9 @@ return
     x := A_CaretX, y := A_CaretY
     send {f2}
     WaitCaretMove(x, y)
+    sleep 70
   }
-	WinTitle := "ahk_id " . WinActive("A")
-	ControlClick, % "x" . 39 * A_ScreenDPI / 96 . " y" . A_CaretY, % WinTitle,,,, NA
+	ControlClick, % "x" . 39 * A_ScreenDPI / 96 . " y" . A_CaretY, A,,,, NA
   if (refresh)
     send {tab}+{tab}
 return
@@ -344,7 +365,7 @@ return
 
 ^b::
 ^!b::
-  CancelAlarm := (A_ThisHotkey == "^!b")
+  CancelAlarm := (A_ThisLabel == "^!b")
   BlockInput, On
   send !b
   WinActivate, ahk_class TPlanDlg
@@ -363,7 +384,7 @@ return
     }
     if (WinExist("ahk_class TPlanDlg")) {
       WinActivate
-      send ^s
+      ControlSend, ahk_parent, {CtrlDown}s{CtrlUp}
     }
     return
   }
@@ -374,7 +395,7 @@ return
   }
   if (WinExist("ahk_class TPlanDlg")) {
     WinActivate
-    send ^s
+    ControlSend, ahk_parent, {CtrlDown}s{CtrlUp}
   }
 return
 
@@ -549,9 +570,9 @@ return
 #if (Vim.IsVimGroup() && Vim.SM.IsNavigatingPlan() && Vim.State.IsCurrentVimMode("SMPlanDragging"))
 j::
 k::
-  if (A_ThisHotkey == "j") {
+  if (A_ThisLabel == "j") {
     c := 1
-  } else if (A_ThisHotkey == "k") {
+  } else if (A_ThisLabel == "k") {
     c := -1
   }
   MouseMove, 0, % c * Vim.State.GetN() * PlanEntryGap,, R
@@ -580,8 +601,8 @@ return
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
   sync := (A_ThisLabel == "BrowserSyncTime")
-  ResetTime := IfContains(A_ThisHotkey, "``")
-  CloseWnd := IfContains(A_ThisHotkey, "^")
+  ResetTime := IfContains(A_ThisLabel, "``")
+  CloseWnd := IfContains(A_ThisLabel, "^")
   wMpvId := WinActive("ahk_class mpv"), wSMElWnd := ""
   if (wBrowserId := WinActive("ahk_group Browser")) {
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
@@ -621,22 +642,23 @@ BrowserSyncTime:
       Goto SMSyncTimeReturn
   }
   Vim.SM.CloseMsgWind()
-  if (CloseWnd && wMpvId)
+  if (wMpvId && CloseWnd && !ResetTime) {
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % "ahk_id " . wMpvId
+  } else if (wMpvId && CloseWnd && ResetTime) {
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % "ahk_id " . wMpvId
+  }
   Vim.SM.CloseMsgWind()
   WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
 
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
 
-  if (!EditTitle := (wMpv || (wBrowserId
-                           && (Vim.Browser.IsVidSite(vim.browser.fullTitle) == 3)))) {
+  if (!EditTitle := (wMpvId || (wBrowserId
+                             && (Vim.Browser.IsVidSite(Vim.Browser.FullTitle) == 3)))) {
     Vim.SM.EditFirstQuestion()
-    send ^t{f9}
-    WinWaitActive, ahk_class TScriptEditor,, 0.3
-    if (ErrorLevel) {
-      EditTitle := true
-    } else {
+    send {CtrlDown}t{f9}{CtrlUp}
+    WinWaitActive, ahk_class TScriptEditor,, 0.7
+    if (!ErrorLevel) {
       sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
       if (IfContains(script := ControlGetText("TMemo1", "A"), "bilibili.com")) {
         if (script ~= "\?p=\d+") {
@@ -646,10 +668,13 @@ BrowserSyncTime:
         }
       } else if (IfContains(script, "youtube.com")) {
         match := "&t=.*s", replacement := "&t=" . sec . "s"
-      } else if (EditTitle := true) {
+      } else {
+        EditTitle := true
         WinClose, ahk_class TScriptEditor
         send {esc}
       }
+    } else {
+      EditTitle := true
     }
   }
 
@@ -662,10 +687,10 @@ BrowserSyncTime:
                   . RegExReplace(WinGetTitle("ahk_class TElWind") 
                                , "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| "))
   }
-  WinWaitActive, ahk_class TElWind
-  if (IfContains(A_ThisHotkey, "^+!"))
+  WinActivate, ahk_class TElWind
+  if (IfContains(A_ThisLabel, "^+!"))
     Vim.SM.Learn(false,, true)
-  if ((A_ThisHotkey == "!+s") || (A_ThisHotkey == "!+``"))
+  if ((A_ThisLabel == "!+s") || (A_ThisLabel == "!+``"))
     WinActivate % "ahk_id " . guiaBrowser.BrowserId
   Vim.Browser.Clear()
 SMSyncTimeReturn:

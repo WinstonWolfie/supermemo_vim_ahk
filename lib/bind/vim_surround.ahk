@@ -30,7 +30,7 @@ b::
 +b::
 t::
   ClipSaved := ClipboardAll
-  CurrKey := (A_ThisLabel == "Surround") ? Vim.Move.LastSurroundKey : A_ThisHotkey
+  CurrKey := (A_ThisLabel == "Surround") ? Vim.Move.LastSurroundKey : A_ThisLabel
   if (CurrKey == "b") {
     CurrKey := ")"
   } else if (CurrKey == "+b") {

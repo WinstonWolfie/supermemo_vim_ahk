@@ -134,7 +134,7 @@ p::
     }
   }
 
-  if (IfContains(A_ThisHotkey, "^"))
+  if (IfContains(A_ThisLabel, "^"))
     Clipboard := Clipboard  ; convert to plain text
   send ^v
 

@@ -40,7 +40,7 @@ class VimMove {
   }
 
   RegForDot(key) {
-    if (this.ReggedForDot := ((!this.IsMotionOnly() || this.IsActionKey(key)) && !((A_ThisHotkey == ".") && !this.Vim.State.fts))) {
+    if (this.ReggedForDot := ((!this.IsMotionOnly() || this.IsActionKey(key)) && !((A_ThisLabel == ".") && !this.Vim.State.fts))) {
       this.LastInOrOut := this.LastRepeat := this.LastSurround := this.LastSurroundKey := this.LastLineCopy := ""
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
       this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
@@ -462,7 +462,7 @@ class VimMove {
                 if (NextOccurrence)
                   right := NextOccurrence
               }
-              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+              Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
             }
           }
@@ -529,7 +529,7 @@ class VimMove {
                 if (NextOccurrence)
                   right := NextOccurrence - 1
               }
-              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+              Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
             }
           }
@@ -588,7 +588,7 @@ class VimMove {
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             if (pos) {
               right := pos - 2
-              if (pos == 2 || pos == 1) {
+              if ((pos == 2) || (pos == 1)) {
                 this.SearchOccurrence++
                 NextOccurrence := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
                 if (NextOccurrence > 1) {
@@ -597,7 +597,7 @@ class VimMove {
                   right := 0
                 }
               }
-              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+              Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
             }
           }
@@ -644,7 +644,7 @@ class VimMove {
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             right := StrLen(DetectionStr) - pos
-            KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+            Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
             send % "+{right " . right . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrReverse(StrBefore)
@@ -659,7 +659,7 @@ class VimMove {
               }
               if (StrLen(StrAfter) == StrLen(StrBefore))
                 left++
-              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+              Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
               send % "+{left " . left . "}"
             }
           }
@@ -702,14 +702,14 @@ class VimMove {
                   right := StrLen(DetectionStr) - NextOccurrence + 1
               }
             }
-            KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+            Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
             send % "+{right " . right . "}"
           } else if StrLen(StrAfter) <= StrLen(StrBefore) {
             DetectionStr := StrReverse(StrBefore)
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             if (pos) {
               left := pos - 2
-              if (pos == 2 || pos == 1) {
+              if ((pos == 2) || (pos == 1)) {
                 this.SearchOccurrence++
                 NextOccurrence := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
                 if (pos == 1 && NextOccurrence == 2) {  ; in instance like "see"
@@ -725,7 +725,7 @@ class VimMove {
               }
               if (StrLen(StrAfter) == StrLen(StrBefore))
                 left++
-              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+              Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
               send % "+{left " . left . "}"
             }
           }
@@ -770,6 +770,7 @@ class VimMove {
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
+            Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
             if (pos) {
               right := pos + 1 + StrLen(StrBefore)
               if (StrLen(DetectionStr) == pos + 2)  ; found at end of paragraph
@@ -790,6 +791,7 @@ class VimMove {
                   right := pos + 1
               }
             }
+            Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
             send % "+{right " . right . "}"
           }
         } else {
@@ -836,6 +838,7 @@ class VimMove {
                   left := NextOccurrence - 1
               }
             }
+            Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
             send % "+{left " . left . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore) || !StrBefore) {
             this.SelectParagraphUp(, true)
@@ -863,8 +866,10 @@ class VimMove {
             } else {
               ret := true
             }
-            if (!ret)
+            if (!ret) {
+              Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
+            }
           }
         } else {
           this.SelectParagraphUp(, true)
@@ -924,13 +929,14 @@ class VimMove {
               if (NextOccurrence)
                 right := NextOccurrence + StrLen(StrBefore) - 1
             }
+            Send {LShift Up}{RShift Up}
             send % "{left}+{right " . right . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrBefore
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             if (pos) {
               right := pos - 1
-              if (pos == 2 || pos == 1) {
+              if ((pos == 2) || (pos == 1)) {
                 this.SearchOccurrence++
                 NextOccurrence := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
                 if (NextOccurrence > 1) {
@@ -939,7 +945,7 @@ class VimMove {
                   right := 0
                 }
               }
-              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+              Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
               send % "+{right " . right . "}"
             }
           }
@@ -990,7 +996,7 @@ class VimMove {
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             right := StrLen(DetectionStr) - pos - 1
-            KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+            Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
             send % "+{right " . right . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrReverse(StrBefore)
@@ -1003,7 +1009,7 @@ class VimMove {
                 if (NextOccurrence)
                   left := NextOccurrence + 2
               }
-              KeyWait Shift  ; keys that need shift (like "(") would mess up the shift below
+              Send {LShift Up}{RShift Up}  ; keys that need shift (like "(") would mess up the shift below
               send % "+{left " . left . "}"
             }
           }
@@ -1411,7 +1417,7 @@ class VimMove {
       this.RegForDot(key)
       if (RestoreClip)
         ClipSaved := ClipboardAll
-      KeyWait Shift
+      Send {LShift Up}{RShift Up}
       send +{right}
       if (Copy(false) ~= "`n") {
         send {left}
@@ -1502,7 +1508,7 @@ class VimMove {
     } else if (IfIn(key, this.InnerKeys)) {
       if (RestoreClip)
         ClipSaved := ClipboardAll
-      KeyWait Shift
+      Send {LShift Up}{RShift Up}
       send +{right}
       if (Copy(false) ~= "`n") {
         send {left}

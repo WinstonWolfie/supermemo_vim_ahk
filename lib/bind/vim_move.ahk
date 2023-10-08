@@ -19,7 +19,7 @@ p::
 ]::
 <::
 >::
-'::Vim.Move.Inner(A_ThisHotkey)
+'::Vim.Move.Inner(A_ThisLabel)
 t::Vim.Move.Inner("<")
 b::Vim.Move.Inner("(")
 +b::Vim.Move.Inner("{")
@@ -37,7 +37,7 @@ p::
 ]::
 <::
 >::
-'::Vim.Move.Outer(A_ThisHotkey)
+'::Vim.Move.Outer(A_ThisLabel)
 t::Vim.Move.Outer("<")
 b::Vim.Move.Outer("(")
 +b::Vim.Move.Outer("{")
@@ -86,7 +86,7 @@ x::Vim.Move.Repeat("x")
 +x::Vim.Move.Repeat("+x")
 ; Sentence
 (::
-)::Vim.Move.Move(A_ThisHotkey)
+)::Vim.Move.Move(A_ThisLabel)
 
 '::Vim.State.SetMode("",, -1,,, -1, 1)  ; leader key
 

@@ -29,6 +29,7 @@ SMParseHTMLGUI:
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
   Gui, HTMLTag:Add, CheckBox, vCopyText, &Copy the text
+  Gui, HTMLTag:Add, CheckBox, vClass, C&lass
   Gui, HTMLTag:Add, Button, default, &Add
   Gui, HTMLTag:Show,, Add HTML Tag
 Return
@@ -51,6 +52,7 @@ SMParseHTML:
   if (A_ThisLabel == "SMParseHTML")
     tag := Vim.Move.SMLastGAltATag
   WinActivate, ahk_class TElWind
+  KeyWait Alt
   if (CopyText)
     Copy(false)
   ClipSaved := ClipboardAll
@@ -64,7 +66,7 @@ SMParseHTML:
     content := StrReplace(content, ">", "&gt;")
   }
   StartingTag := "<", EndingTag := ">"
-  if (Vim.SM.IsCssClass(tag)) {
+  if (Class || Vim.SM.IsCssClass(tag)) {
     StartingTag := "<SPAN class=" . tag, EndingTag := "SPAN>", tag := ""
   } else if (tag = "ruby") {
     Clipboard := ClipSaved
@@ -157,7 +159,7 @@ ClozeHinter:
   if (ClozeHinterCtrlState && (A_ThisLabel == "ClozeHinter")) {  ; from cloze hinter label and ctrl is down
     CtrlState := 1, ClozeHinterCtrlState := 0
   } else {
-    CtrlState := IfContains(A_ThisHotkey, "^")
+    CtrlState := IfContains(A_ThisLabel, "^")
   }
   if (!InitText := Copy())
     return

@@ -31,6 +31,11 @@ Return
 
 +q::
   send !{F4}
+  if (hWnd := WinActive("ahk_class Notepad")) {
+    UIA := UIA_Interface()
+    el := UIA.ElementFromHandle(hWnd)
+    el.WaitElementExist("ControlType=Button AND Name='Don\'t save' AND AutomationId='SecondaryButton'",,,, 1000).Click()
+  }
   Vim.State.SetMode("Vim_Normal")
 Return
 

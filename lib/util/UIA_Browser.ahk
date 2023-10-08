@@ -61,7 +61,7 @@
     Gets the current URL. fromAddressBar=True gets it straight from the URL bar element, which is not a very good method, because the text might be changed by the user and doesn't start with "http(s)://". Default of fromAddressBar=False will cause the real URL to be fetched, but the browser must be visible for it to work (if is not visible, it will be automatically activated).
   SetURL(newUrl, navigateToNewUrl = False)
     Sets the URL bar to newUrl, optionally also navigates to it if navigateToNewUrl=True
-  Navigate(url, targetTitle="", waitLoadTimeOut=-1, sleepAfter=500)
+  Navigate(url, targetTitle="", waitLoadTimeout=-1, sleepAfter=500)
     Navigates to URL and waits page to load
   NewTab()
     Presses the New tab button.
@@ -720,9 +720,9 @@ class UIA_Browser {
   }
 
   ; Navigates to URL and waits page to load
-  Navigate(url, targetTitle:="", waitLoadTimeOut:=-1, sleepAfter:=500) {
+  Navigate(url, targetTitle:="", waitLoadTimeout:=-1, sleepAfter:=500) {
     this.SetURL(url, True)
-    this.WaitPageLoad(targetTitle,waitLoadTimeOut,sleepAfter)
+    this.WaitPageLoad(targetTitle,waitLoadTimeout,sleepAfter)
   }
   
   ; Presses the New tab button. The button name might differ if the browser language is not set to English and can be specified with butName

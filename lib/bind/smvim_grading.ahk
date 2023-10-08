@@ -8,13 +8,13 @@ s::
 d::
 f::
 g::
-  if (A_ThisHotkey == "s") {
+  if (A_ThisLabel == "s") {
     send 2
-  } else if (A_ThisHotkey == "d") {
+  } else if (A_ThisLabel == "d") {
     send 3
-  } else if (A_ThisHotkey == "f") {
+  } else if (A_ThisLabel == "f") {
     send 4
-  } else if (A_ThisHotkey == "g") {
+  } else if (A_ThisLabel == "g") {
     send 5
   }
   ControlTextWait("TBitBtn3", "Next repetition", "A")

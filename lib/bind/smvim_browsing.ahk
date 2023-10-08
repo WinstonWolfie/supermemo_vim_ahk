@@ -15,6 +15,7 @@ g::Vim.State.SetMode("", 1, -1)
 g::Vim.Move.Move("g")  ; 3gg goes to the 3rd line of entire text
 
 +u::  ; gU: click source button
+  KeyWait Shift
   Vim.SM.ClickElWindSourceBtn()
   Vim.State.SetMode()
 Return
@@ -24,7 +25,7 @@ SMGoToLink:
 s::  ; gs: go to link
   Vim.State.SetMode()
   if (link := Vim.SM.GetLink()) {
-    if (IfContains(A_ThisHotkey, "+")) {
+    if (IfContains(A_ThisLabel, "+")) {
       ; run % "iexplore.exe " . link  ; RIP IE
       Vim.Browser.RunInIE(link)
     } else {
@@ -94,15 +95,25 @@ i::Vim.State.SetMode("Insert")
 ; Browser-like actions
 r::  ; reload
   ContLearn := (ContinueGrading := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning()
-  if (ContLearn == 2)
-    bItem := Vim.SM.IsItem()
-  CurrTitle := WinGetTitle("A"), Vim.SM.GoHome()
+  Item := (ContLearn == 2) ? Vim.SM.IsItem() : false
+  CurrTitle := WinGetTitle("A")
+  Vim.SM.GoHome()
   Vim.SM.WaitFileLoad()
   if (ContLearn) {
-    if ((ContLearn == 2) && bItem) {  ; item and just finished grading
+    if ((ContLearn == 2) && Item) {  ; item and just finished grading
       Vim.SM.GoBack()
     } else {
+      RootTitle := WinGetTitle("A")
       Vim.SM.Learn(false)
+      ; In neural review, going to root element and press learn goes to the next neural review queue
+      if (ContLearn == 2) {
+        if (WinWaitTitleChange(RootTitle, "A", 1500) != CurrTitle) {
+          Vim.SM.WaitFileLoad()
+          Vim.SM.GoBack()
+          Vim.SM.WaitFileLoad()
+          Vim.SM.GoBack()
+        }
+      }
     }
   } else if (ContinueGrading) {
     Vim.SM.Learn()
@@ -111,13 +122,11 @@ r::  ; reload
   } else {
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame"))  ; sometimes could happen on YT videos
       WinClose
-    ; If current element is home element
+    Vim.SM.GoBack()
+    ; If current element is root element
     if ((CurrTitle == WinGetTitle("A")) && (CurrTitle ~= "^Concept: ")) {
-      Vim.SM.GoBack()
       Vim.SM.WaitFileLoad()
       send !{right}
-    } else {
-      Vim.SM.GoBack()
     }
   }
 return
@@ -129,9 +138,9 @@ p::
     send {text}y 
 return
 
-+p::  ; play video in default system player / edit script component
++p::  ; play video/sound in default system player / edit script component
   Vim.SM.EditFirstQuestion()
-  send ^{t}{f9}
+  send {CtrlDown}t{f9}{CtrlUp}
 return
 
 n::Vim.SM.AltN()
@@ -156,20 +165,20 @@ c::
       return
   }
   BlockInput, on
-  HinterMode := "OpenLink", OpenInIE := IfContains(A_ThisHotkey, "!+f")
-  if (y && (A_ThisHotkey == "f")) {
+  HinterMode := "OpenLink", OpenInIE := IfContains(A_ThisLabel, "!+f")
+  if (y && (A_ThisLabel == "f")) {
     HinterMode := "YankLink"
-  } else if (IfIn(A_ThisHotkey, "^!+f,!f")) {
+  } else if (IfIn(A_ThisLabel, "^!+f,!f")) {
     HinterMode := "Persistent"
-  } else if (y && (A_ThisHotkey == "v")) {
+  } else if (y && (A_ThisLabel == "v")) {
     HinterMode := "Visual"
-  } else if (y && (A_ThisHotkey == "c")) {
+  } else if (y && (A_ThisLabel == "c")) {
     HinterMode := "Normal"
-  } else if (A_ThisHotkey == "+f") {
+  } else if (A_ThisLabel == "+f") {
     HinterMode := "OpenLinkInNew"
   }
   UIA := UIA_Interface(), LearningState := Vim.SM.IsLearning()
-  Caret := IfIn(A_ThisHotkey, "v,c")
+  Caret := IfIn(A_ThisLabel, "v,c")
   ; Some hyperlinks seem to be text type
   ; Type := Caret ? "Text" : "Hyperlink"
   Type := "Text"
@@ -259,15 +268,15 @@ u::  ; gu: go to parent
   if (n > 1)
     Vim.SM.PrepareStatBar(1)
   loop % n {
-    if (A_ThisHotkey ~= "h$") {
+    if (A_ThisLabel ~= "h$") {
       Vim.SM.GoBack()
-    } else if (A_ThisHotkey ~= "l$") {
+    } else if (A_ThisLabel ~= "l$") {
       send !{right}
-    } else if (A_ThisHotkey ~= "j$|^\+e$") {
+    } else if (A_ThisLabel ~= "j$|^\+e$") {
       send !{pgdn}
-    } else if (A_ThisHotkey ~= "k$|^e$") {
+    } else if (A_ThisLabel ~= "k$|^e$") {
       send !{pgup}
-    } else if (A_ThisHotkey ~= "u$") {
+    } else if (A_ThisLabel ~= "u$") {
       send ^{up}
     }
     if (n > 1)
@@ -284,7 +293,7 @@ return
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (Vim.SM.IsBrowsing()
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
-c::send !c  ; open content window
+; c::send !c  ; open content window  ; taken in sm19
 b::
   if (WinExist("ahk_class TBrowser")) {
     WinActivate
@@ -307,7 +316,7 @@ return
 ^o::
   Send {LCtrl Up}{RCtrl Up}
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
-o::
+o::  ; favoourites
   BlockInput, on
   SetDefaultKeyboard(0x0409)  ; English-US
   l := Vim.SM.IsLearning()
@@ -318,9 +327,9 @@ o::
     send {AltUp}
   } else if (l == 2) {
     Vim.SM.Reload(, true)
-    Vim.SM.WaitFileLoad()
   }
-  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1, Vim.SM.PostMsg(3)  ; favourites
+  Vim.SM.WaitFileLoad()
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1, Vim.SM.PostMsg(3)
   BlockInput, off
 return
 

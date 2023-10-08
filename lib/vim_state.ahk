@@ -112,7 +112,7 @@ class VimState {
 
   HandleEsc() {
     global Vim, VimEscNormal, SMVimSendEscInsert, VimSendEscNormal, VimLongEscNormal
-    if (this.Vim.SM.IsEditingText() && A_ThisHotkey = "capslock")
+    if (this.Vim.SM.IsEditingText() && (A_ThisLabel = "capslock"))
       this.Vim.SM.ClickMid()
     if (!VimEscNormal) {
       send {Esc}

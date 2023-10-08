@@ -41,6 +41,7 @@ NukeHTML:
     ToolTip("Time out.")
     return
   }
+  WinWaitActive, ahk_class TElWind  ; insurance
   if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())) {
     ToolTip("File not found.")
     return
@@ -229,8 +230,7 @@ SMHyperLinkToTopic:
 
   if (Vim.Browser.Title)
     Vim.SM.SetTitle(Vim.Browser.Title)
-  Clipboard := ClipSaved
-  Vim.Browser.Clear(), Vim.SM.Reload()
+  Clipboard := ClipSaved, Vim.Browser.Clear(), Vim.SM.Reload()
 return
 
 r::  ; set *r*eference's link to what's in the clipboard
@@ -238,34 +238,34 @@ r::  ; set *r*eference's link to what's in the clipboard
 
 SMSetLinkFromClipboard:
   ; Had to edit title first, in case of multiple references change
-  if (Vim.Browser.Title)
+  if ((A_ThisLabel == "SMSetLinkFromClipboard") && Vim.Browser.Title)
     Vim.SM.SetTitle(Vim.Browser.Title)
   Vim.SM.EditRef()
-  WinWait, ahk_class TInputDlg
-  Ref := RegExReplace(ControlGetText("TMemo1", "ahk_class TInputDlg")
-                    , "#Link: .*|$", "`r`n#Link: " . Clipboard,, 1)
+  WinWaitActive, ahk_class TInputDlg
+  Ref := "#Link: " . Clipboard . "`r`n" . ControlGetText("TMemo1")
   if (Vim.Browser.Title)
-    Ref := RegExReplace(Ref, "#Title: .*|$", "`r`n#Title: " . Vim.Browser.Title,, 1)
+    Ref := "#Title: " . Vim.Browser.Title . "`r`n" . Ref
   if (Vim.Browser.Source)
-    Ref := RegExReplace(Ref, "#Source: .*|$", "`r`n#Source: " . Vim.Browser.Source,, 1)
+    Ref := "#Source: " . Vim.Browser.Source . "`r`n" . Ref
   if (Vim.Browser.Author)
-    Ref := RegExReplace(Ref, "#Author: .*|$", "`r`n#Author: " . Vim.Browser.Author,, 1)
+    Ref := "#Author: " . Vim.Browser.Author . "`r`n" . Ref
   if (Vim.Browser.Date)
-    Ref := RegExReplace(Ref, "#Date: .*|$", "`r`n#Date: " . Vim.Browser.Date,, 1)
+    Ref := "#Date: " . Vim.Browser.Date . "`r`n" . Ref
   if (Vim.Browser.Comment)
-    Ref := RegExReplace(Ref, "#Comment: .*|$", "`r`n#Comment: " . Vim.Browser.Comment,, 1)
+    Ref := "#Comment: " . Vim.Browser.Comment . "`r`n" . Ref
   ControlSetText, TMemo1, % Ref
   ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
   WinWaitClose
-  if (A_ThisHotkey == "r")
+  if (Vim.SM.HandleSM19PoundSymbUrl(Clipboard) && (A_ThisLabel == "r"))
+    Vim.SM.Reload(, true)
+  if (A_ThisLabel == "r")
     Vim.SM.AskPrio()
 return
 
 m::
-  Vim.State.SetMode("Vim_Normal")
-  Vim.SM.EditRef()
-  WinWait, ahk_class TInputDlg
-  Ref := ControlGetText("TMemo1", "ahk_class TInputDlg")
+  Vim.State.SetMode("Vim_Normal"), Vim.SM.EditRef()
+  WinWaitActive, ahk_class TInputDlg
+  Ref := ControlGetText("TMemo1")
   if (Ref ~= "#Comment: .*#audio") {
     ControlSend, TMemo1, {esc}, ahk_class TInputDlg
     return
@@ -311,7 +311,7 @@ SMLearnChildActiveBrowser:
   Vim.SM.WaitBrowser()
   send ^l
   WinWaitActive, ahk_class TElWind
-  Vim.SM.PlayIfCertainColl("", 500)
+  Vim.SM.PlayIfCertainColl(, 500)
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))

@@ -8,9 +8,9 @@ CapsLock & alt::return  ; so you can press CapsLock first and alt without trigge
 +!/::  ; followed by a cloze hinter
 ^+!/::  ; also cloze hinter but stays in clozed item
 /::  ; better search
-  ShiftState := IfContains(A_ThisHotkey, "+,?")
-  AltState := IfContains(A_ThisHotkey, "!")  ; followed by a cloze
-  CtrlState := IfContains(A_ThisHotkey, "^")
+  ShiftState := IfContains(A_ThisLabel, "+,?")
+  AltState := IfContains(A_ThisLabel, "!")  ; followed by a cloze
+  CtrlState := IfContains(A_ThisLabel, "^")
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")) && (ShiftState := GetKeyState("shift")))
 CapsLock & /::
@@ -22,7 +22,7 @@ CapsLock & /::
     ToolTip("Text not found.")
     return
   }
-  CapsState := IfContains(A_ThisHotkey, "CapsLock")
+  CapsState := IfContains(A_ThisLabel, "CapsLock")
   KeyWait Alt
   BlockInput, on
   if (Vim.SM.IsBrowsing())

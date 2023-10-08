@@ -272,33 +272,46 @@ SMImportButtonImport:
     }
     Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML format but is in plain-text
   }
-  Online := (Passive || (!HTMLText && IsVidSite)), Download := ""
+  Online := (Passive || (!HTMLText && IsVidSite)), CopyAll := Download := ""
   if (DownloadHTML || (!HTMLText && !Online)) {
     if (DownloadHTML || !HTMLText) {
-      DownloadList := "file:///,wikipedia.org,investopedia.com,webmd.com,britannica.com"
-      if (Download := (DownloadHTML || IfContains(Vim.Browser.Url, DownloadList))) {
-        if (IfContains(Vim.Browser.Url, "file:///")) {
+      DownloadList := "file:///,investopedia.com,webmd.com,britannica.com"
+      if (DownloadHTML || IfContains(Vim.Browser.Url, DownloadList)) {
+        if (Download := IfContains(Vim.Browser.Url, "file:///")) {
           Vim.Browser.Url := StrReplace(Vim.Browser.Url, "file:///")
           HTMLText := FileRead(EncodeDecodeURI(Vim.Browser.Url, false))
-        } else {
-          ToolTip("Attempting to download website...", true)
+        } else if (Download := true) {
+          ToolTip("Attempting to download website...", true,,, 19)
           TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
+
+          ; https://www.autohotkey.com/docs/v1/lib/URLDownloadToFile.htm
+          ; whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+          ; whr.Open("GET", Vim.Browser.Url, true)
+          ; whr.Send()
+          ; ; Using 'true' above and the call below allows the script to remain responsive.
+          ; whr.WaitForResponse()
+          ; version := whr.ResponseText
+          ; MsgBox % version
+
           UrlDownloadToFile, % Vim.Browser.Url, % TempPath
-          HTMLText := FileRead(TempPath)
-          FileDelete, % TempPath
+          if (ErrorLevel) {
+            ToolTip("Download failed.",,,, 18), CopyAll := true
+          } else {
+            HTMLText := FileReadAndDelete(TempPath)
+            ; Fixing links
+            RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
+            RegExMatch(Vim.Browser.Url, "^https?:\/\/", HTTP)
+            HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/\/(?=([^<>]+)?>)", " $2=""" . HTTP)
+            HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/(?=([^<>]+)?>)", " $2=""" . UrlHead)
+            HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""(?=#([^<>]+)?>)", " $2=""" . Vim.Browser.Url)
+          }
 
-          ; Fixing links
-          RegExMatch(Vim.Browser.Url, "^https?:\/\/.*?\/", UrlHead)
-          RegExMatch(Vim.Browser.Url, "^https?:\/\/", HTTP)
-          HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/\/(?=([^<>]+)?>)", " $2=""" . HTTP)
-          HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/(?=([^<>]+)?>)", " $2=""" . UrlHead)
-          HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""(?=#([^<>]+)?>)", " $2=""" . Vim.Browser.Url)
-
-          RemoveToolTip()
+          RemoveToolTip(19)
         }
-      } else {
+      }
+      if (!Download || CopyAll) {
         send {esc}
-        CopyAll()
+        CopyAll := true, CopyAll()
         Vim.HTML.ClipboardGet_HTML(HTMLText)
         RegExMatch(HTMLText, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", HTMLText)
       }
@@ -308,7 +321,7 @@ SMImportButtonImport:
       Goto ImportReturn
     }
   }
-  Vim.Browser.GetTitleSourceDate(false,, (Download ? "" : Clipboard))
+  Vim.Browser.GetTitleSourceDate(false,, (CopyAll ? Clipboard : ""))
   if (ResetVidTime)
     Vim.Browser.VidTime := "0:00"
   if (Passive == 1)
@@ -320,7 +333,7 @@ SMImportButtonImport:
   } else if (Online) {
     Clipboard := Vim.Browser.Url
   } else {
-    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,webmd.com"
+    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,webmd.com,proofwiki.org"
     LineBreak := IfContains(Vim.Browser.Url, LineBreakList)
     HTMLText := Vim.HTML.Clean(HTMLText,, LineBreak, Vim.Browser.Url)
     if (!IWB && !Vim.Browser.Date)
@@ -340,7 +353,7 @@ SMImportButtonImport:
     InfoToolTip .= "`nDate: " . Vim.Browser.Date
   if (Vim.Browser.VidTime)
     InfoToolTip .= "`nTime stamp: " . Vim.Browser.VidTime
-  ToolTip(InfoToolTip, true)
+  ToolTip(InfoToolTip, true,,, 17)
 
   if (Prio ~= "^\.")
     Prio := "0" . Prio
@@ -358,10 +371,10 @@ SMImportButtonImport:
   }
 
   WinActivate, ahk_class TElWind
-  PrevSMTitle := WinGetTitle("ahk_class TElWind")
   if (Online && !Passive) {
     Gosub SMCtrlN
   } else {
+    PrevSMTitle := WinGetTitle("ahk_class TElWind")
     Vim.SM.AltN()
     SMNewElementTitle := WinWaitTitleChange(PrevSMTitle, "ahk_class TElWind")
     if (!Online) {
@@ -375,21 +388,31 @@ SMImportButtonImport:
         Goto ImportReturn
     }
   }
+  SMNewTextTitle := WinGetTitle("ahk_class TElWind")
 
   ; Making sure the browser is shown for the maximum amount of time
   if (Passive)
     WinActivate % wBrowser
+
   Vim.SM.ClearHighlight()
+
   if (Passive)
     WinActivate % wBrowser
+
+  Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url)
   Vim.SM.Reload(, true)
+
   if (Passive)
     WinActivate % wBrowser
+
   Vim.SM.WaitFileLoad()
+
   if (Passive)
     WinActivate % wBrowser
-  Vim.Browser.Title := IWB ? "" : Vim.Browser.Title
-  Vim.SM.SetElParam(Vim.Browser.Title, Prio)
+
+  WinWaitTitle(SMNewTextTitle, "ahk_class TElWind")
+  Vim.SM.SetElParam(IWB ? "" : Vim.Browser.Title, Prio)
+
   if (Passive)
     WinActivate % wBrowser
 
@@ -413,12 +436,9 @@ ImportReturn:
     WinWaitNotActive, ahk_class TElWind,, 0.1
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
   }
-  Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal")
-  if (!Esc) {
+  Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal"), RemoveToolTip(17)
+  if (!Esc)
     Clipboard := ClipSaved, ToolTip("Import completed.")
-  } else {
-    RemoveToolTip()
-  }
 return
 
 ^+e::
@@ -437,11 +457,11 @@ return
     ToolTip("Please open SuperMemo and try again.")
     return
   }
-  vToolTip := "selected text", skip := false, url := ""
+  ToolTip := "selected text", skip := false, url := ""
   if (wBrowser) {
     uiaBrowser := new UIA_Browser("ahk_id " . wBrowser)
     if (IfContains(url := uiaBrowser.GetCurrentUrl(), "youtube.com/watch"))
-      text := Vim.Browser.ParseUrl(url), skip := true, vToolTip := "url"
+      text := Vim.Browser.ParseUrl(url), skip := true, ToolTip := "url"
   }
   if (!skip && (!text := Copy())) {
     if (wBrowser) {
@@ -449,14 +469,14 @@ return
         ToolTip("Url not found.")
         return
       }
-      text := Vim.Browser.ParseUrl(url), vToolTip := "url"
+      text := Vim.Browser.ParseUrl(url), ToolTip := "url"
     }
   }
   if (!text) {
     ToolTip("Text not found.")
     return
   }
-  ToolTip("Searching " . vToolTip . " in " . Vim.SM.GetCollName() . "...", true)
+  ToolTip("Searching " . ToolTip . " in " . Vim.SM.GetCollName() . "...", true)
   if (Vim.SM.CheckDup(text))
     RemoveToolTip()
   VimLastSearch := text
@@ -467,7 +487,7 @@ return
 ^!x::
 !+x::
 !x::
-  CtrlState := IfContains(A_ThisHotkey, "^"), hWnd := WinActive("A")
+  CtrlState := IfContains(A_ThisLabel, "^"), hWnd := WinActive("A")
   ClipSaved := ClipboardAll
   if (!Copy(false)) {
     ToolTip("Nothing is selected.")
@@ -486,7 +506,7 @@ return
       ToolTip("SuperMemo is not open; the text you selected" . a . " is on your clipboard.")
       return
     }
-    if (Prio := IfContains(A_ThisHotkey, "+")) {
+    if (Prio := IfContains(A_ThisLabel, "+")) {
       if ((!Prio := InputBox("Priority", "Enter extract priority.")) || ErrorLevel)
         return
       if (Prio ~= "^\.")
@@ -658,7 +678,7 @@ return
 ^!s::
 ^+!s::
   ClipSaved := ClipboardAll
-  CloseWnd := IfContains(A_ThisHotkey, "^")
+  CloseWnd := IfContains(A_ThisLabel, "^")
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := Trim(Copy(false), " `t`r`n")
@@ -696,7 +716,7 @@ return
     }
     if (CloseWnd) {
       if (WinActive("ahk_group Browser")) {
-        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{CtrlDown}w{CtrlUp}
+        send ^w
       } else {  ; epub viewer
         WinClose, A
       }
@@ -732,7 +752,7 @@ MarkInSMTitle:
     }
   }
   Vim.SM.SetTitle(NewTitle)
-  if (IfContains(A_ThisHotkey, "^+!"))
+  if (IfContains(A_ThisLabel, "^+!"))
     Vim.SM.Learn(false, true)
   Clipboard := ClipSaved
 return
@@ -752,7 +772,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
 ^!x::
 !x::
-  if (A_ThisHotkey == "^!x") {
+  if (A_ThisLabel == "^!x") {
     KeyWait Ctrl
     KeyWait Alt
     send ^a
@@ -767,7 +787,7 @@ return
     WinWaitActive, ahk_class wxWindowNR  ; audacity main window
     send ^+e  ; save
     WinWaitActive, Export Audio
-  } else if (A_ThisHotkey == "!x") {
+  } else if (A_ThisLabel == "!x") {
     PostMessage, 0x0111, 17011,,, A  ; export selected audio
     WinWaitActive, Export Selected Audio
   }
@@ -829,6 +849,7 @@ Return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe ebook-viewer.exe"))
 ~^f::
+  Clipboard := Trim(Clipboard)
   if ((A_PriorHotkey != "~^f") || (A_TimeSincePriorHotkey > 400)) {
     KeyWait f
     return
@@ -864,7 +885,7 @@ return
   WinClose, ahk_class TBrowser
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
     Goto HBImportReturn
-  if (IfContains(A_ThisHotkey, "+")) {
+  if (IfContains(A_ThisLabel, "+")) {
     Prio := InputBox("Priority", "Enter extract priority.")
     if (!(Prio >= 0) || ErrorLevel) {
       prio := ""
@@ -923,7 +944,11 @@ return
 !t::  ; test latency
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(hWnd)
-  if (!btn := el.FindFirstBy("ControlType=Text AND Name='network_check'"))
-    btn := el.FindFirstBy("ControlType=Text AND Name='Update All'")
-  btn.click()
+  if (btn := el.FindFirstBy("ControlType=Text AND Name='Update All'")) {
+    btn.Click()
+  } else {
+    aBtn := el.FindAllBy("ControlType=Text AND Name='network_check'")
+    for i, v in aBtn
+      v.Click()
+  }
 return

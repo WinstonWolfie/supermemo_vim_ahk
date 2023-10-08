@@ -95,7 +95,7 @@ _::
 .::
 >::
 space::
-  CurrHotkey := (A_ThisHotkey = "space") ? " " : A_ThisHotkey
+  CurrHotkey := (A_ThisLabel = "space") ? " " : A_ThisLabel
   if (StrLen(CurrHotkey) > 1) {
     if (IfContains(CurrHotkey, "+"))
       CurrHotkey := StrUpper(StrReplace(CurrHotkey, "+"))

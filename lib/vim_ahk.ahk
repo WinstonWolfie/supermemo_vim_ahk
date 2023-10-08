@@ -351,7 +351,7 @@ class VimAhk {
     ; When you change the reference of an element that shares the reference with other elements
     ; no shortcuts there, so movement keys are used for up/down navigation
     ; if more windows are found without shortcuts in the future, they will be all added here
-    return this.SM.IsChangeRefWind()
+    return this.SM.IsVimNavWind()
   }
 
   ParseLineBreaks(str) {

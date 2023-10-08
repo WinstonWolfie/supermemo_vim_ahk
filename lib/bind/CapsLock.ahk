@@ -321,7 +321,7 @@ CapsLock & tab::send !{tab}
 
 ~!f4::
 CapsLock & q::
-    if (A_ThisHotkey == "CapsLock & q")
+    if (A_ThisLabel == "CapsLock & q")
         WinClose, A
     if (WinActive("ahk_exe HiborClient.exe")) {
         WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0

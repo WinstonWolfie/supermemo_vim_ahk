@@ -52,7 +52,7 @@ Return
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
-        . "|PerplexityAI|Lexico|Tatoeba|MD2HTML"
+        . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -65,13 +65,13 @@ Return
       if (Vim.SM.IsEditingText())
         list := "ClozeAndDone!|" . list
       if (Vim.SM.IsEditingHTML())
-        list := "MakeHTMLUnique|CenterTexts|AlignTextsRight|BoldText|ItalicText"
-              . "|UnderscoreText|" . list
+        list := "MakeHTMLUnique|CenterTexts|AlignTextsRight|AlignTextsLeft|ItalicText"
+              . "|UnderscoreText|BoldText|" . list
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
     list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference|" . list
   } else if (WinActive("ahk_group Browser")) {  ; web browsers
-    list := "IWBPriorityAndConcept|IWBNewTopic|" . list
+    list := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|" . list
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
     list := "SetPlanPosition|" . list
   } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
@@ -100,6 +100,8 @@ VimCommanderButtonExecute:
     Goto % RegExReplace(command, "\W")
   } else {
     if (IsUrl(command)) {
+      if !(command ~= "^http")
+        command := "http://" . command
       run % command
     } else {
       run % "https://www.google.com/search?q=" . EncodeDecodeURI(command)
@@ -139,12 +141,17 @@ return
 WebSearchButtonSearch:
   Gui, Submit
   Gui, Destroy
-  if (IsUrl(Search)) {
-    run % Search
-  } else if (DoesTextContainUrl(Search, v)) {
+  if (DoesTextContainUrl(Search, v)) {
     MsgBox, 3,, Text has url. Run it?
-    if (IfMsgBox("Yes"))
+    if (IfMsgBox("Yes")) {
       run % v
+      return
+    }
+  }
+  if (IsUrl(Search)) {
+    if !(Search ~= "^http")
+      Search := "http://" . Search
+    run % Search
   } else {
     run % "https://www.google.com/search?hl=" . LangCode . "&q=" . EncodeDecodeURI(Search)
   }
@@ -280,13 +287,8 @@ WiktionaryButtonWord:
   Gui, Destroy
   if (Language == "Ancient Greek")
     Language := "Ancient_Greek"
-  if (Language == "Latin") {
-    Word := StrReplace(Word, "ā", "a")
-    Word := StrReplace(Word, "ē", "e")
-    Word := StrReplace(Word, "ī", "i")
-    Word := StrReplace(Word, "ū", "u")
-    Word := StrReplace(Word, "ō", "o")
-  }
+  if (Language == "Latin")
+    word := PrepareLatin(word)
   run % "https://en.wiktionary.org/wiki/" . Word . "#" . Language
 return
 
@@ -371,7 +373,7 @@ return
 
 Forcellini:
   if (word := FindSearch("Forcellini", "Word:"))
-    run % "http://lexica.linguax.com/forc2.php?searchedLG=" . word
+    run % "http://lexica.linguax.com/forc2.php?searchedLG=" . PrepareLatin(word)
 return
 
 RAE:
@@ -501,7 +503,7 @@ ReformatVocab:
   if (!data := Copy(false, true))
     Goto RestoreClipReturn
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
-  data := RegExReplace(data, "(\.<BR>""|(\. ?<BR>)?(\r\n<P><\/P>)?\r\n<P>‘)", "<P>")
+  data := RegExReplace(data, "(\.<BR>""|(\. ?<BR>)?(\r\n<P><\/P>)?\r\n<P>‘|\. \r\n<P><\/P>)", "<P>")
   data := RegExReplace(data, "(""|\.?’)", "</P>")
   data := StrReplace(data, "<P></P>")
   SynPos := RegExMatch(data, "<(P|BR)>(Similar|Synonyms)")
@@ -510,8 +512,7 @@ ReformatVocab:
   SynAndAnt := StrReplace(SynAndAnt, "; ", ", ")
   SynAndAnt := RegExReplace(SynAndAnt, "(<BR>)?(\n)?((Similar:?)<BR>|Synonyms ?(\r\n)?(<\/P>\r\n<P>|<BR>))", "<P>syn: ")
   SynAndAnt := RegExReplace(SynAndAnt, "(Opposite:?|Opuesta)<BR>", "ant: ")
-  WinClip.Paste(def . SynAndAnt,, false)
-  send ^a^+1
+  Clip(def . SynAndAnt,, false, "sm")
   Clipboard := ClipSaved
 return
 
@@ -764,16 +765,16 @@ RestartICloudDrive:
 return
 
 CalculateTodaysPassRate:
-  ToolTip("Executing...", true)
+  ToolTip("Executing...", true), SMPID := WinGet("PID", "ahk_class TElWind")
   BlockInput, on
   Vim.SM.PostMsg(31)  ; export rep history
   WinWaitActive, ahk_class TFileBrowser
   TempPath := A_Temp . "\Repetition History_" . Vim.SM.GetCollName() . "_"
             . GetCurrTimeForFileName() ".txt"
   Vim.SM.FileBrowserSetPath(TempPath, true)
-  WinWaitActive, Information ahk_class TMsgDialog
+  WinWaitActive % "Information ahk_class TMsgDialog ahk_pid " . SMPID
   send {enter}
-  RepHistory := FileRead(TempPath)
+  RepHistory := FileReadAndDelete(TempPath)
   DateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
   RegExReplace(RepHistory, "s)\nItem #\d+: [^\n]+\n[^\n]+" . DateRegEx
                          . "[^\n]+Grade=[0-5]",, TodayRepCount)
@@ -865,7 +866,7 @@ MassReplaceRegistry:
 return
 
 AllLapsesToday:
-  ToolTip("Executing...", true)
+  ToolTip("Executing...", true), SMPID := WinGet("PID", "ahk_class TElWind")
   BlockInput, on
   Vim.SM.PostMsg(31)  ; export rep history
   WinWaitActive, ahk_class TFileBrowser
@@ -874,9 +875,9 @@ AllLapsesToday:
   TempOutputPath := A_Temp . "\All Lapses Today_" . Vim.SM.GetCollName() . "_"
                   . t . ".txt"
   Vim.SM.FileBrowserSetPath(TempPath, true)
-  WinWaitActive, Information ahk_class TMsgDialog
+  WinWaitActive % "Information ahk_class TMsgDialog ahk_pid " . SMPID
   send {enter}
-  RepHistory := FileRead(TempPath)
+  RepHistory := FileReadAndDelete(TempPath)
   dateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
   pos := 1, v1 := ""
   while (pos := RegExMatch(RepHistory, "s)\nItem #\d+: ([^\n]+)\n[^\n]+"
@@ -919,10 +920,17 @@ ExternaliseRegistry:
   }
 return
 
+AlignTextsLeft:
 CenterTexts:
 AlignTextsRight:
-  Vim.SM.EditBar((A_ThisLabel == "CenterTexts") ? "16" : "17")
-  Vim.State.SetMode("Vim_Normal")
+  if (A_ThisLabel == "AlignTextsLeft") {
+    n := 15
+  } else if (A_ThisLabel == "CenterTexts") {
+    n := 16
+  } else if (A_ThisLabel == "AlignTextsRight") {
+    n := 17
+  }
+  Vim.SM.EditBar(n), Vim.State.SetMode("Vim_Normal")
 return
 
 BoldText:
@@ -963,4 +971,23 @@ MD2HTML:
   WinWaitActive % "ahk_id " . hWnd
   Clip(v,, false, Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
   Clipboard := ClipSaved
+return
+
+CleanHTML:
+  if (HTMLPath := FindSearch("Clean HTML", "Path:")) {
+    HTML := FileRead(HTMLPath)
+    FileDelete % HTMLPath
+    FileAppend, % Vim.HTML.Clean(HTML), % HTMLPath
+  }
+  ToolTip("Completed.")
+return
+
+SaveFile:
+  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+  if (RegExMatch(url := uiaBrowser.GetCurrentURL(true), "\/[^\/\.]+\.[^\/\.]+$", v))
+    UrlDownloadToFile, % url, % FilePath := "d:" . v
+  SplitPath, FilePath, name, dir, ext, NameNoExt
+  if (ext = "ogg")
+    RunWait, % "cmd /c ffmpeg -i """ . FilePath . """ -acodec libmp3lame """ . dir . "\" . NameNoExt . ".mp3"" && del """ . FilePath . """",, Hide
+  ToolTip("Finished.")
 return
