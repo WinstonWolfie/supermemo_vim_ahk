@@ -1,6 +1,6 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ; Keys that need insert mode
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_group SuperMemo"))
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_group SM"))
 ~!f10::
 ~+f10::
 ~!f12::

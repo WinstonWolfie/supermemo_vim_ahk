@@ -88,7 +88,7 @@ t::  ; gt: open in Notepad
     path := Vim.SM.GetFilePath(false)
     SplitPath, path,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
-      run % "C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path
+      ShellRun("C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path)
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       send ^{f7}  ; save read point

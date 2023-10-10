@@ -258,8 +258,8 @@ SMSetLinkFromClipboard:
   WinWaitClose
   if (Vim.SM.HandleSM19PoundSymbUrl(Clipboard) && (A_ThisLabel == "r"))
     Vim.SM.Reload(, true)
-  if (A_ThisLabel == "r")
-    Vim.SM.AskPrio()
+  ; if (A_ThisLabel == "r")
+  ;   Vim.SM.AskPrio()
 return
 
 m::

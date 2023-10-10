@@ -251,9 +251,9 @@ return                                                               ;|
 ;                     CapsLock + .  |  Ctrl + BackSpace              ;|
 ;-----------------------------------o---------------------------------o
 CapsLock & ,::send {Del}                                             ;|
-CapsLock & .::send ^+{right}{bs}                                     ;|
+CapsLock & .::send % WinActive("ahk_group SM") ? "^+{right}{del}" : "^{del}"
 CapsLock & m::send {BS}                                              ;|
-CapsLock & n::send ^+{left}{bs}                                      ;|
+CapsLock & n::send % WinActive("ahk_group SM") ? "^+{left}{bs}" : "^{bs}"
 ;---------------------------------------------------------------------o
 
 

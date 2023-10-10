@@ -1194,7 +1194,7 @@ RunDefaultBrowser() {
     WinActivate
     return 1
   } else {
-    run % DefaultBrowser
+    ShellRun(DefaultBrowser)
     return 2
   }
 }

@@ -25,7 +25,11 @@ return
 +z::Vim.State.SetMode("Z")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::
-  send ^s!{F4}
+  if (WinActive("ahk_class TInputDlg")) {
+    send ^{enter}
+  } else {
+    send ^s!{F4}
+  }
   Vim.State.SetMode("Vim_Normal")
 Return
 

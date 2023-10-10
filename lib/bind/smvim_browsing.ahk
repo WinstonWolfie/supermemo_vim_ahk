@@ -26,10 +26,10 @@ s::  ; gs: go to link
   Vim.State.SetMode()
   if (link := Vim.SM.GetLink()) {
     if (IfContains(A_ThisLabel, "+")) {
-      ; run % "iexplore.exe " . link  ; RIP IE
+      ; ShellRun("iexplore.exe " . link)  ; RIP IE
       Vim.Browser.RunInIE(link)
     } else {
-      try run % link
+      try ShellRun(link)
       catch {
         RunDefaultBrowser()
         WinWaitActive, ahk_group Browser
@@ -104,7 +104,7 @@ r::  ; reload
       Vim.SM.GoBack()
     } else {
       RootTitle := WinGetTitle("A")
-      Vim.SM.Learn(false)
+      Vim.SM.Learn(false)  ; false bc on pending queue ^l triggers the "learn new material?" window
       ; In neural review, going to root element and press learn goes to the next neural review queue
       if (ContLearn == 2) {
         if (WinWaitTitleChange(RootTitle, "A", 1500) != CurrTitle) {

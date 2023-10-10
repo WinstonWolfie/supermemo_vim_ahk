@@ -29,7 +29,7 @@ LAlt & RAlt::  ; for laptop
     Vim.State.SetMode("Insert")
 return
 
-#f::run C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Everything 1.5a.lnk
+#f::ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Everything 1.5a.lnk")
 ^#h::send ^#{left}
 ^#l::send ^#{right}
 +#h::send +#{left}
@@ -38,8 +38,8 @@ return
 ^+!p::
 Plan:
   Vim.State.SetMode("Vim_Normal")
-  if (!WinExist("ahk_group SuperMemo")) {
-    run C:\SuperMemo\systems\all.kno
+  if (!WinExist("ahk_group SM")) {
+    ShellRun("C:\SuperMemo\systems\all.kno")
     WinWait, ahk_class TElWind,, 3
     if (ErrorLevel)
       return
@@ -77,7 +77,7 @@ return
 ^!i::  ; open in *I*E
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   Vim.Browser.RunInIE(Vim.Browser.ParseUrl(uiaBrowser.GetCurrentURL()))
-  ; run % "iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL()  ; RIP old method)
+  ; ShellRun("iexplore.exe " . Vim.Browser.ParseUrl(GetActiveBrowserURL()))  ; RIP old method
 Return
 
 ^!t::  ; copy title
@@ -443,7 +443,7 @@ return
 
 ^+e::
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-  run % "msedge.exe " . uiaBrowser.GetCurrentUrl()
+  ShellRun("msedge.exe " . uiaBrowser.GetCurrentUrl())
 return
 
 #if (Vim.State.Vim.Enabled && ((wBrowser := WinActive("ahk_group Browser")) ; browser group (Chrome, Edge, Firefox)
@@ -501,7 +501,7 @@ return
       Clipboard := Vim.HTML.Clean(data)
       ClipWait
     }
-    if (!WinExist("ahk_group SuperMemo")) {
+    if (!WinExist("ahk_group SM")) {
       a := CleanHTML ? " (in HTML)" : ""
       ToolTip("SuperMemo is not open; the text you selected" . a . " is on your clipboard.")
       return
@@ -760,13 +760,13 @@ return
 ; IE
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ; Open in default browser (in my case, Chrome); similar to default shortcut ^+e to open in ms edge
-^+c::run % ControlGetText("Edit1", "A")  ; browser url field)
-^+e::run % "msedge.exe " . ControlGetText("Edit1", "A")
+^+c::ShellRun(ControlGetText("Edit1", "A"))  ; browser url field
+^+e::ShellRun("msedge.exe " . ControlGetText("Edit1", "A"))
 ^!l::ToolTip("Copied " . Clipboard := ControlGetText("Edit1", "A"))
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))
 ^+c::
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-  run % uiaBrowser.GetCurrentUrl()
+  ShellRun(uiaBrowser.GetCurrentUrl())
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe
@@ -949,6 +949,6 @@ return
   } else {
     aBtn := el.FindAllBy("ControlType=Text AND Name='network_check'")
     for i, v in aBtn
-      v.Click()
+      v.ControlClick()
   }
 return

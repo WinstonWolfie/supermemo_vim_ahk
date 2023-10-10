@@ -275,6 +275,10 @@ class VimBrowser {
       this.Source := "维基百科", this.Title := RegExReplace(this.Title, " - 维基百科，自由的百科全书$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "本页面最后修订于(.*?) \(", v), this.Date := v1
+    } else if (this.Title ~= " - 維基大典$") {
+      this.Source := "維基大典", this.Title := RegExReplace(this.Title, " - 維基大典$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "此頁(.*?) （", v), this.Date := v1
     } else if (this.Title ~= " - 維基百科，自由的百科全書$") {
       this.Source := "維基百科", this.Title := RegExReplace(this.Title, " - 維基百科，自由的百科全書$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))

@@ -99,21 +99,21 @@ class VimAhk {
     ; Q-Dir
     GroupAdd, VimQdir, ahk_exe Q-Dir_x64.exe  ; q-dir
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe  ; q-dir
-  
+
     GroupAdd, HTML, ahk_exe iexplore.exe  ; Internet Explorer
     GroupAdd, HTML, ahk_exe WINWORD.exe  ; Word
     GroupAdd, HTML, ahk_exe OUTLOOK.exe
-  
-    GroupAdd, SuperMemo, ahk_exe sm19.exe
-    GroupAdd, SuperMemo, ahk_exe sm18.exe
-    GroupAdd, SuperMemo, ahk_exe sm17.exe
-    GroupAdd, SuperMemo, ahk_exe sm16.exe
-    GroupAdd, SuperMemo, ahk_exe sm15.exe
-    
+
+    GroupAdd, SM, ahk_exe sm19.exe
+    GroupAdd, SM, ahk_exe sm18.exe
+    GroupAdd, SM, ahk_exe sm17.exe
+    GroupAdd, SM, ahk_exe sm16.exe
+    GroupAdd, SM, ahk_exe sm15.exe
+
     GroupAdd, Browser, ahk_exe chrome.exe
     GroupAdd, Browser, ahk_exe firefox.exe
     GroupAdd, Browser, ahk_exe msedge.exe  ; Microsoft Edge
-    
+
     GroupAdd, VimExcluded, ahk_class #32770  ; windows + r
 
     GroupAdd, VimForceScroll, ahk_exe WINWORD.exe

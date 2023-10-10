@@ -459,7 +459,7 @@ class VimSM {
     if (!WindFound) {
       MsgBox, 3,, SuperMemo is processing something. Do you want to launch a new window?
       if (IfMsgbox("yes")) {
-        run C:\SuperMemo\sm18.exe
+        ShellRun("C:\SuperMemo\sm18.exe")
         WinWaitActive, ahk_class TElWind
       } else {
         return
@@ -850,7 +850,7 @@ class VimSM {
       } else {
         if ((url ~= "file:\/\/") && (url ~= "#.*"))
           v := url, url := RegExReplace(url, "#.*")
-        try run % url
+        try ShellRun(url)
         catch
           return false
         if (v) {
@@ -1069,6 +1069,16 @@ class VimSM {
         ControlSetText, TMemo1, % url
       ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
       WinWaitClose
+      WinWait, % "ahk_class TChoicesDlg ahk_pid " . SMPID,, 0.3
+      if (!ErrorLevel) {
+        ControlFocus, TGroupButton3
+        ControlClick, TBitBtn2,,,,, NA
+        WinWaitClose
+        WinWait, % "ahk_class TChoicesDlg ahk_pid " . SMPID
+        ControlFocus, TGroupButton2
+        ControlClick, TBitBtn2,,,,, NA
+        WinWaitClose
+      }
       WinClose, % "ahk_class TRegistryForm ahk_pid " . SMPID
       return true
     }

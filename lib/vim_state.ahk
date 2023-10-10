@@ -126,9 +126,9 @@ class VimState {
     neither := !(VimLongEscNormal || LongPress)
     SetNormal := (both || neither)
     ; In SuperMemo you can use esc to both escape and enter normal mode
-    if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert))
+    if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SM") && SMVimSendEscInsert))
       send {Esc}
-    if (SetNormal || (WinActive("ahk_group SuperMemo") && SMVimSendEscInsert))
+    if (SetNormal || (WinActive("ahk_group SM") && SMVimSendEscInsert))
       this.SetNormal()
     if (LongPress) {
       ; Have to ensure the key has been released, otherwise this will get

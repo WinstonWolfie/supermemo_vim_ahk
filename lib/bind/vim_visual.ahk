@@ -39,7 +39,7 @@ Return
       } else {
         Vim.Move.SelectParagraphDown(), Vim.State.SetMode("Vim_VisualParagraphFirst")
       }
-    } else if (WinActive("ahk_group SuperMemo")) {
+    } else if (WinActive("ahk_group SM")) {
       Goto VisualLine
     } else {
       if (!WinActive("ahk_exe notepad++.exe"))  ; notepad++ requires alt down
@@ -153,6 +153,7 @@ u::
 ConvertToLowercaseClipped:
 ConvertToUppercaseClipped:
   html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
+  KeyWait Shift
   if (IfIn(A_ThisLabel, "ConvertToLowercase,u,ConvertToLowercaseClipped")) {
     Clip(StrLower(Copy(false, html)),, false, html)
   } else if (IfIn(A_ThisLabel, "ConvertToUppercase,+u,ConvertToUppercaseClipped")) {
@@ -178,6 +179,7 @@ InvertCaseClipped:
     else
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Lab_Invert_Char
   }
+  KeyWait Shift
   Clip(Lab_Invert_Char_Out,, false, html)
   WinClip._waitClipReady()
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
