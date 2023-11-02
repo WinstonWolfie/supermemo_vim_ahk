@@ -28,17 +28,36 @@ return
   if (WinActive("ahk_class TInputDlg")) {
     send ^{enter}
   } else {
-    send ^s!{F4}
+    send ^s
+    if (WinActive("ahk_exe Notepad.exe")) {
+      send ^w
+    } else {
+      send !{F4}
+    }
   }
   Vim.State.SetMode("Vim_Normal")
 Return
 
 +q::
-  send !{F4}
-  if (hWnd := WinActive("ahk_class Notepad")) {
-    UIA := UIA_Interface()
-    el := UIA.ElementFromHandle(hWnd)
-    el.WaitElementExist("ControlType=Button AND Name='Don\'t save' AND AutomationId='SecondaryButton'",,,, 1000).Click()
+  hWnd := WinActive("A"), SMInput := WinActive("ahk_class TInputDlg")
+  if (WinActive("ahk_exe Notepad.exe")) {
+    send ^w
+  } else {
+    send !{F4}
+  }
+  if (SMInput) {
+    WinWaitActive, ahk_class TMsgDialog,, 0
+    if (!ErrorLevel)
+      send {text}n
+  } else {
+    WinWaitClose, % "ahk_id " . hWnd,, 0.1
+    if (ErrorLevel) {
+      if (hWnd := WinActive("ahk_exe Notepad.exe")) {
+        UIA := UIA_Interface()
+        el := UIA.ElementFromHandle(hWnd)
+        el.WaitElementExist("ControlType=Button AND Name='Don\'t save' AND AutomationId='SecondaryButton'",,,, 1000).Click()
+      }
+    }
   }
   Vim.State.SetMode("Vim_Normal")
 Return

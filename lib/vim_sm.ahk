@@ -7,13 +7,13 @@ class VimSM {
                    . "|italic|bold|small-caps"
   }
 
-  DoesTextExist() {
+  DoesTextExist(RestoreClip:=true) {
     if (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")
      || ControlGet(,, "TMemo1", "ahk_class TElWind")
      || ControlGet(,, "TRichEdit1", "ahk_class TElWind")) {
       return true
     } else {
-      return IfContains(this.GetTemplCode(), "Type=Text", true)
+      return IfContains(this.GetTemplCode(RestoreClip), "Type=Text", true)
     }
   }
 
@@ -352,7 +352,7 @@ class VimSM {
     }
   }
 
-  PlayIfCertainColl(CollName:="", timeout:=0) {
+  PlayIfPassiveColl(CollName:="", timeout:=0) {
     CollName := CollName ? CollName : this.GetCollName()
     if (CollName ~= "i)^(bgm|piano)$")
       return
@@ -368,11 +368,13 @@ class VimSM {
     }
   }
 
-  SaveHTML(method:=0, timeout:=0) {
-    timeout := timeout ? timeout / 1000 : ""
+  SaveHTML(method:=0, timeout:="") {
+    Timeout := Timeout ? Timeout / 1000 : Timeout
     this.OpenNotepad(method, timeout)
-    WinWaitNotActive, ahk_class TElWind,, % timeout
-    WinClose, ahk_class Notepad
+    WinWaitActive, ahk_exe Notepad.exe,, % Timeout
+    WinActivate
+    ControlSend,, {CtrlDown}w{CtrlUp}
+    WinClose
     WinActivate, ahk_class TElWind
     WinWaitActive, ahk_class TElWind
     return !ErrorLevel
@@ -403,6 +405,20 @@ class VimSM {
     return ret
   }
 
+  GetLinkInComment(TemplCode:="", RestoreClip:=true) {
+    if (res := (RestoreClip && !TemplCode)) {
+      ClipSaved := ClipboardAll
+      global WinClip
+      WinClip.Clear()
+    }
+    TemplCode := TemplCode ? TemplCode : this.GetTemplCode(false)
+    RegExMatch(TemplCode, "(?<=#Comment: ).*?(?=<\/FONT><\/SuperMemoReference>)", Comment)
+    DoesTextContainUrl(Comment, v)
+    if (res)
+      Clipboard := ClipSaved
+    return v
+  }
+
   GetFilePath(RestoreClip:=true) {
     this.ActivateElWind()
     return Copy(RestoreClip,,, "!{f12}fc", true)
@@ -411,7 +427,7 @@ class VimSM {
   SetTitle(title:="", timeout:="") {
     if (WinGetTitle("ahk_class TElWind") == title)
       return true
-    timeout := timeout ? timeout / 1000 : ""
+    Timeout := Timeout ? Timeout / 1000 : Timeout
     this.AltT()
     GroupAdd, SMAltT, ahk_class TChoicesDlg
     GroupAdd, SMAltT, ahk_class TTitleEdit
@@ -459,7 +475,7 @@ class VimSM {
     if (!WindFound) {
       MsgBox, 3,, SuperMemo is processing something. Do you want to launch a new window?
       if (IfMsgbox("yes")) {
-        ShellRun("C:\SuperMemo\sm18.exe")
+        ShellRun("C:\SuperMemo\sm19.exe")
         WinWaitActive, ahk_class TElWind
       } else {
         return
@@ -533,7 +549,7 @@ class VimSM {
     if (EnterInsert)
       this.EnterInsertIfSpelling()
     if (AutoPlay)
-      this.PlayIfCertainColl()
+      this.PlayIfPassiveColl()
   }
 
   Reload(timeout:=0, ForceBG:=false) {
@@ -665,18 +681,22 @@ class VimSM {
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
     ; Can't just encode URI, Chinese characters will be encoded
     ; For some reason, SuperMemo only encodes some part of the url (probably because of SuperMemo uses a lower version of IE?)
-    if (IsUrl(text)) {
-      text := StrReplace(text, "%20", " ")
-      text := StrReplace(text, "%3F", "?")
-      text := StrReplace(text, "%27", "'")
-      text := StrReplace(text, "%21", "!")
-    }
+    if (IsUrl(text))
+      text := this.HTMLUrl2SMLinkUrl(text)
     if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(text, "youtube.com/watch?v="))  ; sm19 deletes www from www.youtube.com
       text := RegExReplace(text, "^.*?(?=youtube\.com\/watch\?v=)")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if ((ContLearn == 1) && this.LastCtrlFNotFound)
       this.Learn()
     return ret
+  }
+
+  HTMLUrl2SMLinkUrl(url) {
+    url := StrReplace(url, "%20", " ")
+    url := StrReplace(url, "%3F", "?")
+    url := StrReplace(url, "%27", "'")
+    url := StrReplace(url, "%21", "!")
+    return url
   }
 
   CtrlF(text, ClearHighlight:=true, ToolTip:="Not found.") {
@@ -787,7 +807,8 @@ class VimSM {
         this.Vim.State.SetNormal(), ToolTip("Text not found.")
         return false
       } else if (WinGetClass() == "TCommanderDlg") {  ; ^enter opened commander
-        send h{enter}  ; clear highlight
+        send {text}h  ; clear highlight
+        send {enter}
         WinWaitNotActive
         this.PostMsg(msg)
         WinWaitActive, ahk_class TMyFindDlg
@@ -972,14 +993,16 @@ class VimSM {
     Clipboard := add . this.MakeReference()
   }
 
-  DoesHTMLContainText() {
+  DoesHTMLContainText(byref link) {
     UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1", "A")
-    el := UIA.ElementFromHandle(hCtrl).FindFirstByType("text")
-    return !(el.Name == "#SuperMemo Reference:")
+    el := UIA.ElementFromHandle(hCtrl)
+    text := el.FindFirstByType("text")
+    link := el.FindFirstByType("Hyperlink").Value
+    return !(text.Name == "#SuperMemo Reference:")
   }
 
-  IsEmptyTopic() {
-    return (!this.HasTwoComp() && this.DoesTextExist() && !this.DoesHTMLContainText())
+  IsEmptyTopic(byref link) {
+    return (!this.HasTwoComp() && this.DoesTextExist() && !this.DoesHTMLContainText(link))
   }
 
   AskPrio() {
@@ -1000,10 +1023,10 @@ class VimSM {
   }
 
   OpenNotepad(method:=0, timeout:=0) {
-    this.ExitText(true, timeout)
     if (method) {
       send !{f12}fw
     } else {
+      this.ExitText(true, timeout)
       send ^+{f6}
     }
   }
@@ -1081,6 +1104,22 @@ class VimSM {
       }
       WinClose, % "ahk_class TRegistryForm ahk_pid " . SMPID
       return true
+    }
+  }
+
+  GetElNumber(TemplCode:="", RestoreClip:=true) {
+    TemplCode := TemplCode ? TemplCode : this.GetTemplCode(RestoreClip)
+    RegExMatch(TemplCode, "Begin Element #(\d+)", v)
+    return v1
+  }
+
+  PoundSymbLinkToComment() {
+    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(this.Vim.Browser.Url, "#")) {
+      PoundSymbCommentList := "workflowy.com"
+      if (IfContains(this.Vim.Browser.Url, PoundSymbCommentList)) {
+        this.Vim.Browser.Comment := this.Vim.Browser.Url
+        return true
+      }
     }
   }
 }

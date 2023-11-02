@@ -210,7 +210,7 @@ SMHyperLinkToTopic:
     return
   }
   script := "url " . Vim.Browser.Url
-  if (Vim.Browser.VidTime && IfIn(Vim.Browser.IsVidSite(vim.browser.FullTitle), "1,2")) {
+  if (Vim.Browser.VidTime && IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2")) {
     sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
     if (IfContains(Vim.Browser.Url, "youtube.com")) {
       script .= "&t=" . sec . "s"
@@ -238,11 +238,13 @@ r::  ; set *r*eference's link to what's in the clipboard
 
 SMSetLinkFromClipboard:
   ; Had to edit title first, in case of multiple references change
-  if ((A_ThisLabel == "SMSetLinkFromClipboard") && Vim.Browser.Title)
+  if ((Vim.SM.IsPassive() || !Vim.SM.IsItem()) && Vim.Browser.Title)
     Vim.SM.SetTitle(Vim.Browser.Title)
   Vim.SM.EditRef()
   WinWaitActive, ahk_class TInputDlg
-  Ref := "#Link: " . Clipboard . "`r`n" . ControlGetText("TMemo1")
+  Vim.Browser.Url := Clipboard
+  SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
+  Ref := "#Link: " . Vim.Browser.Url . "`r`n" . ControlGetText("TMemo1")
   if (Vim.Browser.Title)
     Ref := "#Title: " . Vim.Browser.Title . "`r`n" . Ref
   if (Vim.Browser.Source)
@@ -256,7 +258,7 @@ SMSetLinkFromClipboard:
   ControlSetText, TMemo1, % Ref
   ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
   WinWaitClose
-  if (Vim.SM.HandleSM19PoundSymbUrl(Clipboard) && (A_ThisLabel == "r"))
+  if (!SMPoundSymbHandled && Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url) && (A_ThisLabel == "r"))
     Vim.SM.Reload(, true)
   ; if (A_ThisLabel == "r")
   ;   Vim.SM.AskPrio()
@@ -311,7 +313,7 @@ SMLearnChildActiveBrowser:
   Vim.SM.WaitBrowser()
   send ^l
   WinWaitActive, ahk_class TElWind
-  Vim.SM.PlayIfCertainColl(, 500)
+  Vim.SM.PlayIfPassiveColl(, 500)
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))

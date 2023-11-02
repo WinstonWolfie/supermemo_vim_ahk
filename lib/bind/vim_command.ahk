@@ -52,7 +52,7 @@ Return
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
-        . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML"
+        . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -220,7 +220,7 @@ DefineGoogle:
   Gui, GoogleDefine:Add, Text,, &Search:
   Gui, GoogleDefine:Add, Edit, vSearch w136 r1 -WantReturn, % search
   Gui, GoogleDefine:Add, Text,, &Language Code:
-  list := "en-uk||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr|zh-hk|zh"
+  list := "en-uk||en-us|es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr|zh-hk|zh"
   Gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete w136, % list
   Gui, GoogleDefine:Add, Button, default, &Search
   Gui, GoogleDefine:Show,, Google Define
@@ -243,6 +243,8 @@ GoogleDefineButtonSearch:
       define := "definisci"
     } else if (LangCode = "en-uk") {
       add := "&gl=gb"
+    } else if (LangCode = "en-us") {
+      add := "&gl=us"
     }
     ShellRun("https://www.google.com/search?hl=" . LangCode . "&q=" . define . " "
            . search . "&forcedict=" . search . "&dictcorpus=" . LangCode . "&expnd=1" . add)
@@ -356,7 +358,7 @@ TranslateGoogle:
 return
 
 ClearClipboard:
-  ShellRun(ComSpec . " /c echo off | clip")
+  run % ComSpec . " /c echo off | clip"
 return
 
 MemoriseChildren:
@@ -383,7 +385,7 @@ return
 
 OALD:
   if (word := FindSearch("Oxford Advanced Learner's Dictionary", "Word:"))
-    ShellRun("https://www.oxfordlearnersdictionaries.com/definition/english/" . word . "?q=" . word)
+    ShellRun("https://www.oxfordlearnersdictionaries.com/definition/english/" . word)
 return
 
 AlatiusLatinMacronizer:
@@ -420,7 +422,7 @@ ReformatScriptComponent:
     if (YTTime) {
       send ^t{f9}  ; opens script editor
       WinWaitActive, ahk_class TScriptEditor
-      ControlSetText, TMemo1, % ControlGetText("TMemo1", "A") . YTTime, A
+      ControlSetText, TMemo1, % ControlGetText("TMemo1", "A") . YTTime
       send !o{esc}  ; close script editor
     }
   } else {
@@ -605,17 +607,17 @@ ImageGoogle:
 return
 
 SearchLinkInYT:
-  if (!link := Vim.SM.GetLink() && Vim.SM.DoesHTMLExist()) {
+  if ((!link := Vim.SM.GetLink()) && Vim.SM.DoesHTMLExist()) {
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
     send ^{home}+{right}
     RegExMatch(Copy(, true), "(<A((.|\r\n)*)href="")\K[^""]+", link)
     send {esc}
   }
-  SMTitle := WinGetTitle("ahk_class TElWind")
   if (link) {
-    ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(SMTitle))
+    ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(WinGetTitle("ahk_class TElWind")))
     WinWaitActive, ahk_group Browser
+    sleep 400
     uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     uiaBrowser.WaitPageLoad()
     uiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
@@ -699,7 +701,7 @@ return
 OpenInAcrobat:
   send q^{t}{f9}
   if (path := Vim.SM.GetFilePath())
-    ShellRun("acrobat.exe " . path)
+    ShellRun("acrobat.exe", path)
 return
 
 Larousse:
@@ -749,11 +751,11 @@ KillOutlook:
 return
 
 RestartOneDrive:
-  process, close, OneDrive.exe
+  Process, Close, OneDrive.exe
   ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk")
-  WinWait, OneDrive ahk_class CabinetWClass ahk_exe explorer.exe
-  WinClose
-  WinActivate, % "ahk_id " . hWnd
+  WinWait, ahk_class CabinetWClass ahk_exe explorer.exe,, 10
+  if (!ErrorLevel)
+    WinClose
 return
 
 RestartICloudDrive:
@@ -826,43 +828,47 @@ RetryAllSyncErrors:
 return
 
 MassReplaceRegistry:
-  find := "YouTube: "
+  find := "https://finance.yahoo.com/quote/"
   replacement := ""
   if (!find && !replacement)
     return
+  ; ControlSend, Edit1, % "{text}" . find, A
+  loop {
+    send !r
+    WinWaitActive, ahk_class TInputDlg
+    text := ControlGetText("TMemo1")
+    ; if (InStr(text, find) != 1)
+    ;   return
+    if ((InStr(text, find) != 1) || (text ~= "\/$"))
+      return
+    ; ControlSetText, TMemo1, % StrReplace(text, find, replacement)
+    ControlSetText, TMemo1, % text . "/"
+    send !{enter}
+    WinWaitActive, ahk_class TRegistryForm
+    ControlSetText, Edit1  ; clear
+    send {down}
+  }
   ; loop {
   ;   ControlSend, Edit1, % "{text}" . find, A
-  ;   send !r
+  ;   Gosub SMRegAltG
+  ;   WinWaitActive, ahk_class TElWind
+  ;   Vim.SM.EditRef()
   ;   WinWaitActive, ahk_class TInputDlg
   ;   text := ControlGetText("TMemo1")
-  ;   if (InStr(text, find) != 1)
+  ;   if (!IfContains(text, find))
   ;     return
-  ;   ControlSetText, TMemo1, % StrReplace(text, find, replacement)
+  ;   text := RegExReplace(text, "#Source: " . find . "(.*)", "#Author: $1")
+  ;   text .= "`r`n#Source: YouTube"
+  ;   ControlSetText, TMemo1, % text
   ;   send !{enter}
+  ;   WinWaitActive, ahk_class TElWind
+  ;   ; WinWaitActive, ahk_class TChoicesDlg,, 0.3
+  ;   ; if (!ErrorLevel)
+  ;   ;   send {down}{enter}
+  ;   Vim.SM.PostMsg(154)
   ;   WinWaitActive, ahk_class TRegistryForm
   ;   ControlSetText, Edit1  ; clear
   ; }
-  loop {
-    ControlSend, Edit1, % "{text}" . find, A
-    Gosub SMRegAltG
-    WinWaitActive, ahk_class TElWind
-    Vim.SM.EditRef()
-    WinWaitActive, ahk_class TInputDlg
-    text := ControlGetText("TMemo1")
-    if (!IfContains(text, find))
-      return
-    text := RegExReplace(text, "#Source: " . find . "(.*)", "#Author: $1")
-    text .= "`r`n#Source: YouTube"
-    ControlSetText, TMemo1, % text
-    send !{enter}
-    WinWaitActive, ahk_class TElWind
-    ; WinWaitActive, ahk_class TChoicesDlg,, 0.3
-    ; if (!ErrorLevel)
-    ;   send {down}{enter}
-    Vim.SM.PostMsg(154)
-    WinWaitActive, ahk_class TRegistryForm
-    ControlSetText, Edit1  ; clear
-  }
 return
 
 AllLapsesToday:
@@ -918,6 +924,7 @@ ExternaliseRegistry:
     WinWaitActive, ahk_class TRegistryForm
     WinClose
   }
+  Vim.State.SetMode("Vim_Normal")
 return
 
 AlignTextsLeft:
@@ -978,16 +985,33 @@ CleanHTML:
     HTML := FileRead(HTMLPath)
     FileDelete % HTMLPath
     FileAppend, % Vim.HTML.Clean(HTML), % HTMLPath
+    ToolTip("Completed.")
+  } else {
+    ToolTip("Not found.")
   }
-  ToolTip("Completed.")
 return
 
 SaveFile:
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-  if (RegExMatch(url := uiaBrowser.GetCurrentURL(true), "\/[^\/\.]+\.[^\/\.]+$", v))
+  url := uiaBrowser.GetCurrentURL(true)
+  if (r := RegExMatch(url, "\/[^\/\.]+\.[^\/\.]+$", v))
     UrlDownloadToFile, % url, % FilePath := "d:" . v
+  if (!r || ErrorLevel) {
+    ToolTip("Failed.")
+    return
+  }
   SplitPath, FilePath, name, dir, ext, NameNoExt
   if (ext = "ogg")
     RunWait, % "cmd /c ffmpeg -i """ . FilePath . """ -acodec libmp3lame """ . dir . "\" . NameNoExt . ".mp3"" && del """ . FilePath . """",, Hide
-  ToolTip("Finished.")
+  ToolTip("Success.")
+return
+
+EPUB2TXT:
+  if (EpubPath := FindSearch("EPUB2TXT", "Path:")) {
+    TxtPath := StrReplace(EpubPath, ".epub", ".txt")
+    RunWait, % "pandoc -f epub -t plain -o """ . TxtPath . """ """ . EpubPath . """",, Hide
+    ToolTip("Completed.")
+  } else {
+    ToolTip("Not found.")
+  }
 return

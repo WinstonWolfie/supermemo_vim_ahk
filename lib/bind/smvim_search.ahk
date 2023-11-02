@@ -60,7 +60,7 @@ SearchButtonFind:
   Gui, Destroy
   if (UserInput == "")
     Return
-  VimLastSearch := UserInput  ; register UserInput into VimLastSearch
+  VimLastSearch := UserInput := Trim(UserInput)
   ; Previously, UserInput is stored in Vim.Move.LastSearch, but it turned out this would add 000... in floating numbers
   ; ie, 3.8 would become 3.80000
   WinActivate, ahk_class TElWind
@@ -130,7 +130,7 @@ SMSearchAgain:
     if (AltState && !CtrlState && !ShiftState && !CapsState) {
       send !z
     } else if (AltState && ShiftState) {
-      ClozeHinterCtrlState := CtrlState
+      ClozeHinterCtrlState := CtrlState, InitText := UserInput
       Gosub ClozeHinter
     } else if (AltState && CapsState) {
       ClozeHinterCtrlState := CtrlState

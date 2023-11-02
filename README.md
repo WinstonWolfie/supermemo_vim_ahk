@@ -4,7 +4,7 @@ Setting file to emulate vim with AutoHotkey, works with SuperMemo
 
 # To Do
 
-I apologise for still not *finished* writing a documentation (it's being written incrementally!), the keybinds are fairly similar to Vim, except `q` for extract and `z` for cloze, so you can do stuff like `zt.` to cloze until a full stop, and `qip` to extract inner paragraph. [vim-sneak](https://github.com/justinmk/vim-sneak) is added as well, so you can do `d2zth` to delete until the 2nd "th".
+I apologise for still not finished writing a documentation (it's being written incrementally!), the keybinds are fairly similar to Vim, except `q` for extract and `z` for cloze, so you can do stuff like `zt.` to cloze until a full stop, and `qip` to extract inner paragraph. [vim-sneak](https://github.com/justinmk/vim-sneak) is added as well, so you can do `d2zth` to delete until the 2nd "th".
 
 # Cheat sheet
 
@@ -137,6 +137,8 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 ### Browsing (not focused to any text component)
 
 `gs`: go to current reference link (`gS` to open it in IE)
+
+`gm`: go to the link found in comment (`gM` to open it in IE)
 
 `gn`: open the last focused text/HTML file in notepad
 
@@ -403,8 +405,6 @@ Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
 `H` / `<A-h>`: go back in history
 
 `L` / `<A-l>`: go forward in history
-
-`c`: open content window
 
 `b`: open browser
 

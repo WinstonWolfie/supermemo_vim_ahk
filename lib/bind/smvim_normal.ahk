@@ -41,7 +41,7 @@ return
 u::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
 +x::
-x::  ; open hyperlink in current caret position (Open in *n*ew window)
+x::  ; gx: open hyperlink in current caret position (Open in *n*ew window)
   Vim.State.SetMode()
   ClipSaved := ClipboardAll
   if (!Copy(false,,, "+{right}^c{left}")) {  ; end of line
@@ -61,6 +61,7 @@ x::  ; open hyperlink in current caret position (Open in *n*ew window)
       }
     }
     if (CurrLink) {
+      CurrLink := StrReplace(CurrLink, "&amp;", "&")
       if (A_ThisLabel == "u") {
         ToolTip("Copied " . Clipboard := CurrLink)
       } else if (IfContains(A_ThisLabel, "x")) {
@@ -79,16 +80,16 @@ s::  ; gs: go to source
 f::  ; gf: open source file
 t::  ; gt: open in Notepad
   Vim.State.SetMode(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
+  CurrTitle := WinGetTitle("A")
   if (Notepad := IfIn(A_ThisLabel, "^+f6,t")) {
     send ^{f7}  ; save read point
-    Vim.SM.OpenNotepad()
-    w := "ahk_exe Notepad.exe"
+    Vim.SM.OpenNotepad(), w := "ahk_exe Notepad.exe"
   } else {
     ClipSaved := ClipboardAll
     path := Vim.SM.GetFilePath(false)
     SplitPath, path,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
-      ShellRun("C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe " . path)
+      ShellRun("C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe", path)
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       send ^{f7}  ; save read point
@@ -115,7 +116,12 @@ t::  ; gt: open in Notepad
     Vim.SM.Learn()
   } else if (!Notepad) {
     Vim.SM.WaitFileLoad()
+    t := WinGetTitle("A")
     Vim.SM.GoBack()
+    if ((CurrTitle == t) && (CurrTitle ~= "^Concept: ")) {
+      Vim.SM.WaitFileLoad()
+      send !{right}
+    }
   }
 return
 

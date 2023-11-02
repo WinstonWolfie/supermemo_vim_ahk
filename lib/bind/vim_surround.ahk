@@ -1,16 +1,17 @@
 #Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("ydc_y") && Vim.State.surround && !Vim.State.StrIsInCurrentVimMode("Inner,Outer") && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("ydc_y") && Vim.State.Surround && !Vim.State.StrIsInCurrentVimMode("Inner,Outer") && !Vim.State.g)
 s::Vim.Move.YDCMove(), Vim.State.SurroundChangeEntered := false
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc") && !Vim.State.StrIsInCurrentVimMode("Inner,Outer") && !Vim.State.g)
 s::
-  Vim.State.SetMode("",, -1,,, 1), Vim.Move.LastMode := Vim.State.Mode, Vim.State.SurroundChangeEntered := false
+  Vim.State.SetMode("",, -1,,, 1), Vim.Move.LastMode := Vim.State.Mode
+  Vim.State.SurroundChangeEntered := false
   Vim.Move.SurroundKeyEntered := Vim.State.StrIsInCurrentVimMode("ydc_d,ydc_c") ? true : false
 return
 
 #if (Vim.IsVimGroup()
   && Vim.State.StrIsInCurrentVimMode("Visual,Vim_ydc")
   && !Vim.State.StrIsInCurrentVimMode("Inner,Outer")
-  && ((Vim.State.surround && Vim.Move.SurroundKeyEntered) || Vim.State.SurroundChangeEntered))
+  && ((Vim.State.Surround && Vim.Move.SurroundKeyEntered) || Vim.State.SurroundChangeEntered))
 VimSurround:
 (::
 )::
@@ -30,7 +31,7 @@ b::
 +b::
 t::
   ClipSaved := ClipboardAll
-  CurrKey := (A_ThisLabel == "Surround") ? Vim.Move.LastSurroundKey : A_ThisLabel
+  CurrKey := (A_ThisLabel == "VimSurround") ? Vim.Move.LastSurroundKey : A_ThisLabel
   if (CurrKey == "b") {
     CurrKey := ")"
   } else if (CurrKey == "+b") {

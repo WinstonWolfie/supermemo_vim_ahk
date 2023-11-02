@@ -206,4 +206,8 @@ o::  ; move to other end of marked area; not perfect with line breaks
   Clipboard := ClipSaved
 return
 
-+s::Vim.State.SetMode(,,,,, 1)  ; surround
++s::
+  ; This resets the hotkey detection, so you can press +s and ) consecutively in visual mode to surround parentheses
+  send {LShift up}{RShift up}
+  Vim.State.SetMode(,,,,, 1)  ; surround
+return

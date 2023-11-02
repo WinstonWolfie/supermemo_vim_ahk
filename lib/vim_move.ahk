@@ -20,7 +20,7 @@ class VimMove {
   }
 
   IsReplace() {
-    return (this.Vim.State.StrIsInCurrentVimMode("ydc_c,SMVim_") || this.Vim.State.surround)
+    return (this.Vim.State.StrIsInCurrentVimMode("ydc_c,SMVim_") || this.Vim.State.Surround)
   }
   
   RestoreCopy() {
@@ -122,7 +122,7 @@ class VimMove {
     global WinClip
     if (this.Vim.State.Surround)
       this.SurroundKeyEntered := true
-    if (!this.Vim.State.surround || !this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")) {
+    if (!this.Vim.State.Surround || !this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")) {
       if (ydc_y := this.Vim.State.StrIsInCurrentVimMode("ydc_y")) {
         this.YdcClipSaved := Copy(false), this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_d")) {
@@ -156,6 +156,7 @@ class VimMove {
       } else if (this.Vim.State.StrIsInCurrentVimMode("ClozeStay")) {
         Gosub ClozeStay
       } else if (this.Vim.State.StrIsInCurrentVimMode("ClozeHinter")) {
+        global InitText := ""
         Gosub ClozeHinter
       } else if (this.Vim.State.StrIsInCurrentVimMode("ClozeNoBracket")) {
         Gosub ClozeNoBracket
@@ -188,7 +189,7 @@ class VimMove {
     if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe") && GetKeyState("Alt", "P"))
       send {AltUp}
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner,Outer"))
-      this.Vim.State.setmode("Vim_VisualChar",,,,, -1)
+      this.Vim.State.SetMode("Vim_VisualChar",,,,, -1)
   }
 
   Zero() {
@@ -289,7 +290,8 @@ class VimMove {
       this.shift := 0
 
     ; Left/Right
-    if (!this.Vim.State.StrIsInCurrentVimMode("Line,Paragraph")) {
+    ; if (!this.Vim.State.StrIsInCurrentVimMode("Line,Paragraph")) {
+    if (true) {  ; sometimes lines are not accurate, this allows minor adjusts
       ; For some cases, need '+' directly to continue to select
       ; especially for cases using shift as original keys
       ; For now, caret does not work even add + directly
@@ -1611,13 +1613,13 @@ class VimMove {
       return pos
     }
     if (!reversed) {
-      pos := RegExMatch(DetectionStr, "s)((\.|!|\?)((\[.*?\])+\s|[^" . this.WordBoundChars . ",.\]]+).*?){" . Occurrence - 1 . "}\K(\.|!|\?)((\[.*?\])+\s|[^" . this.WordBoundChars . ",.\]]+)", v)
+      pos := RegExMatch(DetectionStr, "s)((\.|!|\?)((\[.*?\])+\s|\d+​\s|[^" . this.WordBoundChars . ",.\]]+).*?){" . Occurrence - 1 . "}\K(\.|!|\?)((\[.*?\])+\s|\d+​\s|[^" . this.WordBoundChars . ",.\]]+)", v)
       if (pos)
         pos += StrLen(v) - 2
       this.v := v
       this.DetectionStr := DetectionStr
     } else {
-      pos := RegExMatch(DetectionStr, "s)((\s(\].*?\[)+|[^" . this.WordBoundChars . ",.\[]+)(\.|!|\?).*?){" . Occurrence - 1 . "}\K(\s(\].*?\[)+|[^" . this.WordBoundChars . ",.\[]+)(\.|!|\?)")
+      pos := RegExMatch(DetectionStr, "s)((\d+​\s|\s(\].*?\[)+|[^" . this.WordBoundChars . ",.\[]+)(\.|!|\?).*?){" . Occurrence - 1 . "}\K(\d+​\s|\s(\].*?\[)+|[^" . this.WordBoundChars . ",.\[]+)(\.|!|\?)")
     }
     return pos
   }

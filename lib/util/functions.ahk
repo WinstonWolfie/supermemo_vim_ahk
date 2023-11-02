@@ -1070,7 +1070,7 @@ EncodeHTML(String, Flags := 1)
 }
 
 CopyAll(Timeout:=2500) {
-  Timeout := Timeout ? Timeout / 1000 : ""
+  Timeout := Timeout ? Timeout / 1000 : Timeout
   global WinClip
   WinClip.Clear()
   send {CtrlDown}a{Ins}{CtrlUp}{Esc}

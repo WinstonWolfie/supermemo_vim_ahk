@@ -138,7 +138,7 @@ return
     TempClip := StrReplace(TempClip, "`r`n", ", ")
     TempClip := RegExReplace(TempClip, "Synonyms & Similar Words, , (Relevance, )?", "syn: ")
     TempClip := StrReplace(TempClip, ", Antonyms & Near Antonyms, , ", "`r`n`r`nant: ")
-  } else if (IfContains(url, "en.wiktionary.org/wiki")) {
+  } else if (IfContains(url, "en.wiktionary.org/w")) {
     TempClip := RegExReplace(TempClip, "Synonyms?:", "syn:")
     TempClip := RegExReplace(TempClip, "Antonyms?:", "ant:")
   } else if (IfContains(url, "collinsdictionary.com")) {
@@ -220,9 +220,8 @@ IWBNewTopic:
     return
   }
   SetTimer, PressBrowserBtn, -1
-  Vim.SM.CloseMsgWind()
+  Vim.SM.CloseMsgWind(), IWB := IfContains(A_ThisLabel, "x,IWB")
   ClipSaved := ClipboardAll
-  IWB := IfContains(A_ThisLabel, "x,IWB")
   Passive := Vim.SM.IsPassive(CollName := Vim.SM.GetCollName()
                             , ConceptBefore := Vim.SM.GetCurrConcept())
   if (!IWB && Vim.SM.CheckDup(Vim.Browser.Url, false))
@@ -231,8 +230,14 @@ IWBNewTopic:
   WinActivate % wBrowser
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
     Goto ImportReturn
-  Prio := Concept := CloseTab := DownloadHTML := ResetVidTime := ""
+  Prio := Concept := CloseTab := DLHTML := ResetVidTime := DLCheck := ""
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
+
+  if (!IWB) {
+    DLList := "investopedia.com,webmd.com,britannica.com"
+    DLCheck := IfContains(Vim.Browser.Url, DLList) ? " checked" : ""
+  }
+
   if (IfContains(A_ThisLabel, "+,Prio")) {
     SetDefaultKeyboard(0x0409)  ; English-US
     Gui, SMImport:Add, Text,, % "Current collection: " . CollName
@@ -243,13 +248,15 @@ IWBNewTopic:
     Gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % list
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
     if (!IWB)
-      Gui, SMImport:Add, Checkbox, vDownloadHTML, Import fullpage &HTML
+      Gui, SMImport:Add, Checkbox, % "vDLHTML" . DLCheck, Import fullpage &HTML
     if (IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
       Gui, SMImport:Add, Checkbox, vResetVidTime, &Reset time stamp
     Gui, SMImport:Add, Button, default, &Import
     Gui, SMImport:Show,, SuperMemo Import
     Gui, SMImport:+HwndImportGuiHwnd
     return
+  } else {
+    DLHTML := DLCheck
   }
 
 SMImportButtonImport:
@@ -264,7 +271,7 @@ SMImportButtonImport:
     Vim.Caret.SwitchToSameWindow(wBrowser)
   }
 
-  HTMLText := (DownloadHTML || Passive) ? "" : Copy(false, true)
+  HTMLText := (DLHTML || Passive) ? "" : Copy(false, true)
   if (IWB) {
     if (!HTMLText) {
       ToolTip("Text not found.")
@@ -272,15 +279,16 @@ SMImportButtonImport:
     }
     Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML format but is in plain-text
   }
-  Online := (Passive || (!HTMLText && IsVidSite)), CopyAll := Download := ""
-  if (DownloadHTML || (!HTMLText && !Online)) {
-    if (DownloadHTML || !HTMLText) {
-      DownloadList := "file:///,investopedia.com,webmd.com,britannica.com"
-      if (DownloadHTML || IfContains(Vim.Browser.Url, DownloadList)) {
-        if (Download := IfContains(Vim.Browser.Url, "file:///")) {
+  if (Passive)
+    DLHTML := false
+  Online := (Passive || (!HTMLText && IsVidSite)), CopyAll := DL := ""
+  if (DLHTML || (!HTMLText && !Online)) {
+    if (DLHTML || !HTMLText) {
+      if (DLHTML) {
+        if (DL := IfContains(Vim.Browser.Url, "file:///")) {
           Vim.Browser.Url := StrReplace(Vim.Browser.Url, "file:///")
           HTMLText := FileRead(EncodeDecodeURI(Vim.Browser.Url, false))
-        } else if (Download := true) {
+        } else if (DL := true) {
           ToolTip("Attempting to download website...", true,,, 19)
           TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
 
@@ -309,7 +317,7 @@ SMImportButtonImport:
           RemoveToolTip(19)
         }
       }
-      if (!Download || CopyAll) {
+      if (!DL || CopyAll) {
         send {esc}
         CopyAll := true, CopyAll()
         Vim.HTML.ClipboardGet_HTML(HTMLText)
@@ -326,6 +334,7 @@ SMImportButtonImport:
     Vim.Browser.VidTime := "0:00"
   if (Passive == 1)
     Vim.Browser.Date := ""
+  SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
 
   WinClip.Clear()
   if (Online && Passive) {
@@ -399,7 +408,8 @@ SMImportButtonImport:
   if (Passive)
     WinActivate % wBrowser
 
-  Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url)
+  if (!SMPoundSymbHandled)
+    Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url)
   Vim.SM.Reload(, true)
 
   if (Passive)
@@ -489,13 +499,17 @@ return
 !x::
   CtrlState := IfContains(A_ThisLabel, "^"), hWnd := WinActive("A")
   ClipSaved := ClipboardAll
+  wBrowser := WinActive("ahk_group Browser")
   if (!Copy(false)) {
     ToolTip("Nothing is selected.")
     Goto RestoreClipReturn
   } else {
-    if (CleanHTML := (WinActive("ahk_group Browser") || WinActive("ahk_exe ebook-viewer.exe"))) {
-      PlainText := Clipboard
+    if (CleanHTML := (wBrowser || WinActive("ahk_exe ebook-viewer.exe"))) {
+      if (wBrowser)
+        PlainText := Clipboard
       Vim.HTML.ClipboardGet_HTML(data)
+      if (wBrowser)
+        RegExMatch(data, "SourceURL:(.*)", v), url := Vim.SM.HTMLUrl2SMLinkUrl(Vim.Browser.ParseUrl(v1))
       RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
       WinClip.Clear()
       Clipboard := Vim.HTML.Clean(data)
@@ -513,7 +527,7 @@ return
         Prio := "0" . Prio
     }
     WinActivate, % "ahk_id " . hWnd
-    if (WinActive("ahk_group Browser")) {
+    if (wBrowser) {
       Vim.Browser.Highlight(, PlainText)
     } else if (WinActive("ahk_exe ebook-viewer.exe")) {
       ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q  ; need to enable this shortcut in settings
@@ -534,7 +548,7 @@ return
   WinActivate, ahk_class TElWind  ; focus to element window
 
 ExtractToSM:
-  if (ret := !Vim.SM.IsEmptyTopic()) {
+  if (ret := !Vim.SM.IsEmptyTopic(SMLink)) {
     if (A_ThisLabel != "ExtractToSM") {
       MsgBox, 3,, Go to source and try again? (press no to paste in current topic)
       if (IfMsgbox("yes")) {
@@ -549,8 +563,17 @@ ExtractToSM:
     }
     if (ret) {
       ToolTip("Please make sure current element is an empty HTML topic. Your extract is now on your clipboard.")
-      return
+      Goto RestoreClipReturn
     }
+  }
+  if (wBrowser && (SMLink != url)) {
+    MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
+                . "`nBrowser url: " . url
+                . "`nSM url: " . SMLink
+    if (IfMsgBox("No") || IfMsgBox("Cancel"))
+      Goto RestoreClipReturn
+    WinWaitActive, ahk_class TElWind
+    KeyWait Enter
   }
   Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
   send ^{home}
@@ -679,9 +702,20 @@ return
 ^+!s::
   ClipSaved := ClipboardAll
   CloseWnd := IfContains(A_ThisLabel, "^")
+  wBrowser := WinActive("ahk_group Browser")
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
   marker := Trim(Copy(false), " `t`r`n")
+  if (wBrowser) {
+    Vim.HTML.ClipboardGet_HTML(data)
+    RegExMatch(data, "SourceURL:(.*)", v)
+    if (v) {
+      url := Vim.Browser.ParseUrl(v1)
+    } else {
+      url := Vim.Browser.GetParsedUrl()
+    }
+    url := Vim.SM.HTMLUrl2SMLinkUrl(url)
+  }
   if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
     if (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))
       marker := "p" . GetAcrobatPageBtn().Value
@@ -709,13 +743,13 @@ return
     }
   } else {
     if (!marker) {
-      if (WinActive("ahk_group Browser"))
+      if (wBrowser)
         Goto BrowserSyncTime
       ToolTip("No text selected.")
       Goto RestoreClipReturn
     }
     if (CloseWnd) {
-      if (WinActive("ahk_group Browser")) {
+      if (wBrowser) {
         send ^w
       } else {  ; epub viewer
         WinClose, A
@@ -727,12 +761,12 @@ return
 
 MarkInSMTitle:
   SMTitle := RegExReplace(ElWindTitle := WinGetTitle("ahk_class TElWind"), "^Duplicate: ")
-  NewTitle := RegExReplace(SMTitle, "((^.+ \| )|^)", marker . " | ")
+  NewTitle := RegExReplace(SMTitle, "^.*? \| |^", marker . " | ")
   if (ElWindTitle == NewTitle) {
     ToolTip("No need to change current title.")
-    return
+    Goto RestoreClipReturn
   }
-  if (ret := !Vim.SM.IsEmptyTopic()) {
+  if (ret := !Vim.SM.IsEmptyTopic(SMLink)) {
     if (A_ThisLabel != "MarkInSMTitle") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
       if (IfMsgbox("yes")) {
@@ -743,6 +777,8 @@ MarkInSMTitle:
       } else if (IfMsgBox("no")) {
         WinWaitActive, ahk_class TElWind
         ret := false
+        SMTitle := RegExReplace(ElWindTitle := WinGetTitle("ahk_class TElWind"), "^Duplicate: ")
+        NewTitle := RegExReplace(SMTitle, "^.*? \| |^", marker . " | ")
       }
     }
     if (ret) {
@@ -750,6 +786,13 @@ MarkInSMTitle:
       Clipboard := marker
       return
     }
+  }
+  if (wBrowser && (SMLink != url)) {
+    MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
+                . "`nBrowser url: " . url
+                . "`nSM url: " . SMLink
+    if (IfMsgBox("No") || IfMsgBox("Cancel"))
+      Goto RestoreClipReturn
   }
   Vim.SM.SetTitle(NewTitle)
   if (IfContains(A_ThisLabel, "^+!"))
@@ -761,7 +804,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ; Open in default browser (in my case, Chrome); similar to default shortcut ^+e to open in ms edge
 ^+c::ShellRun(ControlGetText("Edit1", "A"))  ; browser url field
-^+e::ShellRun("msedge.exe " . ControlGetText("Edit1", "A"))
+^+e::ShellRun("msedge.exe", ControlGetText("Edit1", "A"))
 ^!l::ToolTip("Copied " . Clipboard := ControlGetText("Edit1", "A"))
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))
 ^+c::

@@ -52,7 +52,8 @@ return
   WinWaitActive, ahk_class TMsgDialog  ; wait for "Delete element?" or confirm registry deletion
   send {enter}
   WinWaitClose
-  WinWaitNotActive, ahk_class TElWind,, 0.4
+  Vim.SM.WaitFileLoad()
+  WinWaitNotActive, ahk_class TElWind,, 0.3
   if (!ErrorLevel)  ; "Warning! The last child of the displayed element has been moved or deleted"
     return
   Vim.SM.GoHome()
@@ -118,8 +119,8 @@ return
   send {enter 2}
   WinWaitActive, ahk_class TElWind
   MsgBox, 3,, Permanently remove extra components?
+  WinWaitActive, ahk_class TElWind
   if (IfMsgBox("Yes")) {
-    WinWaitActive, ahk_class TElWind
     send ^+{f2}  ; impose template
     WinWaitActive, ahk_class TMsgDialog
     send {enter}
@@ -132,6 +133,8 @@ return
     send !t
     send {text}classic  ; my plain-text template name is classic
     send {enter 2}
+  } else if (IfMsgBox("Cancel")) {
+    send !{f10}td
   }
   if (ContLearn == 1)
     Vim.SM.learn()
@@ -256,10 +259,11 @@ return
 return
 
 ^!l::
-  CurrTimeDisplay := GetTimeMSec()
-  CurrTimeFileName := RegExReplace(CurrTimeDisplay, " |:", "-")
+  CurrTimeDisplay := GetDetailedTime()
+  CurrTimeFileName := RegExReplace(CurrTimeDisplay, ",? |:", "-")
   ClipSaved := ClipboardAll
-  send {LCtrl up}{LAlt up}{RCtrl up}{RAlt up}
+  KeyWait Alt
+  KeyWait Ctrl
   if (!data := Copy(false, true, 1))
     Goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
@@ -275,12 +279,14 @@ return
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     SetTimer, DownloadLatex, -1
     FileCreateDir % LatexFolderPath
-    Clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>",, false, true)
+    LatexPlaceHolder := GetDetailedTime()
+    Clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>" . LatexPlaceHolder,, false, true)
     Vim.SM.SaveHTML()
     WinWaitActive, ahk_class TElWind
-    HTMLPath := Vim.SM.GetFilePath(false)
-    if (!HTML := FileRead(HTMLPath))
-      HTML := ImgHTML  ; in case the HTML is picture only and somehow not saved
+    HTML := FileRead(HTMLPath := Vim.SM.GetFilePath(false))
+    HTML := StrReplace(HTML, LatexPlaceHolder)
+    send {esc}
+    Vim.SM.WaitTextExit()
     
     /*
       Recommended css setting for anti-merge class:
@@ -292,18 +298,24 @@ return
     */
     
     AntiMerge := "<SPAN class=anti-merge>Last LaTeX to image conversion at " . CurrTimeDisplay . "</SPAN>"
-    send {esc}
-    Vim.SM.WaitTextExit()
-
     HTML := RegExReplace(HTML, "<SPAN class=anti-merge>Last LaTeX to image conversion at .*?(<\/SPAN>|$)", AntiMerge, v)
     if (!v)
       HTML .= "`n" . AntiMerge
     FileDelete % HTMLPath
     FileAppend, % HTML, % HTMLPath
-    Vim.SM.SaveHTML()  ; better than Vim.SM.Reload()
-    Vim.SM.WaitTextFocus()
-    send !{f7}  ; go to read point
     Vim.State.SetMode("Vim_Normal")
+    send !{f12}kr
+    WinWaitActive, ahk_class TRegistryForm
+    send {esc}  ; cannot use WinClose, won't update html
+    WinWaitClose
+    WinWaitActive, ahk_class TElWind
+    ; If you use !{right} the html won't get updated????
+    send ^g
+    send {text}1
+    send {enter}
+    WinWaitActive, ahk_class TElWind
+    Vim.SM.WaitFileLoad()
+    Vim.SM.GoBack()
 
   } else {  ; image
     send {bs}  ; otherwise might contain unwanted format
@@ -700,7 +712,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind")
                       && (title := WinGetTitle("A"))
-                      && (RegExMatch(title, "i)(?<=^p)(\d+|[MDCLXVI]+)(?= \|)", page)  ; eg, p12 | title
+                      && (RegExMatch(title, "i)(?<=^p)(c?\d+|[MDCLXVI]+)(?= \|)", page)  ; eg, p12 | title
                        || RegExMatch(title, ".+?(?= \|)", clip)))  ; eg, last reading point | title
 !s::ToolTip("Copied " . Clipboard := Trim(page ? page : clip))
 
@@ -717,6 +729,11 @@ SMRegAltG:
   Gosub SMRegAltG
   WinWaitActive, ahk_class TElWind
   Goto SMLearnChild
+return
+
+~!n::
+  WinWaitActive, ahk_class TElWind,, 1
+  Vim.SM.PlayIfPassiveColl(, 500)
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Reference Registry \(\d+ members\)"))

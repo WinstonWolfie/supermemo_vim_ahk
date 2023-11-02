@@ -63,7 +63,7 @@ class VimState {
       if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
-      if (PrevMode != mode && A_CaretX)
+      if ((PrevMode != mode) && A_CaretX)
         this.Vim.Caret.SetCaret(this.Mode)
     }
     if (g != -1)

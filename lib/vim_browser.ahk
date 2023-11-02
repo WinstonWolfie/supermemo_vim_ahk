@@ -18,7 +18,8 @@ class VimBrowser {
   }
 
   ParseUrl(url) {
-    if (!IfContains(url, "wiktionary.org/wiki,workflowy.com"))
+    PoundSymbList := "wiktionary.org/wiki,workflowy.com,korean.dict.naver.com/koendict"
+    if (!IfContains(url, PoundSymbList))
       url := RegExReplace(url, "#.*")
     ; Remove everything after "?"
     QuestionMarkList := "baike.baidu.com,bloomberg.com"
@@ -32,7 +33,9 @@ class VimBrowser {
     } else if (IfContains(url, "netflix.com/watch")) {
       url := RegExReplace(url, "\?trackId=.*")
     } else if (IfContains(url, "finance.yahoo.com")) {
-      url := RegExReplace(url, "\?p=.*|\/$")
+      url := RegExReplace(url, "\?.*")
+      if !(url ~= "\/$")
+        url := url . "/"
     } else if (IfContains(url, "dle.rae.es")) {
       url := StrReplace(url, "?m=form")
     }
@@ -75,7 +78,7 @@ class VimBrowser {
       this.Source := "Art... When I Feel Like It ", this.Title := RegExReplace(this.Title, "^Art... When I Feel Like It - ")
     } else if (this.Title ~= "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ") {
       this.Author := "Henry George Liddell, Robert Scott", this.Source := "An Intermediate Greek-English Lexicon", this.Title := RegExReplace(this.Title, "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ")
-    } else if (RegExMatch(this.Title, "^The Project Gutenberg eBook of (.*?), by (.*?)$", v)) {
+    } else if (RegExMatch(this.Title, "i)^The Project Gutenb(?:e|u)rg eBook of (.*?),? by (.*?)\.?$", v)) {
       this.Author := v2, this.Source := "Project Gutenberg", this.Title := v1
 
     } else if (this.Title ~= "_百度知道$") {
@@ -118,6 +121,8 @@ class VimBrowser {
       this.Source := "剑桥词典", this.Title := RegExReplace(this.Title, "：剑桥词典$")
     } else if (this.Title ~= " - The Skeptic's Dictionary - Skepdic\.com$") {
       this.Source := "The Skeptic's Dictionary", this.Title := RegExReplace(this.Title, " - The Skeptic's Dictionary - Skepdic\.com$")
+    } else if (this.Title ~= "-格隆汇$") {
+      this.Source := "格隆汇", this.Title := RegExReplace(this.Title, "-格隆汇$")
 
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {
       this.Source := v1 . " | Cambridge Core", this.Title := RegExReplace(this.Title, "\| (.*) \| Cambridge Core$")
@@ -132,16 +137,19 @@ class VimBrowser {
       if (RegexMatch(this.FullTitle, " : (.*?) : Free Download, Borrow, and Streaming : Internet Archive$", v))
         this.Author := v1
 
-    } else if (this.Title ~= " \/ Twitter$") {
-      this.Source := "Twitter", this.Title := RegExReplace(this.Title, """ \/ Twitter$")
-      RegExMatch(this.Title, "^(.*) on Twitter: """, v), this.Author := v1
-      this.Title := RegExReplace(this.Title,  "^.* on Twitter: """)
+    } else if (this.Title ~= " \/ X$") {
+      this.Source := "X", this.Title := RegExReplace(this.Title, """ \/ X$")
+      RegExMatch(this.Title, "^(.*) on X: """, v), this.Author := v1
+      this.Title := RegExReplace(this.Title,  "^.* on X: """)
 
     } else if (RegExMatch(this.Title, " \| by (.*?) \| ((.*?) \| )?Medium$", v)) {
       this.Source := "Medium", this.Title := RegExReplace(this.Title, " \| by .*? \| Medium$"), this.Author := v1
 
     } else if (RegExMatch(this.Title, "^Git - (.*?) Documentation$", v)) {
       this.Source := "Git - Documentation", this.Title := v1
+
+    } else if (RegExMatch(this.Title, "'(.*?)': Naver Korean-English Dictionary", v)) {
+      this.Source := "Naver Korean-English Dictionary", this.Title := v1
 
     } else if (IfContains(this.Url, "reddit.com")) {
       RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.Source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(v, "r/") . "$")
@@ -233,6 +241,14 @@ class VimBrowser {
         this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
       if (CopyFullPage)
         this.VidTime := this.MatchVidTime(this.FullTitle)
+    } else if (RegExMatch(this.Title, "^Watch (.*?) online free on 9anime$", v)) {
+      this.Source := "9anime", this.Title := v1
+      if (CopyFullPage)
+        this.VidTime := this.MatchVidTime(this.FullTitle)
+    } else if (RegExMatch(this.Title, "^Watch full (.*?) english sub \| Kissasian$", v)) {
+      this.Source := "Kissasian", this.Title := v1
+      if (CopyFullPage)
+        this.VidTime := this.MatchVidTime(this.FullTitle)
 
     ; Wikipedia or wiki format websites
     } else if (this.Title ~= " - supermemo\.guru$") {
@@ -271,6 +287,10 @@ class VimBrowser {
       this.Source := "ProofWiki", this.Title := RegExReplace(this.Title, " - ProofWiki$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last modified on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - Citizendium$") {
+      this.Source := "Citizendium", this.Title := RegExReplace(this.Title, " - Citizendium$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "This page was last modified (.*?), (.*?)\.", v), this.Date := v2
     } else if (this.Title ~= " - 维基百科，自由的百科全书$") {
       this.Source := "维基百科", this.Title := RegExReplace(this.Title, " - 维基百科，自由的百科全书$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -294,11 +314,15 @@ class VimBrowser {
     } else if (this.Title ~= " - Wikipedia, la enciclopedia libre$") {
       this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia, la enciclopedia libre$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.Date := v1
+        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a ", v), this.Date := v1
     } else if (this.Title ~= " - Wikcionario, el diccionario libre$") {
       this.Source := "Wikcionario", this.Title := RegExReplace(this.Title, " - Wikcionario, el diccionario libre$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a las ", v), this.Date := v1
+        RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a ", v), this.Date := v1
+    } else if (this.Title ~= " - Viquipèdia, l'enciclopèdia lliure$") {
+      this.Source := "Viquipèdia", this.Title := RegExReplace(this.Title, " - Viquipèdia, l'enciclopèdia lliure$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "La pàgina va ser modificada per darrera vegada el (.*?) a ", v), this.Date := v1
     } else if (IfContains(this.Url, "it.wikipedia.org")) {
       this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -470,14 +494,14 @@ class VimBrowser {
       return 1
     } else if (title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {  ; video time can be in url but ^a doesn't cover video time
       return 2
-    } else if (title ~= "(^Watch .* HD online$|( 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放|-555电影| – NO视频| \| 91美剧网| \| FMovies)$)") {  ; video time can't be in url and ^a doesn't cover video time
+    } else if (title ~= "^(Watch full .*? english sub \| Kissasian|Watch .* HD online|Watch .*? online free on 9anime)$|( 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放|-555电影| – NO视频| \| 91美剧网| \| FMovies)$") {  ; video time can't be in url and ^a doesn't cover video time
       return 3
     }
   }
 
   Highlight(CollName:="", PlainText:="") {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
-    if (RegexMatch(PlainText, "(\[\d+\])+$|\[\d+\]: \d+$", v)) {
+    if (RegexMatch(PlainText, "(\[\d+\])+$|\[\d+\]: \d+$|(?<=\.)\d+$", v)) {
       this.Url := this.Url ? this.Url : this.GetParsedUrl()
       if (IfContains(this.Url, "wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"

@@ -156,12 +156,13 @@ ClozeHinter:
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 ^+z::
 +z::  ; cloze hinter
-  if (ClozeHinterCtrlState && (A_ThisLabel == "ClozeHinter")) {  ; from cloze hinter label and ctrl is down
+  if (ClozeHinterCtrlState && (A_ThisLabel == "ClozeHinter")) {  ; from cloze hinter label and ctrl is pressed
     CtrlState := 1, ClozeHinterCtrlState := 0
   } else {
     CtrlState := IfContains(A_ThisLabel, "^")
   }
-  if (!InitText := Copy())
+  InitText := ((A_ThisLabel == "ClozeHinter") && InitText) ? InitText : Copy()
+  if (!InitText)
     return
   CurrFocus := ControlGetFocus("ahk_class TElWind"), inside := true
   if (InitText ~= "i)^(more|less)$") {
@@ -250,13 +251,14 @@ CapsLock & z::  ; delete [...]
   TopicTitle := WinGetTitle("ahk_class TElWind")
   if ((A_ThisLabel == "ClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
-  KeyWait Capslock
   if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/")) {
     MsgBox, 3,, Your hint has a slash. Press yes to make it inside square brackets.
     IfMsgBox, Yes
       inside := true
     WinWaitActive, ahk_class TElWind
   }
+  KeyWait Capslock
+  KeyWait Alt
   send !z
   Vim.State.SetMode("Vim_Normal")
   if (!ClozeNoBracket && !hint)  ; entered nothing
@@ -265,6 +267,7 @@ CapsLock & z::  ; delete [...]
   ToolTip("Cloze processing...", true)
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
+  ElNumber := CtrlState ? 1 : Vim.SM.GetElNumber()
   Vim.SM.GoBack(), Vim.SM.WaitFileLoad()
   if (WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 200)) {
     if (!Vim.SM.SpamQ(, 1500))
@@ -285,7 +288,7 @@ CapsLock & z::  ; delete [...]
     send ^a
     ClipSaved := ClipboardAll
     if (ClozeNoBracket) {
-      Clip(RegExReplace(Copy(false), "\s?[...]"),, false)
+      Clip(RegExReplace(Copy(false), "\s?\[\.\.\.\]"),, false)
     } else {
       Clip(StrReplace(Copy(false), "[...]", cloze),, false)
     }
@@ -301,13 +304,13 @@ CapsLock & z::  ; delete [...]
     ;   return
     ; WinWaitActive, ahk_class TElWind
     ; ; Keeps reporting errors that SM can't access clipboard!
-    ; ; if (Copy() = " [...")  ; a bug in SM
+    ; ; if (Copy() = " [...")  ; bug in SM
     ; ;   send {left}{right}+{right 5}
     ; send % ClozeNoBracket ? "{bs}" : "{text}" . cloze
-		; if (WinExist("ahk_class TMyFindDlg")) ; clears search box window
+		; if (WinExist("ahk_class TMyFindDlg")) ; clear search box window
 		; 	WinClose
 
-    ; Replacing [...] directly in HTML. Much faster! but could be unreliable
+    ; Replacing [...] directly in HTML. Much faster!
     HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())
     if (HTML = "<SPAN class=cloze>[...]</SPAN>") {
       if (ClozeNoBracket) {
@@ -317,22 +320,44 @@ CapsLock & z::  ; delete [...]
         send % "{text}" . cloze
       }
     } else {
-      Vim.SM.ExitText()
-      r := ClozeNoBracket ? "" : "<SPAN class=cloze>" . cloze . "</SPAN>"
-      HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>", r, v)
+      send !{f12}fw  ; open html in notepad
+      if (ClozeNoBracket) {
+        HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>",, v)
+      } else {
+        HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>"
+                               , "<SPAN class=cloze>" . cloze . "</SPAN>", v)
+      }
       if (v) {
         FileDelete % HTMLPath
         FileAppend, % HTML, % HTMLPath
+        WinWaitActive, ahk_exe Notepad.exe
+        send ^w
+        WinClose
+        WinActivate, ahk_class TElWind
+        Vim.SM.EditFirstQuestion()  ; must focus on html, otherwise won't update it
+        Vim.SM.WaitHTMLFocus()
+        send !{f12}kr
+        WinWaitActive, ahk_class TRegistryForm
+        send {esc}  ; cannot use WinClose, won't update html
+        WinWaitClose
       } else {
-        ToolTip("Cloze not found!"), CtrlState := true
+        ToolTip("Cloze not found!")
+        WinWaitActive, ahk_exe Notepad.exe
+        send ^w
+        WinClose
       }
     }
   }
-  if (!CtrlState) {  ; only goes back to topic if ctrl is up
-    send !{right}  ; so add a ctrl in the hotkey to keep editing the clozed item
-  } else {
-    ; If replacing [...] directly in HTML
-    Vim.SM.Reload()
+
+  WinWaitActive, ahk_class TElWind
+  ; If you use !{right} the html won't get updated????
+  send ^g
+  send % "{text}" . ElNumber  ; ElNumber = 1 (root element) if ctrl is pressed
+  send {enter}
+  if (CtrlState) {  ; go back to item is ctrl is pressed
+    WinWaitActive, ahk_class TElWind
+    Vim.SM.WaitFileLoad()
+    Vim.SM.GoBack()
   }
   RemoveToolTip()
 return

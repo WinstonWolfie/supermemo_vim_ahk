@@ -4,7 +4,7 @@
 ~enter::  ; enter up doesn't work
 ~space up::
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would add a {left}
-  if (!Vim.SM.PlayIfCertainColl("", 3000))
+  if (!Vim.SM.PlayIfPassiveColl(, 3000))
     Vim.SM.EnterInsertIfSpelling()
 Return
 
@@ -17,6 +17,12 @@ Return
 ~^s::  ; save
 ~^+a::  ; archive current plan
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would move the caret in some instances
+return
+
+#if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))  ; SuperMemo element window
+^f2::
+  Vim.SM.PostMsg((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") ? 179 : 181)  ; go neural
+  Vim.SM.PlayIfPassiveColl(, 500)
 return
 
 #if (Vim.IsVimGroup() && !Vim.State.StrIsInCurrentVimMode("Visual,Command") && WinActive("ahk_class TElWind"))  ; SuperMemo element window

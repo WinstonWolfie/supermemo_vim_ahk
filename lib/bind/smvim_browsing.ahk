@@ -23,8 +23,15 @@ Return
 +s::  ; gS: open link in IE
 SMGoToLink:
 s::  ; gs: go to link
+m::  ; gm: go to link in comment
++m::  ; gM: go to link in comment in IE
   Vim.State.SetMode()
-  if (link := Vim.SM.GetLink()) {
+  if (IfIn(A_ThisLabel, "m,+m")) {
+    link := Vim.SM.GetLinkInComment()
+  } else {
+    link := Vim.SM.GetLink()
+  }
+  if (link) {
     if (IfContains(A_ThisLabel, "+")) {
       ; ShellRun("iexplore.exe " . link)  ; RIP IE
       Vim.Browser.RunInIE(link)
@@ -122,9 +129,10 @@ r::  ; reload
   } else {
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame"))  ; sometimes could happen on YT videos
       WinClose
+    t := WinGetTitle("A")
     Vim.SM.GoBack()
     ; If current element is root element
-    if ((CurrTitle == WinGetTitle("A")) && (CurrTitle ~= "^Concept: ")) {
+    if ((CurrTitle == t) && (CurrTitle ~= "^Concept: ")) {
       Vim.SM.WaitFileLoad()
       send !{right}
     }
@@ -295,7 +303,7 @@ return
    || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())))
 ; c::send !c  ; open content window  ; taken in sm19
 b::
-  if (WinExist("ahk_class TBrowser")) {
+  if (WinExist("ahk_pid " . WinGet("PID", "A") . " ahk_class TBrowser")) {
     WinActivate
   } else {
     ; Sometimes a bug makes that you can't use ^space to open browser in content window
@@ -328,7 +336,8 @@ o::  ; favoourites
   } else if (l == 2) {
     Vim.SM.Reload(, true)
   }
-  Vim.SM.WaitFileLoad()
+  if (l)
+    Vim.SM.WaitFileLoad()
   Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1, Vim.SM.PostMsg(3)
   BlockInput, off
 return
@@ -393,8 +402,23 @@ Return
   ToolTip("Read point cleared")
 Return
 
-!+j::send !+{pgdn}  ; go to next sibling
-!+k::send !+{pgup}  ; go to previous sibling
+!+j::
+!+k::
+  n := Vim.State.GetN()
+  if (n > 1)
+    Vim.SM.PrepareStatBar(1)
+  loop % n {
+    if (A_ThisLabel == "!+j") {
+      send !+{PgDn}  ; go to next sibling
+    } else if (A_ThisLabel == "!+k") {
+      send !+{PgUp}  ; go to previous sibling
+    }
+    if (n > 1)
+      Vim.SM.WaitFileLoad(,, false)
+  }
+  if (n > 1)
+    Vim.SM.PrepareStatBar(2)
+return
 
 #if (Vim.IsVimGroup()
   && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual"))
