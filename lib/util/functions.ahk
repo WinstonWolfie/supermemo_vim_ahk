@@ -121,7 +121,7 @@ FileRead(Filename) {
 }
 FileReadAndDelete(Filename) {
   FileRead, v, % Filename
-  FileDelete, % Filename
+  ; FileDelete, % Filename
   Return, v
 }
 FileReadLine(Filename, LineNum) {
@@ -990,6 +990,10 @@ sortArray( a, o := "A")  ; https://www.autohotkey.com/boards/viewtopic.php?t=601
 
 RestoreClipReturn:
   Clipboard := ClipSaved
+return
+
+RemoveToolTipReturn:
+  RemoveToolTip()
 return
 
 ; https://www.autohotkey.com/docs/v1/scripts/index.htm#HTML_Entities_Encoding

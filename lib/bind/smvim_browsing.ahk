@@ -306,11 +306,7 @@ b::
   if (WinExist("ahk_pid " . WinGet("PID", "A") . " ahk_class TBrowser")) {
     WinActivate
   } else {
-    ; Sometimes a bug makes that you can't use ^space to open browser in content window
-    ; After a while, I found out it's due to my Chinese input method
-    ; Fixed in win11?
-    ; SetDefaultKeyboard(0x0409)  ; English-US
-    send ^{space}  ; open browser
+    Vim.SM.OpenBrowser()
   }
 return
 

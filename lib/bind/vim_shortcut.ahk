@@ -234,7 +234,7 @@ IWBNewTopic:
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
 
   if (!IWB) {
-    DLList := "investopedia.com,webmd.com,britannica.com"
+    DLList := "economist.com,investopedia.com,webmd.com,britannica.com"
     DLCheck := IfContains(Vim.Browser.Url, DLList) ? " checked" : ""
   }
 
@@ -387,14 +387,31 @@ SMImportButtonImport:
     Vim.SM.AltN()
     SMNewElementTitle := WinWaitTitleChange(PrevSMTitle, "ahk_class TElWind")
     if (!Online) {
-      Vim.SM.PasteHTML()
+      Vim.SM.PasteHTML(100)
       Vim.SM.ExitText()
       WinWaitTitleChange(SMNewElementTitle, "A")
     } else if (Passive) {
-      Gosub SMHyperLinkToTopic
-      KeyWait Esc
-      if (ErrorLevel)
+      send {CtrlDown}vt{CtrlUp}{f9}{enter}  ; opens script editor
+      WinWaitActive, ahk_class TScriptEditor,, 3
+      if (ErrorLevel) {
+        ToolTip("No script component found.")
         Goto ImportReturn
+      }
+      script := "url " . Vim.Browser.Url
+      if (Vim.Browser.VidTime && IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2")) {
+        sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+        if (IfContains(Vim.Browser.Url, "youtube.com")) {
+          script .= "&t=" . sec . "s"
+        } else if (IfContains(Vim.Browser.Url, "bilibili.com")) {
+          script .= (script ~= "\?p=\d+") ? "&t=" . sec : "?t=" . sec
+        }
+      }
+      ControlSetText, TMemo1, % script
+      send !o{esc 2}  ; close script editor
+      WinWaitClose
+      WinWaitActive, ahk_class TElWind  ; without this Vim.SM.SetTitle() may fail
+      if (Vim.Browser.VidTime && (Vim.Browser.IsVidSite(vim.browser.FullTitle) == 3))
+        Vim.Browser.Title := Vim.Browser.VidTime . " | " . Vim.Browser.Title
     }
   }
   SMNewTextTitle := WinGetTitle("ahk_class TElWind")
@@ -500,6 +517,8 @@ return
   CtrlState := IfContains(A_ThisLabel, "^"), hWnd := WinActive("A")
   ClipSaved := ClipboardAll
   wBrowser := WinActive("ahk_group Browser")
+  KeyWait Alt
+  KeyWait Ctrl
   if (!Copy(false)) {
     ToolTip("Nothing is selected.")
     Goto RestoreClipReturn
@@ -532,7 +551,8 @@ return
     } else if (WinActive("ahk_exe ebook-viewer.exe")) {
       ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
-      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}a
+      ; ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}a
+      send a
     } else if (WinActive("ahk_exe WINWORD.exe")) {
       send ^!h
     } else if (WinActive("ahk_exe WinDjView.exe")) {
@@ -580,6 +600,8 @@ ExtractToSM:
 
   if (!CleanHTML) {
     send ^v
+    while (DllCall("GetOpenClipboardWindow"))
+      sleep 1
   } else {
     Vim.SM.PasteHTML()
   }
@@ -593,24 +615,7 @@ ExtractToSM:
     send !x  ; extract
   }
   Vim.SM.WaitExtractProcessing()
-
-  ; Delete text via Delete before cursor
-  ; x := A_CaretX, y := A_CaretY
-  ; send {down}
-  ; WaitCaretMove(x, y)
-  ; send !\\
-
-  loop {
-    send !{f12}kd  ; delete registry link
-    WinWaitActive, ahk_class TMsgDialog,, 0.2
-    if (!ErrorLevel) {
-      send {enter}
-      WinWaitClose
-      break
-    }
-  }
-  Vim.SM.ActivateElWind()
-  WinWaitActive, ahk_class TElWind
+  Vim.SM.DeleteHTML()
   send ^+{f7}  ; clear read point
   if (CtrlState) {
     Vim.SM.GoBack()
@@ -625,7 +630,8 @@ return
 +z::Vim.State.SetMode("Z")
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z") && !ControlGetFocus("A"))
 +z::  ; exit and save annotations
-  ControlSend,, q, ahk_class SUMATRA_PDF_FRAME
+  ; ControlSend,, q, ahk_class SUMATRA_PDF_FRAME
+  send q
   WinActivate, ahk_class TElWind
   WinWait, Unsaved annotations,, 0
   if (!ErrorLevel) {
@@ -707,6 +713,7 @@ return
     send {esc}
   marker := Trim(Copy(false), " `t`r`n")
   if (wBrowser) {
+    critical
     Vim.HTML.ClipboardGet_HTML(data)
     RegExMatch(data, "SourceURL:(.*)", v)
     if (v) {

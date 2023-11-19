@@ -113,26 +113,6 @@ w::  ; prepare *w*ikipedia articles in languages other than English
   send {esc}
 return
 
-i::  ; learn outstanding *i*tems only
-  Vim.State.SetMode("Vim_Normal"), Vim.SM.GoHome()
-  WinClose, % w := "ahk_class TBrowser ahk_pid " . WinGet("PID", "A")
-  if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-    Vim.SM.PostMsg(200)
-  } else {
-    Vim.SM.PostMsg(202)  ; View - Outstanding
-  }
-  Vim.SM.WaitBrowser()
-  send {AppsKey}ci
-  Vim.SM.WaitBrowser()
-  wBrowser := WinExist(w)
-  sleep 200
-  while (WinExist("ahk_id " . wBrowser)) {
-    WinActivate
-    send ^l
-    sleep 200
-  }
-return
-
 o::  ; c*o*mpress images
   send ^{enter}^a  ; open commander
   send {text}co  ; Compress images
@@ -189,50 +169,6 @@ return
   send {left 2}{esc}
 return
 
-+p::
-p::  ; hyperlink to scri*p*t component
-  Vim.State.SetMode("Vim_Normal")
-  ClipSaved := ClipboardAll
-  Vim.Browser.Url := Clipboard
-  WinClip.Clear()
-  Vim.SM.RefToClipForTopic(CollName)
-  ClipWait
-  Vim.SM.AltN()
-  Vim.SM.WaitFileLoad()
-
-SMHyperLinkToTopic:
-  send {CtrlDown}vt{CtrlUp}{f9}{enter}  ; opens script editor
-  WinWaitActive, ahk_class TScriptEditor,, 1.5
-  if (ErrorLevel) {
-    ToolTip("No script component found.")
-    if (A_ThisLabel != "SMHyperLinkToTopic")
-      Clipboard := ClipSaved, Vim.Browser.Clear()
-    return
-  }
-  script := "url " . Vim.Browser.Url
-  if (Vim.Browser.VidTime && IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2")) {
-    sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-    if (IfContains(Vim.Browser.Url, "youtube.com")) {
-      script .= "&t=" . sec . "s"
-    } else if (IfContains(Vim.Browser.Url, "bilibili.com")) {
-      script .= (script ~= "\?p=\d+") ? "&t=" . sec : "?t=" . sec
-    }
-    if (A_ThisLabel != "SMHyperLinkToTopic")
-      ToolTip("Time stamp in script component set as " . sec . "s")
-  }
-  ControlSetText, TMemo1, % script, A
-  send !o{esc 2}  ; close script editor
-  WinWaitActive, ahk_class TElWind  ; without this SetTitle() may fail
-  if (Vim.Browser.VidTime && (Vim.Browser.IsVidSite(vim.browser.FullTitle) == 3))
-    Vim.Browser.Title := Vim.Browser.VidTime . " | " . Vim.Browser.Title
-  if (A_ThisLabel == "SMHyperLinkToTopic")
-    return
-
-  if (Vim.Browser.Title)
-    Vim.SM.SetTitle(Vim.Browser.Title)
-  Clipboard := ClipSaved, Vim.Browser.Clear(), Vim.SM.Reload()
-return
-
 r::  ; set *r*eference's link to what's in the clipboard
   Vim.State.SetMode("Vim_Normal"), Vim.SM.ExitText()
 
@@ -286,7 +222,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 +i::  ; learn current element's outstanding child item
   Vim.State.SetMode("Vim_Normal")
-  send ^{space}
+  Vim.SM.OpenBrowser()
   Vim.SM.WaitBrowser()
   send {AppsKey}ci
   Vim.SM.WaitBrowser()
@@ -297,10 +233,24 @@ return
   send ^l
 return
 
+i::  ; learn outstanding *i*tems only
+  Vim.State.SetMode("Vim_Normal"), Vim.SM.GoHome()
+  WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "A")
+  if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    Vim.SM.PostMsg(200)
+  } else {
+    Vim.SM.PostMsg(202)  ; View - Outstanding
+  }
+  Vim.SM.WaitBrowser()
+  send {AppsKey}ci
+  Vim.SM.WaitBrowser()
+  send ^l
+return
+
 SMLearnChild:
 c::  ; learn child
   Vim.State.SetMode("Vim_Normal")
-  send ^{space}
+  Vim.SM.OpenBrowser()
   Vim.SM.WaitBrowser()
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TBrowser"))

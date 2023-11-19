@@ -241,6 +241,11 @@ SendEvent {Blind}{LButton up}                                        ;|
 return                                                               ;|
 ;---------------------------------------------------------------------o
 
+NotCtrlDelWind() {
+    return ((WinActive("ahk_group SM") && !Vim.SM.IsEditingHTML())
+          || WinActive("ahk_exe AutoHotkey.exe")
+          || WinActive("ahk_class CabinetWClass ahk_exe explorer.exe"))
+}
 
 ;=====================================================================o
 ;                           CapsLock Deletor                         ;|
@@ -251,9 +256,9 @@ return                                                               ;|
 ;                     CapsLock + .  |  Ctrl + BackSpace              ;|
 ;-----------------------------------o---------------------------------o
 CapsLock & ,::send {Del}                                             ;|
-CapsLock & .::send % ((WinActive("ahk_group SM") && !Vim.SM.IsEditingHTML()) || WinActive("ahk_exe AutoHotkey.exe")) ? "^+{right}{del}" : "^{del}"
+CapsLock & .::send % (NotCtrlDelWind()) ? "^+{right}{del}" : "^{del}"
 CapsLock & m::send {BS}                                              ;|
-CapsLock & n::send % ((WinActive("ahk_group SM") && !Vim.SM.IsEditingHTML()) || WinActive("ahk_exe AutoHotkey.exe")) ? "^+{left}{bs}" : "^{bs}"
+CapsLock & n::send % (NotCtrlDelWind()) ? "^+{left}{bs}" : "^{bs}"
 ;---------------------------------------------------------------------o
 
 

@@ -50,9 +50,10 @@ Return
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
-        . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|Linguee"
+        . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|LatinoGraecum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
         . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
+        . "|PasteCleanedClipboard|ArchiveToday"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -274,6 +275,7 @@ Wiktionary:
   Gui, Wiktionary:Add, Text,, &Language:
   List := "Spanish||English|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|Latin|Ancient Greek|Chinese"
+        . "|Catalan"
   Gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete w136, % List
   Gui, Wiktionary:Add, Button, default, &Word
   Gui, Wiktionary:Show,, Wiktionary
@@ -362,7 +364,7 @@ ClearClipboard:
 return
 
 MemoriseChildren:
-  send ^{space}
+  Vim.SM.OpenBrowser()
   Vim.SM.WaitBrowser()
   Goto MemoriseCurrentBrowser
 return
@@ -523,7 +525,8 @@ ZLibrary:
     return
   ; RIP z-lib
   ; ShellRun("https://z-lib.org/")
-  ShellRun("https://lib-rc5t5df46yl4ghwlnyuzt52y.mountain.pm/s/?q=" . text)
+  ; ShellRun("https://lib-rc5t5df46yl4ghwlnyuzt52y.mountain.pm/s/?q=" . text)
+  ShellRun("https://singlelogin.re/s/?q=" . text)
 
   ; Telegram
   ; ShellRun("https://web.telegram.org/z/#1788460589")
@@ -716,6 +719,13 @@ GraecoLatinum:
   }
 return
 
+LatinoGraecum:
+  if (word := FindSearch("Latino-Graecum", "Word:")) {
+    ShellRun("http://lexica.linguax.com/nlm.php?searchedLG=" . word)
+    ShellRun("http://lexica.linguax.com/schrevel.php?searchedLG=" . word)
+  }
+return
+
 Linguee:
   if (word := FindSearch("Linguee", "Word:"))
     ShellRun("https://www.linguee.com/search?query=" . word)
@@ -778,9 +788,9 @@ CalculateTodaysPassRate:
   send {enter}
   RepHistory := FileReadAndDelete(TempPath)
   DateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
-  RegExReplace(RepHistory, "s)\nItem #\d+: [^\n]+\n[^\n]+" . DateRegEx
+  RegExReplace(RepHistory, "s)\nItem #[\d,]+: [^\n]+\n[^\n]+" . DateRegEx
                          . "[^\n]+Grade=[0-5]",, TodayRepCount)
-  RegExReplace(RepHistory, "s)\nItem #\d+: [^\n]+\n[^\n]+" . DateRegEx
+  RegExReplace(RepHistory, "s)\nItem #[\d,]+: [^\n]+\n[^\n]+" . DateRegEx
                          . "[^\n]+Grade=[3-5]",, TodayPassCount)
   BlockInput, off
   RemoveToolTip()
@@ -886,7 +896,7 @@ AllLapsesToday:
   RepHistory := FileReadAndDelete(TempPath)
   dateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
   pos := 1, v1 := ""
-  while (pos := RegExMatch(RepHistory, "s)\nItem #\d+: ([^\n]+)\n[^\n]+"
+  while (pos := RegExMatch(RepHistory, "s)\nItem #[\d,]+: ([^\n]+)\n[^\n]+"
                                      . dateRegEx . "[^\n]+Grade=[0-2]", v, pos + StrLen(v1)))
     FileAppend, % v1 . "`n", % TempOutputPath
   ShellRun(TempOutputPath)
@@ -1014,4 +1024,26 @@ EPUB2TXT:
   } else {
     ToolTip("Not found.")
   }
+return
+
+PasteCleanedClipboard:
+  Vim.HTML.ClipboardGet_HTML(data)
+  RegExMatch(data, "SourceURL:(.*)", v)
+  RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
+  data := Vim.HTML.Clean(data,,, v1)
+  Clip(data,,, (Vim.SM.IsEditingHTML() ? "sm" : true))
+return
+
+ArchiveToday:
+  WinWaitActive % "ahk_id " . hWnd
+  if (WinActive("ahk_group Browser")) {
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    url := FindSearch("Archive Today", "URL:", uiaBrowser.GetCurrentURL(), true)
+  } else if (WinActive("ahk_class TElWind")) {
+    url := FindSearch("Archive Today", "URL:", Vim.SM.GetLink(), true)
+  } else if (!url := FindSearch("Today", "URL:")) {
+    return
+  }
+  if (url)
+    ShellRun("https://archive.today/?run=1&url=" . url)
 return

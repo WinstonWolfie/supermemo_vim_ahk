@@ -123,6 +123,8 @@ class VimBrowser {
       this.Source := "The Skeptic's Dictionary", this.Title := RegExReplace(this.Title, " - The Skeptic's Dictionary - Skepdic\.com$")
     } else if (this.Title ~= "-格隆汇$") {
       this.Source := "格隆汇", this.Title := RegExReplace(this.Title, "-格隆汇$")
+    } else if (this.Title ~= "：劍橋詞典$") {
+      this.Source := "劍橋詞典", this.Title := RegExReplace(this.Title, "：劍橋詞典$")
 
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {
       this.Source := v1 . " | Cambridge Core", this.Title := RegExReplace(this.Title, "\| (.*) \| Cambridge Core$")
@@ -227,14 +229,6 @@ class VimBrowser {
         this.Source .= "：纪录片", this.Title := RegExReplace(this.Title, "-纪录片-全集-高清独家在线观看$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText)
-    } else if (this.Title ~= " 在线播放 - 小宝影院 - 在线视频$") {
-      this.Source := "小宝影院", this.Title := RegExReplace(this.Title, " 在线播放 - 小宝影院 - 在线视频$")
-      if (CopyFullPage)
-        this.VidTime := this.MatchVidTime(this.FullTitle)
-    } else if (this.Title ~= "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$") {
-      this.Source := "唐人街影院", this.Title := RegExReplace(this.Title, "-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放$")
-      if (CopyFullPage)
-        this.VidTime := this.MatchVidTime(this.FullTitle)
     } else if (RegExMatch(this.Title, "^Watch (.*) HD online$", v)) {
       this.Source := "MoviesJoy", this.Title := v1
       if (RegExMatch(this.Title, " (\d+)$", v))
@@ -323,6 +317,11 @@ class VimBrowser {
       this.Source := "Viquipèdia", this.Title := RegExReplace(this.Title, " - Viquipèdia, l'enciclopèdia lliure$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "La pàgina va ser modificada per darrera vegada el (.*?) a ", v), this.Date := v1
+    } else if (this.Title ~= " - Vicipaedia$") {
+      this.Source := "Vicipaedia", this.Title := RegExReplace(this.Title, " - Vicipaedia$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Novissima mutatio die (.*?) hora", v), this.Date := v1
+
     } else if (IfContains(this.Url, "it.wikipedia.org")) {
       this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -331,10 +330,11 @@ class VimBrowser {
       this.Source := "ウィキペディア", this.Title := RegExReplace(this.Title, " - Wikipedia$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "最終更新 (.*?) \(", v), this.Date := v1
-    } else if (this.Title ~= " - Vicipaedia$") {
-      this.Source := "Vicipaedia", this.Title := RegExReplace(this.Title, " - Vicipaedia$")
+    } else if (IfContains(this.Url, "fr.wikisource.org")) {
+      this.Source := "Wikisource", this.Title := RegExReplace(this.Title, " - Wikisource$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Novissima mutatio die (.*?) hora", v), this.Date := v1
+        RegExMatch(FullPageText, "La dernière modification de cette page a été faite le (.*?) à ", v), this.Date := v1
+
     } else if (IfContains(this.Url, "github.com")) {
       this.Source := "GitHub", this.Title := RegExReplace(this.Title, "^GitHub - "), this.Title := RegExReplace(this.Title, " · GitHub$")
       if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -432,7 +432,7 @@ class VimBrowser {
   }
 
   MatchYTDate(text) {
-    RegExMatch(text, "views +?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", v)
+    RegExMatch(text, "views +?(\r\n)?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", v)
     return v
   }
 
@@ -494,14 +494,14 @@ class VimBrowser {
       return 1
     } else if (title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {  ; video time can be in url but ^a doesn't cover video time
       return 2
-    } else if (title ~= "^(Watch full .*? english sub \| Kissasian|Watch .* HD online|Watch .*? online free on 9anime)$|( 在线播放 - 小宝影院 - 在线视频|-在线播放 - 唐人街影院-海外华人影视网站-在线高清播放|-555电影| – NO视频| \| 91美剧网| \| FMovies)$") {  ; video time can't be in url and ^a doesn't cover video time
+    } else if (title ~= "^(Watch full .*? english sub \| Kissasian|Watch .* HD online|Watch .*? online free on 9anime)$") {  ; video time can't be in url and ^a doesn't cover video time
       return 3
     }
   }
 
   Highlight(CollName:="", PlainText:="") {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
-    if (RegexMatch(PlainText, "(\[\d+\])+$|\[\d+\]: \d+$|(?<=\.)\d+$", v)) {
+    if (RegexMatch(PlainText, "(\[\d+\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
       this.Url := this.Url ? this.Url : this.GetParsedUrl()
       if (IfContains(this.Url, "wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"

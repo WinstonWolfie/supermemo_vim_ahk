@@ -111,13 +111,15 @@ return
 return
 
 ^!p::  ; convert to a *p*lain-text template
+^!i::  ; convert to the "item" template
   ContLearn := Vim.SM.IsLearning()
-  send ^+p  ; much faster than ^+m
-  WinWaitActive, ahk_class TElParamDlg
-  send !t
-  send {text}classic  ; my plain-text template name is classic
-  send {enter 2}
-  WinWaitActive, ahk_class TElWind
+  if (A_ThisLabel == "^!p") {
+    template := "classic"  ; my plain-text template name is classic
+  } else if (A_ThisLabel == "^!i") {
+    template := "item"
+  }
+  Vim.SM.SetElParam(,, template)
+  WinWaitClose, ahk_class TElParamDlg
   MsgBox, 3,, Permanently remove extra components?
   WinWaitActive, ahk_class TElWind
   if (IfMsgBox("Yes")) {
@@ -128,11 +130,8 @@ return
     WinWaitActive, ahk_class TMsgDialog
     send {enter}
     WinWaitClose
-    send ^+p  ; much faster than ^+m
-    WinWaitActive, ahk_class TElParamDlg
-    send !t
-    send {text}classic  ; my plain-text template name is classic
-    send {enter 2}
+    Vim.SM.SetElParam(,, template)
+    WinWaitClose, ahk_class TElParamDlg
   } else if (IfMsgBox("Cancel")) {
     send !{f10}td
   }
@@ -285,8 +284,8 @@ return
     WinWaitActive, ahk_class TElWind
     HTML := FileRead(HTMLPath := Vim.SM.GetFilePath(false))
     HTML := StrReplace(HTML, LatexPlaceHolder)
-    send {esc}
-    Vim.SM.WaitTextExit()
+    ; send {esc}
+    ; Vim.SM.WaitTextExit()
     
     /*
       Recommended css setting for anti-merge class:
@@ -301,22 +300,27 @@ return
     HTML := RegExReplace(HTML, "<SPAN class=anti-merge>Last LaTeX to image conversion at .*?(<\/SPAN>|$)", AntiMerge, v)
     if (!v)
       HTML .= "`n" . AntiMerge
-    FileDelete % HTMLPath
-    FileAppend, % HTML, % HTMLPath
-    Vim.State.SetMode("Vim_Normal")
-    send !{f12}kr
-    WinWaitActive, ahk_class TRegistryForm
-    send {esc}  ; cannot use WinClose, won't update html
-    WinWaitClose
-    WinWaitActive, ahk_class TElWind
-    ; If you use !{right} the html won't get updated????
-    send ^g
-    send {text}1
-    send {enter}
-    WinWaitActive, ahk_class TElWind
-    Vim.SM.WaitFileLoad()
-    Vim.SM.GoBack()
+    Vim.SM.DeleteHTML()
+    send ^{home}
+    Clip(HTML,, false, "sm")
+    Vim.SM.Reload()
 
+    ; FileDelete % HTMLPath
+    ; FileAppend, % HTML, % HTMLPath
+    ; send !{f12}kr
+    ; WinWaitActive, ahk_class TRegistryForm
+    ; send {esc}  ; cannot use WinClose, won't update html
+    ; WinWaitClose
+    ; WinWaitActive, ahk_class TElWind
+    ; ; If you use !{right} the html won't get updated????
+    ; send ^g
+    ; send {text}1
+    ; send {enter}
+    ; WinWaitActive, ahk_class TElWind
+    ; Vim.SM.WaitFileLoad()
+    ; Vim.SM.GoBack()
+
+    Vim.State.SetMode("Vim_Normal")
   } else {  ; image
     send {bs}  ; otherwise might contain unwanted format
     RegExMatch(data, "alt=""(.*?)""", v)

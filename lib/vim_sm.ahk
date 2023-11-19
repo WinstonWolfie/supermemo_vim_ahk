@@ -940,7 +940,7 @@ class VimSM {
   WaitBrowser(timeout:=1) {
     WinWaitActive, ahk_class TProgressBox,, % timeout
     if (!ErrorLevel)
-      WinWaitNotActive, ahk_class TProgressBox
+      WinWaitClose
     WinWaitActive, ahk_class TBrowser
   }
 
@@ -1023,11 +1023,11 @@ class VimSM {
   }
 
   OpenNotepad(method:=0, timeout:=0) {
-    if (method) {
-      send !{f12}fw
-    } else {
+    if (!method) {
       this.ExitText(true, timeout)
       send ^+{f6}
+    } else {
+      send !{f12}fw
     }
   }
 
@@ -1070,11 +1070,11 @@ class VimSM {
     this.Vim.Caret.SwitchToSameWindow()
   }
 
-  PasteHTML() {
+  PasteHTML(SleepInterval:=1) {
     this.ActivateElWind()
     send {AppsKey}xp  ; Paste HTML
     while (DllCall("GetOpenClipboardWindow"))
-      sleep 1
+      sleep % SleepInterval
     WinWaitNotActive, ahk_class TElWind,, 0.3
     WinWaitActive, ahk_class TElWind
   }
@@ -1121,5 +1121,25 @@ class VimSM {
         return true
       }
     }
+  }
+
+  DeleteHTML() {
+    loop {
+      send !{f12}kd  ; delete registry link
+      WinWaitActive, ahk_class TMsgDialog,, 0.2
+      if (!ErrorLevel) {
+        send {enter}
+        WinWaitClose
+        break
+      }
+    }
+    WinWaitActive, ahk_class TElWind
+  }
+
+  OpenBrowser() {
+    ; Sometimes a bug makes that you can't use ^space to open browser in content window
+    ; After a while, I found out it's due to my Chinese input method
+    SetDefaultKeyboard(0x0409)  ; English-US
+    send ^{space}  ; open browser
   }
 }

@@ -109,9 +109,12 @@ Return
   send {Shift Up}
 Return
 
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingPlainText())
+m::send % "{text}*" . Copy() . "*"
+
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())
 b::
-  send ^{space}
+  Vim.SM.OpenBrowser()
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -261,17 +264,19 @@ CapsLock & z::  ; delete [...]
   KeyWait Alt
   send !z
   Vim.State.SetMode("Vim_Normal")
-  if (!ClozeNoBracket && !hint)  ; entered nothing
+  if (!ClozeNoBracket && !hint && !CtrlState)  ; entered nothing
     return
 
   ToolTip("Cloze processing...", true)
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
-    return
-  ElNumber := CtrlState ? 1 : Vim.SM.GetElNumber()
+    Goto RemoveToolTipReturn
+  ; ElNumber := CtrlState ? 1 : Vim.SM.GetElNumber()
   Vim.SM.GoBack(), Vim.SM.WaitFileLoad()
+  if (!ClozeNoBracket && !hint && CtrlState)  ; entered nothing
+    Goto RemoveToolTipReturn
   if (WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 200)) {
-    if (!Vim.SM.SpamQ(, 1500))
-      return
+    if (!Vim.SM.SpamQ(, 2500))
+      Goto RemoveToolTipReturn
   } else {
     Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
   }
@@ -312,52 +317,69 @@ CapsLock & z::  ; delete [...]
 
     ; Replacing [...] directly in HTML. Much faster!
     HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())
-    if (HTML = "<SPAN class=cloze>[...]</SPAN>") {
-      if (ClozeNoBracket) {
-        send {del 5}
-      } else {
-        send +{right 5}
-        send % "{text}" . cloze
-      }
+    ; if (HTML = "<SPAN class=cloze>[...]</SPAN>") {
+    ;   if (ClozeNoBracket) {
+    ;     send {del 5}
+    ;   } else {
+    ;     send +{right 5}
+    ;     send % "{text}" . cloze
+    ;   }
+    ; } else {
+    ;   send !{f12}fw  ; open html in notepad
+    ;   if (ClozeNoBracket) {
+    ;     HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>",, v)
+    ;   } else {
+    ;     HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>"
+    ;                            , "<SPAN class=cloze>" . cloze . "</SPAN>", v)
+    ;   }
+    ;   if (v) {
+    ;     FileDelete % HTMLPath
+    ;     FileAppend, % HTML, % HTMLPath
+    ;     WinWaitActive, ahk_exe Notepad.exe
+    ;     send ^w
+    ;     WinClose
+    ;     WinActivate, ahk_class TElWind
+    ;     Vim.SM.EditFirstQuestion()  ; must focus on html, otherwise won't update it
+    ;     Vim.SM.WaitHTMLFocus()
+    ;     send !{f12}kr
+    ;     WinWaitActive, ahk_class TRegistryForm
+    ;     send {esc}  ; cannot use WinClose, won't update html
+    ;     WinWaitClose
+    ;   } else {
+    ;     ToolTip("Cloze not found!")
+    ;     WinWaitActive, ahk_exe Notepad.exe
+    ;     send ^w
+    ;     WinClose
+    ;   }
+    ; }
+
+    Vim.SM.DeleteHTML()
+    send ^{home}
+    if (ClozeNoBracket) {
+      HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>",, v)
     } else {
-      send !{f12}fw  ; open html in notepad
-      if (ClozeNoBracket) {
-        HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>",, v)
-      } else {
-        HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>"
-                               , "<SPAN class=cloze>" . cloze . "</SPAN>", v)
-      }
-      if (v) {
-        FileDelete % HTMLPath
-        FileAppend, % HTML, % HTMLPath
-        WinWaitActive, ahk_exe Notepad.exe
-        send ^w
-        WinClose
-        WinActivate, ahk_class TElWind
-        Vim.SM.EditFirstQuestion()  ; must focus on html, otherwise won't update it
-        Vim.SM.WaitHTMLFocus()
-        send !{f12}kr
-        WinWaitActive, ahk_class TRegistryForm
-        send {esc}  ; cannot use WinClose, won't update html
-        WinWaitClose
-      } else {
-        ToolTip("Cloze not found!")
-        WinWaitActive, ahk_exe Notepad.exe
-        send ^w
-        WinClose
-      }
+      HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>"
+                              , "<SPAN class=cloze>" . cloze . "</SPAN>", v)
     }
+    Clip(HTML,,, "sm")
   }
 
-  WinWaitActive, ahk_class TElWind
-  ; If you use !{right} the html won't get updated????
-  send ^g
-  send % "{text}" . ElNumber  ; ElNumber = 1 (root element) if ctrl is pressed
-  send {enter}
-  if (CtrlState) {  ; go back to item is ctrl is pressed
-    WinWaitActive, ahk_class TElWind
-    Vim.SM.WaitFileLoad()
-    Vim.SM.GoBack()
+  if (CtrlState) {
+    send {esc}
+  } else {
+    send !{right}
   }
+
+  ; WinWaitActive, ahk_class TElWind
+  ; ; If you use !{right} the html won't get updated????
+  ; send ^g
+  ; send % "{text}" . ElNumber  ; ElNumber = 1 (root element) if ctrl is pressed
+  ; send {enter}
+  ; if (CtrlState) {  ; go back to item is ctrl is pressed
+  ;   WinWaitActive, ahk_class TElWind
+  ;   Vim.SM.WaitFileLoad()
+  ;   Vim.SM.GoBack()
+  ; }
+
   RemoveToolTip()
 return

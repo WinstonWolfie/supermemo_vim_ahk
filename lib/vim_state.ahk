@@ -112,14 +112,16 @@ class VimState {
 
   HandleEsc() {
     global Vim, VimEscNormal, SMVimSendEscInsert, VimSendEscNormal, VimLongEscNormal
-    if (this.Vim.SM.IsEditingText() && (A_ThisLabel = "capslock"))
+    caps := (A_ThisHotkey = "CapsLock") ? true : false
+    esc := (A_ThisHotkey = "Esc") ? true : false
+    if (this.Vim.SM.IsEditingText() && caps)
       this.Vim.SM.ClickMid()
     if (!VimEscNormal) {
       send {Esc}
       Return
     }
-    ; The keywait waits for esc to be released. If it doesn't detect a release
-    ; within the time limit, sets ErrorLevel to 1.
+    ; keyWait waits for Esc to be released. If it didn't detect a release
+    ; within the time limit, ErrorLevel is set to 1.
     KeyWait, Esc, T0.5
     LongPress := ErrorLevel
     both := (VimLongEscNormal && LongPress)
@@ -130,11 +132,10 @@ class VimState {
       send {Esc}
     if (SetNormal || (WinActive("ahk_group SM") && SMVimSendEscInsert))
       this.SetNormal()
-    if (LongPress) {
-      ; Have to ensure the key has been released, otherwise this will get
-      ; triggered again.
+    ; Have to ensure the key has been released, otherwise this will get
+    ; triggered again.
+    if (LongPress && esc)
       KeyWait Esc
-    }
   }
 
   HandlePlanDraggingSetNormal() {
