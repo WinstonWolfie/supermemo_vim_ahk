@@ -777,14 +777,14 @@ RestartICloudDrive:
 return
 
 CalculateTodaysPassRate:
-  ToolTip("Executing...", true), SMPID := WinGet("PID", "ahk_class TElWind")
+  ToolTip("Executing...", true), pidSM := WinGet("PID", "ahk_class TElWind")
   BlockInput, on
   Vim.SM.PostMsg(31)  ; export rep history
   WinWaitActive, ahk_class TFileBrowser
   TempPath := A_Temp . "\Repetition History_" . Vim.SM.GetCollName() . "_"
             . GetCurrTimeForFileName() ".txt"
   Vim.SM.FileBrowserSetPath(TempPath, true)
-  WinWaitActive % "Information ahk_class TMsgDialog ahk_pid " . SMPID
+  WinWaitActive % "Information ahk_class TMsgDialog ahk_pid " . pidSM
   send {enter}
   RepHistory := FileReadAndDelete(TempPath)
   DateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
@@ -820,7 +820,7 @@ return
 PerplexityAIButtonSearch:
   Gui, Submit
   Gui, Destroy
-  ShellRun("https://www.perplexity.ai/search?q=" . search . "&focus=" . focus
+  ShellRun("https://www.perplexity.ai/search?q=" . EncodeDecodeURI(search) . "&focus=" . focus
          . "&copilot=" . (copilot ? "true" : "false"))
 return
 
@@ -882,7 +882,7 @@ MassReplaceRegistry:
 return
 
 AllLapsesToday:
-  ToolTip("Executing...", true), SMPID := WinGet("PID", "ahk_class TElWind")
+  ToolTip("Executing...", true), pidSM := WinGet("PID", "ahk_class TElWind")
   BlockInput, on
   Vim.SM.PostMsg(31)  ; export rep history
   WinWaitActive, ahk_class TFileBrowser
@@ -891,7 +891,7 @@ AllLapsesToday:
   TempOutputPath := A_Temp . "\All Lapses Today_" . Vim.SM.GetCollName() . "_"
                   . t . ".txt"
   Vim.SM.FileBrowserSetPath(TempPath, true)
-  WinWaitActive % "Information ahk_class TMsgDialog ahk_pid " . SMPID
+  WinWaitActive % "Information ahk_class TMsgDialog ahk_pid " . pidSM
   send {enter}
   RepHistory := FileReadAndDelete(TempPath)
   dateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")

@@ -244,7 +244,10 @@ IWBNewTopic:
     Gui, SMImport:Add, Text,, &Priority:
     Gui, SMImport:Add, Edit, vPrio w196
     Gui, SMImport:Add, Text,, Concept &group:  ; like in default import dialog
-    list := ConceptBefore . "||Online|Sources|ToDo"
+    ConceptList := "||Online|Sources|ToDo"
+    if (IfIn(ConceptBefore, "Online,Sources,ToDo"))
+      ConceptList := StrReplace(ConceptList, "|" . ConceptBefore)
+    list := StrLower(ConceptBefore . ConceptList)
     Gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % list
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
     if (!IWB)
@@ -586,7 +589,7 @@ ExtractToSM:
       Goto RestoreClipReturn
     }
   }
-  if (wBrowser && (SMLink != url)) {
+  if (wBrowser && !Vim.SM.MatchLink(SMLink, url)) {
     MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                 . "`nBrowser url: " . url
                 . "`nSM url: " . SMLink
@@ -794,7 +797,7 @@ MarkInSMTitle:
       return
     }
   }
-  if (wBrowser && (SMLink != url)) {
+  if (wBrowser && !Vim.SM.MatchLink(SMLink, url)) {
     MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                 . "`nBrowser url: " . url
                 . "`nSM url: " . SMLink

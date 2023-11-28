@@ -262,6 +262,7 @@ CapsLock & z::  ; delete [...]
   }
   KeyWait Capslock
   KeyWait Alt
+  KeyWait Enter
   send !z
   Vim.State.SetMode("Vim_Normal")
   if (!ClozeNoBracket && !hint && !CtrlState)  ; entered nothing
@@ -272,14 +273,11 @@ CapsLock & z::  ; delete [...]
     Goto RemoveToolTipReturn
   ; ElNumber := CtrlState ? 1 : Vim.SM.GetElNumber()
   Vim.SM.GoBack(), Vim.SM.WaitFileLoad()
+  WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 200)
   if (!ClozeNoBracket && !hint && CtrlState)  ; entered nothing
     Goto RemoveToolTipReturn
-  if (WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 200)) {
-    if (!Vim.SM.SpamQ(, 2500))
-      Goto RemoveToolTipReturn
-  } else {
-    Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
-  }
+  if (!Vim.SM.SpamQ(, 10000))
+    Goto RemoveToolTipReturn
   if (!ClozeNoBracket && inside) {
     cloze := "[" . hint . "]"
   } else {

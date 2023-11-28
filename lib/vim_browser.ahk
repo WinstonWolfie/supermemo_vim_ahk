@@ -52,7 +52,7 @@ class VimBrowser {
       this.Title := RegExReplace(this.Title, "^\(\d+\) ")
 
     ; Sites that should be skipped
-    SkippedList := "wind.com.cn,thepokerbank.com"
+    SkippedList := "wind.com.cn,thepokerbank.com,tutorial.math.lamar.edu"
     if (IfContains(this.Url, SkippedList)) {
       return
 
@@ -522,16 +522,16 @@ class VimBrowser {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
-      if (btn) {
-        btn.FindByPath("P3").click()  ; click the description box, so the webpage doesn't scroll down
-      } else {
-        el := guiaBrowser.FindFirstBy("ControlType=Text AND Name='^\d+(\.\d+)?(K|M|B)? views'",, "regex")
-        if (el.FindByPath("+1").Name == "•") {  ; not video time from the current video (instead, suggestion box)
-          return false
-        } else {
-          el.click()
-        }
-      }
+      ; if (btn) {
+        btn.FindByPath("P2").click()  ; click the description box, so the webpage doesn't scroll down
+      ; } else {
+      ;   el := guiaBrowser.FindFirstBy("ControlType=Text AND Name='^\d+(\.\d+)?(K|M|B)? views'",, "regex")
+      ;   if (el.FindByPath("+1").Name == "•") {  ; not video time from the current video (instead, suggestion box)
+      ;     return false
+      ;   } else {
+      ;     el.click()
+      ;   }
+      ; }
     } else {
       return false
     }

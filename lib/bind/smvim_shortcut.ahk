@@ -82,7 +82,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && Vim.SM.DoesHTMLExist())
 ^!f::  ; use IE's search
-  SMPID := WinGet("PID", "A")
+  pidSM := WinGet("PID", "A")
   send ^t
   Vim.SM.WaitHTMLFocus()
   if (Vim.SM.IsEditingHTML())
@@ -97,7 +97,7 @@ return
 return
 
 RegisterVimLastSearchForSMCtrlAltF:
-  while (WinExist("ahk_class #32770 ahk_pid " . SMPID)) {
+  while (WinExist("ahk_class #32770 ahk_pid " . pidSM)) {
     if (v := ControlGetText("Edit1"))
       VimLastSearch := v
     sleep 100
@@ -258,6 +258,8 @@ return
 return
 
 ^!l::
+  ContLearn := (Vim.SM.IsGrading()) ? 1 : Vim.SM.IsLearning()
+  Item := (ContLearn == 1) ? true : false
   CurrTimeDisplay := GetDetailedTime()
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, ",? |:", "-")
   ClipSaved := ClipboardAll
@@ -280,12 +282,14 @@ return
     FileCreateDir % LatexFolderPath
     LatexPlaceHolder := GetDetailedTime()
     Clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>" . LatexPlaceHolder,, false, true)
+    if (ContLearn == 1) {  ; item and "Show answer"
+      send {esc}
+      Vim.SM.WaitTextExit()
+    }
     Vim.SM.SaveHTML()
     WinWaitActive, ahk_class TElWind
     HTML := FileRead(HTMLPath := Vim.SM.GetFilePath(false))
     HTML := StrReplace(HTML, LatexPlaceHolder)
-    ; send {esc}
-    ; Vim.SM.WaitTextExit()
     
     /*
       Recommended css setting for anti-merge class:
@@ -303,23 +307,15 @@ return
     Vim.SM.DeleteHTML()
     send ^{home}
     Clip(HTML,, false, "sm")
-    Vim.SM.Reload()
-
-    ; FileDelete % HTMLPath
-    ; FileAppend, % HTML, % HTMLPath
-    ; send !{f12}kr
-    ; WinWaitActive, ahk_class TRegistryForm
-    ; send {esc}  ; cannot use WinClose, won't update html
-    ; WinWaitClose
-    ; WinWaitActive, ahk_class TElWind
-    ; ; If you use !{right} the html won't get updated????
-    ; send ^g
-    ; send {text}1
-    ; send {enter}
-    ; WinWaitActive, ahk_class TElWind
-    ; Vim.SM.WaitFileLoad()
-    ; Vim.SM.GoBack()
-
+    if (ContLearn == 1) {  ; item and "Show answer"
+      send {esc}
+      Vim.SM.WaitTextExit()
+    }
+    Vim.SM.SaveHTML()
+    if (Item) {
+      WinWaitActive, ahk_class TElWind
+      send ^+{f7}  ; clear read point
+    }
     Vim.State.SetMode("Vim_Normal")
   } else {  ; image
     send {bs}  ; otherwise might contain unwanted format
@@ -331,7 +327,8 @@ return
     RegExMatch(data, "src=""(.*?)""", v)
     if (!v)
       RegExMatch(data, "src=(.*?) ", v)
-    LatexPath := StrReplace(v1, "file:///"), LatexFormula := HTML_decode(LatexFormula)
+    LatexPath := StrReplace(v1, "file:///")
+    LatexFormula := StrReplace(LatexFormula, "&amp;", "&")
     Clip(LatexFormula, true, false)
     FileDelete % LatexPath
     Vim.State.SetMode("Vim_Visual")
@@ -340,9 +337,12 @@ return
 return
 
 ProcessLatexFormula(LatexFormula) {
-  LatexFormula := RegExReplace(LatexFormula, "{\\displaystyle |\\displaystyle{ ?",, v)  ; from Wikipedia, Wikibooks, Better Explained, etc
+  LatexFormula := RegExReplace(LatexFormula, "{\\(display|text)style |\\(display|text)style{ ?",, v)  ; from Wikipedia, Wikibooks, Better Explained, etc
   if (v)
     LatexFormula := RegExReplace(LatexFormula, "}$")
+  LatexFormula := RegExReplace(LatexFormula, "\\\(\\displaystyle",, v)  ; from LibreTexts
+  if (v)
+    LatexFormula := RegExReplace(LatexFormula, "\)$")
   LatexFormula := StrReplace(LatexFormula, "{\ce ",, v)  ; from Wikipedia's chemistry formulae
   if (v)
     LatexFormula := RegExReplace(LatexFormula, "}$")

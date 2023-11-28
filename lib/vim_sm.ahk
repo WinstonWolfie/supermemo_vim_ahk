@@ -464,8 +464,8 @@ class VimSM {
     wSMElWnd := "ahk_class TElWind"
     WinGet, paSMTitles, List, ahk_class TElWind
     loop % paSMTitles {
-      SMPID := WinGet("PID", "ahk_id " . hWnd := paSMTitles%A_Index%)
-      if (WinExist("ahk_class TProgressBox ahk_pid " . SMPID)) {
+      pidSM := WinGet("PID", "ahk_id " . hWnd := paSMTitles%A_Index%)
+      if (WinExist("ahk_class TProgressBox ahk_pid " . pidSM)) {
         continue
       } else {
         WindFound := true, wSMElWnd := "ahk_id " . hWnd
@@ -677,6 +677,10 @@ class VimSM {
   }
 
   CheckDup(text, ClearHighlight:=true) {  ; try to find duplicates
+    pidSM := WinGet("PID", "ahk_class TElWind")
+    while (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)
+        || WinExist("ahk_class TBrowser ahk_pid " . pidSM))
+      WinClose
     ContLearn := this.IsLearning(), text := LTrim(text)
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
     ; Can't just encode URI, Chinese characters will be encoded
@@ -744,14 +748,14 @@ class VimSM {
     }
     if (!r)
       return false
-    WinWait, % "ahk_class TCommanderDlg ahk_pid " . SMPID := WinGet("PID", "ahk_class TElWind")
+    WinWait, % "ahk_class TCommanderDlg ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind")
     if (text) {
       ControlSetText, TEdit2, % text
       ControlTextWait("TEdit2", text, "")
     }
-    while (WinExist("ahk_class TCommanderDlg ahk_pid " . SMPID)) {
+    while (WinExist("ahk_class TCommanderDlg ahk_pid " . pidSM)) {
       ControlClick, TButton4,,,,, NA
-      if (WinExist("ahk_class #32770 ahk_pid " . SMPID))
+      if (WinExist("ahk_class #32770 ahk_pid " . pidSM))
         ControlSend,, {esc}
     }
     return true
@@ -957,7 +961,7 @@ class VimSM {
     }
   }
 
-  SpamQ(SpamInterval:=20, timeout:=0) {
+  SpamQ(SpamInterval:=100, timeout:=0) {
     loop {
       this.EditFirstQuestion()
       if (SpamInterval && this.WaitTextFocus(SpamInterval)) {
@@ -1018,7 +1022,7 @@ class VimSM {
   }
 
   CloseMsgWind() {
-    while (WinExist("ahk_class TMsgDialog"))
+    while (WinExist("ahk_class TMsgDialog ahk_pid " . WinGet("PID", "ahk_class TElWind")))
       WinClose
   }
 
@@ -1081,28 +1085,28 @@ class VimSM {
 
   HandleSM19PoundSymbUrl(url) {
     if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(url, "#")) {
-      SMPID := WinGet("PID", "ahk_class TElWind")
+      pidSM := WinGet("PID", "ahk_class TElWind")
       this.PostMsg(154), ShortUrl := RegExReplace(url, "#.*")
-      WinWait, % "ahk_class TRegistryForm ahk_pid " . SMPID
+      WinWait, % "ahk_class TRegistryForm ahk_pid " . pidSM
       ControlSetText, Edit1, % SubStr(ShortUrl, 2)
       ControlSend, Edit1, % "{text}" . SubStr(ShortUrl, 1, 1)
       Acc_Get("Object", "4.5.4.6.4").accDoDefaultAction()
-      WinWait, % "ahk_class TInputDlg ahk_pid " . SMPID
+      WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
       if (ControlGetText("TMemo1") == ShortUrl)
         ControlSetText, TMemo1, % url
       ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
       WinWaitClose
-      WinWait, % "ahk_class TChoicesDlg ahk_pid " . SMPID,, 0.3
+      WinWait, % "ahk_class TChoicesDlg ahk_pid " . pidSM,, 0.3
       if (!ErrorLevel) {
         ControlFocus, TGroupButton3
         ControlClick, TBitBtn2,,,,, NA
         WinWaitClose
-        WinWait, % "ahk_class TChoicesDlg ahk_pid " . SMPID
+        WinWait, % "ahk_class TChoicesDlg ahk_pid " . pidSM
         ControlFocus, TGroupButton2
         ControlClick, TBitBtn2,,,,, NA
         WinWaitClose
       }
-      WinClose, % "ahk_class TRegistryForm ahk_pid " . SMPID
+      WinClose, % "ahk_class TRegistryForm ahk_pid " . pidSM
       return true
     }
   }
@@ -1141,5 +1145,13 @@ class VimSM {
     ; After a while, I found out it's due to my Chinese input method
     SetDefaultKeyboard(0x0409)  ; English-US
     send ^{space}  ; open browser
+  }
+
+  MatchLink(SMLink, url) {
+    if (IfContains(url, "britannica.com")) {
+      return IfContains(url, SMLink)
+    } else {
+      return (SMLink = url)
+    }
   }
 }
