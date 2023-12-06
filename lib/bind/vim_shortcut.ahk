@@ -634,13 +634,12 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class SUMATRA_PDF_FRAME") && Vim.State.IsCurrentVimMode("Z") && !ControlGetFocus("A"))
 +z::  ; exit and save annotations
   ; ControlSend,, q, ahk_class SUMATRA_PDF_FRAME
+  send ^+s
   send q
   WinActivate, ahk_class TElWind
   WinWait, Unsaved annotations,, 0
-  if (!ErrorLevel) {
-    ControlClick, Button1,,,,, NA
-    WinActivate, ahk_class TElWind
-  }
+  if (!ErrorLevel)
+    WinActivate
   Vim.State.SetMode("Vim_Normal")
 return
 

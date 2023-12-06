@@ -288,6 +288,7 @@ return
     }
     Vim.SM.SaveHTML()
     WinWaitActive, ahk_class TElWind
+    Vim.SM.WaitHTMLFocus()
     HTML := FileRead(HTMLPath := Vim.SM.GetFilePath(false))
     HTML := StrReplace(HTML, LatexPlaceHolder)
     
@@ -340,14 +341,15 @@ ProcessLatexFormula(LatexFormula) {
   LatexFormula := RegExReplace(LatexFormula, "{\\(display|text)style |\\(display|text)style{ ?",, v)  ; from Wikipedia, Wikibooks, Better Explained, etc
   if (v)
     LatexFormula := RegExReplace(LatexFormula, "}$")
-  LatexFormula := RegExReplace(LatexFormula, "\\\(\\displaystyle",, v)  ; from LibreTexts
+  LatexFormula := RegExReplace(LatexFormula, "\\\(\\(displaystyle)?",, v)  ; from LibreTexts
   if (v)
     LatexFormula := RegExReplace(LatexFormula, "\)$")
   LatexFormula := StrReplace(LatexFormula, "{\ce ",, v)  ; from Wikipedia's chemistry formulae
   if (v)
     LatexFormula := RegExReplace(LatexFormula, "}$")
   LatexFormula := RegExReplace(LatexFormula, "^\\\[|\\\]$")  ; removing start \[ and end ]\ (in Better Explained)
-  return LatexFormula
+  LatexFormula := RegExReplace(LatexFormula, "^\\\(|\\\)$")  ; removing start \( and end )\ (in LibreTexts)
+  return Trim(LatexFormula)
 }
 
 DownloadLatex:

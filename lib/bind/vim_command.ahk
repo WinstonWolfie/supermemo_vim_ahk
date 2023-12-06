@@ -53,7 +53,7 @@ Return
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|LatinoGraecum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
         . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
-        . "|PasteCleanedClipboard|ArchiveToday"
+        . "|PasteCleanedClipboard|ArchiveToday|WolframAlpha"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     list := "SetConceptHook|MemoriseChildren|" . list
@@ -1047,3 +1047,8 @@ ArchiveToday:
   if (url)
     ShellRun("https://archive.today/?run=1&url=" . url)
 return
+
+WolframAlpha:
+  if (text := FindSearch("WolframAlpha", "Text:"))
+    ShellRun("https://www.wolframalpha.com/input?input=" . EncodeDecodeURI(text))
+Return
