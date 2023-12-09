@@ -15,7 +15,11 @@
 
 #if (Vim.State.Vim.Enabled && (GetKeyState("LWin", "P") || GetKeyState("RWin", "P")))
 CapsLock & j::WinMinimize, A
-CapsLock & k::WinMaximize, A
+CapsLock & k::
+    w := WinActive("A")
+    send #{down}  ; refresh window
+    WinMaximize, % "ahk_id " . w
+return
 
 #if (Vim.State.Vim.Enabled)
 ;=====================================================================o
