@@ -691,9 +691,9 @@ LinkToPreviousElement:
   Vim.SM.WaitFileLoad()
   send !{f10}ci  ; link contents
   WinWaitActive, ahk_class TContents
-  sleep 100
-  send {enter}
-  WinActivate, ahk_class TElWind
+  send {enter}+{enter}
+  Vim.SM.WaitFileLoad()
+  WinWaitActive, ahk_class TElWind
   Goto SMListLinks
 return
 

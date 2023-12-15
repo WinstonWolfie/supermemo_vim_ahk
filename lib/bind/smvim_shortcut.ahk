@@ -287,9 +287,8 @@ return
       Vim.SM.WaitTextExit()
     }
     Vim.SM.SaveHTML()
-    WinWaitActive, ahk_class TElWind
     Vim.SM.WaitHTMLFocus()
-    HTML := FileRead(HTMLPath := Vim.SM.GetFilePath(false))
+    HTML := FileRead(HTMLPath := Vim.SM.LoopForFilePath(false))
     HTML := StrReplace(HTML, LatexPlaceHolder)
     
     /*

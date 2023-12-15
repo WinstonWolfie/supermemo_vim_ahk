@@ -138,6 +138,8 @@ class VimBrowser {
       this.Source := "Internet Archive", this.Title := RegExReplace(this.Title, "( : .*?)? : Free Download, Borrow, and Streaming : Internet Archive$")
       if (RegexMatch(this.FullTitle, " : (.*?) : Free Download, Borrow, and Streaming : Internet Archive$", v))
         this.Author := v1
+    } else if (RegExMatch(this.Title, " \| a podcast by (.*)$", v)) {
+      this.Author := v1, this.Source := "PodBean", this.Title := RegExReplace(this.Title, " \| a podcast by (.*)$")
 
     } else if (this.Title ~= " \/ X$") {
       this.Source := "X", this.Title := RegExReplace(this.Title, """ \/ X$")
@@ -208,6 +210,8 @@ class VimBrowser {
       this.Source := "Finty"
     } else if (IfContains(this.Url, "theconversation.com")) {
       this.Source := "The Conversation"
+    } else if (IfContains(this.Url, "thefreedictionary.com")) {
+      this.Source := "The Free Dictionary"
 
     ; Sites that require special attention
     ; Video sites

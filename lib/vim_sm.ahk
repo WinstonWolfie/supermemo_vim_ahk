@@ -421,7 +421,15 @@ class VimSM {
 
   GetFilePath(RestoreClip:=true) {
     this.ActivateElWind()
-    return Copy(RestoreClip,,, "!{f12}fc", true)
+    return Copy(RestoreClip,,, "!{f12}fc")
+  }
+
+  LoopForFilePath(RestoreClip) {
+    loop {
+      if (FilePath := this.GetFilePath(RestoreClip))
+        break
+    }
+    return FilePath
   }
 
   SetTitle(title:="", timeout:="") {
