@@ -35,8 +35,8 @@ class VimHTML {
 
     if (nuke) {
       ; Classes
-      str := RegExReplace(str, "is)<[^>]+\K class="".*?""(?=([^>]+)?>)")
-      str := RegExReplace(str, "is)<[^>]+\K class=[^ >]+(?=([^>]+)?>)")
+      str := RegExReplace(str, "is)<[^>]+\K\sclass="".*?""(?=([^>]+)?>)")
+      str := RegExReplace(str, "is)<[^>]+\K\sclass=[^ >]+(?=([^>]+)?>)")
     }
 
     if (LineBreak)
@@ -44,20 +44,23 @@ class VimHTML {
 
     if (IfContains(url, "economist.com"))
       str := StrReplace(str, "<small", "<small class=uppercase")
-      ; str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^>]+>)", " class=uppercase ")
+      ; str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^>]+>)", " class=uppercase ")
 
     ; Ilya Frank
-    ; str := RegExReplace(str, "is)<\w+\K (?=[^>]+COLOR: green)(?=[^>]+>)", " class=ilya-frank-translation ")
+    ; str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+COLOR: green)(?=[^>]+>)", " class=ilya-frank-translation ")
 
     ; Converts font-style to tags
-    str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-style: italic)(?=[^>]+>)", " class=italic ")
-    str := RegExReplace(str, "is)<\w+\K (?=[^>]+font-weight: bold)(?=[^>]+>)", " class=bold ")
-    str := RegExReplace(str, "is)<\w+\K (?=[^>]+text-decoration: underline)(?=[^>]+>)", " class=underline ")
+    str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-style: italic)(?=[^>]+>)", " class=italic ")
+    str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-weight: bold)(?=[^>]+>)", " class=bold ")
+    str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+text-decoration: underline)(?=[^>]+>)", " class=underline ")
+
+    ; For Dummies books
+    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?class=zcheltitalic(?=([^>]+)?>)", " class=italic")
 
     ; Styles and fonts
-    str := RegExReplace(str, "is)<[^>]+\K (zzz)?style="".*?""(?=([^>]+)?>)")
-    str := RegExReplace(str, "is)<[^>]+\K (zzz)?style='.*?'(?=([^>]+)?>)")
-    str := RegExReplace(str, "is)<[^>]+\K (zzz)?style=[^>]+(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?style="".*?""(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?style='.*?'(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?style=[^>]+(?=([^>]+)?>)")
     str := RegExReplace(str, "is)<\/?(zzz)?(font|form)([^>]+)?>")
 
     ; SuperMemo uses IE7; svg was introduced in IE9
@@ -69,9 +72,9 @@ class VimHTML {
     str := RegExReplace(str, "is)<(zzz)?button([^>]+)?>.*?<\/(zzz)?button>")
     str := RegExReplace(str, "is)<(zzz)?script([^>]+)?>.*?<\/(zzz)?script>")
     str := RegExReplace(str, "is)<(zzz)?input([^>]+)?>")
-    str := RegExReplace(str, "is)<[^>]+\K (bgcolor|onerror|onload|onclick|onmouseover)="".*?""(?=([^>]+)?>)")
-    str := RegExReplace(str, "is)<[^>]+\K (bgcolor|onerror|onload|onclick|onmouseover)=[^ >]+(?=([^>]+)?>)")
-    str := RegExReplace(str, "is)<[^>]+\K (onmouseover|onmouseout)=[^;]+;(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout)="".*?""(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout)=[^ >]+(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(onmouseover|onmouseout)=[^;]+;(?=([^>]+)?>)")
 
     ; Remove empty paragraphs
     str := RegExReplace(str, "is)<p([^>]+)?>(&nbsp;|\s| )+<\/p>")

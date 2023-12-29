@@ -1211,3 +1211,10 @@ PrepareLatin(word) {
   Word := StrReplace(Word, "ō", "o")
   return word
 }
+
+RetrieveUrlFromClip() {
+  global Vim
+  Vim.HTML.ClipboardGet_HTML(data)
+  RegExMatch(data, "SourceURL:(.*)", v)
+  return v1
+}

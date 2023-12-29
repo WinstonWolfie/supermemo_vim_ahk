@@ -605,8 +605,26 @@ Libgen:
 return
 
 ImageGoogle:
-  if (search := FindSearch("Image (Google)", "Search:"))
-    ShellRun("https://www.google.com/search?hl=en&tbm=isch&q=" . search)
+  Search := Trim(Copy())
+  Gui, ImageGoogle:Add, Text,, &Search:
+  Gui, ImageGoogle:Add, Edit, vSearch w136 r1 -WantReturn, % Search
+  Gui, ImageGoogle:Add, Text,, &Language Code:
+  List := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr|zh-hk|zh"
+  Gui, ImageGoogle:Add, Combobox, vLangCode gAutoComplete w136, % List
+  Gui, ImageGoogle:Add, Button, Default, &Search
+  Gui, ImageGoogle:Show,, Image (Google)
+  SetDefaultKeyboard(0x0409)  ; English-US
+Return
+
+ImageGoogleGuiEscape:
+ImageGoogleGuiClose:
+  Gui, Destroy
+return
+
+ImageGoogleButtonSearch:
+  Gui, Submit
+  Gui, Destroy
+  ShellRun("https://www.google.com/search?hl=" . LangCode . "&tbm=isch&q=" . search)
 return
 
 SearchLinkInYT:

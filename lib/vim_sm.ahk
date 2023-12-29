@@ -132,11 +132,11 @@ class VimSM {
           || (CurrFocus == "TBitBtn8")
           || (CurrFocus == "TBitBtn9")))
   }
- 
+
   IsNavigatingPlan() {
     return (WinActive("ahk_class TPlanDlg") && (ControlGetFocus("A") == "TStringGrid1"))
   }
- 
+
   IsNavigatingTask() {
     return (WinActive("ahk_class TTaskManager") && (ControlGetFocus("A") == "TStringGrid1"))
   }
@@ -217,9 +217,9 @@ class VimSM {
     this.ActivateElWind(), ret := 1
     if (this.IsEditingText()) {
       if (this.HasTwoComp()) {
-        send ^t
+        send !{f12}fl
         if (ReturnToComp)
-          send !{f12}fl
+          send ^t
         ret := 2
       }
       send {esc}
@@ -424,11 +424,15 @@ class VimSM {
     return Copy(RestoreClip,,, "!{f12}fc")
   }
 
-  LoopForFilePath(RestoreClip) {
+  LoopForFilePath(RestoreClip:=true) {
+    if (RestoreClip)
+      ClipSaved := ClipboardAll
     loop {
-      if (FilePath := this.GetFilePath(RestoreClip))
+      if (FilePath := this.GetFilePath(false))
         break
     }
+    if (RestoreClip)
+      Clipboard := ClipSaved
     return FilePath
   }
 

@@ -149,6 +149,11 @@ return
 +p::  ; play video/sound in default system player / edit script component
   Vim.SM.EditFirstQuestion()
   send {CtrlDown}t{f9}{CtrlUp}
+  WinWaitActive, ahk_class mpv,, 1
+  if (!ErrorLevel && (WinGetTitle("ahk_class TElWind") ~= "^(([1-9]){1,2}:)?([1-9]){1,2}:([1-9]){1,2} \| ")) {
+    sleep 700
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{space}, ahk_class mpv
+  }
 return
 
 n::Vim.SM.AltN()

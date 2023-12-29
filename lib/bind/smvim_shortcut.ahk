@@ -1,6 +1,7 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^!.::  ; find [...] and insert
+  BlockInput, On
   if !(Vim.SM.HasTwoComp() && (ControlGetFocus() == "Internet Explorer_Server2")) {
     Vim.SM.ExitText()
     Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
@@ -23,6 +24,7 @@
     if (!Vim.SM.HandleF3(2))
       Goto SetModeNormalReturn
   }
+  BlockInput, Off
   Vim.State.SetMode("Insert")
 return
 
@@ -65,6 +67,9 @@ return
 ^!+g::  ; change element's concept *g*roup
   Vim.State.SetMode("Insert")
   SetDefaultKeyboard(0x0409)  ; English-US
+  KeyWait Ctrl
+  KeyWait Shift
+  KeyWait Alt
   send ^+p!g  ; focus to concept group
   Vim.State.BackToNormal := 1
 return
@@ -258,7 +263,7 @@ return
 return
 
 ^!l::
-  ContLearn := (Vim.SM.IsGrading()) ? 1 : Vim.SM.IsLearning()
+  ContLearn := Vim.SM.IsGrading() ? 1 : Vim.SM.IsLearning()
   Item := (ContLearn == 1) ? true : false
   CurrTimeDisplay := GetDetailedTime()
   CurrTimeFileName := RegExReplace(CurrTimeDisplay, ",? |:", "-")
@@ -621,6 +626,7 @@ BrowserSyncTime:
   ResetTime := IfContains(A_ThisLabel, "``")
   CloseWnd := IfContains(A_ThisLabel, "^")
   wMpvId := WinActive("ahk_class mpv"), wSMElWnd := ""
+  TimeInTitle := WinActive("ahk_class TElWind") ? (WinGetTitle("ahk_class TElWind") ~= "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ") : ""
   if (wBrowserId := WinActive("ahk_group Browser")) {
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
@@ -670,8 +676,7 @@ BrowserSyncTime:
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
 
-  if (!EditTitle := (wMpvId || (wBrowserId
-                             && (Vim.Browser.IsVidSite(Vim.Browser.FullTitle) == 3)))) {
+  if (!EditTitle := (wMpvId || TimeInTitle || (wBrowserId && (Vim.Browser.IsVidSite(Vim.Browser.FullTitle) == 3)))) {
     Vim.SM.EditFirstQuestion()
     send {CtrlDown}t{f9}{CtrlUp}
     WinWaitActive, ahk_class TScriptEditor,, 0.7
@@ -730,6 +735,7 @@ SMRegAltG:
 !i::Acc_Get("Object", "4.6.4.3.4.9.4",, "A").accDoDefaultAction()  ; default item template
 !t::Acc_Get("Object", "4.6.4.3.4.10.4",, "A").accDoDefaultAction()  ; default topic template
 
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^(Concept|Text) Registry \(\d+ members\)"))
 ^l::
   Gosub SMRegAltG
   WinWaitActive, ahk_class TElWind

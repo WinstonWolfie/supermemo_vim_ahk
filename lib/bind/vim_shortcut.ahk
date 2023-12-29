@@ -215,12 +215,23 @@ IWBNewTopic:
   }
   Vim.Browser.Clear()
   guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinActive("A"))
-  if (!Vim.Browser.Url := Vim.Browser.GetParsedUrl()) {
+  IWB := IfContains(A_ThisLabel, "x,IWB")
+  if (IWB) {
+    if (!HTMLText := Copy(false, true)) {
+      ToolTip("Text not found.")
+      Goto ImportReturn
+    }
+    Vim.Browser.Url := Vim.Browser.ParseUrl(RetrieveUrlFromClip())
+  } else {
+    Vim.Browser.Url := Vim.Browser.GetParsedUrl()
+  }
+
+  if (!Vim.Browser.Url) {
     ToolTip("Url not found.")
     return
   }
   SetTimer, PressBrowserBtn, -1
-  Vim.SM.CloseMsgWind(), IWB := IfContains(A_ThisLabel, "x,IWB")
+  Vim.SM.CloseMsgWind()
   ClipSaved := ClipboardAll
   Passive := Vim.SM.IsPassive(CollName := Vim.SM.GetCollName()
                             , ConceptBefore := Vim.SM.GetCurrConcept())
@@ -230,7 +241,7 @@ IWBNewTopic:
   WinActivate % wBrowser
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
     Goto ImportReturn
-  Prio := Concept := CloseTab := DLHTML := ResetVidTime := DLCheck := ""
+  Prio := Concept := CloseTab := DLHTML := ResetVidTime := DLCheck := CheckDupForIWB := RefComment := ""
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
 
   if (!IWB) {
@@ -248,10 +259,14 @@ IWBNewTopic:
     if (IfIn(ConceptBefore, "Online,Sources,ToDo"))
       ConceptList := StrReplace(ConceptList, "|" . ConceptBefore)
     list := StrLower(ConceptBefore . ConceptList)
-    Gui, SMImport:Add, Combobox, vConcept gAutoComplete w196, % list
+    Gui, SMImport:Add, ComboBox, vConcept gAutoComplete w196, % list
+    Gui, SMImport:Add, Text,, Co&mment:
+    Gui, SMImport:Add, ComboBox, vRefComment gAutoComplete w196, #audio
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
     if (!IWB)
       Gui, SMImport:Add, Checkbox, % "vDLHTML" . DLCheck, Import fullpage &HTML
+    if (IWB)
+      Gui, SMImport:Add, Checkbox, vCheckDupForIWB, Check &duplication
     if (IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
       Gui, SMImport:Add, Checkbox, vResetVidTime, &Reset time stamp
     Gui, SMImport:Add, Button, default, &Import
@@ -274,14 +289,20 @@ SMImportButtonImport:
     Vim.Caret.SwitchToSameWindow(wBrowser)
   }
 
-  HTMLText := (DLHTML || Passive) ? "" : Copy(false, true)
-  if (IWB) {
-    if (!HTMLText) {
-      ToolTip("Text not found.")
+  if (!IWB)
+    HTMLText := (DLHTML || Passive) ? "" : Copy(false, true)
+
+  if (CheckDupForIWB) {
+    if (Vim.SM.CheckDup(Vim.Browser.Url, false))
+      MsgBox, 3,, Continue import?
+    WinClose, ahk_class TBrowser
+    WinActivate % wBrowser
+    if (IfMsgbox("No") || IfMsgbox("Cancel"))
       Goto ImportReturn
-    }
-    Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML format but is in plain-text
   }
+  if (IWB)
+    Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML but is in plain-text
+
   if (Passive)
     DLHTML := false
   Online := (Passive || (!HTMLText && IsVidSite)), CopyAll := DL := ""
@@ -338,6 +359,8 @@ SMImportButtonImport:
   if (Passive == 1)
     Vim.Browser.Date := ""
   SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
+  if (RefComment)
+    Vim.Browser.Comment := RefComment . " " . Vim.Browser.Comment
 
   WinClip.Clear()
   if (Online && Passive) {
@@ -365,6 +388,8 @@ SMImportButtonImport:
     InfoToolTip .= "`nDate: " . Vim.Browser.Date
   if (Vim.Browser.VidTime)
     InfoToolTip .= "`nTime stamp: " . Vim.Browser.VidTime
+  if (Vim.Browser.Comment)
+    InfoToolTip .= "`nComment: " . Vim.Browser.Comment
   ToolTip(InfoToolTip, true,,, 17)
 
   if (Prio ~= "^\.")
@@ -390,7 +415,7 @@ SMImportButtonImport:
     Vim.SM.AltN()
     SMNewElementTitle := WinWaitTitleChange(PrevSMTitle, "ahk_class TElWind")
     if (!Online) {
-      Vim.SM.PasteHTML(100)
+      Vim.SM.PasteHTML()
       Vim.SM.ExitText()
       WinWaitTitleChange(SMNewElementTitle, "A")
     } else if (Passive) {
@@ -716,10 +741,8 @@ return
   marker := Trim(Copy(false), " `t`r`n")
   if (wBrowser) {
     critical
-    Vim.HTML.ClipboardGet_HTML(data)
-    RegExMatch(data, "SourceURL:(.*)", v)
-    if (v) {
-      url := Vim.Browser.ParseUrl(v1)
+    if (url := RetrieveUrlFromClip()) {
+      url := Vim.Browser.ParseUrl(url)
     } else {
       url := Vim.Browser.GetParsedUrl()
     }

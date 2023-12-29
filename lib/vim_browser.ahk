@@ -212,6 +212,8 @@ class VimBrowser {
       this.Source := "The Conversation"
     } else if (IfContains(this.Url, "thefreedictionary.com")) {
       this.Source := "The Free Dictionary"
+    } else if (IfContains(this.Url, "examine.com")) {
+      this.Source := "Examine"
 
     ; Sites that require special attention
     ; Video sites
@@ -505,7 +507,7 @@ class VimBrowser {
 
   Highlight(CollName:="", PlainText:="") {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
-    if (RegexMatch(PlainText, "(\[\d+\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
+    if (RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
       this.Url := this.Url ? this.Url : this.GetParsedUrl()
       if (IfContains(this.Url, "wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"

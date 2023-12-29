@@ -18,6 +18,10 @@ CapsLock & j::WinMinimize, A
 CapsLock & k::
     w := WinActive("A")
     send #{down}  ; refresh window
+    KeyWait CapsLock
+    KeyWait LWin
+    KeyWait RWin
+    KeyWait k
     WinMaximize, % "ahk_id " . w
 return
 
@@ -328,8 +332,14 @@ return                                                               ;|
 
 CapsLock & tab::send !{tab}
 
-~!f4::
+!f4::
 CapsLock & q::
+    if (WinActive("ahk_class TElWind") && (Vim.SM.IsLearning() == 1)) {
+        Vim.SM.GoHome()
+        Vim.SM.WaitFileLoad()
+    }
+    if (A_ThisLabel == "!f4")
+        send !{f4}
     if (A_ThisLabel == "CapsLock & q")
         WinClose, A
     if (WinActive("ahk_exe HiborClient.exe")) {

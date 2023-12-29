@@ -273,11 +273,12 @@ CapsLock & z::  ; delete [...]
     Goto RemoveToolTipReturn
   ; ElNumber := CtrlState ? 1 : Vim.SM.GetElNumber()
   Vim.SM.GoBack(), Vim.SM.WaitFileLoad()
-  WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 200)
+  WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 500)
   if (!ClozeNoBracket && !hint && CtrlState)  ; entered nothing
     Goto RemoveToolTipReturn
-  if (!Vim.SM.SpamQ(, 10000))
+  if (!Vim.SM.SpamQ(, 10000))  ; not editing text after 10000ms
     Goto RemoveToolTipReturn
+
   if (!ClozeNoBracket && inside) {
     cloze := "[" . hint . "]"
   } else {
@@ -287,6 +288,7 @@ CapsLock & z::  ; delete [...]
       cloze := "[...](" . hint . ")"
     }
   }
+
   if (Vim.SM.IsEditingPlainText()) {
     send ^a
     ClipSaved := ClipboardAll
@@ -314,7 +316,7 @@ CapsLock & z::  ; delete [...]
 		; 	WinClose
 
     ; Replacing [...] directly in HTML. Much faster!
-    HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())
+    HTML := FileRead(HTMLPath := Vim.SM.LoopForFilePath())
     ; if (HTML = "<SPAN class=cloze>[...]</SPAN>") {
     ;   if (ClozeNoBracket) {
     ;     send {del 5}
