@@ -323,7 +323,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^o::
-  Send {LCtrl Up}{RCtrl Up}
+  KeyWait Ctrl
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
 o::  ; favoourites
   BlockInput, on

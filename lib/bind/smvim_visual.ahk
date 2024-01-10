@@ -272,8 +272,9 @@ CapsLock & z::  ; delete [...]
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     Goto RemoveToolTipReturn
   ; ElNumber := CtrlState ? 1 : Vim.SM.GetElNumber()
-  Vim.SM.GoBack(), Vim.SM.WaitFileLoad()
-  WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 500)
+  Vim.SM.GoBack()
+  WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 700)
+  Vim.SM.WaitFileLoad()
   if (!ClozeNoBracket && !hint && CtrlState)  ; entered nothing
     Goto RemoveToolTipReturn
   if (!Vim.SM.SpamQ(, 10000))  ; not editing text after 10000ms

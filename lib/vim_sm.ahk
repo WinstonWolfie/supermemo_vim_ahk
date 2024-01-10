@@ -646,10 +646,10 @@ class VimSM {
     }
     if (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
       ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{CtrlDown}p{CtrlUp}{Shift Up}, ahk_class TElWind
-      WinWait, % w,, 0
+      WinWait, % w,, 1.5
       if (ErrorLevel) {
         ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{CtrlDown}p{CtrlUp}{Shift Up}, ahk_class TElWind
-        WinWait, % w,, 0
+        WinWait, % w,, 1.5
         if (ErrorLevel)
           return
       }

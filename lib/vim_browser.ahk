@@ -125,6 +125,8 @@ class VimBrowser {
       this.Source := "格隆汇", this.Title := RegExReplace(this.Title, "-格隆汇$")
     } else if (this.Title ~= "：劍橋詞典$") {
       this.Source := "劍橋詞典", this.Title := RegExReplace(this.Title, "：劍橋詞典$")
+    } else if (this.Title ~= " - Treccani - Treccani - Treccani$") {
+      this.Source := "Treccani", this.Title := RegExReplace(this.Title, " - Treccani - Treccani - Treccani$")
 
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {
       this.Source := v1 . " | Cambridge Core", this.Title := RegExReplace(this.Title, "\| (.*) \| Cambridge Core$")
@@ -140,6 +142,14 @@ class VimBrowser {
         this.Author := v1
     } else if (RegExMatch(this.Title, " \| a podcast by (.*)$", v)) {
       this.Author := v1, this.Source := "PodBean", this.Title := RegExReplace(this.Title, " \| a podcast by (.*)$")
+    } else if (IfContains(this.Url, "podbean.com")) {
+      this.Source := "PodBean"
+      RegExMatch(this.Title, " \| (.*?)$", v), this.Author := v1
+      this.Title := RegExReplace(this.Title, " \| (.*?)$")
+      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
+        RegExMatch(FullPageText, "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}`, \d{4}", v), this.Date := v
+        this.VidTime := this.MatchVidTime(FullPageText)
+      }
 
     } else if (this.Title ~= " \/ X$") {
       this.Source := "X", this.Title := RegExReplace(this.Title, """ \/ X$")

@@ -438,7 +438,7 @@ SMImportButtonImport:
       send !o{esc 2}  ; close script editor
       WinWaitClose
       WinWaitActive, ahk_class TElWind  ; without this Vim.SM.SetTitle() may fail
-      if (Vim.Browser.VidTime && (Vim.Browser.IsVidSite(vim.browser.FullTitle) == 3))
+      if (Vim.Browser.VidTime && !IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2"))
         Vim.Browser.Title := Vim.Browser.VidTime . " | " . Vim.Browser.Title
     }
   }

@@ -430,7 +430,8 @@ return
   Gui, PlanAdd:Add, Text,, A&ctivity:
   list := "Break||Gaming|Coding|Sports|Social|Family|Passive|Meal|Rest"
         . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc"
-        . "|Out|Singing|Calligraphy|Drawing|Movie|TV|VC|GF|Music|AE"
+        . "|Out|Singing|Calligraphy|Drawing|Movie|TV|VC|GF|Music|AE|Sun"
+        . "|Lang|Podcast"
   Gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
   Gui, PlanAdd:Add, Text,, &Time:
   Gui, PlanAdd:Add, Edit, vTime w110
@@ -626,7 +627,8 @@ BrowserSyncTime:
   ResetTime := IfContains(A_ThisLabel, "``")
   CloseWnd := IfContains(A_ThisLabel, "^")
   wMpvId := WinActive("ahk_class mpv"), wSMElWnd := ""
-  TimeInTitle := WinActive("ahk_class TElWind") ? (WinGetTitle("ahk_class TElWind") ~= "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ") : ""
+  ; TimeInTitle := WinActive("ahk_class TElWind") ? (WinGetTitle("ahk_class TElWind") ~= "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ") : ""
+  TimeInTitle := (WinGetTitle("ahk_class TElWind") ~= "^(\d{1,2}:)?\d{1,2}:\d{1,2} \| ")
   if (wBrowserId := WinActive("ahk_group Browser")) {
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
@@ -676,7 +678,7 @@ BrowserSyncTime:
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
 
-  if (!EditTitle := (wMpvId || TimeInTitle || (wBrowserId && (Vim.Browser.IsVidSite(Vim.Browser.FullTitle) == 3)))) {
+  if (!EditTitle := (wMpvId || TimeInTitle || (wBrowserId && !IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2")))) {
     Vim.SM.EditFirstQuestion()
     send {CtrlDown}t{f9}{CtrlUp}
     WinWaitActive, ahk_class TScriptEditor,, 0.7

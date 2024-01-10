@@ -60,7 +60,7 @@ Return
     if (WinActive("ahk_class TElWind")) {
       list := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement"
             . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
-            . "|ExternaliseRegistry|" . list
+            . "|ExternaliseRegistry|Comment|" . list
       if (Vim.SM.IsPassive(, -1))
         list := "ReformatScriptComponent|SearchLinkInYT|" . list
       if (Vim.SM.IsEditingText())
@@ -577,15 +577,13 @@ ImportFile:
   }
   send {text}y  ; confirm to delete the file / confirm to keep the file
   WinWaitActive, ahk_class TElWind
-  if (KeepFile) {
+  RegExMatch(FilePath, "[^\\]+(?=\.)", FileName)
+  if (KeepFile && !(FileName ~= "^IMPORTED_")) {
     MsgBox, 3,, Do you want to add "IMPORTED_" prefix to the file?
-    if (IfMsgBox("Yes")) {
-      RegExMatch(FilePath, "[^\\]+(?=\.)", FileName)
+    if (IfMsgBox("Yes"))
       FileMove, % FilePath, % StrReplace(FilePath, FileName, "IMPORTED_" . FileName)
-    }
   }
-  if (!Vim.SM.AskPrio())
-    return
+  Vim.SM.AskPrio()
 return
 
 ScriptSettings:
@@ -1070,3 +1068,20 @@ WolframAlpha:
   if (text := FindSearch("WolframAlpha", "Text:"))
     ShellRun("https://www.wolframalpha.com/input?input=" . EncodeDecodeURI(text))
 Return
+
+Comment:
+  Vim.SM.EditRef()
+  WinWaitActive, ahk_class TInputDlg
+  Ref := ControlGetText("TMemo1")
+  RegExMatch(Ref, "#Comment: (.*)|$", v), PrevComment := v1
+  Comment := InputBox("Comment", "Set comment:",,,,,,,, PrevComment)
+  WinWaitActive, ahk_class TInputDlg
+  if (Comment) {
+    Ref := "#Comment: " . Comment . "`r`n" . Ref
+  } else {
+    Ref := RegExReplace(Ref, "#Comment:.*")
+  }
+  ControlSetText, TMemo1, % Ref
+  send ^{enter}
+  WinWaitClose
+return
