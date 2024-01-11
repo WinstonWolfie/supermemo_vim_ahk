@@ -428,10 +428,10 @@ return
     return
   }
   Gui, PlanAdd:Add, Text,, A&ctivity:
-  list := "Break||Gaming|Coding|Sports|Social|Family|Passive|Meal|Rest"
-        . "|Planning|Investing|SM|Shower|IM|Piano|Meditation|Job|Misc"
-        . "|Out|Singing|Calligraphy|Drawing|Movie|TV|VC|GF|Music|AE|Sun"
-        . "|Lang|Podcast"
+  list := "Break||Gaming|Coding|Sports|Soc|Family|Listen|Meal|Rest"
+        . "|Plan|Invest|SM|Shower|IM|Piano|Medit|Job|Misc"
+        . "|Out|Singing|Calligr|Drawing|Movie|TV|GF|Music|AE|Sun"
+        . "|Lang|SocMed"
   Gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
   Gui, PlanAdd:Add, Text,, &Time:
   Gui, PlanAdd:Add, Edit, vTime w110
