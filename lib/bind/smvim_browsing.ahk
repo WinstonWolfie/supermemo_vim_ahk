@@ -152,7 +152,7 @@ return
   WinWaitActive, ahk_class mpv,, 1.5
   if (!ErrorLevel) {
     RegExMatch(Vim.SM.GetFirstParagraph(), "^SMVim time stamp: (.*)", v)
-    if (v1 ~= "^(([1-9]){1,2}:)?([1-9]){1,2}:([1-9]){1,2} \| ") {
+    if (v1 ~= "(([1-9]){1,2}:)?([1-9]){1,2}:([1-9]){1,2}") {
       sleep 700
       ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{space}, ahk_class mpv
     }

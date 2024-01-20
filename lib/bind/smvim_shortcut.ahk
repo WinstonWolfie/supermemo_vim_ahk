@@ -691,7 +691,9 @@ BrowserSyncTime:
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
 
-  if (!EditHTMLComp := (wMpvId || (wBrowserId && !IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2")))) {
+  OldText := Vim.SM.GetFirstParagraph()
+  TimeInHTML := (OldText ~= "^SMVim time stamp:")
+  if (!EditHTMLComp := (wMpvId || TimeInHTML || (wBrowserId && !IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2")))) {
     Vim.SM.EditFirstQuestion()
     send {Ctrl Down}t{f9}{Ctrl Up}
     WinWaitActive, ahk_class TScriptEditor,, 0.7
@@ -716,14 +718,16 @@ BrowserSyncTime:
   }
 
   if (EditHTMLComp) {
-    OldText := Vim.SM.GetFirstParagraph()
+    Vim.SM.EditFirstQuestion()
     NewText := "SMVim time stamp: " . Vim.Browser.VidTime
     if (OldText != NewText) {
-      if (OldText != "#SuperMemo Reference:")
-        Vim.SM.EmptyHTMLComp()
-      Vim.SM.SpamQ()
       send ^{home}
-      send % "{text}" . NewText
+      if (OldText ~= "^SMVim time stamp:") {
+        send ^+{down}+{left}
+      } else if (OldText) {
+        send {enter}{up}
+      }
+      Clip(NewText,, false, "sm")
       send {esc}
     }
   } else {

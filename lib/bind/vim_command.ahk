@@ -77,7 +77,7 @@ Return
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
     list := "SetPlanPosition|" . list
   } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
-    list := "MassReplaceRegistry|" . list
+    list := "MassReplaceRegistry|MassProcessRegistry|" . list
   } else if (WinActive("Google Drive error list ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
     list := "RetryAllSyncErrors|" . list
   }
@@ -903,6 +903,50 @@ MassReplaceRegistry:
   ; }
 return
 
+MassProcessRegistry:
+  find := "https://finance.yahoo.com/quote/"
+  replacement := ""
+  if (!find && !replacement)
+    return
+  ; ControlSend, Edit1, % "{text}" . find, A
+  loop {
+    send !r
+    WinWaitActive, ahk_class TInputDlg
+    text := ControlGetText("TMemo1")
+    ; if (InStr(text, find) != 1)
+    ;   return
+    if ((InStr(text, find) != 1) || (text ~= "\/$"))
+      return
+    ; ControlSetText, TMemo1, % StrReplace(text, find, replacement)
+    ControlSetText, TMemo1, % text . "/"
+    send !{enter}
+    WinWaitActive, ahk_class TRegistryForm
+    ControlSetText, Edit1  ; clear
+    send {down}
+  }
+  ; loop {
+  ;   ControlSend, Edit1, % "{text}" . find, A
+  ;   Gosub SMRegAltG
+  ;   WinWaitActive, ahk_class TElWind
+  ;   Vim.SM.EditRef()
+  ;   WinWaitActive, ahk_class TInputDlg
+  ;   text := ControlGetText("TMemo1")
+  ;   if (!IfContains(text, find))
+  ;     return
+  ;   text := RegExReplace(text, "#Source: " . find . "(.*)", "#Author: $1")
+  ;   text .= "`r`n#Source: YouTube"
+  ;   ControlSetText, TMemo1, % text
+  ;   send !{enter}
+  ;   WinWaitActive, ahk_class TElWind
+  ;   ; WinWaitActive, ahk_class TChoicesDlg,, 0.3
+  ;   ; if (!ErrorLevel)
+  ;   ;   send {down}{enter}
+  ;   Vim.SM.PostMsg(154)
+  ;   WinWaitActive, ahk_class TRegistryForm
+  ;   ControlSetText, Edit1  ; clear
+  ; }
+return
+
 AllLapsesToday:
   ToolTip("Executing...", true), pidSM := WinGet("PID", "ahk_class TElWind")
   BlockInput, on
@@ -1094,36 +1138,20 @@ return
 
 MassProcessBrowser:
   loop {
-    dup := ""
-    if (!Vim.SM.GetFirstParagraph()) {
       SMTitle := WinGetTitle("ahk_class TElWind")
-      if (RegExMatch(SMTitle, "^(.*?) \| ", v)) {
-        if (RegExMatch(SMTitle, "i)(?<=^p)(c?\d+|[MDCLXVI]+)(?= \|)", page) || RegExMatch(SMTitle, ".+?(?= \|)", clip)) {
-          WinWaitActive, ahk_class TElWind
-          if (page) {
+      if (RegExMatch(SMTitle, "^((?:\d{1,2}:)?\d{1,2}:\d{1,2}) \| ", v)) {
+          WinActivate, ahk_class TElWind
+          if (v1) {
             Critical
-            if (page ~= "^Duplicate: ") {
-              dup := "Duplicate: "
-              page := RegExReplace(page, "^Duplicate: ")
-            }
-            Clip("SMVim page number: " . page,, false)
-          } else if (clip) {
-            Critical
-            if (clip ~= "^Duplicate: ") {
-              dup := "Duplicate: "
-              clip := RegExReplace(clip, "^Duplicate: ")
-            }
-            Clip("SMVim read point: " . clip,, false)
+            Clip("SMVim time stamp: " . v1,, false)
           }
           send {esc}
           Vim.SM.WaitTextExit()
           sleep 100
           ; MsgBox, 3,, Continue?
-        }
         ; if (IfMsgBox("Yes"))
-          Vim.SM.SetTitle(dup . RegExReplace(SMTitle, "^(.*?) \| "))
+          Vim.SM.SetTitle(RegExReplace(SMTitle, "^((?:\d{1,2}:)?\d{1,2}:\d{1,2}) \| "))
       }
-    }
     WinActivate, ahk_class TBrowser
     send {down}
     Vim.SM.WaitFileLoad()

@@ -365,7 +365,7 @@ SMImportButtonImport:
   Vim.Browser.GetTitleSourceDate(false,, (CopyAll ? Clipboard : ""))
   if (ResetVidTime)
     Vim.Browser.VidTime := "0:00"
-  if (Passive == 1)
+  if ((Passive == 1) && !Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
     Vim.Browser.Date := ""
   SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
   if (RefComment)
@@ -428,6 +428,8 @@ SMImportButtonImport:
       Vim.SM.ExitText()
       WinWaitTitleChange(SMNewElementTitle, "A")
     } else if (Passive) {
+      if (Vim.Browser.VidTime && !IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2"))
+        Clipboard := "SMVim time stamp: " . Vim.Browser.VidTime . "`n" . Clipboard
       send {Ctrl Down}vt{Ctrl Up}{f9}{enter}  ; opens script editor
       WinWaitActive, ahk_class TScriptEditor,, 3
       if (ErrorLevel) {
@@ -447,8 +449,6 @@ SMImportButtonImport:
       send !o{esc 2}  ; close script editor
       WinWaitClose
       WinWaitActive, ahk_class TElWind  ; without this Vim.SM.SetTitle() may fail
-      if (Vim.Browser.VidTime && !IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2"))
-        Vim.Browser.Title := Vim.Browser.VidTime . " | " . Vim.Browser.Title
     }
   }
   SMNewTextTitle := WinGetTitle("ahk_class TElWind")
@@ -660,6 +660,7 @@ ExtractToSM:
   Vim.SM.EmptyHTMLComp()
   send ^{home}
   Clip(NewText,, false)
+  SetTimer, RestoreClipReturn, -3000
   send ^+{f7}  ; clear read point
   Vim.SM.WaitTextExit()
   if (CtrlState) {
@@ -667,8 +668,6 @@ ExtractToSM:
   } else {
     WinActivate % "ahk_id " . hWnd
   }
-  sleep 3000
-  Clipboard := ClipSaved
 return
 
 ; SumatraPDF
@@ -815,6 +814,7 @@ return
   WinActivate, ahk_class TElWind
 
 MarkInHTMLComp:
+  Vim.SM.EditFirstQuestion()
   if (wBrowser) {
     Vim.SM.GetHTMLComp(OldText, RefLink)
   } else {
@@ -844,8 +844,10 @@ MarkInHTMLComp:
       return
     }
   }
-  if (OldText == NewText)
+  if (OldText == NewText) {
+    send {esc}
     Goto RestoreClipReturn
+  }
   if (wBrowser && !Vim.SM.MatchLink(RefLink, url)) {
     MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                 . "`nBrowser url: " . url
@@ -855,14 +857,12 @@ MarkInHTMLComp:
   }
   if (OldText)
     Vim.SM.EmptyHTMLComp()
-  Vim.SM.SpamQ()
   send ^{home}
   Clip(NewText,, false)
+  SetTimer, RestoreClipReturn, -3000
   send {esc}
   if (IfContains(A_ThisLabel, "^+!"))
     Vim.SM.Learn(false, true)
-  sleep 3000
-  Clipboard := ClipSaved
 return
 
 ; IE
