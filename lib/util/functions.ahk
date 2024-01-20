@@ -1077,7 +1077,7 @@ CopyAll(Timeout:=2500) {
   Timeout := Timeout ? Timeout / 1000 : Timeout
   global WinClip
   WinClip.Clear()
-  send {CtrlDown}a{Ins}{CtrlUp}{Esc}
+  send {Ctrl Down}a{Ins}{Ctrl Up}{Esc}
   ClipWait % Timeout
   return !ErrorLevel
 }
@@ -1203,13 +1203,13 @@ RunDefaultBrowser() {
   }
 }
 
-PrepareLatin(word) {
-  Word := StrReplace(Word, "ā", "a")
-  Word := StrReplace(Word, "ē", "e")
-  Word := StrReplace(Word, "ī", "i")
-  Word := StrReplace(Word, "ū", "u")
-  Word := StrReplace(Word, "ō", "o")
-  return word
+RemoveLatinMacrons(Latin) {
+  Latin := StrReplace(Latin, "ā", "a")
+  Latin := StrReplace(Latin, "ē", "e")
+  Latin := StrReplace(Latin, "ī", "i")
+  Latin := StrReplace(Latin, "ū", "u")
+  Latin := StrReplace(Latin, "ō", "o")
+  return Latin
 }
 
 RetrieveUrlFromClip() {

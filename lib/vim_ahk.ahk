@@ -13,8 +13,6 @@
 #Include %A_LineFile%\..\util\UIA_Interface.ahk
 #Include %A_LineFile%\..\util\UIA_Constants.ahk
 
-wc := new WinClip
-
 ; Classes, Functions
 #Include %A_LineFile%\..\vim_about.ahk
 #Include %A_LineFile%\..\vim_check.ahk
@@ -101,7 +99,7 @@ class VimAhk {
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe  ; q-dir
 
     GroupAdd, HTML, ahk_exe iexplore.exe  ; Internet Explorer
-    GroupAdd, HTML, ahk_exe WINWORD.exe  ; Word
+    GroupAdd, HTML, ahk_exe WINWORD.exe  ; MS Word
     GroupAdd, HTML, ahk_exe OUTLOOK.exe
 
     GroupAdd, SM, ahk_exe sm19.exe
@@ -112,7 +110,7 @@ class VimAhk {
 
     GroupAdd, Browser, ahk_exe chrome.exe
     GroupAdd, Browser, ahk_exe firefox.exe
-    GroupAdd, Browser, ahk_exe msedge.exe  ; Microsoft Edge
+    GroupAdd, Browser, ahk_exe msedge.exe
 
     GroupAdd, VimExcluded, ahk_class #32770  ; windows + r
 
@@ -240,16 +238,6 @@ class VimAhk {
     }
   }
 
-  ; SetTwoLetterMap(key1, key2) {
-  ;   EnterNormal := ObjBindMethod(this, "TwoLetterEnterNormal")
-  ;   Enabled := ObjBindMethod(this, "TwoLetterNormalMapsEnabled")
-  ;   HotKey If, % Enabled
-  ;   HotKey, %key1% & %key2%, % EnterNormal
-  ;   HotKey, %key2% & %key1%, % EnterNormal
-  ;   HotKey, % "~" . key1, empty
-  ;   HotKey, % "~" . key2, empty
-  ; }
-
   TwoLetterNormalMapsEnabled() {
     Return (this.IsVimGroup()
          && (this.State.StrIsInCurrentVimMode("Insert,Visual")
@@ -342,15 +330,11 @@ class VimAhk {
     Return True
   }
 
-  ; Ref: https://www.reddit.com/r/AutoHotkey/comments/4ma5b8/identifying_end_of_line_when_typing_with_ahk_and/
   CheckChr(key) {
     Return (Copy(,,, "+{right}^c{left}") ~= key)
   }
 
   IsExceptionWindow() {
-    ; When you change the reference of an element that shares the reference with other elements
-    ; no shortcuts there, so movement keys are used for up/down navigation
-    ; if more windows are found without shortcuts in the future, they will be all added here
     return this.SM.IsVimNavWind()
   }
 

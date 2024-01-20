@@ -178,10 +178,10 @@ class VimSM {
         ControlSend, TEdit5, {enter}
       }
     } else if (WinExist("ahk_class TElWind") || ForceBG) {
-      send {AltDown}
+      send {Alt Down}
       PostMessage, 0x0104, 0x50, 1<<29,, ahk_class TElWind  ; P key
       PostMessage, 0x0105, 0x50, 1<<29,, ahk_class TElWind
-      send {AltUp}
+      send {Alt Up}
       WinWait, ahk_class TPriorityDlg
       ControlSetText, TEdit5, % Prio
       while (WinExist())
@@ -373,7 +373,7 @@ class VimSM {
     this.OpenNotepad(method, timeout)
     WinWaitActive, ahk_exe Notepad.exe,, % Timeout
     WinActivate
-    ControlSend,, {CtrlDown}w{CtrlUp}
+    ControlSend,, {Ctrl Down}w{Ctrl Up}
     WinClose
     WinActivate, ahk_class TElWind
     WinWaitActive, ahk_class TElWind
@@ -437,7 +437,8 @@ class VimSM {
   }
 
   SetTitle(title:="", timeout:="") {
-    if (WinGetTitle("ahk_class TElWind") == title)
+    SMCurrTitle := WinGetTitle("ahk_class TElWind")
+    if (SMCurrTitle == title)
       return true
     Timeout := Timeout ? Timeout / 1000 : Timeout
     this.AltT()
@@ -571,13 +572,13 @@ class VimSM {
       this.WaitFileLoad(timeout)
       this.GoBack()
     } else if (WinExist("ahk_class TElWind")) {
-      send {AltDown}
+      send {Alt Down}
       PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
       PostMessage, 0x0105, 0x24, 1<<29,, ahk_class TElWind
       this.WaitFileLoad(timeout)
       PostMessage, 0x0104, 0x25, 1<<29,, ahk_class TElWind  ; left arrow key
       PostMessage, 0x0105, 0x25, 1<<29,, ahk_class TElWind
-      send {AltUp}
+      send {Alt Up}
     }
   }
 
@@ -645,10 +646,10 @@ class VimSM {
       return
     }
     if (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
-      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{CtrlDown}p{CtrlUp}{Shift Up}, ahk_class TElWind
+      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{Ctrl Down}p{Ctrl Up}{Shift Up}, ahk_class TElWind
       WinWait, % w,, 1.5
       if (ErrorLevel) {
-        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{CtrlDown}p{CtrlUp}{Shift Up}, ahk_class TElWind
+        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{Ctrl Down}p{Ctrl Up}{Shift Up}, ahk_class TElWind
         WinWait, % w,, 1.5
         if (ErrorLevel)
           return
@@ -846,10 +847,10 @@ class VimSM {
     if (!ForceBG && WinActive("ahk_class TElWind")) {
       send !{home}
     } else if (ForceBG || WinExist("ahk_class TElWind")) {
-      send {AltDown}
+      send {Alt Down}
       PostMessage, 0x0104, 0x24, 1<<29  ; home key
       PostMessage, 0x0105, 0x24, 1<<29
-      send {AltUp}
+      send {Alt Up}
     }
   }
 
@@ -857,16 +858,19 @@ class VimSM {
     if (!ForceBG && WinActive("ahk_class TElWind")) {
       send !{left}
     } else if (ForceBG || WinExist("ahk_class TElWind")) {
-      send {AltDown}
+      send {Alt Down}
       PostMessage, 0x0104, 0x25, 1<<29  ; left arrow key
       PostMessage, 0x0105, 0x25, 1<<29
-      send {AltUp}
+      send {Alt Up}
     }
   }
 
   AutoPlay() {
-    ToolTip(WinGetTitle("ahk_class TElWind"),, -4000, "center")
-    send ^{f10}
+    if (WinGetTitle("ahk_class TElWind") == "Netflix") {
+      ShellRun(this.GetLink())
+    } else {
+      send ^{f10}
+    }
   }
 
   AltT() {
@@ -962,7 +966,7 @@ class VimSM {
 
   InvokeFileBrowser() {
     this.ActivateElWind()
-    send {CtrlDown}ttq{CtrlUp}
+    send {Ctrl Down}ttq{Ctrl Up}
     GroupAdd, SMCtrlQ, ahk_class TFileBrowser
     GroupAdd, SMCtrlQ, ahk_class TMsgDialog
     WinWaitActive, ahk_group SMCtrlQ
@@ -998,7 +1002,7 @@ class VimSM {
 
   ActivateElWind() {
     if (!WinActive("ahk_class TElWind"))
-      WinActivate
+      WinActivate, ahk_class TElWind
   }
 
   RefToClipForTopic(CollName:="") {
@@ -1010,6 +1014,7 @@ class VimSM {
   }
 
   DoesHTMLContainText(byref link) {
+    this.ActivateElWind()
     UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1", "A")
     el := UIA.ElementFromHandle(hCtrl)
     text := el.FindFirstByType("text")
@@ -1106,7 +1111,7 @@ class VimSM {
       WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
       if (ControlGetText("TMemo1") == ShortUrl)
         ControlSetText, TMemo1, % url
-      ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
+      ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
       WinWaitClose
       WinWait, % "ahk_class TChoicesDlg ahk_pid " . pidSM,, 0.3
       if (!ErrorLevel) {
@@ -1139,7 +1144,7 @@ class VimSM {
     }
   }
 
-  DeleteHTML() {
+  EmptyHTMLComp() {
     loop {
       send !{f12}kd  ; delete registry link
       WinWaitActive, ahk_class TMsgDialog,, 0.2
@@ -1164,6 +1169,39 @@ class VimSM {
       return IfContains(url, SMLink)
     } else {
       return (SMLink = url)
+    }
+  }
+
+  GetFirstParagraph() {
+    this.ActivateElWind()
+    UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1", "A")
+    el := UIA.ElementFromHandle(hCtrl)
+    el := el.FindFirstByType("text").Name
+    if (el == "#SuperMemo Reference:")
+      el := ""
+    return el
+  }
+
+  GetHTMLComp(ByRef FirstParagraph, ByRef RefLink) {
+    this.ActivateElWind()
+    UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1", "A")
+    el := UIA.ElementFromHandle(hCtrl)
+    FirstParagraph := el.FindFirstByType("text").Name
+    if (FirstParagraph == "#SuperMemo Reference:")
+      FirstParagraph := ""
+    RefLink := el.FindFirstByType("Hyperlink").Value
+    return (FirstParagraph || RefLink)
+  }
+
+  IsCompMarker(text) {
+    if (text ~= "^SMVim read point:") {
+      return "read point"
+    } else if (text ~= "^SMVim page number:") {
+      return "page number"
+    } else if (text ~= "^SMVim time stamp:") {
+      return "time stamp"
+    } else {
+      return false
     }
   }
 }

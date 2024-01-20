@@ -224,6 +224,8 @@ class VimBrowser {
       this.Source := "The Free Dictionary"
     } else if (IfContains(this.Url, "examine.com")) {
       this.Source := "Examine"
+    } else if (IfContains(this.Url, "corporatefinanceinstitute.com")) {
+      this.Source := "Corporate Finance Institute"
 
     ; Sites that require special attention
     ; Video sites
@@ -259,8 +261,16 @@ class VimBrowser {
       this.Source := "Kissasian", this.Title := v1
       if (CopyFullPage)
         this.VidTime := this.MatchVidTime(this.FullTitle)
+    } else if (RegExMatch(this.Title, "^Watch (.*?) English Sub/Dub online Free on Aniwatch\.to$", v)) {
+      this.Source := "AniWatch", this.Title := v1
+      if (CopyFullPage)
+        this.VidTime := this.MatchVidTime(this.FullTitle)
     } else if (RegExMatch(this.Title, "-免费在线观看-爱壹帆$", v)) {
       this.Source := "爱壹帆", this.Title := RegExReplace(this.Title, "-免费在线观看-爱壹帆$")
+      if (CopyFullPage)
+        this.VidTime := this.MatchVidTime(this.FullTitle)
+    } else if (RegExMatch(this.Title, "_高清在线观看 – NO视频$", v)) {
+      this.Source := "NO视频", this.Title := RegExReplace(this.Title, "_高清在线观看 – NO视频$")
       if (CopyFullPage)
         this.VidTime := this.MatchVidTime(this.FullTitle)
 
@@ -491,7 +501,7 @@ class VimBrowser {
       ie.Navigate(url)
     } else {
       if (ControlGetText("Edit1", wIE)) {  ; current page is not new tab page
-        ControlSend, ahk_parent, {CtrlDown}t{CtrlUp}, % wIE
+        ControlSend, ahk_parent, {Ctrl Down}t{Ctrl Up}, % wIE
         ControlTextWait("Edit1", "", wIE)
       }
       ControlSetText, Edit1, % url, % wIE
@@ -510,13 +520,20 @@ class VimBrowser {
       return 1
     } else if (title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {  ; video time can be in url but ^a doesn't cover video time
       return 2
-    } else if (title ~= "^(Watch full .*? english sub \| Kissasian|Watch .* HD online|Watch .*? online free on 9anime|-免费在线观看-爱壹帆)$") {  ; video time can't be in url and ^a doesn't cover video time
+    } else if (title ~= "^(Watch full .*? english sub \| Kissasian|Watch .* HD online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on Aniwatch\.to)$") {  ; video time can't be in url and ^a doesn't cover video time
+      return 3
+    } else if (title ~= "(-免费在线观看-爱壹帆|_高清在线观看 – NO视频)$") {  ; video time can't be in url and ^a doesn't cover video time
       return 3
     }
   }
 
   Highlight(CollName:="", PlainText:="") {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
+    if (RegexMatch(PlainText, "\d+\.$", v)) {
+      this.Url := this.Url ? this.Url : this.GetParsedUrl()
+      if (IfContains(this.Url, "fr.wikipedia.org"))
+        send % "+{left " . StrLen(v) . "}"
+    }
     if (RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
       this.Url := this.Url ? this.Url : this.GetParsedUrl()
       if (IfContains(this.Url, "wikipedia.org"))

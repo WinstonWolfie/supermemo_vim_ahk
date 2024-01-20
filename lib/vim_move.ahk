@@ -86,7 +86,7 @@ class VimMove {
       this.Vim.State.SetMode("Vim_VisualParagraph",, -1)  ; -1 is needed for repeat to work
   
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualBlock") && WinActive("ahk_exe notepad++.exe"))
-      send {AltDown}
+      send {Alt Down}
 
     if (this.Vim.State.StrIsInCurrentVimMode("Vim_ydc,SMVim_") && IfIn(key, "k,^u,^b,g")) {
       this.Vim.State.LineCopy := 1
@@ -187,7 +187,7 @@ class VimMove {
     ; This forces it to be up again afterwards.
     send {LCtrl Up}{RCtrl Up}
     if (!WinActive("ahk_exe iexplore.exe") && !WinActive("ahk_exe Notepad.exe") && GetKeyState("Alt", "P"))
-      send {AltUp}
+      send {Alt Up}
     if (this.Vim.State.IsCurrentVimMode("Vim_VisualFirst") || this.Vim.State.StrIsInCurrentVimMode("Inner,Outer"))
       this.Vim.State.SetMode("Vim_VisualChar",,,,, -1)
   }
@@ -1157,7 +1157,7 @@ class VimMove {
       if (WinActive("ahk_group VimForceScroll")) {
         ; if (c := A_CaretX)
         ;   this.Vim.SM.PrepareStatBar(1, A_CaretX, A_CaretY)
-        send {CtrlUp}{WheelDown}
+        send {Ctrl Up}{WheelDown}
         ; if (c)
         ;   this.Vim.SM.PrepareStatBar(2)
       } else {
@@ -1177,7 +1177,7 @@ class VimMove {
       if (WinActive("ahk_group VimForceScroll")) {
         ; if (c := A_CaretX)
         ;   this.Vim.SM.PrepareStatBar(1, A_CaretX, A_CaretY)
-        send {CtrlUp}{WheelUp}
+        send {Ctrl Up}{WheelUp}
         ; if (c)
         ;   this.Vim.SM.PrepareStatBar(2)
       } else {

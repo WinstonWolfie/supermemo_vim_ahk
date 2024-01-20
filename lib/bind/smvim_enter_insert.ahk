@@ -27,6 +27,11 @@ return
   Vim.State.BackToNormal := 1
 return
 
+~!e::
+~!l::
+~!v::
+~!w::Vim.State.SetMode("Insert")
+
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.State.g)
 !t::
   Vim.SM.AltT()

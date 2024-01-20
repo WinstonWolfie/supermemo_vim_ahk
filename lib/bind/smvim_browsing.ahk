@@ -148,11 +148,14 @@ return
 
 +p::  ; play video/sound in default system player / edit script component
   Vim.SM.EditFirstQuestion()
-  send {CtrlDown}t{f9}{CtrlUp}
-  WinWaitActive, ahk_class mpv,, 1
-  if (!ErrorLevel && (WinGetTitle("ahk_class TElWind") ~= "^(([1-9]){1,2}:)?([1-9]){1,2}:([1-9]){1,2} \| ")) {
-    sleep 700
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{space}, ahk_class mpv
+  send ^t!{f12}fv
+  WinWaitActive, ahk_class mpv,, 1.5
+  if (!ErrorLevel) {
+    RegExMatch(Vim.SM.GetFirstParagraph(), "^SMVim time stamp: (.*)", v)
+    if (v1 ~= "^(([1-9]){1,2}:)?([1-9]){1,2}:([1-9]){1,2} \| ") {
+      sleep 700
+      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{space}, ahk_class mpv
+    }
   }
 return
 
@@ -330,10 +333,10 @@ o::  ; favoourites
   SetDefaultKeyboard(0x0409)  ; English-US
   l := Vim.SM.IsLearning()
   if (l == 1) {
-    send {AltDown}
+    send {Alt Down}
     PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
     PostMessage, 0x0105, 0x24, 1<<29,, ahk_class TElWind
-    send {AltUp}
+    send {Alt Up}
   } else if (l == 2) {
     Vim.SM.Reload(, true)
   }

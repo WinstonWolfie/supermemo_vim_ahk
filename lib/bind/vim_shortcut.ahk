@@ -12,6 +12,8 @@
 #if
 ^!+v::Vim.State.ToggleEnabled()
 
+^!+t::msgbox % Vim.SM.GetFirstParagraph()
+
 #if (Vim.State.Vim.Enabled)
 ; Shortcuts
 ^!r::reload
@@ -72,7 +74,14 @@ return
 
 ; Browsers
 #if (Vim.State.Vim.Enabled && WinActive("ahk_group Browser"))
-^!w::send ^w!{tab}  ; close tab and switch back
+^!w::
+  KeyWait Ctrl
+  KeyWait Alt
+  BrowserTitle := WinGetTitle("A")
+  send ^w
+  WinWaitTitleChange(BrowserTitle, "A", 200)
+  send !{tab}  ; close tab and switch back
+return
 
 ^!i::  ; open in *I*E
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
@@ -419,7 +428,7 @@ SMImportButtonImport:
       Vim.SM.ExitText()
       WinWaitTitleChange(SMNewElementTitle, "A")
     } else if (Passive) {
-      send {CtrlDown}vt{CtrlUp}{f9}{enter}  ; opens script editor
+      send {Ctrl Down}vt{Ctrl Up}{f9}{enter}  ; opens script editor
       WinWaitActive, ahk_class TScriptEditor,, 3
       if (ErrorLevel) {
         ToolTip("No script component found.")
@@ -473,7 +482,7 @@ SMImportButtonImport:
 
   if (CloseTab) {
     WinActivate % wBrowser  ; apparently needed for closing tab
-    ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{CtrlDown}w{CtrlUp}, % wBrowser
+    ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}w{Ctrl Up}, % wBrowser
   }
 
 SMImportGuiEscape:
@@ -596,9 +605,15 @@ return
   WinActivate, ahk_class TElWind  ; focus to element window
 
 ExtractToSM:
-  if (ret := !Vim.SM.IsEmptyTopic(SMLink)) {
+  if (wBrowser) {
+    Vim.SM.GetHTMLComp(Marker, RefLink)
+  } else {
+    Marker := Vim.SM.GetFirstParagraph()
+  }
+  if (IfNotIn(Vim.SM.IsCompMarker(Marker),"read point,page number")) {
+    ret := true
     if (A_ThisLabel != "ExtractToSM") {
-      MsgBox, 3,, Go to source and try again? (press no to paste in current topic)
+      MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
       if (IfMsgbox("yes")) {
         WinWaitActive, ahk_class TElWind
         Vim.SM.ClickElWindSourceBtn()
@@ -610,22 +625,21 @@ ExtractToSM:
       }
     }
     if (ret) {
-      ToolTip("Please make sure current element is an empty HTML topic. Your extract is now on your clipboard.")
-      Goto RestoreClipReturn
+      ToolTip("Copied " . Clipboard)
+      return
     }
   }
-  if (wBrowser && !Vim.SM.MatchLink(SMLink, url)) {
+  if (wBrowser && !Vim.SM.MatchLink(RefLink, url)) {
     MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                 . "`nBrowser url: " . url
-                . "`nSM url: " . SMLink
+                . "`nSM url: " . RefLink
     if (IfMsgBox("No") || IfMsgBox("Cancel"))
       Goto RestoreClipReturn
-    WinWaitActive, ahk_class TElWind
-    KeyWait Enter
   }
-  Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
+  Vim.SM.EditFirstQuestion()
   send ^{home}
-
+  if (Marker)
+    send ^+{down}+{left 2}
   if (!CleanHTML) {
     send ^v
     while (DllCall("GetOpenClipboardWindow"))
@@ -643,13 +657,17 @@ ExtractToSM:
     send !x  ; extract
   }
   Vim.SM.WaitExtractProcessing()
-  Vim.SM.DeleteHTML()
+  Vim.SM.EmptyHTMLComp()
+  send ^{home}
+  Clip(NewText,, false)
   send ^+{f7}  ; clear read point
+  Vim.SM.WaitTextExit()
   if (CtrlState) {
     Vim.SM.GoBack()
   } else {
     WinActivate % "ahk_id " . hWnd
   }
+  sleep 3000
   Clipboard := ClipSaved
 return
 
@@ -722,7 +740,7 @@ return
   send {enter}
 return
 
-; Syncing page number / marker
+; Sync read point / page number
 #if (Vim.State.Vim.Enabled
   && (WinActive("ahk_class SUMATRA_PDF_FRAME")
    || WinActive("ahk_exe ebook-viewer.exe")
@@ -738,7 +756,9 @@ return
   wBrowser := WinActive("ahk_group Browser")
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
-  marker := Trim(Copy(false), " `t`r`n")
+  PageNumber := ""
+  ReadPoint := Trim(Copy(false), " `t`r`n")
+  ReadPoint := RegExReplace(ReadPoint, "s)\r\n.*")
   if (wBrowser) {
     critical
     if (url := RetrieveUrlFromClip()) {
@@ -749,13 +769,16 @@ return
     url := Vim.SM.HTMLUrl2SMLinkUrl(url)
   }
   if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
-    if (wAcrobat := WinActive("ahk_class AcrobatSDIWindow"))
-      marker := "p" . GetAcrobatPageBtn().Value
-    if (!wAcrobat && !marker && (page := ControlGetText("Edit1", "A")))
-      marker := "p" . page
-    if (!marker) {
-      ToolTip("No text selected and page number not found.")
-      Goto RestoreClipReturn
+    if (!ReadPoint) {
+      if (wAcrobat := WinActive("ahk_class AcrobatSDIWindow")) {
+        PageNumber := GetAcrobatPageBtn().Value
+      } else {
+        PageNumber := ControlGetText("Edit1", "A")
+      }
+      if (!PageNumber) {
+        ToolTip("No text selected and page number not found.")
+        Goto RestoreClipReturn
+      }
     }
     if (CloseWnd) {
       if (wSumatra) {
@@ -791,44 +814,54 @@ return
   Vim.SM.CloseMsgWind()
   WinActivate, ahk_class TElWind
 
-MarkInSMTitle:
-  SMTitle := RegExReplace(ElWindTitle := WinGetTitle("ahk_class TElWind"), "^Duplicate: ")
-  NewTitle := RegExReplace(SMTitle, "^.*? \| |^", marker . " | ")
-  if (ElWindTitle == NewTitle) {
-    ToolTip("No need to change current title.")
-    Goto RestoreClipReturn
+MarkInHTMLComp:
+  if (wBrowser) {
+    Vim.SM.GetHTMLComp(OldText, RefLink)
+  } else {
+    OldText := Vim.SM.GetFirstParagraph()
   }
-  if (ret := !Vim.SM.IsEmptyTopic(SMLink)) {
-    if (A_ThisLabel != "MarkInSMTitle") {
+  if (ReadPoint) {
+    NewText := "SMVim read point: " . ReadPoint
+  } else if (PageNumber) {
+    NewText := "SMVim page number: " . PageNumber
+  }
+  if (IfNotIn(Vim.SM.IsCompMarker(OldText),"read point,page number")) {
+    ret := true
+    if (A_ThisLabel != "MarkInHTMLComp") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
       if (IfMsgbox("yes")) {
         WinWaitActive, ahk_class TElWind
         Vim.SM.ClickElWindSourceBtn()
         Vim.SM.WaitFileLoad()
-        Goto MarkInSMTitle
+        Goto MarkInHTMLComp
       } else if (IfMsgBox("no")) {
         WinWaitActive, ahk_class TElWind
         ret := false
-        SMTitle := RegExReplace(ElWindTitle := WinGetTitle("ahk_class TElWind"), "^Duplicate: ")
-        NewTitle := RegExReplace(SMTitle, "^.*? \| |^", marker . " | ")
       }
     }
     if (ret) {
-      ToolTip("No source element found or source element isn't empty. Your mark is now on your clipboard.")
-      Clipboard := marker
+      ToolTip("Copied " . NetText)
       return
     }
   }
-  if (wBrowser && !Vim.SM.MatchLink(SMLink, url)) {
+  if (OldText == NewText)
+    Goto RestoreClipReturn
+  if (wBrowser && !Vim.SM.MatchLink(RefLink, url)) {
     MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                 . "`nBrowser url: " . url
-                . "`nSM url: " . SMLink
+                . "`nSM url: " . RefLink
     if (IfMsgBox("No") || IfMsgBox("Cancel"))
       Goto RestoreClipReturn
   }
-  Vim.SM.SetTitle(NewTitle)
+  if (OldText)
+    Vim.SM.EmptyHTMLComp()
+  Vim.SM.SpamQ()
+  send ^{home}
+  Clip(NewText,, false)
+  send {esc}
   if (IfContains(A_ThisLabel, "^+!"))
     Vim.SM.Learn(false, true)
+  sleep 3000
   Clipboard := ClipSaved
 return
 

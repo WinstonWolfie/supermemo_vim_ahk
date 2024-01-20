@@ -192,7 +192,7 @@ SMSetLinkFromClipboard:
   if (Vim.Browser.Comment)
     Ref := "#Comment: " . Vim.Browser.Comment . "`r`n" . Ref
   ControlSetText, TMemo1, % Ref
-  ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}  ; submit
+  ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
   WinWaitClose
   if (!SMPoundSymbHandled && Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url) && (A_ThisLabel == "r"))
     Vim.SM.Reload(, true)
@@ -210,7 +210,7 @@ m::
   }
   Ref := RegExReplace(Ref, "#Comment:(.*)|$", "`r`n#Comment:$1 #audio ",, 1)
   ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
-  ControlSend, TMemo1, {CtrlDown}{enter}{CtrlUp}, ahk_class TInputDlg  ; submit
+  ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}, ahk_class TInputDlg  ; submit
 return
 
 d::

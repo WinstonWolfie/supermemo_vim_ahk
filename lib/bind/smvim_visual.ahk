@@ -354,7 +354,7 @@ CapsLock & z::  ; delete [...]
     ;   }
     ; }
 
-    Vim.SM.DeleteHTML()
+    Vim.SM.EmptyHTMLComp()
     send ^{home}
     if (ClozeNoBracket) {
       HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>",, v)

@@ -70,7 +70,8 @@ Return
               . "|UnderscoreText|BoldText|" . list
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
-    list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference|" . list
+    list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference"
+          . "|MassProcessBrowser|" . list
   } else if (WinActive("ahk_group Browser")) {  ; web browsers
     list := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|" . list
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
@@ -277,7 +278,8 @@ Wiktionary:
         . "|Arabic|Polish|Portuguese|Korean|Turkish|Latin|Ancient Greek|Chinese"
         . "|Catalan"
   Gui, Wiktionary:Add, Combobox, vLanguage gAutoComplete w136, % List
-  Gui, Wiktionary:Add, Button, default, &Word
+  Gui, Wiktionary:Add, Checkbox, vGoogle, &Google
+  Gui, Wiktionary:Add, Button, default, &Search
   Gui, Wiktionary:Show,, Wiktionary
 return
 
@@ -286,14 +288,18 @@ WiktionaryGuiClose:
   Gui, Destroy
 return
 
-WiktionaryButtonWord:
+WiktionaryButtonSearch:
   Gui, Submit
   Gui, Destroy
-  if (Language == "Ancient Greek")
-    Language := "Ancient_Greek"
-  if (Language == "Latin")
-    word := PrepareLatin(word)
-  ShellRun("https://en.wiktionary.org/wiki/" . Word . "#" . Language)
+  if (Google) {
+    ShellRun("https://www.google.com/search?hl=en&q=Wiktionary " . Language . " " . EncodeDecodeURI(word))
+  } else {
+    if (Language == "Ancient Greek")
+      Language := "Ancient_Greek"
+    if (Language == "Latin")
+      word := RemoveLatinMacrons(word)
+    ShellRun("https://en.wiktionary.org/wiki/" . Word . "#" . Language)
+  }
 return
 
 CopyTitle:
@@ -377,7 +383,7 @@ return
 
 Forcellini:
   if (word := FindSearch("Forcellini", "Word:"))
-    ShellRun("http://lexica.linguax.com/forc2.php?searchedLG=" . PrepareLatin(word))
+    ShellRun("http://lexica.linguax.com/forc2.php?searchedLG=" . RemoveLatinMacrons(word))
 return
 
 RAE:
@@ -1084,4 +1090,42 @@ Comment:
   ControlSetText, TMemo1, % Ref
   send ^{enter}
   WinWaitClose
+return
+
+MassProcessBrowser:
+  loop {
+    dup := ""
+    if (!Vim.SM.GetFirstParagraph()) {
+      SMTitle := WinGetTitle("ahk_class TElWind")
+      if (RegExMatch(SMTitle, "^(.*?) \| ", v)) {
+        if (RegExMatch(SMTitle, "i)(?<=^p)(c?\d+|[MDCLXVI]+)(?= \|)", page) || RegExMatch(SMTitle, ".+?(?= \|)", clip)) {
+          WinWaitActive, ahk_class TElWind
+          if (page) {
+            Critical
+            if (page ~= "^Duplicate: ") {
+              dup := "Duplicate: "
+              page := RegExReplace(page, "^Duplicate: ")
+            }
+            Clip("SMVim page number: " . page,, false)
+          } else if (clip) {
+            Critical
+            if (clip ~= "^Duplicate: ") {
+              dup := "Duplicate: "
+              clip := RegExReplace(clip, "^Duplicate: ")
+            }
+            Clip("SMVim read point: " . clip,, false)
+          }
+          send {esc}
+          Vim.SM.WaitTextExit()
+          sleep 100
+          ; MsgBox, 3,, Continue?
+        }
+        ; if (IfMsgBox("Yes"))
+          Vim.SM.SetTitle(dup . RegExReplace(SMTitle, "^(.*?) \| "))
+      }
+    }
+    WinActivate, ahk_class TBrowser
+    send {down}
+    Vim.SM.WaitFileLoad()
+  }
 return

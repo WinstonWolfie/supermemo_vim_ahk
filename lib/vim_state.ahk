@@ -248,10 +248,10 @@ class VimState {
   ToggleEnabled() {
     if (this.Vim.Enabled) {
       this.Vim.Enabled := False
-      ToolTip("supermemo_vim_ahk disabled.")
+      ToolTip("SMVim disabled.")
     } else {
       this.Vim.Enabled := True
-      ToolTip("supermemo_vim_ahk enabled.")
+      ToolTip("SMVim enabled.")
     }
   }
 
