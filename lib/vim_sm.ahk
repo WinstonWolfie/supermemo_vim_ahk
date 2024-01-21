@@ -868,6 +868,8 @@ class VimSM {
   AutoPlay() {
     if (WinGetTitle("ahk_class TElWind") == "Netflix") {
       ShellRun(this.GetLink())
+    } else if (this.GetFirstParagraph() == "SMVim: Use online video progress") {
+      Gosub SearchLinkInYT
     } else {
       send ^{f10}
     }
@@ -1005,11 +1007,13 @@ class VimSM {
       WinActivate, ahk_class TElWind
   }
 
-  RefToClipForTopic(CollName:="") {
+  RefToClipForTopic(CollName:="", UseOnlineProgress:=false) {
+    mark := "SMVim: Use online video progress"
     CollName := CollName ? CollName : this.GetCollName()
     url := StrReplace(this.Vim.Browser.Url, "https://www.youtube.com/watch?v=", "https://youtube.com/watch?v=")
     if (!IfContains(url, "youtube.com/playlist"))
-      add := (CollName = "bgm") ? url . "`n" : ""
+      add := (CollName = "bgm") ? mark . "`n" : ""
+    add := UseOnlineProgress ? mark : add
     Clipboard := add . this.MakeReference()
   }
 

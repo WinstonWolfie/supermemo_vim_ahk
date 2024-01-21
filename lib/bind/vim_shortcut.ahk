@@ -276,8 +276,11 @@ IWBNewTopic:
       Gui, SMImport:Add, Checkbox, % "vDLHTML" . DLCheck, Import fullpage &HTML
     if (IWB)
       Gui, SMImport:Add, Checkbox, vCheckDupForIWB, Check &duplication
-    if (IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
+    if (IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle)) {
       Gui, SMImport:Add, Checkbox, vResetVidTime, &Reset time stamp
+      if (Vim.Browser.Source == "YouTube")
+        Gui, SMImport:Add, Checkbox, vUseOnlineProgress, &Mark as use online progress
+    }
     Gui, SMImport:Add, Button, default, &Import
     Gui, SMImport:Show,, SuperMemo Import
     Gui, SMImport:+HwndImportGuiHwnd
@@ -373,7 +376,7 @@ SMImportButtonImport:
 
   WinClip.Clear()
   if (Online && Passive) {
-    Vim.SM.RefToClipForTopic(CollName)
+    Vim.SM.RefToClipForTopic(CollName, UseOnlineProgress)
   } else if (Online) {
     Clipboard := Vim.Browser.Url
   } else {

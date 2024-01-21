@@ -62,7 +62,7 @@ Return
             . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
             . "|ExternaliseRegistry|Comment|" . list
       if (Vim.SM.IsPassive(, -1))
-        list := "ReformatScriptComponent|SearchLinkInYT|" . list
+        list := "ReformatScriptComponent|SearchLinkInYT|MarkAsOnlineProgress|" . list
       if (Vim.SM.IsEditingText())
         list := "ClozeAndDone!|" . list
       if (Vim.SM.IsEditingHTML())
@@ -1138,22 +1138,37 @@ return
 
 MassProcessBrowser:
   loop {
-      SMTitle := WinGetTitle("ahk_class TElWind")
-      if (RegExMatch(SMTitle, "^((?:\d{1,2}:)?\d{1,2}:\d{1,2}) \| ", v)) {
-          WinActivate, ahk_class TElWind
-          if (v1) {
-            Critical
-            Clip("SMVim time stamp: " . v1,, false)
-          }
-          send {esc}
-          Vim.SM.WaitTextExit()
-          sleep 100
-          ; MsgBox, 3,, Continue?
-        ; if (IfMsgBox("Yes"))
-          Vim.SM.SetTitle(RegExReplace(SMTitle, "^((?:\d{1,2}:)?\d{1,2}:\d{1,2}) \| "))
+    FirstParagraph := Vim.SM.GetFirstParagraph()
+    if (FirstParagraph ~= "https:\/\/youtube\.com\/watch\?v=.*") {
+      RefLink := Vim.SM.GetLink()
+      if (RefLink == FirstParagraph) {
+        Critical
+        Vim.SM.EditFirstQuestion()
+        Vim.SM.EmptyHTMLComp()
+        Vim.SM.WaitHTMLFocus()
+        send ^{home}
+        Clip("SMVim: Use online video progress",, false, "sm")
+        send {esc}
+        Vim.SM.WaitTextExit()
+        sleep 100
       }
+    }
     WinActivate, ahk_class TBrowser
     send {down}
     Vim.SM.WaitFileLoad()
   }
+return
+
+MarkAsOnlineProgress:
+  Vim.SM.EditFirstQuestion()
+  FirstParagraph := Vim.SM.GetFirstParagraph()
+  Vim.SM.WaitHTMLFocus()
+  send ^{home}
+  if (!FirstParagraph) {
+    Clip("SMVim: Use online video progress",,, "sm")
+  } else if (FirstParagraph != "SMVim: Use online video progress") {
+    send {enter}{up}
+    Clip("SMVim: Use online video progress",,, "sm")
+  }
+  Vim.SM.ExitText(), Vim.State.SetMode("Vim_Normal")
 return
