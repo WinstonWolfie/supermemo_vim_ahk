@@ -371,6 +371,7 @@ Return
 s::
   Acc_Get("Object", "4.1.4.1.4.1.4",, "A").accDoDefaultAction(2)
   ControlFocus, Edit1, A
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
 return
 
 b::send !b  ; begin

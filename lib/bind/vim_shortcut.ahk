@@ -572,8 +572,8 @@ return
       ClipWait
     }
     if (!WinExist("ahk_group SM")) {
-      a := CleanHTML ? " (in HTML)" : ""
-      ToolTip("SuperMemo is not open; the text you selected" . a . " is on your clipboard.")
+      a := CleanHTML ? "(in HTML)" : ""
+      ToolTip("SuperMemo is not open; the text you selected " . a . " is on your clipboard.")
       return
     }
     if (Prio := IfContains(A_ThisLabel, "+")) {
@@ -610,7 +610,7 @@ ExtractToSM:
   } else {
     Marker := Vim.SM.GetFirstParagraph()
   }
-  if (IfNotIn(Vim.SM.IsCompMarker(Marker),"read point,page number")) {
+  if (Marker && IfNotIn(Vim.SM.IsCompMarker(Marker),"read point,page number")) {
     ret := true
     if (A_ThisLabel != "ExtractToSM") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
@@ -658,9 +658,13 @@ ExtractToSM:
   }
   Vim.SM.WaitExtractProcessing()
   Vim.SM.EmptyHTMLComp()
-  send ^{home}
-  Clip(NewText,, false)
-  SetTimer, RestoreClipReturn, -3000
+  if (Marker) {
+    send ^{home}
+    Clip(Marker,, false)
+    SetTimer, RestoreClipReturn, -3000
+  } else {
+    Clipboard := ClipSaved
+  }
   send ^+{f7}  ; clear read point
   Vim.SM.WaitTextExit()
   if (CtrlState) {
@@ -796,7 +800,7 @@ return
       }
     }
   } else {
-    if (!marker) {
+    if (!ReadPoint) {
       if (wBrowser)
         Goto BrowserSyncTime
       ToolTip("No text selected.")
@@ -825,7 +829,7 @@ MarkInHTMLComp:
   } else if (PageNumber) {
     NewText := "SMVim page number: " . PageNumber
   }
-  if (IfNotIn(Vim.SM.IsCompMarker(OldText),"read point,page number")) {
+  if (OldText && IfNotIn(Vim.SM.IsCompMarker(OldText),"read point,page number")) {
     ret := true
     if (A_ThisLabel != "MarkInHTMLComp") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
@@ -840,7 +844,7 @@ MarkInHTMLComp:
       }
     }
     if (ret) {
-      ToolTip("Copied " . NetText)
+      ToolTip("Copied " . Clipboard := NewText)
       return
     }
   }

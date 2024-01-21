@@ -274,7 +274,7 @@ return
   ClipSaved := ClipboardAll
   KeyWait Alt
   KeyWait Ctrl
-  if (!data := Copy(false, true, 1))
+  if (!data := Copy(false, true))
     Goto RestoreClipReturn
   ToolTip("LaTeX converting...", true)
   if (!IfContains(data, "<IMG")) {  ; text
@@ -640,19 +640,21 @@ BrowserSyncTime:
     loop % paSMTitles {
       SMTitle := WinGetTitle("ahk_id " . hWnd := paSMTitles%A_Index%)
       ; SM uses "." instead of "..." in titles
-      if (ret := (SMTitle == RegExReplace(Vim.Browser.Title, "\.\.\.?", "."))) {
+      if (TitleMatched := (SMTitle == RegExReplace(Vim.Browser.Title, "\.\.\.?", "."))) {
         wSMElWnd := hWnd
         break
       }
     }
-    if (!ret) {
+    SkipCheckUrl := false
+    if (!TitleMatched) {
       WinActivate, ahk_class TElWind
       MsgBox, 3,, % "Titles don't match. Continue?`nBrowser title: " . Vim.Browser.Title
       WinActivate % wBrowser
       if (IfMsgbox("No") || IfMsgbox("Cancel"))
         Goto SMSyncTimeReturn
+      SkipCheckUrl := IfMsgBox("Yes")
     }
-    if ((Vim.Browser.Title == "Netflix") || (Vim.Browser.Source == "MoviesJoy")) {
+    if (!SkipCheckUrl && ((Vim.Browser.Title == "Netflix") || (Vim.Browser.Source == "MoviesJoy"))) {
       BrowserUrl := Vim.Browser.GetParsedUrl()
       SMUrl := Vim.SM.GetLink()
       if (BrowserUrl != SMUrl) {
@@ -749,7 +751,7 @@ return
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 !s::
   if ((p := Vim.SM.GetFirstParagraph()) && (p ~= "SMVim (read point|page number|time stamp): ")) {
-    ToolTip("Copied " . RegExReplace(p, "SMVim (read point|page number|time stamp): "))
+    ToolTip("Copied " . Clipboard := RegExReplace(p, "SMVim (read point|page number|time stamp): "))
   } else {
     KeyWait Alt
     send !s

@@ -197,7 +197,7 @@ class VimSM {
 
   MoveAboveRef(RestoreClip:=true) {
     send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-    if (IfContains(Copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
+    if (IfContains(Copy(RestoreClip), "#SuperMemo Reference:")) {
       send {up 2}
     } else {
       send ^{end}
@@ -206,7 +206,7 @@ class VimSM {
 
   MoveToLast(RestoreClip:=true) {
     send ^{end}^+{up}  ; if there are references this would select (or deselect in visual mode) them all
-    if (InStr(Copy(RestoreClip,, 1), "#SuperMemo Reference:")) {
+    if (InStr(Copy(RestoreClip), "#SuperMemo Reference:")) {
       send {up}{left}
     } else {
       send ^{end}
@@ -421,7 +421,7 @@ class VimSM {
 
   GetFilePath(RestoreClip:=true) {
     this.ActivateElWind()
-    return Copy(RestoreClip,,, "!{f12}fc")
+    return Copy(RestoreClip,, "!{f12}fc")
   }
 
   LoopForFilePath(RestoreClip:=true) {
@@ -500,7 +500,7 @@ class VimSM {
 
   GetTemplCode(RestoreClip:=true) {
     this.ActivateElWind()
-    return Copy(RestoreClip,,, this.IsEditingText() ? "!{f10}tc" : "^c")
+    return Copy(RestoreClip,, this.IsEditingText() ? "!{f10}tc" : "^c")
   }
 
   PrepareStatBar(step, x:=0, y:=0) {
@@ -1194,12 +1194,8 @@ class VimSM {
   }
 
   IsCompMarker(text) {
-    if (text ~= "^SMVim read point:") {
-      return "read point"
-    } else if (text ~= "^SMVim page number:") {
-      return "page number"
-    } else if (text ~= "^SMVim time stamp:") {
-      return "time stamp"
+    if (RegExMatch(text, "^SMVim (.*?):", v)) {
+      return v1
     } else {
       return false
     }

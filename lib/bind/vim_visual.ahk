@@ -65,7 +65,7 @@ Return
 
 ; ydc
 y::
-  vim.move.YdcClipSaved := Copy(false,,, "^c{Right}")
+  vim.move.YdcClipSaved := Copy(false,, "^c{Right}")
   if (WinActive("ahk_group VimCursorSameAfterSelect"))
     send {Left}
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
@@ -78,7 +78,7 @@ Return
 d::
 x::
   if (!Vim.State.Leader) {
-    vim.move.YdcClipSaved := Copy(false,,, "^x")
+    vim.move.YdcClipSaved := Copy(false,, "^x")
   } else {
     send {bs}
   }
@@ -91,7 +91,7 @@ Return
 
 c::
   if (!Vim.State.Leader) {
-    vim.move.YdcClipSaved := Copy(false,,, "^x")
+    vim.move.YdcClipSaved := Copy(false,, "^x")
   } else {
     send {bs}
   }

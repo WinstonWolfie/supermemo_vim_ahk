@@ -127,14 +127,14 @@ class VimMove {
         this.YdcClipSaved := Copy(false), this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_d")) {
         if (!this.Vim.State.Leader) {
-          this.YdcClipSaved := Copy(false,,, "^x")
+          this.YdcClipSaved := Copy(false,, "^x")
         } else {
           send {bs}
         }
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_c")) {
         if (!this.Vim.State.Leader) {
-          this.YdcClipSaved := Copy(false,,, "^x")
+          this.YdcClipSaved := Copy(false,, "^x")
         } else {
           send {bs}
         }
@@ -1270,7 +1270,7 @@ class VimMove {
             if (this.shift == 1)
               send +{down}  ; go down one line, if there are references this would include the #SuperMemo Reference
             KeyWait Shift
-            if (IfContains(Copy(false,, 1), "#SuperMemo Reference:")) {
+            if (IfContains(Copy(false), "#SuperMemo Reference:")) {
               if (this.shift == 1) {
                 send +{up 4}  ; select until start of last line
               } else {

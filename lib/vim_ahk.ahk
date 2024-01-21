@@ -331,7 +331,7 @@ class VimAhk {
   }
 
   CheckChr(key) {
-    Return (Copy(,,, "+{right}^c{left}") ~= key)
+    Return (Copy(,, "+{right}^c{left}") ~= key)
   }
 
   IsExceptionWindow() {
