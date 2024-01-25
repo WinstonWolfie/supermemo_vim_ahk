@@ -22,7 +22,7 @@ class VimBrowser {
     if (!IfContains(url, PoundSymbList))
       url := RegExReplace(url, "#.*")
     ; Remove everything after "?"
-    QuestionMarkList := "baike.baidu.com,bloomberg.com"
+    QuestionMarkList := "baike.baidu.com,bloomberg.com,substack.com"
     if (IfContains(url, QuestionMarkList)) {
       url := RegExReplace(url, "\?.*")
     } else if (IfContains(url, "youtube.com/watch")) {
@@ -132,6 +132,12 @@ class VimBrowser {
       this.Source := v1 . " | Cambridge Core", this.Title := RegExReplace(this.Title, "\| (.*) \| Cambridge Core$")
     } else if (RegExMatch(this.Title, " \| (.*) \| Fandom$", v)) {
       this.Source := v1 . " | Fandom", this.Title := RegExReplace(this.Title, " \| (.*) \| Fandom$")
+      this.Url := this.Url ? this.Url : this.GetParsedUrl()
+      TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
+      UrlDownloadToFile, % this.Url . "?action=history", % TempPath
+      t := FileRead(TempPath)
+      RegExMatch(t, "<h4 class=""mw-index-pager-list-header-first mw-index-pager-list-header"">(.*?)<\/h4>", v)
+      this.Date := v1
     } else if (RegExMatch(this.Title, " \| (.*) \| The Guardian$", v)) {
       this.Source := v1 . " | The Guardian", this.Title := RegExReplace(this.Title, " \| (.*) \| The Guardian$")
     } else if (RegExMatch(this.Title, " - (.*) \| OpenStax$", v)) {
@@ -146,7 +152,7 @@ class VimBrowser {
       this.Source := "PodBean"
       RegExMatch(this.Title, " \| (.*?)$", v), this.Author := v1
       this.Title := RegExReplace(this.Title, " \| (.*?)$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
+      if (IfContains(this.Url, "podbean.com/e") && CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
         RegExMatch(FullPageText, "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}`, \d{4}", v), this.Date := v
         this.VidTime := this.MatchVidTime(FullPageText)
       }
@@ -527,15 +533,15 @@ class VimBrowser {
     }
   }
 
-  Highlight(CollName:="", PlainText:="") {
+  Highlight(CollName:="", PlainText:="", Url:="") {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
-    if (RegexMatch(PlainText, "\d+\.$", v)) {
-      this.Url := this.Url ? this.Url : this.GetParsedUrl()
-      if (IfContains(this.Url, "fr.wikipedia.org"))
+    if (RegexMatch(PlainText, "(?<!\s)(?<!\d)\d+\.", v)) {
+      Url := Url ? Url : this.GetParsedUrl()
+      if (IfContains(Url, "fr.wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"
     }
     if (RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
-      this.Url := this.Url ? this.Url : this.GetParsedUrl()
+      Url := Url ? Url : this.GetParsedUrl()
       if (IfContains(this.Url, "wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"
     }

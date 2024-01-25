@@ -228,7 +228,7 @@ class VimState {
 
   ; Update icon/mode indicator
   StatusCheck() {
-    if (this.Vim.IsVimGroup()) {
+    if (this.Vim.IsVimGroup() || this.Vim.State.IsCurrentVimMode("Insert_unicode")) {
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
     } else {
       this.Vim.Icon.SetIcon("Disabled", this.Vim.Conf["VimIconCheckInterval"]["val"])

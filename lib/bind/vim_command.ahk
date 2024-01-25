@@ -676,7 +676,9 @@ GenerateTimeString:
 return
 
 BingChat:
-  ClipSaved := link := "", wEdge := WinActive("ahk_exe msedge.exe"), ext := ".htm"
+  ClipSaved := link := ""
+  wEdge := WinActive("ahk_exe msedge.exe")
+  ext := ".htm"  ; by default the text will be copied with its format retained
   if (WinActive("ahk_class TElWind")) {
     if (Vim.SM.IsBrowsing()) {
       link := Vim.SM.GetLink()
@@ -688,7 +690,7 @@ BingChat:
     link := uiaBrowser.GetCurrentURL()
   } else {
     ClipSaved := ClipboardAll
-    if (!text := Copy(false, true))
+    if (!text := Copy(false, true))  ; HTML not found
       text := Clipboard, ext := ".txt"
     if (text) {
       link := A_Temp . "\" . GetCurrTimeForFileName() . ext
@@ -697,12 +699,17 @@ BingChat:
     }
   }
   if (text || !wEdge) {
-    ShellRun("msedge.exe " . link)
+    ShellRun("msedge.exe", link)
     WinWaitActive, ahk_exe msedge.exe
   }
   send ^+.
   if (ClipSaved)
     Clipboard := ClipSaved
+  if (link) {
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    uiaBrowser.WaitPageLoad()
+    FileDelete % link
+  }
 return 
 
 LinkToPreviousElement:
@@ -822,13 +829,17 @@ CalculateTodaysPassRate:
 return
 
 PerplexityAI:
-  search := Trim(Copy())
+  if ((!Search := Trim(Copy())) && Vim.SM.IsEditingHTML())
+    Search := "File path from SMVim script: " . Vim.SM.GetFilePath()
   Gui, PerplexityAI:Add, Text,, &Search:
-  Gui, PerplexityAI:Add, Edit, vSearch w136 r1 -WantReturn, % search
+  Gui, PerplexityAI:Add, Edit, vSearch w200 r1 -WantReturn, % Search
   Gui, PerplexityAI:Add, Text,, &Focus:
   list := "internet||scholar|writing|wolfram|youtube|reddit"
-  Gui, PerplexityAI:Add, Combobox, vFocus gAutoComplete w136, % list
+  Gui, PerplexityAI:Add, Combobox, vFocus gAutoComplete w200, % list
   Gui, PerplexityAI:Add, CheckBox, vCopilot Checked, &Copilot
+  Gui, PerplexityAI:Add, Text,, &Attach the above text and ask:
+  list := "summarize|what is the conclusion?|check this file for mistakes"
+  Gui, PerplexityAI:Add, Combobox, vAddSearch gAutoComplete w200, % list
   Gui, PerplexityAI:Add, Button, default, &Search
   Gui, PerplexityAI:Show,, Perplexity AI
   SetDefaultKeyboard(0x0409)  ; English-US
@@ -842,8 +853,52 @@ return
 PerplexityAIButtonSearch:
   Gui, Submit
   Gui, Destroy
-  ShellRun("https://www.perplexity.ai/search?q=" . EncodeDecodeURI(search) . "&focus=" . focus
-         . "&copilot=" . (copilot ? "true" : "false"))
+  if (AddSearch || (Search ~= "^File path from SMVim script: ")) {
+    ShellRun("https://www.perplexity.ai/")
+    WinWaitActive, ahk_group Browser
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    uiaBrowser.WaitPageLoad()
+
+    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Focus'").Click()
+    if (Focus == "internet") {
+      uiaBrowser.WaitElementExist("ControlType=Text AND Name='All'").Click()
+    } else if (Focus == "scholar") {
+      uiaBrowser.WaitElementExist("ControlType=Text AND Name='Academic'").Click()
+    } else if (Focus == "writing") {
+      uiaBrowser.WaitElementExist("ControlType=Text AND Name='Writing'").Click()
+    } else if (Focus == "wolfram") {
+      uiaBrowser.WaitElementExist("ControlType=Text AND Name='Wolfram|Alpha'").Click()
+    } else if (Focus == "youtube") {
+      uiaBrowser.WaitElementExist("ControlType=Text AND Name='YouTube'").Click()
+    } else if (Focus == "reddit") {
+      uiaBrowser.WaitElementExist("ControlType=Text AND Name='Reddit'").Click()
+    }
+
+    TempFilePath := ""
+    if (Search ~= "^File path from SMVim script: ") {
+      FilePath := RegExReplace(Search, "^File path from SMVim script: ")
+    } else {
+      TempFilePath := A_Temp . "\" . GetCurrTimeForFileName() . ".txt"
+      FileDelete % TempFilePath
+      FileAppend, % Search, % TempFilePath
+      FilePath := TempFilePath
+    }
+    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Attach'").Click()
+    WinWaitActive, ahk_class #32770
+    ControlSetText, Edit1, % FilePath
+    send {enter}
+    WinWaitNotActive
+    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Uploading...'")
+    if (AddSearch) {
+      uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Ask anything...'").SetValue(AddSearch)
+      uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='Uploading...'")
+      send {enter}
+    }
+    FileDelete % TempFilePath
+  } else {
+    ShellRun("https://www.perplexity.ai/search?q=" . EncodeDecodeURI(Search) . "&focus=" . Focus
+           . "&copilot=" . (Copilot ? "true" : "false"))
+  }
 return
 
 RetryAllSyncErrors:
@@ -1138,19 +1193,34 @@ return
 
 MassProcessBrowser:
   loop {
-    FirstParagraph := Vim.SM.GetFirstParagraph()
-    if (FirstParagraph ~= "https:\/\/youtube\.com\/watch\?v=.*") {
-      RefLink := Vim.SM.GetLink()
-      if (RefLink == FirstParagraph) {
-        Critical
-        Vim.SM.EditFirstQuestion()
-        Vim.SM.EmptyHTMLComp()
-        Vim.SM.WaitHTMLFocus()
-        send ^{home}
-        Clip("SMVim: Use online video progress",, false, "sm")
-        send {esc}
-        Vim.SM.WaitTextExit()
-        sleep 100
+    dup := ""
+    if (!Vim.SM.GetFirstParagraph()) {
+      SMTitle := WinGetTitle("ahk_class TElWind")
+      if (RegExMatch(SMTitle, "^(.*?) \| ", v)) {
+        if (RegExMatch(SMTitle, "i)(?<=^p)(c?\d+|[MDCLXVI]+)(?= \|)", page) || RegExMatch(SMTitle, ".+?(?= \|)", clip)) {
+          WinWaitActive, ahk_class TElWind
+          if (page) {
+            Critical
+            if (page ~= "^Duplicate: ") {
+              dup := "Duplicate: "
+              page := RegExReplace(page, "^Duplicate: ")
+            }
+            Clip("SMVim page number: " . page,, false)
+          } else if (clip) {
+            Critical
+            if (clip ~= "^Duplicate: ") {
+              dup := "Duplicate: "
+              clip := RegExReplace(clip, "^Duplicate: ")
+            }
+            Clip("SMVim read point: " . clip,, false)
+          }
+          send {esc}
+          Vim.SM.WaitTextExit()
+          sleep 100
+          ; MsgBox, 3,, Continue?
+        }
+        ; if (IfMsgBox("Yes"))
+          Vim.SM.SetTitle(dup . RegExReplace(SMTitle, "^(.*?) \| "))
       }
     }
     WinActivate, ahk_class TBrowser

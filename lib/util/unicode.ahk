@@ -59,9 +59,9 @@ OtherCase() {
 EmacsEnabled = 0  ; For emacs there is (set-input-method "TeX") 
 Suspend
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Insert"))
+#if
 !^+u::Vim.State.SetMode("Insert_unicode")
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Insert_unicode"))
+#if (Vim.State.IsCurrentVimMode("Insert_unicode"))
 !^+u::Vim.State.SetMode("Insert")
 
 ;; ========= TABLE OF SYMBOLS ========================================

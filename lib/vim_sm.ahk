@@ -696,10 +696,11 @@ class VimSM {
       WinClose
     ContLearn := this.IsLearning(), text := LTrim(text)
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
-    ; Can't just encode URI, Chinese characters will be encoded
-    ; For some reason, SuperMemo only encodes some part of the url (probably because of SuperMemo uses a lower version of IE?)
+    ; Can't just encode URI, Chinese characters will also be encoded
+    ; For some reason, SuperMemo only encodes some part of the url
+    ; Probably because of SuperMemo uses a lower version of IE?
     if (IsUrl(text))
-      text := this.HTMLUrl2SMLinkUrl(text)
+      text := this.HTMLUrl2SMUrl(text)
     if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(text, "youtube.com/watch?v="))  ; sm19 deletes www from www.youtube.com
       text := RegExReplace(text, "^.*?(?=youtube\.com\/watch\?v=)")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
@@ -708,11 +709,12 @@ class VimSM {
     return ret
   }
 
-  HTMLUrl2SMLinkUrl(url) {
+  HTMLUrl2SMUrl(url) {
     url := StrReplace(url, "%20", " ")
     url := StrReplace(url, "%3F", "?")
     url := StrReplace(url, "%27", "'")
     url := StrReplace(url, "%21", "!")
+    url := StrReplace(url, "%26", "&")
     return url
   }
 
@@ -866,9 +868,14 @@ class VimSM {
   }
 
   AutoPlay() {
+    ToolTip := "Running: `n`nTitle: " . WinGetTitle("ahk_class TElWind")
+    FirstParagraph := this.GetFirstParagraph()
+    if (FirstParagraph ~= "^SMVim")
+      ToolTip .= "`n" . StrUpper(SubStr(FirstParagraph, 7, 1)) . SubStr(FirstParagraph, 8)
+    ToolTip(ToolTip,, -4000, "center")
     if (WinGetTitle("ahk_class TElWind") == "Netflix") {
       ShellRun(this.GetLink())
-    } else if (this.GetFirstParagraph() == "SMVim: Use online video progress") {
+    } else if (GetFirstParagraph == "SMVim: Use online video progress") {
       Gosub SearchLinkInYT
     } else {
       send ^{f10}
@@ -1169,10 +1176,11 @@ class VimSM {
   }
 
   MatchLink(SMLink, url) {
+    url := this.HTMLUrl2SMUrl(url)
     if (IfContains(url, "britannica.com")) {
       return IfContains(url, SMLink)
     } else {
-      return (SMLink = url)
+      return (SMLink == url)
     }
   }
 

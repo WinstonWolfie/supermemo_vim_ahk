@@ -118,6 +118,9 @@ return
 ^!p::  ; convert to a *p*lain-text template
 ^!i::  ; convert to the "item" template
   ContLearn := Vim.SM.IsLearning()
+  KeyWait Ctrl
+  KeyWait Alt
+  BlockInput, On
   if (A_ThisLabel == "^!p") {
     template := "classic"  ; my plain-text template name is classic
   } else if (A_ThisLabel == "^!i") {
@@ -125,8 +128,12 @@ return
   }
   Vim.SM.SetElParam(,, template)
   WinWaitClose, ahk_class TElParamDlg
+  if (ContLearn == 1)
+    Vim.SM.learn()
+  BlockInput, Off
   MsgBox, 3,, Permanently remove extra components?
   WinWaitActive, ahk_class TElWind
+  BlockInput, On
   if (IfMsgBox("Yes")) {
     send ^+{f2}  ; impose template
     WinWaitActive, ahk_class TMsgDialog
@@ -137,11 +144,12 @@ return
     WinWaitClose
     Vim.SM.SetElParam(,, template)
     WinWaitClose, ahk_class TElParamDlg
+    if (ContLearn == 1)
+      Vim.SM.learn()
   } else if (IfMsgBox("Cancel")) {
     send !{f10}td
   }
-  if (ContLearn == 1)
-    Vim.SM.learn()
+  BlockInput, Off
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -435,8 +443,8 @@ return
   Gui, PlanAdd:Add, Text,, A&ctivity:
   list := "Break||Game|Code|Sports|Social|Family|Listen|Meal|Rest"
         . "|Plan|Invest|SM|Shower|IM|Piano|Medit|Job|Misc|Out"
-        . "|Sing|Write|Draw|Movie|TV|GF|Music|AE|Sun|Lang|SocMed"
-        . "|MP|Tidy|Read|Write|Poker"
+        . "|Sing|Write|Draw|Movie|TV|GF|Music|Sun|Lang|SocMed"
+        . "|MP|Tidy|Read|Write|Poker|Video"
   Gui, PlanAdd:Add, Combobox, vActivity gAutoComplete w110, % list
   Gui, PlanAdd:Add, Text,, &Time:
   Gui, PlanAdd:Add, Edit, vTime w110
@@ -486,7 +494,8 @@ PlanAddButtonAppend:
     if (!ErrorLevel)
       send {text}y
   }
-  send ^s
+  if (A_ThisLabel == "PlanAddButtonAppend")
+    send ^s
   if (!NoBackup && IfIn(activity, "Break,Sports,Out,Shower"))
     try ShellRun("b")  ; my personal backup script
   BlockInput, off
@@ -550,7 +559,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TMyFindDlg"))
 ; So holding ctrl and press f twice could be a shorthand for searching clipboard
 ^f::
-  ControlSetText, TEdit1, % Clipboard
+  ControlSetText, TEdit1, % VimLastSearch := Clipboard
   ControlFocus, TEdit1
   ControlClick, TButton3
 return
@@ -631,7 +640,8 @@ BrowserSyncTime:
   sync := (A_ThisLabel == "BrowserSyncTime")
   ResetTime := IfContains(A_ThisLabel, "``")
   CloseWnd := IfContains(A_ThisLabel, "^")
-  wMpvId := WinActive("ahk_class mpv"), wSMElWnd := ""
+  wMpvId := WinActive("ahk_class mpv")
+  wSMElWnd := TemplCode := ""
   if (wBrowserId := WinActive("ahk_group Browser")) {
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
@@ -656,11 +666,12 @@ BrowserSyncTime:
     }
     if (!SkipCheckUrl && ((Vim.Browser.Title == "Netflix") || (Vim.Browser.Source == "MoviesJoy"))) {
       BrowserUrl := Vim.Browser.GetParsedUrl()
-      SMUrl := Vim.SM.GetLink()
+      WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
+      SMUrl := Vim.SM.GetLink(TemplCode := Vim.SM.GetTemplCode())
       if (BrowserUrl != SMUrl) {
         MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                     . "`nBrowser url: " . BrowserUrl
-                    . "`nSM url: " . SMUrl
+                    . "`n     SM url: " . SMUrl
         WinActivate % wBrowser
         if (IfMsgBox("No") || IfMsgBox("Cancel"))
           Goto SMSyncTimeReturn
@@ -689,38 +700,26 @@ BrowserSyncTime:
   }
   Vim.SM.CloseMsgWind()
   WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
-
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
 
-  OldText := Vim.SM.GetFirstParagraph()
-  TimeInHTML := (OldText ~= "^SMVim time stamp:")
-  if (!EditHTMLComp := (wMpvId || TimeInHTML || (wBrowserId && !IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2")))) {
-    Vim.SM.EditFirstQuestion()
-    send {Ctrl Down}t{f9}{Ctrl Up}
-    WinWaitActive, ahk_class TScriptEditor,, 0.7
-    if (!ErrorLevel) {
-      sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
-      if (IfContains(script := ControlGetText("TMemo1", "A"), "bilibili.com")) {
-        if (script ~= "\?p=\d+") {
-          match := "&t=.*", replacement := "&t=" . sec
-        } else {
-          match := "\?t=.*", replacement := "?t=" . sec
-        }
-      } else if (IfContains(script, "youtube.com")) {
-        match := "&t=.*s", replacement := "&t=" . sec . "s"
-      } else {
-        EditHTMLComp := true
-        WinClose, ahk_class TScriptEditor
-        send {esc}
-      }
+  TemplCode := TemplCode ? TemplCode : Vim.SM.GetTemplCode()
+  RegExMatch(TemplCode, "ScriptFile=\K.*", ScriptPath) 
+  Script := FileRead(ScriptPath)
+  Sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+  EditScript := True
+  if (IfContains(Script, "bilibili.com")) {
+    if (Script ~= "\?p=\d+") {
+      Match := "&t=.*", Replacement := "&t=" . Sec
     } else {
-      EditHTMLComp := true
+      Match := "\?t=.*", Replacement := "?t=" . Sec
     }
-  }
-
-  if (EditHTMLComp) {
+  } else if (IfContains(Script, "youtube.com")) {
+    Match := "&t=.*s", Replacement := "&t=" . Sec . "s"
+  } else {
+    EditScript := False
     Vim.SM.EditFirstQuestion()
+    OldText := Vim.SM.GetFirstParagraph()
     NewText := "SMVim time stamp: " . Vim.Browser.VidTime
     if (OldText != NewText) {
       send ^{home}
@@ -732,18 +731,20 @@ BrowserSyncTime:
       Clip(NewText,, false, "sm")
       send {esc}
     }
-  } else {
-    ControlSetText, TMemo1, % RegExReplace(script, match . "|$", replacement,, 1), A
-    send !o{esc}  ; close script editor
-    ToolTip("Time stamp in script component set as " . sec . "s")
+  }
+
+  if (EditScript) {
+    FileDelete, % ScriptPath
+    FileAppend, % RegExReplace(Script, Match . "|$", Replacement,, 1), % ScriptPath
+    ToolTip("Time stamp in script component set as " . Sec . "s")
   }
   WinWaitActive, ahk_class TElWind
   if (IfContains(A_ThisLabel, "^+!"))
     Vim.SM.Learn(false,, true)
   if ((A_ThisLabel == "!+s") || (A_ThisLabel == "!+``"))
-    WinActivate % "ahk_id " . guiaBrowser.BrowserId
-  Vim.Browser.Clear()
+    WinActivate % wBrowser
 SMSyncTimeReturn:
+  Vim.Browser.Clear()
   if (sync)
     Clipboard := ClipSaved
 return
@@ -759,14 +760,10 @@ return
   }
 return
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^.*? Registry \(\d+ members\)"))
-SMRegAltG:
-!g::
-  Acc_Get("Object", "4.5.4.2.4",, "A").accDoDefaultAction()
-  WinWaitActive, ahk_class TElWind,, 1
-  if (!ErrorLevel)
-    Vim.State.SetMode("Vim_Normal")
-return
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Concept Registry \(\d+ members\)"))
+!p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
+!i::Acc_Get("Object", "4.6.4.3.4.9.4",, "A").accDoDefaultAction()  ; default item template
+!t::Acc_Get("Object", "4.6.4.3.4.10.4",, "A").accDoDefaultAction()  ; default topic template
 
 ^l::
   Gosub SMRegAltG
@@ -774,18 +771,28 @@ return
   Goto SMLearnChild
 return
 
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Reference Registry \(\d+ members\)"))
+!i::Acc_Get("Object", "4.5.4.8.4",, "A").accDoDefaultAction()
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^.*? Registry \(\d+ members\)"))
+SMRegAltG:
+!g::
+  Acc_Get("Object", "4.5.4.2.4",, "A").accDoDefaultAction()
+  WinWaitActive, ahk_class TElWind,, 1.5
+  if (!ErrorLevel)
+    Vim.State.SetMode("Vim_Normal")
+return
+
+^l::
+  send !b
+  WinWaitActive, ahk_class TBrowser
+  Goto SMLearnChildActiveBrowser
+return
+
 ~!n::
   WinWaitActive, ahk_class TElWind,, 1
   Vim.SM.PlayIfPassiveColl(, 500)
 return
-
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Concept Registry \(\d+ members\)"))
-!p::ControlFocus, TEdit1  ; set priority for current selected concept in registry window
-!i::Acc_Get("Object", "4.6.4.3.4.9.4",, "A").accDoDefaultAction()  ; default item template
-!t::Acc_Get("Object", "4.6.4.3.4.10.4",, "A").accDoDefaultAction()  ; default topic template
-
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle("A") ~= "^Reference Registry \(\d+ members\)"))
-!i::Acc_Get("Object", "4.5.4.8.4",, "A").accDoDefaultAction()
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
 ; Use English input method for choosing concept when import

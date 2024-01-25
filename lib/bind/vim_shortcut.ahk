@@ -12,8 +12,6 @@
 #if
 ^!+v::Vim.State.ToggleEnabled()
 
-^!+t::msgbox % Vim.SM.GetFirstParagraph()
-
 #if (Vim.State.Vim.Enabled)
 ; Shortcuts
 ^!r::reload
@@ -272,11 +270,12 @@ IWBNewTopic:
     Gui, SMImport:Add, Text,, Co&mment:
     Gui, SMImport:Add, ComboBox, vRefComment gAutoComplete w196, #audio
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
-    if (!IWB)
+    IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle)
+    if (!IWB && !IsVidSite)
       Gui, SMImport:Add, Checkbox, % "vDLHTML" . DLCheck, Import fullpage &HTML
     if (IWB)
       Gui, SMImport:Add, Checkbox, vCheckDupForIWB, Check &duplication
-    if (IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle)) {
+    if (IsVidSite) {
       Gui, SMImport:Add, Checkbox, vResetVidTime, &Reset time stamp
       if (Vim.Browser.Source == "YouTube")
         Gui, SMImport:Add, Checkbox, vUseOnlineProgress, &Mark as use online progress
@@ -313,7 +312,7 @@ SMImportButtonImport:
       Goto ImportReturn
   }
   if (IWB)
-    Vim.Browser.Highlight(CollName, Clipboard)  ; clipboard contains HTML but is in plain-text
+    Vim.Browser.Highlight(CollName, Clipboard, Vim.Browser.Url)  ; clipboard contains HTML but is in plain-text
 
   if (Passive)
     DLHTML := false
@@ -527,7 +526,7 @@ return
   ToolTip := "selected text", skip := false, url := ""
   if (wBrowser) {
     uiaBrowser := new UIA_Browser("ahk_id " . wBrowser)
-    if (IfContains(url := uiaBrowser.GetCurrentUrl(), "youtube.com/watch"))
+    if (IfContains(url := uiaBrowser.GetCurrentUrl(), "youtube.com/watch,netflix.com/watch"))
       text := Vim.Browser.ParseUrl(url), skip := true, ToolTip := "url"
   }
   if (!skip && (!text := Copy())) {
@@ -567,8 +566,10 @@ return
       if (wBrowser)
         PlainText := Clipboard
       Vim.HTML.ClipboardGet_HTML(data)
-      if (wBrowser)
-        RegExMatch(data, "SourceURL:(.*)", v), url := Vim.SM.HTMLUrl2SMLinkUrl(Vim.Browser.ParseUrl(v1))
+      if (wBrowser) {
+        RegExMatch(data, "SourceURL:(.*)", v)
+        BrowserUrl := Vim.Browser.ParseUrl(v1)
+      }
       RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
       WinClip.Clear()
       Clipboard := Vim.HTML.Clean(data)
@@ -587,7 +588,7 @@ return
     }
     WinActivate, % "ahk_id " . hWnd
     if (wBrowser) {
-      Vim.Browser.Highlight(, PlainText)
+      Vim.Browser.Highlight(, PlainText, BrowserUrl)
     } else if (WinActive("ahk_exe ebook-viewer.exe")) {
       ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
@@ -613,7 +614,7 @@ ExtractToSM:
   } else {
     Marker := Vim.SM.GetFirstParagraph()
   }
-  if (Marker && IfNotIn(Vim.SM.IsCompMarker(Marker),"read point,page number")) {
+  if (Marker && IfNotIn(Vim.SM.IsCompMarker(Marker), "read point,page number")) {
     ret := true
     if (A_ThisLabel != "ExtractToSM") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
@@ -632,12 +633,14 @@ ExtractToSM:
       return
     }
   }
-  if (wBrowser && !Vim.SM.MatchLink(RefLink, url)) {
+  if (wBrowser && !Vim.SM.MatchLink(RefLink, BrowserUrl)) {
     MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
-                . "`nBrowser url: " . url
-                . "`nSM url: " . RefLink
-    if (IfMsgBox("No") || IfMsgBox("Cancel"))
-      Goto RestoreClipReturn
+                . "`nBrowser url: " . BrowserUrl
+                . "`n     SM url: " . RefLink
+    if (IfMsgBox("No") || IfMsgBox("Cancel")) {
+      ToolTip("Copied " . Clipboard)
+      return
+    }
   }
   Vim.SM.EditFirstQuestion()
   send ^{home}
@@ -760,11 +763,15 @@ return
   ClipSaved := ClipboardAll
   CloseWnd := IfContains(A_ThisLabel, "^")
   wBrowser := WinActive("ahk_group Browser")
+  KeyWait Ctrl
+  KeyWait Alt
+  KeyWait Shift
   if ((wSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     send {esc}
+  if (wSumatra && (A_ThisLabel == "!+s"))
+    send ^+s
   PageNumber := ""
-  ReadPoint := Trim(Copy(false), " `t`r`n")
-  ReadPoint := RegExReplace(ReadPoint, "s)\r\n.*")
+  ReadPoint := RegExReplace(Trim(Copy(false), " `t`r`n"), "s)\r\n.*")
   if (wBrowser) {
     critical
     if (url := RetrieveUrlFromClip()) {
@@ -772,7 +779,7 @@ return
     } else {
       url := Vim.Browser.GetParsedUrl()
     }
-    url := Vim.SM.HTMLUrl2SMLinkUrl(url)
+    url := Vim.SM.HTMLUrl2SMUrl(url)
   }
   if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
     if (!ReadPoint) {
@@ -858,9 +865,11 @@ MarkInHTMLComp:
   if (wBrowser && !Vim.SM.MatchLink(RefLink, url)) {
     MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                 . "`nBrowser url: " . url
-                . "`nSM url: " . RefLink
-    if (IfMsgBox("No") || IfMsgBox("Cancel"))
-      Goto RestoreClipReturn
+                . "`n     SM url: " . RefLink
+    if (IfMsgBox("No") || IfMsgBox("Cancel")) {
+      ToolTip("Copied " . Clipboard := NewText)
+      return
+    }
   }
   if (OldText)
     Vim.SM.EmptyHTMLComp()
