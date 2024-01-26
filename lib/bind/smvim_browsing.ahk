@@ -208,7 +208,7 @@ c::
       aHints.Push(CreateHintsArray(Control, hCtrl, Type, Caret)*)
   }
   if (n := ObjCount(aHints)) {
-    critical  ; adding critical increases performance
+    Critical  ; adding critical increases performance
     Vim.State.SetMode("KeyListener")
     ; aHintStrings is later used in key listener
     CreateHints(aHints, aHintStrings := hintStrings(n))

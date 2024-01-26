@@ -182,7 +182,7 @@ class VimSM {
       PostMessage, 0x0104, 0x50, 1<<29,, ahk_class TElWind  ; P key
       PostMessage, 0x0105, 0x50, 1<<29,, ahk_class TElWind
       send {Alt Up}
-      WinWait, ahk_class TPriorityDlg
+      WinWait, % "ahk_class TPriorityDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
       ControlSetText, TEdit5, % Prio
       while (WinExist())
         ControlSend, TEdit5, {enter}
@@ -445,7 +445,7 @@ class VimSM {
     GroupAdd, SMAltT, ahk_class TChoicesDlg
     GroupAdd, SMAltT, ahk_class TTitleEdit
     WinWait, % "ahk_group SMAltT ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind"),, % timeout
-    if (WinGetClass() == "TChoicesDlg") {  ; window from the last WinWait
+    if (WinGetClass() == "TChoicesDlg") {
       if (!title)
         ControlFocus, TGroupButton2
       while (WinExist("ahk_class TChoicesDlg ahk_pid " . pidSM))
@@ -453,7 +453,7 @@ class VimSM {
       if (title)
         WinWait, % "ahk_class TTitleEdit ahk_pid " . pidSM, % timeout
     }
-    if (WinGetClass() == "TTitleEdit") {  ; window from the last WinWait
+    if (WinGetClass() == "TTitleEdit") {
       if (title)
         ControlSetText, TMemo1, % title
       ControlSend, TMemo1, {enter}
@@ -567,7 +567,7 @@ class VimSM {
 
   Reload(timeout:=0, ForceBG:=false) {
     if (!ForceBG && WinActive("ahk_class TElWind")) {
-      critical
+      Critical
       this.GoHome()
       this.WaitFileLoad(timeout)
       this.GoBack()
@@ -586,11 +586,11 @@ class VimSM {
     return (text ~= this.CssClass)
   }
 
-  ChangeDefaultConcept(concept:="", send:=0, CurrConcept:="", check:=true) {
+  SetCurrConcept(Concept:="", CurrConcept:="") {
     ; No need for changing if entered concept = current concept
-    if (concept && check) {
+    if (Concept) {
       CurrConcept := CurrConcept ? CurrConcept : this.GetCurrConcept()
-      if (CurrConcept = concept)
+      if (CurrConcept = Concept)
         return false
     }
     UIA := UIA_Interface()
@@ -598,23 +598,10 @@ class VimSM {
     ; Just using ControlClick() cannot operate in background
     pos := el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").GetCurrentPos("screen")
     ControlClickScreen(pos.x, pos.y, "ahk_class TElWind")
-    if (concept) {
-      WinWait, ahk_class TRegistryForm
-      ; send = 1 means must send
-      ; send = -1 means must not send
-      ; send = 0 means let string length decide
-      ; ControlSend is faster when string length smaller than 20
-      if ((send == 1) || ((send != -1) && (StrLen(concept) <= 20))) {
-        ControlSend, Edit1, % "{text}" . concept, ahk_class TRegistryForm
-      } else {
-        ControlSetText, Edit1, % SubStr(concept, 2), ahk_class TRegistryForm
-        ; Needed for updating the template; without {text},
-        ; the first letter would not be in the correct case;
-        ; which makes ControlTextWait() cannot pass
-        ControlSend, Edit1, % "{text}" . SubStr(concept, 1, 1), ahk_class TRegistryForm
-        ControlTextWait("Edit1", concept, "ahk_class TRegistryForm")
-      }
-      ControlSend, Edit1, {enter}, ahk_class TRegistryForm
+    if (Concept) {
+      WinWait, % "ahk_class TRegistryForm ahk_pid " . WinGet("PID", "ahk_class TElWind")
+      ControlSend, Edit1, % "{text}" . Concept
+      ControlSend, Edit1, {enter}
       return true
     }
   }
@@ -631,18 +618,18 @@ class VimSM {
     ControlClickWinCoordDPIAdjusted(294, 45, "ahk_class TBrowser")
   }
 
-  SetElParam(title:="", Prio:="", template:="", Submit:=true) {
-    if (!title && !(prio >= 0) && !template) {
+  SetElParam(Title:="", Prio:="", Template:="", Submit:=true) {
+    if (!Title && !(Prio >= 0) && !Template) {
       return
-    } else if (title && (prio >= 0) && !template) {
-      this.SetPrio(prio,, true)
-      this.SetTitle(title)
+    } else if (Title && (Prio >= 0) && !Template) {
+      this.SetPrio(Prio,, true)
+      this.SetTitle(Title)
       return
-    } else if (title && !(prio >= 0) && !template) {
-      this.SetTitle(title)
+    } else if (Title && !(Prio >= 0) && !Template) {
+      this.SetTitle(Title)
       return
-    } else if (!title && (prio >= 0) && !template) {
-      this.SetPrio(prio,, true)
+    } else if (!Title && (Prio >= 0) && !Template) {
+      this.SetPrio(Prio,, true)
       return
     }
     if (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
@@ -655,16 +642,16 @@ class VimSM {
           return
       }
     }
-    if (template) {
-      ControlSetText, Edit1, % SubStr(template, 2)
-      ControlSend, Edit1, % "{text}" . SubStr(template, 1, 1)
+    if (Template && (ControlGetText("Edit1") != Template)) {
+      ControlSetText, Edit1, % SubStr(Template, 2)
+      ControlSend, Edit1, % "{text}" . SubStr(Template, 1, 1)
       this.WaitFileLoad()
     }
-    if (title) {
-      ControlSetText, TEdit2, % SubStr(title, 2)
-      ControlSend, TEdit2, % "{text}" . SubStr(title, 1, 1)
+    if (Title && (ControlGetText("TEdit2") != Title)) {
+      ControlSetText, TEdit2, % SubStr(Title, 2)
+      ControlSend, TEdit2, % "{text}" . SubStr(Title, 1, 1)
     }
-    if (Prio >= 0) {
+    if ((Prio >= 0) && (ControlGetText("TEdit1") != Prio)) {
       ControlSetText, TEdit1, % SubStr(Prio, 2)
       ControlSend, TEdit1, % "{text}" . SubStr(Prio, 1, 1)
     }
@@ -1210,6 +1197,21 @@ class VimSM {
       return v1
     } else {
       return false
+    }
+  }
+
+  ListLinks() {
+    this.ActivateElWind()
+    send !{f10}cs
+  }
+
+  LinkConcept(Concept:="") {
+    this.ActivateElWind()
+    send !{f10}cl
+    if (Concept) {
+      WinWaitActive, ahk_class TRegistryForm
+      ControlSend, Edit1, % "{text}" . Concept
+      ControlSend, Edit1, {enter}
     }
   }
 }

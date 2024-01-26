@@ -59,16 +59,8 @@ NukeHTML:
   send {esc}
 Return
 
-l::  ; *l*ink concept
-  send !{f10}cl
-  Vim.State.SetMode("Vim_Normal")
-return
-
-SMListLinks:
-+l::  ; list links
-  send !{f10}cs
-  Vim.State.SetMode("Vim_Normal")
-return
+l::Vim.SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
++l::Vim.SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
 
 w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.State.SetMode("Vim_Normal")
@@ -180,43 +172,22 @@ SMSetLinkFromClipboard:
   WinWaitActive, ahk_class TInputDlg
   Vim.Browser.Url := Clipboard
   SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
-  Ref := "#Link: " . Vim.Browser.Url . "`r`n" . ControlGetText("TMemo1")
+  Ref := "#Link: " . Vim.Browser.Url . "`n" . ControlGetText("TMemo1")
   if (Vim.Browser.Title)
-    Ref := "#Title: " . Vim.Browser.Title . "`r`n" . Ref
+    Ref := "#Title: " . Vim.Browser.Title . "`n" . Ref
   if (Vim.Browser.Source)
-    Ref := "#Source: " . Vim.Browser.Source . "`r`n" . Ref
+    Ref := "#Source: " . Vim.Browser.Source . "`n" . Ref
   if (Vim.Browser.Author)
-    Ref := "#Author: " . Vim.Browser.Author . "`r`n" . Ref
+    Ref := "#Author: " . Vim.Browser.Author . "`n" . Ref
   if (Vim.Browser.Date)
-    Ref := "#Date: " . Vim.Browser.Date . "`r`n" . Ref
+    Ref := "#Date: " . Vim.Browser.Date . "`n" . Ref
   if (Vim.Browser.Comment)
-    Ref := "#Comment: " . Vim.Browser.Comment . "`r`n" . Ref
+    Ref := "#Comment: " . Vim.Browser.Comment . "`n" . Ref
   ControlSetText, TMemo1, % Ref
   ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
   WinWaitClose
   if (!SMPoundSymbHandled && Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url) && (A_ThisLabel == "r"))
     Vim.SM.Reload(, true)
-  ; if (A_ThisLabel == "r")
-  ;   Vim.SM.AskPrio()
-return
-
-m::
-  Vim.State.SetMode("Vim_Normal"), Vim.SM.EditRef()
-  WinWaitActive, ahk_class TInputDlg
-  Ref := ControlGetText("TMemo1")
-  if (Ref ~= "#Comment: .*#audio") {
-    ControlSend, TMemo1, {esc}, ahk_class TInputDlg
-    return
-  }
-  Ref := RegExReplace(Ref, "#Comment:(.*)|$", "`r`n#Comment:$1 #audio ",, 1)
-  ControlSetText, TMemo1, % Ref, ahk_class TInputDlg
-  ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}, ahk_class TInputDlg  ; submit
-return
-
-d::
-  Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.CtrlF("#audio"))
-    Goto SMLearnChildActiveBrowser
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))

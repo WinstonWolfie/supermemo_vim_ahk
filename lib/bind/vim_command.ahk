@@ -60,7 +60,7 @@ Return
     if (WinActive("ahk_class TElWind")) {
       list := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement"
             . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
-            . "|ExternaliseRegistry|Comment|" . list
+            . "|ExternaliseRegistry|Comment|Tag|" . list
       if (Vim.SM.IsPassive(, -1))
         list := "ReformatScriptComponent|SearchLinkInYT|MarkAsOnlineProgress|" . list
       if (Vim.SM.IsEditingText())
@@ -111,10 +111,10 @@ VimCommanderButtonExecute:
   }
 return
 
-FindSearch(Title, Prompt, Text:="", ForceText:=false) {
+FindSearch(Title, Prompt, Text:="", ForceText:=false, Width:="192", Height:="128") {
   if (!ForceText && (!Text := Trim(Copy())))
     Text := Text ? Text : Clipboard
-  ret := InputBox(Title, Prompt,,,,,,,, Text)
+  ret := InputBox(Title, Prompt,, Width, Height,,,,, Text)
   ; If the user closed the input box without submitting, return nothing
   return ErrorLevel ? "" : ret
 }
@@ -183,7 +183,7 @@ WaybackMachine:
 return
 
 DeepL:
-  if (text := FindSearch("DeepL Translate", "Text:"))
+  if (text := FindSearch("DeepL Translate", "Text:",,, 256))
     ShellRun("https://www.deepl.com/en/translator#?/en/" . text)
 Return
 
@@ -361,7 +361,7 @@ UIAViewer:
 return
 
 TranslateGoogle:
-  if (text := FindSearch("Google Translate", "Text:"))
+  if (text := FindSearch("Google Translate", "Text:",,, 256))
     ShellRun("https://translate.google.com/?sl=auto&tl=en&text=" . text . "&op=translate")
 return
 
@@ -723,7 +723,7 @@ LinkToPreviousElement:
   send {enter}+{enter}
   Vim.SM.WaitFileLoad()
   WinWaitActive, ahk_class TElWind
-  Goto SMListLinks
+  Vim.SM.ListLinks()
 return
 
 AlwaysOnTop:
@@ -1181,6 +1181,10 @@ Comment:
   RegExMatch(Ref, "#Comment: (.*)|$", v), PrevComment := v1
   Comment := InputBox("Comment", "Set comment:",,,,,,,, PrevComment)
   WinWaitActive, ahk_class TInputDlg
+  if (ErrorLevel) {
+    WinClose
+    return
+  }
   if (Comment) {
     Ref := "#Comment: " . Comment . "`r`n" . Ref
   } else {
@@ -1241,4 +1245,27 @@ MarkAsOnlineProgress:
     Clip("SMVim: Use online video progress",,, "sm")
   }
   Vim.SM.ExitText(), Vim.State.SetMode("Vim_Normal")
+return
+
+Tag:
+  Vim.State.SetMode("Vim_Normal")
+  if ((!Tags := InputBox("Tag", "Add tags (without # and use space to separate):",, 350)) || ErrorLevel)
+    return
+  s := StrSplit(Tags, " ")
+  loop % s.MaxIndex() {
+    Vim.SM.LinkConcept(s[A_Index])
+    WinWaitActive, ahk_class TElWind
+  }
+  Vim.SM.EditRef()
+  WinWaitActive, ahk_class TInputDlg
+  Ref := ControlGetText("TMemo1")
+  RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
+  loop % s.MaxIndex() {
+    if (!IfContains(Comment, "#" . s[A_Index]))
+      Comment .= " #" . s[A_Index]
+  }
+  Ref := "#Comment: " . Comment . "`n" . Ref
+  ControlSetText, TMemo1, % Ref
+  ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
+  WinWaitClose
 return

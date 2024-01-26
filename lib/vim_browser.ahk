@@ -232,6 +232,8 @@ class VimBrowser {
       this.Source := "Examine"
     } else if (IfContains(this.Url, "corporatefinanceinstitute.com")) {
       this.Source := "Corporate Finance Institute"
+    } else if (IfContains(this.Url, "cnrtl.fr/definition")) {
+      this.Source := "Trésor de la langue française informatisé"
 
     ; Sites that require special attention
     ; Video sites
@@ -542,7 +544,7 @@ class VimBrowser {
     }
     if (RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
       Url := Url ? Url : this.GetParsedUrl()
-      if (IfContains(this.Url, "wikipedia.org"))
+      if (IfContains(Url, "wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"
     }
     ; ControlSend doesn't work reliably because browser can't highlight in background
@@ -555,22 +557,13 @@ class VimBrowser {
   }
 
   ClickBtn() {
-    critical
+    Critical
     this.Url := this.Url ? this.Url : this.GetParsedUrl()
     if (IfContains(this.Url, "youtube.com/watch")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
-      ; if (btn) {
-        btn.FindByPath("P2").click()  ; click the description box, so the webpage doesn't scroll down
-      ; } else {
-      ;   el := guiaBrowser.FindFirstBy("ControlType=Text AND Name='^\d+(\.\d+)?(K|M|B)? views'",, "regex")
-      ;   if (el.FindByPath("+1").Name == "•") {  ; not video time from the current video (instead, suggestion box)
-      ;     return false
-      ;   } else {
-      ;     el.click()
-      ;   }
-      ; }
+      btn.FindByPath("P2").click()  ; click the description box, so the webpage doesn't scroll down
     } else {
       return false
     }

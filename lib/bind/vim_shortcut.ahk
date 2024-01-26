@@ -248,7 +248,7 @@ IWBNewTopic:
   WinActivate % wBrowser
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
     Goto ImportReturn
-  Prio := Concept := CloseTab := DLHTML := ResetVidTime := DLCheck := CheckDupForIWB := RefComment := ""
+  Prio := Concept := CloseTab := DLHTML := ResetVidTime := DLCheck := CheckDupForIWB := Tags := RefComment := ""
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
 
   if (!IWB) {
@@ -260,15 +260,17 @@ IWBNewTopic:
     SetDefaultKeyboard(0x0409)  ; English-US
     Gui, SMImport:Add, Text,, % "Current collection: " . CollName
     Gui, SMImport:Add, Text,, &Priority:
-    Gui, SMImport:Add, Edit, vPrio w196
+    Gui, SMImport:Add, Edit, vPrio w280
     Gui, SMImport:Add, Text,, Concept &group:  ; like in default import dialog
     ConceptList := "||Online|Sources|ToDo"
     if (IfIn(ConceptBefore, "Online,Sources,ToDo"))
       ConceptList := StrReplace(ConceptList, "|" . ConceptBefore)
     list := StrLower(ConceptBefore . ConceptList)
-    Gui, SMImport:Add, ComboBox, vConcept gAutoComplete w196, % list
-    Gui, SMImport:Add, Text,, Co&mment:
-    Gui, SMImport:Add, ComboBox, vRefComment gAutoComplete w196, #audio
+    Gui, SMImport:Add, ComboBox, vConcept gAutoComplete w280, % list
+    Gui, SMImport:Add, Text,, &Tags (without #; use space to separate):
+    Gui, SMImport:Add, Edit, vTags w280
+    Gui, SMImport:Add, Text,, Reference c&omment:
+    Gui, SMImport:Add, Edit, vRefComment w280
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
     IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle)
     if (!IWB && !IsVidSite)
@@ -326,16 +328,6 @@ SMImportButtonImport:
         } else if (DL := true) {
           ToolTip("Attempting to download website...", true,,, 19)
           TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
-
-          ; https://www.autohotkey.com/docs/v1/lib/URLDownloadToFile.htm
-          ; whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-          ; whr.Open("GET", Vim.Browser.Url, true)
-          ; whr.Send()
-          ; ; Using 'true' above and the call below allows the script to remain responsive.
-          ; whr.WaitForResponse()
-          ; version := whr.ResponseText
-          ; MsgBox % version
-
           UrlDownloadToFile, % Vim.Browser.Url, % TempPath
           if (ErrorLevel) {
             ToolTip("Download failed.",,,, 18), CopyAll := true
@@ -370,8 +362,12 @@ SMImportButtonImport:
   if ((Passive == 1) && !Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
     Vim.Browser.Date := ""
   SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
-  if (RefComment)
-    Vim.Browser.Comment := RefComment . " " . Vim.Browser.Comment
+  if (Tags) {
+    TagsComment := "#" . StrReplace(Trim(Tags), " ", " #")
+    if (RefComment)
+      TagsComment := " " . TagsComment 
+    Vim.Browser.Comment := Trim(RefComment) . TagsComment . " " . Vim.Browser.Comment
+  }
 
   WinClip.Clear()
   if (Online && Passive) {
@@ -408,7 +404,7 @@ SMImportButtonImport:
   Vim.SM.CloseMsgWind()
 
   if (Concept) {
-    Vim.SM.ChangeDefaultConcept(Concept,, ConceptBefore)
+    Vim.SM.SetCurrConcept(Concept, ConceptBefore)
     WinWaitClose, ahk_class TRegistryForm
     if (InStr(Vim.SM.GetCurrConcept(), Concept) != 1) {
       WinActivate, ahk_class TElWind
@@ -438,19 +434,19 @@ SMImportButtonImport:
         ToolTip("No script component found.")
         Goto ImportReturn
       }
-      script := "url " . Vim.Browser.Url
+      Script := "url " . Vim.Browser.Url
       if (Vim.Browser.VidTime && IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2")) {
-        sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+        Sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
         if (IfContains(Vim.Browser.Url, "youtube.com")) {
-          script .= "&t=" . sec . "s"
+          Script .= "&t=" . Sec . "s"
         } else if (IfContains(Vim.Browser.Url, "bilibili.com")) {
-          script .= (script ~= "\?p=\d+") ? "&t=" . sec : "?t=" . sec
+          Script .= (Script ~= "\?p=\d+") ? "&t=" . Sec : "?t=" . Sec
         }
       }
-      ControlSetText, TMemo1, % script
+      ControlSetText, TMemo1, % Script
       send !o{esc 2}  ; close script editor
       WinWaitClose
-      WinWaitActive, ahk_class TElWind  ; without this Vim.SM.SetTitle() may fail
+      WinWaitActive, ahk_class TElWind
     }
   }
   SMNewTextTitle := WinGetTitle("ahk_class TElWind")
@@ -477,7 +473,17 @@ SMImportButtonImport:
     WinActivate % wBrowser
 
   WinWaitTitle(SMNewTextTitle, "ahk_class TElWind")
-  Vim.SM.SetElParam(IWB ? "" : Vim.Browser.Title, Prio)
+  if (!Online || Passive)  ; did not use Ctrl + N for YT
+    Vim.SM.SetElParam(IWB ? "" : Vim.Browser.Title, Prio)
+
+  if (Tags) {
+    Critical
+    s := StrSplit(Tags, " ")
+    loop % s.MaxIndex() {
+      Vim.SM.LinkConcept(s[A_Index])
+      WinWaitActive, ahk_class TElWind
+    }
+  }
 
   if (Passive)
     WinActivate % wBrowser
@@ -773,7 +779,7 @@ return
   PageNumber := ""
   ReadPoint := RegExReplace(Trim(Copy(false), " `t`r`n"), "s)\r\n.*")
   if (wBrowser) {
-    critical
+    Critical
     if (url := RetrieveUrlFromClip()) {
       url := Vim.Browser.ParseUrl(url)
     } else {

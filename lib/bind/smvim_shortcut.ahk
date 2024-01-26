@@ -30,7 +30,7 @@ return
 
 ^!c::  ; change default *c*oncept group
   SetDefaultKeyboard(0x0409)  ; English-US
-  Vim.SM.ChangeDefaultConcept()
+  Vim.SM.SetCurrConcept()
   Vim.State.SetMode("Vim_Normal")
 Return
 
@@ -84,6 +84,8 @@ return
   if (t)
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
 return
+
+^+!t::Goto Tag
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && Vim.SM.DoesHTMLExist())
 ^!f::  ; use IE's search
