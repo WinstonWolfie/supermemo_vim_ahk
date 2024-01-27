@@ -216,17 +216,19 @@ IWBNewTopic:
     WinActivate
     return
   }
-  if (Vim.Browser.GetFullTitle() = "new tab") {
+  Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
+  if (Vim.Browser.FullTitle = "new tab") {
     ToolTip("Web page not found.")
+    Vim.Browser.Clear()
     return
   }
-  Vim.Browser.Clear()
   guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . WinActive("A"))
-  IWB := IfContains(A_ThisLabel, "x,IWB")
-  if (IWB) {
+  ClipSaved := ClipboardAll
+  if (IWB := IfContains(A_ThisLabel, "x,IWB")) {
     if (!HTMLText := Copy(false, true)) {
       ToolTip("Text not found.")
-      Goto ImportReturn
+      Vim.Browser.Clear()
+      Goto RestoreClipReturn
     }
     Vim.Browser.Url := Vim.Browser.ParseUrl(RetrieveUrlFromClip())
   } else {
@@ -235,28 +237,25 @@ IWBNewTopic:
 
   if (!Vim.Browser.Url) {
     ToolTip("Url not found.")
-    return
+    Vim.Browser.Clear()
+    Goto RestoreClipReturn
   }
+
   SetTimer, PressBrowserBtn, -1
   Vim.SM.CloseMsgWind()
-  ClipSaved := ClipboardAll
-  Passive := Vim.SM.IsPassive(CollName := Vim.SM.GetCollName()
-                            , ConceptBefore := Vim.SM.GetCurrConcept())
+  CollName := Vim.SM.GetCollName()
+  ConceptBefore := Vim.SM.GetCurrConcept()
+  Passive := Vim.SM.IsPassive(CollName, ConceptBefore)
   if (!IWB && Vim.SM.CheckDup(Vim.Browser.Url, false))
     MsgBox, 3,, Continue import?
   WinClose, ahk_class TBrowser
   WinActivate % wBrowser
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
     Goto ImportReturn
-  Prio := Concept := CloseTab := DLHTML := ResetVidTime := DLCheck := CheckDupForIWB := Tags := RefComment := ""
-  Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
 
-  if (!IWB) {
-    DLList := "economist.com,investopedia.com,webmd.com,britannica.com"
-    DLCheck := IfContains(Vim.Browser.Url, DLList) ? " checked" : ""
-  }
-
+  Prio := Concept := CloseTab := DLHTML := ResetVidTime := DLCheck := CheckDupForIWB := Tags := RefComment := ClipBeforeGui := OnlineEl := ""
   if (IfContains(A_ThisLabel, "+,Prio")) {
+    ClipBeforeGui := Clipboard
     SetDefaultKeyboard(0x0409)  ; English-US
     Gui, SMImport:Add, Text,, % "Current collection: " . CollName
     Gui, SMImport:Add, Text,, &Priority:
@@ -273,21 +272,25 @@ IWBNewTopic:
     Gui, SMImport:Add, Edit, vRefComment w280
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
     IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle)
-    if (!IWB && !IsVidSite)
-      Gui, SMImport:Add, Checkbox, % "vDLHTML" . DLCheck, Import fullpage &HTML
+    if (!IWB && !IsVidSite) {
+      Gui, SMImport:Add, Checkbox, vOnlineEl, Import as o&nline element
+      DLList := "economist.com,investopedia.com,webmd.com,britannica.com"
+      DLCheck := IfContains(Vim.Browser.Url, DLList) ? "checked" : ""
+      Gui, SMImport:Add, Checkbox, % "vDLHTML " . DLCheck, Import fullpage &HTML
+    }
     if (IWB)
       Gui, SMImport:Add, Checkbox, vCheckDupForIWB, Check &duplication
     if (IsVidSite) {
       Gui, SMImport:Add, Checkbox, vResetVidTime, &Reset time stamp
-      if (Vim.Browser.Source == "YouTube")
-        Gui, SMImport:Add, Checkbox, vUseOnlineProgress, &Mark as use online progress
+      if (IfContains(Vim.Browser.Url, "youtube.com/watch")) {
+        check := (CollName = "bgm") ? "checked" : ""
+        Gui, SMImport:Add, Checkbox, % "vUseOnlineProgress " . check, &Mark as use online progress
+      }
     }
     Gui, SMImport:Add, Button, default, &Import
     Gui, SMImport:Show,, SuperMemo Import
     Gui, SMImport:+HwndImportGuiHwnd
     return
-  } else {
-    DLHTML := DLCheck
   }
 
 SMImportButtonImport:
@@ -297,7 +300,7 @@ SMImportButtonImport:
     KeyWait I
     Gui, Submit
     if (Passive != 2)
-      Passive := (IfIn(Concept, "online,sources")) ? true : false
+      Passive := (IfIn(Concept, "online,sources") || OnlineEl) ? true : false
     Gui, Destroy
     Vim.Caret.SwitchToSameWindow(wBrowser)
   }
@@ -340,7 +343,6 @@ SMImportButtonImport:
             HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""\/(?=([^<>]+)?>)", " $2=""" . UrlHead)
             HTMLText := RegExReplace(HTMLText, "is)<([^<>]+)?\K (href|src)=""(?=#([^<>]+)?>)", " $2=""" . Vim.Browser.Url)
           }
-
           RemoveToolTip(19)
         }
       }
@@ -369,9 +371,8 @@ SMImportButtonImport:
     Vim.Browser.Comment := Trim(RefComment) . TagsComment . " " . Vim.Browser.Comment
   }
 
-  WinClip.Clear()
   if (Online && Passive) {
-    Vim.SM.RefToClipForTopic(CollName, UseOnlineProgress)
+    Vim.SM.RefToClipForTopic(UseOnlineProgress)
   } else if (Online) {
     Clipboard := Vim.Browser.Url
   } else {
@@ -382,7 +383,6 @@ SMImportButtonImport:
       Vim.Browser.Date := "Imported on " . GetDetailedTime()
     Clipboard := HTMLText . "<br>" . Vim.SM.MakeReference(true)
   }
-  ClipWait
 
   InfoToolTip := "Importing:`n"
                . "Url: " . Vim.Browser.Url . "`n"
@@ -404,9 +404,9 @@ SMImportButtonImport:
   Vim.SM.CloseMsgWind()
 
   if (Concept) {
-    Vim.SM.SetCurrConcept(Concept, ConceptBefore)
+    Vim.SM.SetCurrConcept(OnlineEl ? "online" : Concept, ConceptBefore)
     WinWaitClose, ahk_class TRegistryForm
-    if (InStr(Vim.SM.GetCurrConcept(), Concept) != 1) {
+    if (!OnlineEl && InStr(Vim.SM.GetCurrConcept(), Concept) != 1) {
       WinActivate, ahk_class TElWind
       MsgBox, 3,, Current concept doesn't seem like your entered concept. Continue?
       if (IfMsgbox("No") || IfMsgbox("Cancel"))
@@ -474,7 +474,7 @@ SMImportButtonImport:
 
   WinWaitTitle(SMNewTextTitle, "ahk_class TElWind")
   if (!Online || Passive)  ; did not use Ctrl + N for YT
-    Vim.SM.SetElParam(IWB ? "" : Vim.Browser.Title, Prio)
+    Vim.SM.SetElParam(IWB ? "" : Vim.Browser.Title, Prio,, OnlineEl ? Concept : "")
 
   if (Tags) {
     Critical
@@ -508,9 +508,18 @@ ImportReturn:
     WinWaitNotActive, ahk_class TElWind,, 0.1
     Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
   }
-  Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal"), RemoveToolTip(17)
+  Vim.Browser.Clear()
+  Vim.State.SetMode("Vim_Normal")
+  RemoveToolTip(17)  ; import info tooltip
+  ; Closed Gui and did not copy anything
+  if (IfContains(A_ThisLabel, "SMImportGui")) {
+    if (Clipboard == ClipBeforeGui)
+      Clipboard := ClipSaved
+  } else {
+    Clipboard := ClipSaved
+  }
   if (!Esc)
-    Clipboard := ClipSaved, ToolTip("Import completed.")
+    ToolTip("Import completed.")
 return
 
 ^+e::
@@ -577,9 +586,7 @@ return
         BrowserUrl := Vim.Browser.ParseUrl(v1)
       }
       RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
-      WinClip.Clear()
       Clipboard := Vim.HTML.Clean(data)
-      ClipWait
     }
     if (!WinExist("ahk_group SM")) {
       a := CleanHTML ? "(in HTML)" : ""
@@ -871,7 +878,7 @@ MarkInHTMLComp:
   if (wBrowser && !Vim.SM.MatchLink(RefLink, url)) {
     MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                 . "`nBrowser url: " . url
-                . "`n     SM url: " . RefLink
+                . "`n       SM url: " . RefLink
     if (IfMsgBox("No") || IfMsgBox("Cancel")) {
       ToolTip("Copied " . Clipboard := NewText)
       return
@@ -1023,13 +1030,11 @@ return
       Prio := "0" . Prio
     }
   }
-  WinClip.Clear()
   Clipboard := "#SuperMemo Reference:"
              . "`n#Title: " . title
              . "`n#Source: " . source
              . "`n#Date: " . date
              . "`n#Link: " . link
-  ClipWait
   WinActivate, ahk_class TElWind
   Vim.SM.CtrlN()
   Vim.SM.Reload()
@@ -1038,7 +1043,8 @@ return
 HBImportReturn:
   Vim.SM.ClearHighlight()
   WinWaitNotActive, ahk_class TElWind,, 0.1
-  Vim.Caret.SwitchToSameWindow("ahk_class TElWind"), Clipboard := ClipSaved
+  Vim.Caret.SwitchToSameWindow("ahk_class TElWind")
+  Clipboard := ClipSaved
 return
 
 MatchHiborTitle(text) {

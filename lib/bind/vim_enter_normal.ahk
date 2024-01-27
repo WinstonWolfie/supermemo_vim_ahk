@@ -24,7 +24,7 @@ Return
 ~enter::
   if (Vim.State.BackToNormal == 1) {
     if (WinActive("ahk_class TCommanderDlg")) {
-      WinWaitActive, ahk_class TInputDlg,, 0.25
+      WinWaitActive, ahk_class TInputDlg,, 0.3
       if (!ErrorLevel)  ; commands like Compress images
         return
     }

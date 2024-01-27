@@ -519,7 +519,7 @@ class VimBrowser {
   }
 
   GetFullTitle() {
-    return RegExReplace(WinGetTitle("A"), "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
+    return RegExReplace(WinGetTitle("ahk_group Browser"), "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
   }
 
   IsVidSite(title:="") {

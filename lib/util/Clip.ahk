@@ -9,7 +9,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
   If (Text = "") {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     send % KeysToSend ? KeysToSend : "^c"
-    ClipWait, WaitIndefinitely ? "" : (LongCopy ? 0.6 : 0.2), True
+    ClipWait, % WaitIndefinitely ? "" : (LongCopy ? 0.6 : 0.2), True
     if (!ErrorLevel) {
       if (HTML) {
         Vim.HTML.ClipboardGet_HTML(Clipped)

@@ -121,6 +121,10 @@ class VimSM {
     return (WinActive("ahk_class TElWind") && !this.IsEditingText())
   }
 
+  IsBrowsingBG() {
+    return (WinExist("ahk_class TElWind") && !IfContains(ControlGetFocus("ahk_class TElWind"), "Internet Explorer_Server,TMemo,TRichEdit"))
+  }
+
   IsGrading() {
     CurrFocus := ControlGetFocus("A")
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
@@ -473,33 +477,33 @@ class VimSM {
       return 1
   }
 
-  PostMsg(msg) {
-    wSMElWnd := "ahk_class TElWind"
+  PostMsg(Msg) {
+    wSMElWind := "ahk_class TElWind"
     WinGet, paSMTitles, List, ahk_class TElWind
     loop % paSMTitles {
       pidSM := WinGet("PID", "ahk_id " . hWnd := paSMTitles%A_Index%)
       if (WinExist("ahk_class TProgressBox ahk_pid " . pidSM)) {
         continue
       } else {
-        WindFound := true, wSMElWnd := "ahk_id " . hWnd
+        WindFound := true, wSMElWind := "ahk_id " . hWnd
         break
       }
     }
     if (!WindFound) {
       MsgBox, 3,, SuperMemo is processing something. Do you want to launch a new window?
-      if (IfMsgbox("yes")) {
+      if (IfMsgbox("Yes")) {
         ShellRun("C:\SuperMemo\sm19.exe")
         WinWaitActive, ahk_class TElWind
       } else {
         return
       }
     }
-    PostMessage, 0x0111, % msg,,, % wSMElWnd
+    PostMessage, 0x0111, % Msg,,, % wSMElWind
     return true
   }
 
-  GetTemplCode(RestoreClip:=true) {
-    this.ActivateElWind()
+  GetTemplCode(RestoreClip:=true, wSMElWind:="") {
+    this.ActivateElWind(wSMElWind)
     return Copy(RestoreClip,, this.IsEditingText() ? "!{f10}tc" : "^c")
   }
 
@@ -548,6 +552,7 @@ class VimSM {
   }
 
   Learn(CtrlL:=true, EnterInsert:=false, AutoPlay:=false) {
+    this.ActivateElWind()
     if (CtrlL) {
       if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
         this.PostMsg(178)
@@ -618,17 +623,17 @@ class VimSM {
     ControlClickWinCoordDPIAdjusted(294, 45, "ahk_class TBrowser")
   }
 
-  SetElParam(Title:="", Prio:="", Template:="", Submit:=true) {
-    if (!Title && !(Prio >= 0) && !Template) {
+  SetElParam(Title:="", Prio:="", Template:="", Group:="", Submit:=true) {
+    if (!Title && !(Prio >= 0) && !Template && !Group) {
       return
-    } else if (Title && (Prio >= 0) && !Template) {
+    } else if (Title && (Prio >= 0) && !Template && !Group) {
       this.SetPrio(Prio,, true)
       this.SetTitle(Title)
       return
-    } else if (Title && !(Prio >= 0) && !Template) {
+    } else if (Title && !(Prio >= 0) && !Template && !Group) {
       this.SetTitle(Title)
       return
-    } else if (!Title && (Prio >= 0) && !Template) {
+    } else if (!Title && (Prio >= 0) && !Template && !Group) {
       this.SetPrio(Prio,, true)
       return
     }
@@ -654,6 +659,10 @@ class VimSM {
     if ((Prio >= 0) && (ControlGetText("TEdit1") != Prio)) {
       ControlSetText, TEdit1, % SubStr(Prio, 2)
       ControlSend, TEdit1, % "{text}" . SubStr(Prio, 1, 1)
+    }
+    if (Group && (ControlGetText("Edit2") != Group)) {
+      ControlSetText, Edit2, % SubStr(Group, 2)
+      ControlSend, Edit2, % "{text}" . SubStr(Group, 1, 1)
     }
     if (Submit) {
       ControlFocus, TMemo1  ; needed, otherwise the window won't close sometimes
@@ -688,8 +697,6 @@ class VimSM {
     ; Probably because of SuperMemo uses a lower version of IE?
     if (IsUrl(text))
       text := this.HTMLUrl2SMUrl(text)
-    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(text, "youtube.com/watch?v="))  ; sm19 deletes www from www.youtube.com
-      text := RegExReplace(text, "^.*?(?=youtube\.com\/watch\?v=)")
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if ((ContLearn == 1) && this.LastCtrlFNotFound)
       this.Learn()
@@ -702,6 +709,8 @@ class VimSM {
     url := StrReplace(url, "%27", "'")
     url := StrReplace(url, "%21", "!")
     url := StrReplace(url, "%26", "&")
+    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(url, "youtube.com/watch?v="))  ; sm19 deletes www from www.youtube.com
+      url := StrReplace(url, "www.")
     return url
   }
 
@@ -857,12 +866,12 @@ class VimSM {
   AutoPlay() {
     ToolTip := "Running: `n`nTitle: " . WinGetTitle("ahk_class TElWind")
     FirstParagraph := this.GetFirstParagraph()
-    if (FirstParagraph ~= "^SMVim")
+    if (FirstParagraph ~= "^SMVim(?!:)")
       ToolTip .= "`n" . StrUpper(SubStr(FirstParagraph, 7, 1)) . SubStr(FirstParagraph, 8)
     ToolTip(ToolTip,, -4000, "center")
     if (WinGetTitle("ahk_class TElWind") == "Netflix") {
       ShellRun(this.GetLink())
-    } else if (GetFirstParagraph == "SMVim: Use online video progress") {
+    } else if (FirstParagraph == "SMVim: Use online video progress") {
       Gosub SearchLinkInYT
     } else {
       send ^{f10}
@@ -996,18 +1005,15 @@ class VimSM {
     this.Vim.State.SetNormal()
   }
 
-  ActivateElWind() {
-    if (!WinActive("ahk_class TElWind"))
-      WinActivate, ahk_class TElWind
+  ActivateElWind(wSMElWind:="") {
+    wSMElWind := wSMElWind ? wSMElWind : "ahk_class TElWind"
+    if (!WinActive(wSMElWind))
+      WinActivate, % wSMElWind
   }
 
-  RefToClipForTopic(CollName:="", UseOnlineProgress:=false) {
-    mark := "SMVim: Use online video progress"
-    CollName := CollName ? CollName : this.GetCollName()
-    url := StrReplace(this.Vim.Browser.Url, "https://www.youtube.com/watch?v=", "https://youtube.com/watch?v=")
-    if (!IfContains(url, "youtube.com/playlist"))
-      add := (CollName = "bgm") ? mark . "`n" : ""
-    add := UseOnlineProgress ? mark : add
+  RefToClipForTopic(UseOnlineProgress:=false) {
+    if (UseOnlineProgress)
+      add := "SMVim: Use online video progress`n"
     Clipboard := add . this.MakeReference()
   }
 

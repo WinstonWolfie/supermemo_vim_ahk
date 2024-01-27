@@ -127,11 +127,8 @@ p::
     PrevClip := ClipboardAll
     Copy(false)
     NewClip := ClipboardAll
-    if (PrevClip) {
-      WinClip.Clear()
+    if (PrevClip)
       Clipboard := PrevClip
-      ClipWait
-    }
   }
 
   if (IfContains(A_ThisLabel, "^"))

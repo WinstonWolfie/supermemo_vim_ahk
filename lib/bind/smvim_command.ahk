@@ -57,10 +57,11 @@ NukeHTML:
   Vim.SM.Reload()
   Vim.SM.WaitFileLoad()
   send {esc}
+  ToolTip("HTML cleaned.")
 Return
 
-l::Vim.SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
-+l::Vim.SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
++l::Vim.SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
+l::Vim.SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
 
 w::  ; prepare *w*ikipedia articles in languages other than English
   Vim.State.SetMode("Vim_Normal")

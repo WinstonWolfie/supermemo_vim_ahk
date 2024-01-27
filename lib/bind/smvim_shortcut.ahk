@@ -71,7 +71,32 @@ return
   KeyWait Shift
   KeyWait Alt
   send ^+p!g  ; focus to concept group
-  Vim.State.BackToNormal := 1
+  WinWaitActive, ahk_class TElParamDlg
+  OldConcept := ControlGetText("Edit2"), NewConcept := ""
+  WinWaitNotActive
+  if (NewConcept && (OldConcept != NewConcept)) {
+    MsgBox, 3,, Make children this concept too?
+    WinWaitActive, ahk_class TElWind
+    if (IfMsgBox("Yes")) {
+      send !c
+      WinWaitActive, ahk_class TContents
+      send ^{space}
+      WinWaitActive, ahk_class TBrowser
+      send {AppsKey}pg
+      WinWaitActive, ahk_class TRegistryForm
+      ControlSend, Edit1, % "{text}" . NewConcept
+      ControlSend, Edit1, {enter}
+      WinWaitActive, ahk_class TMsgDialog
+      send {enter}
+      WinWaitClose
+      WinWaitActive, ahk_class TMsgDialog
+      WinClose
+      WinActivate, ahk_class TBrowser
+      send {esc}
+    }
+  }
+  OldConcept := NewConcept := ""
+  Vim.State.SetMode("Vim_Normal")
 return
 
 ^!t::
@@ -178,7 +203,6 @@ SMCtrlN:
     Clip(text,, false)
     Vim.SM.WaitTextFocus()
     Vim.SM.SetElParam(Vim.Browser.Title, Prio, "YouTube")
-    Vim.Browser.Title := Prio := ""
     if (A_ThisLabel == "~^n") {
       Vim.Browser.Clear()
       Clipboard := ClipSaved
@@ -243,7 +267,7 @@ return
 ; 1. Go to the element you want to link to and press ctrl+alt+g
 ; 2. Go to the element you want to have the hyperlink, select text and press ctrl+alt+k
 ^!g::
-  Clipboard := ""
+  WinClip.Clear()
   send ^g^c{esc}
   ClipWait
   Vim.State.SetNormal()
@@ -451,6 +475,7 @@ return
   Gui, PlanAdd:Add, Text,, &Time:
   Gui, PlanAdd:Add, Edit, vTime w110
   Gui, PlanAdd:Add, CheckBox, vNoBackup, Do &not backup
+  Gui, PlanAdd:Add, CheckBox, vCancelAlarm, Canc&el alarm
   Gui, PlanAdd:Add, Button, default x10 w50 h24, &Insert
   Gui, PlanAdd:Add, Button, x+10 w50 h24, &Append
   Gui, PlanAdd:Show,, Add Activity
@@ -498,10 +523,13 @@ PlanAddButtonAppend:
   }
   if (A_ThisLabel == "PlanAddButtonAppend")
     send ^s
+  if (CancelAlarm)
+    Vim.SM.Command("")
   if (!NoBackup && IfIn(activity, "Break,Sports,Out,Shower"))
     try ShellRun("b")  ; my personal backup script
   BlockInput, off
   Vim.State.SetNormal()
+  WinActivate, ahk_class TPlanDlg
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))
@@ -639,61 +667,58 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
-  sync := (A_ThisLabel == "BrowserSyncTime")
+  Sync := (A_ThisLabel == "BrowserSyncTime")
   ResetTime := IfContains(A_ThisLabel, "``")
   CloseWnd := IfContains(A_ThisLabel, "^")
   wMpvId := WinActive("ahk_class mpv")
-  wSMElWnd := TemplCode := ""
+  wSMElWindId := SMTemplCode := ""
+
   if (wBrowserId := WinActive("ahk_group Browser")) {
     Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
-    Vim.Browser.GetTitleSourceDate(!sync, false,, false)  ; get title for checking later
+    Vim.Browser.GetTitleSourceDate(!Sync, false)
     WinGet, paSMTitles, List, ahk_class TElWind  ; can't get pseudo-array by WinActive("A")
     loop % paSMTitles {
       SMTitle := WinGetTitle("ahk_id " . hWnd := paSMTitles%A_Index%)
       ; SM uses "." instead of "..." in titles
-      if (TitleMatched := (SMTitle == RegExReplace(Vim.Browser.Title, "\.\.\.?", "."))) {
-        wSMElWnd := hWnd
+      if (SMTitle == RegExReplace(Vim.Browser.Title, "\.\.\.?", ".")) {
+        wSMElWindId := hWnd
         break
       }
     }
-    SkipCheckUrl := false
-    if (!TitleMatched) {
-      WinActivate, ahk_class TElWind
-      MsgBox, 3,, % "Titles don't match. Continue?`nBrowser title: " . Vim.Browser.Title
+  }
+
+  wSMElWind := wSMElWindId ? "ahk_id " . wSMElWindId : "ahk_class TElWind"
+    
+  if (wBrowserId) {
+    SMUrl := Vim.SM.GetLink(SMTemplCode := Vim.SM.GetTemplCode(, wSMElWind))
+    Vim.Browser.Url := Vim.SM.HTMLUrl2SMUrl(Vim.Browser.Url)
+    if (Vim.Browser.Url != SMUrl) {
+      MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
+                  . "`nBrowser url: " . Vim.Browser.Url
+                  . "`n       SM url: " . SMUrl
       WinActivate % wBrowser
-      if (IfMsgbox("No") || IfMsgbox("Cancel"))
+      if (IfMsgBox("No") || IfMsgBox("Cancel"))
         Goto SMSyncTimeReturn
-      SkipCheckUrl := IfMsgBox("Yes")
-    }
-    if (!SkipCheckUrl && ((Vim.Browser.Title == "Netflix") || (Vim.Browser.Source == "MoviesJoy"))) {
-      BrowserUrl := Vim.Browser.GetParsedUrl()
-      WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
-      SMUrl := Vim.SM.GetLink(TemplCode := Vim.SM.GetTemplCode())
-      if (BrowserUrl != SMUrl) {
-        MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
-                    . "`nBrowser url: " . BrowserUrl
-                    . "`n     SM url: " . SMUrl
-        WinActivate % wBrowser
-        if (IfMsgBox("No") || IfMsgBox("Cancel"))
-          Goto SMSyncTimeReturn
-      }
     }
     if (!ResetTime) {
-      if (!Vim.Browser.VidTime := Vim.Browser.GetVidtime(Vim.Browser.FullTitle)) {
-        SetDefaultKeyboard(0x0409)  ; English-US
-        if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
-          Goto SMSyncTimeReturn
-      }
+      WinActivate % wBrowser
+      Vim.Browser.VidTime := Vim.Browser.GetVidtime(Vim.Browser.FullTitle)
     }
-    WinActivate % wBrowser
-    if (CloseWnd)  ; hotkeys with ctrl will close the tab
-      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}w{Ctrl Up}, % wBrowser
-  } else if (!Vim.Browser.VidTime && !ResetTime) {
+  }
+
+  if (!Vim.Browser.VidTime && !ResetTime) {
     SetDefaultKeyboard(0x0409)  ; English-US
     if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
       Goto SMSyncTimeReturn
   }
+
+  if (wBrowserId) {
+    WinActivate % wBrowser
+    if (CloseWnd)  ; hotkeys with ctrl will close the tab
+      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}w{Ctrl Up}, % wBrowser
+  }
+
   Vim.SM.CloseMsgWind()
   if (wMpvId && CloseWnd && !ResetTime) {
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % "ahk_id " . wMpvId
@@ -701,12 +726,12 @@ BrowserSyncTime:
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % "ahk_id " . wMpvId
   }
   Vim.SM.CloseMsgWind()
-  WinActivate, % wSMElWnd ? "ahk_id " . wSMElWnd : "ahk_class TElWind"
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
 
-  TemplCode := TemplCode ? TemplCode : Vim.SM.GetTemplCode()
-  RegExMatch(TemplCode, "ScriptFile=\K.*", ScriptPath) 
+  if (!SMTemplCode)
+    SMTemplCode := Vim.SM.GetTemplCode(, wSMElWind)
+  RegExMatch(SMTemplCode, "ScriptFile=\K.*", ScriptPath) 
   Script := FileRead(ScriptPath)
   Sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
   EditScript := True
@@ -720,6 +745,7 @@ BrowserSyncTime:
     Match := "&t=.*s", Replacement := "&t=" . Sec . "s"
   } else {
     EditScript := False
+    WinActivate, % wSMElWind
     Vim.SM.EditFirstQuestion()
     OldText := Vim.SM.GetFirstParagraph()
     NewText := "SMVim time stamp: " . Vim.Browser.VidTime
@@ -740,14 +766,15 @@ BrowserSyncTime:
     FileAppend, % RegExReplace(Script, Match . "|$", Replacement,, 1), % ScriptPath
     ToolTip("Time stamp in script component set as " . Sec . "s")
   }
-  WinWaitActive, ahk_class TElWind
   if (IfContains(A_ThisLabel, "^+!"))
     Vim.SM.Learn(false,, true)
   if ((A_ThisLabel == "!+s") || (A_ThisLabel == "!+``"))
     WinActivate % wBrowser
+  if (IfContains(A_ThisLabel, "^!"))
+    WinActivate, % wSMElWind
 SMSyncTimeReturn:
   Vim.Browser.Clear()
-  if (sync)
+  if (Sync)
     Clipboard := ClipSaved
 return
 
@@ -811,3 +838,9 @@ n::send {text}n
 ^!+h::send {text}==================================================
 
 ^+k::send !{f12}kr  ; registry member
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg") && OldConcept)
+enter::
+  NewConcept := ControlGetText("Edit2")
+  send {enter}
+return

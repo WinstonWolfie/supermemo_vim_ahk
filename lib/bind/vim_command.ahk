@@ -436,9 +436,7 @@ ReformatScriptComponent:
   } else {
     Vim.Browser.Title := Vim.Browser.VidTime . " | " . Vim.Browser.Title
   }
-  WinClip.Clear()
   Clipboard := Vim.Browser.Url
-  ClipWait
   Gosub SMSetLinkFromClipboard
   send {esc}
   if (ContLearn)
