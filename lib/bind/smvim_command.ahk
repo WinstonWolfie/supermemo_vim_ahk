@@ -37,7 +37,7 @@ NukeHTML:
       return
     }
   }
-  if (!Vim.SM.SaveHTML(, 2500)) {
+  if (!Vim.SM.SaveHTML(3000)) {
     ToolTip("Time out.")
     return
   }

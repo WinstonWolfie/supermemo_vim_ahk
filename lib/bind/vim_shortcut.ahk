@@ -246,8 +246,12 @@ IWBNewTopic:
   CollName := Vim.SM.GetCollName()
   ConceptBefore := Vim.SM.GetCurrConcept()
   Passive := Vim.SM.IsPassive(CollName, ConceptBefore)
-  if (!IWB && Vim.SM.CheckDup(Vim.Browser.Url, false))
-    MsgBox, 3,, Continue import?
+  DupChecked := false
+  if (!IWB) {
+    if (Vim.SM.CheckDup(Vim.Browser.Url, false))
+      MsgBox, 3,, Continue import?
+    DupChecked := true
+  }
   WinClose, ahk_class TBrowser
   WinActivate % wBrowser
   if (IfMsgbox("No") || IfMsgbox("Cancel"))
@@ -299,18 +303,23 @@ SMImportButtonImport:
     KeyWait Enter
     KeyWait I
     Gui, Submit
-    if (Passive != 2)
-      Passive := (IfIn(Concept, "online,sources") || OnlineEl) ? true : false
     Gui, Destroy
-    Vim.Caret.SwitchToSameWindow(wBrowser)
   }
+
+  if (o := IfIn(Concept, "online,sources"))
+    OnlineEl := false
+  if (Passive != 2)
+    Passive := (o || OnlineEl) ? true : false
+  Vim.Caret.SwitchToSameWindow(wBrowser)
 
   if (!IWB)
     HTMLText := (DLHTML || Passive) ? "" : Copy(false, true)
 
   if (CheckDupForIWB) {
+    DupChecked := false
     if (Vim.SM.CheckDup(Vim.Browser.Url, false))
       MsgBox, 3,, Continue import?
+    DupChecked := true
     WinClose, ahk_class TBrowser
     WinActivate % wBrowser
     if (IfMsgbox("No") || IfMsgbox("Cancel"))
@@ -321,7 +330,8 @@ SMImportButtonImport:
 
   if (Passive)
     DLHTML := false
-  Online := (Passive || (!HTMLText && IsVidSite)), CopyAll := DL := ""
+  Online := (Passive || (!HTMLText && IsVidSite))
+  CopyAll := DL := ""
   if (DLHTML || (!HTMLText && !Online)) {
     if (DLHTML || !HTMLText) {
       if (DLHTML) {
@@ -406,7 +416,7 @@ SMImportButtonImport:
   if (Concept) {
     Vim.SM.SetCurrConcept(OnlineEl ? "online" : Concept, ConceptBefore)
     WinWaitClose, ahk_class TRegistryForm
-    if (!OnlineEl && InStr(Vim.SM.GetCurrConcept(), Concept) != 1) {
+    if (!OnlineEl && (InStr(Vim.SM.GetCurrConcept(), Concept) != 1)) {
       WinActivate, ahk_class TElWind
       MsgBox, 3,, Current concept doesn't seem like your entered concept. Continue?
       if (IfMsgbox("No") || IfMsgbox("Cancel"))
@@ -431,7 +441,7 @@ SMImportButtonImport:
       send {Ctrl Down}vt{Ctrl Up}{f9}{enter}  ; opens script editor
       WinWaitActive, ahk_class TScriptEditor,, 3
       if (ErrorLevel) {
-        ToolTip("No script component found.")
+        ToolTip("Script component not found.")
         Goto ImportReturn
       }
       Script := "url " . Vim.Browser.Url
@@ -455,7 +465,8 @@ SMImportButtonImport:
   if (Passive)
     WinActivate % wBrowser
 
-  Vim.SM.ClearHighlight()
+  if (DupChecked)
+    Vim.SM.ClearHighlight()
 
   if (Passive)
     WinActivate % wBrowser
@@ -496,13 +507,16 @@ SMImportButtonImport:
 SMImportGuiEscape:
 SMImportGuiClose:
 ImportReturn:
+  EscGui := IfContains(A_ThisLabel, "SMImportGui")
   if (Esc := IfContains(A_ThisLabel, "SMImportGui,ImportReturn")) {
-    Gui, Destroy
-    Vim.SM.ClearHighlight()
+    if (EscGui)
+      Gui, Destroy
+    if (DupChecked)
+      Vim.SM.ClearHighlight()
   }
   if (Passive || Esc) {
-    WinWaitNotActive, % "ahk_id " . guiaBrowser.BrowserId,, 0.1
-    Vim.Caret.SwitchToSameWindow("ahk_id " . guiaBrowser.BrowserId)
+    WinWaitNotActive, % wBrowser,, 0.1
+    Vim.Caret.SwitchToSameWindow(wBrowser)
     send {esc 2}
   } else if (IfIn(A_ThisLabel, "SMImportButtonImport,^!a")) {
     WinWaitNotActive, ahk_class TElWind,, 0.1
@@ -511,13 +525,10 @@ ImportReturn:
   Vim.Browser.Clear()
   Vim.State.SetMode("Vim_Normal")
   RemoveToolTip(17)  ; import info tooltip
-  ; Closed Gui and did not copy anything
-  if (IfContains(A_ThisLabel, "SMImportGui")) {
-    if (Clipboard == ClipBeforeGui)
-      Clipboard := ClipSaved
-  } else {
+  ; If closed gui but did not copy anything, restore clipboard
+  ; If closed gui but copied something while the gui is open, do not restore clipboard
+  if (!EscGui || (Clipboard == ClipBeforeGui))
     Clipboard := ClipSaved
-  }
   if (!Esc)
     ToolTip("Import completed.")
 return

@@ -23,9 +23,9 @@ SMParseHTMLGUI:
   GAltA := (A_ThisLabel == "SMParseHTMLGUI"), Vim.State.SetMode("Vim_Normal")
   SetDefaultKeyboard(0x0409)  ; English-US
   Gui, HTMLTag:Add, Text,, &HTML tag:
-  RegExMatch(Vim.SM.CssClass, "(hint.*$)", v)
+  RegExMatch(Vim.SM.CssClass, "hint.*$", v)
   list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
-        . "|sup|blockquote|ruby|small|" . v1
+        . "|sup|blockquote|ruby|small|" . v
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
   Gui, HTMLTag:Add, CheckBox, vOriginalHTML, &On original HTML
   Gui, HTMLTag:Add, CheckBox, vCopyText, &Copy the text
@@ -44,13 +44,13 @@ HTMLTagButtonAdd:
   Gui, Destroy
   if (GAltA) {
     GAltA := false, Vim.State.SetMode("SMVim_GAltA", 0, -1, 0,,, -1)
-    Vim.Move.SMLastGAltATag := tag
+    Vim.Move.SMLastGAltATag := Tag
     return
   }
 
 SMParseHTML:
   if (A_ThisLabel == "SMParseHTML")
-    tag := Vim.Move.SMLastGAltATag
+    Tag := Vim.Move.SMLastGAltATag
   WinActivate, ahk_class TElWind
   KeyWait Alt
   if (CopyText)
@@ -60,24 +60,24 @@ SMParseHTML:
     Goto RestoreClipReturn
   if (OriginalHTML) {
     Vim.HTML.ClipboardGet_HTML(data)
-    RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", content)
+    RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", Content)
   } else {
-    content := StrReplace(Clipboard, "<", "&lt;")
-    content := StrReplace(content, ">", "&gt;")
+    Content := StrReplace(Clipboard, "<", "&lt;")
+    Content := StrReplace(Content, ">", "&gt;")
   }
   StartingTag := "<", EndingTag := ">"
-  if (Class || Vim.SM.IsCssClass(tag)) {
-    StartingTag := "<SPAN class=" . tag, EndingTag := "SPAN>", tag := ""
-  } else if (tag = "ruby") {
+  if (Class || Vim.SM.IsCssClass(Tag)) {
+    StartingTag := "<SPAN class=" . Tag, EndingTag := "SPAN>", Tag := ""
+  } else if (Tag = "ruby") {
     Clipboard := ClipSaved
     InputBox, UserInput, Ruby tag annotation, Annotations:`n(annotations will appear above your selection`, like Pinyin),, 200, 180
     if (ErrorLevel || !UserInput)
       return
-    Clip("<RUBY>" . content . "<RP>(</RP><RT>" . UserInput
+    Clip("<RUBY>" . Content . "<RP>(</RP><RT>" . UserInput
        . "</RT><RP>)</RP></RUBY>",,, "sm")
     return
   }
-  Clip(StartingTag . tag . ">" . content . "</" . tag . EndingTag,, false, "sm")
+  Clip(StartingTag . Tag . ">" . Content . "</" . Tag . EndingTag,, false, "sm")
   Clipboard := ClipSaved
 return
 
@@ -113,10 +113,7 @@ Return
 m::send % "{text}*" . Copy() . "*"
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())
-b::
-  Vim.SM.OpenBrowser()
-  Vim.State.SetMode("Vim_Normal")
-return
+b::Vim.SM.OpenBrowser(), Vim.State.SetMode("Vim_Normal")
 
 ExtractStay:
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
@@ -167,7 +164,7 @@ ClozeHinter:
   InitText := ((A_ThisLabel == "ClozeHinter") && InitText) ? InitText : Copy()
   if (!InitText)
     return
-  CurrFocus := ControlGetFocus("ahk_class TElWind"), inside := true
+  CurrFocus := ControlGetFocus("ahk_class TElWind"), Inside := true
   if (InitText ~= "i)^(more|less)$") {
     InitText := "more/less"
   } else if (InitText ~= "i)^(faster|slower)$") {
@@ -223,12 +220,12 @@ ClozeHinter:
   } else if (InitText ~= "i)^(greater|smaller)$") {
     InitText := "greater/smaller"
   } else {
-    inside := false
+    Inside := false
   }
   Gui, ClozeHinter:Add, Text,, &Hint:
   Gui, ClozeHinter:Add, Edit, vHint w196 r1 -WantReturn, % InitText
-  Gui, ClozeHinter:Add, CheckBox, % "vInside " . (inside ? "checked" : ""), &Inside square brackets
-  Gui, ClozeHinter:Add, CheckBox, vFullWidthParen, Use &fullwidth parentheses
+  Gui, ClozeHinter:Add, CheckBox, % "vInside " . (Inside ? "checked" : ""), &Inside square brackets
+  Gui, ClozeHinter:Add, CheckBox, vFullWidthParentheses, Use &fullwidth parentheses
   Gui, ClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
   Gui, ClozeHinter:Add, Button, default, Clo&ze
   Gui, ClozeHinter:Show,, Cloze Hinter
@@ -254,10 +251,10 @@ CapsLock & z::  ; delete [...]
   TopicTitle := WinGetTitle("ahk_class TElWind")
   if ((A_ThisLabel == "ClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
-  if (!ClozeNoBracket && !inside && hint && IfContains(hint, "/")) {
+  if (!ClozeNoBracket && !Inside && Hint && IfContains(Hint, "/")) {
     MsgBox, 3,, Your hint has a slash. Press yes to make it inside square brackets.
     IfMsgBox, Yes
-      inside := true
+      Inside := true
     WinWaitActive, ahk_class TElWind
   }
   KeyWait Capslock
@@ -265,122 +262,59 @@ CapsLock & z::  ; delete [...]
   KeyWait Enter
   send !z
   Vim.State.SetMode("Vim_Normal")
-  if (!ClozeNoBracket && !hint && !CtrlState)  ; entered nothing
+  if (!ClozeNoBracket && !Hint && !CtrlState)  ; entered nothing
     return
 
   ToolTip("Cloze processing...", true)
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     Goto RemoveToolTipReturn
-  ; ElNumber := CtrlState ? 1 : Vim.SM.GetElNumber()
   Vim.SM.GoBack()
-  WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 700)
+  if (!ClozeNoBracket && !Hint && CtrlState)  ; entered nothing
+    Goto RemoveToolTipReturn
+  WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 500)
   Vim.SM.WaitFileLoad()
-  if (!ClozeNoBracket && !hint && CtrlState)  ; entered nothing
-    Goto RemoveToolTipReturn
-  if (!Vim.SM.SpamQ(, 10000))  ; not editing text after 10000ms
+  if (!Vim.SM.SpamQ(, 10000))
     Goto RemoveToolTipReturn
 
-  if (!ClozeNoBracket && inside) {
-    cloze := "[" . hint . "]"
+  if (!ClozeNoBracket && Inside) {
+    Cloze := "[" . Hint . "]"
   } else {
-    if (FullWidthParen) {
-      cloze := "[...]（" . hint . "）"
+    if (FullWidthParentheses) {
+      Cloze := "[...]（" . Hint . "）"
     } else {
-      cloze := "[...](" . hint . ")"
+      Cloze := "[...](" . Hint . ")"
     }
   }
 
-  if (Vim.SM.IsEditingPlainText()) {
-    send ^a
-    ClipSaved := ClipboardAll
-    if (ClozeNoBracket) {
-      Clip(RegExReplace(Copy(false), "\s?\[\.\.\.\]"),, false)
-    } else {
-      Clip(StrReplace(Copy(false), "[...]", cloze),, false)
+  loop {  ; sometimes the question is not the first component
+    if (Vim.SM.IsEditingPlainText()) {
+      send ^a
+      ClipSaved := ClipboardAll
+      if (ClozeNoBracket) {
+        Clip(RegExReplace(Copy(false), "\s?\[\.\.\.\]"),, false)
+      } else {
+        Clip(StrReplace(Copy(false), "[...]", Cloze),, false)
+      }
+      Clipboard := ClipSaved
+      break
+    } else if (Vim.SM.IsEditingHTML()) {
+      if (HTML := FileRead(HTMLPath := Vim.SM.LoopForFilePath())) {
+        Vim.SM.EmptyHTMLComp()
+        send ^{home}
+        if (ClozeNoBracket) {
+          HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>")
+        } else {
+          HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>"
+                                 , "<SPAN class=cloze>" . Cloze . "</SPAN>")
+        }
+        Clip(HTML,,, "sm")
+        break
+      } else {
+        send ^t
+      }
     }
-    Clipboard := ClipSaved
-  } else if (Vim.SM.IsEditingHTML()) {
-    ; Using F3 method
-    ; if (!Vim.SM.HandleF3(1))
-    ;   return
-    ; ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
-    ; send {enter}
-    ; WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
-    ; if (!Vim.SM.HandleF3(2))
-    ;   return
-    ; WinWaitActive, ahk_class TElWind
-    ; ; Keeps reporting errors that SM can't access clipboard!
-    ; ; if (Copy() = " [...")  ; bug in SM
-    ; ;   send {left}{right}+{right 5}
-    ; send % ClozeNoBracket ? "{bs}" : "{text}" . cloze
-		; if (WinExist("ahk_class TMyFindDlg")) ; clear search box window
-		; 	WinClose
-
-    ; Replacing [...] directly in HTML. Much faster!
-    HTML := FileRead(HTMLPath := Vim.SM.LoopForFilePath())
-    ; if (HTML = "<SPAN class=cloze>[...]</SPAN>") {
-    ;   if (ClozeNoBracket) {
-    ;     send {del 5}
-    ;   } else {
-    ;     send +{right 5}
-    ;     send % "{text}" . cloze
-    ;   }
-    ; } else {
-    ;   send !{f12}fw  ; open html in notepad
-    ;   if (ClozeNoBracket) {
-    ;     HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>",, v)
-    ;   } else {
-    ;     HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>"
-    ;                            , "<SPAN class=cloze>" . cloze . "</SPAN>", v)
-    ;   }
-    ;   if (v) {
-    ;     FileDelete % HTMLPath
-    ;     FileAppend, % HTML, % HTMLPath
-    ;     WinWaitActive, ahk_exe Notepad.exe
-    ;     send ^w
-    ;     WinClose
-    ;     WinActivate, ahk_class TElWind
-    ;     Vim.SM.EditFirstQuestion()  ; must focus on html, otherwise won't update it
-    ;     Vim.SM.WaitHTMLFocus()
-    ;     send !{f12}kr
-    ;     WinWaitActive, ahk_class TRegistryForm
-    ;     send {esc}  ; cannot use WinClose, won't update html
-    ;     WinWaitClose
-    ;   } else {
-    ;     ToolTip("Cloze not found!")
-    ;     WinWaitActive, ahk_exe Notepad.exe
-    ;     send ^w
-    ;     WinClose
-    ;   }
-    ; }
-
-    Vim.SM.EmptyHTMLComp()
-    send ^{home}
-    if (ClozeNoBracket) {
-      HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>",, v)
-    } else {
-      HTML := StrReplace(HTML, "<SPAN class=cloze>[...]</SPAN>"
-                              , "<SPAN class=cloze>" . cloze . "</SPAN>", v)
-    }
-    Clip(HTML,,, "sm")
   }
 
-  if (CtrlState) {
-    send {esc}
-  } else {
-    send !{right}
-  }
-
-  ; WinWaitActive, ahk_class TElWind
-  ; ; If you use !{right} the html won't get updated????
-  ; send ^g
-  ; send % "{text}" . ElNumber  ; ElNumber = 1 (root element) if ctrl is pressed
-  ; send {enter}
-  ; if (CtrlState) {  ; go back to item is ctrl is pressed
-  ;   WinWaitActive, ahk_class TElWind
-  ;   Vim.SM.WaitFileLoad()
-  ;   Vim.SM.GoBack()
-  ; }
-
+  send % CtrlState ? "{esc}" : "!{right}"
   RemoveToolTip()
 return

@@ -80,7 +80,7 @@ return
     if (IfMsgBox("Yes")) {
       send !c
       WinWaitActive, ahk_class TContents
-      send ^{space}
+      Vim.SM.OpenBrowser()
       WinWaitActive, ahk_class TBrowser
       send {AppsKey}pg
       WinWaitActive, ahk_class TRegistryForm
@@ -422,7 +422,7 @@ return
 return
 
 !t::send !mlt  ; Totals
-!d::send !mld  ; Totals
+!d::send !mld  ; Delays
 
 ^b::
 ^!b::
@@ -476,6 +476,7 @@ return
   Gui, PlanAdd:Add, Edit, vTime w110
   Gui, PlanAdd:Add, CheckBox, vNoBackup, Do &not backup
   Gui, PlanAdd:Add, CheckBox, vCancelAlarm, Canc&el alarm
+  Gui, PlanAdd:Add, CheckBox, vSave, &Save
   Gui, PlanAdd:Add, Button, default x10 w50 h24, &Insert
   Gui, PlanAdd:Add, Button, x+10 w50 h24, &Append
   Gui, PlanAdd:Show,, Add Activity
@@ -505,10 +506,10 @@ PlanAddButtonAppend:
     WinWaitActive, ahk_class TPlanDlg
   }
   send {down}{ins}  ; inserting one activity below the current selected activity and start editing
-  send % "{text}" . activity
-  if (time) {
+  send % "{text}" . Activity
+  if (Time) {
     send {enter}
-    send % "{text}" . time
+    send % "{text}" . Time
     send {enter}{up}!b
     WinWaitActive, ahk_class TMsgDialog,, 0.3
     if (!ErrorLevel)
@@ -521,11 +522,11 @@ PlanAddButtonAppend:
     if (!ErrorLevel)
       send {text}y
   }
-  if (A_ThisLabel == "PlanAddButtonAppend")
+  if (Save || (A_ThisLabel == "PlanAddButtonAppend"))
     send ^s
   if (CancelAlarm)
     Vim.SM.Command("")
-  if (!NoBackup && IfIn(activity, "Break,Sports,Out,Shower"))
+  if (!NoBackup && IfIn(Activity, "Break,Sports,Out,Shower"))
     try ShellRun("b")  ; my personal backup script
   BlockInput, off
   Vim.State.SetNormal()

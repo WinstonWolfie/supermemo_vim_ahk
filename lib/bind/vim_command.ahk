@@ -1246,24 +1246,41 @@ MarkAsOnlineProgress:
 return
 
 Tag:
+  Gui, SMTag:Add, Text,, &Add tags (without # and use space to separate):
+  Gui, SMTag:Add, Edit, vTags w350 r1 -WantReturn
+  Gui, SMTag:Add, Checkbox, vLinkConceptOnly, &Link concept only
+  Gui, SMTag:Add, Button, Default, &Tag
+  Gui, SMTag:Show,, Tag
+  SetDefaultKeyboard(0x0409)  ; English-US
+Return
+
+SMTagGuiEscape:
+SMTagGuiClose:
   Vim.State.SetMode("Vim_Normal")
-  if ((!Tags := InputBox("Tag", "Add tags (without # and use space to separate):",, 350)) || ErrorLevel)
-    return
+  Gui, Destroy
+return
+
+SMTagButtonTag:
+  Vim.State.SetMode("Vim_Normal")
+  Gui, Submit
+  Gui, Destroy
   s := StrSplit(Tags, " ")
   loop % s.MaxIndex() {
     Vim.SM.LinkConcept(s[A_Index])
     WinWaitActive, ahk_class TElWind
   }
-  Vim.SM.EditRef()
-  WinWaitActive, ahk_class TInputDlg
-  Ref := ControlGetText("TMemo1")
-  RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
-  loop % s.MaxIndex() {
-    if (!IfContains(Comment, "#" . s[A_Index]))
-      Comment .= " #" . s[A_Index]
+  if (!LinkConceptOnly) {
+    Vim.SM.EditRef()
+    WinWaitActive, ahk_class TInputDlg
+    Ref := ControlGetText("TMemo1")
+    RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
+    loop % s.MaxIndex() {
+      if (!IfContains(Comment, "#" . s[A_Index]))
+        Comment .= " #" . s[A_Index]
+    }
+    Ref := "#Comment: " . Comment . "`n" . Ref
+    ControlSetText, TMemo1, % Ref
+    ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
+    WinWaitClose
   }
-  Ref := "#Comment: " . Comment . "`n" . Ref
-  ControlSetText, TMemo1, % Ref
-  ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
-  WinWaitClose
 return

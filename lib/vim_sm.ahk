@@ -217,7 +217,7 @@ class VimSM {
     }
   }
 
-  ExitText(ReturnToComp:=false, timeout:=0) {
+  ExitText(ReturnToComp:=false, Timeout:=0) {
     this.ActivateElWind(), ret := 1
     if (this.IsEditingText()) {
       if (this.HasTwoComp()) {
@@ -227,7 +227,7 @@ class VimSM {
         ret := 2
       }
       send {esc}
-      if (!this.WaitTextExit(timeout))
+      if (!this.WaitTextExit(Timeout))
         return 0
     }
     return ret
@@ -278,7 +278,7 @@ class VimSM {
     }
   }
 
-  WaitClozeProcessing(timeout:=0) {
+  WaitClozeProcessing(Timeout:=0) {
     this.PrepareStatBar(1)
     StartTime := A_TickCount
     loop {
@@ -297,7 +297,7 @@ class VimSM {
     }
     loop {
       if (A_CaretX) {
-        this.WaitFileLoad(timeout, "|Please wait", false)
+        this.WaitFileLoad(Timeout, "|Please wait", false)
         sleep 200
         this.PrepareStatBar(2)
         return 1
@@ -308,7 +308,7 @@ class VimSM {
     }
   }
 
-  WaitExtractProcessing(timeout:=0) {
+  WaitExtractProcessing(Timeout:=0) {
     this.PrepareStatBar(1)
     StartTime := A_TickCount
     loop {
@@ -323,7 +323,7 @@ class VimSM {
     }
     loop {
       if (A_CaretX) {
-        this.WaitFileLoad(timeout, "|Loading file", false)
+        this.WaitFileLoad(Timeout, "|Loading file", false)
         sleep 200
         this.PrepareStatBar(2)
         return true
@@ -334,7 +334,7 @@ class VimSM {
     }
   }
 
-  EnterInsertIfSpelling(timeout:=500) {
+  EnterInsertIfSpelling(Timeout:=500) {
     StartTime := A_TickCount
     loop {
       sleep 100
@@ -356,13 +356,13 @@ class VimSM {
     }
   }
 
-  PlayIfPassiveColl(CollName:="", timeout:=0) {
+  PlayIfPassiveColl(CollName:="", Timeout:=0) {
     CollName := CollName ? CollName : this.GetCollName()
     if (CollName ~= "i)^(bgm|piano)$")
       return
     if (this.IsPassive(CollName, -1)) {
       StartTime := A_TickCount
-      if (ControlTextWait("TBitBtn3", "Next repetition", "ahk_class TElWind",,,, timeout)) {
+      if (ControlTextWait("TBitBtn3", "Next repetition", "ahk_class TElWind",,,, Timeout)) {
         WinActivate, ahk_class TElWind
         this.AutoPlay()
         return true
@@ -372,9 +372,9 @@ class VimSM {
     }
   }
 
-  SaveHTML(method:=0, timeout:="") {
+  SaveHTML(Timeout:="") {
     Timeout := Timeout ? Timeout / 1000 : Timeout
-    this.OpenNotepad(method, timeout)
+    this.OpenNotepad(Timeout)
     WinWaitActive, ahk_exe Notepad.exe,, % Timeout
     WinActivate
     ControlSend,, {Ctrl Down}w{Ctrl Up}
@@ -428,19 +428,21 @@ class VimSM {
     return Copy(RestoreClip,, "!{f12}fc")
   }
 
-  LoopForFilePath(RestoreClip:=true) {
+  LoopForFilePath(RestoreClip:=true, MaxLoop:=5) {
     if (RestoreClip)
       ClipSaved := ClipboardAll
     loop {
       if (FilePath := this.GetFilePath(false))
         break
+      if (A_Index > MaxLoop)
+        return
     }
     if (RestoreClip)
       Clipboard := ClipSaved
     return FilePath
   }
 
-  SetTitle(title:="", timeout:="") {
+  SetTitle(title:="", Timeout:="") {
     SMCurrTitle := WinGetTitle("ahk_class TElWind")
     if (SMCurrTitle == title)
       return true
@@ -448,14 +450,14 @@ class VimSM {
     this.AltT()
     GroupAdd, SMAltT, ahk_class TChoicesDlg
     GroupAdd, SMAltT, ahk_class TTitleEdit
-    WinWait, % "ahk_group SMAltT ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind"),, % timeout
+    WinWait, % "ahk_group SMAltT ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind"),, % Timeout
     if (WinGetClass() == "TChoicesDlg") {
       if (!title)
         ControlFocus, TGroupButton2
       while (WinExist("ahk_class TChoicesDlg ahk_pid " . pidSM))
         ControlClick, TBitBtn2,,,,, NA
       if (title)
-        WinWait, % "ahk_class TTitleEdit ahk_pid " . pidSM, % timeout
+        WinWait, % "ahk_class TTitleEdit ahk_pid " . pidSM, % Timeout
     }
     if (WinGetClass() == "TTitleEdit") {
       if (title)
@@ -525,12 +527,12 @@ class VimSM {
     }
   }
 
-  WaitFileLoad(timeout:=0, add:="", PrepareStatBar:=true) {  ; used for reloading or waiting for an element to load
+  WaitFileLoad(Timeout:=0, add:="", PrepareStatBar:=true) {  ; used for reloading or waiting for an element to load
     ; Move mouse because this function requires status bar text detection
     if (PrepareStatBar)
       this.PrepareStatBar(1)
     match := "^(\s+)?(Priority|Int|Downloading|\(\d+ item\(s\)" . add . ")"
-    if (timeout == -1) {
+    if (Timeout == -1) {
       ret := (WinGetText("ahk_class TStatBar") ~= match)
     } else {
       StartTime := A_TickCount
@@ -540,7 +542,7 @@ class VimSM {
         if (WinGetText("ahk_class TStatBar") ~= match) {
           ret := true
           break
-        } else if (timeout && (A_TickCount - StartTime > timeout)) {
+        } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
           ret := false
           break
         }
@@ -570,17 +572,17 @@ class VimSM {
       this.PlayIfPassiveColl()
   }
 
-  Reload(timeout:=0, ForceBG:=false) {
+  Reload(Timeout:=0, ForceBG:=false) {
     if (!ForceBG && WinActive("ahk_class TElWind")) {
       Critical
       this.GoHome()
-      this.WaitFileLoad(timeout)
+      this.WaitFileLoad(Timeout)
       this.GoBack()
     } else if (WinExist("ahk_class TElWind")) {
       send {Alt Down}
       PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
       PostMessage, 0x0105, 0x24, 1<<29,, ahk_class TElWind
-      this.WaitFileLoad(timeout)
+      this.WaitFileLoad(Timeout)
       PostMessage, 0x0104, 0x25, 1<<29,, ahk_class TElWind  ; left arrow key
       PostMessage, 0x0105, 0x25, 1<<29,, ahk_class TElWind
       send {Alt Up}
@@ -692,9 +694,6 @@ class VimSM {
       WinClose
     ContLearn := this.IsLearning(), text := LTrim(text)
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
-    ; Can't just encode URI, Chinese characters will also be encoded
-    ; For some reason, SuperMemo only encodes some part of the url
-    ; Probably because of SuperMemo uses a lower version of IE?
     if (IsUrl(text))
       text := this.HTMLUrl2SMUrl(text)
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
@@ -704,12 +703,15 @@ class VimSM {
   }
 
   HTMLUrl2SMUrl(url) {
+    ; Can't just encode URI, Chinese characters will also be encoded
+    ; For some reason, SuperMemo only encodes some part of the url
+    ; Probably because of SuperMemo uses a lower version of IE?
     url := StrReplace(url, "%20", " ")
     url := StrReplace(url, "%3F", "?")
     url := StrReplace(url, "%27", "'")
     url := StrReplace(url, "%21", "!")
     url := StrReplace(url, "%26", "&")
-    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(url, "youtube.com/watch?v="))  ; sm19 deletes www from www.youtube.com
+    if (IfContains(url, "youtube.com/watch?v="))  ; sm19 deletes www from www.youtube.com
       url := StrReplace(url, "www.")
     return url
   }
@@ -720,11 +722,11 @@ class VimSM {
       return
     this.CloseMsgWind()
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      r := this.PostMsg(143)
+      ret := this.PostMsg(143)
     } else {
-      r := this.PostMsg(144)
+      ret := this.PostMsg(144)
     }
-    if (!r)
+    if (!ret)
       return false
     WinWait, % "ahk_class TMyFindDlg ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind")
     ControlSetText, TEdit1, % text
@@ -753,11 +755,11 @@ class VimSM {
 
   Command(text) {
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      r := this.PostMsg(238)
+      ret := this.PostMsg(238)
     } else {
-      r := this.PostMsg(240)
+      ret := this.PostMsg(240)
     }
-    if (!r)
+    if (!ret)
       return false
     WinWait, % "ahk_class TCommanderDlg ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind")
     if (text) {
@@ -776,7 +778,7 @@ class VimSM {
     break := html ? "<br>" : "`n"
     text := "#SuperMemo Reference:"
     if (this.Vim.Browser.Url)
-      text .= break . "#Link: " . this.Vim.Browser.Url
+      text .= break . "#Link: " . this.HTMLUrl2SMUrl(this.Vim.Browser.Url)
     if (this.Vim.Browser.Title)
       text .= break . "#Title: " . this.Vim.Browser.Title
     if (this.Vim.Browser.Source)
@@ -880,11 +882,11 @@ class VimSM {
 
   AltT() {
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      r := this.PostMsg(115)
+      ret := this.PostMsg(115)
     } else {
-      r := this.PostMsg(116)
+      ret := this.PostMsg(116)
     }
-    return r
+    return ret
   }
 
   RunLink(url, RunInIE:=false) {
@@ -962,8 +964,8 @@ class VimSM {
     }
   }
 
-  WaitBrowser(timeout:=1) {
-    WinWaitActive, ahk_class TProgressBox,, % timeout
+  WaitBrowser(Timeout:=1) {
+    WinWaitActive, ahk_class TProgressBox,, % Timeout
     if (!ErrorLevel)
       WinWaitClose
     WinWaitActive, ahk_class TBrowser
@@ -982,7 +984,7 @@ class VimSM {
     }
   }
 
-  SpamQ(SpamInterval:=100, timeout:=0) {
+  SpamQ(SpamInterval:=100, Timeout:=0) {
     loop {
       this.EditFirstQuestion()
       if (SpamInterval && this.WaitTextFocus(SpamInterval)) {
@@ -1047,22 +1049,18 @@ class VimSM {
       WinClose
   }
 
-  OpenNotepad(method:=0, timeout:=0) {
-    if (!method) {
-      this.ExitText(true, timeout)
-      send ^+{f6}
-    } else {
-      send !{f12}fw
-    }
-  }
+  OpenNotepad(Timeout:=0) {
+    this.ExitText(true, Timeout)
+    send ^+{f6}
+}
 
   Plan() {
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      r := this.PostMsg(241)
+      ret := this.PostMsg(241)
     } else {
-      r := this.PostMsg(243)
+      ret := this.PostMsg(243)
     }
-    return r
+    return ret
   }
 
   IsItem(TemplCode:="") {
