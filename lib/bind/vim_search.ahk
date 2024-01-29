@@ -19,8 +19,10 @@ Return
   } else {
     hWnd := WinActive("A")
     send ^f
-    WinWaitNotActive, % "ahk_id " . hWnd,, 0.25
-    send ^v!f
+    WinWaitNotActive, % "ahk_id " . hWnd,, 0.3
+    send ^v
+    WinClip._waitClipReady()
+    send {enter}
   }
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return

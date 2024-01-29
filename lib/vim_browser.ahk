@@ -567,7 +567,7 @@ class VimBrowser {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
-      btn.FindByPath("P2").click()  ; click the description box, so the webpage doesn't scroll down
+      btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
     } else {
       return false
     }

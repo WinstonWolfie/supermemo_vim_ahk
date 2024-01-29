@@ -130,18 +130,14 @@ return
   Vim.State.SetMode("Vim_Normal")
 return
 
-z::  ; clo*z*e
-  send !z
-  Vim.State.SetMode("Vim_Normal")
-return
+z::Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
 
 ClozeStay:
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
 ^!z::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 ^z::
-  send !z
-  Vim.State.SetMode("Vim_Normal")
+  Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
   if (Vim.SM.WaitClozeProcessing() != -1)  ; warning on trying to cloze on items
     Vim.SM.GoBack()
 Return
@@ -260,8 +256,7 @@ CapsLock & z::  ; delete [...]
   KeyWait Capslock
   KeyWait Alt
   KeyWait Enter
-  send !z
-  Vim.State.SetMode("Vim_Normal")
+  Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
   if (!ClozeNoBracket && !Hint && !CtrlState)  ; entered nothing
     return
 
@@ -296,10 +291,11 @@ CapsLock & z::  ; delete [...]
         Clip(StrReplace(Copy(false), "[...]", Cloze),, false)
       }
       Clipboard := ClipSaved
-      break
+      Break
     } else if (Vim.SM.IsEditingHTML()) {
       if (HTML := FileRead(HTMLPath := Vim.SM.LoopForFilePath())) {
         Vim.SM.EmptyHTMLComp()
+        WinWaitActive, ahk_class TElWind
         send ^{home}
         if (ClozeNoBracket) {
           HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>")
@@ -308,7 +304,7 @@ CapsLock & z::  ; delete [...]
                                  , "<SPAN class=cloze>" . Cloze . "</SPAN>")
         }
         Clip(HTML,,, "sm")
-        break
+        Break
       } else {
         send ^t
       }
@@ -317,4 +313,7 @@ CapsLock & z::  ; delete [...]
 
   send % CtrlState ? "{esc}" : "!{right}"
   RemoveToolTip()
+  WinWaitActive, ahk_class TChoicesDlg,, 0
+  if (!ErrorLevel)
+    WinClose
 return

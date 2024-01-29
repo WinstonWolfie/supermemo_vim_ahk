@@ -184,15 +184,15 @@ SMCtrlN:
 ^n::
   Vim.SM.CtrlN(), Vim.State.SetMode("Vim_Normal")
   if (IfContains(Clipboard, "youtube.com") && IsUrl(Clipboard)) {
+    if (A_ThisLabel == "^n") {
+      ClipSaved := ClipboardAll
+      Prio := ""
+    }
     Vim.Browser.Url := Clipboard
     ; Register browser time stamp to YT comp time stamp
     if (Vim.Browser.VidTime) {
       RegExMatch(Clipboard, "v=(.{11})", v), YTID := v1
       Clipboard := "{SuperMemoYouTube:" . YTID . "," . Vim.Browser.VidTime . ",0:00,0:00,3}"
-    }
-    if (A_ThisLabel == "~^n") {
-      ClipSaved := ClipboardAll
-      Prio := ""
     }
     text := Vim.Browser.Title . "`n" . Vim.SM.MakeReference()
     Vim.SM.WaitFileLoad()
@@ -203,7 +203,7 @@ SMCtrlN:
     Clip(text,, false)
     Vim.SM.WaitTextFocus()
     Vim.SM.SetElParam(Vim.Browser.Title, Prio, "YouTube")
-    if (A_ThisLabel == "~^n") {
+    if (A_ThisLabel == "^n") {
       Vim.Browser.Clear()
       Clipboard := ClipSaved
     }
@@ -250,11 +250,11 @@ return
     return
   }
   send !c
-  WinWaitActive, ahk_class TInputDlg,, 0.25
+  WinWaitActive, ahk_class TInputDlg,, 0.3
   if (ErrorLevel) {
     Send {esc}
     BlockInput, off
-    ToolTip("Can't be cloned because this script registry is the only instance in this collection.",, -5000)
+    ToolTip("Can't be cloned because this script is the only instance in this collection.",, -5000)
     return
   }
   send {Alt Down}oo{Alt Up}
@@ -273,7 +273,7 @@ return
   Vim.State.SetNormal()
   Clipboard := (Clipboard ~= "^#") ? Clipboard : "#" . Clipboard
   ToolTip("Copied " . Clipboard)
-  WinWaitActive, Error! ahk_class TMsgDialog,, 0
+  WinWaitActive, Error! ahk_class TMsgDialog,, 0.3
   if (!ErrorLevel)
     WinClose
 return
@@ -295,7 +295,7 @@ return
   el := UIA.ElementFromHandle(WinActive("ahk_class Internet Explorer_TridentDlgFrame"))
   el.WaitElementExist("ControlType=Edit AND Name='URL: ' AND AutomationId='txtURL'").SetValue(link)
   send {enter}
-  WinWaitClose, ahk_class Internet Explorer_TridentDlgFrame
+  WinWaitClose
   Vim.State.SetNormal(), Vim.Caret.SwitchToSameWindow()
   send {left}
 return
@@ -348,6 +348,7 @@ return
     if (!v)
       HTML .= "`n" . AntiMerge
     Vim.SM.EmptyHTMLComp()
+    WinWaitActive, ahk_class TElWind
     send ^{home}
     Clip(HTML,, false, "sm")
     if (ContLearn == 1) {  ; item and "Show answer"
@@ -684,7 +685,7 @@ BrowserSyncTime:
       ; SM uses "." instead of "..." in titles
       if (SMTitle == RegExReplace(Vim.Browser.Title, "\.\.\.?", ".")) {
         wSMElWindId := hWnd
-        break
+        Break
       }
     }
   }
@@ -693,7 +694,7 @@ BrowserSyncTime:
     
   if (wBrowserId) {
     SMUrl := Vim.SM.GetLink(SMTemplCode := Vim.SM.GetTemplCode(, wSMElWind))
-    Vim.Browser.Url := Vim.SM.HTMLUrl2SMUrl(Vim.Browser.Url)
+    Vim.Browser.Url := Vim.SM.HTMLUrl2SMRefUrl(Vim.Browser.Url)
     if (Vim.Browser.Url != SMUrl) {
       MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
                   . "`nBrowser url: " . Vim.Browser.Url
@@ -748,8 +749,8 @@ BrowserSyncTime:
     EditScript := False
     WinActivate, % wSMElWind
     Vim.SM.EditFirstQuestion()
-    OldText := Vim.SM.GetFirstParagraph()
-    NewText := "SMVim time stamp: " . Vim.Browser.VidTime
+    OldText := Vim.SM.GetHTMLMarker()
+    NewText := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Vim.Browser.VidTime
     if (OldText != NewText) {
       send ^{home}
       if (OldText ~= "^SMVim time stamp:") {
@@ -781,7 +782,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 !s::
-  if ((p := Vim.SM.GetFirstParagraph()) && (p ~= "SMVim (read point|page number|time stamp): ")) {
+  if ((p := Vim.SM.GetHTMLMarker()) && (p ~= "SMVim (read point|page number|time stamp): ")) {
     ToolTip("Copied " . Clipboard := RegExReplace(p, "SMVim (read point|page number|time stamp): "))
   } else {
     KeyWait Alt

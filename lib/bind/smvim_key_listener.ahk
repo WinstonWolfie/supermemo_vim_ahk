@@ -26,7 +26,7 @@ capslock::
       if (!HintsEntered) {
         for i, v in aHintStrings {
           if (cont := (v ~= "i)^" . A_ThisLabel))
-            break
+            Break
         }
         if (!cont)
           return

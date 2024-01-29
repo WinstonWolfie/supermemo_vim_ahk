@@ -95,7 +95,7 @@ SMSearchAgain:
         if (ShiftState) {
           Vim.State.SetMode("Vim_Visual")
         } else if (AltState) {
-          send !z
+          Vim.SM.Cloze()
         }
       }
     } else {
@@ -128,7 +128,7 @@ SMSearchAgain:
     if (!Vim.SM.HandleF3(2))
       return
     if (AltState && !CtrlState && !ShiftState && !CapsState) {
-      send !z
+      Vim.SM.Cloze()
     } else if (AltState && ShiftState) {
       ClozeHinterCtrlState := CtrlState, InitText := UserInput
       Gosub ClozeHinter

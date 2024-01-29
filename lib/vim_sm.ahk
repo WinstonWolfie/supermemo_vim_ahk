@@ -283,9 +283,9 @@ class VimSM {
     StartTime := A_TickCount
     loop {
       if (!A_CaretX) {
-        break
+        Break
       } else if (A_CaretX && this.WaitFileLoad(-1, "|Please wait", false)) {  ; prevent looping forever
-        break
+        Break
       } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         this.PrepareStatBar(2)
         return 0
@@ -313,9 +313,9 @@ class VimSM {
     StartTime := A_TickCount
     loop {
       if (!A_CaretX) {
-        break
+        Break
       } else if (A_CaretX && this.WaitFileLoad(-1, "|Loading file", false)) {  ; prevent looping forever
-        break
+        Break
       } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         this.PrepareStatBar(2)
         return false
@@ -340,9 +340,9 @@ class VimSM {
       sleep 100
       if (IfContains(ControlGetFocus("ahk_class TElWind"), "TMemo")) {
         this.Vim.State.SetMode("Insert")
-        break
+        Break
       } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
-        break
+        Break
       }
     }
   }
@@ -433,7 +433,7 @@ class VimSM {
       ClipSaved := ClipboardAll
     loop {
       if (FilePath := this.GetFilePath(false))
-        break
+        Break
       if (A_Index > MaxLoop)
         return
     }
@@ -485,10 +485,10 @@ class VimSM {
     loop % paSMTitles {
       pidSM := WinGet("PID", "ahk_id " . hWnd := paSMTitles%A_Index%)
       if (WinExist("ahk_class TProgressBox ahk_pid " . pidSM)) {
-        continue
+        Continue
       } else {
         WindFound := true, wSMElWind := "ahk_id " . hWnd
-        break
+        Break
       }
     }
     if (!WindFound) {
@@ -541,10 +541,10 @@ class VimSM {
           WinClose
         if (WinGetText("ahk_class TStatBar") ~= match) {
           ret := true
-          break
+          Break
         } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
           ret := false
-          break
+          Break
         }
       }
     }
@@ -695,22 +695,50 @@ class VimSM {
     ContLearn := this.IsLearning(), text := LTrim(text)
     text := RegExReplace(text, "^file:\/\/\/")  ; SuperMemo converts file:/// to file://
     if (IsUrl(text))
-      text := this.HTMLUrl2SMUrl(text)
+      text := this.HTMLUrl2SMRefUrl(text)
     ret := this.CtrlF(text, ClearHighlight, "No duplicates found.")
     if ((ContLearn == 1) && this.LastCtrlFNotFound)
       this.Learn()
     return ret
   }
 
-  HTMLUrl2SMUrl(url) {
+  HTMLUrl2SMRefUrl(url) {
     ; Can't just encode URI, Chinese characters will also be encoded
     ; For some reason, SuperMemo only encodes some part of the url
     ; Probably because of SuperMemo uses a lower version of IE?
     url := StrReplace(url, "%20", " ")
-    url := StrReplace(url, "%3F", "?")
-    url := StrReplace(url, "%27", "'")
     url := StrReplace(url, "%21", "!")
+    url := StrReplace(url, "%22", """")
+    url := StrReplace(url, "%23", "#")
+    url := StrReplace(url, "%24", "$")
+    url := StrReplace(url, "%25", "%")
     url := StrReplace(url, "%26", "&")
+    url := StrReplace(url, "%27", "'")
+    url := StrReplace(url, "%28", "(")
+    url := StrReplace(url, "%29", ")")
+    url := StrReplace(url, "%2A", "*")
+    url := StrReplace(url, "%2B", "+")
+    url := StrReplace(url, "%2C", ",")
+    url := StrReplace(url, "%2D", "-")
+    url := StrReplace(url, "%2E", ".")
+    url := StrReplace(url, "%2F", "/")
+    url := StrReplace(url, "%3A", ":")
+    url := StrReplace(url, "%3B", ";")
+    url := StrReplace(url, "%3C", "<")
+    url := StrReplace(url, "%3D", "=")
+    url := StrReplace(url, "%3E", ">")
+    url := StrReplace(url, "%3F", "?")
+    url := StrReplace(url, "%40", "@")
+    url := StrReplace(url, "%5B", "[")
+    url := StrReplace(url, "%5C", "\")
+    url := StrReplace(url, "%5D", "]")
+    url := StrReplace(url, "%5E", "^")
+    url := StrReplace(url, "%5F", "_")
+    url := StrReplace(url, "%60", "`")
+    url := StrReplace(url, "%7B", "{")
+    url := StrReplace(url, "%7C", "|")
+    url := StrReplace(url, "%7D", "}")
+    url := StrReplace(url, "%7E", "~")
     if (IfContains(url, "youtube.com/watch?v="))  ; sm19 deletes www from www.youtube.com
       url := StrReplace(url, "www.")
     return url
@@ -775,20 +803,20 @@ class VimSM {
   }
 
   MakeReference(html:=false) {
-    break := html ? "<br>" : "`n"
+    Break := html ? "<br>" : "`n"
     text := "#SuperMemo Reference:"
     if (this.Vim.Browser.Url)
-      text .= break . "#Link: " . this.HTMLUrl2SMUrl(this.Vim.Browser.Url)
+      text .= Break . "#Link: " . this.HTMLUrl2SMRefUrl(this.Vim.Browser.Url)
     if (this.Vim.Browser.Title)
-      text .= break . "#Title: " . this.Vim.Browser.Title
+      text .= Break . "#Title: " . this.Vim.Browser.Title
     if (this.Vim.Browser.Source)
-      text .= break . "#Source: " . this.Vim.Browser.Source
+      text .= Break . "#Source: " . this.Vim.Browser.Source
     if (this.Vim.Browser.Author)
-      text .= break . "#Author: " . this.Vim.Browser.Author
+      text .= Break . "#Author: " . this.Vim.Browser.Author
     if (this.Vim.Browser.Date)
-      text .= break . "#Date: " . this.Vim.Browser.Date
+      text .= Break . "#Date: " . this.Vim.Browser.Date
     if (this.Vim.Browser.Comment)
-      text .= break . "#Comment: " . this.Vim.Browser.Comment
+      text .= Break . "#Comment: " . this.Vim.Browser.Comment
     return text
   }
 
@@ -867,13 +895,13 @@ class VimSM {
 
   AutoPlay() {
     ToolTip := "Running: `n`nTitle: " . WinGetTitle("ahk_class TElWind")
-    FirstParagraph := this.GetFirstParagraph()
-    if (FirstParagraph ~= "^SMVim(?!:)")
-      ToolTip .= "`n" . StrUpper(SubStr(FirstParagraph, 7, 1)) . SubStr(FirstParagraph, 8)
-    ToolTip(ToolTip,, -4000, "center")
+    Marker := this.GetMarkerFromHTMLAllText(this.GetHTMLAllText())
+    if (Marker ~= "^SMVim(?!:)")
+      ToolTip .= "`n" . StrUpper(SubStr(Marker, 7, 1)) . SubStr(Marker, 8)
+    ToolTip(ToolTip,, -5000, "center")
     if (WinGetTitle("ahk_class TElWind") == "Netflix") {
       ShellRun(this.GetLink())
-    } else if (FirstParagraph == "SMVim: Use online video progress") {
+    } else if (Marker == "SMVim: Use online video progress") {
       Gosub SearchLinkInYT
     } else {
       send ^{f10}
@@ -1015,8 +1043,8 @@ class VimSM {
 
   RefToClipForTopic(UseOnlineProgress:=false) {
     if (UseOnlineProgress)
-      add := "SMVim: Use online video progress`n"
-    Clipboard := add . this.MakeReference()
+      add := "<SPAN class=Highlight>SMVim</SPAN>: Use online video progress<br>"
+    Clipboard := add . this.MakeReference(true)
   }
 
   DoesHTMLContainText(byref link) {
@@ -1153,10 +1181,9 @@ class VimSM {
       if (!ErrorLevel) {
         send {enter}
         WinWaitClose
-        break
+        Break
       }
     }
-    WinWaitActive, ahk_class TElWind
   }
 
   OpenBrowser() {
@@ -1167,7 +1194,7 @@ class VimSM {
   }
 
   MatchLink(SMLink, url) {
-    url := this.HTMLUrl2SMUrl(url)
+    url := this.HTMLUrl2SMRefUrl(url)
     if (IfContains(url, "britannica.com")) {
       return IfContains(url, SMLink)
     } else {
@@ -1175,25 +1202,37 @@ class VimSM {
     }
   }
 
-  GetFirstParagraph() {
-    this.ActivateElWind()
-    UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1", "A")
-    el := UIA.ElementFromHandle(hCtrl)
-    el := el.FindFirstByType("text").Name
-    if (el == "#SuperMemo Reference:")
-      el := ""
-    return el
+  GetHTMLMarker() {
+    return this.GetMarkerFromHTMLAllText(this.GetHTMLAllText())
   }
 
-  GetHTMLComp(ByRef FirstParagraph, ByRef RefLink) {
+  GetHTMLAllText() {
     this.ActivateElWind()
     UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1", "A")
-    el := UIA.ElementFromHandle(hCtrl)
-    FirstParagraph := el.FindFirstByType("text").Name
-    if (FirstParagraph == "#SuperMemo Reference:")
-      FirstParagraph := ""
-    RefLink := el.FindFirstByType("Hyperlink").Value
-    return (FirstParagraph || RefLink)
+    return UIA.ElementFromHandle(hCtrl).FindAllByType("text")
+  }
+
+  GetLinkFromHTMLAllText(auiaText) {
+    for i, v in auiaText {
+      if (v.Name == "#Link: ") {
+        return v.FindByPath("+1").Name
+      }
+    }
+  }
+
+  GetMarkerFromHTMLAllText(auiaText) {
+    for i, v in auiaText {
+      if ((A_Index == 1) && (v.Name ~= "^SMVim .*")) {
+        Marker := v.Name
+        Continue
+      } else if ((A_Index == 2) && Marker) {
+        Marker .= v.Name
+        Break
+      } else {
+        return
+      }
+    }
+    return Marker
   }
 
   IsCompMarker(text) {
@@ -1216,6 +1255,24 @@ class VimSM {
       WinWaitActive, ahk_class TRegistryForm
       ControlSend, Edit1, % "{text}" . Concept
       ControlSend, Edit1, {enter}
+    }
+  }
+
+  Cloze() {
+    this.ActivateElWind()
+    send !z
+    this.WaitForChangingRef()
+  }
+
+  WaitForChangingRef() {
+    WinWaitActive, ahk_class TChoicesDlg,, 0.3
+    if (!ErrorLevel) {
+      WinClose
+      loop 3 {
+        WinWaitActive, ahk_class TChoicesDlg,, 1.5
+        if (!ErrorLevel)
+          WinClose
+      }
     }
   }
 }

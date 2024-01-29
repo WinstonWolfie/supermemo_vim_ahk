@@ -216,6 +216,7 @@ IWBNewTopic:
     WinActivate
     return
   }
+  Vim.Browser.Clear()
   Vim.Browser.FullTitle := Vim.Browser.GetFullTitle()
   if (Vim.Browser.FullTitle = "new tab") {
     ToolTip("Web page not found.")
@@ -437,8 +438,9 @@ SMImportButtonImport:
       WinWaitTitleChange(SMNewElementTitle, "A")
     } else if (Passive) {
       if (Vim.Browser.VidTime && !IfIn(Vim.Browser.IsVidSite(Vim.Browser.FullTitle), "1,2"))
-        Clipboard := "SMVim time stamp: " . Vim.Browser.VidTime . "`n" . Clipboard
-      send {Ctrl Down}vt{Ctrl Up}{f9}{enter}  ; opens script editor
+        Clipboard := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Vim.Browser.VidTime . "<br>" . Clipboard
+      Vim.SM.PasteHTML()
+      send ^t{f9}{enter}  ; open script editor
       WinWaitActive, ahk_class TScriptEditor,, 3
       if (ErrorLevel) {
         ToolTip("Script component not found.")
@@ -489,9 +491,9 @@ SMImportButtonImport:
 
   if (Tags) {
     Critical
-    s := StrSplit(Tags, " ")
-    loop % s.MaxIndex() {
-      Vim.SM.LinkConcept(s[A_Index])
+    aTags := StrSplit(Tags, " ")
+    loop % aTags.MaxIndex() {
+      Vim.SM.LinkConcept(aTags[A_Index])
       WinWaitActive, ahk_class TElWind
     }
   }
@@ -633,11 +635,9 @@ return
   WinActivate, ahk_class TElWind  ; focus to element window
 
 ExtractToSM:
-  if (wBrowser) {
-    Vim.SM.GetHTMLComp(Marker, RefLink)
-  } else {
-    Marker := Vim.SM.GetFirstParagraph()
-  }
+  auiaText := Vim.SM.GetHTMLAllText()
+  RefLink := wBrowser ? Vim.SM.GetLinkFromHTMLAllText(auiaText) : ""
+  Marker := Vim.SM.GetMarkerFromHTMLAllText(auiaText)
   if (Marker && IfNotIn(Vim.SM.IsCompMarker(Marker), "read point,page number")) {
     ret := true
     if (A_ThisLabel != "ExtractToSM") {
@@ -667,9 +667,10 @@ ExtractToSM:
     }
   }
   Vim.SM.EditFirstQuestion()
-  send ^{home}
   if (Marker)
-    send ^+{down}+{left 2}
+    Vim.SM.EmptyHTMLComp()
+  WinWaitActive, ahk_class TElWind
+  send ^{home}
   if (!CleanHTML) {
     send ^v
     while (DllCall("GetOpenClipboardWindow"))
@@ -688,12 +689,11 @@ ExtractToSM:
   }
   Vim.SM.WaitExtractProcessing()
   Vim.SM.EmptyHTMLComp()
+  WinWaitActive, ahk_class TElWind
   if (Marker) {
     send ^{home}
-    Clip(Marker,, false)
-    SetTimer, RestoreClipReturn, -3000
-  } else {
-    Clipboard := ClipSaved
+    Marker := RegExReplace(Marker, "^(SMVim (.*?)):", "<SPAN class=Highlight>$1</SPAN>:")
+    Clip(Marker,, false, "sm")
   }
   send ^+{f7}  ; clear read point
   Vim.SM.WaitTextExit()
@@ -702,6 +702,7 @@ ExtractToSM:
   } else {
     WinActivate % "ahk_id " . hWnd
   }
+  Clipboard := ClipSaved
 return
 
 ; SumatraPDF
@@ -803,7 +804,7 @@ return
     } else {
       url := Vim.Browser.GetParsedUrl()
     }
-    url := Vim.SM.HTMLUrl2SMUrl(url)
+    url := Vim.SM.HTMLUrl2SMRefUrl(url)
   }
   if (wSumatra || (wDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
     if (!ReadPoint) {
@@ -853,15 +854,13 @@ return
 
 MarkInHTMLComp:
   Vim.SM.EditFirstQuestion()
-  if (wBrowser) {
-    Vim.SM.GetHTMLComp(OldText, RefLink)
-  } else {
-    OldText := Vim.SM.GetFirstParagraph()
-  }
+  auiaText := Vim.SM.GetHTMLAllText()
+  RefLink := wBrowser ? Vim.SM.GetLinkFromHTMLAllText(auiaText) : ""
+  OldText := Vim.SM.GetMarkerFromHTMLAllText(auiaText)
   if (ReadPoint) {
-    NewText := "SMVim read point: " . ReadPoint
+    NewText := "<SPAN class=Highlight>SMVim read point</SPAN>: " . ReadPoint
   } else if (PageNumber) {
-    NewText := "SMVim page number: " . PageNumber
+    NewText := "<SPAN class=Highlight>SMVim page number</SPAN>: " . PageNumber
   }
   if (OldText && IfNotIn(Vim.SM.IsCompMarker(OldText),"read point,page number")) {
     ret := true
@@ -897,12 +896,13 @@ MarkInHTMLComp:
   }
   if (OldText)
     Vim.SM.EmptyHTMLComp()
+  WinWaitActive, ahk_class TElWind
   send ^{home}
-  Clip(NewText,, false)
-  SetTimer, RestoreClipReturn, -3000
+  Clip(NewText,, false, "sm")
   send {esc}
   if (IfContains(A_ThisLabel, "^+!"))
     Vim.SM.Learn(false, true)
+  Clipboard := ClipSaved
 return
 
 ; IE

@@ -44,7 +44,7 @@ Return
   hWnd := WinActive("A")
   Gui, VimCommander:Add, Text,, &Command:
 
-  list := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
+  List := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
         . "|WaybackMachine|DefineGoogle|YouGlish|KillOutlook|DeepL"
         . "|WindowSpy|BingChat|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
@@ -56,30 +56,30 @@ Return
         . "|PasteCleanedClipboard|ArchiveToday|WolframAlpha"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
-    list := "SetConceptHook|MemoriseChildren|" . list
+    List := "SetConceptHook|MemoriseChildren|" . List
     if (WinActive("ahk_class TElWind")) {
-      list := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement"
+      List := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement"
             . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
-            . "|ExternaliseRegistry|Comment|Tag|" . list
+            . "|ExternaliseRegistry|Comment|Tag|" . List
       if (Vim.SM.IsPassive(, -1))
-        list := "ReformatScriptComponent|SearchLinkInYT|MarkAsOnlineProgress|" . list
+        List := "ReformatScriptComponent|SearchLinkInYT|MarkAsOnlineProgress|" . List
       if (Vim.SM.IsEditingText())
-        list := "ClozeAndDone!|" . list
+        List := "ClozeAndDone!|" . List
       if (Vim.SM.IsEditingHTML())
-        list := "MakeHTMLUnique|CenterTexts|AlignTextsRight|AlignTextsLeft|ItalicText"
-              . "|UnderscoreText|BoldText|" . list
+        List := "MakeHTMLUnique|CenterTexts|AlignTextsRight|AlignTextsLeft|ItalicText"
+              . "|UnderscoreText|BoldText|" . List
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
-    list := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference"
-          . "|MassProcessBrowser|" . list
+    List := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference"
+          . "|MassProcessBrowser|" . List
   } else if (WinActive("ahk_group Browser")) {  ; web browsers
-    list := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|" . list
+    List := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|" . List
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
-    list := "SetPlanPosition|" . list
+    List := "SetPlanPosition|" . List
   } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
-    list := "MassReplaceRegistry|MassProcessRegistry|" . list
-  } else if (WinActive("Google Drive error list ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
-    list := "RetryAllSyncErrors|" . list
+    List := "MassReplaceRegistry|MassProcessRegistry|" . List
+  } else if (WinActive("Google Drive error List ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
+    List := "RetryAllSyncErrors|" . List
   }
 
   Gui, VimCommander:Add, Combobox, vCommand gAutoComplete w144, % list
@@ -96,17 +96,20 @@ return
 VimCommanderButtonExecute:
   Gui, Submit
   Gui, Destroy
-  if (IfContains("|" . list . "|", "|" . command . "|")) {
+  if (IfContains("|" . List . "|", "|" . Command . "|")) {
     Vim.State.SetMode("Insert")
     WinActivate % "ahk_id " . hWnd
-    Goto % RegExReplace(command, "\W")
+    Goto % RegExReplace(Command, "\W")
   } else {
-    if (IsUrl(command)) {
-      if !(command ~= "^http")
-        command := "http://" . command
-      ShellRun(command)
+    aCommand := StrSplit(Command, " ")
+    if (aCommand[1] = "YT") {
+      ShellRun("https://www.youtube.com/results?search_query=" . RegExReplace(Command, "i)^YT "))
+    } else if (IsUrl(Command)) {
+      if !(Command ~= "^http")
+        Command := "http://" . Command
+      ShellRun(Command)
     } else {
-      ShellRun("https://www.google.com/search?q=" . EncodeDecodeURI(command))
+      ShellRun("https://www.google.com/search?q=" . EncodeDecodeURI(Command))
     }
   }
 return
@@ -258,7 +261,7 @@ return
 ClozeAndDone:
   if (!Copy())
     return
-  send !z
+  Vim.SM.Cloze()
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   send ^+{enter}
@@ -907,7 +910,7 @@ RetryAllSyncErrors:
     el.FindFirstBy("ControlType=MenuItem AND Name='Retry' AND AutomationId='retry-id'").Click()
     sleep 100
     if (el.FindFirstBy("ControlType=Text AND Name='Looks fine'"))
-      break
+      Break
   }
   ToolTip("Finished.")
 return
@@ -1037,7 +1040,7 @@ ExternaliseRegistry:
     WinWaitActive, ahk_class TRegistryForm
     if (IfContains(WinGetTitle(), "(0 members)")) {
       WinClose
-      continue
+      Continue
     }
     send {down}
     if (IfContains(WinGetTitle(), "Video Registry"))
@@ -1100,7 +1103,7 @@ MD2HTML:
   ShellRun("pandoc", TempMDPath . " -s -o " . TempHTMLPath)
   loop {
     if (t := FileRead(TempHTMLPath))
-      break
+      Break
     sleep 100
   }
   RegExMatch(t, "s)<body>\K.*(?=<\/body>)", v)
@@ -1195,36 +1198,18 @@ return
 
 MassProcessBrowser:
   loop {
-    dup := ""
-    if (!Vim.SM.GetFirstParagraph()) {
-      SMTitle := WinGetTitle("ahk_class TElWind")
-      if (RegExMatch(SMTitle, "^(.*?) \| ", v)) {
-        if (RegExMatch(SMTitle, "i)(?<=^p)(c?\d+|[MDCLXVI]+)(?= \|)", page) || RegExMatch(SMTitle, ".+?(?= \|)", clip)) {
-          WinWaitActive, ahk_class TElWind
-          if (page) {
-            Critical
-            if (page ~= "^Duplicate: ") {
-              dup := "Duplicate: "
-              page := RegExReplace(page, "^Duplicate: ")
-            }
-            Clip("SMVim page number: " . page,, false)
-          } else if (clip) {
-            Critical
-            if (clip ~= "^Duplicate: ") {
-              dup := "Duplicate: "
-              clip := RegExReplace(clip, "^Duplicate: ")
-            }
-            Clip("SMVim read point: " . clip,, false)
-          }
-          send {esc}
-          Vim.SM.WaitTextExit()
-          sleep 100
-          ; MsgBox, 3,, Continue?
-        }
-        ; if (IfMsgBox("Yes"))
-          Vim.SM.SetTitle(dup . RegExReplace(SMTitle, "^(.*?) \| "))
-      }
-    }
+    send +{enter}
+    WinWaitActive, ahk_class TElWind
+    send ^+{f12}
+    WinWaitActive, ahk_class TMsgDialog
+    send {enter}
+    WinWaitClose
+    Vim.SM.EditFirstQuestion()
+    Vim.SM.WaitHTMLFocus()
+    send ^{home}^+{right 3}!{f12}rh
+    sleep 100
+    send {esc}
+    Vim.SM.WaitTextExit()
     WinActivate, ahk_class TBrowser
     send {down}
     Vim.SM.WaitFileLoad()
@@ -1233,15 +1218,20 @@ return
 
 MarkAsOnlineProgress:
   Vim.SM.EditFirstQuestion()
-  FirstParagraph := Vim.SM.GetFirstParagraph()
+  for i, v in % Vim.SM.GetHTMLAllText() {
+    FirstText := v.Name
+    if (FirstText == "#SuperMemo Reference:")
+      FirstText := ""
+    Break
+  }
   Vim.SM.WaitHTMLFocus()
   send ^{home}
-  if (!FirstParagraph) {
-    Clip("SMVim: Use online video progress",,, "sm")
-  } else if (FirstParagraph != "SMVim: Use online video progress") {
+  if (FirstText && (FirstText != "SMVim: Use online video progress")) {
+    FirstText := ""
     send {enter}{up}
-    Clip("SMVim: Use online video progress",,, "sm")
   }
+  if (!FirstText)
+    Clip("<SPAN class=Highlight>SMVim: Use online video progress</SPAN>",,, "sm")
   Vim.SM.ExitText(), Vim.State.SetMode("Vim_Normal")
 return
 
@@ -1264,9 +1254,9 @@ SMTagButtonTag:
   Vim.State.SetMode("Vim_Normal")
   Gui, Submit
   Gui, Destroy
-  s := StrSplit(Tags, " ")
-  loop % s.MaxIndex() {
-    Vim.SM.LinkConcept(s[A_Index])
+  aTags := StrSplit(Tags, " ")
+  loop % aTags.MaxIndex() {
+    Vim.SM.LinkConcept(aTags[A_Index])
     WinWaitActive, ahk_class TElWind
   }
   if (!LinkConceptOnly) {

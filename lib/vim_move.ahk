@@ -161,7 +161,7 @@ class VimMove {
       } else if (this.Vim.State.StrIsInCurrentVimMode("ClozeNoBracket")) {
         Gosub ClozeNoBracket
       } else if (this.Vim.State.StrIsInCurrentVimMode("Cloze")) {
-        send !z
+        this.Vim.SM.Cloze()
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltT")) {
         sleep 20

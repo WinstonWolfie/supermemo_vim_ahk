@@ -11,7 +11,6 @@ Return
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))  ; SuperMemo element window
 ~f4::  ; open tasklist
 ~!x::  ; extract
-~!z::  ; cloze
 ~^+a::  ; web import
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
 ~^s::  ; save
@@ -22,8 +21,10 @@ return
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))  ; SuperMemo element window
 ^f2::
   Vim.SM.PostMsg((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") ? 179 : 181)  ; go neural
-  Vim.SM.PlayIfPassiveColl(, 500)
+  Vim.State.SetMode("Vim_Normal"), Vim.SM.PlayIfPassiveColl(, 500)
 return
+
+!z::Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
 
 #if (Vim.IsVimGroup() && !Vim.State.StrIsInCurrentVimMode("Visual,Command") && WinActive("ahk_class TElWind"))  ; SuperMemo element window
 ^l::Vim.SM.Learn(, true), Vim.State.SetMode("Vim_Normal")
