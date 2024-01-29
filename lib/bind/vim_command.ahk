@@ -1238,7 +1238,7 @@ return
 Tag:
   Gui, SMTag:Add, Text,, &Add tags (without # and use space to separate):
   Gui, SMTag:Add, Edit, vTags w350 r1 -WantReturn
-  Gui, SMTag:Add, Checkbox, vLinkConceptOnly, &Link concept only
+  Gui, SMTag:Add, Checkbox, vEditRefComment, Also add to reference &comment
   Gui, SMTag:Add, Button, Default, &Tag
   Gui, SMTag:Show,, Tag
   SetDefaultKeyboard(0x0409)  ; English-US
@@ -1259,7 +1259,7 @@ SMTagButtonTag:
     Vim.SM.LinkConcept(aTags[A_Index])
     WinWaitActive, ahk_class TElWind
   }
-  if (!LinkConceptOnly) {
+  if (EditRefComment) {
     Vim.SM.EditRef()
     WinWaitActive, ahk_class TInputDlg
     Ref := ControlGetText("TMemo1")

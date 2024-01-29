@@ -1222,10 +1222,10 @@ class VimSM {
 
   GetMarkerFromHTMLAllText(auiaText) {
     for i, v in auiaText {
-      if ((A_Index == 1) && (v.Name ~= "^SMVim .*")) {
+      if ((i == 1) && (v.Name ~= "^SMVim .*")) {
         Marker := v.Name
         Continue
-      } else if ((A_Index == 2) && Marker) {
+      } else if ((i == 2) && Marker) {
         Marker .= v.Name
         Break
       } else {
@@ -1233,6 +1233,16 @@ class VimSM {
       }
     }
     return Marker
+  }
+
+  IsHTMLEmpty(auiaText) {
+    for i, v in auiaText {
+      if ((i == 1) && (v.Name == "#SuperMemo Reference:")) {
+        return true
+      } else {
+        return false
+      }
+    }
   }
 
   IsCompMarker(text) {
@@ -1248,13 +1258,28 @@ class VimSM {
     send !{f10}cs
   }
 
-  LinkConcept(Concept:="") {
+  LinkConcept(Concept:="", Check:=true) {
     this.ActivateElWind()
     send !{f10}cl
     if (Concept) {
       WinWaitActive, ahk_class TRegistryForm
+      w := "ahk_id " . WinExist()
       ControlSend, Edit1, % "{text}" . Concept
+      if (Concept && Check) {
+        send !r
+        WinWaitActive, ahk_class TInputDlg
+        CurrConcept := ControlGetText("TMemo1")
+        WinClose
+        if (InStr(CurrConcept, Concept) != 1) {
+          MsgBox, 3,, Current concept doesn't seem like your entered concept. Continue?
+          if (IfMsgbox("No") || IfMsgbox("Cancel")) {
+            WinClose, % w
+            return
+          }
+        }
+      }
       ControlSend, Edit1, {enter}
+      return true
     }
   }
 

@@ -259,6 +259,7 @@ IWBNewTopic:
     Goto ImportReturn
 
   Prio := Concept := CloseTab := DLHTML := ResetVidTime := DLCheck := CheckDupForIWB := Tags := RefComment := ClipBeforeGui := OnlineEl := ""
+  IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle)
   if (IfContains(A_ThisLabel, "+,Prio")) {
     ClipBeforeGui := Clipboard
     SetDefaultKeyboard(0x0409)  ; English-US
@@ -276,7 +277,6 @@ IWBNewTopic:
     Gui, SMImport:Add, Text,, Reference c&omment:
     Gui, SMImport:Add, Edit, vRefComment w280
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
-    IsVidSite := Vim.Browser.IsVidSite(Vim.Browser.FullTitle)
     if (!IWB && !IsVidSite) {
       Gui, SMImport:Add, Checkbox, vOnlineEl, Import as o&nline element
       DLList := "economist.com,investopedia.com,webmd.com,britannica.com"
@@ -372,7 +372,7 @@ SMImportButtonImport:
   Vim.Browser.GetTitleSourceDate(false,, (CopyAll ? Clipboard : ""))
   if (ResetVidTime)
     Vim.Browser.VidTime := "0:00"
-  if ((Passive == 1) && !Vim.Browser.IsVidSite(Vim.Browser.FullTitle))
+  if ((Passive == 1) && !IsVideSite)
     Vim.Browser.Date := ""
   SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
   if (Tags) {
@@ -638,7 +638,8 @@ ExtractToSM:
   auiaText := Vim.SM.GetHTMLAllText()
   RefLink := wBrowser ? Vim.SM.GetLinkFromHTMLAllText(auiaText) : ""
   Marker := Vim.SM.GetMarkerFromHTMLAllText(auiaText)
-  if (Marker && IfNotIn(Vim.SM.IsCompMarker(Marker), "read point,page number")) {
+  if ((!Vim.SM.IsHTMLEmpty(auiaText) && !Marker)
+   || (Marker && IfNotIn(Vim.SM.IsCompMarker(Marker), "read point,page number"))) {
     ret := true
     if (A_ThisLabel != "ExtractToSM") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
@@ -862,7 +863,8 @@ MarkInHTMLComp:
   } else if (PageNumber) {
     NewText := "<SPAN class=Highlight>SMVim page number</SPAN>: " . PageNumber
   }
-  if (OldText && IfNotIn(Vim.SM.IsCompMarker(OldText),"read point,page number")) {
+  if ((!Vim.SM.IsHTMLEmpty(auiaText) && !OldText)
+   || (OldText && IfNotIn(Vim.SM.IsCompMarker(OldText),"read point,page number"))) {
     ret := true
     if (A_ThisLabel != "MarkInHTMLComp") {
       MsgBox, 3,, Go to source and try again? (press no to execute in current topic)
