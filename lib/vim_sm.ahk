@@ -360,7 +360,7 @@ class VimSM {
     CollName := CollName ? CollName : this.GetCollName()
     if (CollName ~= "i)^(bgm|piano)$")
       return
-    if (this.IsPassive(CollName, -1)) {
+    if (this.IsOnline(CollName, -1)) {
       StartTime := A_TickCount
       if (ControlTextWait("TBitBtn3", "Next repetition", "ahk_class TElWind",,,, Timeout)) {
         WinActivate, ahk_class TElWind
@@ -403,13 +403,13 @@ class VimSM {
       WinClip.Clear()
     }
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(false)
-    RegExMatch(TemplCode, "(?<=#Link: <a href="").*?(?="")", ret)
+    RegExMatch(TemplCode, "(?<=#Link: <a href="").*?(?="")", Link)
     if (res)
       Clipboard := ClipSaved
-    return ret
+    return Link
   }
 
-  GetLinkInComment(TemplCode:="", RestoreClip:=true) {
+  GetLinksInComment(TemplCode:="", RestoreClip:=true) {
     if (res := (RestoreClip && !TemplCode)) {
       ClipSaved := ClipboardAll
       global WinClip
@@ -417,10 +417,10 @@ class VimSM {
     }
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(false)
     RegExMatch(TemplCode, "(?<=#Comment: ).*?(?=<\/FONT><\/SuperMemoReference>)", Comment)
-    DoesTextContainUrl(Comment, v)
+    Links := GetAllLinks(Comment)
     if (res)
       Clipboard := ClipSaved
-    return v
+    return Links
   }
 
   GetFilePath(RestoreClip:=true) {
@@ -470,12 +470,14 @@ class VimSM {
     return ControlGetText("TEdit1", "ahk_class TElWind")
   }
 
-  IsPassive(CollName:="", CurrConcept:="") {
+  IsOnline(CollName:="", CurrConcept:="") {
     CollName := CollName ? CollName : this.GetCollName()
+    ; Online collections
     if (IfIn(CollName, "passive,singing,piano,calligraphy,drawing,bgm,music"))
       return 2
     CurrConcept := CurrConcept ? CurrConcept : this.GetCurrConcept()
-    if (IfIn(CurrConcept, "Online,Source"))
+    ; Online concepts
+    if (IfIn(CurrConcept, "Online,Sources"))
       return 1
   }
 
@@ -492,8 +494,7 @@ class VimSM {
       }
     }
     if (!WindFound) {
-      MsgBox, 3,, SuperMemo is processing something. Do you want to launch a new window?
-      if (IfMsgbox("Yes")) {
+      if (MsgBox(3,, "SuperMemo is processing something. Do you want to launch a new window?") = "yes") {
         ShellRun("C:\SuperMemo\sm19.exe")
         WinWaitActive, ahk_class TElWind
       } else {
@@ -555,15 +556,16 @@ class VimSM {
 
   Learn(CtrlL:=true, EnterInsert:=false, AutoPlay:=false) {
     this.ActivateElWind()
-    if (CtrlL) {
+    Btn2Text := ControlGetText("TBitBtn2", "ahk_class TElWind")
+    Btn3Text := ControlGetText("TBitBtn3", "ahk_class TElWind")
+    if (CtrlL || (Btn2Text == "Learn") || (Btn3Text == "Learn")) {
       if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
         this.PostMsg(178)
       } else {
         this.PostMsg(180)
       }
-    } else if (ControlGetText("TBitBtn2", "ahk_class TElWind") == "Learn") {
-      ControlSend, TBitBtn2, {enter}, ahk_class TElWind
-    } else if (IfIn(ControlGetText("TBitBtn3", "ahk_class TElWind"), "Learn,Show answer,Next repetition", true)) {
+    } else if (IfIn(Btn3Text, "Show answer,Next repetition", true)) {
+      this.ExitText()
       ControlSend, TBitBtn3, {enter}, ahk_class TElWind
     }
     if (EnterInsert)
@@ -628,10 +630,6 @@ class VimSM {
   SetElParam(Title:="", Prio:="", Template:="", Group:="", Submit:=true) {
     if (!Title && !(Prio >= 0) && !Template && !Group) {
       return
-    } else if (Title && (Prio >= 0) && !Template && !Group) {
-      this.SetPrio(Prio,, true)
-      this.SetTitle(Title)
-      return
     } else if (Title && !(Prio >= 0) && !Template && !Group) {
       this.SetTitle(Title)
       return
@@ -639,17 +637,17 @@ class VimSM {
       this.SetPrio(Prio,, true)
       return
     }
-    if (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
-      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{Ctrl Down}p{Ctrl Up}{Shift Up}, ahk_class TElWind
+    pidSM := WinGet("PID", "ahk_class TElWind")
+    wSMElWind := "ahk_class TElWind ahk_pid " . pidSM
+    while (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . pidSM)) {
+      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{Ctrl Down}p{Ctrl Up}{Shift Up}, % wSMElWind
       WinWait, % w,, 1.5
-      if (ErrorLevel) {
-        ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}{Ctrl Down}p{Ctrl Up}{Shift Up}, ahk_class TElWind
-        WinWait, % w,, 1.5
-        if (ErrorLevel)
-          return
-      }
+      if (!ErrorLevel)
+        Break
+      if (A_Index > 6)
+        return false
     }
-    if (Template && (ControlGetText("Edit1") != Template)) {
+    if (Template && !(ControlGetText("Edit1") = Template)) {
       ControlSetText, Edit1, % SubStr(Template, 2)
       ControlSend, Edit1, % "{text}" . SubStr(Template, 1, 1)
       this.WaitFileLoad()
@@ -662,7 +660,7 @@ class VimSM {
       ControlSetText, TEdit1, % SubStr(Prio, 2)
       ControlSend, TEdit1, % "{text}" . SubStr(Prio, 1, 1)
     }
-    if (Group && (ControlGetText("Edit2") != Group)) {
+    if (Group && !(ControlGetText("Edit2") = Group)) {
       ControlSetText, Edit2, % SubStr(Group, 2)
       ControlSend, Edit2, % "{text}" . SubStr(Group, 1, 1)
     }
@@ -804,7 +802,7 @@ class VimSM {
 
   MakeReference(html:=false) {
     Break := html ? "<br>" : "`n"
-    text := "#SuperMemo Reference:"
+    text := Break . "#SuperMemo Reference:"
     if (this.Vim.Browser.Url)
       text .= Break . "#Link: " . this.HTMLUrl2SMRefUrl(this.Vim.Browser.Url)
     if (this.Vim.Browser.Title)
@@ -1041,25 +1039,6 @@ class VimSM {
       WinActivate, % wSMElWind
   }
 
-  RefToClipForTopic(UseOnlineProgress:=false) {
-    if (UseOnlineProgress)
-      add := "<SPAN class=Highlight>SMVim</SPAN>: Use online video progress<br>"
-    Clipboard := add . this.MakeReference(true)
-  }
-
-  DoesHTMLContainText(byref link) {
-    this.ActivateElWind()
-    UIA := UIA_Interface(), hCtrl := ControlGet(,, "Internet Explorer_Server1", "A")
-    el := UIA.ElementFromHandle(hCtrl)
-    text := el.FindFirstByType("text")
-    link := el.FindFirstByType("Hyperlink").Value
-    return !(text.Name == "#SuperMemo Reference:")
-  }
-
-  IsEmptyTopic(byref link) {
-    return (!this.HasTwoComp() && this.DoesTextExist() && !this.DoesHTMLContainText(link))
-  }
-
   AskPrio() {
     this.ActivateElWind()
     if ((!Prio := InputBox("Priority", "Enter priority.")) || ErrorLevel)
@@ -1271,14 +1250,14 @@ class VimSM {
         CurrConcept := ControlGetText("TMemo1")
         WinClose
         if (InStr(CurrConcept, Concept) != 1) {
-          MsgBox, 3,, Current concept doesn't seem like your entered concept. Continue?
-          if (IfMsgbox("No") || IfMsgbox("Cancel")) {
+          MB := MsgBox(3,, "Current concept doesn't seem like your entered concept. Continue?")
+          if (IfIn(MB, "No,Cancel")) {
             WinClose, % w
             return
           }
         }
       }
-      ControlSend, Edit1, {enter}
+      ControlSend, Edit1, {enter}, % w
       return true
     }
   }
@@ -1298,6 +1277,109 @@ class VimSM {
         if (!ErrorLevel)
           WinClose
       }
+    }
+  }
+
+  AskToSearchLinkOrStop(BrowserUrl, SMUrl) {  ; return true if user wants to stop
+    t := "Link in SM reference is not the same as in the browser. Continue?"
+       . "`n(press no to execute a search)"
+       . "`nBrowser url: " . BrowserUrl
+       . "`n       SM url: " . SMUrl
+    MB := MsgBox(3,, t)
+    stop := false
+    if (MB = "no") {
+      if (this.CheckDup(BrowserUrl)) {
+        MB := MsgBox(3,, "Found. Continue?")
+        WinClose, ahk_class TBrowser
+        if (MB = "yes") {
+          WinWaitActive, ahk_class TElWind
+        } else {
+          stop := true
+        }
+      } else {
+        stop := true
+      }
+    } else if (MB = "cancel") {
+      stop := true
+    }
+    return stop
+  }
+
+  CleanHTML(str, nuke:=false, LineBreak:=false, Url:="") {
+    ; zzz in case you used f6 in SuperMemo to remove format before,
+    ; which disables the tag by adding zzz (eg, <FONT> -> <ZZZFONT>)
+
+    ; All attributes removal detects for <> surrounding
+    ; however, sometimes if a text attribute is used, and it has HTML tag
+    ; style and others removal might not be working
+    ; Example: https://www.scientificamerican.com/article/can-newborn-neurons-prevent-addiction/
+    ; This will likely not be fixed
+
+    RegExMatch(str, r := "i)^<strong><font color=""?blue""?>.*? : <\/font><\/strong>", SMSplit)
+    if (SMSplit)
+      str := RegExReplace(str, r, SMSplitPlaceHolder := GetDetailedTime())
+
+    if (nuke) {
+      ; Classes
+      str := RegExReplace(str, "is)<[^>]+\K\sclass="".*?""(?=([^>]+)?>)")
+      str := RegExReplace(str, "is)<[^>]+\K\sclass=[^ >]+(?=([^>]+)?>)")
+    }
+
+    if (LineBreak)
+      str := RegExReplace(str, "i)<(BR|(\/)?DIV)", "<$2P")
+
+    if (IfContains(url, "economist.com"))
+      str := StrReplace(str, "<small", "<small class=uppercase")
+      ; str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^>]+>)", " class=uppercase ")
+
+    ; Ilya Frank
+    ; str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+COLOR: green)(?=[^>]+>)", " class=ilya-frank-translation ")
+
+    ; Converts font-style to tags
+    str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-style: italic)(?=[^>]+>)", " class=italic ")
+    str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-weight: bold)(?=[^>]+>)", " class=bold ")
+    str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+text-decoration: underline)(?=[^>]+>)", " class=underline ")
+
+    ; For Dummies books
+    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?class=zcheltitalic(?=([^>]+)?>)", " class=italic")
+
+    ; Styles and fonts
+    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?style="".*?""(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?style='.*?'(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?style=[^>]+(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<\/?(zzz)?(font|form)([^>]+)?>")
+
+    ; SuperMemo uses IE7; svg was introduced in IE9
+    str := RegExReplace(str, "is)<\/?(svg|path)([^>]+)?>")
+    str := StrReplace(str, "https://wikimedia.org/api/rest_v1/media/math/render/svg/", "https://wikimedia.org/api/rest_v1/media/math/render/png/")
+
+    ; Scripts
+    str := RegExReplace(str, "is)<(zzz)?iframe([^>]+)?>.*?<\/(zzz)?iframe>")
+    str := RegExReplace(str, "is)<(zzz)?button([^>]+)?>.*?<\/(zzz)?button>")
+    str := RegExReplace(str, "is)<(zzz)?script([^>]+)?>.*?<\/(zzz)?script>")
+    str := RegExReplace(str, "is)<(zzz)?input([^>]+)?>")
+    str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout)="".*?""(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout)=[^ >]+(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(onmouseover|onmouseout)=[^;]+;(?=([^>]+)?>)")
+
+    ; Remove empty paragraphs
+    str := RegExReplace(str, "is)<p([^>]+)?>(&nbsp;|\s| )+<\/p>")
+    str := RegExReplace(str, "is)<div([^>]+)?>(&nbsp;|\s| )+<\/div>")
+
+    v := 1
+    while (v)  ; remove <div></div>
+      str := RegExReplace(str, "is)<div([^>]+)?>(\n+)?<\/div>",, v)
+
+    if (SMSplit)
+      str := StrReplace(str, SMSplitPlaceHolder, SMSplit)
+
+    return str
+  }
+
+  LinkConcepts(aTags) {
+    loop % aTags.MaxIndex() {
+      this.LinkConcept(aTags[A_Index])
+      WinWaitActive, ahk_class TElWind
     }
   }
 }

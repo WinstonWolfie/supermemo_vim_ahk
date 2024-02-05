@@ -12,7 +12,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     ClipWait, % WaitIndefinitely ? "" : (LongCopy ? 0.6 : 0.2), True
     if (!ErrorLevel) {
       if (HTML) {
-        Vim.HTML.ClipboardGet_HTML(Clipped)
+        ClipboardGet_HTML(Clipped)
         RegExMatch(Clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", Clipped)
       } else {
         Clipped := Clipboard
@@ -20,7 +20,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     }
   } Else {
     if (HTML && (HTML != "sm")) {
-      Vim.HTML.SetClipboardHTML(text)
+      SetClipboardHTML(text)
     } else {
       WinClip.Clear()
       Clipboard := Text

@@ -5,14 +5,16 @@ class VimBrowser {
   }
 
   Clear() {
+    ; DO NOT add critical here
     this.Title := this.Url := this.Source := this.Date := this.Comment := this.VidTime := this.Author := this.FullTitle := ""
     global guiaBrowser := ""
   }
 
-  GetInfo(RestoreClip:=true, CopyFullPage:=true, PressButton:=true) {
+  GetInfo(RestoreClip:=true, CopyFullPage:=true, ClickBtn:=true) {
+    this.ActivateBrowser()
     global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     this.Url := this.GetParsedUrl()
-    if (PressButton)
+    if (ClickBtn)
       this.ClickBtn()
     this.GetTitleSourceDate(RestoreClip, CopyFullPage)
   }
@@ -42,9 +44,9 @@ class VimBrowser {
     return url
   }
 
-  GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true, FullPageText:="", GetUrl:=true) {
+  GetTitleSourceDate(RestoreClip:=true, CopyFullPage:=true, FullPageText:="", GetUrl:=true, GetDate:=true, GetVidTime:=true) {
     this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
-    this.Title := this.Title ? this.Title : this.FullTitle
+    this.Title := this.FullTitle
     if (GetUrl)
       this.Url := this.Url ? this.Url : this.GetParsedUrl()
 
@@ -70,8 +72,6 @@ class VimBrowser {
       this.Source := "italki", this.Title := RegExReplace(this.Title, "^italki - ")
     } else if (this.Title ~= "^CSOP - Products - ") {
       this.Source := "CSOP Asset Management", this.Title := RegExReplace(this.Title, "^CSOP - Products - ")
-    ; } else if (this.Title ~= "^GitHub - ") {
-      ; this.Source := "GitHub", this.Title := RegExReplace(this.Title, "^GitHub - ")
     } else if (this.Title ~= "^ArtStation - ") {
       this.Source := "ArtStation", this.Title := RegExReplace(this.Title, "^ArtStation - ")
     } else if (this.Title ~= "^Art... When I Feel Like It - ") {
@@ -130,14 +130,6 @@ class VimBrowser {
 
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {
       this.Source := v1 . " | Cambridge Core", this.Title := RegExReplace(this.Title, "\| (.*) \| Cambridge Core$")
-    } else if (RegExMatch(this.Title, " \| (.*) \| Fandom$", v)) {
-      this.Source := v1 . " | Fandom", this.Title := RegExReplace(this.Title, " \| (.*) \| Fandom$")
-      this.Url := this.Url ? this.Url : this.GetParsedUrl()
-      TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
-      UrlDownloadToFile, % this.Url . "?action=history", % TempPath
-      t := FileRead(TempPath)
-      RegExMatch(t, "<h4 class=""mw-index-pager-list-header-first mw-index-pager-list-header"">(.*?)<\/h4>", v)
-      this.Date := v1
     } else if (RegExMatch(this.Title, " \| (.*) \| The Guardian$", v)) {
       this.Source := v1 . " | The Guardian", this.Title := RegExReplace(this.Title, " \| (.*) \| The Guardian$")
     } else if (RegExMatch(this.Title, " - (.*) \| OpenStax$", v)) {
@@ -152,9 +144,32 @@ class VimBrowser {
       this.Source := "PodBean"
       RegExMatch(this.Title, " \| (.*?)$", v), this.Author := v1
       this.Title := RegExReplace(this.Title, " \| (.*?)$")
-      if (IfContains(this.Url, "podbean.com/e") && CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
+      if (IfContains(this.Url, "podbean.com/e") && CopyFullPage && (GetDate || GetVidTime) && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
         RegExMatch(FullPageText, "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}`, \d{4}", v), this.Date := v
         this.VidTime := this.MatchVidTime(FullPageText)
+      }
+
+    } else if (RegExMatch(this.Title, " \| (.*) \| Fandom$", v)) {
+      this.Source := v1 . " | Fandom", this.Title := RegExReplace(this.Title, " \| (.*) \| Fandom$")
+      if (CopyFullPage && GetDate) {
+        this.Url := this.Url ? this.Url : this.GetParsedUrl()
+        TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
+        UrlDownloadToFile, % this.Url . "?action=history", % TempPath
+        t := FileRead(TempPath)
+        RegExMatch(t, "<h4 class=""mw-index-pager-list-header-first mw-index-pager-list-header"">(.*?)<\/h4>", v)
+        this.Date := v1
+      }
+    } else if (this.Title ~= " - TV Tropes$") {
+      this.Source := "TV Tropes", this.Title := RegExReplace(this.Title, " - TV Tropes$")
+      if (CopyFullPage && GetDate) {
+        this.Url := this.Url ? this.Url : this.GetParsedUrl()
+        TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
+        RegExMatch(this.Url, "https:\/\/tvtropes\.org\/pmwiki\/pmwiki\.php\/(.*?)\/(.*?)($|\?)", v)
+        DLUrl := "https://tvtropes.org/pmwiki/article_history.php?article=" . v1 . "." . v2
+        UrlDownloadToFile, % DLUrl, % TempPath
+        t := FileRead(TempPath)
+        RegExMatch(t, "<a href=""\/pmwiki\/article_history\.php\?article=" . v1 . "\." . v2 . ".*?#edit.*?>(\w+ \d+\w+ \d+)", v)
+        this.Date := v1
       }
 
     } else if (this.Title ~= " \/ X$") {
@@ -253,158 +268,169 @@ class VimBrowser {
       this.Source := "哔哩哔哩", this.Title := RegExReplace(this.Title, "-bilibili-哔哩哔哩$")
       if (this.Title ~= "-纪录片-全集-高清独家在线观看$")
         this.Source .= "：纪录片", this.Title := RegExReplace(this.Title, "-纪录片-全集-高清独家在线观看$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetVidTime && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         this.VidTime := this.MatchVidTime(this.FullTitle, FullPageText)
-    } else if (RegExMatch(this.Title, "^Watch (.*) HD online$", v)) {
+    } else if (this.Url ~= "moviesjoy\.(is|to)") {
+      RegExMatch(this.Title, "^Watch (.*?) HD online$", v)
       this.Source := "MoviesJoy", this.Title := v1
       if (RegExMatch(this.Title, " (\d+)$", v))
         this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
-      if (CopyFullPage)
+      if (CopyFullPage && GetVidTime)
+        this.VidTime := this.MatchVidTime(this.FullTitle)
+    } else if (IfContains(this.Url, "dopebox.to")) {
+      RegExMatch(this.Title, "^Watch Free (.*?) Full Movies Online$", v)
+      this.Source := "DopeBox", this.Title := v1
+      if (RegExMatch(this.Title, " (\d+)$", v))
+        this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
+      if (CopyFullPage && GetVidTime)
         this.VidTime := this.MatchVidTime(this.FullTitle)
     } else if (RegExMatch(this.Title, "^Watch (.*?) online free on 9anime$", v)) {
       this.Source := "9anime", this.Title := v1
-      if (CopyFullPage)
+      if (CopyFullPage && GetVidTime)
         this.VidTime := this.MatchVidTime(this.FullTitle)
     } else if (RegExMatch(this.Title, "^Watch full (.*?) english sub \| Kissasian$", v)) {
       this.Source := "Kissasian", this.Title := v1
-      if (CopyFullPage)
+      if (CopyFullPage && GetVidTime)
         this.VidTime := this.MatchVidTime(this.FullTitle)
     } else if (RegExMatch(this.Title, "^Watch (.*?) English Sub/Dub online Free on Aniwatch\.to$", v)) {
       this.Source := "AniWatch", this.Title := v1
-      if (CopyFullPage)
+      if (CopyFullPage && GetVidTime)
         this.VidTime := this.MatchVidTime(this.FullTitle)
     } else if (RegExMatch(this.Title, "-免费在线观看-爱壹帆$", v)) {
       this.Source := "爱壹帆", this.Title := RegExReplace(this.Title, "-免费在线观看-爱壹帆$")
-      if (CopyFullPage)
+      if (CopyFullPage && GetVidTime)
         this.VidTime := this.MatchVidTime(this.FullTitle)
     } else if (RegExMatch(this.Title, "_高清在线观看 – NO视频$", v)) {
       this.Source := "NO视频", this.Title := RegExReplace(this.Title, "_高清在线观看 – NO视频$")
-      if (CopyFullPage)
+      if (CopyFullPage && GetVidTime)
         this.VidTime := this.MatchVidTime(this.FullTitle)
 
     ; Wikipedia or wiki format websites
     } else if (this.Title ~= " - supermemo\.guru$") {
       this.Source := "SuperMemo Guru", this.Title := RegExReplace(this.Title, " - supermemo\.guru$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
     } else if (this.Title ~= " - SuperMemopedia$") {
       this.Source := "SuperMemopedia", this.Title := RegExReplace(this.Title, " - SuperMemopedia$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
     } else if (IfContains(this.Url, "en.wikipedia.org")) {
       this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
     } else if (this.Title ~= " - Simple English Wikipedia, the free encyclopedia$") {
       this.Source := "Simple English Wikipedia", this.Title := RegExReplace(this.Title, " - Simple English Wikipedia, the free encyclopedia")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last changed on (.*?),", v), this.Date := v1
     } else if (this.Title ~= " - Wiktionary, the free dictionary$") {
       this.Source := "Wiktionary", this.Title := RegExReplace(this.Title, " - Wiktionary, the free dictionary$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
     } else if (IfContains(this.Url, "en.wikiversity.org")) {
       this.Source := "Wikiversity", this.Title := RegExReplace(this.Title, " - Wikiversity$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
     } else if (this.Title ~= " - Wikisource, the free online library$") {
       this.Source := "Wikisource", this.Title := RegExReplace(this.Title, " - Wikisource, the free online library$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
     } else if (this.Title ~= " - Wikibooks, open books for an open world$") {
       this.Source := "Wikibooks", this.Title := RegExReplace(this.Title, " - Wikibooks, open books for an open world$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
     } else if (this.Title ~= " - ProofWiki$") {
       this.Source := "ProofWiki", this.Title := RegExReplace(this.Title, " - ProofWiki$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last modified on (.*?),", v), this.Date := v1
     } else if (this.Title ~= " - Citizendium$") {
       this.Source := "Citizendium", this.Title := RegExReplace(this.Title, " - Citizendium$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last modified (.*?), (.*?)\.", v), this.Date := v2
     } else if (this.Title ~= " - 维基百科，自由的百科全书$") {
       this.Source := "维基百科", this.Title := RegExReplace(this.Title, " - 维基百科，自由的百科全书$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "本页面最后修订于(.*?) \(", v), this.Date := v1
     } else if (this.Title ~= " - 維基大典$") {
       this.Source := "維基大典", this.Title := RegExReplace(this.Title, " - 維基大典$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "此頁(.*?) （", v), this.Date := v1
     } else if (this.Title ~= " - 維基百科，自由的百科全書$") {
       this.Source := "維基百科", this.Title := RegExReplace(this.Title, " - 維基百科，自由的百科全書$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "本頁面最後修訂於(.*?) \(", v), this.Date := v1
     } else if (this.Title ~= " - 維基百科，自由嘅百科全書$") {
       this.Source := "維基百科", this.Title := RegExReplace(this.Title, " - 維基百科，自由嘅百科全書$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "呢版上次改係(.*?) \(", v), this.Date := v1
     } else if (this.Title ~= " - 维基文库，自由的图书馆$") {
       this.Source := "维基文库", this.Title := RegExReplace(this.Title, " - 维基文库，自由的图书馆$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.Date := v1
     } else if (this.Title ~= " - 维基词典，自由的多语言词典$") {
       this.Source := "维基词典", this.Title := RegExReplace(this.Title, " - 维基词典，自由的多语言词典$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.Date := v1
     } else if (this.Title ~= " - Wikipedia, la enciclopedia libre$") {
       this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia, la enciclopedia libre$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a ", v), this.Date := v1
+    } else if (this.Title ~= " — Wikipédia$") {
+      this.Source := "Wikipédia", this.Title := RegExReplace(this.Title, " — Wikipédia$")
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "La dernière modification de cette page a été faite .*? (\d+ .*? \d+) à", v), this.Date := v1
     } else if (this.Title ~= " - Wikcionario, el diccionario libre$") {
       this.Source := "Wikcionario", this.Title := RegExReplace(this.Title, " - Wikcionario, el diccionario libre$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Esta página se editó por última vez el (.*?) a ", v), this.Date := v1
     } else if (this.Title ~= " - Viquipèdia, l'enciclopèdia lliure$") {
       this.Source := "Viquipèdia", this.Title := RegExReplace(this.Title, " - Viquipèdia, l'enciclopèdia lliure$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "La pàgina va ser modificada per darrera vegada el (.*?) a ", v), this.Date := v1
     } else if (this.Title ~= " - Vicipaedia$") {
       this.Source := "Vicipaedia", this.Title := RegExReplace(this.Title, " - Vicipaedia$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Novissima mutatio die (.*?) hora", v), this.Date := v1
-
     } else if (IfContains(this.Url, "it.wikipedia.org")) {
       this.Source := "Wikipedia", this.Title := RegExReplace(this.Title, " - Wikipedia$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Questa pagina è stata modificata per l'ultima volta il (.*?) alle", v), this.Date := v1
     } else if (IfContains(this.Url, "ja.wikipedia.org")) {
       this.Source := "ウィキペディア", this.Title := RegExReplace(this.Title, " - Wikipedia$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "最終更新 (.*?) \(", v), this.Date := v1
     } else if (IfContains(this.Url, "fr.wikisource.org")) {
       this.Source := "Wikisource", this.Title := RegExReplace(this.Title, " - Wikisource$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "La dernière modification de cette page a été faite le (.*?) à ", v), this.Date := v1
 
     } else if (IfContains(this.Url, "github.com")) {
       this.Source := "GitHub", this.Title := RegExReplace(this.Title, "^GitHub - "), this.Title := RegExReplace(this.Title, " · GitHub$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Latest commit .*? on (.*)", v), this.Date := v1
 
     ; Others
     } else if (this.Title ~= "_百度百科$") {
       this.Source := "百度百科", this.Title := RegExReplace(this.Title, "_百度百科$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "s)最近更新：.*（(.*)）", v), this.Date := v1
     } else if (IfContains(this.Url, "zhuanlan.zhihu.com")) {
       this.Source := "知乎", this.Title := RegExReplace(this.Title, " - 知乎$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "(编辑|发布)于 (.*?) ", v), this.Date := v2
     } else if (IfContains(this.Url, "economist.com")) {
       this.Source := "The Economist", this.Title := RegExReplace(this.Title, " \| The Economist$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "\r\n(\w+ \d+\w+ \d+)( \| .*)?\r\n\r\n", v), this.Date := v1
     } else if (IfContains(this.Url, "investopedia.com")) {
       this.Source := "Investopedia"
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Updated (.*)", v), this.Date := v1
     } else if (IfContains(this.Url, "mp.weixin.qq.com")) {
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, " ([0-9]{4}-[0-9]{2}-[0-9]{2}) ", v), this.Date := v1
     } else if (this.Title ~= " \| Britannica$") {
       this.Source := "Britannica", this.Title := RegExReplace(this.Title, " \| Britannica$")
-      if (CopyFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Last Updated: (.*) • ", v), this.Date := v1
       
     ; Special cases
@@ -438,6 +464,7 @@ class VimBrowser {
   GetFullPage(RestoreClip:=true) {
     if (RestoreClip)
       ClipSaved := ClipboardAll
+    this.ActivateBrowser()
     CopyAll()
     text := Clipboard
     if (RestoreClip)
@@ -459,6 +486,7 @@ class VimBrowser {
   }
 
   GetParsedUrl() {
+    this.ActivateBrowser()
     global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     return this.ParseUrl(guiaBrowser.GetCurrentURL())
   }
@@ -490,6 +518,7 @@ class VimBrowser {
 
   MatchVidTime(title:="", FullPageText:="", RestoreClip:=true) {
     title := title ? title : this.GetFullTitle()
+    this.ActivateBrowser()
     if (title ~= " - YouTube$") {
       if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip)) {
         RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
@@ -522,24 +551,29 @@ class VimBrowser {
     WinActivate, % wIE
   }
 
-  GetFullTitle() {
-    return RegExReplace(WinGetTitle("ahk_group Browser"), "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
+  GetFullTitle(WinTitle:="") {
+    WinTitle := WinTitle ? WinGetTitle(WinTitle) : WinGetTitle("ahk_group Browser")
+    return RegExReplace(WinTitle, "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
   }
 
   IsVidSite(title:="") {
     title := title ? title : this.GetFullTitle()
-    if (title ~= " - YouTube$") {  ; video time can be in url and ^a covers the video time
-      return 1
+    if (title ~= " - YouTube$") {
+      return "yt"
+    ; return 1 if video time can be in url and ^a covers the video time
     } else if (title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {  ; video time can be in url but ^a doesn't cover video time
       return 2
-    } else if (title ~= "^(Watch full .*? english sub \| Kissasian|Watch .* HD online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on Aniwatch\.to)$") {  ; video time can't be in url and ^a doesn't cover video time
+    } else if (title ~= "^(Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on Aniwatch\.to)$") {  ; video time can't be in url and ^a doesn't cover video time
       return 3
     } else if (title ~= "(-免费在线观看-爱壹帆|_高清在线观看 – NO视频)$") {  ; video time can't be in url and ^a doesn't cover video time
       return 3
+    } else if (title ~= "^(Netflix)$") {  ; video time cannot be retrieved
+      return 4
     }
   }
 
   Highlight(CollName:="", PlainText:="", Url:="") {
+    this.ActivateBrowser()
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
     if (RegexMatch(PlainText, "(?<!\s)(?<!\d)\d+\.", v)) {
       Url := Url ? Url : this.GetParsedUrl()
@@ -561,20 +595,23 @@ class VimBrowser {
   }
 
   ClickBtn() {
-    Critical
+    this.ActivateBrowser()
     this.Url := this.Url ? this.Url : this.GetParsedUrl()
     if (IfContains(this.Url, "youtube.com/watch")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
       btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
-    } else {
-      return false
     }
-    return true
+  }
+
+  ActivateBrowser() {
+    if (!WinActive("ahk_group Browser"))
+      WinActivate, ahk_group Browser
   }
 }
 
-PressBrowserBtn:
+ClickBrowserBtn:
   Vim.Browser.ClickBtn()
+  ClickBrowserBtnFinished := true
 return

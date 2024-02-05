@@ -233,6 +233,27 @@ UrlDownloadToFile(URL, Filename) {
 }
 MsgBox(Options:="", Title:="", Text:="", Timeout:="") {
   MsgBox, % Options, % Title, % Text, % Timeout
+  if (IfMsgBox("Yes")) {
+    return "Yes"
+  } else if (IfMsgBox("No")) {
+    return "No"
+  } else if (IfMsgBox("OK")) {
+    return "OK"
+  } else if (IfMsgBox("Cancel")) {
+    return "Cancel"
+  } else if (IfMsgBox("Abort")) {
+    return "Abort"
+  } else if (IfMsgBox("Ignore")) {
+    return "Ignore"
+  } else if (IfMsgBox("Retry")) {
+    return "Retry"
+  } else if (IfMsgBox("Continue")) {
+    return "Continue"
+  } else if (IfMsgBox("TryAgain")) {
+    return "TryAgain"
+  } else if (IfMsgBox("Timeout")) {
+    return "Timeout"
+  }
 }
 
 ; https://www.autohotkey.com/boards/viewtopic.php?t=5484
@@ -1083,11 +1104,17 @@ CopyAll(Timeout:=2500) {
 }
 
 IsUrl(text) {
-  return ((DoesTextContainUrl(text, v) == 1) && (text == v))
+  for i, v in % GetAllLinks(text) {
+    if ((i == 1) && (v == text))
+      return true
+  }
 }
 
-DoesTextContainUrl(text, byref v) {
-  return RegExMatch(text, "((https?|file):\/\/|www\.)[^ ]+", v)
+GetAllLinks(text) {
+  links := [], pos := 1
+  while (pos := RegExMatch(text, "((https?|file):\/\/|www\.)[^ ]+", match, pos + StrLen(match)))
+    links.Push(match)
+  return links
 }
 
 SetModeNormalReturn:
@@ -1214,7 +1241,74 @@ RemoveLatinMacrons(Latin) {
 
 RetrieveUrlFromClip() {
   global Vim
-  Vim.HTML.ClipboardGet_HTML(data)
+  ClipboardGet_HTML(data)
   RegExMatch(data, "SourceURL:(.*)", v)
   return v1
+}
+
+ClipboardGet_HTML( byref Data ) {
+  If CBID := DllCall( "RegisterClipboardFormat", Str,"HTML Format", UInt )
+  If DllCall( "IsClipboardFormatAvailable", UInt,CBID ) <> 0
+    If DllCall( "OpenClipboard", UInt,0 ) <> 0
+    If hData := DllCall( "GetClipboardData", UInt,CBID, UInt )
+        DataL := DllCall( "GlobalSize", UInt,hData, UInt )
+      , pData := DllCall( "GlobalLock", UInt,hData, UInt )
+      , VarSetCapacity( data, dataL * ( A_IsUnicode ? 2 : 1 ) ), StrGet := "StrGet"
+      , A_IsUnicode ? Data := %StrGet%( pData, dataL, 0 )
+                    : DllCall( "lstrcpyn", Str,Data, UInt,pData, UInt,DataL )
+      , DllCall( "GlobalUnlock", UInt,hData )
+  DllCall( "CloseClipboard" )
+  Return dataL ? dataL : 0
+}
+
+; https://www.autohotkey.com/boards/viewtopic.php?t=80706
+SetClipboardHTML(HtmlBody, HtmlHead:="", AltText:="") {       ; v0.67 by SKAN on D393/D42B
+  Local  F, Html, pMem, Bytes, hMemHTM:=0, hMemTXT:=0, Res1:=1, Res2:=1   ; @ tiny.cc/t80706
+  Static CF_UNICODETEXT:=13,   CFID:=DllCall("RegisterClipboardFormat", "Str","HTML Format")
+
+  If ! DllCall("OpenClipboard", "Ptr",A_ScriptHwnd)
+    Return 0
+  Else DllCall("EmptyClipboard")
+
+  If (HtmlBody!="")
+  {
+    Html     := "Version:0.9`r`nStartHTML:00000000`r`nEndHTML:00000000`r`nStartFragment"
+        . ":00000000`r`nEndFragment:00000000`r`n<!DOCTYPE>`r`n<html>`r`n<head>`r`n"
+              ; . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment-->`r`n"
+              . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment-->"
+                . HtmlBody . "<!--EndFragment-->`r`n</body>`r`n</html>"
+                ; . HtmlBody . "`r`n<!--EndFragment-->`r`n</body>`r`n</html>"
+
+    Bytes    := StrPut(Html, "utf-8")
+    hMemHTM  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",Bytes+4, "Ptr")
+    pMem     := DllCall("GlobalLock", "Ptr",hMemHTM, "Ptr")
+    StrPut(Html, pMem, Bytes, "utf-8")
+
+    F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<html>", "Ptr") - pMem
+    StrPut(Format("{:08}", F), pMem+23, 8, "utf-8")
+    F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","</html>", "Ptr") - pMem
+    StrPut(Format("{:08}", F), pMem+41, 8, "utf-8")
+    F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--StartFra", "Ptr") - pMem
+    StrPut(Format("{:08}", F), pMem+65, 8, "utf-8")
+    F := DllCall("Shlwapi.dll\StrStrA", "Ptr",pMem, "AStr","<!--EndFragm", "Ptr") - pMem
+    StrPut(Format("{:08}", F), pMem+87, 8, "utf-8")
+
+    DllCall("GlobalUnlock", "Ptr",hMemHTM)
+    Res1  := DllCall("SetClipboardData", "Int",CFID, "Ptr",hMemHTM)
+  }
+
+  If (AltText!="")
+  {
+    Bytes    := StrPut(AltText, "utf-16")
+    hMemTXT  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",(Bytes*2)+8, "Ptr")
+    pMem     := DllCall("GlobalLock", "Ptr",hMemTXT, "Ptr")
+    StrPut(AltText, pMem, Bytes, "utf-16")
+    DllCall("GlobalUnlock", "Ptr",hMemTXT)
+    Res2  := DllCall("SetClipboardData", "Int",CF_UNICODETEXT, "Ptr",hMemTXT)
+  }
+
+  DllCall("CloseClipboard")
+  hMemHTM := hMemHTM ? DllCall("GlobalFree", "Ptr",hMemHTM) : 0
+
+  Return (Res1 & Res2)
 }

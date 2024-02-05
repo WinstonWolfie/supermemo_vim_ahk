@@ -48,70 +48,27 @@ NukeHTML:
   }
   if ((A_ThisLabel == "NukeHTML")
    && (HTML ~= "i)<.*?\K class=(" . Vim.SM.CssClass . ")(?=.*?>)")) {
-    MsgBox, 3,, HTML has SM classes. Continue?
-    if (IfMsgbox("No") || IfMsgbox("Cancel"))
+    if (IfIn(MsgBox(3,, "HTML has SM classes. Continue?"), "No,Cancel")) {
+      HTML := ""
       return
+    }
   }
   FileDelete % HTMLPath
-  FileAppend, % Vim.HTML.Clean(HTML, (A_ThisLabel == "NukeHTML"),, Vim.SM.GetLink()), % HTMLPath
+  FileAppend, % Vim.SM.CleanHTML(HTML, (A_ThisLabel == "NukeHTML"),, Vim.SM.GetLink()), % HTMLPath
   Vim.SM.Reload()
   Vim.SM.WaitFileLoad()
   send {esc}
-  ToolTip("HTML cleaned.")
+  ToolTip("HTML cleaned."), HTML := ""
 Return
 
 +l::Vim.SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
 l::Vim.SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
 
-w::  ; prepare *w*ikipedia articles in languages other than English
-  Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.IsEditingPlainText() || !Vim.SM.DoesHTMLExist())
-    return
-	send !g  ; in case it's learning
-	send ^{f7}  ; save read point
-  if (!Vim.SM.IsEditingHTML())
-    Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
-  Vim.SM.SaveHTML()  ; making sure the html path is correct
-  send {esc}
-  Vim.SM.WaitTextExit()  ; making changes to the html file requires not editing html in SM
-  link := Vim.SM.GetLink(TemplCode := Vim.SM.GetTemplCode())
-  if (link) {
-    if (!IfContains(link, "wikipedia.org/wiki")) {
-      ToolTip("Not Wikipedia!")
-      return
-    }
-    if (IfContains(link, "en.wikipedia.org")) {
-      ToolTip("English Wikipedia doesn't need to be prepared!")
-      return
-    }
-  } else {
-    ToolTip("No reference.")
-    return
-  }
-  RegExMatch(Link, "(?<=https:\/\/).*?(?=\/wiki\/)", WikiLink)
-  RegExMatch(TemplCode, "HTMFile=\K.*", FilePath)
-  HTML := StrReplace(FileRead(FilePath), "en.wikipedia.org", WikiLink)
-  FileDelete % FilePath
-  FileAppend, % HTML, % FilePath
-  Vim.SM.SaveHTML()
-  if (WikiLink ~= "(zh|fr|la)\.wikipedia\.org") {
-    Vim.SM.WaitTextFocus()
-    send ^{home}{end}+{home}  ; selecting first line
-    Vim.SM.AltT()
-    WinWaitActive, ahk_class TChoicesDlg,, 2  ; sometimes it could take a really long time for the choice dialogue to pop up
-    if (!ErrorLevel)
-      send 2{enter}  ; makes selection title
-  }
-  Vim.SM.ClickMid()
-  send {esc}
-return
-
 o::  ; c*o*mpress images
   send ^{enter}^a  ; open commander
   send {text}co  ; Compress images
   send {enter}
-  Vim.State.SetMode("Insert")
-  Vim.State.BackToNormal := 1
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
 return
 
 s::  ; turn active language item to passive (*s*witch)
@@ -167,7 +124,7 @@ r::  ; set *r*eference's link to what's in the clipboard
 
 SMSetLinkFromClipboard:
   ; Had to edit title first, in case of multiple references change
-  if ((Vim.SM.IsPassive() || !Vim.SM.IsItem()) && Vim.Browser.Title)
+  if ((Vim.SM.IsOnline(, -1) || !Vim.SM.IsItem()) && Vim.Browser.Title)
     Vim.SM.SetTitle(Vim.Browser.Title)
   Vim.SM.EditRef()
   WinWaitActive, ahk_class TInputDlg

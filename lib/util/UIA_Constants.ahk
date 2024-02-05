@@ -99,7 +99,7 @@ global UIA_RuntimeIdPropertyId := 30000
  , UIA_HelpTextPropertyId := 30013
  , UIA_ClickablePointPropertyId := 30014
  , UIA_CulturePropertyId := 30015
- , UIA_IsControlElementPropertyId := 30016
+ , UIA_IsContrOnlineElementPropertyId := 30016
  , UIA_IsContentElementPropertyId := 30017
  , UIA_LabeledByPropertyId := 30018
  , UIA_IsPasswordPropertyId := 30019
@@ -590,7 +590,7 @@ global sIID_IUIAutomationElement := "{D22108AA-8AC5-49A5-837B-37BBB3D7591E}"
  . "CurrentClassName hresult(bstr*);"
  . "CurrentHelpText hresult(bstr*);"
  . "CurrentCulture hresult(int*);"
- . "CurrentIsControlElement hresult(long*);"
+ . "CurrentIsContrOnlineElement hresult(long*);"
  . "CurrentIsContentElement hresult(long*);"
  . "CurrentIsPassword hresult(long*);"
  . "CurrentNativeWindowHandle hresult(hwnd*);"
@@ -622,7 +622,7 @@ global sIID_IUIAutomationElement := "{D22108AA-8AC5-49A5-837B-37BBB3D7591E}"
  . "CachedClassName hresult(bstr*);"
  . "CachedHelpText hresult(bstr*);"
  . "CachedCulture hresult(int*);"
- . "CachedIsControlElement hresult(long*);"
+ . "CachedIsContrOnlineElement hresult(long*);"
  . "CachedIsContentElement hresult(long*);"
  . "CachedIsPassword hresult(long*);"
  . "CachedNativeWindowHandle hresult(hwnd*);"

@@ -30,8 +30,7 @@ return
 
 ^!c::  ; change default *c*oncept group
   SetDefaultKeyboard(0x0409)  ; English-US
-  Vim.SM.SetCurrConcept()
-  Vim.State.SetMode("Vim_Normal")
+  Vim.SM.SetCurrConcept(), Vim.State.SetMode("Vim_Normal")
 Return
 
 ~^+f12::  ; bomb format with no confirmation
@@ -75,9 +74,8 @@ return
   OldConcept := ControlGetText("Edit2"), NewConcept := ""
   WinWaitNotActive
   if (NewConcept && (OldConcept != NewConcept)) {
-    MsgBox, 3,, Make children this concept too?
-    WinWaitActive, ahk_class TElWind
-    if (IfMsgBox("Yes")) {
+    if (MsgBox(3,, "Make children this concept too?") = "yes") {
+      WinWaitActive, ahk_class TElWind
       send !c
       WinWaitActive, ahk_class TContents
       Vim.SM.OpenBrowser()
@@ -158,10 +156,10 @@ return
   if (ContLearn == 1)
     Vim.SM.learn()
   BlockInput, Off
-  MsgBox, 3,, Permanently remove extra components?
+  MB := MsgBox(3,, "Permanently remove extra components?")
   WinWaitActive, ahk_class TElWind
   BlockInput, On
-  if (IfMsgBox("Yes")) {
+  if (MB = "yes") {
     send ^+{f2}  ; impose template
     WinWaitActive, ahk_class TMsgDialog
     send {enter}
@@ -173,7 +171,7 @@ return
     WinWaitClose, ahk_class TElParamDlg
     if (ContLearn == 1)
       Vim.SM.learn()
-  } else if (IfMsgBox("Cancel")) {
+  } else if (MB = "cancel") {
     send !{f10}td
   }
   BlockInput, Off
@@ -183,18 +181,14 @@ return
 SMCtrlN:
 ^n::
   Vim.SM.CtrlN(), Vim.State.SetMode("Vim_Normal")
-  if (IfContains(Clipboard, "youtube.com") && IsUrl(Clipboard)) {
-    if (A_ThisLabel == "^n") {
+  if (RegExMatch(Clipboard, "(?:youtube\.com).*?(?:v=)([a-zA-Z0-9_-]{11})", v) && IsUrl(Clipboard)) {
+    if (A_ThisLabel == "^n")
       ClipSaved := ClipboardAll
-      Prio := ""
-    }
     Vim.Browser.Url := Clipboard
     ; Register browser time stamp to YT comp time stamp
-    if (Vim.Browser.VidTime) {
-      RegExMatch(Clipboard, "v=(.{11})", v), YTID := v1
-      Clipboard := "{SuperMemoYouTube:" . YTID . "," . Vim.Browser.VidTime . ",0:00,0:00,3}"
-    }
-    text := Vim.Browser.Title . "`n" . Vim.SM.MakeReference()
+    if (Vim.Browser.VidTime)
+      Clipboard := "{SuperMemoYouTube:" . v1 . "," . Vim.Browser.VidTime . ",0:00,0:00,3}"
+    text := Vim.Browser.Title . Vim.SM.MakeReference()
     Vim.SM.WaitFileLoad()
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
@@ -202,10 +196,9 @@ SMCtrlN:
     Vim.SM.WaitTextExit()
     Clip(text,, false)
     Vim.SM.WaitTextFocus()
-    Vim.SM.SetElParam(Vim.Browser.Title, Prio, "YouTube")
     if (A_ThisLabel == "^n") {
-      Vim.Browser.Clear()
-      Clipboard := ClipSaved
+      Vim.SM.SetElParam(Vim.Browser.Title,, "YouTube")
+      Vim.Browser.Clear(), Clipboard := ClipSaved
     }
   }
 return
@@ -671,42 +664,37 @@ return
 BrowserSyncTime:
   Sync := (A_ThisLabel == "BrowserSyncTime")
   ResetTime := IfContains(A_ThisLabel, "``")
-  CloseWnd := IfContains(A_ThisLabel, "^")
-  wMpvId := WinActive("ahk_class mpv")
-  wSMElWindId := SMTemplCode := ""
+  CloseWnd := IfContains(A_ThisLabel, "^")  ; hotkeys with ctrl will close the browser tab / mpv
+  widMPV := WinActive("ahk_class mpv")
+  widSMElWind := SMTemplCode := wBrowser := ""
 
-  if (wBrowserId := WinActive("ahk_group Browser")) {
-    Vim.Browser.Clear(), guiaBrowser := new UIA_Browser(wBrowser := "ahk_id " . wBrowserId)
+  if (widBrowser := WinActive("ahk_group Browser")) {
+    Vim.Browser.Clear(), wBrowser := "ahk_id " . widBrowser
     ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{esc}, % wBrowser
-    Vim.Browser.GetTitleSourceDate(!Sync, false)
+    Vim.Browser.GetTitleSourceDate(!Sync, false,,, false)  ; need url here
     WinGet, paSMTitles, List, ahk_class TElWind  ; can't get pseudo-array by WinActive("A")
     loop % paSMTitles {
       SMTitle := WinGetTitle("ahk_id " . hWnd := paSMTitles%A_Index%)
       ; SM uses "." instead of "..." in titles
       if (SMTitle == RegExReplace(Vim.Browser.Title, "\.\.\.?", ".")) {
-        wSMElWindId := hWnd
+        widSMElWind := hWnd
         Break
       }
     }
   }
 
-  wSMElWind := wSMElWindId ? "ahk_id " . wSMElWindId : "ahk_class TElWind"
-    
-  if (wBrowserId) {
+  wSMElWind := widSMElWind ? "ahk_id " . widSMElWind : "ahk_class TElWind"
+
+  if (widBrowser) {
     SMUrl := Vim.SM.GetLink(SMTemplCode := Vim.SM.GetTemplCode(, wSMElWind))
     Vim.Browser.Url := Vim.SM.HTMLUrl2SMRefUrl(Vim.Browser.Url)
     if (Vim.Browser.Url != SMUrl) {
-      MsgBox, 3,, % "Link in SM reference is not the same as in the browser. Continue?"
-                  . "`nBrowser url: " . Vim.Browser.Url
-                  . "`n       SM url: " . SMUrl
-      WinActivate % wBrowser
-      if (IfMsgBox("No") || IfMsgBox("Cancel"))
+      SMTemplCode := ""
+      if (Vim.SM.AskToSearchLinkOrStop(Vim.Browser.Url, SMUrl))
         Goto SMSyncTimeReturn
     }
-    if (!ResetTime) {
-      WinActivate % wBrowser
+    if (!ResetTime)
       Vim.Browser.VidTime := Vim.Browser.GetVidtime(Vim.Browser.FullTitle)
-    }
   }
 
   if (!Vim.Browser.VidTime && !ResetTime) {
@@ -715,18 +703,17 @@ BrowserSyncTime:
       Goto SMSyncTimeReturn
   }
 
-  if (wBrowserId) {
+  if (widBrowser && CloseWnd) {
     WinActivate % wBrowser
-    if (CloseWnd)  ; hotkeys with ctrl will close the tab
-      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}w{Ctrl Up}, % wBrowser
+    ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}w{Ctrl Up}, % wBrowser
   }
 
-  Vim.SM.CloseMsgWind()
-  if (wMpvId && CloseWnd && !ResetTime) {
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % "ahk_id " . wMpvId
-  } else if (wMpvId && CloseWnd && ResetTime) {
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % "ahk_id " . wMpvId
+  if (widMPV && CloseWnd && !ResetTime) {
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % "ahk_id " . widMPV
+  } else if (widMPV && CloseWnd && ResetTime) {
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % "ahk_id " . widMPV
   }
+
   Vim.SM.CloseMsgWind()
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
@@ -751,10 +738,10 @@ BrowserSyncTime:
     Vim.SM.EditFirstQuestion()
     OldText := Vim.SM.GetHTMLMarker()
     NewText := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Vim.Browser.VidTime
-    if (OldText != NewText) {
+    if (OldText != RegExReplace(NewText, "<.*?>")) {
       send ^{home}
       if (OldText ~= "^SMVim time stamp:") {
-        send ^+{down}+{left}
+        send ^+{down}+{left}{bs}  ; need to delete old text, or the old style persists
       } else if (OldText) {
         send {enter}{up}
       }
@@ -768,13 +755,15 @@ BrowserSyncTime:
     FileAppend, % RegExReplace(Script, Match . "|$", Replacement,, 1), % ScriptPath
     ToolTip("Time stamp in script component set as " . Sec . "s")
   }
-  if (IfContains(A_ThisLabel, "^+!"))
-    Vim.SM.Learn(false,, true)
-  if ((A_ThisLabel == "!+s") || (A_ThisLabel == "!+``"))
-    WinActivate % wBrowser
-  if (IfContains(A_ThisLabel, "^!"))
-    WinActivate, % wSMElWind
+
 SMSyncTimeReturn:
+  if (IfContains(A_ThisLabel, "^+!")) {
+    Vim.SM.Learn(false,, true)
+  } else if (wBrowser && ((A_ThisLabel == "SMSyncTimeReturn") || (A_ThisLabel == "!+s") || (A_ThisLabel == "!+``"))) {  ; keep browser tab open
+    WinActivate % wBrowser
+  } else if (IfContains(A_ThisLabel, "^!")) {
+    WinActivate % wSMElWind
+  }
   Vim.Browser.Clear()
   if (Sync)
     Clipboard := ClipSaved

@@ -20,35 +20,40 @@ g::Vim.Move.Move("g")  ; 3gg goes to the 3rd line of entire text
   Vim.State.SetMode()
 Return
 
-+s::  ; gS: open link in IE
 SMGoToLink:
 s::  ; gs: go to link
++s::  ; gS: open link in IE
 m::  ; gm: go to link in comment
 +m::  ; gM: go to link in comment in IE
-  Vim.State.SetMode()
+  Vim.State.SetMode(), Links := [], Success := false
   if (IfIn(A_ThisLabel, "m,+m")) {
-    link := Vim.SM.GetLinkInComment()
-  } else {
-    link := Vim.SM.GetLink()
+    Links := Vim.SM.GetLinksInComment()
+  } else if (Link := Vim.SM.GetLink()) {
+    Links.Push(Link)
   }
-  if (link) {
-    if (IfContains(A_ThisLabel, "+")) {
-      ; ShellRun("iexplore.exe " . link)  ; RIP IE
-      Vim.Browser.RunInIE(link)
-    } else {
-      try ShellRun(link)
-      catch {
-        RunDefaultBrowser()
-        WinWaitActive, ahk_group Browser
-        uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-        if (Vim.Browser.GetFullTitle() != "new tab")
-          uiaBrowser.NewTab()
-        uiaBrowser.Navigate(link)
+  if (ObjCount(Links) > 0) {
+    for i, Link in Links {
+      if (Link) {
+        if (IfContains(A_ThisLabel, "+")) {
+          ; ShellRun("iexplore.exe " . Link)  ; RIP IE
+          Vim.Browser.RunInIE(Link)
+        } else {
+          try ShellRun(Link)
+          catch {
+            RunDefaultBrowser()
+            WinWaitActive, ahk_group Browser
+            uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+            if (Vim.Browser.GetFullTitle() != "new tab")
+              uiaBrowser.NewTab()
+            uiaBrowser.Navigate(Link)
+          }
+        }
+        Success := true
       }
     }
-  } else {
-    ToolTip("No link found.")
   }
+  if (!Success)
+    ToolTip("Link not found.")
 Return
 
 ; Element/content window

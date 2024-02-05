@@ -53,7 +53,7 @@ Return
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|LatinoGraecum|Linguee"
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
         . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
-        . "|PasteCleanedClipboard|ArchiveToday|WolframAlpha"
+        . "|PasteCleanedClipboard|ArchiveToday|WolframAlpha|PasteHTML"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     List := "SetConceptHook|MemoriseChildren|" . List
@@ -61,7 +61,7 @@ Return
       List := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement"
             . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
             . "|ExternaliseRegistry|Comment|Tag|" . List
-      if (Vim.SM.IsPassive(, -1))
+      if (Vim.SM.IsOnline(, -1))
         List := "ReformatScriptComponent|SearchLinkInYT|MarkAsOnlineProgress|" . List
       if (Vim.SM.IsEditingText())
         List := "ClozeAndDone!|" . List
@@ -102,8 +102,15 @@ VimCommanderButtonExecute:
     Goto % RegExReplace(Command, "\W")
   } else {
     aCommand := StrSplit(Command, " ")
-    if (aCommand[1] = "YT") {
-      ShellRun("https://www.youtube.com/results?search_query=" . RegExReplace(Command, "i)^YT "))
+    if (aCommand[1] = "yt") {
+      ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(RegExReplace(Command, "i)^yt ")))
+    } else if (aCommand[1] = "def") {
+      Command := EncodeDecodeURI(RegExReplace(Command, "i)^def "))
+      ShellRun("https://www.google.com/search?hl=en-uk&q=define " . Command . "&forcedict=" . Command . "&dictcorpus=en-uk&expnd=1&gl=gb")
+    } else if (aCommand[1] = "wkt") {
+      ShellRun("https://www.google.com/search?q=wiktionary " . EncodeDecodeURI(RegExReplace(Command, "i)^wkt ")))
+    } else if (aCommand[1] = "pplx") {
+      ShellRun("https://www.perplexity.ai/search?q=" . EncodeDecodeURI(RegExReplace(Command, "i)^pplx ")) . "&focus=internet&copilot=true")
     } else if (IsUrl(Command)) {
       if !(Command ~= "^http")
         Command := "http://" . Command
@@ -146,10 +153,16 @@ return
 WebSearchButtonSearch:
   Gui, Submit
   Gui, Destroy
-  if (DoesTextContainUrl(Search, v)) {
-    MsgBox, 3,, Text has url. Run it?
-    if (IfMsgBox("Yes")) {
-      ShellRun(v)
+  LinkCount := ObjCount(Links := GetAllLinks(Search))
+  if (LinkCount > 0) {
+    if (LinkCount == 1) {
+      MB := MsgBox(3,, "Text contains url. Run it?")
+    } else if (LinkCount > 1) {
+      MB := MsgBox(3,, "Text contains multiple urls. Run them?")
+    }
+    if (MB = "yes") {
+      for i, v in Links
+        ShellRun(v)
       return
     }
   }
@@ -175,29 +188,29 @@ WaybackMachine:
   WinWaitActive % "ahk_id " . hWnd
   if (WinActive("ahk_group Browser")) {
     uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-    url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL())
+    Url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL())
   } else if (WinActive("ahk_class TElWind")) {
-    url := FindSearch("Wayback Machine", "URL:", Vim.SM.GetLink(), true)
-  } else if (!url := FindSearch("Wayback Machine", "URL:")) {
+    Url := FindSearch("Wayback Machine", "URL:", Vim.SM.GetLink(), true)
+  } else if (!Url := FindSearch("Wayback Machine", "URL:")) {
     return
   }
-  if (url)
-    ShellRun("https://web.archive.org/web/*/" . url)
+  if (Url)
+    ShellRun("https://web.archive.org/web/*/" . Url)
 return
 
 DeepL:
-  if (text := FindSearch("DeepL Translate", "Text:",,, 256))
-    ShellRun("https://www.deepl.com/en/translator#?/en/" . text)
+  if (Text := FindSearch("DeepL Translate", "Text:",,, 256))
+    ShellRun("https://www.deepl.com/en/translator#?/en/" . EncodeDecodeURI(Text))
 Return
 
 YouGlish:
   search := Trim(Copy())
   Gui, YouGlish:Add, Text,, &Search:
-  Gui, YouGlish:Add, Edit, vSearch w136 r1 -WantReturn, % search
+  Gui, YouGlish:Add, Edit, vSearch w136 r1 -WantReturn, % Search
   Gui, YouGlish:Add, Text,, &Language:
-  list := "English||Spanish|French|Italian|Japanese|German|Russian|Greek|Hebrew"
+  List := "English||Spanish|French|Italian|Japanese|German|Russian|Greek|Hebrew"
         . "|Arabic|Polish|Portuguese|Korean|Turkish|American Sign Language|Dutch"
-  Gui, YouGlish:Add, Combobox, vLanguage gAutoComplete w136, % list
+  Gui, YouGlish:Add, Combobox, vLanguage gAutoComplete w136, % List
   Gui, YouGlish:Add, Button, default, &Search
   Gui, YouGlish:Show,, YouGlish
 Return
@@ -210,9 +223,9 @@ return
 YouGlishButtonSearch:
   Gui, Submit
   Gui, Destroy
-  if (language == "American Sign Language")
-    language := "signlanguage"
-  ShellRun("https://youglish.com/pronounce/" . search . "/" . StrLower(language))
+  if (Language == "American Sign Language")
+    Language := "signlanguage"
+  ShellRun("https://youglish.com/pronounce/" . EncodeDecodeURI(Search) . "/" . StrLower(Language))
 Return
 
 KillIE:
@@ -223,10 +236,10 @@ return
 DefineGoogle:
   search := Trim(Copy())
   Gui, GoogleDefine:Add, Text,, &Search:
-  Gui, GoogleDefine:Add, Edit, vSearch w136 r1 -WantReturn, % search
+  Gui, GoogleDefine:Add, Edit, vSearch w136 r1 -WantReturn, % Search
   Gui, GoogleDefine:Add, Text,, &Language Code:
-  list := "en-uk||en-us|es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr|zh-hk|zh"
-  Gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete w136, % list
+  List := "en-uk||en-us|es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr|zh-hk|zh"
+  Gui, GoogleDefine:Add, Combobox, vLangCode gAutoComplete w136, % List
   Gui, GoogleDefine:Add, Button, default, &Search
   Gui, GoogleDefine:Show,, Google Define
   SetDefaultKeyboard(0x0409)  ; English-US
@@ -240,21 +253,22 @@ return
 GoogleDefineButtonSearch:
   Gui, Submit
   Gui, Destroy
+  Search := EncodeDecodeURI(Search)
   if (LangCode) {
-    define := "define", add := ""
+    Define := "define", Add := ""
     if (LangCode = "fr") {
-      define := "définis"
+      Define := "définis"
     } else if (LangCode = "it") {
-      define := "definisci"
+      Define := "definisci"
     } else if (LangCode = "en-uk") {
-      add := "&gl=gb"
+      Add := "&gl=gb"
     } else if (LangCode = "en-us") {
-      add := "&gl=us"
+      Add := "&gl=us"
     }
-    ShellRun("https://www.google.com/search?hl=" . LangCode . "&q=" . define . " "
-           . search . "&forcedict=" . search . "&dictcorpus=" . LangCode . "&expnd=1" . add)
+    ShellRun("https://www.google.com/search?hl=" . LangCode . "&q=" . Define . " "
+           . Search . "&forcedict=" . Search . "&dictcorpus=" . LangCode . "&expnd=1" . Add)
   } else {
-    ShellRun("https://www.google.com/search?q=define " . search)
+    ShellRun("https://www.google.com/search?q=define " . Search)
   }
 return
 
@@ -364,8 +378,8 @@ UIAViewer:
 return
 
 TranslateGoogle:
-  if (text := FindSearch("Google Translate", "Text:",,, 256))
-    ShellRun("https://translate.google.com/?sl=auto&tl=en&text=" . text . "&op=translate")
+  if (Text := FindSearch("Google Translate", "Text:",,, 256))
+    ShellRun("https://translate.google.com/?sl=auto&tl=en&text=" . EncodeDecodeURI(Text) . "&op=translate")
 return
 
 ClearClipboard:
@@ -406,7 +420,7 @@ AlatiusLatinMacronizer:
   WinWaitActive, ahk_group Browser
   uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
   uiaBrowser.WaitPageLoad()
-  uiaBrowser.WaitElementExist("ControlType=Edit AND FrameworkId=Chrome").SetValue(Latin)
+  uiaBrowser.WaitElementExist("ControlType=Edit AND Framewidork=Chrome").SetValue(Latin)
   uiaBrowser.WaitElementExist("ControlType=Button AND Name='Submit'").Click()
 return
 
@@ -567,10 +581,10 @@ ImportFile:
   WinWaitActive, ahk_class TElWind
   Vim.SM.InvokeFileBrowser()
   send {right}
-  MsgBox, 3,, Do you want to also delete the file?
-  IfMsgBox, Cancel
+  MB := MsgBox(3,, "Do you want to also delete the file?")
+  if (MB = "cancel")
     return
-  if (KeepFile := IfMsgBox("No"))
+  if (KeepFile := (MB = "no"))
     FilePath := WinGetTitle("ahk_class TFileBrowser")
   WinActivate, ahk_class TFileBrowser
   send {enter}
@@ -586,8 +600,7 @@ ImportFile:
   WinWaitActive, ahk_class TElWind
   RegExMatch(FilePath, "[^\\]+(?=\.)", FileName)
   if (KeepFile && !(FileName ~= "^IMPORTED_")) {
-    MsgBox, 3,, Do you want to add "IMPORTED_" prefix to the file?
-    if (IfMsgBox("Yes"))
+    if (MsgBox(3,, "Do you want to add ""IMPORTED_"" prefix to the file?") = "yes")
       FileMove, % FilePath, % StrReplace(FilePath, FileName, "IMPORTED_" . FileName)
   }
   Vim.SM.AskPrio()
@@ -824,7 +837,7 @@ CalculateTodaysPassRate:
                          . "[^\n]+Grade=[3-5]",, TodayPassCount)
   BlockInput, off
   RemoveToolTip()
-  msgbox % "Today's repetition count: " . TodayRepCount
+  MsgBox % "Today's repetition count: " . TodayRepCount
          . "`nToday's pass (grade > 3) count: " . TodayPassCount
          . "`nToday's pass rate: " . Format("{:g}", TodayPassCount / TodayRepCount * 100) . "%"
 return
@@ -1116,7 +1129,7 @@ CleanHTML:
   if (HTMLPath := FindSearch("Clean HTML", "Path:")) {
     HTML := FileRead(HTMLPath)
     FileDelete % HTMLPath
-    FileAppend, % Vim.HTML.Clean(HTML), % HTMLPath
+    FileAppend, % Vim.SM.CleanHTML(HTML), % HTMLPath
     ToolTip("Completed.")
   } else {
     ToolTip("Not found.")
@@ -1149,10 +1162,10 @@ EPUB2TXT:
 return
 
 PasteCleanedClipboard:
-  Vim.HTML.ClipboardGet_HTML(data)
+  ClipboardGet_HTML(data)
   RegExMatch(data, "SourceURL:(.*)", v)
   RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
-  data := Vim.HTML.Clean(data,,, v1)
+  data := Vim.SM.CleanHTML(data,,, v1)
   Clip(data,,, (Vim.SM.IsEditingHTML() ? "sm" : true))
 return
 
@@ -1236,9 +1249,9 @@ MarkAsOnlineProgress:
 return
 
 Tag:
-  Gui, SMTag:Add, Text,, &Add tags (without # and use space to separate):
+  Gui, SMTag:Add, Text,, &Add tags (without # and use `; to separate):
   Gui, SMTag:Add, Edit, vTags w350 r1 -WantReturn
-  Gui, SMTag:Add, Checkbox, vEditRefComment, Also add to reference &comment
+  Gui, SMTag:Add, Checkbox, vEditRefComment Checked, Also add to reference &comment
   Gui, SMTag:Add, Button, Default, &Tag
   Gui, SMTag:Show,, Tag
   SetDefaultKeyboard(0x0409)  ; English-US
@@ -1254,23 +1267,28 @@ SMTagButtonTag:
   Vim.State.SetMode("Vim_Normal")
   Gui, Submit
   Gui, Destroy
-  aTags := StrSplit(Tags, " ")
-  loop % aTags.MaxIndex() {
-    Vim.SM.LinkConcept(aTags[A_Index])
-    WinWaitActive, ahk_class TElWind
-  }
+  aTags := StrSplit(Tags, ";")
+  Vim.SM.LinkConcepts(aTags)
   if (EditRefComment) {
     Vim.SM.EditRef()
     WinWaitActive, ahk_class TInputDlg
     Ref := ControlGetText("TMemo1")
     RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
-    loop % s.MaxIndex() {
-      if (!IfContains(Comment, "#" . s[A_Index]))
-        Comment .= " #" . s[A_Index]
+    loop % aTags.MaxIndex() {
+      Tag := StrReplace(aTags[A_Index], " ", "_")
+      if (!IfContains(Comment, "#" . Tag))
+        Comment .= " #" . Tag
     }
     Ref := "#Comment: " . Comment . "`n" . Ref
     ControlSetText, TMemo1, % Ref
     ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
     WinWaitClose
   }
+return
+
+PasteHTML:
+  ClipboardGet_HTML(data)
+  RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", data)
+  Clipboard := data
+  send ^v
 return

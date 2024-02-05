@@ -50,11 +50,11 @@ x::  ; gx: open hyperlink in current caret position (Open in *n*ew window)
     Copy(false,, "+{left}^c{right}")
   }
   LinkMatch := "(<A((.|\r\n)*)href="")\K[^""]+"
-  If (Vim.HTML.ClipboardGet_HTML(data)) {
+  If (ClipboardGet_HTML(data)) {
     RegExMatch(data, LinkMatch, CurrLink)
     if (!CurrLink) {
       Copy(false,, "+{left}^c{right}")
-      If (Vim.HTML.ClipboardGet_HTML(data)) {
+      If (ClipboardGet_HTML(data)) {
         RegExMatch(data, LinkMatch, CurrLink)
         if (!CurrLink)
           ToolTip("No link found.")

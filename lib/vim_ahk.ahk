@@ -26,7 +26,6 @@
 #Include %A_LineFile%\..\vim_state.ahk
 #Include %A_LineFile%\..\vim_tooltip.ahk
 #Include %A_LineFile%\..\vim_sm.ahk
-#Include %A_LineFile%\..\vim_html.ahk
 #Include %A_LineFile%\..\vim_browser.ahk
 
 ; Key Bindings

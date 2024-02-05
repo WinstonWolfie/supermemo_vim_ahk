@@ -59,7 +59,7 @@ SMParseHTML:
   if (!Copy(false))
     Goto RestoreClipReturn
   if (OriginalHTML) {
-    Vim.HTML.ClipboardGet_HTML(data)
+    ClipboardGet_HTML(data)
     RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", Content)
   } else {
     Content := StrReplace(Clipboard, "<", "&lt;")
@@ -248,8 +248,7 @@ CapsLock & z::  ; delete [...]
   if ((A_ThisLabel == "ClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
   if (!ClozeNoBracket && !Inside && Hint && IfContains(Hint, "/")) {
-    MsgBox, 3,, Your hint has a slash. Press yes to make it inside square brackets.
-    IfMsgBox, Yes
+    if (MsgBox(3,, "Your hint has a slash. Press yes to make it inside square brackets.") = "yes")
       Inside := true
     WinWaitActive, ahk_class TElWind
   }
