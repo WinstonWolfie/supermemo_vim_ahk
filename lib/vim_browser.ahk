@@ -551,23 +551,23 @@ class VimBrowser {
     WinActivate, % wIE
   }
 
-  GetFullTitle(WinTitle:="") {
-    WinTitle := WinTitle ? WinGetTitle(WinTitle) : WinGetTitle("ahk_group Browser")
-    return RegExReplace(WinTitle, "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
+  GetFullTitle(w:="") {
+    w := w ? WinGetTitle(w) : WinGetTitle("ahk_group Browser")
+    return RegExReplace(w, "( - Google Chrome| — Mozilla Firefox|( and \d+ more pages?)? - [^-]+ - Microsoft​ Edge)$")
   }
 
-  IsVidSite(title:="") {
-    title := title ? title : this.GetFullTitle()
-    if (title ~= " - YouTube$") {
+  IsVidSite(Title:="", w:="") {
+    Title := Title ? Title : this.GetFullTitle(w)
+    if (Title ~= " - YouTube$") {
       return "yt"
     ; return 1 if video time can be in url and ^a covers the video time
-    } else if (title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {  ; video time can be in url but ^a doesn't cover video time
+    } else if (Title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {  ; video time can be in url but ^a doesn't cover video time
       return 2
-    } else if (title ~= "^(Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on Aniwatch\.to)$") {  ; video time can't be in url and ^a doesn't cover video time
+    } else if (Title ~= "^(Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on Aniwatch\.to)$") {  ; video time can't be in url and ^a doesn't cover video time
       return 3
-    } else if (title ~= "(-免费在线观看-爱壹帆|_高清在线观看 – NO视频)$") {  ; video time can't be in url and ^a doesn't cover video time
+    } else if (Title ~= "(-免费在线观看-爱壹帆|_高清在线观看 – NO视频)$") {  ; video time can't be in url and ^a doesn't cover video time
       return 3
-    } else if (title ~= "^(Netflix)$") {  ; video time cannot be retrieved
+    } else if (Title ~= "^(Netflix)$") {  ; video time cannot be retrieved
       return 4
     }
   }
@@ -575,12 +575,15 @@ class VimBrowser {
   Highlight(CollName:="", PlainText:="", Url:="") {
     this.ActivateBrowser()
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
+    Sent := False
     if (RegexMatch(PlainText, "(?<!\s)(?<!\d)\d+\.", v)) {
       Url := Url ? Url : this.GetParsedUrl()
-      if (IfContains(Url, "fr.wikipedia.org"))
+      if (IfContains(Url, "fr.wikipedia.org")) {
+        Sent := True
         send % "+{left " . StrLen(v) . "}"
+      }
     }
-    if (RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
+    if (!Sent && RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
       Url := Url ? Url : this.GetParsedUrl()
       if (IfContains(Url, "wikipedia.org"))
         send % "+{left " . StrLen(v) . "}"

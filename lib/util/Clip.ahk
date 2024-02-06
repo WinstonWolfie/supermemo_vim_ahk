@@ -2,14 +2,20 @@
 ; Clip() - Send and Retrieve Text Using the Clipboard
 ; Originally by berban - updated February 18, 2019 - modified by Winston
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156
-Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", WaitIndefinitely:=false) {
+Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1) {
   global WinClip, Vim
   if (RestoreClip)
     ClipSaved := ClipboardAll
   If (Text = "") {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     send % KeysToSend ? KeysToSend : "^c"
-    ClipWait, % WaitIndefinitely ? "" : (LongCopy ? 0.6 : 0.2), True
+    if (WaitTime == -1) {
+      ClipWait, % LongCopy ? 0.6 : 0.2, True
+    } else if (WaitTime == 0) {
+      ClipWait,, True
+    } else if (WaitTime) {
+      ClipWait, % WaitTime, True
+    }
     if (!ErrorLevel) {
       if (HTML) {
         ClipboardGet_HTML(Clipped)
@@ -43,6 +49,6 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     Return Clipped
 }
 
-Copy(RestoreClip:=true, HTML:=false, KeysToSend:="", WaitIndefinitely:=false) {
-  return Clip(,, RestoreClip, HTML, KeysToSend, WaitIndefinitely)
+Copy(RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1) {
+  return Clip(,, RestoreClip, HTML, KeysToSend, WaitTime)
 }

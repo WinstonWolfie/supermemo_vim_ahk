@@ -37,11 +37,11 @@ class VimCaret {
     this.SwitchToSameWindow()
   }
 
-  SwitchToSameWindow(WinTitle:="") {
-    WinTitle := WinTitle ? WinTitle : "ahk_id " . WinActive("A")
+  SwitchToSameWindow(w:="") {
+    w := w ? w : "ahk_id " . WinActive("A")
     ; Activate desktop
     ; WinActivate, ahk_class WorkerW  ; doesn't work in Win 11
     WinActivate, ahk_class Progman
-    WinActivate % WinTitle
+    WinActivate % w
   }
 }

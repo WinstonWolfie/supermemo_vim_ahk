@@ -211,9 +211,7 @@ IWBNewTopic:
     WinActivate
     return
   }
-
-  CurrTitle := Vim.Browser.GetFullTitle("A")
-  if (!CurrTitle || (CurrTitle = "new tab")) {
+  if (Vim.Browser.GetFullTitle("A") = "new tab") {
     ToolTip("Web page not found.")
     return
   }
@@ -240,8 +238,12 @@ IWBNewTopic:
   ClickBrowserBtnFinished := false
   SetTimer, ClickBrowserBtn, -1
   wBrowser := "ahk_id " . WinActive("A")
+  IsVidSite := Vim.Browser.IsVidSite(, "A")
+
   Vim.SM.CloseMsgWind()
-  CollName := Vim.SM.GetCollName(), ConceptBefore := Vim.SM.GetCurrConcept()
+  CollName := Vim.SM.GetCollName()
+  ConceptBefore := Vim.SM.GetCurrConcept()
+
   DupChecked := MB := false
   if (!IWB) {
     if (Vim.SM.CheckDup(Vim.Browser.Url, false))
@@ -254,7 +256,6 @@ IWBNewTopic:
     Goto SMImportReturn
 
   Prio := Concept := CloseTab := DLHTML := ResetVidTime := CheckDupForIWB := Tags := RefComment := ClipBeforeGui := UseOnlineProgress := OnlineEl := ""
-  IsVidSite := Vim.Browser.IsVidSite()
   while (!ClickBrowserBtnFinished)
     Continue
   if (IfIn(A_ThisLabel, "^+!a,IWBPriorityAndConcept,^+!b")) {
@@ -391,13 +392,15 @@ SMImportButtonImport:
 
   SMCtrlNYT := (!OnlineEl && (IsVidSite = "yt"))
   if (OnlineEl) {
-    add := ""
     if (Vim.Browser.VidTime && !IfIn(IsVidSite, "yt,1,2")) {
-      add := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Vim.Browser.VidTime
+      SetClipboardHTML("<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Vim.Browser.VidTime
+                     . Vim.SM.MakeReference(true))
     } else if (UseOnlineProgress) {
-      add := "<SPAN class=Highlight>SMVim: Use online video progress</SPAN>"
+      SetClipboardHTML("<SPAN class=Highlight>SMVim: Use online video progress</SPAN>"
+                     . Vim.SM.MakeReference(true))
+    } else {
+      Clipboard := Vim.SM.MakeReference()
     }
-    SetClipboardHTML(add . Vim.SM.MakeReference(true))
   } else if (SMCtrlNYT) {
     Clipboard := Vim.Browser.Url
   } else {
@@ -430,10 +433,8 @@ SMImportButtonImport:
 
   ChangeBackConcept := ""
   if (Concept) {
-    if (Skip := ((OnlineEl == 1) && !Vim.SM.IsOnline(-1, Concept))) {
-      ChangeBackConcept := Concept
-      Concept := "online"
-    }
+    if (Skip := ((OnlineEl == 1) && !Vim.SM.IsOnline(-1, Concept)))
+      ChangeBackConcept := Concept, Concept := "online"
     if (Vim.SM.SetCurrConcept(Concept, ConceptBefore))
       WinWaitClose
     if (!Skip && (InStr(Vim.SM.GetCurrConcept(), Concept) != 1)) {
@@ -1111,4 +1112,17 @@ return
     for i, v in aBtn
       v.ControlClick()
   }
+return
+
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class mpv") && !Vim.State.IsCurrentVimMode("Z"))
++z::Vim.State.SetMode("Z")
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class mpv") && Vim.State.IsCurrentVimMode("Z"))
++z::
+  send +q
+  Vim.State.SetMode("Vim_Normal")
+return
+
++q::
+  send q
+  Vim.State.SetMode("Vim_Normal")
 return

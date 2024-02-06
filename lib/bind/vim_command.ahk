@@ -843,8 +843,12 @@ CalculateTodaysPassRate:
 return
 
 PerplexityAI:
-  if ((!Search := Trim(Copy())) && Vim.SM.IsEditingHTML())
+  if ((!Search := Trim(Copy())) && Vim.SM.IsEditingHTML()) {
+    send ^{f7}  ; save read point
+    Vim.SM.SaveHTML()  ; path may be updated
+    WinWaitActive, ahk_class TElWind
     Search := "File path from SMVim script: " . Vim.SM.GetFilePath()
+  }
   Gui, PerplexityAI:Add, Text,, &Search:
   Gui, PerplexityAI:Add, Edit, vSearch w200 r1 -WantReturn, % Search
   Gui, PerplexityAI:Add, Text,, &Focus:

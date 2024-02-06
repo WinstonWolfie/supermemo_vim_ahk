@@ -86,17 +86,18 @@ t::  ; gt: open in Notepad
     Vim.SM.OpenNotepad(), w := "ahk_exe Notepad.exe"
   } else {
     ClipSaved := ClipboardAll
-    path := Vim.SM.GetFilePath(false)
-    SplitPath, path,,, ext
+    SMFilePath := Vim.SM.GetFilePath(false)
+    SplitPath, SMFilePath,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
-      ShellRun("C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe", path)
+      ShellRun("C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe", SMFilePath)
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       send ^{f7}  ; save read point
       Vim.SM.SaveHTML()  ; path may be updated
       WinWaitActive, ahk_class TElWind
-      path := Vim.SM.GetFilePath(false)
-      Vim.SM.ExitText(true), ShellRun("vim", path)
+      SMFilePath := Vim.SM.GetFilePath(false)
+      Vim.SM.ExitText(true)
+      ShellRun("vim", SMFilePath)
       GroupAdd, Vim, ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe  ; Win 11
       GroupAdd, Vim, ahk_class ConsoleWindowClass ahk_exe cmd.exe  ; Win 10
       w := "ahk_group Vim"

@@ -152,14 +152,15 @@ p::
 return
 
 +p::  ; play video/sound in default system player / edit script component
-  Vim.SM.EditFirstQuestion()
+  Marker := Vim.SM.GetHTMLMarker(), Vim.SM.EditFirstQuestion()
   send ^t!{f12}fv
   WinWaitActive, ahk_class mpv,, 1.5
   if (!ErrorLevel) {
-    RegExMatch(Vim.SM.GetHTMLMarker(), "^SMVim time stamp: (.*)", v)
-    if (v1 ~= "(([1-9]){1,2}:)?([1-9]){1,2}:([1-9]){1,2}") {
+    RegExMatch(Marker, "^SMVim time stamp: (.*)", v)
+    if (Vim.Browser.GetSecFromTime(v1) > 0) {
       sleep 700
-      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{space}, ahk_class mpv
+      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{space}
+      WinActivate
     }
   }
 return
@@ -167,7 +168,6 @@ return
 n::Vim.SM.AltN()
 +n::Vim.SM.AltA()
 x::send {del}  ; delete element/component
-
 ^i::send ^{f8}  ; download images
 
 !+f::  ; open in IE

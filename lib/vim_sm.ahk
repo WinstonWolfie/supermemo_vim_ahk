@@ -892,10 +892,16 @@ class VimSM {
   }
 
   AutoPlay() {
+    w := "ahk_id " . WinActive("A")
     ToolTip := "Running: `n`nTitle: " . WinGetTitle("ahk_class TElWind")
     Marker := this.GetMarkerFromHTMLAllText(this.GetHTMLAllText())
-    if (Marker ~= "^SMVim(?!:)")
+    if (Marker ~= "^SMVim(?!:)") {
       ToolTip .= "`n" . StrUpper(SubStr(Marker, 7, 1)) . SubStr(Marker, 8)
+      Str := SubStr(Marker, 7)
+      RegExMatch(Str, "^.*?(?=:)", MarkerName)
+      RegExMatch(Str, "(?<=: ).*$", MarkerContent)
+      AskToCopy := IfIn(MarkerName, "read point,page number")
+    }
     ToolTip(ToolTip,, -5000, "center")
     if (WinGetTitle("ahk_class TElWind") == "Netflix") {
       ShellRun(this.GetLink())
@@ -903,6 +909,11 @@ class VimSM {
       Gosub SearchLinkInYT
     } else {
       send ^{f10}
+    }
+    if (AskToCopy) {
+      WinWaitNotActive, % w
+      if (MsgBox(3,, "Do you want to copy " . MarkerName . "?"))
+        ToolTip("Copied " . Clipboard := MarkerContent)
     }
   }
 
@@ -1204,6 +1215,9 @@ class VimSM {
       if ((i == 1) && (v.Name ~= "^SMVim .*")) {
         Marker := v.Name
         Continue
+      } else if ((i == 1) && (v.Name == "SMVim: Use online video progress")) {
+        Marker := v.Name
+        Break
       } else if ((i == 2) && Marker) {
         Marker .= v.Name
         Break

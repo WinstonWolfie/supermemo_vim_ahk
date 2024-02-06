@@ -665,7 +665,7 @@ BrowserSyncTime:
   Sync := (A_ThisLabel == "BrowserSyncTime")
   ResetTime := IfContains(A_ThisLabel, "``")
   CloseWnd := IfContains(A_ThisLabel, "^")  ; hotkeys with ctrl will close the browser tab / mpv
-  widMPV := WinActive("ahk_class mpv")
+  widMPV := WinActive("ahk_class mpv"), wMPV := "ahk_id " . widMPV
   widSMElWind := SMTemplCode := wBrowser := ""
 
   if (widBrowser := WinActive("ahk_group Browser")) {
@@ -697,6 +697,16 @@ BrowserSyncTime:
       Vim.Browser.VidTime := Vim.Browser.GetVidtime(Vim.Browser.FullTitle)
   }
 
+  if (widMPV && !ResetTime) {
+    if (Vim.Browser.VidTime := Copy(,,, 0.6)) {
+      Vim.Browser.VidTime := RegExReplace(Vim.Browser.VidTime, "^00:")
+      Vim.Browser.VidTime := RegExReplace(Vim.Browser.VidTime, "^0(?=\d)")
+      Vim.Browser.VidTime := RegExReplace(Vim.Browser.VidTime, "\..*")
+    } else {
+      ToolTip("Time stamp not found or mpv-copyTime script not installed or timed out.")
+    }
+  }
+
   if (!Vim.Browser.VidTime && !ResetTime) {
     SetDefaultKeyboard(0x0409)  ; English-US
     if ((!Vim.Browser.VidTime := InputBox("Video Time Stamp", "Enter video time stamp.")) || ErrorLevel)
@@ -709,20 +719,25 @@ BrowserSyncTime:
   }
 
   if (widMPV && CloseWnd && !ResetTime) {
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % "ahk_id " . widMPV
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % wMPV
   } else if (widMPV && CloseWnd && ResetTime) {
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % "ahk_id " . widMPV
+    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % wMPV
   }
 
   Vim.SM.CloseMsgWind()
   if (ResetTime)
     Vim.Browser.VidTime := "0:00"
 
-  if (!SMTemplCode)
-    SMTemplCode := Vim.SM.GetTemplCode(, wSMElWind)
-  RegExMatch(SMTemplCode, "ScriptFile=\K.*", ScriptPath) 
-  Script := FileRead(ScriptPath)
-  Sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+  if (!widMPV) {
+    if (!SMTemplCode)
+      SMTemplCode := Vim.SM.GetTemplCode(, wSMElWind)
+    RegExMatch(SMTemplCode, "ScriptFile=\K.*", ScriptPath) 
+    Script := FileRead(ScriptPath)
+    Sec := Vim.Browser.GetSecFromTime(Vim.Browser.VidTime)
+  } else {
+    Script := ""
+  }
+
   EditScript := True
   if (IfContains(Script, "bilibili.com")) {
     if (Script ~= "\?p=\d+") {
@@ -759,8 +774,10 @@ BrowserSyncTime:
 SMSyncTimeReturn:
   if (IfContains(A_ThisLabel, "^+!")) {
     Vim.SM.Learn(false,, true)
-  } else if (wBrowser && ((A_ThisLabel == "SMSyncTimeReturn") || (A_ThisLabel == "!+s") || (A_ThisLabel == "!+``"))) {  ; keep browser tab open
+  } else if (wBrowser && ((A_ThisLabel == "SMSyncTimeReturn") || (A_ThisLabel ~= "\!\+(s|`)"))) {  ; keep browser tab open
     WinActivate % wBrowser
+  } else if (wMPV && (A_ThisLabel ~= "\!\+(s|`)")) {
+    WinActivate % wMPV
   } else if (IfContains(A_ThisLabel, "^!")) {
     WinActivate % wSMElWind
   }
