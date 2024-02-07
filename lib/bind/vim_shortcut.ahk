@@ -211,10 +211,6 @@ IWBNewTopic:
     WinActivate
     return
   }
-  if (Vim.Browser.GetFullTitle("A") = "new tab") {
-    ToolTip("Web page not found.")
-    return
-  }
 
   ClipSaved := ClipboardAll
   if (IWB := IfContains(A_ThisLabel, "IWB,^+!b")) {
