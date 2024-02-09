@@ -390,7 +390,7 @@ SMImportButtonImport:
     }
     if (RefComment)
       TagsComment := " " . TagsComment 
-    Vim.Browser.Comment .= " " .  Trim(RefComment) . TagsComment
+    Vim.Browser.Comment := Trim(RefComment) . TagsComment . " " . Vim.Browser.Comment
   }
 
   SMCtrlNYT := (!OnlineEl && (IsVideoOrAudioSite = "yt"))
