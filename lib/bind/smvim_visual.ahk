@@ -259,16 +259,15 @@ CapsLock & z::  ; delete [...]
   if (!ClozeNoBracket && !Hint && !CtrlState)  ; entered nothing
     return
 
-  ToolTip("Cloze processing...", true)
+  Vim.State.SetToolTip("Cloze processing...")
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
-    Goto RemoveToolTipReturn
-  Vim.SM.GoBack()
+      Vim.SM.GoBack()
   if (!ClozeNoBracket && !Hint && CtrlState)  ; entered nothing
-    Goto RemoveToolTipReturn
+    return
   WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 500)
   Vim.SM.WaitFileLoad()
   if (!Vim.SM.SpamQ(, 10000))
-    Goto RemoveToolTipReturn
+    return
 
   if (!ClozeNoBracket && Inside) {
     Cloze := "[" . Hint . "]"
@@ -310,8 +309,7 @@ CapsLock & z::  ; delete [...]
     }
   }
 
-  send % CtrlState ? "{esc}" : "!{right}"
-  RemoveToolTip()
+  send % CtrlState ? "{Esc}" : "!{right}"
   WinWaitActive, ahk_class TChoicesDlg,, 0
   if (!ErrorLevel)
     WinClose

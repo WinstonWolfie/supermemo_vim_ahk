@@ -19,7 +19,7 @@ CapsLock & /::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")))
 CapsLock & /::
   if (!Vim.SM.DoesTextExist()) {
-    ToolTip("Text not found.")
+    Vim.State.SetToolTip("Text not found.")
     return
   }
   CapsState := IfContains(A_ThisLabel, "CapsLock")
@@ -102,10 +102,10 @@ SMSearchAgain:
       send {left}
       if (A_ThisLabel != "SMSearchAgain") {
         send ^{home}
-        ToolTip("Search started from the beginning.")
+        Vim.State.SetToolTip("Search started from the beginning.")
         Goto SMSearchAgain
       }
-      ToolTip("Not found."), Vim.State.SetNormal()
+      Vim.State.SetToolTip("Not found."), Vim.State.SetNormal()
       Return
     }
   } else if (IfContains(CurrFocus, "Internet Explorer_Server")) {

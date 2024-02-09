@@ -19,7 +19,7 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.SM.IsBrowsing() && Vim.State.g && VimLastSearch)
 n::
   if (!Vim.SM.DoesTextExist()) {
-    ToolTip("Text not found.")
+    Vim.State.SetToolTip("Text not found.")
     return
   }
   Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
@@ -57,13 +57,13 @@ x::  ; gx: open hyperlink in current caret position (Open in *n*ew window)
       If (ClipboardGet_HTML(data)) {
         RegExMatch(data, LinkMatch, CurrLink)
         if (!CurrLink)
-          ToolTip("No link found.")
+          Vim.State.SetToolTip("No link found.")
       }
     }
     if (CurrLink) {
       CurrLink := StrReplace(CurrLink, "&amp;", "&")
       if (A_ThisLabel == "u") {
-        ToolTip("Copied " . Clipboard := CurrLink)
+        Vim.State.SetToolTip("Copied " . Clipboard := CurrLink)
       } else if (IfContains(A_ThisLabel, "x")) {
         Vim.SM.RunLink(Currlink)
       }

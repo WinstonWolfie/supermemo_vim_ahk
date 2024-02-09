@@ -80,7 +80,7 @@ x::
   if (!Vim.State.Leader) {
     vim.move.YdcClipSaved := Copy(false,, "^x")
   } else {
-    send {bs}
+    send {BS}
   }
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
@@ -93,7 +93,7 @@ c::
   if (!Vim.State.Leader) {
     vim.move.YdcClipSaved := Copy(false,, "^x")
   } else {
-    send {bs}
+    send {BS}
   }
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Insert", 0, 0, 1)

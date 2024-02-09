@@ -6,7 +6,7 @@
 
 ; Element window
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
-'::Vim.State.SetMode("",, -1,,, -1, 1)  ; leader key
+'::Vim.State.SetMode(,, -1,,, -1, 1)  ; leader key
 q::Vim.SM.EditFirstQuestion()
 a::Vim.SM.EditFirstAnswer()
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
@@ -53,7 +53,7 @@ m::  ; gm: go to link in comment
     }
   }
   if (!Success)
-    ToolTip("Link not found.")
+    Vim.State.SetToolTip("Link not found.")
 Return
 
 ; Element/content window
@@ -205,7 +205,7 @@ c::
   Type := "Text"
   if (!aHints := CreateHintsArray(Control, hCtrl, Type, Caret)) {
     BlockInput, off
-    ToolTip("Text too long.")
+    Vim.State.SetToolTip("Text too long.")
     return
   }    
   if ((Control == "Internet Explorer_Server2") && (LearningState != 1)) {  ; so answer isn't revealed
@@ -218,10 +218,16 @@ c::
     ; aHintStrings is later used in key listener
     CreateHints(aHints, aHintStrings := hintStrings(n))
   } else {
-    ToolTip("No link found.")
+    Vim.State.SetToolTip("No link found.")
   }
   BlockInput, off
 return
+
+CreateHints(HintsArray, HintStrings) {
+  for i, v in HintsArray
+    ToolTipG(HintStrings[i], v.x, v.y, i,, "yellow", "black",, "S")
+  global LastHintCount := i
+}
 
 CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
   global Vim, UIA
@@ -359,9 +365,9 @@ y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
 y::  ; yy: copy current source url
   if (!link := Vim.SM.GetLink()) {
-    ToolTip("Link not found.")
+    Vim.State.SetToolTip("Link not found.")
   } else {
-    ToolTip("Copied " . Clipboard := link)
+    Vim.State.SetToolTip("Copied " . Clipboard := link)
   }
   Vim.State.SetNormal()
 return
@@ -397,19 +403,19 @@ m::
   if (Vim.SM.IsEditingHTML())
     Vim.SM.ClickMid()
   send ^{f7}  ; set read point
-  ToolTip("Read point set")
+  Vim.State.SetToolTip("Read point set")
 Return
 
 !f7::
 `::
   send !{f7}  ; go to read point
-  ToolTip("Going to read point")
+  Vim.State.SetToolTip("Going to read point")
 Return
 
 !m::
 ^+f7::
   send ^+{f7}  ; clear read point
-  ToolTip("Read point cleared")
+  Vim.State.SetToolTip("Read point cleared")
 Return
 
 !+j::

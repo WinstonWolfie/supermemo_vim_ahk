@@ -28,17 +28,16 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     if (HTML && (HTML != "sm")) {
       SetClipboardHTML(text)
     } else {
-      WinClip.Clear()
       Clipboard := Text
-      ClipWait
     }
     if (HTML = "sm") {
       Vim.SM.PasteHTML()
     } else {
       send % KeysToSend ? KeysToSend : "^v"
-      while (DllCall("GetOpenClipboardWindow"))
-        sleep 1
-      ; Sleep 20  ; Short sleep in case Clip() is followed by more keystrokes such as {Enter}
+      while (DllCall("GetOpenClipboardWindow")) {
+        Critical
+        sleep 20
+      }
     }
   }
   If (Text && Reselect)

@@ -43,7 +43,7 @@ Return
 Return
 
 ; +s::  ; remapped in vim-sneak
-;   send {end}+{home}{bs}
+;   send {end}+{home}{BS}
 ;   Vim.State.SetMode("Insert")
 ; Return
 

@@ -51,9 +51,9 @@ g::Vim.Move.Move("g")
 _::Vim.Move.Move("$")
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("j", "P") && Vim.SM.IsEditingText())
-k::send {up}{esc}
+k::send {up}{Esc}
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("k", "P") && Vim.SM.IsEditingText())
-j::send {down}{esc}
+j::send {down}{Esc}
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_"))
 ; 1 character
@@ -88,7 +88,7 @@ x::Vim.Move.Repeat("x")
 (::
 )::Vim.Move.Move(A_ThisLabel)
 
-'::Vim.State.SetMode("",, -1,,, -1, 1)  ; leader key
+'::Vim.State.SetMode(,, -1,,, -1, 1)  ; leader key
 
 ; Search
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.State.fts)

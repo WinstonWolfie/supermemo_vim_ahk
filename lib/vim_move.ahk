@@ -129,14 +129,14 @@ class VimMove {
         if (!this.Vim.State.Leader) {
           this.YdcClipSaved := Copy(false,, "^x")
         } else {
-          send {bs}
+          send {BS}
         }
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("ydc_c")) {
         if (!this.Vim.State.Leader) {
           this.YdcClipSaved := Copy(false,, "^x")
         } else {
-          send {bs}
+          send {BS}
         }
         this.Vim.State.SetMode("Insert")
       } else if (this.Vim.State.StrIsInCurrentVimMode("Vim_gu")) {
@@ -1136,7 +1136,7 @@ class VimMove {
         }
       } else if (key == "+x") {
         if (this.Vim.IsNavigating()) {
-          send {bs}
+          send {BS}
         } else if (this.shift != 1) {
           send +{left}
         }

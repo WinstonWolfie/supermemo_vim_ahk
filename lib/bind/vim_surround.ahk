@@ -41,7 +41,7 @@ t::
   }
   if (!Vim.State.SurroundChangeEntered && Vim.State.StrIsInCurrentVimMode("Visual,ydc_y")) {
     if (!selection := Copy(false)) {
-      ToolTip("Text not found.")
+      Vim.State.SetToolTip("Text not found.")
       Goto RestoreClipReturn
     }
     SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
@@ -74,7 +74,7 @@ VimSurround(CurrKey, SelectionLen, d:=false, c:=false) {
   if ((CurrKey == "<") && (!tag || ErrorLevel))
     return
   if (d)
-    send {bs}
+    send {BS}
   if (tag && c) {
     send % "{text}<" . tag . ">"
   } else if (c) {

@@ -557,26 +557,6 @@ SetDefaultKeyboard(LocaleID) {  ; https://www.autohotkey.com/boards/viewtopic.ph
   }
 }
 
-ToolTip(text, perma:=false, period:=-2000, command:="", n:=20) {
-  PrevCoordModeTT := A_CoordModeToolTip
-  CoordMode, ToolTip, Screen
-  if (command = "center") {
-    x := A_ScreenWidth / 3, y := A_ScreenHeight / 2
-  } else {
-    x := A_ScreenWidth / 3, y := A_ScreenHeight / 5 * 4
-  }
-  ToolTip, % text, % x, % y, % n
-  RemoveTTFunc := Func("RemoveToolTip").Bind(n)
-  SetTimer, % RemoveTTFunc, off
-  if (!perma)
-    SetTimer, % RemoveTTFunc, % period
-  CoordMode, ToolTip, % PrevCoordModeTT
-}
-
-RemoveToolTip(n:=20) {
-  Tooltip,,,, % n
-}
-
 RevArr(arr) {  ; https://github.com/jNizM/AHK_Scripts/blob/master/src/arrays/RevArr.ahk
   newarr := []
   for index, value in arr
@@ -1011,10 +991,6 @@ sortArray( a, o := "A")  ; https://www.autohotkey.com/boards/viewtopic.php?t=601
 
 RestoreClipReturn:
   Clipboard := ClipSaved
-return
-
-RemoveToolTipReturn:
-  RemoveToolTip()
 return
 
 ; https://www.autohotkey.com/docs/v1/scripts/index.htm#HTML_Entities_Encoding

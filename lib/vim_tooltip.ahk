@@ -28,12 +28,12 @@ class VimToolTip {
     this.SetRemoveToolTip(60000)
   }
 
-  RemoveToolTip() {
+  RemoveToolTip(WhichToolTip:=20) {
     display := this.DisplayToolTipObj
     SetTimer, % display, Off
     remove := this.RemoveToolTipObj
-    SetTimer, % remove, off
-    ToolTip
+    SetTimer, % remove, Off
+    ToolTip,,,, % WhichToolTip
   }
 
   SetRemoveToolTip(time) {

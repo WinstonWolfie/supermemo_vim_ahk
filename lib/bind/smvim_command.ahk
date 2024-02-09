@@ -25,7 +25,7 @@ NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
   if (Vim.SM.IsEditingPlainText() || !Vim.SM.DoesHTMLExist()) {
-    ToolTip("This script only works on HTML.")
+    Vim.State.SetToolTip("This script only works on HTML.")
     return
   }
 	send ^{f7}  ; save read point
@@ -33,17 +33,17 @@ NukeHTML:
     send ^t
     Vim.SM.WaitTextFocus()
     if (!Vim.SM.IsEditingHTML()) {
-      ToolTip("This script only works on HTML.")
+      Vim.State.SetToolTip("This script only works on HTML.")
       return
     }
   }
   if (!Vim.SM.SaveHTML(3000)) {
-    ToolTip("Time out.")
+    Vim.State.SetToolTip("Time out.")
     return
   }
   WinWaitActive, ahk_class TElWind  ; insurance
   if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())) {
-    ToolTip("File not found.")
+    Vim.State.SetToolTip("File not found.")
     return
   }
   if ((A_ThisLabel == "NukeHTML")
@@ -57,8 +57,8 @@ NukeHTML:
   FileAppend, % Vim.SM.CleanHTML(HTML, (A_ThisLabel == "NukeHTML"),, Vim.SM.GetLink()), % HTMLPath
   Vim.SM.Reload()
   Vim.SM.WaitFileLoad()
-  send {esc}
-  ToolTip("HTML cleaned."), HTML := ""
+  send {Esc}
+  Vim.State.SetToolTip("HTML cleaned."), HTML := ""
 Return
 
 +l::Vim.SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
@@ -77,7 +77,7 @@ s::  ; turn active language item to passive (*s*witch)
     return
   Vim.SM.ExitText()
   if (Vim.SM.IsLearning() == 2)  ; if learning (on "next repitition")
-    send {esc}
+    send {Esc}
   send ^+s
   sleep 320
   Vim.SM.EditFirstQuestion()
@@ -89,9 +89,9 @@ s::  ; turn active language item to passive (*s*witch)
   if (Vim.SM.IsEditingHTML()) {
     send ^{home}^{del 2}
   } else if (Vim.SM.IsEditingPlainText()) {
-    send ^{home}^+{right}{bs}
+    send ^{home}^+{right}{BS}
   }
-  send {esc}
+  send {Esc}
 return
 
 +s::
@@ -100,7 +100,7 @@ return
     return
   Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3", "A") != "Learn")  ; if learning (on "next repitition")
-    send {esc}
+    send {Esc}
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus(), WinClip.Clear()
   if (Vim.SM.IsEditingHTML()) {
@@ -109,14 +109,14 @@ return
     send ^{home}^+{right}
   }
   text := Clip()
-  send {bs}{esc}
+  send {BS}{Esc}
   Vim.SM.WaitTextExit()
   send ^+s
   sleep 320
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
   send % "{text}" . text
-  send {left 2}{esc}
+  send {left 2}{Esc}
 return
 
 r::  ; set *r*eference's link to what's in the clipboard

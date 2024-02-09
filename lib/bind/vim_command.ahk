@@ -10,7 +10,7 @@ h::
   Vim.State.SetMode("Vim_Normal")
 Return
 CapsLock & m::
-bs::Vim.State.SetMode("Vim_Normal")
+BS::Vim.State.SetMode("Vim_Normal")
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command_w"))
 Return::
@@ -44,7 +44,7 @@ Return
   hWnd := WinActive("A")
   Gui, VimCommander:Add, Text,, &Command:
 
-  List := "Plan||Wiktionary|WebSearch|YT|ScriptSettings|MoveMouseToCaret"
+  List := "Plan||Wiktionary|WebSearch|YT|Settings|MoveMouseToCaret"
         . "|WaybackMachine|DefineGoogle|YouGlish|KillOutlook|DeepL"
         . "|WindowSpy|BingChat|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
@@ -138,7 +138,7 @@ WebSearch:
   Gui, WebSearch:Add, Text,, &Search:
   Gui, WebSearch:Add, Edit, vSearch w136 r1 -WantReturn, % Search
   Gui, WebSearch:Add, Text,, &Language Code:
-  List := "en||es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr|zh-hk|zh"
+  List := "en-uk||en-us|es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr|zh-hk|zh"
   Gui, WebSearch:Add, Combobox, vLangCode gAutoComplete w136, % List
   Gui, WebSearch:Add, Button, Default, &Search
   Gui, WebSearch:Show,, Google Define
@@ -178,9 +178,9 @@ return
 MoveMouseToCaret:
   MouseMove, A_CaretX, A_CaretY
   if (A_CaretX) {
-    ToolTip("Current caret position: " . A_CaretX . " " . A_CaretY)
+    Vim.State.SetToolTip("Current caret position: " . A_CaretX . " " . A_CaretY)
   } else {
-    ToolTip("Caret not found.")
+    Vim.State.SetToolTip("Caret not found.")
   }
 return
 
@@ -320,14 +320,14 @@ WiktionaryButtonSearch:
 return
 
 CopyTitle:
-  ToolTip("Copied " . Clipboard := WinGetTitle("A"))
+  Vim.State.SetToolTip("Copied " . Clipboard := WinGetTitle("A"))
 return
 
 CopyHTML:
   ClipSaved := ClipboardAll
   if (!Clipboard := Copy(false, true))
     Goto RestoreClipReturn
-  ToolTip("Copying successful.")
+  Vim.State.SetToolTip("Copying successful.")
 return
 
 Forvo:
@@ -365,8 +365,8 @@ SetConceptHook:
   WinWaitActive, ahk_class TMsgDialog  ; either asking for confirmation or "no change"
   if (!ErrorLevel)
     send {enter}
-  ControlSend, TVirtualStringTree1, {esc}, ahk_class TContents
-  ToolTip("Hook set."), Vim.State.SetMode("Vim_Normal")
+  ControlSend, TVirtualStringTree1, {Esc}, ahk_class TContents
+  Vim.State.SetToolTip("Hook set."), Vim.State.SetMode("Vim_Normal")
 Return
 
 AccViewer:
@@ -440,22 +440,22 @@ ReformatScriptComponent:
   ClipWait
   aOriginalText := StrSplit(Clipboard, "`n`r")
   Vim.Browser.Url := Trim(aOriginalText[1], " `r`n"), Vim.Browser.Title := WinGetTitle("A")
-  Vim.Browser.VidTime := Trim(aOriginalText[2], " `r`n")
+  Vim.Browser.TimeStamp := Trim(aOriginalText[2], " `r`n")
   if (IfContains(Vim.Browser.Url, "youtube.com")) {
-    YTTime := Vim.Browser.VidTime ? "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.VidTime) . "s" : ""
+    YTTime := Vim.Browser.TimeStamp ? "&t=" . Vim.Browser.GetSecFromTime(Vim.Browser.TimeStamp) . "s" : ""
     Vim.Browser.Source := "YouTube"
     if (YTTime) {
       send ^t{f9}  ; opens script editor
       WinWaitActive, ahk_class TScriptEditor
       ControlSetText, TMemo1, % ControlGetText("TMemo1", "A") . YTTime
-      send !o{esc}  ; close script editor
+      send !o{Esc}  ; close script editor
     }
   } else {
-    Vim.Browser.Title := Vim.Browser.VidTime . " | " . Vim.Browser.Title
+    Vim.Browser.Title := Vim.Browser.TimeStamp . " | " . Vim.Browser.Title
   }
   Clipboard := Vim.Browser.Url
   Gosub SMSetLinkFromClipboard
-  send {esc}
+  send {Esc}
   if (ContLearn)
     Vim.SM.Learn()
   Clipboard := ClipSaved
@@ -464,7 +464,7 @@ return
 
 CopyWindowPosition:
   WinGetPos, x, y, w, h, A
-  ToolTip("Copied " . Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h)
+  Vim.State.SetToolTip("Copied " . Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h)
 return
 
 MassReplaceReference:
@@ -567,7 +567,7 @@ ZLibrary:
   ; if (uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='waiting for network|updating'",, "regex",, 2000)) {
   ;   uiaBrowser.FindFirstBy("ControlType=Button AND Name='Send Message'").Click()
   ; } else {
-  ;   ToolTip("Timed out.")
+  ;   Vim.State.SetToolTip("Timed out.")
   ; }
 return
 
@@ -606,7 +606,7 @@ ImportFile:
   Vim.SM.AskPrio()
 return
 
-ScriptSettings:
+Settings:
   Vim.Setting.ShowGui()
 return
 
@@ -646,14 +646,14 @@ ImageGoogleButtonSearch:
 return
 
 SearchLinkInYT:
-  if ((!link := Vim.SM.GetLink()) && Vim.SM.DoesHTMLExist()) {
+  if ((!Link := Vim.SM.GetLink()) && Vim.SM.DoesHTMLExist()) {
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
     send ^{home}+{right}
-    RegExMatch(Copy(, true), "(<A((.|\r\n)*)href="")\K[^""]+", link)
-    send {esc}
+    RegExMatch(Copy(, true), "(<A((.|\r\n)*)href="")\K[^""]+", Link)
+    send {Esc}
   }
-  if (link) {
+  if (Link) {
     ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(WinGetTitle("ahk_class TElWind")))
     WinWaitActive, ahk_group Browser
     sleep 400
@@ -661,15 +661,15 @@ SearchLinkInYT:
     uiaBrowser.WaitPageLoad()
     uiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
     auiaLinks := uiaBrowser.FindAllByType("Hyperlink")
-    link := RegExReplace(link, "https:\/\/(www\.)?")
+    Link := RegExReplace(Link, "https:\/\/(www\.)?")
     for i, v in auiaLinks {
-      if (IfContains(v.CurrentValue, link)) {
-        v.click()
+      if (IfContains(v.CurrentValue, Link)) {
+        v.Click()
         return
       }
     }
   } else {
-    ToolTip("Not found.")
+    Vim.State.SetToolTip("Not found.")
   }
 return
 
@@ -820,7 +820,7 @@ RestartICloudDrive:
 return
 
 CalculateTodaysPassRate:
-  ToolTip("Executing...", true), pidSM := WinGet("PID", "ahk_class TElWind")
+  Vim.State.SetToolTip("Executing..."), pidSM := WinGet("PID", "ahk_class TElWind")
   BlockInput, on
   Vim.SM.PostMsg(31)  ; export rep history
   WinWaitActive, ahk_class TFileBrowser
@@ -836,7 +836,6 @@ CalculateTodaysPassRate:
   RegExReplace(RepHistory, "s)\nItem #[\d,]+: [^\n]+\n[^\n]+" . DateRegEx
                          . "[^\n]+Grade=[3-5]",, TodayPassCount)
   BlockInput, off
-  RemoveToolTip()
   MsgBox % "Today's repetition count: " . TodayRepCount
          . "`nToday's pass (grade > 3) count: " . TodayPassCount
          . "`nToday's pass rate: " . Format("{:g}", TodayPassCount / TodayRepCount * 100) . "%"
@@ -929,7 +928,7 @@ RetryAllSyncErrors:
     if (el.FindFirstBy("ControlType=Text AND Name='Looks fine'"))
       Break
   }
-  ToolTip("Finished.")
+  Vim.State.SetToolTip("Finished.")
 return
 
 MassReplaceRegistry:
@@ -1021,7 +1020,7 @@ MassProcessRegistry:
 return
 
 AllLapsesToday:
-  ToolTip("Executing...", true), pidSM := WinGet("PID", "ahk_class TElWind")
+  Vim.State.SetToolTip("Executing..."), pidSM := WinGet("PID", "ahk_class TElWind")
   BlockInput, on
   Vim.SM.PostMsg(31)  ; export rep history
   WinWaitActive, ahk_class TFileBrowser
@@ -1040,7 +1039,6 @@ AllLapsesToday:
     FileAppend, % v1 . "`n", % TempOutputPath
   ShellRun(TempOutputPath)
   BlockInput, off
-  RemoveToolTip()
 return
 
 Lexico:
@@ -1134,9 +1132,9 @@ CleanHTML:
     HTML := FileRead(HTMLPath)
     FileDelete % HTMLPath
     FileAppend, % Vim.SM.CleanHTML(HTML), % HTMLPath
-    ToolTip("Completed.")
+    Vim.State.SetToolTip("Completed.")
   } else {
-    ToolTip("Not found.")
+    Vim.State.SetToolTip("Not found.")
   }
 return
 
@@ -1146,22 +1144,22 @@ SaveFile:
   if (r := RegExMatch(url, "\/[^\/\.]+\.[^\/\.]+$", v))
     UrlDownloadToFile, % url, % FilePath := "d:" . v
   if (!r || ErrorLevel) {
-    ToolTip("Failed.")
+    Vim.State.SetToolTip("Failed.")
     return
   }
   SplitPath, FilePath, name, dir, ext, NameNoExt
   if (ext = "ogg")
     RunWait, % "cmd /c ffmpeg -i """ . FilePath . """ -acodec libmp3lame """ . dir . "\" . NameNoExt . ".mp3"" && del """ . FilePath . """",, Hide
-  ToolTip("Success.")
+  Vim.State.SetToolTip("Success.")
 return
 
 EPUB2TXT:
   if (EpubPath := FindSearch("EPUB2TXT", "Path:")) {
     TxtPath := StrReplace(EpubPath, ".epub", ".txt")
     RunWait, % "pandoc -f epub -t plain -o """ . TxtPath . """ """ . EpubPath . """",, Hide
-    ToolTip("Completed.")
+    Vim.State.SetToolTip("Completed.")
   } else {
-    ToolTip("Not found.")
+    Vim.State.SetToolTip("Not found.")
   }
 return
 
@@ -1225,7 +1223,7 @@ MassProcessBrowser:
     Vim.SM.WaitHTMLFocus()
     send ^{home}^+{right 3}!{f12}rh
     sleep 100
-    send {esc}
+    send {Esc}
     Vim.SM.WaitTextExit()
     WinActivate, ahk_class TBrowser
     send {down}

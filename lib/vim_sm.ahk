@@ -226,7 +226,7 @@ class VimSM {
           send ^t
         ret := 2
       }
-      send {esc}
+      send {Esc}
       if (!this.WaitTextExit(Timeout))
         return 0
     }
@@ -768,7 +768,7 @@ class VimSM {
     } else if (WinGetClass() == "TMsgDialog") {
       this.LastCtrlFNotFound := true
       WinClose
-      ToolTip(ToolTip,, -3000)
+      this.Vim.State.SetToolTip(ToolTip)
       if (ClearHighlight)
         this.ClearHighlight()
     }
@@ -795,7 +795,7 @@ class VimSM {
     while (WinExist("ahk_class TCommanderDlg ahk_pid " . pidSM)) {
       ControlClick, TButton4,,,,, NA
       if (WinExist("ahk_class #32770 ahk_pid " . pidSM))
-        ControlSend,, {esc}
+        ControlSend,, {Esc}
     }
     return true
   }
@@ -832,7 +832,7 @@ class VimSM {
         this.PostMsg(msg)
         WinWaitActive, ahk_class TMyFindDlg,, 3.5
         if (ErrorLevel) {
-          ToolTip("F3 window cannot be launched.")
+          this.Vim.State.SetToolTip("F3 window cannot be launched.")
           return false
         }
       }
@@ -846,8 +846,8 @@ class VimSM {
       if (WinGetClass() == "TMyFindDlg") {  ; ^enter closed "not found" window
         WinClose
         this.ClearHighlight()
-        send {esc}
-        this.Vim.State.SetNormal(), ToolTip("Text not found.")
+        send {Esc}
+        this.Vim.State.SetNormal(), this.Vim.State.SetToolTip("Text not found.")
         return false
       } else if (WinGetClass() == "TCommanderDlg") {  ; ^enter opened commander
         send {text}h  ; clear highlight
@@ -893,16 +893,7 @@ class VimSM {
 
   AutoPlay() {
     w := "ahk_id " . WinActive("A")
-    ToolTip := "Running: `n`nTitle: " . WinGetTitle("ahk_class TElWind")
-    Marker := this.GetMarkerFromHTMLAllText(this.GetHTMLAllText())
-    if (Marker ~= "^SMVim(?!:)") {
-      ToolTip .= "`n" . StrUpper(SubStr(Marker, 7, 1)) . SubStr(Marker, 8)
-      Str := SubStr(Marker, 7)
-      RegExMatch(Str, "^.*?(?=:)", MarkerName)
-      RegExMatch(Str, "(?<=: ).*$", MarkerContent)
-      AskToCopy := IfIn(MarkerName, "read point,page number")
-    }
-    ToolTip(ToolTip,, -5000, "center")
+    Marker := this.GetHTMLMarker()
     if (WinGetTitle("ahk_class TElWind") == "Netflix") {
       ShellRun(this.GetLink())
     } else if (Marker == "SMVim: Use online video progress") {
@@ -910,11 +901,51 @@ class VimSM {
     } else {
       send ^{f10}
     }
-    if (AskToCopy) {
-      WinWaitNotActive, % w
-      if (MsgBox(3,, "Do you want to copy " . MarkerName . "?"))
-        ToolTip("Copied " . Clipboard := MarkerContent)
+    SMTitle := WinGetTitle("ahk_class TElWind")
+    ToolTip := "Running: `n`nTitle: " . SMTitle
+    if (Marker ~= "^SMVim(?!:)") {
+      ToolTip .= "`n" . StrUpper(SubStr(Marker, 7, 1)) . SubStr(Marker, 8)
+      Str := SubStr(Marker, 7)
+      RegExMatch(Str, "^.*?(?=:)", MarkerName)
+      RegExMatch(Str, "(?<=: ).*$", MarkerContent)
     }
+    WinWaitNotActive, % w
+    hWnd := WinActive("A")
+    if (MarkerName = "read point") {
+      if (WinActive("ahk_group Browser")) {
+        uiaBrowser := new UIA_Browser("ahk_id " . hWnd)
+        uiaBrowser.WaitPageLoad(,, 0)
+      }
+      t := "Do you want to search read point?"
+         . "`n`nTitle: " . SMTitle
+         . "`nRead point: " . MarkerContent
+      if (MsgBox(3,, t) = "yes") {
+        ClipSaved := ClipboardAll
+        Clipboard := MarkerContent
+        WinWaitActive, % "ahk_id " . hWnd
+        send ^f
+        sleep 100
+        if (Calibre := WinActive("ahk_exe ebook-viewer.exe"))
+          sleep 100
+        send ^v
+        global WinClip
+        WinClip._waitClipReady()
+        send {enter}
+        if (Calibre)
+          send {enter}
+        Clipboard := ClipSaved
+      }
+    } else if (MarkerName = "page mark") {
+      if (MsgBox(3,, "Do you want to go to page mark?") = "yes") {
+        WinWaitActive, % "ahk_id " . hWnd
+        if (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) {
+          ControlFocus, Edit1
+          ControlSetText, Edit1, % MarkerContent
+          send {enter}
+        }
+      }
+    }
+    this.Vim.State.SetToolTip(ToolTip)
   }
 
   AltT() {
@@ -1216,8 +1247,7 @@ class VimSM {
         Marker := v.Name
         Continue
       } else if ((i == 1) && (v.Name == "SMVim: Use online video progress")) {
-        Marker := v.Name
-        Break
+        return v.Name
       } else if ((i == 2) && Marker) {
         Marker .= v.Name
         Break

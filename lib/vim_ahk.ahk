@@ -246,11 +246,11 @@ class VimAhk {
 
   TwoLetterEnterNormal() {
     if (this.State.StrIsInCurrentVimMode("Insert")) {
-      send {bs}
+      send {BS}
     } else if (this.State.StrIsInCurrentVimMode("Visual")) {
       send {right}{up}
     } else if (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText()) {
-      send {up}{esc}
+      send {up}{Esc}
     }
     this.State.SetNormal()
   }

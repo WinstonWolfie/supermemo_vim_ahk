@@ -16,13 +16,13 @@
 #if (Vim.State.Vim.Enabled && (GetKeyState("LWin", "P") || GetKeyState("RWin", "P")))
 CapsLock & j::WinMinimize, A
 CapsLock & k::
-    w := WinActive("A")
+    h := WinActive("A")
     send #{down}  ; refresh window
     KeyWait CapsLock
     KeyWait LWin
     KeyWait RWin
     KeyWait k
-    WinMaximize, % "ahk_id " . w
+    WinMaximize, % "ahk_id " . h
 return
 
 #if (Vim.State.Vim.Enabled)
@@ -266,7 +266,7 @@ NotCtrlDelWind() {
 CapsLock & ,::send {Del}                                             ;|
 CapsLock & .::send % (NotCtrlDelWind()) ? "^+{right}{del}" : "^{del}"
 CapsLock & m::send {BS}                                              ;|
-CapsLock & n::send % (NotCtrlDelWind()) ? "^+{left}{bs}" : "^{bs}"
+CapsLock & n::send % (NotCtrlDelWind()) ? "^+{left}{BS}" : "^{BS}"
 ;---------------------------------------------------------------------o
 
 

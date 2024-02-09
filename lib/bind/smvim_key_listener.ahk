@@ -14,36 +14,37 @@ m::
 p::
 g::
 h::
-bs::
-esc::
-capslock::
+BS::
+Esc::
+CapsLock::
 ^[::
-  esc := IfIn(A_ThisLabel, "esc,capslock,^[")
-  if (!esc) {
-    if (bs := (A_ThisLabel = "bs")) {
+  Esc := IfIn(A_ThisLabel, "Esc,CapsLock,^[")
+  if (!Esc) {
+    if (BS := (A_ThisLabel = "BS")) {
       HintsEntered := RegExReplace(HintsEntered, ".$")
     } else {
       if (!HintsEntered) {
         for i, v in aHintStrings {
-          if (cont := (v ~= "i)^" . A_ThisLabel))
+          if (Cont := (v ~= "i)^" . A_ThisLabel))
             Break
         }
-        if (!cont)
+        if (!Cont)
           return
       }
       HintsEntered .= A_ThisLabel
     }
-    ToolTip(StrUpper(HintsEntered), true,,, 19)
-    if (bs || (!ArrayIndex := HasVal(aHintStrings, HintsEntered)))
+    if (BS || (!ArrayIndex := HasVal(aHintStrings, HintsEntered))) {
+      Vim.State.SetToolTip(StrUpper(HintsEntered), 0, 19)
       return
+    }
     v := aHints[ArrayIndex]
     if (HinterMode == "YankLink") {
-      ToolTip("Copied " . Clipboard := v.Link)
+      Vim.State.SetToolTip("Copied " . Clipboard := v.Link)
     } else if (IfIn(HinterMode, "Visual,Normal")) {
       IE2 := ControlGet(,, "Internet Explorer_Server2", "A")
       IE1 := ControlGet(,, "Internet Explorer_Server1", "A")
       if (IE2 && IE1) {
-        send ^t{esc}
+        send ^t{Esc}
         Vim.SM.WaitTextExit()
         sleep 20
       }
@@ -63,16 +64,17 @@ capslock::
         send {right}{left}^+{right}
     } else {
       if (e := !Vim.SM.RunLink(v.Link, OpenInIE))
-        ToolTip("An error occured when running " . v.Link)
+        Vim.State.SetToolTip("An error occured when running " . v.Link)
       if (!e && IfContains(HinterMode, "Persistent,OpenLinkInNew")) {
         WinWaitNotActive, ahk_class TElWind
         WinActivate, ahk_class TElWind
       }
     }
   }
-  HintsEntered := "", RemoveToolTip(19)
-  if (esc || (HinterMode != "Persistent")) {
-    RemoveAllToopTip(LastHintCount, "g")
+  HintsEntered := "", Vim.VimToolTip.RemoveToolTip(19)
+  if (Esc || (HinterMode != "Persistent")) {
+    loop % LastHintCount
+      ToolTipG(,,, A_Index)
     if (HinterMode == "Visual") {
       Vim.State.SetMode("Vim_VisualChar")
     } else {
@@ -81,26 +83,7 @@ capslock::
   }
 return
 
-RemoveAllToopTip(n:=20, ToolTipKind:="") {
-  if (!ToolTipKind) {
-    loop % n
-      ToolTip,,,, % A_Index
-  } else if (ToolTipKind = "ex") {
-    loop % n
-      ToolTipEx(,,, A_Index)
-  } else if (ToolTipKind = "g") {
-    loop % n
-      ToolTipG(,,, A_Index)
-  }
-}
-
-CreateHints(HintsArray, HintStrings) {
-  for i, v in HintsArray
-    ToolTipG(HintStrings[i], v.x, v.y, i,, "yellow", "black",, "S")
-  global LastHintCount := i
-}
-
-hintStrings(linkCount) {  ; adapted from vimium
+hintStrings(linkCount) {  ; adapted from vimium: https://github.com/philc/vimium
   hints := [], offset := 0
   linkHintCharacters := ["S", "A", "D", "J", "K", "L", "E", "W", "C", "M", "P", "G", "H"]
   while (((ObjCount(hints) - offset) < linkCount) || (ObjCount(hints) == 1)) {
