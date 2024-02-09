@@ -452,8 +452,13 @@ class VimBrowser {
       if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Updated (.*)", v), this.Date := v1
     } else if (IfContains(this.Url, "mp.weixin.qq.com")) {
-      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, " ([0-9]{4}-[0-9]{2}-[0-9]{2}) ", v), this.Date := v1
+      if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
+        if (RegExMatch(FullPageText, "Modified on (\d{4}-\d{2}-\d{2})", v)) {
+          this.Date := v1
+        } else if (RegExMatch(FullPageText, " (\d{4}-\d{2}-\d{2}) \d{2}:\d{2}", v)) {
+          this.Date := v1
+        }
+      }
     } else if (this.Title ~= " \| Britannica$") {
       this.Source := "Britannica", this.Title := RegExReplace(this.Title, " \| Britannica$")
       if (CopyFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))

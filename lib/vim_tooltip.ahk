@@ -36,8 +36,8 @@ class VimToolTip {
     ToolTip,,,, % WhichToolTip
   }
 
-  SetRemoveToolTip(time) {
-    remove := this.RemoveToolTipObj
+  SetRemoveToolTip(time, WhichToolTip:=20) {
+    remove := ObjBindMethod(this, "RemoveToolTip", WhichToolTip)
     SetTimer, % remove, % "-" time
   }
 }

@@ -382,12 +382,15 @@ SMImportButtonImport:
     Vim.Browser.Date := ""
 
   SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
-  if (Tags) {
-    TagsComment := StrReplace(Trim(Tags), " ", "_")
-    TagsComment := "#" . StrReplace(TagsComment, ";", " #")
+  if (Tags || RefComment) {
+    TagsComment := ""
+    if (Tags) {
+      TagsComment := StrReplace(Trim(Tags), " ", "_")
+      TagsComment := "#" . StrReplace(TagsComment, ";", " #")
+    }
     if (RefComment)
       TagsComment := " " . TagsComment 
-    Vim.Browser.Comment := Trim(RefComment) . TagsComment . " " . Vim.Browser.Comment
+    Vim.Browser.Comment .= " " .  Trim(RefComment) . TagsComment
   }
 
   SMCtrlNYT := (!OnlineEl && (IsVideoOrAudioSite = "yt"))

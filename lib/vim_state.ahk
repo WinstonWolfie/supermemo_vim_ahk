@@ -49,7 +49,7 @@ class VimState {
     StrReplace(Title, "`n",, Lines)
     ToolTip, % Title, 5, H - 30 - (Lines) * 20, % WhichToolTip
     if (Period > 0)
-      this.Vim.VimToolTip.SetRemoveToolTip(Period)
+      this.Vim.VimToolTip.SetRemoveToolTip(Period, WhichToolTip)
   }
 
   FullStatus() {
@@ -82,8 +82,6 @@ class VimState {
       this.Surround := Surround
     if (Leader != -1)
       this.Leader := Leader
-    if (Leader == 1)
-      this.SetToolTip("<leader>")
     this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, fts)
   }
 
