@@ -248,8 +248,7 @@ CapsLock & z::  ; delete [...]
   if ((A_ThisLabel == "ClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
   if (!ClozeNoBracket && !Inside && Hint && IfContains(Hint, "/")) {
-    if (MsgBox(3,, "Your hint has a slash. Press yes to make it inside square brackets.") = "yes")
-      Inside := true
+    Inside := (MsgBox(3,, "Your hint has a slash. Press yes to make it inside square brackets.") = "yes")
     WinWaitActive, ahk_class TElWind
   }
   KeyWait Capslock
@@ -261,7 +260,8 @@ CapsLock & z::  ; delete [...]
 
   Vim.State.SetToolTip("Cloze processing...")
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
-      Vim.SM.GoBack()
+    return
+  Vim.SM.GoBack()
   if (!ClozeNoBracket && !Hint && CtrlState)  ; entered nothing
     return
   WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 500)

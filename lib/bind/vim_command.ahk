@@ -1209,6 +1209,7 @@ Comment:
   ControlSetText, TMemo1, % Ref
   send ^{enter}
   WinWaitClose
+  Vim.State.SetNormal()
 return
 
 MassProcessBrowser:

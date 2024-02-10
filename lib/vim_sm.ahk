@@ -944,8 +944,9 @@ class VimSM {
           send {enter}
         }
       }
+    } else {
+      this.Vim.State.SetToolTip(ToolTip)
     }
-    this.Vim.State.SetToolTip(ToolTip)
   }
 
   AltT() {

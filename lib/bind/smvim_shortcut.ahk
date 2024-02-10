@@ -233,32 +233,33 @@ return
 
 !+c::
   KeyWait Shift  ; shift always gets stuck
-  BlockInput, on
+  BlockInput, On
   Vim.SM.EditFirstQuestion()
   send ^t{f9}
   WinWaitActive, ahk_class TScriptEditor,, 1.5
   if (ErrorLevel) {
+    BlockInput, Off
     Vim.State.SetToolTip("Script editor not found.")
-    BlockInput, off
     return
   }
   send !c
   WinWaitActive, ahk_class TInputDlg,, 0.3
   if (ErrorLevel) {
     Send {Esc}
-    BlockInput, off
+    BlockInput, Off
+    WinWaitActive, ahk_class TElWind
     Vim.State.SetToolTip("Can't be cloned because this script is the only instance in this collection.")
     return
   }
-  send {Alt Down}oo{Alt Up}
+  send {Alt Down}oo{Alt Up}{Esc}
+  BlockInput, Off
+  WinWaitActive, ahk_class TElWind
   Vim.State.SetToolTip("Cloning successful.")
-  send {Esc}
-  BlockInput, off
 return
 
 ; More intuitive inter-element linking, inspired by Obsidian
-; 1. Go to the element you want to link to and press ctrl+alt+g
-; 2. Go to the element you want to have the hyperlink, select text and press ctrl+alt+k
+; 1. Go to the element you want to link to and press Ctrl + Alt + G
+; 2. Go to the element you want to have the hyperlink, select text and press Ctrl + Alt + K
 ^!g::
   WinClip.Clear()
   send ^g^c{Esc}
@@ -673,7 +674,7 @@ BrowserSyncTime:
     Vim.Browser.FullTitle := Vim.Browser.GetFullTitle(wBrowser)
     if (Vim.Browser.FullTitle != "Netflix")
       ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Esc}, % wBrowser
-    Vim.Browser.GetTitleSourceDate(!Sync, false,,, false, false)  ; need url here
+    Vim.Browser.GetTitleSourceDate(!Sync, false,,, false, false)  ; need url and title here
     WinGet, paSMTitles, List, ahk_class TElWind  ; can't get pseudo-array by WinActive("A")
     loop % paSMTitles {
       SMTitle := WinGetTitle("ahk_id " . hWnd := paSMTitles%A_Index%)

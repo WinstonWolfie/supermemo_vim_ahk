@@ -388,9 +388,11 @@ SMImportButtonImport:
       TagsComment := StrReplace(Trim(Tags), " ", "_")
       TagsComment := "#" . StrReplace(TagsComment, ";", " #")
     }
-    if (RefComment)
+    if (RefComment && TagsComment)
       TagsComment := " " . TagsComment 
-    Vim.Browser.Comment := Trim(RefComment) . TagsComment . " " . Vim.Browser.Comment
+    if (Vim.Browser.Comment)
+      Vim.Browser.Comment := " " . Vim.Browser.Comment
+    Vim.Browser.Comment := Trim(RefComment) . TagsComment . Vim.Browser.Comment
   }
 
   SMCtrlNYT := (!OnlineEl && (IsVideoOrAudioSite = "yt"))
