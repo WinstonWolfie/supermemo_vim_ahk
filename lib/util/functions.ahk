@@ -10,51 +10,51 @@
 ; https://github.com/Paris/AutoHotkey-Scripts/blob/master/Functions.ahk
 
 IfBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
-  PrevStringCaseSense := A_StringCaseSense
+  SCS := A_StringCaseSense
   StringCaseSense % StrCaseSense ? "on" : "off"
   If var between %LowerBound% and %UpperBound%
     ret := true
-  StringCaseSense % PrevStringCaseSense
+  StringCaseSense % SCS
   return ret
 }
 IfNotBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
-  PrevStringCaseSense := A_StringCaseSense
+  SCS := A_StringCaseSense
   StringCaseSense % StrCaseSense ? "on" : "off"
   If var not between %LowerBound% and %UpperBound%
     ret := true
-  StringCaseSense % PrevStringCaseSense
+  StringCaseSense % SCS
   return ret
 }
 IfIn(ByRef var, MatchList, StrCaseSense:=false) {
-  PrevStringCaseSense := A_StringCaseSense
+  SCS := A_StringCaseSense
   StringCaseSense % StrCaseSense ? "on" : "off"
   If var in %MatchList%
     ret := true
-  StringCaseSense % PrevStringCaseSense
+  StringCaseSense % SCS
   return ret
 }
 IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
-  PrevStringCaseSense := A_StringCaseSense
+  SCS := A_StringCaseSense
   StringCaseSense % StrCaseSense ? "on" : "off"
   If var not in %MatchList%
     ret := true
-  StringCaseSense % PrevStringCaseSense
+  StringCaseSense % SCS
   return ret
 }
 IfContains(ByRef var, MatchList, StrCaseSense:=false) {
-  PrevStringCaseSense := A_StringCaseSense
+  SCS := A_StringCaseSense
   StringCaseSense % StrCaseSense ? "on" : "off"
   If var contains %MatchList%
     ret := true
-  StringCaseSense % PrevStringCaseSense
+  StringCaseSense % SCS
   return ret
 }
 IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
-  PrevStringCaseSense := A_StringCaseSense
+  SCS := A_StringCaseSense
   StringCaseSense % StrCaseSense ? "on" : "off"
   If var not contains %MatchList%
     ret := true
-  StringCaseSense % PrevStringCaseSense
+  StringCaseSense % SCS
   return ret
 }
 IfIs(ByRef var, type) {
@@ -121,7 +121,7 @@ FileRead(Filename) {
 }
 FileReadAndDelete(Filename) {
   FileRead, v, % Filename
-  ; FileDelete, % Filename
+  FileDelete, % Filename
   Return, v
 }
 FileReadLine(Filename, LineNum) {
@@ -465,7 +465,7 @@ WinWaitTitleChange(OriginalTitle:="", WinTitle:="", Timeout:=0) {
   }
 }
 
-WinWaitTitle(title, Timeout:=0, WinTitle:="") {
+WinWaitTitle(title, WinTitle:="", Timeout:=0) {
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) == title) {
@@ -476,7 +476,7 @@ WinWaitTitle(title, Timeout:=0, WinTitle:="") {
   }
 }
 
-WinWaitTitleRegEx(title, Timeout:=0, WinTitle:="") {
+WinWaitTitleRegEx(title, WinTitle:="", Timeout:=0) {
   StartTime := A_TickCount
   loop {
     if (WinGetTitle(WinTitle) ~= title) {
@@ -1074,7 +1074,7 @@ CopyAll(Timeout:=2500) {
   Timeout := Timeout ? Timeout / 1000 : Timeout
   global WinClip
   WinClip.Clear()
-  send {Ctrl Down}a{Ins}{Ctrl Up}{Esc}
+  Send {Esc}{Ctrl Down}a{Ins}{Ctrl Up}{Esc}
   ClipWait % Timeout
   return !ErrorLevel
 }
@@ -1216,7 +1216,6 @@ RemoveLatinMacrons(Latin) {
 }
 
 RetrieveUrlFromClip() {
-  global Vim
   ClipboardGet_HTML(data)
   RegExMatch(data, "SourceURL:(.*)", v)
   return v1
@@ -1237,6 +1236,20 @@ ClipboardGet_HTML( byref Data ) {
   Return dataL ? dataL : 0
 }
 
+GetClipHTMLBody(HTML:="") {
+  if (!HTML)
+    ClipboardGet_HTML(HTML)
+  RegExMatch(HTML, "s)<!--StartFragment-->(.*)<!--EndFragment-->", v)
+  return v1
+}
+
+GetClipLink(HTML:="") {
+  if (!HTML)
+    ClipboardGet_HTML(HTML)
+  RegExMatch(HTML, "SourceURL:(.*)", v)
+  return v1
+}
+
 ; https://www.autohotkey.com/boards/viewtopic.php?t=80706
 SetClipboardHTML(HtmlBody, HtmlHead:="", AltText:="") {       ; v0.67 by SKAN on D393/D42B
   Local  F, Html, pMem, Bytes, hMemHTM:=0, hMemTXT:=0, Res1:=1, Res2:=1   ; @ tiny.cc/t80706
@@ -1250,10 +1263,8 @@ SetClipboardHTML(HtmlBody, HtmlHead:="", AltText:="") {       ; v0.67 by SKAN on
   {
     Html     := "Version:0.9`r`nStartHTML:00000000`r`nEndHTML:00000000`r`nStartFragment"
         . ":00000000`r`nEndFragment:00000000`r`n<!DOCTYPE>`r`n<html>`r`n<head>`r`n"
-              ; . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment-->`r`n"
               . HtmlHead . "`r`n</head>`r`n<body>`r`n<!--StartFragment-->"
                 . HtmlBody . "<!--EndFragment-->`r`n</body>`r`n</html>"
-                ; . HtmlBody . "`r`n<!--EndFragment-->`r`n</body>`r`n</html>"
 
     Bytes    := StrPut(Html, "utf-8")
     hMemHTM  := DllCall("GlobalAlloc", "Int",0x42, "Ptr",Bytes+4, "Ptr")

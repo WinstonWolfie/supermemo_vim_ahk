@@ -14,49 +14,57 @@ i::
 Return
 
 +i::
-  send {Home}
+  Send {Home}
   Vim.State.SetMode("Insert")
 Return
 
 a::
   if (Vim.IsNavigating()) {
-    send {tab}
+    Send {tab}
   } else if (!Vim.CheckChr("`n")) {
-    send {Right}
+    Send {Right}
   }
   Vim.State.SetMode("Insert")
 Return
 
 +a::
-  send {End}
+  Send {End}
   Vim.State.SetMode("Insert")
 Return
 
 o::
-  send {End}{Enter}
+  if (Vim.SM.IsNavigatingPlan()) {
+    Send {Down}{Ins}
+  } else {
+    Send {End}{Enter}
+  }
   Vim.State.SetMode("Insert")
 Return
 
 +o::
-  send {Home}{Enter}{Left}
+  if (Vim.SM.IsNavigatingPlan()) {
+    Send {Ins}
+  } else {
+    Send {Home}{Enter}{Left}
+  }
   Vim.State.SetMode("Insert")
 Return
 
 ; +s::  ; remapped in vim-sneak
-;   send {end}+{home}{BS}
+;   Send {end}+{home}{BS}
 ;   Vim.State.SetMode("Insert")
 ; Return
 
 ; Keys that need insert mode
 ~f2::
-  sleep 70
+  Sleep 70
   if (A_CaretX)
     Vim.State.SetMode("Insert")
 Return
 
 alt::  ; for access keys
   ; Can't use KeyWait Alt, any hotkeys that use modifier alt would trigger this script
-  send {alt}  ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert
+  Send {alt}  ; cannot use tilde, because you wouldn't want other keys like alt+d to go to insert
   Vim.State.SetMode("Insert")
 return
 
@@ -69,7 +77,11 @@ return
     Vim.State.SetMode("Insert")
 return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual"))
-~#a::Vim.State.SetMode("Insert")  ; text editor everywhere shortcut
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TCommanderDlg"))
+~Enter::
+  WinWaitActive, ahk_class TInputDlg,, 0.3
+  if (!ErrorLevel)
+    Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
+return
 
 #if

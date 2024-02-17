@@ -30,9 +30,9 @@ n::Vim.Move.Move("gn")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.Leader)
 q::
   loop % n := Vim.State.GetN() {
-    send {home}>{space}  ; add comment; useful when replying emails
+    Send {home}>{space}  ; add comment; useful when replying emails
     if (n > 1)
-      send {down}
+      Send {down}
     n--
   }
   Vim.State.SetMode()
@@ -74,15 +74,13 @@ x::  ; gx: open hyperlink in current caret position (Open in *n*ew window)
 return
 
 s::  ; gs: go to source
-#if (Vim.IsVimGroup() && (hWnd := WinActive("ahk_class TElWind")))
-^+f6::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (hWnd := WinActive("ahk_class TElWind")) && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 f::  ; gf: open source file
 t::  ; gt: open in Notepad
-  Vim.State.SetMode(), ContLearn := Vim.SM.IsLearning(), ClipSaved := ""
-  CurrTitle := WinGetTitle("A")
+  Vim.State.SetMode(), ContLearn := Vim.SM.IsLearning()
+  ClipSaved := "", CurrTitle := WinGetTitle("A")
   if (Notepad := IfIn(A_ThisLabel, "^+f6,t")) {
-    send ^{f7}  ; save read point
+    Send ^{f7}  ; save read point
     Vim.SM.OpenNotepad(), w := "ahk_exe Notepad.exe"
   } else {
     ClipSaved := ClipboardAll
@@ -92,7 +90,7 @@ t::  ; gt: open in Notepad
       ShellRun("C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe", SMFilePath)
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
-      send ^{f7}  ; save read point
+      Send ^{f7}  ; save read point
       Vim.SM.SaveHTML()  ; path may be updated
       WinWaitActive, ahk_class TElWind
       SMFilePath := Vim.SM.GetFilePath(false)
@@ -109,7 +107,7 @@ t::  ; gt: open in Notepad
   WinWaitClose
   Vim.SM.ActivateElWind()
   if (Notepad) {
-    send !{f7}  ; go to read point
+    Send !{f7}  ; go to read point
   } else {
     Vim.SM.GoHome()
   }
@@ -121,7 +119,7 @@ t::  ; gt: open in Notepad
     Vim.SM.GoBack()
     if ((CurrTitle == t) && (CurrTitle ~= "^Concept: ")) {
       Vim.SM.WaitFileLoad()
-      send !{right}
+      Send !{right}
     }
   }
 return
@@ -137,7 +135,11 @@ return
 <::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
 <::
-  Vim.SM.EditBar((A_ThisLabel == ">") ? "21" : "20")
+  if (A_ThisLabel == ">") {
+    Vim.SM.EditBar(21) 
+  } else if (A_ThisLabel == "<") {
+    Vim.SM.EditBar(20)
+  }
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -149,7 +151,7 @@ return
   && ((Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key
    || Vim.SM.IsLearning()
    || Vim.SM.IsGrading()
-   || (WinActive("A") == ImportGuiHwnd)
+   || (WinActive("A") == SMImportGuiHwnd)
    || (WinActive("Priority ahk_class #32770"))
    || WinActive("ahk_class TPriorityDlg")))
 ; Priority script, originally made by Naess and modified by Guillem

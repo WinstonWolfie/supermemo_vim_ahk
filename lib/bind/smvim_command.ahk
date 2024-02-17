@@ -1,24 +1,24 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TElWind"))
 b::  ; remove all text *b*efore cursor
-  send !\\
+  Send !\\
   WinWaitNotActive, ahk_class TElWind,, 0
   if (!ErrorLevel)
-    send {enter}
+    Send {enter}
   Vim.State.SetMode("Vim_Normal")
 return
 
 a::  ; remove all text *a*fter cursor
-  send !.
+  Send !.
   WinWaitNotActive, ahk_class TElWind,, 0
   if (!ErrorLevel)
-    send {enter}
+    Send {enter}
   Vim.State.SetMode("Vim_Normal")
 return
 
 f::  ; clean *f*ormat: using f6 (retaining tables)
   Vim.State.SetMode("Vim_Normal")
-  send {f6}^arbs{enter}
+  Send {f6}^arbs{enter}
 return
 
 NukeHTML:
@@ -28,9 +28,9 @@ NukeHTML:
     Vim.State.SetToolTip("This script only works on HTML.")
     return
   }
-	send ^{f7}  ; save read point
+	Send ^{f7}  ; save read point
   if (!Vim.SM.IsEditingHTML()) {
-    send ^t
+    Send ^t
     Vim.SM.WaitTextFocus()
     if (!Vim.SM.IsEditingHTML()) {
       Vim.State.SetToolTip("This script only works on HTML.")
@@ -57,7 +57,7 @@ NukeHTML:
   FileAppend, % Vim.SM.CleanHTML(HTML, (A_ThisLabel == "NukeHTML"),, Vim.SM.GetLink()), % HTMLPath
   Vim.SM.Reload()
   Vim.SM.WaitFileLoad()
-  send {Esc}
+  Send {Esc}
   Vim.State.SetToolTip("HTML cleaned."), HTML := ""
 Return
 
@@ -65,9 +65,9 @@ Return
 l::Vim.SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
 
 o::  ; c*o*mpress images
-  send ^{enter}^a  ; open commander
-  send {text}co  ; Compress images
-  send {enter}
+  Send ^{enter}^a  ; open commander
+  Send {text}co  ; Compress images
+  Send {enter}
   Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
 return
 
@@ -77,21 +77,21 @@ s::  ; turn active language item to passive (*s*witch)
     return
   Vim.SM.ExitText()
   if (Vim.SM.IsLearning() == 2)  ; if learning (on "next repitition")
-    send {Esc}
-  send ^+s
-  sleep 320
+    Send {Esc}
+  Send ^+s
+  Sleep 320
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
-  send ^{home}
-  send {text}en:
-  send {space}^t
-  sleep 320
+  Send ^{home}
+  Send {text}en:
+  Send {space}^t
+  Sleep 320
   if (Vim.SM.IsEditingHTML()) {
-    send ^{home}^{del 2}
+    Send ^{home}^{del 2}
   } else if (Vim.SM.IsEditingPlainText()) {
-    send ^{home}^+{right}{BS}
+    Send ^{home}^+{right}{BS}
   }
-  send {Esc}
+  Send {Esc}
 return
 
 +s::
@@ -100,23 +100,23 @@ return
     return
   Vim.SM.ExitText()
   if (ControlGetText("TBitBtn3", "A") != "Learn")  ; if learning (on "next repitition")
-    send {Esc}
+    Send {Esc}
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus(), WinClip.Clear()
   if (Vim.SM.IsEditingHTML()) {
-    send ^{home}^+{right 2}
+    Send ^{home}^+{right 2}
   } else if (Vim.SM.IsEditingPlainText()) {
-    send ^{home}^+{right}
+    Send ^{home}^+{right}
   }
   text := Clip()
-  send {BS}{Esc}
+  Send {BS}{Esc}
   Vim.SM.WaitTextExit()
-  send ^+s
-  sleep 320
+  Send ^+s
+  Sleep 320
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
-  send % "{text}" . text
-  send {left 2}{Esc}
+  Send % "{text}" . text
+  Send {left 2}{Esc}
 return
 
 r::  ; set *r*eference's link to what's in the clipboard
@@ -127,7 +127,7 @@ SMSetLinkFromClipboard:
   if ((Vim.SM.IsOnline(, -1) || !Vim.SM.IsItem()) && Vim.Browser.Title)
     Vim.SM.SetTitle(Vim.Browser.Title)
   Vim.SM.EditRef()
-  WinWaitActive, ahk_class TInputDlg
+  WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
   Vim.Browser.Url := Clipboard
   SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
   Ref := "#Link: " . Vim.Browser.Url . "`n" . ControlGetText("TMemo1")
@@ -142,7 +142,7 @@ SMSetLinkFromClipboard:
   if (Vim.Browser.Comment)
     Ref := "#Comment: " . Vim.Browser.Comment . "`n" . Ref
   ControlSetText, TMemo1, % Ref
-  ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
+  ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}{enter}{Ctrl Up}  ; submit
   WinWaitClose
   if (!SMPoundSymbHandled && Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url) && (A_ThisLabel == "r"))
     Vim.SM.Reload(, true)
@@ -153,13 +153,13 @@ return
   Vim.State.SetMode("Vim_Normal")
   Vim.SM.OpenBrowser()
   Vim.SM.WaitBrowser()
-  send {AppsKey}ci
+  Send {AppsKey}ci
   Vim.SM.WaitBrowser()
-  send {AppsKey}co
+  Send {AppsKey}co
   Vim.SM.WaitBrowser()
-  send ^s
+  Send ^s
   Vim.SM.WaitBrowser()
-  send ^l
+  Send ^l
 return
 
 i::  ; learn outstanding *i*tems only
@@ -171,9 +171,9 @@ i::  ; learn outstanding *i*tems only
     Vim.SM.PostMsg(202)  ; View - Outstanding
   }
   Vim.SM.WaitBrowser()
-  send {AppsKey}ci
+  Send {AppsKey}ci
   Vim.SM.WaitBrowser()
-  send ^l
+  Send ^l
 return
 
 SMLearnChild:
@@ -186,13 +186,13 @@ c::  ; learn child
 c::
 SMLearnChildActiveBrowser:
   Vim.State.SetMode("Vim_Normal")
-  send {AppsKey}co
+  Send {AppsKey}co
   Vim.SM.WaitBrowser()
-  send ^s
+  Send ^s
   Vim.SM.WaitBrowser()
-  send ^l
+  Send ^l
   WinWaitActive, ahk_class TElWind
-  Vim.SM.PlayIfPassiveColl(, 500)
+  Vim.SM.PlayIfOnlineColl(, 500)
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))

@@ -8,7 +8,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     ClipSaved := ClipboardAll
   If (Text = "") {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    send % KeysToSend ? KeysToSend : "^c"
+    Send % KeysToSend ? KeysToSend : "^c"
     if (WaitTime == -1) {
       ClipWait, % LongCopy ? 0.6 : 0.2, True
     } else if (WaitTime == 0) {
@@ -16,14 +16,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     } else if (WaitTime) {
       ClipWait, % WaitTime, True
     }
-    if (!ErrorLevel) {
-      if (HTML) {
-        ClipboardGet_HTML(Clipped)
-        RegExMatch(Clipped, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", Clipped)
-      } else {
-        Clipped := Clipboard
-      }
-    }
+    Clipped := HTML ? GetClipHTMLBody() : Clipboard
   } Else {
     if (HTML && (HTML != "sm")) {
       SetClipboardHTML(text)
@@ -33,15 +26,13 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     if (HTML = "sm") {
       Vim.SM.PasteHTML()
     } else {
-      send % KeysToSend ? KeysToSend : "^v"
-      while (DllCall("GetOpenClipboardWindow")) {
-        Critical
-        sleep 20
-      }
+      Send % KeysToSend ? KeysToSend : "^v"
+      while (DllCall("GetOpenClipboardWindow"))
+        Sleep 20
     }
   }
   If (Text && Reselect)
-    send % "+{Left " . StrLen(Vim.ParseLineBreaks(text)) . "}"
+    Send % "+{Left " . StrLen(Vim.ParseLineBreaks(text)) . "}"
   if (RestoreClip)  ; for scripts that restore clipboard at the end
     Clipboard := ClipSaved
   If (Text = "")

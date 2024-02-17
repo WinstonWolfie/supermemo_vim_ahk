@@ -44,9 +44,9 @@ CapsLock::
       IE2 := ControlGet(,, "Internet Explorer_Server2", "A")
       IE1 := ControlGet(,, "Internet Explorer_Server1", "A")
       if (IE2 && IE1) {
-        send ^t{Esc}
+        Send ^t{Esc}
         Vim.SM.WaitTextExit()
-        sleep 20
+        Sleep 20
       }
       if (v.Control == "Internet Explorer_Server1") {
         if (IE2) {
@@ -58,10 +58,10 @@ CapsLock::
         Vim.SM.EditFirstQuestion()
       }
       Vim.SM.WaitTextFocus()
-      sleep 20  ; needed lest text changes position when you click
+      Sleep 20  ; needed lest text changes position when you click
       ControlClickScreen(v.x, v.y)
       if (HinterMode == "Visual")
-        send {right}{left}^+{right}
+        Send {right}{left}^+{right}
     } else {
       if (e := !Vim.SM.RunLink(v.Link, OpenInIE))
         Vim.State.SetToolTip("An error occured when running " . v.Link)

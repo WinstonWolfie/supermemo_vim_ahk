@@ -7,14 +7,14 @@ c::Vim.State.SetMode("Vim_ydc_c", 0, -1, 0,,, -1)
   Vim.State.SetMode("Vim_ydc_y", 0, 0, 1,,, -1)
   KeyWait Shift
   if (WinActive("ahk_group VimDoubleHomeGroup"))
-    send {Home}
-  send {Home}+{End}
+    Send {Home}
+  Send {Home}+{End}
   if (!WinActive("ahk_group VimLBSelectGroup")) {
     Vim.Move.Move("l")
   } else {
     Vim.Move.Move("")
   }
-  send {Left}{Home}
+  Send {Left}{Home}
 Return
 
 +d::
@@ -22,7 +22,7 @@ Return
   if (!WinActive("ahk_group VimLBSelectGroup")) {
     Vim.Move.Move("$")
   } else {
-    send {Shift Down}{End}{Left}
+    Send {Shift Down}{End}{Left}
     Vim.Move.Move("")
   }
 Return
@@ -32,7 +32,7 @@ Return
   if (!WinActive("ahk_group VimLBSelectGroup")) {
     Vim.Move.Move("$")
   } else {
-    send {Shift Down}{End}{Left}
+    Send {Shift Down}{End}{Left}
     Vim.Move.Move("")
   }
 Return
@@ -40,7 +40,7 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_y") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
 y::
   Vim.Move.YDCMove()
-  send {Left}{Home}
+  Send {Left}{Home}
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_ydc_d") && !Vim.IsNavigating() && !Vim.SM.IsBrowsing())
@@ -55,9 +55,9 @@ p::
   if (IfContains(A_ThisLabel, "^"))
     Clipboard := Clipboard
   if ((Vim.State.LineCopy == 1) && (Vim.Move.YdcClipSaved == Clipboard)) {
-    send {End}{Enter}^v{Home}
+    Send {End}{Enter}^v{Home}
   } else {
-    send {Right}^v{Left}
+    Send {Right}^v{Left}
   }
   KeyWait, p  ; To avoid repeat, somehow it calls <C-p>, print...
 Return
@@ -67,9 +67,9 @@ Return
   if (IfContains(A_ThisLabel, "^"))
     Clipboard := Clipboard
   if ((Vim.State.LineCopy == 1) && (Vim.Move.YdcClipSaved == Clipboard)) {
-    send {Home}{Enter}{Left}^v{Home}
+    Send {Home}{Enter}{Left}^v{Home}
   } else {
-    send ^v
+    Send ^v
   }
   KeyWait, p
 Return

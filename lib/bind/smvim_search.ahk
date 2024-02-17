@@ -24,11 +24,11 @@ CapsLock & /::
   }
   CapsState := IfContains(A_ThisLabel, "CapsLock")
   KeyWait Alt
-  BlockInput, on
+  BlockInput, On
   if (Vim.SM.IsBrowsing())
     Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
   if (Vim.State.StrIsInCurrentVimMode("Visual")) {
-    send {right}
+    Send {right}
     Vim.State.SetNormal()
   }
   CurrFocus := ControlGetFocus("ahk_class TElWind")
@@ -43,10 +43,10 @@ CapsLock & /::
   Gui, Search:Add, CheckBox, vWholeWord, Match &whole word only
   if (AltState) {
     Gui, Search:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
-    Gui, Search:Add, CheckBox, % "vShiftState " . (ShiftState ? "checked" : ""), &Cloze hinter
+    Gui, Search:Add, CheckBox, % "vShiftState " . (ShiftState ? "checked" : ""), Cloze &hinter
   }
   Gui, Search:Add, Button, default, &Find
-  BlockInput, off
+  BlockInput, Off
   Gui, Search:Show,, Search
 return
 
@@ -68,7 +68,7 @@ SearchButtonFind:
 SMSearch:
 SMSearchAgain:
   if (IfContains(CurrFocus, "TMemo")) {
-    send ^+{end}
+    Send ^+{end}
     if (A_ThisLabel != "SMSearchAgain") {
       if (Vim.State.n)
         Vim.State.n--
@@ -89,9 +89,9 @@ SMSearchAgain:
       pos := RegExMatch(selection, match)
     }
     if (pos) {
-      send % "{left}{right " . pos - 1 . "}"
+      Send % "{left}{right " . pos - 1 . "}"
       if (ShiftState || AltState) {
-        send % "+{right " . StrLen(UserInput) . "}"
+        Send % "+{right " . StrLen(UserInput) . "}"
         if (ShiftState) {
           Vim.State.SetMode("Vim_Visual")
         } else if (AltState) {
@@ -99,9 +99,9 @@ SMSearchAgain:
         }
       }
     } else {
-      send {left}
+      Send {left}
       if (A_ThisLabel != "SMSearchAgain") {
-        send ^{home}
+        Send ^{home}
         Vim.State.SetToolTip("Search started from the beginning.")
         Goto SMSearchAgain
       }
@@ -116,14 +116,14 @@ SMSearchAgain:
     if (WholeWord)
       Control, Check,, TCheckBox2, ahk_class TMyFindDlg  ; match whole word
     Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
-    send {enter}
+    Send {enter}
     if (Vim.State.n)
-      send % "{f3 " . Vim.State.GetN() - 1 . "}"
+      Send % "{f3 " . Vim.State.GetN() - 1 . "}"
     WinWaitNotActive, ahk_class TMyFindDlg
     if (ShiftState && !AltState) {
       Vim.State.SetMode("Vim_Visual")
     } else if (!AltState) {  ; all modifier keys are not pressed
-      send {left}  ; put caret on left of searched text
+      Send {left}  ; put caret on left of searched text
     }
     if (!Vim.SM.HandleF3(2))
       return
@@ -131,12 +131,12 @@ SMSearchAgain:
       Vim.SM.Cloze()
     } else if (AltState && ShiftState) {
       ClozeHinterCtrlState := CtrlState, InitText := UserInput
-      Gosub ClozeHinter
+      Gosub SMClozeHinter
     } else if (AltState && CapsState) {
       ClozeHinterCtrlState := CtrlState
-      Gosub ClozeNoBracket
+      Gosub SMClozeNoBracket
     } else if (AltState && CtrlState) {
-      Gosub ClozeStay
+      Gosub SMClozeStay
     }
   }
 return

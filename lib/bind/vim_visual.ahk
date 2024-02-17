@@ -16,14 +16,14 @@ VisualLine:
   if (Vim.State.StrIsInCurrentVimMode("VisualLine")) {
     Vim.State.SetNormal()
   } else {
-    send {home}
+    Send {home}
     if (Vim.State.n) {
-      send % "+{down " . Vim.State.n - 1 . "}"
+      Send % "+{down " . Vim.State.n - 1 . "}"
       Vim.State.SetMode("Vim_VisualLine")
     } else {
       Vim.State.SetMode("Vim_VisualLineFirst")
     }
-    send +{end}
+    Send +{end}
   }
 Return
 
@@ -43,7 +43,7 @@ Return
       Goto VisualLine
     } else {
       if (!WinActive("ahk_exe notepad++.exe"))  ; notepad++ requires alt down
-        send ^b
+        Send ^b
       Vim.State.SetMode("Vim_VisualBlock")
     }
   }
@@ -52,12 +52,12 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.fts && !Vim.State.Surround)
 ; Visual to insert
 +i::
-  send {left}
+  Send {left}
   Vim.State.SetMode("Insert")
 Return
 
 +a::
-  send {right}
+  Send {right}
   Vim.State.SetMode("Insert")
 Return
 
@@ -67,7 +67,7 @@ Return
 y::
   vim.move.YdcClipSaved := Copy(false,, "^c{Right}")
   if (WinActive("ahk_group VimCursorSameAfterSelect"))
-    send {Left}
+    Send {Left}
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
   } else {
@@ -80,7 +80,7 @@ x::
   if (!Vim.State.Leader) {
     vim.move.YdcClipSaved := Copy(false,, "^x")
   } else {
-    send {BS}
+    Send {BS}
   }
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Vim_Normal", 0, 0, 1)
@@ -93,7 +93,7 @@ c::
   if (!Vim.State.Leader) {
     vim.move.YdcClipSaved := Copy(false,, "^x")
   } else {
-    send {BS}
+    Send {BS}
   }
   if (Vim.State.StrIsInCurrentVimMode("Line")) {
     Vim.State.SetMode("Insert", 0, 0, 1)
@@ -111,11 +111,11 @@ Return
     Gosub SMSearchAgain
   } else {
     hWnd := WinActive("A")
-    send ^f
+    Send ^f
     WinWaitNotActive, % "ahk_id " . hWnd,, 0.3
-    send ^v
+    Send ^v
     WinClip._waitClipReady()
-    send {enter}
+    Send {enter}
   }
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
@@ -135,7 +135,7 @@ p::
 
   if (IfContains(A_ThisLabel, "^"))
     Clipboard := Clipboard  ; convert to plain text
-  send ^v
+  Send ^v
 
   if (!Vim.State.Leader) {
     WinClip._waitClipReady()
@@ -189,24 +189,24 @@ o::  ; move to other end of marked area; not perfect with line breaks
   if (!selection := Copy(false))
     Goto RestoreClipReturn
   SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
-  send +{right}
+  Send +{right}
   SelectionRight := Copy(false)
   SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
-  send +{left}
+  Send +{left}
   if ((SelectionLen < SelectionRightLen)
    || ((SelectionLen == SelectionRightLen)
     && (StrLen(selection) < StrLen(SelectionRight)))) {  ; moving point of selection is on the right
-    send % "{right}+{left " . SelectionLen . "}"
+    Send % "{right}+{left " . SelectionLen . "}"
   } else if ((SelectionLen > SelectionRightLen)
           || ((SelectionLen == SelectionRightLen)
            && (StrLen(selection) > StrLen(SelectionRight)))) {
-    send % "{left}+{right " . SelectionLen . "}"
+    Send % "{left}+{right " . SelectionLen . "}"
   }
   Clipboard := ClipSaved
 return
 
 +s::
   ; This resets the hotkey detection, so you can press +s and ) consecutively in visual mode to surround parentheses
-  send {LShift up}{RShift up}
+  Send {LShift up}{RShift up}
   Vim.State.SetMode(,,,,, 1)  ; surround
 return

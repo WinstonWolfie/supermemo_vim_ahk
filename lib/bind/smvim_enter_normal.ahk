@@ -1,10 +1,10 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 #if (Vim.IsVimGroup() && Vim.SM.IsBrowsing())
 ; For Learn button
-~enter::  ; enter up doesn't work
+~Enter::  ; enter up doesn't work
 ~space up::
   Vim.State.SetMode("Vim_Normal")  ; SetNormal() would add a {left}
-  if (!Vim.SM.PlayIfPassiveColl(, 3000))
+  if (!Vim.SM.PlayIfOnlineColl(, 3000))
     Vim.SM.EnterInsertIfSpelling()
 Return
 
@@ -21,7 +21,7 @@ return
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))  ; SuperMemo element window
 ^f2::
   Vim.SM.PostMsg((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") ? 179 : 181)  ; go neural
-  Vim.State.SetMode("Vim_Normal"), Vim.SM.PlayIfPassiveColl(, 500)
+  Vim.State.SetMode("Vim_Normal"), Vim.SM.PlayIfOnlineColl(, 500)
 return
 
 !z::Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
@@ -33,4 +33,7 @@ return
 ^p::Vim.SM.Plan(), Vim.State.SetMode("Vim_Normal")
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TContents"))
-~enter::Vim.State.SetNormal()
+~Enter::Vim.State.SetNormal()
+
+#if (Vim.IsVimGroup() && Vim.IsExceptionWnd())
+~Enter::Vim.State.SetMode("Vim_Normal")

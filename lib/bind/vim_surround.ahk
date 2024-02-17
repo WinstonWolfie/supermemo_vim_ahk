@@ -45,7 +45,7 @@ t::
       Goto RestoreClipReturn
     }
     SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
-    send {left}
+    Send {left}
     if (!VimSurround(CurrKey, SelectionLen,, true))
       return
   } else if (Vim.State.SurroundChangeEntered || ((c := Vim.State.StrIsInCurrentVimMode("ydc_c")) || Vim.State.StrIsInCurrentVimMode("ydc_d"))) {
@@ -60,7 +60,7 @@ t::
         return
       }
     }
-    send {left}
+    Send {left}
     if (!VimSurround(CurrKey, SelectionLen, true, c))
       return
   }
@@ -74,24 +74,24 @@ VimSurround(CurrKey, SelectionLen, d:=false, c:=false) {
   if ((CurrKey == "<") && (!tag || ErrorLevel))
     return
   if (d)
-    send {BS}
+    Send {BS}
   if (tag && c) {
-    send % "{text}<" . tag . ">"
+    Send % "{text}<" . tag . ">"
   } else if (c) {
-    send % "{text}" . key := Vim.Move.RevSurrKey(CurrKey)
+    Send % "{text}" . key := Vim.Move.RevSurrKey(CurrKey)
     if (s := IfIn(CurrKey, "(,[,{"))
-      send {space}
+      Send {space}
   }
-  send % "{right " . SelectionLen . "}"
+  Send % "{right " . SelectionLen . "}"
   if (d)
-    send {del}
+    Send {del}
   if (tag && c) {
-    send % "{text}</" . tag . ">"
+    Send % "{text}</" . tag . ">"
   } else if (c) {
     key := Vim.Move.RevSurrKey(CurrKey, 2)
     if (s)
-      send {space}
-    send % "{text}" . key
+      Send {space}
+    Send % "{text}" . key
   }
   return true
 }

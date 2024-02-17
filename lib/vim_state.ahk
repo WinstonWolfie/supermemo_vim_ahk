@@ -45,6 +45,9 @@ class VimState {
   }
 
   SetToolTip(Title, Period:=2000, WhichToolTip:=20) {
+    global oVimRemoveToolTip
+    if (oVimRemoveToolTip)
+      SetTimer, % oVimRemoveToolTip, Off
     WinGetPos, , , , H, A
     StrReplace(Title, "`n",, Lines)
     ToolTip, % Title, 5, H - 30 - (Lines) * 20, % WhichToolTip
@@ -64,7 +67,7 @@ class VimState {
       if ((PrevMode == "SMPlanDragging") && this.IsCurrentVimMode("Vim_Normal"))
         this.HandlePlanDraggingSetNormal()
       if (this.IsCurrentVimMode("Insert") && this.Vim.SM.IsNavigatingPlan() && !GetKeyState("Alt", "P"))
-        send {f2}^a
+        Send {f2}^a
       if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
@@ -89,7 +92,7 @@ class VimState {
     this.LastIME := VIM_IME_Get()
     if (this.LastIME) {
       if (VIM_IME_GetConverting()) {
-        send {Esc}
+        Send {Esc}
         Return
       } else {
         VIM_IME_SET()
@@ -97,11 +100,11 @@ class VimState {
     }
     if (A_CaretX && !this.Vim.IsNavigating()) {
       if (this.StrIsInCurrentVimMode("Visual,ydc") && !this.StrIsInCurrentVimMode("VisualFirst")) {
-        send {Right}
+        Send {Right}
         if (WinActive("ahk_group VimCursorSameAfterSelect"))
-          send {Left}
+          Send {Left}
       } else if (this.StrIsInCurrentVimMode("Insert")) {
-        send {left}
+        Send {left}
       }
     }
     this.SetMode("Vim_Normal")
@@ -117,12 +120,12 @@ class VimState {
 
   HandleEsc() {
     global Vim, VimEscNormal, SMVimSendEscInsert, VimSendEscNormal, VimLongEscNormal
-    caps := (A_ThisHotkey = "CapsLock") ? true : false
+    Caps := (A_ThisHotkey = "CapsLock") ? true : false
     Esc := (A_ThisHotkey = "Esc") ? true : false
-    if (this.Vim.SM.IsEditingText() && caps)
+    if (this.Vim.SM.IsEditingText() && Caps)
       this.Vim.SM.ClickMid()
     if (!VimEscNormal) {
-      send {Esc}
+      Send {Esc}
       Return
     }
     ; keyWait waits for Esc to be released. If it didn't detect a release
@@ -134,7 +137,7 @@ class VimState {
     SetNormal := (both || neither)
     ; In SuperMemo you can use Esc to both escape and enter normal mode
     if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SM") && SMVimSendEscInsert))
-      send {Esc}
+      Send {Esc}
     if (SetNormal || (WinActive("ahk_group SM") && SMVimSendEscInsert))
       this.SetNormal()
     ; Have to ensure the key has been released, otherwise this will get
@@ -160,7 +163,7 @@ class VimState {
   HandleCtrlBracket() {
     global Vim, VimCtrlBracketNormal, VimSendCtrlBracketNormal, VimLongCtrlBracketNormal, VimCtrlBracketToEsc
     if (!VimCtrlBracketNormal) {
-      send ^[
+      Send ^[
       Return
     }
     KeyWait, [, T0.5
@@ -169,9 +172,9 @@ class VimState {
     neither := !(VimLongCtrlBracketNormal || LongPress)
     SetNormal := (both || neither)
     if (VimCtrlBracketToEsc)
-      send {Esc}
+      Send {Esc}
     if (!SetNormal || (VimSendCtrlBracketNormal && this.IsCurrentVimMode("Vim_Normal"))) {
-      send ^[
+      Send ^[
     }
     if (SetNormal) {
       this.SetNormal()
@@ -252,11 +255,9 @@ class VimState {
 
   ToggleEnabled() {
     if (this.Vim.Enabled) {
-      this.Vim.Enabled := False
-      Vim.State.SetToolTip("SMVim disabled.")
+      this.Vim.Enabled := False, this.SetToolTip("SMVim disabled.")
     } else {
-      this.Vim.Enabled := True
-      Vim.State.SetToolTip("SMVim enabled.")
+      this.Vim.Enabled := True, this.SetToolTip("SMVim enabled.")
     }
   }
 

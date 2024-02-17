@@ -9,13 +9,13 @@ d::
 f::
 g::
   if (A_ThisLabel == "s") {
-    send 2
+    Send 2
   } else if (A_ThisLabel == "d") {
-    send 3
+    Send 3
   } else if (A_ThisLabel == "f") {
-    send 4
+    Send 4
   } else if (A_ThisLabel == "g") {
-    send 5
+    Send 5
   }
   ControlTextWait("TBitBtn3", "Next repetition", "A")
   ControlSend, TBitBtn3, {enter}, A

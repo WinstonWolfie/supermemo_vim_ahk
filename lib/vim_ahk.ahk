@@ -246,11 +246,11 @@ class VimAhk {
 
   TwoLetterEnterNormal() {
     if (this.State.StrIsInCurrentVimMode("Insert")) {
-      send {BS}
+      Send {BS}
     } else if (this.State.StrIsInCurrentVimMode("Visual")) {
-      send {right}{up}
+      Send {right}{up}
     } else if (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText()) {
-      send {up}{Esc}
+      Send {up}{Esc}
     }
     this.State.SetNormal()
   }
@@ -322,9 +322,9 @@ class VimAhk {
     if (not this.Enabled) {
       Return False
     } else if (this.Conf["VimAppList"]["val"] == "Allow List") {
-      Return ((WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group VimExcluded")) || this.IsExceptionWindow())
+      Return ((WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group VimExcluded")) || this.IsExceptionWnd())
     } else if (this.Conf["VimAppList"]["val"] == "Deny List") {
-      Return (!WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group VimExcluded") && !this.IsExceptionWindow())
+      Return (!WinActive("ahk_group " . this.GroupName) && !WinActive("ahk_group VimExcluded") && !this.IsExceptionWnd())
     }
     Return True
   }
@@ -333,8 +333,8 @@ class VimAhk {
     Return (Copy(,, "+{right}^c{left}") ~= key)
   }
 
-  IsExceptionWindow() {
-    return this.SM.IsVimNavWind()
+  IsExceptionWnd() {
+    return this.SM.IsVimNavWnd()
   }
 
   ParseLineBreaks(str) {
@@ -359,7 +359,7 @@ class VimAhk {
   IsNavigating() {
     return (this.SM.IsNavigatingPlan()
          || this.SM.IsNavigatingTask()
-         || this.SM.IsNavigatingContentWindow()
+         || this.SM.IsNavigatingContentWind()
          || this.SM.IsNavigatingBrowser())
   }
 }

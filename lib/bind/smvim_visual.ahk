@@ -1,12 +1,13 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 .::  ; selected text becomes [...]
-  send ^c
+  if (!Vim.State.Leader)
+    Send ^c
   if (Vim.SM.IsEditingHTML()) {
-    send {text}<span class="Cloze">[...]</span>
-    send +{left 32}^+1
+    Send {text}<span class="Cloze">[...]</span>
+    Send +{left 32}^+1
   } else if (Vim.SM.IsEditingPlainText()) {
-    send {text}[...]
+    Send {text}[...]
   }
   Vim.State.SetMode("Vim_Normal")
 return
@@ -15,7 +16,7 @@ return
 ~^+i::Vim.State.SetMode("Vim_Normal")  ; ignore
 
 ^h::  ; parse *h*tml
-  send ^+1
+  Send ^+1
 ~^+1::Vim.State.SetMode("Vim_Normal")
 
 SMParseHTMLGUI:
@@ -59,8 +60,7 @@ SMParseHTML:
   if (!Copy(false))
     Goto RestoreClipReturn
   if (OriginalHTML) {
-    ClipboardGet_HTML(data)
-    RegExMatch(data, "s)<!--StartFragment-->\K.*(?=<!--EndFragment-->)", Content)
+    Content := GetClipHTMLBody()
   } else {
     Content := StrReplace(Clipboard, "<", "&lt;")
     Content := StrReplace(Content, ">", "&gt;")
@@ -82,37 +82,37 @@ SMParseHTML:
 return
 
 m::  ; highlight: *m*ark
-  send {AppsKey}rh
+  Send {AppsKey}rh
   Vim.State.SetMode("Vim_Normal")
 return
 
 q::  ; extract (*q*uote)
-  send !x
+  Send !x
   Vim.State.SetMode("Vim_Normal")
 return
 
 +h::  ; move to top of screen
-  send {Shift Down}
+  Send {Shift Down}
   Vim.SM.ClickTop()
-  send {Shift Up}
+  Send {Shift Up}
 Return
 
 +m::  ; move to middle of screen
-  send {Shift Down}
+  Send {Shift Down}
   Vim.SM.ClickMid()
-  send {Shift Up}
+  Send {Shift Up}
 Return
 
 +l::  ; move to bottom of screen
-  send {Shift Down}
+  Send {Shift Down}
   Vim.SM.ClickBottom()
-  send {Shift Up}
+  Send {Shift Up}
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingPlainText())
-m::send % "{text}*" . Copy() . "*"
+m::Send % "{text}*" . Copy() . "*"
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWindow())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWind())
 b::Vim.SM.OpenBrowser(), Vim.State.SetMode("Vim_Normal")
 
 ExtractStay:
@@ -120,19 +120,19 @@ ExtractStay:
 ^!x::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 ^q::  ; extract (*q*uote)
-  send !x
+  Send !x
   Vim.SM.WaitExtractProcessing()
   Vim.SM.GoBack(), Vim.State.SetMode("Vim_Normal")
 return
 
 +q::  ; extract with priority
-  send !+x
+  Send !+x
   Vim.State.SetMode("Vim_Normal")
 return
 
 z::Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
 
-ClozeStay:
+SMClozeStay:
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
 ^!z::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
@@ -145,19 +145,19 @@ Return
 ~!t::
 ~!q::Vim.State.SetMode("Vim_Normal")
 
-ClozeHinter:
+SMClozeHinter:
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
 ^!+z::
 !+z::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 ^+z::
 +z::  ; cloze hinter
-  if (ClozeHinterCtrlState && (A_ThisLabel == "ClozeHinter")) {  ; from cloze hinter label and ctrl is pressed
-    CtrlState := 1, ClozeHinterCtrlState := 0
+  if (ClozeHinterCtrlState && (A_ThisLabel == "SMClozeHinter")) {  ; from cloze hinter label and ctrl is pressed
+    CtrlState := 1, ClozeHintertrlState := 0
   } else {
     CtrlState := IfContains(A_ThisLabel, "^")
   }
-  InitText := ((A_ThisLabel == "ClozeHinter") && InitText) ? InitText : Copy()
+  InitText := ((A_ThisLabel == "SMClozeHinter") && InitText) ? InitText : Copy()
   if (!InitText)
     return
   CurrFocus := ControlGetFocus("ahk_class TElWind"), Inside := true
@@ -177,11 +177,11 @@ ClozeHinter:
     InitText := "increases/decreases"
   } else if (InitText ~= "i)^(increase|decrease)$") {
     InitText := "increase/decrease"
-  } else if (InitText ~= "i)^reduced$") {
+  } else if (InitText = "reduced") {
     InitText := "increased/reduced"
-  } else if (InitText ~= "i)^reduces$") {
+  } else if (InitText = "reduces") {
     InitText := "increases/reduces"
-  } else if (InitText ~= "i)^reduce$") {
+  } else if (InitText = "reduce") {
     InitText := "increase/reduce"
   } else if (InitText ~= "i)^(positive|negative)$") {
     InitText := "positive/negative"
@@ -197,17 +197,17 @@ ClozeHinter:
     InitText := "monetary/fiscal"
   } else if (InitText ~= "i)^(activator|inhibitor)$") {
     InitText := "activator/inhibitor"
-  } else if (InitText ~= "i)^elevate$") {
+  } else if (InitText = "elevate") {
     InitText := "elevate/lower"
   } else if (InitText ~= "i)^(elevates|lowers)$") {
     InitText := "elevates/lowers"
   } else if (InitText ~= "i)^(elevated|lowered)$") {
     InitText := "elevated/lowered"
-  } else if (InitText ~= "i)^raise$") {
+  } else if (InitText = "raise") {
     InitText := "raise/lower"
-  } else if (InitText ~= "i)^raises$") {
+  } else if (InitText = "raises") {
     InitText := "raises/lowers"
-  } else if (InitText ~= "i)^raised$") {
+  } else if (InitText = "raised") {
     InitText := "raised/lowered"
   } else if (InitText ~= "i)^(activate|inhibit)$") {
     InitText := "activate/inhibit"
@@ -215,37 +215,40 @@ ClozeHinter:
     InitText := "activates/inhibits"
   } else if (InitText ~= "i)^(greater|smaller)$") {
     InitText := "greater/smaller"
+  } else if (InitText ~= "i)^(male|female)$") {
+    InitText := "male/female"
   } else {
     Inside := false
   }
-  Gui, ClozeHinter:Add, Text,, &Hint:
-  Gui, ClozeHinter:Add, Edit, vHint w196 r1 -WantReturn, % InitText
-  Gui, ClozeHinter:Add, CheckBox, % "vInside " . (Inside ? "checked" : ""), &Inside square brackets
-  Gui, ClozeHinter:Add, CheckBox, vFullWidthParentheses, Use &fullwidth parentheses
-  Gui, ClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
-  Gui, ClozeHinter:Add, Button, default, Clo&ze
-  Gui, ClozeHinter:Show,, Cloze Hinter
+  Gui, SMClozeHinter:Add, Text,, &Hint:
+  Gui, SMClozeHinter:Add, Edit, vHint w196 r1 -WantReturn, % InitText
+  Gui, SMClozeHinter:Add, CheckBox, % "vInside " . (Inside ? "checked" : ""), &Inside square brackets
+  Gui, SMClozeHinter:Add, CheckBox, vFullWidthParentheses, Use &fullwidth parentheses
+  Gui, SMClozeHinter:Add, CheckBox, % "vCtrlState " . (CtrlState ? "checked" : ""), &Stay in clozed item
+  Gui, SMClozeHinter:Add, CheckBox, vDone, &Done!
+  Gui, SMClozeHinter:Add, Button, default, Clo&ze
+  Gui, SMClozeHinter:Show,, Cloze Hinter
 Return
 
-ClozeHinterGuiEscape:
-ClozeHinterGuiClose:
+SMClozeHinterGuiEscape:
+SMClozeHinterGuiClose:
   Gui, Destroy
   Vim.State.SetMode("Vim_Normal")
 return
 
-ClozeHinterButtonCloze:
+SMClozeHinterButtonCloze:
   Gui, Submit
   Gui, Destroy
   WinActivate, ahk_class TElWind
 
-ClozeNoBracket:
+SMClozeNoBracket:
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && (CtrlState := GetKeyState("ctrl")) && Vim.SM.IsEditingText())
 CapsLock & z::  ; delete [...]
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
 CapsLock & z::  ; delete [...]
-  ClozeNoBracket := IfIn(A_ThisLabel, "ClozeNoBracket,CapsLock & z")
+  ClozeNoBracket := IfIn(A_ThisLabel, "SMClozeNoBracket,CapsLock & z")
   TopicTitle := WinGetTitle("ahk_class TElWind")
-  if ((A_ThisLabel == "ClozeNoBracket") && ClozeNoBracketCtrlState)
+  if ((A_ThisLabel == "SMClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
   if (!ClozeNoBracket && !Inside && Hint && IfContains(Hint, "/")) {
     Inside := (MsgBox(3,, "Your hint has a slash. Press yes to make it inside square brackets.") = "yes")
@@ -261,6 +264,14 @@ CapsLock & z::  ; delete [...]
   Vim.State.SetToolTip("Cloze processing...")
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
+  if (Done) {
+    Send ^+{enter}
+    WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
+    Send {enter}
+    WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?"
+    Send {enter}
+    CtrlState := true
+  }
   Vim.SM.GoBack()
   if (!ClozeNoBracket && !Hint && CtrlState)  ; entered nothing
     return
@@ -281,7 +292,7 @@ CapsLock & z::  ; delete [...]
 
   loop {  ; sometimes the question is not the first component
     if (Vim.SM.IsEditingPlainText()) {
-      send ^a
+      Send ^a
       ClipSaved := ClipboardAll
       if (ClozeNoBracket) {
         Clip(RegExReplace(Copy(false), "\s?\[\.\.\.\]"),, false)
@@ -294,7 +305,7 @@ CapsLock & z::  ; delete [...]
       if (HTML := FileRead(HTMLPath := Vim.SM.LoopForFilePath())) {
         Vim.SM.EmptyHTMLComp()
         WinWaitActive, ahk_class TElWind
-        send ^{home}
+        Send ^{home}
         if (ClozeNoBracket) {
           HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>")
         } else {
@@ -304,12 +315,12 @@ CapsLock & z::  ; delete [...]
         Clip(HTML,,, "sm")
         Break
       } else {
-        send ^t
+        Send ^t
       }
     }
   }
 
-  send % CtrlState ? "{Esc}" : "!{right}"
+  Send % CtrlState ? "{Esc}" : "!{right}"
   WinWaitActive, ahk_class TChoicesDlg,, 0
   if (!ErrorLevel)
     WinClose

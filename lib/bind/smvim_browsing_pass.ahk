@@ -8,7 +8,7 @@
 3::
 4::
 5::
-  send % A_ThisLabel
+  Send % A_ThisLabel
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g && true)  ; true is needed here for not duplicating hotkeys
@@ -97,7 +97,7 @@ _::
 .::
 >::
 ; Space::
-  send % "{" . A_ThisLabel . "}"
+  Send % "{" . A_ThisLabel . "}"
 Return
 
 ~^d::  ; dismiss; vim scroll down

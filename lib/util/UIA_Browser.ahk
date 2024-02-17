@@ -41,7 +41,7 @@
 		Refreshes UIA_Browser.MainPaneElement and also returns it
 	GetCurrentDocumentElement()
 		Returns the current document/content element of the browser. For Mozilla, the tab name which content to get can be specified.
-	GetAllText()
+	GetTextArray()
 		Gets all text from the browser element (CurrentName properties for all child elements)
 	GetAllLinks()
 		Gets all link elements from the browser (returns an array of elements)
@@ -582,7 +582,7 @@ class UIA_Browser {
 	}
 	
 	; Gets all text from the browser element (CurrentName properties for all Text elements)
-	GetAllText() { 
+	GetTextArray() { 
 		local
 		if !this.IsBrowserVisible()
 			WinActivate, % "ahk_id" this.BrowserId

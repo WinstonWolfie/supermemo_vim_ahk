@@ -7,18 +7,18 @@ u::Send % "^{z " . Vim.State.GetN() . "}"
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g && !Vim.IsNavigating())
 ; Combine lines
-+j:: send {End}{Space}{Delete}
-+k:: send {up}{End}{Space}{Delete}
++j:: Send {End}{Space}{Delete}
++k:: Send {up}{End}{Space}{Delete}
 
 ; Change case
 ~::
-  send +{right}
+  Send +{right}
   if (IfIs(selection := Copy(), "lower")) {
     selection := StrUpper(selection)
   } else if (IfIs(selection, "upper")) {
     selection := StrLower(selection)
   }
-  send % "{text}" . selection
+  Send % "{text}" . selection
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
@@ -26,35 +26,34 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::
   if (WinActive("ahk_class TInputDlg")) {
-    send ^{enter}
+    Send ^{enter}
   } else {
-    send ^s
+    Send ^s
     if (WinActive("ahk_exe Notepad.exe")) {
-      send ^w
+      Send ^w
     } else {
-      send !{F4}
+      Send !{F4}
     }
   }
   Vim.State.SetMode("Vim_Normal")
 Return
 
 +q::
-  hWnd := WinActive("A"), SMInput := WinActive("ahk_class TInputDlg")
+  hWnd := WinActive("A"), SMInputDlg := WinActive("ahk_class TInputDlg")
   if (WinActive("ahk_exe Notepad.exe")) {
-    send ^w
+    Send ^w
   } else {
-    send !{F4}
+    Send !{F4}
   }
-  if (SMInput) {
+  if (SMInputDlg) {
     WinWaitActive, ahk_class TMsgDialog,, 0
     if (!ErrorLevel)
-      send {text}n
+      Send {text}n
   } else {
-    WinWaitClose, % "ahk_id " . hWnd,, 0.1
+    WinWaitClose, % "ahk_id " . hWnd,, 0.3
     if (ErrorLevel) {
       if (hWnd := WinActive("ahk_exe Notepad.exe")) {
-        UIA := UIA_Interface()
-        el := UIA.ElementFromHandle(hWnd)
+        UIA := UIA_Interface(), el := UIA.ElementFromHandle(hWnd)
         el.WaitElementExist("ControlType=Button AND Name='Don\'t save' AND AutomationId='SecondaryButton'",,,, 1000).Click()
       }
     }
@@ -64,7 +63,7 @@ Return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.Move.LastKey)
 ; Period
-; .::send +^{Right}{BS}^v  ; original vim_ahk; no idea what that means
+; .::Send +^{Right}{BS}^v  ; original vim_ahk; no idea what that means
 .::  ; dot repeat
   Vim.State.n := Vim.State.n ? Vim.State.n : Vim.Move.LastN
   Vim.State.Mode := Vim.Move.LastMode, Vim.State.Surround := Vim.Move.LastSurround
@@ -94,12 +93,12 @@ return
 ; For Q-dir, ^X mapping does not work, use !X instead.
 ; ^X does not work to be sent, too, use Down/Up
 ; switch to left top (1), right top (2), left bottom (3), right bottom (4)
-!u::send {LControl Down}{1 Down}{1 Up}{LControl Up}
-!i::send {LControl Down}{2 Down}{2 Up}{LControl Up}
-!j::send {LControl Down}{3 Down}{3 Up}{LControl Up}
-!k::send {LControl Down}{4 Down}{4 Up}{LControl Up}
+!u::Send {LControl Down}{1 Down}{1 Up}{LControl Up}
+!i::Send {LControl Down}{2 Down}{2 Up}{LControl Up}
+!j::Send {LControl Down}{3 Down}{3 Up}{LControl Up}
+!k::Send {LControl Down}{4 Down}{4 Up}{LControl Up}
 ; Ctrl+q, menu Quick-links
-'::send {LControl Down}{q Down}{q Up}{LControl Up}
+'::Send {LControl Down}{q Down}{q Up}{LControl Up}
 ; Keep the e key in Normal mode, use the right button and then press the refresh (e) function, do nothing, return to the e key directly
 ~e::
 Return
