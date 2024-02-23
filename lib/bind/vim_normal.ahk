@@ -8,17 +8,17 @@ u::Send % "^{z " . Vim.State.GetN() . "}"
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g && !Vim.IsNavigating())
 ; Combine lines
 +j:: Send {End}{Space}{Delete}
-+k:: Send {up}{End}{Space}{Delete}
++k:: Send {Up}{End}{Space}{Delete}
 
 ; Change case
 ~::
-  Send +{right}
-  if (IfIs(selection := Copy(), "lower")) {
-    selection := StrUpper(selection)
-  } else if (IfIs(selection, "upper")) {
-    selection := StrLower(selection)
+  Send +{Right}
+  if (IfIs(Selection := Copy(), "lower")) {
+    Selection := StrUpper(Selection)
+  } else if (IfIs(Selection, "upper")) {
+    Selection := StrLower(Selection)
   }
-  Send % "{text}" . selection
+  Send % "{text}" . Selection
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.g)
@@ -26,7 +26,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Z"))
 +z::
   if (WinActive("ahk_class TInputDlg")) {
-    Send ^{enter}
+    Send ^{Enter}
   } else {
     Send ^s
     if (WinActive("ahk_exe Notepad.exe")) {

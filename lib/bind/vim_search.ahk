@@ -9,7 +9,7 @@ Return
 *::
   ClipSaved := ClipboardAll
   Vim.State.SetMode("Vim_Visual")
-  Send ^{right}^{left}
+  Send ^{Right}^{Left}
   Vim.Move.Move("e",,,,, false)
   Copy(false)
   if (WinActive("ahk_class TElWind")) {
@@ -22,7 +22,7 @@ Return
     WinWaitNotActive, % "ahk_id " . hWnd,, 0.3
     Send ^v
     WinClip._waitClipReady()
-    Send {enter}
+    Send {Enter}
   }
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return

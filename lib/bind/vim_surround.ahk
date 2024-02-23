@@ -40,27 +40,27 @@ t::
     CurrKey := "<"
   }
   if (!Vim.State.SurroundChangeEntered && Vim.State.StrIsInCurrentVimMode("Visual,ydc_y")) {
-    if (!selection := Copy(false)) {
+    if (!Selection := Copy(false)) {
       Vim.State.SetToolTip("Text not found.")
       Goto RestoreClipReturn
     }
-    SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
-    Send {left}
+    SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
+    Send {Left}
     if (!VimSurround(CurrKey, SelectionLen,, true))
       return
   } else if (Vim.State.SurroundChangeEntered || ((c := Vim.State.StrIsInCurrentVimMode("ydc_c")) || Vim.State.StrIsInCurrentVimMode("ydc_d"))) {
     if (!Vim.State.SurroundChangeEntered) {
       Vim.State.SetMode("Vim_Visual")
       Vim.Move.Inner(CurrKey)
-      if (!selection := Copy(false))
+      if (!Selection := Copy(false))
         Goto RestoreClipReturn
-      SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
+      SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
       if (c) {
         Vim.State.SurroundChangeEntered := true
         return
       }
     }
-    Send {left}
+    Send {Left}
     if (!VimSurround(CurrKey, SelectionLen, true, c))
       return
   }
@@ -70,7 +70,7 @@ return
 
 VimSurround(CurrKey, SelectionLen, d:=false, c:=false) {
   global Vim
-  tag := (CurrKey == "<") ? InputBox("vim-surround", "Enter tag") : ""
+  tag := (CurrKey == "<") ? InputBox("vim-surround", "Enter tag:") : ""
   if ((CurrKey == "<") && (!tag || ErrorLevel))
     return
   if (d)
@@ -80,9 +80,9 @@ VimSurround(CurrKey, SelectionLen, d:=false, c:=false) {
   } else if (c) {
     Send % "{text}" . key := Vim.Move.RevSurrKey(CurrKey)
     if (s := IfIn(CurrKey, "(,[,{"))
-      Send {space}
+      Send {Space}
   }
-  Send % "{right " . SelectionLen . "}"
+  Send % "{Right " . SelectionLen . "}"
   if (d)
     Send {del}
   if (tag && c) {
@@ -90,7 +90,7 @@ VimSurround(CurrKey, SelectionLen, d:=false, c:=false) {
   } else if (c) {
     key := Vim.Move.RevSurrKey(CurrKey, 2)
     if (s)
-      Send {space}
+      Send {Space}
     Send % "{text}" . key
   }
   return true

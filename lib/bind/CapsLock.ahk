@@ -4,7 +4,7 @@
 CapsLock & j::WinMinimize, A
 CapsLock & k::
   hWnd := WinActive("A")
-  send #{down}  ; refresh window
+  send #{Down}  ; refresh window
   KeyWait CapsLock
   KeyWait LWin
   KeyWait RWin
@@ -192,20 +192,20 @@ NotCtrlDelWnd() {
 }
 
 CapsLock & ,::Send {Del}
-CapsLock & .::Send % (NotCtrlDelWnd()) ? "^+{right}{del}" : "^{del}"
+CapsLock & .::Send % (NotCtrlDelWnd()) ? "^+{Right}{del}" : "^{del}"
 CapsLock & m::Send {BS}
-CapsLock & n::Send % (NotCtrlDelWnd()) ? "^+{left}{BS}" : "^{BS}"
+CapsLock & n::Send % (NotCtrlDelWnd()) ? "^+{Left}{BS}" : "^{BS}"
 
 CapsLock & w::
 	if GetKeyState("alt")
 		Send ^+{Right}
 	else
-		Send ^{right}
+		Send ^{Right}
 return
 
 CapsLock & b::
 	if GetKeyState("alt")
-		Send ^+{left}
+		Send ^+{Left}
 	else
 		Send ^{Left}
 return
@@ -218,7 +218,7 @@ CapsLock & F5::Send {Media_Next}
 CapsLock & F6::Send {Media_Stop}
 
 CapsLock & s::
-  Send {ins}
+  Send {Ins}
   if (Vim.IsVimGroup())
     Vim.State.SetMode("Insert")
 return
@@ -243,6 +243,6 @@ CapsLock & q::
   if (WinActive("ahk_exe HiborClient.exe")) {
     WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0
     if (!ErrorLevel)
-      Send {enter}
+      Send {Enter}
   }
 return

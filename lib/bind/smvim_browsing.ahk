@@ -65,7 +65,7 @@ Return
 0::Vim.SM.Gohome(), Vim.State.SetMode()  ; g0: go to root element
 
 $::  ; g$: go to last element
-  Send !{end}
+  Send !{End}
   Vim.State.SetMode()
 Return
 
@@ -115,7 +115,7 @@ r::  ; reload
       Vim.SM.GoBack()
     } else {
       RootTitle := WinWaitTitleRegEx("^Concept: ", "A", 1500)
-      Vim.SM.WaitStatBar("^(\s+)?(Priority|Int)")
+      Vim.SM.WaitStatBarRegEx("^(Priority|Int)")
       Vim.SM.Learn(false)  ; false bc on pending queue ^l triggers the "learn new material?" window
       Vim.SM.WaitFileLoad()
       ; In neural review, going to root element and press learn goes to the next neural review queue
@@ -130,14 +130,14 @@ r::  ; reload
   } else if (ContGrade) {
     Vim.SM.Learn()
     ControlTextWait("TBitBtn3", "Show answer", "A")
-    ControlSend, TBitBtn3, {enter}, A
+    ControlSend, TBitBtn3, {Enter}, A
   } else {
     t := WinGetTitle("A")
     Vim.SM.GoBack()
     ; If current element is root element
     if ((CurrTitle == t) && (CurrTitle ~= "^Concept: ")) {
       Vim.SM.WaitFileLoad()
-      Send !{right}
+      Send !{Right}
     }
   }
 return
@@ -145,16 +145,19 @@ return
 p::Vim.SM.AutoPlay()
 
 +p::  ; play video/sound in default system player / edit script component
+  Marker := Vim.SM.GetMarkerFromTextArray()
   KeyWait Shift
-  Marker := Vim.SM.GetMarkerFromTextArray(), Vim.SM.EditFirstQuestion()
+  Vim.SM.EditFirstQuestion()
   Send ^t
   Vim.SM.ViewFile()
-  WinWaitActive, ahk_class mpv,, 1.5
-  if (!ErrorLevel) {
+  GroupAdd, SMF9, ahk_class mpv
+  GroupAdd, SMF9, ahk_class TScriptEditor
+  WinWaitActive, ahk_group SMF9,, 1.5
+  if (!ErrorLevel && (WinGetClass() == "mpv")) {
     RegExMatch(Marker, "^SMVim time stamp: (.*)", v)
     if (Vim.Browser.GetSecFromTime(v1) > 0) {
       Sleep 700
-      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{space}
+      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Space}
       WinActivate
     }
   }
@@ -250,7 +253,7 @@ CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
   && (Vim.SM.IsBrowsing()
    || WinActive("ahk_class TContents")
    || WinActive("ahk_class TBrowser")))
-+x::Send ^+{enter}  ; Done!
++x::Send ^+{Enter}  ; Done!
 
 
 ; Element/content window
@@ -293,13 +296,13 @@ u::  ; gu: go to parent
     if (A_ThisLabel ~= "h$") {
       Vim.SM.GoBack()
     } else if (A_ThisLabel ~= "l$") {
-      Send !{right}
+      Send !{Right}
     } else if (A_ThisLabel ~= "j$|^\+e$") {
       Send !{pgdn}
     } else if (A_ThisLabel ~= "k$|^e$") {
       Send !{pgup}
     } else if (A_ThisLabel ~= "u$") {
-      Send ^{up}
+      Send ^{Up}
     }
     if (n > 1)
       Vim.SM.WaitFileLoad(, false)
@@ -368,8 +371,7 @@ y::  ; yy: copy current source url
 return
 
 e::  ; ye: duplicate current element
-  Send !d
-  Vim.State.SetNormal()
+  Vim.SM.Duplicate(), Vim.State.SetNormal()
 Return
 
 ; Plan/tasklist window
@@ -448,11 +450,11 @@ return
 Enter::
   VimLastSearch := ControlGetText("TMemo1"), SMCtrlF3 := false
   Vim.State.BackToNormal--
-  Send {enter}
+  Send {Enter}
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TMyFindDlg"))
 Enter::
   VimLastSearch := ControlGetText("TEdit1")
-  Send {enter}
+  Send {Enter}
 return

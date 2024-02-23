@@ -28,7 +28,7 @@ CapsLock & /::
   if (Vim.SM.IsBrowsing())
     Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
   if (Vim.State.StrIsInCurrentVimMode("Visual")) {
-    Send {right}
+    Send {Right}
     Vim.State.SetNormal()
   }
   CurrFocus := ControlGetFocus("ahk_class TElWind")
@@ -68,30 +68,30 @@ SearchButtonFind:
 SMSearch:
 SMSearchAgain:
   if (IfContains(CurrFocus, "TMemo")) {
-    Send ^+{end}
+    Send ^+{End}
     if (A_ThisLabel != "SMSearchAgain") {
       if (Vim.State.n)
         Vim.State.n--
       n := Vim.State.n ? Vim.State.n : 0, Vim.State.n := 0
     }
     if (WholeWord) {
-      match := "s)(\b(" . UserInput . ")\b.*?){" . n . "}\K\b" . UserInput . "\b"
+      Match := "s)(\b(" . UserInput . ")\b.*?){" . n . "}\K\b" . UserInput . "\b"
     } else {
-      match := "s)((" . UserInput . ").*?){" . n . "}\K" . UserInput
+      Match := "s)((" . UserInput . ").*?){" . n . "}\K" . UserInput
     }
-    pos := RegExMatch(selection := Vim.ParseLineBreaks(Copy()), match)
+    pos := RegExMatch(Selection := Vim.ParseLineBreaks(Copy()), Match)
     if (pos == 1) {
       if (WholeWord) {
-        match := "s)(\b(" . UserInput . ")\b.*?){" . n + 1 . "}\K\b" . UserInput . "\b"
+        Match := "s)(\b(" . UserInput . ")\b.*?){" . n + 1 . "}\K\b" . UserInput . "\b"
       } else {
-        match := "s)(" . UserInput . ".*?){" . n + 1 . "}\K" . UserInput
+        Match := "s)(" . UserInput . ".*?){" . n + 1 . "}\K" . UserInput
       }
-      pos := RegExMatch(selection, match)
+      pos := RegExMatch(Selection, Match)
     }
     if (pos) {
-      Send % "{left}{right " . pos - 1 . "}"
+      Send % "{Left}{Right " . pos - 1 . "}"
       if (ShiftState || AltState) {
-        Send % "+{right " . StrLen(UserInput) . "}"
+        Send % "+{Right " . StrLen(UserInput) . "}"
         if (ShiftState) {
           Vim.State.SetMode("Vim_Visual")
         } else if (AltState) {
@@ -99,9 +99,9 @@ SMSearchAgain:
         }
       }
     } else {
-      Send {left}
+      Send {Left}
       if (A_ThisLabel != "SMSearchAgain") {
-        Send ^{home}
+        Send ^{Home}
         Vim.State.SetToolTip("Search started from the beginning.")
         Goto SMSearchAgain
       }
@@ -116,14 +116,14 @@ SMSearchAgain:
     if (WholeWord)
       Control, Check,, TCheckBox2, ahk_class TMyFindDlg  ; match whole word
     Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
-    Send {enter}
+    Send {Enter}
     if (Vim.State.n)
       Send % "{f3 " . Vim.State.GetN() - 1 . "}"
     WinWaitNotActive, ahk_class TMyFindDlg
     if (ShiftState && !AltState) {
       Vim.State.SetMode("Vim_Visual")
     } else if (!AltState) {  ; all modifier keys are not pressed
-      Send {left}  ; put caret on left of searched text
+      Send {Left}  ; put caret on left of searched text
     }
     if (!Vim.SM.HandleF3(2))
       return

@@ -4,7 +4,7 @@ class VimGui {
     this.Vim := vim
     this.Hwnd := 0
     this.HwndAll := []
-    this.Title := title
+    this.Title := Title
   }
 
   ShowGui() {

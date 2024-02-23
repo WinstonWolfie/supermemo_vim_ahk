@@ -16,14 +16,14 @@ VisualLine:
   if (Vim.State.StrIsInCurrentVimMode("VisualLine")) {
     Vim.State.SetNormal()
   } else {
-    Send {home}
+    Send {Home}
     if (Vim.State.n) {
-      Send % "+{down " . Vim.State.n - 1 . "}"
+      Send % "+{Down " . Vim.State.n - 1 . "}"
       Vim.State.SetMode("Vim_VisualLine")
     } else {
       Vim.State.SetMode("Vim_VisualLineFirst")
     }
-    Send +{end}
+    Send +{End}
   }
 Return
 
@@ -52,12 +52,12 @@ Return
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && !Vim.State.fts && !Vim.State.Surround)
 ; Visual to insert
 +i::
-  Send {left}
+  Send {Left}
   Vim.State.SetMode("Insert")
 Return
 
 +a::
-  Send {right}
+  Send {Right}
   Vim.State.SetMode("Insert")
 Return
 
@@ -115,7 +115,7 @@ Return
     WinWaitNotActive, % "ahk_id " . hWnd,, 0.3
     Send ^v
     WinClip._waitClipReady()
-    Send {enter}
+    Send {Enter}
   }
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 Return
@@ -167,10 +167,10 @@ InvertCase:
 ~::
   ClipSaved := ClipboardAll
 InvertCaseClipped:
-  selection := Copy(false, html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
+  Selection := Copy(false, html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
   Lab_Invert_Char_Out:= ""
-  Loop % Strlen(selection) {
-    Lab_Invert_Char:= Substr(selection, A_Index, 1)
+  Loop % Strlen(Selection) {
+    Lab_Invert_Char:= Substr(Selection, A_Index, 1)
     if Lab_Invert_Char is upper
        Lab_Invert_Char_Out:= Lab_Invert_Char_Out Chr(Asc(Lab_Invert_Char) + 32)
     else if Lab_Invert_Char is lower
@@ -186,21 +186,21 @@ Return
 
 o::  ; move to other end of marked area; not perfect with line breaks
   ClipSaved := ClipboardAll
-  if (!selection := Copy(false))
+  if (!Selection := Copy(false))
     Goto RestoreClipReturn
-  SelectionLen := StrLen(Vim.ParseLineBreaks(selection))
-  Send +{right}
+  SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
+  Send +{Right}
   SelectionRight := Copy(false)
   SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
-  Send +{left}
+  Send +{Left}
   if ((SelectionLen < SelectionRightLen)
    || ((SelectionLen == SelectionRightLen)
-    && (StrLen(selection) < StrLen(SelectionRight)))) {  ; moving point of selection is on the right
-    Send % "{right}+{left " . SelectionLen . "}"
+    && (StrLen(Selection) < StrLen(SelectionRight)))) {  ; moving point of selection is on the right
+    Send % "{Right}+{Left " . SelectionLen . "}"
   } else if ((SelectionLen > SelectionRightLen)
           || ((SelectionLen == SelectionRightLen)
-           && (StrLen(selection) > StrLen(SelectionRight)))) {
-    Send % "{left}+{right " . SelectionLen . "}"
+           && (StrLen(Selection) > StrLen(SelectionRight)))) {
+    Send % "{Left}+{Right " . SelectionLen . "}"
   }
   Clipboard := ClipSaved
 return

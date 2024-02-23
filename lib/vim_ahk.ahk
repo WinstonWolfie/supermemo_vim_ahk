@@ -248,9 +248,9 @@ class VimAhk {
     if (this.State.StrIsInCurrentVimMode("Insert")) {
       Send {BS}
     } else if (this.State.StrIsInCurrentVimMode("Visual")) {
-      Send {right}{up}
+      Send {Right}{Up}
     } else if (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText()) {
-      Send {up}{Esc}
+      Send {Up}{Esc}
     }
     this.State.SetNormal()
   }
@@ -330,7 +330,7 @@ class VimAhk {
   }
 
   CheckChr(key) {
-    Return (Copy(,, "+{right}^c{left}") ~= key)
+    Return (Copy(,, "+{Right}^c{Left}") ~= key)
   }
 
   IsExceptionWnd() {

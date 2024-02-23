@@ -9,7 +9,7 @@
   if (Vim.SM.IsEditingPlainText()) {
     Send ^a
     if (pos := InStr(Copy(), "[...]")) {
-      Send % "{left}{right " . pos + 4 . "}"
+      Send % "{Left}{Right " . pos + 4 . "}"
     } else {
       Vim.State.SetToolTip("Not found.")
       Goto SetModeNormalReturn
@@ -18,9 +18,9 @@
     if (!Vim.SM.HandleF3(1))
       Goto SetModeNormalReturn
     ControlSetText, TEdit1, [...], ahk_class TMyFindDlg
-    Send {enter}
+    Send {Enter}
     WinWaitNotActive, ahk_class TMyFindDlg  ; faster than wait for element window to be active
-    Send {right}  ; put caret on the right
+    Send {Right}  ; put caret on the right
     if (!Vim.SM.HandleF3(2))
       Goto SetModeNormalReturn
   }
@@ -34,7 +34,7 @@ return
 Return
 
 ~^+f12::  ; bomb format with no confirmation
-  Send {enter}
+  Send {Enter}
   Vim.State.SetNormal()
 return
 
@@ -44,14 +44,14 @@ return
 >^>+\::  ; Done! and keep learning
   Vim.State.SetNormal()
   if (IfContains(A_ThisLabel, "\")) {
-    Send ^+{enter}
+    Send ^+{Enter}
     WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
-    Send {enter}
+    Send {Enter}
   } else {
     Send ^+{del}
   }
   WinWaitActive, ahk_class TMsgDialog  ; wait for "Delete element?" or confirm registry deletion
-  Send {enter}
+  Send {Enter}
   WinWaitClose
   Vim.SM.WaitFileLoad()
   WinWaitNotActive, ahk_class TElWind,, 0.3
@@ -60,48 +60,53 @@ return
   Vim.SM.GoHome()
   Vim.SM.WaitFileLoad()
   if (WinActive("ahk_class TElWind"))
-    Vim.SM.Learn(false, true)
+    Vim.SM.Learn(false, true, true)
 return
 
 ^!+g::  ; change element's concept *g*roup
-  Vim.State.SetMode("Insert")
-  SetDefaultKeyboard(0x0409)  ; English-US
+  BlockInput, On
+  Vim.SM.OpenBrowser()
+  WinWait, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
+  BrowserTitle := WinWaitTitleRegEx("^Subset elements \(\d+ elements\)")
+  WinClose
+  Vim.State.SetMode("Insert"), SetDefaultKeyboard(0x0409)  ; English-US
   KeyWait Ctrl
   KeyWait Shift
   KeyWait Alt
   Send ^+p!g  ; focus to concept group
   WinWaitActive, ahk_class TElParamDlg
+  BlockInput, Off
   OldConcept := ControlGetText("Edit2"), NewConcept := ""
-  WinWaitNotActive
-  if (NewConcept && (OldConcept != NewConcept)) {
-    if (MsgBox(3,, "Make children this concept too?") = "yes") {
-      WinWaitActive, ahk_class TElWind
-      Send !c
-      WinWaitActive, ahk_class TContents
-      Vim.SM.OpenBrowser()
-      WinWaitActive, ahk_class TBrowser
-      Send {AppsKey}pg
-      WinWaitActive, ahk_class TRegistryForm
-      ControlSend, Edit1, % "{text}" . NewConcept
-      ControlSend, Edit1, {enter}
-      WinWaitActive, ahk_class TMsgDialog
-      Send {enter}
-      WinWaitClose
-      WinWaitActive, ahk_class TMsgDialog
-      WinClose
-      WinActivate, ahk_class TBrowser
-      Send {Esc}
-    }
-  }
-  OldConcept := NewConcept := ""
+  WinWaitClose
   Vim.State.SetMode("Vim_Normal")
+  if (IfContains(BrowserTitle, "1 elements"))
+    return
+  if (NewConcept && (OldConcept != NewConcept) && (A_PriorKey = "Enter")
+   && (MsgBox(3,, "Make children this concept too?") = "Yes")) {
+    WinWaitActive, ahk_class TElWind
+    Send !c
+    WinWaitActive, ahk_class TContents
+    Vim.SM.OpenBrowser()
+    WinWaitActive, ahk_class TBrowser
+    Send {AppsKey}pg
+    WinWaitActive, ahk_class TRegistryForm
+    ControlSend, Edit1, % "{text}" . NewConcept
+    ControlSend, Edit1, {Enter}
+    WinWaitActive, ahk_class TMsgDialog
+    Send {Enter}
+    WinWaitClose
+    WinWaitActive, ahk_class TMsgDialog
+    WinClose
+    WinActivate, ahk_class TBrowser
+    Send {Esc}
+  }
 return
 
 ^!t::
   KeyWait Ctrl
   KeyWait Alt
   if (t := Vim.SM.IsEditingText()) {
-    Send {right}
+    Send {Right}
     while (Copy())  ; still selecting text
       Sleep 200
   }
@@ -118,7 +123,7 @@ return
   Send ^t
   Vim.SM.WaitHTMLFocus()
   if (Vim.SM.IsEditingHTML())
-    Send {right}{left}{Ctrl Down}cf{Ctrl Up}  ; discovered by Harvey from the SuperMemo.wiki Discord server
+    Send {Right}{Left}{Ctrl Down}cf{Ctrl Up}  ; discovered by Harvey from the SuperMemo.wiki Discord server
   WinWaitActive, ahk_class #32770,, 1.5
   if (ErrorLevel)
     return
@@ -163,19 +168,19 @@ return
   MB := MsgBox(3,, "Permanently remove extra components?")
   WinWaitActive, ahk_class TElWind
   BlockInput, On
-  if (MB = "yes") {
+  if (MB = "Yes") {
     Send ^+{f2}  ; impose template
     WinWaitActive, ahk_class TMsgDialog
-    Send {enter}
+    Send {Enter}
     WinWaitClose
     WinWaitActive, ahk_class TMsgDialog
-    Send {enter}
+    Send {Enter}
     WinWaitClose
     Vim.SM.SetElParam(,, Template)
     WinWaitClose, ahk_class TElParamDlg
     if (ContLearn == 1)
       Vim.SM.learn()
-  } else if (MB = "cancel") {
+  } else if (MB = "Cancel") {
     Vim.SM.DetachTemplate()
   }
   BlockInput, Off
@@ -184,7 +189,9 @@ return
 
 SMCtrlN:
 ^n::
-  Vim.SM.CtrlN(), Vim.State.SetMode("Vim_Normal")
+  Vim.SM.CtrlN()
+  if (A_ThisLabel == "^n")
+    Vim.State.SetMode("Vim_Normal")
   if (RegExMatch(Clipboard, "(?:youtube\.com).*?(?:v=)([a-zA-Z0-9_-]{11})", v) && IsUrl(Clipboard)) {
     if (A_ThisLabel == "^n")
       ClipSaved := ClipboardAll
@@ -192,17 +199,19 @@ SMCtrlN:
     ; Register browser time stamp to YT comp time stamp
     if (Vim.Browser.TimeStamp)
       Clipboard := "{SuperMemoYouTube:" . v1 . "," . Vim.Browser.TimeStamp . ",0:00,0:00,3}"
-    text := Vim.Browser.Title . Vim.SM.MakeReference()
+    Text := Vim.Browser.Title . Vim.SM.MakeReference()
     Vim.SM.WaitFileLoad()
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
     Send ^a{BS}{Esc}
     Vim.SM.WaitTextExit()
-    Clip(text,, false)
+    Clip(Text,, false)
     Vim.SM.WaitTextFocus()
+    Vim.SM.WaitFileLoad()
     if (A_ThisLabel == "^n") {
       Vim.SM.SetElParam(Vim.Browser.Title,, "YouTube")
-      Vim.Browser.Clear(), Clipboard := ClipSaved
+      Vim.SM.Reload(), Vim.Browser.Clear(), Clipboard := ClipSaved
+      Vim.State.SetToolTip("Processing finished.")
     }
   }
 return
@@ -282,10 +291,10 @@ return
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class Internet Explorer_TridentDlgFrame"))
   el.WaitElementExist("ControlType=Edit AND Name='URL: ' AND AutomationId='txtURL'").SetValue(Link)
-  Send {enter}
+  Send {Enter}
   WinWaitClose
   Vim.State.SetNormal(), Vim.Caret.SwitchToSameWindow()
-  Send {left}
+  Send {Left}
 return
 
 ^!l::
@@ -305,8 +314,8 @@ return
     ; After almost a year since I wrote this script, I finially figured out this f**ker website encodes the formula twice. Well, I suppose I don't use math that often in SM
     LatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
     LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cbg_white%2520%255Chuge%2520" . LatexFormula . "&dl=1"
-    LatexFolderPath := Vim.SM.GetCollPath(text := WinGetText("ahk_class TElWind"))
-                     . Vim.SM.GetCollName(text) . "\elements\LaTeX"
+    LatexFolderPath := Vim.SM.GetCollPath(Text := WinGetText("ahk_class TElWind"))
+                     . Vim.SM.GetCollName(Text) . "\elements\LaTeX"
     LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     SetTimer, DownloadLatex, -1
@@ -337,7 +346,7 @@ return
       HTML .= "`n" . AntiMerge
     Vim.SM.EmptyHTMLComp()
     WinWaitActive, ahk_class TElWind
-    Send ^{home}
+    Send ^{Home}
     Clip(HTML,, false, "sm")
     if (ContLearn == 1) {  ; item and "Show answer"
       Send {Esc}
@@ -398,7 +407,7 @@ return
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))  ; SuperMemo Plan window
 !r::
   if (refresh := Vim.SM.IsNavigatingPlan()) {
-    Send {home}{right}
+    Send {Home}{Right}
     x := A_CaretX, y := A_CaretY
     Send {f2}
     WaitCaretMove(x, y)
@@ -484,22 +493,22 @@ SMPlanInsertButtonAppend:
   if (A_ThisLabel == "SMPlanInsertButtonInsert") {
     Send ^t  ; split
     WinWaitActive, ahk_class TInputDlg
-    Send {enter}
+    Send {Enter}
     WinWaitActive, ahk_class TPlanDlg
   }
-  Send {down}{ins}  ; inserting one activity below the current selected activity and start editing
+  Send {Down}{Ins}  ; inserting one activity below the current selected activity and start editing
   Send % "{text}" . Activity
   if (Time) {
-    Send {enter}
+    Send {Enter}
     Send % "{text}" . Time
-    Send {enter}{up}!b
+    Send {Enter}{Up}!b
     WinWaitActive, ahk_class TMsgDialog,, 0.3
     if (!ErrorLevel)
       WinClose, ahk_class TMsgDialog
   } else {
     Send +{tab}
     Send % "{text}" . CurrTime
-    Send {enter}
+    Send {Enter}
     WinWaitActive, ahk_class TMsgDialog,, 0.3
     if (!ErrorLevel)
       Send {text}y
@@ -566,7 +575,7 @@ Enter::
   Prio := ControlGetText("TEdit5", "A")
   if (Prio ~= "^\.")
     ControlSetText, TEdit5, % "0" . Prio
-  Send {enter}
+  Send {Enter}
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TMyFindDlg"))
@@ -586,7 +595,7 @@ d::
   MouseGetPos, XCoordSaved, YCoordSaved
 
   ; Move to the name of current entry
-  Send {home}{right}
+  Send {Home}{Right}
 
   ; Get current entry coords
   x := A_CaretX, y := A_CaretY
@@ -596,7 +605,7 @@ d::
   Coords := StrSplit(WaitCaretMove(x, y), " ")
 
   ; Move to the next entry
-  Send +{tab}{down}{right}
+  Send +{tab}{Down}{Right}
   Coords := StrSplit(WaitCaretMove(Coords[1], IniYCoord := Coords[2]), " ")
 
   ; Show caret in next entry
@@ -607,7 +616,7 @@ d::
 
   ; Calculate entry height
   PlanEntryGap := A_CaretY - IniYCoord
-  Send {up}{left}  ; go back
+  Send {Up}{Left}  ; go back
   WaitCaretMove(Coords[1], Coords[2])
 
   ; Move to position
@@ -650,43 +659,45 @@ return
 !+`::  ; clear time but browser tab stays open
 ^+!`::  ; clear time and keep learning
 BrowserSyncTime:
-  Sync := (A_ThisLabel == "BrowserSyncTime")
+  if (A_ThisLabel != "BrowserSyncTime")
+    ClipSaved := ClipboardAll
   ResetTime := IfContains(A_ThisLabel, "``")
   CloseWnd := IfContains(A_ThisLabel, "^")  ; hotkeys with ctrl will close the browser tab / mpv
+  wPrev := "ahk_id " . WinActive("A")
   hMPV := WinActive("ahk_class mpv"), wMPV := "ahk_id " . hMPV
-  hSMElWind := SMTemplCode := wBrowser := ""
+  hBrowser := WinActive("ahk_group Browser"), wBrowser := "ahk_id " . hBrowser
+  wSMElWind := "ahk_class TElWind", SMTemplCode := ""
 
-  if (hBrowser := WinActive("ahk_group Browser")) {
-    Vim.Browser.Clear(), wBrowser := "ahk_id " . hBrowser
+  if (hBrowser) {
+    Vim.Browser.Clear()
     Vim.Browser.FullTitle := Vim.Browser.GetFullTitle(wBrowser)
+
     if (Vim.Browser.FullTitle != "Netflix")
       ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Esc}, % wBrowser
-    Vim.Browser.GetTitleSourceDate(!Sync, false,,, false, false)  ; need url and title here
+
+    if (!ResetTime)
+      Vim.Browser.TimeStamp := Vim.Browser.GetTimeStamp(Vim.Browser.FullTitle,, false)
+    Vim.Browser.GetTitleSourceDate(false, false,,, false, false)  ; need url and title here
+
     WinGet, pahSMElWind, List, ahk_class TElWind
     loop % pahSMElWind {
-      SMTitle := WinGetTitle("ahk_id " . hWnd := pahSMElWind%A_Index%)
-      ; SM uses "." instead of "..." in titles
-      if (SMTitle == RegExReplace(Vim.Browser.Title, "\.\.\.?", ".")) {
-        hSMElWind := hWnd
+      SMTitle := WinGetTitle(wTemp := "ahk_id " . pahSMElWind%A_Index%)
+      TempBrowserTitle := RegExReplace(Vim.Browser.Title, "\.\.\.?", ".")  ; SM uses "." instead of "..." in titles
+      if (((SMTitle ~= " \.$") && InStr(TempBrowserTitle, RegExReplace(SMTitle, " \.$")))
+       || (SMTitle == TempBrowserTitle)) {
+        wSMElWind := wTemp
         Break
       }
     }
-  }
 
-  wSMElWind := hSMElWind ? "ahk_id " . hSMElWind : "ahk_class TElWind"
-
-  if (hBrowser) {
-    if (Vim.Browser.FullTitle == "Netflix")
-      Vim.Browser.TimeStamp := Vim.Browser.GetTimeStamp(Vim.Browser.FullTitle,, !Sync)
-    SMUrl := Vim.SM.GetLink(SMTemplCode := Vim.SM.GetTemplCode(!Sync, wSMElWind))
-    Vim.Browser.Url := Vim.SM.HTMLUrl2SMRefUrl(Vim.Browser.Url)
-    if (Vim.Browser.Url != SMUrl) {
+    SMTemplCode := Vim.SM.GetTemplCode(false, wSMElWind)
+    CurrSMUrl := Vim.SM.GetLink(SMTemplCode)
+    ret := Vim.SM.AskToSearchLink(Vim.Browser.Url, CurrSMUrl, wSMElWind)
+    if (ret == 0) {
+      Goto SMSyncTimeReturn
+    } else if (ret == -1) {
       SMTemplCode := ""
-      if (!Vim.SM.AskToSearchLink(Vim.Browser.Url, SMUrl, wSMElWind))
-        Goto SMSyncTimeReturn
     }
-    if (!ResetTime && !Vim.Browser.TimeStamp)
-      Vim.Browser.TimeStamp := Vim.Browser.GetTimeStamp(Vim.Browser.FullTitle,, !Sync)
   }
 
   if (hMPV && !ResetTime) {
@@ -701,7 +712,7 @@ BrowserSyncTime:
 
   if (!Vim.Browser.TimeStamp && !ResetTime) {
     SetDefaultKeyboard(0x0409)  ; English-US
-    if ((!Vim.Browser.TimeStamp := InputBox("Time Stamp", "Enter time stamp.")) || ErrorLevel)
+    if ((!Vim.Browser.TimeStamp := InputBox(, "Enter time stamp:")) || ErrorLevel)
       Goto SMSyncTimeReturn
   }
 
@@ -720,41 +731,36 @@ BrowserSyncTime:
   if (ResetTime)
     Vim.Browser.TimeStamp := "0:00"
 
-  if (!hMPV) {
-    if (!SMTemplCode)
-      SMTemplCode := Vim.SM.GetTemplCode(!Sync, wSMElWind)
-    RegExMatch(SMTemplCode, "ScriptFile=\K.*", ScriptPath) 
-    Script := FileRead(ScriptPath)
-    Sec := Vim.Browser.GetSecFromTime(Vim.Browser.TimeStamp)
+  EditHTML := EditScript := false
+  if (hMPV) {
+    EditHTML := true
   } else {
-    Script := ""
+    if (!SMTemplCode)
+      SMTemplCode := Vim.SM.GetTemplCode(false, wSMElWind)
+    RegExMatch(SMTemplCode, "ScriptFile=\K.*", ScriptPath) 
+    UrlInScript := RegExReplace(FileRead(ScriptPath), "^url ")
+    if (NewUrl := Vim.Browser.TimeStampToUrl(UrlInScript, Vim.Browser.TimeStamp)) {
+      EditScript := true
+    } else {
+      EditHTML := true
+    }
   }
 
-  EditScript := True
-  if (IfContains(Script, "bilibili.com")) {
-    if (Script ~= "\?p=\d+") {
-      Match := "&t=.*", Replacement := "&t=" . Sec
-    } else {
-      Match := "\?t=.*", Replacement := "?t=" . Sec
-    }
-  } else if (IfContains(Script, "youtube.com")) {
-    Match := "&t=.*s", Replacement := "&t=" . Sec . "s"
-  } else {
-    EditScript := False
+  if (EditHTML) {
     WinActivate, % wSMElWind
     Vim.SM.EditFirstQuestion()
     OldText := Vim.SM.GetMarkerFromTextArray()
     NewText := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Vim.Browser.TimeStamp
     if (OldText != RegExReplace(NewText, "<.*?>")) {
       Vim.SM.WaitTextFocus()
-      Send ^{home}
+      Send ^{Home}
       if (OldText ~= "^SMVim time stamp: ") {
-        Send ^{right 4}
-        Send % "+{right " . StrLen(RegExReplace(OldText, "^SMVim time stamp: ")) . "}"
+        Send ^{Right 4}
+        Send % "+{Right " . StrLen(RegExReplace(OldText, "^SMVim time stamp: ")) . "}"
         Send % "{text}" . Vim.Browser.TimeStamp
       } else if (OldText) {
-        Send {enter}{up}
-        Clip(NewText,, !Sync, "sm")
+        Send {Enter}{Up}
+        Clip(NewText,, false, "sm")
       }
     }
     Send {Esc}
@@ -762,25 +768,23 @@ BrowserSyncTime:
 
 SMSyncTimeReturn:
   if (IfContains(A_ThisLabel, "^+!")) {
-    Vim.SM.Learn(false,, true)
-  } else if (wBrowser && ((A_ThisLabel == "SMSyncTimeReturn") || (A_ThisLabel ~= "\!\+(s|`)"))) {  ; keep browser tab open
-    WinActivate % wBrowser
-  } else if (wMPV && (A_ThisLabel ~= "\!\+(s|`)")) {
-    WinActivate % wMPV
+    Vim.SM.Learn(false, true, true, wSMElWind)
+  } else if (A_ThisLabel ~= "^(!\+(s|`)|SMSyncTimeReturn)$") {
+    WinActivate % wPrev
   } else if (IfContains(A_ThisLabel, "^!")) {
     WinActivate % wSMElWind
   }
 
-  if (EditScript) {
-    FileDelete, % ScriptPath
-    FileAppend, % RegExReplace(Script, Match . "|$", Replacement,, 1), % ScriptPath
-    if (A_ThisLabel != "SMSyncTimeReturn")
-      Vim.State.SetToolTip("Time stamp in script component set as " . Sec . "s")
+  if (EditScript && (A_ThisLabel != "SMSyncTimeReturn")) {
+    if (NewUrl == UrlInScript) {
+      Vim.State.SetToolTip("No change.")
+    } else {
+      FileDelete, % ScriptPath
+      FileAppend, % "url " . NewUrl, % ScriptPath
+      Vim.State.SetToolTip("Time stamp in script component set as " . Vim.Browser.TimeStamp)
+    }
   }
-
-  Vim.Browser.Clear()
-  if (Sync)
-    Clipboard := ClipSaved
+  Vim.Browser.Clear(), Clipboard := ClipSaved
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
@@ -837,9 +841,9 @@ y::Send {text}y
 n::Send {text}n
 
 #if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
-^/::Send {home}//{space}
-+!a::Send /*  */{left 3}
-^+!a::Send /*{enter 2}*/{up}
+^/::Send {Home}//{Space}
++!a::Send /*  */{Left 3}
+^+!a::Send /*{Enter 2}*/{Up}
 ^!+h::Send {text}==================================================
 
 ^+k::Vim.SM.RegMember()
@@ -847,5 +851,5 @@ n::Send {text}n
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg") && OldConcept)
 Enter::
   NewConcept := ControlGetText("Edit2")
-  Send {enter}
+  Send {Enter}
 return

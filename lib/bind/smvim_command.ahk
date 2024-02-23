@@ -4,7 +4,7 @@ b::  ; remove all text *b*efore cursor
   Send !\\
   WinWaitNotActive, ahk_class TElWind,, 0
   if (!ErrorLevel)
-    Send {enter}
+    Send {Enter}
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -12,13 +12,13 @@ a::  ; remove all text *a*fter cursor
   Send !.
   WinWaitNotActive, ahk_class TElWind,, 0
   if (!ErrorLevel)
-    Send {enter}
+    Send {Enter}
   Vim.State.SetMode("Vim_Normal")
 return
 
 f::  ; clean *f*ormat: using f6 (retaining tables)
   Vim.State.SetMode("Vim_Normal")
-  Send {f6}^arbs{enter}
+  Send {f6}^arbs{Enter}
 return
 
 NukeHTML:
@@ -65,9 +65,9 @@ Return
 l::Vim.SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
 
 o::  ; c*o*mpress images
-  Send ^{enter}^a  ; open commander
+  Send ^{Enter}^a  ; open commander
   Send {text}co  ; Compress images
-  Send {enter}
+  Send {Enter}
   Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
 return
 
@@ -82,14 +82,14 @@ s::  ; turn active language item to passive (*s*witch)
   Sleep 320
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
-  Send ^{home}
+  Send ^{Home}
   Send {text}en:
-  Send {space}^t
+  Send {Space}^t
   Sleep 320
   if (Vim.SM.IsEditingHTML()) {
-    Send ^{home}^{del 2}
+    Send ^{Home}^{del 2}
   } else if (Vim.SM.IsEditingPlainText()) {
-    Send ^{home}^+{right}{BS}
+    Send ^{Home}^+{Right}{BS}
   }
   Send {Esc}
 return
@@ -104,19 +104,19 @@ return
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus(), WinClip.Clear()
   if (Vim.SM.IsEditingHTML()) {
-    Send ^{home}^+{right 2}
+    Send ^{Home}^+{Right 2}
   } else if (Vim.SM.IsEditingPlainText()) {
-    Send ^{home}^+{right}
+    Send ^{Home}^+{Right}
   }
-  text := Clip()
+  Text := Clip()
   Send {BS}{Esc}
   Vim.SM.WaitTextExit()
   Send ^+s
   Sleep 320
   Vim.SM.EditFirstQuestion()
   Vim.SM.WaitTextFocus()
-  Send % "{text}" . text
-  Send {left 2}{Esc}
+  Send % "{text}" . Text
+  Send {Left 2}{Esc}
 return
 
 r::  ; set *r*eference's link to what's in the clipboard
@@ -142,7 +142,7 @@ SMSetLinkFromClipboard:
   if (Vim.Browser.Comment)
     Ref := "#Comment: " . Vim.Browser.Comment . "`n" . Ref
   ControlSetText, TMemo1, % Ref
-  ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}{enter}{Ctrl Up}  ; submit
+  ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}{Enter}{Ctrl Up}  ; submit
   WinWaitClose
   if (!SMPoundSymbHandled && Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url) && (A_ThisLabel == "r"))
     Vim.SM.Reload(, true)
@@ -158,7 +158,7 @@ return
   Send {AppsKey}co
   Vim.SM.WaitBrowser()
   Send ^s
-  Vim.SM.WaitBrowser()
+  Vim.SM.WaitFileLoad()
   Send ^l
 return
 
@@ -189,7 +189,7 @@ SMLearnChildActiveBrowser:
   Send {AppsKey}co
   Vim.SM.WaitBrowser()
   Send ^s
-  Vim.SM.WaitBrowser()
+  Vim.SM.WaitFileLoad()
   Send ^l
   WinWaitActive, ahk_class TElWind
   Vim.SM.PlayIfOnlineColl(, 500)

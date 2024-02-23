@@ -37,12 +37,12 @@ return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && GetKeyState("j", "P"))
 k::
-  Send +{up}{right}
+  Send +{Up}{Right}
   Vim.State.SetMode("Vim_Normal")
 return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && GetKeyState("k", "P"))
 j::
-  Send +{down}{left}
+  Send +{Down}{Left}
   Vim.State.SetMode("Vim_Normal")
 return

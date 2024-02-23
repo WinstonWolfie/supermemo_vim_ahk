@@ -98,12 +98,12 @@ r::Vim.State.SetMode("r_once")
 ~.::
 ~>::
 ~Space::
-  Send {Del}{left}
+  Send {Del}{Left}
   Vim.State.SetMode("Vim_Normal")
 Return
 
 :::  ; ":" can't be used with "~"?
-  Send {:}{Del}{left}
+  Send {:}{Del}{Left}
   Vim.State.SetMode("Vim_Normal")
 Return
 

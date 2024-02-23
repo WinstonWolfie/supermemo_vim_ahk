@@ -163,7 +163,7 @@ WebSearchButtonSearch:
     } else if (LinkCount > 1) {
       MB := MsgBox(3,, "Text contains multiple urls. Run them?")
     }
-    if (MB = "yes") {
+    if (MB = "Yes") {
       for i, v in Links
         ShellRun(v)
       return
@@ -191,7 +191,7 @@ WaybackMachine:
   WinWaitActive % "ahk_id " . hWnd
   if (WinActive("ahk_group Browser")) {
     uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-    Url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL())
+    Url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL(), true)
   } else if (WinActive("ahk_class TElWind")) {
     Url := FindSearch("Wayback Machine", "URL:", Vim.SM.GetLink(), true)
   } else if (!Url := FindSearch("Wayback Machine", "URL:")) {
@@ -281,11 +281,11 @@ ClozeAndDone:
   Vim.SM.Cloze()
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
-  Send ^+{enter}
+  Send ^+{Enter}
   WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
-  Send {enter}
+  Send {Enter}
   WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?"
-  Send {enter}
+  Send {Enter}
   Vim.State.SetNormal()
 return
 
@@ -343,11 +343,11 @@ SetConceptHook:
     WinWaitActive, ahk_class TContents
   }
   if (ControlGetFocus("A") == "TVTEdit1")
-    Send {enter}
+    Send {Enter}
   ControlFocusWait("TVirtualStringTree1", "A")
   Send {AppsKey}ce
   WinWaitActive, ahk_class TMsgDialog  ; either asking for confirmation or "no change"
-  Send {enter}
+  Send {Enter}
   ControlSend, TVirtualStringTree1, {Esc}, ahk_class TContents
   Vim.State.SetToolTip("Hook set."), Vim.State.SetMode("Vim_Normal")
 Return
@@ -465,22 +465,22 @@ MassReplaceReference:
     } else {
       return
     }
-    Send !{enter}
+    Send !{Enter}
     WinWaitActive, ahk_class TChoicesDlg,, 0
     if (!ErrorLevel)
-      Send {down}{enter}
+      Send {Down}{Enter}
     WinActivate, ahk_class TBrowser
-    Send {down}
+    Send {Down}
   }
 return
 
 SciHub:
-  if (!text := FindSearch("Sci-Hub", "Search:"))
+  if (!Text := FindSearch("Sci-Hub", "Search:"))
     return
-  if (RegExMatch(text, "https:\/\/doi\.org\/([^ ]+)", v)) {
+  if (RegExMatch(Text, "https:\/\/doi\.org\/([^ ]+)", v)) {
     ShellRun("https://sci-hub.hkvisa.net/" . v1)
   ; https://www.crossref.org/blog/dois-and-matching-regular-expressions/
-  } else if (RegExMatch(text, "i)10.\d{4,9}/[-._;()/:A-Z0-9]+", v)) {
+  } else if (RegExMatch(Text, "i)10.\d{4,9}/[-._;()/:A-Z0-9]+", v)) {
     ShellRun("https://sci-hub.hkvisa.net/" . v)
   } else {
     ShellRun("https://sci-hub.hkvisa.net/")
@@ -488,14 +488,14 @@ SciHub:
     uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     uiaBrowser.WaitPageLoad()
     el := uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
-    el.GetCurrentPatternAs("Value").SetValue(text)
+    el.GetCurrentPatternAs("Value").SetValue(Text)
     uiaBrowser.WaitElementExist("ControlType=Text AND Name='open'").Click()
   }
 return
 
 YT:
-  if (text := FindSearch("YouTube", "Search:"))
-    ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(text))
+  if (Text := FindSearch("YouTube", "Search:"))
+    ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(Text))
 return
 
 ; Personal: reformat my old vocabulary items
@@ -525,12 +525,12 @@ ReformatVocab:
 return
 
 ZLibrary:
-  if (!text := FindSearch("Z-Library", "Search:"))
+  if (!Text := FindSearch("Z-Library", "Search:"))
     return
   ; RIP z-lib
   ; ShellRun("https://z-lib.org/")
-  ; ShellRun("https://lib-rc5t5df46yl4ghwlnyuzt52y.mountain.pm/s/?q=" . text)
-  ShellRun("https://singlelogin.re/s/?q=" . text)
+  ; ShellRun("https://lib-rc5t5df46yl4ghwlnyuzt52y.mountain.pm/s/?q=" . Text)
+  ShellRun("https://singlelogin.re/s/?q=" . Text)
 
   ; Telegram
   ; ShellRun("https://web.telegram.org/z/#1788460589")
@@ -544,9 +544,9 @@ ZLibrary:
   ; uiaBrowser.SetURL(Url . "s/" . EncodeDecodeURI(search) . "?", true)
 
   ; Telegram
-  ; uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Message' AND AutomationId='editable-message-text'") ; SetValue(text) doesn't work
+  ; uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Message' AND AutomationId='editable-message-text'") ; SetValue(Text) doesn't work
   ; Send {tab}
-  ; Send % "{text}" . text
+  ; Send % "{text}" . Text
   ; if (uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='waiting for network|updating'",, "regex",, 2000)) {
   ;   uiaBrowser.FindFirstBy("ControlType=Button AND Name='Send Message'").Click()
   ; } else {
@@ -560,19 +560,19 @@ ImportFile:
   WinWaitActive, ahk_class TElParamDlg
   Send !t
   Send {text}binary  ; my template for pdf/epub file is binary
-  Send {enter 2}
+  Send {Enter 2}
   WinWaitActive, ahk_class TElWind
   Vim.SM.InvokeFileBrowser()
-  Send {right}
+  Send {Right}
   MB := MsgBox(3,, "Do you want to also delete the file?")
-  if (MB = "cancel")
+  if (MB = "Cancel")
     return
-  if (KeepFile := (MB = "no"))
+  if (KeepFile := (MB = "No"))
     FilePath := WinGetTitle("ahk_class TFileBrowser")
   WinActivate, ahk_class TFileBrowser
-  Send {enter}
+  Send {Enter}
   WinWaitActive, ahk_class TInputDlg
-  Send {enter}
+  Send {Enter}
   WinWaitActive, ahk_class TMsgDialog
   if (!KeepFile) {
     Send {text}n  ; not keeping the file in original position
@@ -583,7 +583,7 @@ ImportFile:
   WinWaitActive, ahk_class TElWind
   RegExMatch(FilePath, "[^\\]+(?=\.)", FileName)
   if (KeepFile && !(FileName ~= "^IMPORTED_")) {
-    if (MsgBox(3,, "Do you want to add ""IMPORTED_"" prefix to the file?") = "yes")
+    if (MsgBox(3,, "Do you want to add ""IMPORTED_"" prefix to the file?") = "Yes")
       FileMove, % FilePath, % StrReplace(FilePath, FileName, "IMPORTED_" . FileName)
   }
   Vim.SM.AskPrio()
@@ -632,28 +632,12 @@ SearchLinkInYT:
   if ((!Link := Vim.SM.GetLink()) && Vim.SM.DoesHTMLExist()) {
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitTextFocus()
-    Send ^{home}+{right}
+    Send ^{Home}+{Right}
     RegExMatch(Copy(, true), "(<A((.|\r\n)*)href="")\K[^""]+", Link)
     Send {Esc}
   }
-  if (Link) {
-    ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(WinGetTitle("ahk_class TElWind")))
-    WinWaitActive, ahk_group Browser
-    Sleep 400
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-    uiaBrowser.WaitPageLoad()
-    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
-    auiaLinks := uiaBrowser.FindAllByType("Hyperlink")
-    Link := RegExReplace(Link, "https:\/\/(www\.)?")
-    for i, v in auiaLinks {
-      if (IfContains(v.CurrentValue, Link)) {
-        v.Click()
-        return
-      }
-    }
-  } else {
+  if (!Link || !Vim.Browser.SearchInYT(WinGetTitle("ahk_class TElWind"), Link))
     Vim.State.SetToolTip("Not found.")
-  }
 return
 
 WatchLaterYT:
@@ -673,39 +657,39 @@ GenerateTimeString:
 return
 
 BingChat:
-  ClipSaved := link := ""
+  ClipSaved := Link := ""
   wEdge := WinActive("ahk_exe msedge.exe")
   ext := ".htm"  ; by default the text will be copied with its format retained
   if (WinActive("ahk_class TElWind")) {
     if (Vim.SM.IsBrowsing()) {
-      link := Vim.SM.GetLink()
+      Link :=Vim.SM.GetLink()
     } else if (Vim.SM.IsEditingText()) {
-      link := Vim.SM.GetFilePath()
+      Link :=Vim.SM.GetFilePath()
     }
-  } else if (!wEdge && (w := WinActive("ahk_group Browser"))) {
-    uiaBrowser := new UIA_Browser("ahk_id " . w)
-    link := uiaBrowser.GetCurrentURL()
+  } else if (!wEdge && (hWnd := WinActive("ahk_group Browser"))) {
+    uiaBrowser := new UIA_Browser("ahk_id " . hWnd)
+    Link :=uiaBrowser.GetCurrentURL()
   } else {
     ClipSaved := ClipboardAll
-    if (!text := Copy(false, true))  ; HTML not found
-      text := Clipboard, ext := ".txt"
-    if (text) {
-      link := A_Temp . "\" . GetCurrTimeForFileName() . ext
-      FileDelete % link
-      FileAppend, % text, % link
+    if (!Text := Copy(false, true))  ; HTML not found
+      Text := Clipboard, ext := ".txt"
+    if (Text) {
+      Link :=A_Temp . "\" . GetCurrTimeForFileName() . ext
+      FileDelete % Link
+      FileAppend, % Text, % Link
     }
   }
-  if (text || !wEdge) {
-    ShellRun("msedge.exe", link)
+  if (Text || !wEdge) {
+    ShellRun("msedge.exe", Link)
     WinWaitActive, ahk_exe msedge.exe
   }
   Send ^+.
   if (ClipSaved)
     Clipboard := ClipSaved
-  if (link) {
+  if (Link) {
     uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     uiaBrowser.WaitPageLoad()
-    FileDelete % link
+    FileDelete % Link
   }
 return 
 
@@ -717,7 +701,7 @@ LinkToPreviousElement:
   Vim.SM.WaitFileLoad()
   Vim.SM.LinkContents()
   WinWaitActive, ahk_class TContents
-  Send {enter}+{enter}
+  Send {Enter}+{Enter}
   Vim.SM.WaitFileLoad()
   WinWaitActive, ahk_class TElWind
   Vim.SM.ListLinks()
@@ -811,7 +795,7 @@ CalculateTodaysPassRate:
             . GetCurrTimeForFileName() ".txt"
   Vim.SM.FileBrowserSetPath(TempPath, true)
   WinWaitActive % "Information ahk_class TMsgDialog ahk_pid " . pidSM
-  Send {enter}
+  Send {Enter}
   RepHistory := FileReadAndDelete(TempPath)
   DateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
   RegExReplace(RepHistory, "s)\nItem #[\d,]+: [^\n]+\n[^\n]+" . DateRegEx
@@ -885,13 +869,13 @@ PerplexityAIButtonSearch:
     uiaBrowser.WaitElementExist("ControlType=Text AND Name='Attach'").Click()
     WinWaitActive, ahk_class #32770
     ControlSetText, Edit1, % FilePath
-    Send {enter}
+    Send {Enter}
     WinWaitNotActive
     uiaBrowser.WaitElementExist("ControlType=Text AND Name='Uploading...'")
     if (AddSearch) {
       uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Ask anything...'").SetValue(AddSearch)
       uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='Uploading...'")
-      Send {enter}
+      Send {Enter}
     }
     if (TempFilePath)
       FileDelete % TempFilePath
@@ -922,17 +906,17 @@ MassReplaceRegistry:
   loop {
     Send !r
     WinWaitActive, ahk_class TInputDlg
-    text := ControlGetText("TMemo1")
-    ; if (InStr(text, find) != 1)
+    Text := ControlGetText("TMemo1")
+    ; if (InStr(Text, find) != 1)
     ;   return
-    if ((InStr(text, find) != 1) || (text ~= "\/$"))
+    if ((InStr(Text, find) != 1) || (Text ~= "\/$"))
       return
-    ; ControlSetText, TMemo1, % StrReplace(text, find, replacement)
-    ControlSetText, TMemo1, % text . "/"
-    Send !{enter}
+    ; ControlSetText, TMemo1, % StrReplace(Text, find, replacement)
+    ControlSetText, TMemo1, % Text . "/"
+    Send !{Enter}
     WinWaitActive, ahk_class TRegistryForm
     ControlSetText, Edit1  ; clear
-    Send {down}
+    Send {Down}
   }
   ; loop {
   ;   ControlSend, Edit1, % "{text}" . find, A
@@ -940,17 +924,17 @@ MassReplaceRegistry:
   ;   WinWaitActive, ahk_class TElWind
   ;   Vim.SM.EditRef()
   ;   WinWaitActive, ahk_class TInputDlg
-  ;   text := ControlGetText("TMemo1")
-  ;   if (!IfContains(text, find))
+  ;   Text := ControlGetText("TMemo1")
+  ;   if (!IfContains(Text, find))
   ;     return
-  ;   text := RegExReplace(text, "#Source: " . find . "(.*)", "#Author: $1")
-  ;   text .= "`r`n#Source: YouTube"
-  ;   ControlSetText, TMemo1, % text
-  ;   Send !{enter}
+  ;   Text := RegExReplace(Text, "#Source: " . find . "(.*)", "#Author: $1")
+  ;   Text .= "`r`n#Source: YouTube"
+  ;   ControlSetText, TMemo1, % Text
+  ;   Send !{Enter}
   ;   WinWaitActive, ahk_class TElWind
   ;   ; WinWaitActive, ahk_class TChoicesDlg,, 0.3
   ;   ; if (!ErrorLevel)
-  ;   ;   Send {down}{enter}
+  ;   ;   Send {Down}{Enter}
   ;   Vim.SM.PostMsg(154)
   ;   WinWaitActive, ahk_class TRegistryForm
   ;   ControlSetText, Edit1  ; clear
@@ -966,17 +950,17 @@ MassProcessRegistry:
   loop {
     Send !r
     WinWaitActive, ahk_class TInputDlg
-    text := ControlGetText("TMemo1")
-    ; if (InStr(text, find) != 1)
+    Text := ControlGetText("TMemo1")
+    ; if (InStr(Text, find) != 1)
     ;   return
-    if ((InStr(text, find) != 1) || (text ~= "\/$"))
+    if ((InStr(Text, find) != 1) || (Text ~= "\/$"))
       return
-    ; ControlSetText, TMemo1, % StrReplace(text, find, replacement)
-    ControlSetText, TMemo1, % text . "/"
-    Send !{enter}
+    ; ControlSetText, TMemo1, % StrReplace(Text, find, replacement)
+    ControlSetText, TMemo1, % Text . "/"
+    Send !{Enter}
     WinWaitActive, ahk_class TRegistryForm
     ControlSetText, Edit1  ; clear
-    Send {down}
+    Send {Down}
   }
   ; loop {
   ;   ControlSend, Edit1, % "{text}" . find, A
@@ -984,17 +968,17 @@ MassProcessRegistry:
   ;   WinWaitActive, ahk_class TElWind
   ;   Vim.SM.EditRef()
   ;   WinWaitActive, ahk_class TInputDlg
-  ;   text := ControlGetText("TMemo1")
-  ;   if (!IfContains(text, find))
+  ;   Text := ControlGetText("TMemo1")
+  ;   if (!IfContains(Text, find))
   ;     return
-  ;   text := RegExReplace(text, "#Source: " . find . "(.*)", "#Author: $1")
-  ;   text .= "`r`n#Source: YouTube"
-  ;   ControlSetText, TMemo1, % text
-  ;   Send !{enter}
+  ;   Text := RegExReplace(Text, "#Source: " . find . "(.*)", "#Author: $1")
+  ;   Text .= "`r`n#Source: YouTube"
+  ;   ControlSetText, TMemo1, % Text
+  ;   Send !{Enter}
   ;   WinWaitActive, ahk_class TElWind
   ;   ; WinWaitActive, ahk_class TChoicesDlg,, 0.3
   ;   ; if (!ErrorLevel)
-  ;   ;   Send {down}{enter}
+  ;   ;   Send {Down}{Enter}
   ;   Vim.SM.PostMsg(154)
   ;   WinWaitActive, ahk_class TRegistryForm
   ;   ControlSetText, Edit1  ; clear
@@ -1012,7 +996,7 @@ AllLapsesToday:
                   . t . ".txt"
   Vim.SM.FileBrowserSetPath(TempPath, true)
   WinWaitActive % "Information ahk_class TMsgDialog ahk_pid " . pidSM
-  Send {enter}
+  Send {Enter}
   RepHistory := FileReadAndDelete(TempPath)
   dateRegEx := "Date=" . FormatTime(, "dd\.MM\.yyyy")
   pos := 1, v1 := ""
@@ -1039,14 +1023,14 @@ ExternaliseRegistry:
       WinClose
       Continue
     }
-    Send {down}
+    Send {Down}
     if (IfContains(WinGetTitle(), "Video Registry"))
       ControlTextWaitExist("Edit1",,,,, 1500)
     Send {AppsKey}tt
     WinWaitActive, ahk_class TMsgDialog
-    Send {enter}
+    Send {Enter}
     WinWaitActive, ahk_class TMsgDialog
-    Send {enter}
+    Send {Enter}
     WinWaitActive, ahk_class TProgressBox,, 0
     if (!ErrorLevel)
       WinWaitClose
@@ -1165,8 +1149,8 @@ ArchiveToday:
 return
 
 WolframAlpha:
-  if (text := FindSearch("WolframAlpha", "Text:"))
-    ShellRun("https://www.wolframalpha.com/input?input=" . EncodeDecodeURI(text))
+  if (Text := FindSearch("WolframAlpha", "Text:"))
+    ShellRun("https://www.wolframalpha.com/input?input=" . EncodeDecodeURI(Text))
 Return
 
 Comment:
@@ -1174,7 +1158,7 @@ Comment:
   WinWaitActive, ahk_class TInputDlg
   Ref := ControlGetText("TMemo1")
   RegExMatch(Ref, "#Comment: (.*)|$", v), PrevComment := v1
-  Comment := InputBox("Comment", "Set comment:",,,,,,,, PrevComment)
+  Comment := InputBox(, "Set comment:",,,,,,,, PrevComment)
   WinWaitActive, ahk_class TInputDlg
   if (ErrorLevel) {
     WinClose
@@ -1186,27 +1170,27 @@ Comment:
     Ref := RegExReplace(Ref, "#Comment:.*")
   }
   ControlSetText, TMemo1, % Ref
-  Send ^{enter}
+  Send ^{Enter}
   WinWaitClose
   Vim.State.SetNormal()
 return
 
 MassProcessBrowser:
   loop {
-    Send +{enter}
+    Send +{Enter}
     WinWaitActive, ahk_class TElWind
     Send ^+{f12}
     WinWaitActive, ahk_class TMsgDialog
-    Send {enter}
+    Send {Enter}
     WinWaitClose
     Vim.SM.EditFirstQuestion()
     Vim.SM.WaitHTMLFocus()
-    Send ^{home}^+{right 3}!{f12}rh
+    Send ^{Home}^+{Right 3}!{f12}rh
     Sleep 100
     Send {Esc}
     Vim.SM.WaitTextExit()
     WinActivate, ahk_class TBrowser
-    Send {down}
+    Send {Down}
     Vim.SM.WaitFileLoad()
   }
 return
@@ -1220,10 +1204,10 @@ MarkAsOnlineProgress:
     Break
   }
   Vim.SM.WaitHTMLFocus()
-  Send ^{home}
+  Send ^{Home}
   if (FirstText && (FirstText != "SMVim: Use online video progress")) {
     FirstText := ""
-    Send {enter}{up}
+    Send {Enter}{Up}
   }
   if (!FirstText)
     Clip("<SPAN class=Highlight>SMVim: Use online video progress</SPAN>",,, "sm")
@@ -1263,7 +1247,7 @@ SMTagEntered:
     }
     Ref := "#Comment: " . Comment . "`n" . Ref
     ControlSetText, TMemo1, % Ref
-    ControlSend, TMemo1, {Ctrl Down}{enter}{Ctrl Up}  ; submit
+    ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
     WinWaitClose
   }
   Vim.State.SetToolTip("Tagging finished.")

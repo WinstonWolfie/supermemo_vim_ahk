@@ -3,7 +3,7 @@
 ; For Learn button
 ~Enter::  ; enter up doesn't work
 ~space up::
-  Vim.State.SetMode("Vim_Normal")  ; SetNormal() would add a {left}
+  Vim.State.SetMode("Vim_Normal")  ; SetNormal() would add a {Left}
   if (!Vim.SM.PlayIfOnlineColl(, 3000))
     Vim.SM.EnterInsertIfSpelling()
 Return
@@ -27,7 +27,7 @@ return
 !z::Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
 
 #if (Vim.IsVimGroup() && !Vim.State.StrIsInCurrentVimMode("Visual,Command") && WinActive("ahk_class TElWind"))  ; SuperMemo element window
-^l::Vim.SM.Learn(, true), Vim.State.SetMode("Vim_Normal")
+^l::Vim.SM.Learn(,, true), Vim.State.SetMode("Vim_Normal")
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && Vim.SM.IsEditingHTML())  ; SuperMemo element window
 ^p::Vim.SM.Plan(), Vim.State.SetMode("Vim_Normal")

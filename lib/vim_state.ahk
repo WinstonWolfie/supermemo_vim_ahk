@@ -104,7 +104,7 @@ class VimState {
         if (WinActive("ahk_group VimCursorSameAfterSelect"))
           Send {Left}
       } else if (this.StrIsInCurrentVimMode("Insert")) {
-        Send {left}
+        Send {Left}
       }
     }
     this.SetMode("Vim_Normal")

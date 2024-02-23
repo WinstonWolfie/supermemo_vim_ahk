@@ -5,7 +5,7 @@
     Send ^c
   if (Vim.SM.IsEditingHTML()) {
     Send {text}<span class="Cloze">[...]</span>
-    Send +{left 32}^+1
+    Send +{Left 32}^+1
   } else if (Vim.SM.IsEditingPlainText()) {
     Send {text}[...]
   }
@@ -251,7 +251,7 @@ CapsLock & z::  ; delete [...]
   if ((A_ThisLabel == "SMClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0
   if (!ClozeNoBracket && !Inside && Hint && IfContains(Hint, "/")) {
-    Inside := (MsgBox(3,, "Your hint has a slash. Press yes to make it inside square brackets.") = "yes")
+    Inside := (MsgBox(3,, "Your hint has a slash. Press yes to make it inside square brackets.") = "Yes")
     WinWaitActive, ahk_class TElWind
   }
   KeyWait Capslock
@@ -265,11 +265,11 @@ CapsLock & z::  ; delete [...]
   if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   if (Done) {
-    Send ^+{enter}
+    Send ^+{Enter}
     WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
-    Send {enter}
+    Send {Enter}
     WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?"
-    Send {enter}
+    Send {Enter}
     CtrlState := true
   }
   Vim.SM.GoBack()
@@ -305,7 +305,7 @@ CapsLock & z::  ; delete [...]
       if (HTML := FileRead(HTMLPath := Vim.SM.LoopForFilePath())) {
         Vim.SM.EmptyHTMLComp()
         WinWaitActive, ahk_class TElWind
-        Send ^{home}
+        Send ^{Home}
         if (ClozeNoBracket) {
           HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>")
         } else {
@@ -320,7 +320,7 @@ CapsLock & z::  ; delete [...]
     }
   }
 
-  Send % CtrlState ? "{Esc}" : "!{right}"
+  Send % CtrlState ? "{Esc}" : "!{Right}"
   WinWaitActive, ahk_class TChoicesDlg,, 0
   if (!ErrorLevel)
     WinClose

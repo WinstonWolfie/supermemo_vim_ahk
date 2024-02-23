@@ -30,9 +30,9 @@ n::Vim.Move.Move("gn")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.Leader)
 q::
   loop % n := Vim.State.GetN() {
-    Send {home}>{space}  ; add comment; useful when replying emails
+    Send {Home}>{Space}  ; add comment; useful when replying emails
     if (n > 1)
-      Send {down}
+      Send {Down}
     n--
   }
   Vim.State.SetMode()
@@ -44,16 +44,16 @@ u::
 x::  ; gx: open hyperlink in current caret position (Open in *n*ew window)
   Vim.State.SetMode()
   ClipSaved := ClipboardAll
-  if (!Copy(false,, "+{right}^c{left}")) {  ; end of line
-    Copy(false,, "+{right}^c{right}")
+  if (!Copy(false,, "+{Right}^c{Left}")) {  ; end of line
+    Copy(false,, "+{Right}^c{Right}")
   } else if (Clipboard ~= "\s") {
-    Copy(false,, "+{left}^c{right}")
+    Copy(false,, "+{Left}^c{Right}")
   }
   LinkMatch := "(<A((.|\r\n)*)href="")\K[^""]+"
   If (ClipboardGet_HTML(data)) {
     RegExMatch(data, LinkMatch, CurrLink)
     if (!CurrLink) {
-      Copy(false,, "+{left}^c{right}")
+      Copy(false,, "+{Left}^c{Right}")
       If (ClipboardGet_HTML(data)) {
         RegExMatch(data, LinkMatch, CurrLink)
         if (!CurrLink)
@@ -87,7 +87,7 @@ t::  ; gt: open in Notepad
     SMFilePath := Vim.SM.GetFilePath(false)
     SplitPath, SMFilePath,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
-      ShellRun("C:\Program Files\Adobe\Adobe Photoshop 2021\Photoshop.exe", SMFilePath)
+      ShellRun("ps", SMFilePath)
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       Send ^{f7}  ; save read point
@@ -119,7 +119,7 @@ t::  ; gt: open in Notepad
     Vim.SM.GoBack()
     if ((CurrTitle == t) && (CurrTitle ~= "^Concept: ")) {
       Vim.SM.WaitFileLoad()
-      Send !{right}
+      Send !{Right}
     }
   }
 return
@@ -152,7 +152,7 @@ return
    || Vim.SM.IsLearning()
    || Vim.SM.IsGrading()
    || (WinActive("A") == SMImportGuiHwnd)
-   || (WinActive("Priority ahk_class #32770"))
+   || Vim.SM.IsPrioInputBox()
    || WinActive("ahk_class TPriorityDlg")))
 ; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg

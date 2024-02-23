@@ -61,7 +61,7 @@ CapsLock::
       Sleep 20  ; needed lest text changes position when you click
       ControlClickScreen(v.x, v.y)
       if (HinterMode == "Visual")
-        Send {right}{left}^+{right}
+        Send {Right}{Left}^+{Right}
     } else {
       if (e := !Vim.SM.RunLink(v.Link, OpenInIE))
         Vim.State.SetToolTip("An error occured when running " . v.Link)

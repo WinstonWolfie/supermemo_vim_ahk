@@ -18,6 +18,6 @@ g::
     Send 5
   }
   ControlTextWait("TBitBtn3", "Next repetition", "A")
-  ControlSend, TBitBtn3, {enter}, A
+  ControlSend, TBitBtn3, {Enter}, A
   Vim.SM.EnterInsertIfSpelling()
 return

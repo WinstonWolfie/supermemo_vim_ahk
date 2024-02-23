@@ -17,12 +17,13 @@
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
+~^+y::  ; search YT
 ~^g::  ; element number
-  Vim.State.SetMode("Insert")
-  Vim.State.BackToNormal := 1
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
 return
 
 ~!n::  ; new topic
+; Context menus
 ~!e::
 ~!l::
 ~!v::
@@ -31,8 +32,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.State.g)
 !t::
   Vim.SM.AltT()
-  Vim.State.SetMode("Insert")
-  Vim.State.BackToNormal := 2
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 2
 return
 
 #if (Vim.State.Vim.Enabled && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")) && Vim.SM.IsBrowsing())
@@ -44,11 +44,10 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TPlanDlg"))
 !h::  ; change hours
-  ControlFocus, TEdit1, A
+  ControlFocus, TEdit1
   Vim.State.SetMode("Insert")
 Return
 
 ~^t::  ; split
-  Vim.State.SetMode("Insert")
-  Vim.State.BackToNormal := 1
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
 return

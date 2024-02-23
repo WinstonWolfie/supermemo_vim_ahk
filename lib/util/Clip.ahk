@@ -19,7 +19,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     Clipped := HTML ? GetClipHTMLBody() : Clipboard
   } Else {
     if (HTML && (HTML != "sm")) {
-      SetClipboardHTML(text)
+      SetClipboardHTML(Text)
     } else {
       Clipboard := Text
     }
@@ -32,7 +32,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     }
   }
   If (Text && Reselect)
-    Send % "+{Left " . StrLen(Vim.ParseLineBreaks(text)) . "}"
+    Send % "+{Left " . StrLen(Vim.ParseLineBreaks(Text)) . "}"
   if (RestoreClip)  ; for scripts that restore clipboard at the end
     Clipboard := ClipSaved
   If (Text = "")

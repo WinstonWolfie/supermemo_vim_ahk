@@ -11,15 +11,16 @@ class VimBrowser {
   }
 
   GetInfo(RestoreClip:=true, GetFullPage:=true, ClickBtn:=true) {
-    this.ActivateBrowser()
     global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-    this.Url := this.GetParsedUrl()
+    this.Url := this.GetUrl()
     if (ClickBtn)
       this.ClickBtn()
     this.GetTitleSourceDate(RestoreClip, GetFullPage)
   }
 
   ParseUrl(Url) {
+    if (!Url)
+      return
     PoundSymbList := "wiktionary.org/wiki,workflowy.com,korean.dict.naver.com/koendict"
     if (!IfContains(Url, PoundSymbList))
       Url := RegExReplace(Url, "#.*")
@@ -48,7 +49,7 @@ class VimBrowser {
     this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
     this.Title := this.FullTitle
     if (GetUrl)
-      this.Url := this.Url ? this.Url : this.GetParsedUrl()
+      this.Url := this.Url ? this.Url : this.GetUrl()
 
     if (this.Title ~= " - YouTube$")
       this.Title := RegExReplace(this.Title, "^\(\d+\) ")
@@ -128,6 +129,10 @@ class VimBrowser {
       this.Source := "劍橋詞典", this.Title := RegExReplace(this.Title, "：劍橋詞典$")
     } else if (this.Title ~= " - Treccani - Treccani - Treccani$") {
       this.Source := "Treccani", this.Title := RegExReplace(this.Title, " - Treccani - Treccani - Treccani$")
+    } else if (this.Title ~= " \(豆瓣\)$") {
+      this.Source := "豆瓣", this.Title := RegExReplace(this.Title, " \(豆瓣\)$")
+    } else if (IfContains(this.Url, "meta.wikimedia.org")) {
+      this.Source := "Meta-Wiki", this.Title := RegExReplace(this.Title, " - Meta$")
 
     ; Source in the middle
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {
@@ -159,7 +164,7 @@ class VimBrowser {
     } else if (RegExMatch(this.Title, " \| (.*) \| Fandom$", v)) {
       this.Source := v1 . " | Fandom", this.Title := RegExReplace(this.Title, " \| (.*) \| Fandom$")
       if (GetFullPage && GetDate) {
-        this.Url := this.Url ? this.Url : this.GetParsedUrl()
+        this.Url := this.Url ? this.Url : this.GetUrl()
         TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
         UrlDownloadToFile, % this.Url . "?action=history", % TempPath
         RegExMatch(FileReadAndDelete(TempPath), "<h4 class=""mw-index-pager-list-header-first mw-index-pager-list-header"">(.*?)<\/h4>", v)
@@ -168,7 +173,7 @@ class VimBrowser {
     } else if (this.Title ~= " - TV Tropes$") {
       this.Source := "TV Tropes", this.Title := RegExReplace(this.Title, " - TV Tropes$")
       if (GetFullPage && GetDate) {
-        this.Url := this.Url ? this.Url : this.GetParsedUrl()
+        this.Url := this.Url ? this.Url : this.GetUrl()
         TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
         RegExMatch(this.Url, "https:\/\/tvtropes\.org\/pmwiki\/pmwiki\.php\/(.*?)\/(.*?)($|\?)", v)
         UrlDownloadToFile, % "https://tvtropes.org/pmwiki/article_history.php?article=" . v1 . "." . v2, % TempPath
@@ -247,7 +252,7 @@ class VimBrowser {
     } else if (IfContains(this.Url, "youtube.com/playlist")) {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "(.*)\r\n\d+ videos", Author), this.Author := Author
+        RegExMatch(FullPageText, "(.*)\r\n\d+ videos", v), this.Author := v1
     } else if (this.Title ~= "_哔哩哔哩_bilibili$") {
       this.Source := "哔哩哔哩", this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
       if (IfContains(this.Url, "bilibili.com/video")) {
@@ -420,6 +425,7 @@ class VimBrowser {
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "La dernière modification de cette page a été faite le (.*?) à ", v), this.Date := v1
 
+    ; Other websites that can get date by copying full page
     } else if (IfContains(this.Url, "github.com")) {
       this.Source := "GitHub", this.Title := RegExReplace(this.Title, "^GitHub - "), this.Title := RegExReplace(this.Title, " · GitHub$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -464,6 +470,10 @@ class VimBrowser {
         if (GetTimeStamp)
           this.TimeStamp := this.GetTimeStamp(this.FullTitle)
       }
+    } else if (this.Title ~= " - GeeksforGeeks$") {
+      this.Source := "GeeksforGeeks", this.Title := RegExReplace(this.Title, " - GeeksforGeeks$")
+      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Last Updated : (.*)", v), this.Date := v1
 
     } else {
       ReversedTitle := StrReverse(this.Title)
@@ -494,10 +504,10 @@ class VimBrowser {
       ClipSaved := ClipboardAll
     this.ActivateBrowser()
     CopyAll()
-    text := Clipboard
+    Text := Clipboard
     if (RestoreClip)
       Clipboard := ClipSaved
-    return text
+    return Text
   }
 
   GetSecFromTime(TimeStamp) {
@@ -508,29 +518,32 @@ class VimBrowser {
     return aTime[1] + aTime[2] * 60 + aTime[3] * 3600
   }
 
-  GetParsedUrl() {
-    this.ActivateBrowser()
+  GetUrl(Parsed:=true) {
     global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-    return this.ParseUrl(guiaBrowser.GetCurrentURL())
+    if (Parsed) {
+      return this.ParseUrl(guiaBrowser.GetCurrentURL())
+    } else {
+      return guiaBrowser.GetCurrentURL()
+    }
   }
 
   GetTimeStamp(Title:="", FullPageText:="", RestoreClip:=true) {
     Title := Title ? Title : this.GetFullTitle()
-    this.ActivateBrowser()
     if (Title ~= " - YouTube$") {
       if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip)) {
         RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
-        ; v1 = v2 means at end of video
+        ; v1 == v2 means at end of video
         TimeStamp := (v1 == v2) ? "0:00" : v1
       }
-    } else if (Title ~= "_[^_]+ - 喜马拉雅$") {
-      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-      TimeStamp := guiaBrowser.FindFirstByName("^\d{2}:\d{2}:\d{2}$",, "regex").CurrentName
-      TimeStamp := RegExReplace(TimeStamp, "^00:")
     } else {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-      TimeStamp := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
+      if (Title ~= "_[^_]+ - 喜马拉雅$") {
+        TimeStamp := guiaBrowser.FindFirstByName("^\d{2}:\d{2}:\d{2}$",, "regex").CurrentName
+      } else {
+        TimeStamp := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
+      }
     }
+    TimeStamp := RegExReplace(TimeStamp, "^00:(?=\d{2}:\d{2})")
     return RegExReplace(TimeStamp, "^0(?=\d)")
   }
 
@@ -548,7 +561,7 @@ class VimBrowser {
         ControlTextWait("Edit1", "", wIE)
       }
       ControlSetText, Edit1, % Url, % wIE
-      ControlSend, Edit1, {enter}, % wIE
+      ControlSend, Edit1, {Enter}, % wIE
     }
     WinActivate, % wIE
   }
@@ -560,14 +573,16 @@ class VimBrowser {
 
   IsVideoOrAudioSite(Title:="", w:="") {
     Title := Title ? Title : this.GetFullTitle(w)
+    ; Return 1 if time stamp can be in url and ^a covers the time stamp
     if (Title ~= " - YouTube$") {
-      return "yt"
-    ; return 1 if time stamp can be in url and ^a covers the time stamp
-    } else if (Title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {  ; time stamp can be in url but ^a doesn't cover time stamp
+      return 1
+    ; Return 2 if time stamp can be in url but ^a doesn't cover time stamp
+    } else if (Title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {
       return 2
-    } else if (Title ~= "^(Netflix|Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on Aniwatch\.to)$") {  ; time stamp can't be in url and ^a doesn't cover time stamp
+    ; Return 3 if time stamp can't be in url and ^a doesn't cover time stamp
+    } else if (Title ~= "^(Netflix|Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on Aniwatch\.to)$") {
       return 3
-    } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon)$") {  ; time stamp can't be in url and ^a doesn't cover time stamp
+    } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon)$") {
       return 3
     }
   }
@@ -577,16 +592,16 @@ class VimBrowser {
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
     Sent := False
     if (RegexMatch(PlainText, "(?<!\s)(?<!\d)\d+\.", v)) {
-      Url := Url ? Url : this.GetParsedUrl()
+      Url := Url ? Url : this.GetUrl()
       if (IfContains(Url, "fr.wikipedia.org")) {
         Sent := True
-        Send % "+{left " . StrLen(v) . "}"
+        Send % "+{Left " . StrLen(v) . "}"
       }
     }
     if (!Sent && RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
-      Url := Url ? Url : this.GetParsedUrl()
+      Url := Url ? Url : this.GetUrl()
       if (IfContains(Url, "wikipedia.org"))
-        Send % "+{left " . StrLen(v) . "}"
+        Send % "+{Left " . StrLen(v) . "}"
     }
     ; ControlSend doesn't work reliably because browser can't highlight in background
     if (CollName = "zen") {
@@ -598,8 +613,7 @@ class VimBrowser {
   }
 
   ClickBtn() {
-    this.ActivateBrowser()
-    this.Url := this.Url ? this.Url : this.GetParsedUrl()
+    this.Url := this.Url ? this.Url : this.GetUrl()
     if (IfContains(this.Url, "youtube.com/watch")) {
       global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
@@ -611,6 +625,39 @@ class VimBrowser {
   ActivateBrowser() {
     if (!WinActive("ahk_group Browser"))
       WinActivate, ahk_group Browser
+  }
+
+  SearchInYT(Title, Link) {
+    ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(Title))
+    WinWaitActive, ahk_group Browser
+    Sleep 400
+    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    uiaBrowser.WaitPageLoad()
+    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
+    auiaLinks := uiaBrowser.FindAllByType("Hyperlink")
+    Link := RegExReplace(Link, "https:\/\/(www\.)?")
+    for i, v in auiaLinks {
+      if (IfContains(v.CurrentValue, Link)) {
+        v.Click()
+        return true
+      }
+    }
+  }
+
+  TimeStampToUrl(Url, TimeStamp) {
+    Sec := this.GetSecFromTime(TimeStamp)
+    if (IfContains(Url, "youtube.com")) {
+      Url := RegExReplace(Url, "&t=.*?s|$", "&t=" . Sec . "s",, 1)
+    } else if (IfContains(Url, "bilibili.com")) {
+      if (Url ~= "\?p=\d+") {
+        Url := RegExReplace(Url, "&t=.*|$", "&t=" . Sec,, 1)
+      } else {
+        Url := RegExReplace(Url, "\?t=.*|$", "?t=" . Sec,, 1)
+      }
+    } else {
+      Url := ""
+    }
+    return Url
   }
 }
 

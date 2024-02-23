@@ -795,7 +795,7 @@ class UIA_Browser {
 		if (this.BrowserType = "Mozilla")
 			ControlFocus, ahk_parent, % "ahk_id" this.BrowserId
 		ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Enter}, % "ahk_id" this.BrowserId
-		ControlSend, ahk_parent, % text, % "ahk_id" this.BrowserId
+		ControlSend, ahk_parent, % Text, % "ahk_id" this.BrowserId
 	}
 	
 	WindowFromPoint(X, Y) { ; by SKAN and Linear Spoon
