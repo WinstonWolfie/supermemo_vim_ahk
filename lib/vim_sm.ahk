@@ -159,12 +159,14 @@ class VimSM {
     if (WinActive("A") == SMImportGuiHwnd) {
       ControlFocus, Edit1
       ControlSetText, Edit1, % Prio
-      Send {tab}
+      Send {tab}^a
     } else if (this.IsPrioInputBox()) {
       ControlSetText, Edit1, % Prio
+      ControlFocus, Edit1
+      Send ^a
     } else if (WinActive("ahk_class TPriorityDlg")) {  ; priority dialogue
       ControlSetText, TEdit5, % Prio
-      ControlFocus, TEdit1
+      ControlFocus, TEdit1  ; interval
     } else if (WinExist("ahk_class TElWind")) {
       this.SetPrio(Prio)
     }
@@ -456,15 +458,15 @@ class VimSM {
     GroupAdd, SMAltT, ahk_class TTitleEdit
     WinWait, % "ahk_group SMAltT ahk_pid " . pidSM := WinGet("PID", "ahk_class TElWind"),, % Timeout
     if (WinGetClass() == "TChoicesDlg") {
-      if (!Title)
+      if (Title == "")
         ControlFocus, TGroupButton2
       while (WinExist("ahk_class TChoicesDlg ahk_pid " . pidSM))
         ControlClick, TBitBtn2,,,,, NA
-      if (Title)
+      if (Title != "")
         WinWait, % "ahk_class TTitleEdit ahk_pid " . pidSM, % Timeout
     }
     if (WinGetClass() == "TTitleEdit") {
-      if (Title)
+      if (Title != "")
         ControlSetText, TMemo1, % Title
       ControlSend, TMemo1, {Enter}
     }
@@ -666,7 +668,8 @@ class VimSM {
     ControlClickScreen(pos.x, pos.y, "ahk_class TElWind")
     if (Concept) {
       WinWait, % "ahk_class TRegistryForm ahk_pid " . WinGet("PID", "ahk_class TElWind")
-      ControlSend, Edit1, % "{text}" . Concept
+      ControlSetText, Edit1, % SubStr(Concept, 2)
+      ControlSend, Edit1, % "{text}" . SubStr(Concept, 1, 1)
       ControlSend, Edit1, {Enter}
       return true
     }
@@ -686,17 +689,17 @@ class VimSM {
 
   SetElParam(Title:="", Prio:="", Template:="", Group:="", Submit:=true) {
     Critical
-    if (!Title && !(Prio >= 0) && !Template && !Group) {
+    if ((Title == "") && !(Prio >= 0) && !Template && !Group) {
       return
-    } else if (Title && !(Prio >= 0) && !Template && !Group) {
+    } else if ((Title != "") && !(Prio >= 0) && !Template && !Group) {
       this.SetTitle(Title)
       return
-    } else if (!Title && (Prio >= 0) && !Template && !Group) {
+    } else if ((Title == "") && (Prio >= 0) && !Template && !Group) {
       this.SetPrio(Prio,, true)
       return
     }
-    pidSM := WinGet("PID", "ahk_class TElWind")
-    while (!WinExist(w := "ahk_class TElParamDlg ahk_pid " . pidSM)) {
+    w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+    while (!WinExist(w)) {
       this.PostMsg(706, true)
       WinWait, % w,, 0.7
       if (!ErrorLevel)
@@ -707,7 +710,7 @@ class VimSM {
       ControlSend, Edit1, % "{text}" . SubStr(Template, 1, 1)
       this.WaitFileLoad()
     }
-    if (Title && (ControlGetText("TEdit2") != Title)) {
+    if ((Title != "") && (ControlGetText("TEdit2") != Title)) {
       ControlSetText, TEdit2, % SubStr(Title, 2)
       ControlSend, TEdit2, % "{text}" . SubStr(Title, 1, 1)
     }
@@ -984,13 +987,15 @@ class VimSM {
           Send {Enter}
         } else {
           ClipSaved := ClipboardAll
+          global WinClip
+          WinClip.Clear()
           Clipboard := MarkerContent
+          ClipWait
           Send ^f
           Sleep 100
           if (Calibre := WinActive("ahk_exe ebook-viewer.exe"))
             Sleep 200
           Send ^v
-          global WinClip
           WinClip._waitClipReady()
           Send {Enter}
           if (Calibre)
@@ -1035,7 +1040,7 @@ class VimSM {
           return false
         if (TempUrl) {
           WinWaitActive, ahk_group Browser
-          uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+          uiaBrowser := new UIA_Browser("A")
           uiaBrowser.SetUrl(TempUrl, true)
         }
       }
@@ -1067,10 +1072,10 @@ class VimSM {
     }
   }
 
-  EditRef() {
-    ; this.ActivateElWind()
+  EditRef(wSMElWind:="ahk_class TElWind") {
+    ; this.ActivateElWind(wSMElWind)
     ; Send !{f10}fe
-    this.PostMsg(658, true)
+    this.PostMsg(658, true, wSMElWind)
   }
 
   AltA() {
@@ -1105,9 +1110,7 @@ class VimSM {
     this.WaitFileLoad()
   }
 
-  InvokeFileBrowser() {
-    this.ActivateElWind()
-    Send {Ctrl Down}ttq{Ctrl Up}
+  WaitFileBrowser() {
     GroupAdd, SMCtrlQ, ahk_class TFileBrowser
     GroupAdd, SMCtrlQ, ahk_class TMsgDialog
     WinWaitActive, ahk_group SMCtrlQ
@@ -1208,24 +1211,22 @@ class VimSM {
     this.Vim.Caret.SwitchToSameWindow()
   }
 
-  PasteHTML(SleepInterval:=1) {
+  PasteHTML() {
     ; this.ActivateElWind()
-    ; Send {AppsKey}xp  ; Paste HTML
+    ; Send {AppsKey}xp
     this.PostMsg(843, true)
-    while (DllCall("GetOpenClipboardWindow"))
-      Sleep % SleepInterval
+    WinClip._waitClipReady()
     WinWait, % "ahk_class TProgressBox ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.3
     if (!ErrorLevel)
       WinWaitClose
-    ; WinWaitNotActive, ahk_class TElWind,, 0.3
-    ; WinWaitActive, ahk_class TElWind
   }
 
   HandleSM19PoundSymbUrl(Url) {
     if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(Url, "#")) {
-      pidSM := WinGet("PID", "ahk_class TElWind")
       this.PostMsg(154), ShortUrl := RegExReplace(Url, "#.*")
+      pidSM := WinGet("PID", "ahk_class TElWind")
       WinWait, % "ahk_class TRegistryForm ahk_pid " . pidSM
+      wReg := "ahk_id " . WinExist()
       ControlSetText, Edit1, % SubStr(ShortUrl, 2)
       ControlSend, Edit1, % "{text}" . SubStr(ShortUrl, 1, 1)
       this.RegAltR()
@@ -1244,7 +1245,7 @@ class VimSM {
         ControlClick, TBitBtn2,,,,, NA
         WinWaitClose
       }
-      WinClose, % "ahk_class TRegistryForm ahk_pid " . pidSM
+      WinClose, % wReg
       return true
     }
   }
@@ -1355,43 +1356,41 @@ class VimSM {
     this.PostMsg(650, true)
   }
 
-  LinkConcept(Concept:="", ForegroundWnd:="") {
-    ; this.ActivateElWind()
+  LinkConcept(Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="") {
+    ; this.ActivateElWind(wSMElWind)
     ; Send !{f10}cl
-    this.PostMsg(642, true)
-    if (ForegroundWnd)
-      WinActivate % ForegroundWnd
-    pidSM := WinGet("PID", "ahk_class TElWind")
+    this.PostMsg(642, true, wSMElWind)
+    if (wForeground)
+      WinActivate, % wForeground  ; sometimes it robs the focused window
     if (Concept) {
+      pidSM := WinGet("PID", wSMElWind)
       WinWait, % "ahk_class TRegistryForm ahk_pid " . pidSM
-      w := "ahk_id " . WinExist()
-      ControlSend, Edit1, % "{text}" . Concept
+      wReg := "ahk_id " . WinExist()
+      ControlSetText, Edit1, % SubStr(Concept, 2)
+      ControlSend, Edit1, % "{text}" . SubStr(Concept, 1, 1)
       this.RegAltR()
       WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
       CurrConcept := ControlGetText("TMemo1")
       WinClose
       if (InStr(CurrConcept, Concept) != 1) {
-        WinActivate, % w
+        WinActivate, % wReg
         MB := MsgBox(3,, "Current concept doesn't seem like your entered concept. Continue?")
         if (IfIn(MB, "No,Cancel")) {
-          WinClose, % w
+          WinClose, % wReg
           return
         }
       }
-      ControlSend, Edit1, {Enter}, % w
-      WinWaitClose, % w
+      ControlSend, Edit1, {Enter}, % wReg
+      WinWaitClose, % wReg
       return true
     }
   }
 
   Cloze() {
     this.ActivateElWind()
-    Send !z
-    this.WaitForChangingRef()
-  }
-
-  WaitForChangingRef() {
-    WinWaitActive, ahk_class TChoicesDlg,, 0.3
+    this.PostMsg(795, true)
+    ; Wait for prompt for changing reference
+    WinWaitActive, ahk_class TChoicesDlg,, 0.7
     if (!ErrorLevel) {
       WinClose
       loop 3 {
@@ -1485,8 +1484,8 @@ class VimSM {
     str := RegExReplace(str, "is)<(zzz)?button([^>]+)?>.*?<\/(zzz)?button>")
     str := RegExReplace(str, "is)<(zzz)?script([^>]+)?>.*?<\/(zzz)?script>")
     str := RegExReplace(str, "is)<(zzz)?input([^>]+)?>")
-    str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout)="".*?""(?=([^>]+)?>)")
-    str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout)=[^ >]+(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout|onfocus)="".*?""(?=([^>]+)?>)")
+    str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout|onfocus)=[^ >]+(?=([^>]+)?>)")
     str := RegExReplace(str, "is)<[^>]+\K\s(onmouseover|onmouseout)=[^;]+;(?=([^>]+)?>)")
 
     ; Remove empty paragraphs
@@ -1503,9 +1502,9 @@ class VimSM {
     return str
   }
 
-  LinkConcepts(aTags, ForegroundWnd:="") {
+  LinkConcepts(aTags, wSMElWind:="ahk_class TElWind", wForeground:="") {
     loop % aTags.MaxIndex()
-      this.LinkConcept(aTags[A_Index], ForegroundWnd)
+      this.LinkConcept(aTags[A_Index], wSMElWind, wForeground)
   }
 
   RegAltR(WinTitle:="") {
@@ -1575,5 +1574,50 @@ class VimSM {
 
   Duplicate() {
     this.PostMsg(709, true)
+  }
+
+  FindMatchTitleColl(TargetTitle) {
+    WinGet, pahSMElWind, List, ahk_class TElWind
+    loop % pahSMElWind {
+      SMTitle := WinGetTitle(wTemp := "ahk_id " . pahSMElWind%A_Index%)
+      TempTitle := RegExReplace(TargetTitle, "\.\.\.?", ".")  ; SM uses "." instead of "..." in titles
+      if (((SMTitle ~= " \.$") && (InStr(TempTitle, RegExReplace(SMTitle, " \.$")) == 1))
+       || (SMTitle == TempTitle))
+        return wTemp
+    }
+  }
+
+  CanMarkOrExtract(HTMLExist, auiaText, Marker, ThisLabel, Label, ToolTip:="") {
+    if (!HTMLExist
+    || (!this.IsHTMLEmpty(auiaText) && !Marker)
+    || (Marker && IfNotIn(this.IsCompMarker(Marker), "read point,page mark"))) {
+      if (ThisLabel != Label) {
+        if (HTMLExist)
+          ParentElNumber := this.GetParentElNumber(auiaText)
+        t := "Go to source and try again?"
+        if (HTMLExist)
+          t .= " (press no to execute in current topic)"
+        if (IfIn(MB := MsgBox(3,, t), "yes,no")) {
+          if (MB = "Yes") {
+            if (HTMLExist) {
+              this.GoToEl(ParentElNumber)
+            } else {
+              this.ClickElWindSourceBtn()
+            }
+          }
+          if !((MB = "No") && !HTMLExist) {
+            this.WaitFileLoad()
+            return -1
+          }
+        }
+      }
+      if (ToolTip) {
+        this.Vim.State.SetToolTip("Copied " . ToolTip)
+      } else {
+        this.Vim.State.SetToolTip("Copied " . Clipboard)
+      }
+      return 0
+    }
+    return 1
   }
 }

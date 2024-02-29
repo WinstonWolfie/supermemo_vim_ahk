@@ -2,16 +2,19 @@
 class VimBrowser {
   __New(Vim) {
     this.Vim := Vim
+    this.Months := "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
   }
 
   Clear() {
     ; DO NOT add critical here
     this.Title := this.Url := this.Source := this.Date := this.Comment := this.TimeStamp := this.Author := this.FullTitle := ""
-    global guiaBrowser := ""
+  }
+
+  GetGuiaBrowser() {
+    global guiaBrowser := (guiaBrowser.BrowserId == WinActive("A")) ? guiaBrowser : new UIA_Browser("A")
   }
 
   GetInfo(RestoreClip:=true, GetFullPage:=true, ClickBtn:=true) {
-    global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
     this.Url := this.GetUrl()
     if (ClickBtn)
       this.ClickBtn()
@@ -238,13 +241,15 @@ class VimBrowser {
       this.Source := "Corporate Finance Institute"
     } else if (IfContains(this.Url, "cnrtl.fr/definition")) {
       this.Source := "Trésor de la langue française informatisé"
+    } else if (IfContains(this.Url, "books.openbookpublishers.com")) {
+      this.Source := "Open Book Publishers"
 
     ; Video/audio
     } else if (IfContains(this.Url, "youtube.com/watch")) {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
         if (GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
         RegExMatch(FullPageText, ".*(?=\r\n.*subscribers)", Author), this.Author := Author
         if (GetDate)
           RegExMatch(FullPageText, "views +?(\r\n)?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
@@ -257,10 +262,10 @@ class VimBrowser {
       this.Source := "哔哩哔哩", this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
       if (IfContains(this.Url, "bilibili.com/video")) {
         if (GetFullPage && GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
         if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
           if (GetDate)
-            RegExMatch(FullPageText, "(.*) \d\d:\d\d:\d\d", Date), this.Date := Date
+            RegExMatch(FullPageText, "(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}", v), this.Date := v1
           RegExMatch(FullPageText, "m)^.*(?=\r\n 发消息)", Author), this.Author := Author
         }
       }
@@ -269,46 +274,46 @@ class VimBrowser {
       if (this.Title ~= "-纪录片-全集-高清独家在线观看$")
         this.Source .= "：纪录片", this.Title := RegExReplace(this.Title, "-纪录片-全集-高清独家在线观看$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (this.Url ~= "moviesjoy\.(.*?)\/watch") {
       RegExMatch(this.Title, "^Watch (.*?) HD online$", v)
       this.Source := "MoviesJoy", this.Title := v1
       if (RegExMatch(this.Title, " (\d+)$", v))
         this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (IfContains(this.Url, "dopebox.to")) {
       RegExMatch(this.Title, "^Watch Free (.*?) Full Movies Online$", v)
       this.Source := "DopeBox", this.Title := v1
       if (RegExMatch(this.Title, " (\d+)$", v))
         this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (RegExMatch(this.Title, "^Watch (.*?) online free on 9anime$", v)) {
       this.Source := "9anime", this.Title := v1
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (RegExMatch(this.Title, "^Watch full (.*?) english sub \| Kissasian$", v)) {
       this.Source := "Kissasian", this.Title := v1
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (RegExMatch(this.Title, "^Watch (.*?) English Sub/Dub online Free on Aniwatch\.to$", v)) {
       this.Source := "AniWatch", this.Title := v1
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (this.Title ~= "-免费在线观看-爱壹帆$") {
       this.Source := "爱壹帆", this.Title := RegExReplace(this.Title, "-免费在线观看-爱壹帆$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (this.Title ~= "_高清在线观看 – NO视频$") {
       this.Source := "NO视频", this.Title := RegExReplace(this.Title, "_高清在线观看 – NO视频$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (this.Title ~= "_[^_]+ - 喜马拉雅$") {
       this.Source := "喜马拉雅", this.Title := RegExReplace(this.Title, "_[^_]+ - 喜马拉雅$")
       if (IfContains(this.Url, "ximalaya.com/sound")) {
         if (GetFullPage && GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
         if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
           if (GetDate)
             RegExMatch(FullPageText, "\d{4}-\d{2}-\d{2}", Date), this.Date := Date
@@ -317,11 +322,11 @@ class VimBrowser {
       }
     } else if (this.Title == "Netflix") {
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (this.Title ~= " - Animelon$") {
       this.Source := "Animelon", this.Title := RegExReplace(this.Title, " - Animelon$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
 
     ; Wikipedia or wiki format websites
     } else if (this.Title ~= " - supermemo\.guru$") {
@@ -441,7 +446,7 @@ class VimBrowser {
     } else if (IfContains(this.Url, "economist.com")) {
       this.Source := "The Economist", this.Title := RegExReplace(this.Title, " \| The Economist$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{1,2}(st|nd|rd|th) \d{4}", v), this.Date := v
+        RegExMatch(FullPageText, this.Months . " \d{1,2}(st|nd|rd|th) \d{4}", v), this.Date := v
     } else if (IfContains(this.Url, "investopedia.com")) {
       this.Source := "Investopedia"
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -466,47 +471,57 @@ class VimBrowser {
       this.Title := RegExReplace(this.Title, " \| (.*?)$")
       if (IfContains(this.Url, "podbean.com/e") && GetFullPage && (GetDate || GetTimeStamp) && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
         if (GetDate)
-          RegExMatch(FullPageText, "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}, \d{4}", v), this.Date := v
+          RegExMatch(FullPageText, this.Months . " \d{2}, \d{4}", v), this.Date := v
         if (GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
       }
     } else if (this.Title ~= " - GeeksforGeeks$") {
       this.Source := "GeeksforGeeks", this.Title := RegExReplace(this.Title, " - GeeksforGeeks$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Last Updated : (.*)", v), this.Date := v1
+    } else if (RegExMatch(this.Title, "- (.*?) \(podcast\) \| Listen Notes$", v)) {
+      this.Author := v1, this.Source := "Listen Notes", this.Title := RegExReplace(this.Title, "- .*? \(podcast\) \| Listen Notes$")
+      if (GetFullPage && (GetDate || GetTimeStamp) && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
+        if (GetDate)
+          RegExMatch(FullPageText, this.Months . "\. \d{1,2}, \d{4}", v), this.Date := v
+        if (GetTimeStamp)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
+      }
 
     } else {
       ReversedTitle := StrReverse(this.Title)
       if (IfContains(ReversedTitle, " | ") && (!IfContains(ReversedTitle, " - ") || (InStr(ReversedTitle, " | ") < InStr(ReversedTitle, " - ")))) {
-        separator := " | "
+        Separator := " | "
       } else if (IfContains(ReversedTitle, " – ")) {
-        separator := " – "  ; sites like BetterExplained
+        Separator := " – "  ; sites like BetterExplained
       } else if (IfContains(ReversedTitle, " - ")) {
-        separator := " - "
+        Separator := " - "
       } else if (IfContains(ReversedTitle, " — ")) {
-        separator := " — "
+        Separator := " — "
       } else if (IfContains(ReversedTitle, " -- ")) {
-        separator := " -- "
+        Separator := " -- "
       } else if (IfContains(ReversedTitle, " • ")) {
-        separator := " • "
+        Separator := " • "
       }
-      if (pos := separator ? InStr(ReversedTitle, separator) : 0) {
-        TitleLength := StrLen(this.Title) - pos - StrLen(separator) + 1
+      if (pos := Separator ? InStr(ReversedTitle, Separator) : 0) {
+        TitleLength := StrLen(this.Title) - pos - StrLen(Separator) + 1
         this.Source := SubStr(this.Title, TitleLength + 1, StrLen(this.Title))
-        this.Source := StrReplace(this.Source, separator,,, 1)
+        this.Source := StrReplace(this.Source, Separator,,, 1)
         this.Title := SubStr(this.Title, 1, TitleLength)
       }
     }
   }
 
   GetFullPage(RestoreClip:=true) {
-    if (RestoreClip)
-      ClipSaved := ClipboardAll
+    if (RestoreClip) {
+      global WinClip
+      WinClip.Snap(data)
+    }
     this.ActivateBrowser()
     CopyAll()
     Text := Clipboard
     if (RestoreClip)
-      Clipboard := ClipSaved
+      WinClip.Restore(data)
     return Text
   }
 
@@ -519,7 +534,8 @@ class VimBrowser {
   }
 
   GetUrl(Parsed:=true) {
-    global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    global guiaBrowser
+    this.GetGuiaBrowser()
     if (Parsed) {
       return this.ParseUrl(guiaBrowser.GetCurrentURL())
     } else {
@@ -535,8 +551,12 @@ class VimBrowser {
         ; v1 == v2 means at end of video
         TimeStamp := (v1 == v2) ? "0:00" : v1
       }
+    } else if (Title ~= "- .*? \(podcast\) \| Listen Notes$") {
+      if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip))
+        RegExMatch(FullPageText, "\d\.\dx\r\n\K.*", TimeStamp)
     } else {
-      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+      global guiaBrowser
+      this.GetGuiaBrowser()
       if (Title ~= "_[^_]+ - 喜马拉雅$") {
         TimeStamp := guiaBrowser.FindFirstByName("^\d{2}:\d{2}:\d{2}$",, "regex").CurrentName
       } else {
@@ -591,7 +611,7 @@ class VimBrowser {
     this.ActivateBrowser()
     CollName := CollName ? CollName : this.Vim.SM.GetCollName()
     Sent := False
-    if (RegexMatch(PlainText, "(?<!\s)(?<!\d)\d+\.", v)) {
+    if (RegexMatch(PlainText, "(?<!\s)(?<!\d)(\d+,?)+\.", v)) {
       Url := Url ? Url : this.GetUrl()
       if (IfContains(Url, "fr.wikipedia.org")) {
         Sent := True
@@ -615,26 +635,28 @@ class VimBrowser {
   ClickBtn() {
     this.Url := this.Url ? this.Url : this.GetUrl()
     if (IfContains(this.Url, "youtube.com/watch")) {
-      global guiaBrowser := guiaBrowser ? guiaBrowser : new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+      global guiaBrowser
+      this.GetGuiaBrowser()
       if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
         btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
       btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
     }
   }
 
-  ActivateBrowser() {
-    if (!WinActive("ahk_group Browser"))
-      WinActivate, ahk_group Browser
+  ActivateBrowser(wBrowser:="ahk_group Browser") {
+    if (!WinActive(wBrowser))
+      WinActivate, % wBrowser
   }
 
   SearchInYT(Title, Link) {
     ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(Title))
     WinWaitActive, ahk_group Browser
     Sleep 400
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
-    uiaBrowser.WaitPageLoad()
-    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
-    auiaLinks := uiaBrowser.FindAllByType("Hyperlink")
+    global guiaBrowser
+    this.GetGuiaBrowser()
+    guiaBrowser.WaitPageLoad()
+    guiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
+    auiaLinks := guiaBrowser.FindAllByType("Hyperlink")
     Link := RegExReplace(Link, "https:\/\/(www\.)?")
     for i, v in auiaLinks {
       if (IfContains(v.CurrentValue, Link)) {

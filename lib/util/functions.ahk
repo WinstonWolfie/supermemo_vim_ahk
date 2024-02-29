@@ -989,10 +989,6 @@ sortArray( a, o := "A")  ; https://www.autohotkey.com/boards/viewtopic.php?t=601
     } Until !Partitions
 }
 
-RestoreClipReturn:
-  Clipboard := ClipSaved
-return
-
 ; https://www.autohotkey.com/docs/v1/scripts/index.htm#HTML_Entities_Encoding
 ; HTML Entities Encoding
 ; https://www.autohotkey.com

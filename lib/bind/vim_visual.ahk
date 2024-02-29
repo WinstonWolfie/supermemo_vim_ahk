@@ -129,8 +129,11 @@ p::
     PrevClip := ClipboardAll
     Copy(false)
     NewClip := ClipboardAll
-    if (PrevClip)
+    if (PrevClip) {
+      WinClip.Clear()
       Clipboard := PrevClip
+      ClipWait
+    }
   }
 
   if (IfContains(A_ThisLabel, "^"))
@@ -186,8 +189,10 @@ Return
 
 o::  ; move to other end of marked area; not perfect with line breaks
   ClipSaved := ClipboardAll
-  if (!Selection := Copy(false))
-    Goto RestoreClipReturn
+  if (!Selection := Copy(false)) {
+    Clipboard := ClipSaved
+    return
+  }
   SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
   Send +{Right}
   SelectionRight := Copy(false)
@@ -205,8 +210,4 @@ o::  ; move to other end of marked area; not perfect with line breaks
   Clipboard := ClipSaved
 return
 
-+s::
-  ; This resets the hotkey detection, so you can press +s and ) consecutively in visual mode to surround parentheses
-  Send {LShift up}{RShift up}
-  Vim.State.SetMode(,,,,, 1)  ; surround
-return
++s::Vim.State.SetMode(,,,,, 1)  ; surround

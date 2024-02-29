@@ -111,8 +111,15 @@ VimCommanderButtonExecute:
     } else if (aCommand[1] = "pplx") {
       ShellRun("https://www.perplexity.ai/search?q=" . EncodeDecodeURI(RegExReplace(Command, "i)^pplx ")) . "&focus=internet&copilot=true")
     } else if (aCommand[1] = "tag") {
-      Tags := RegExReplace(Command, "i)^tag ")
-      EditRefComment := true
+      Tags := RegExReplace(Command, "i)^tag "), EditRefComment := true
+      wSMElWind := ""
+      if (WinActive("ahk_group Browser")) {
+        Vim.Browser.GetTitleSourceDate(, false,, false, false, false)
+        wSMElWind := Vim.SM.FindMatchTitleColl(Vim.Browser.Title)
+        Vim.Browser.Clear()
+      }
+      if (!wSMElWind)
+        wSMElWind := "ahk_class TElWind"
       Goto SMTagEntered
     } else if (IsUrl(Command)) {
       if !(Command ~= "^http")
@@ -188,9 +195,8 @@ MoveMouseToCaret:
 return
 
 WaybackMachine:
-  WinWaitActive % "ahk_id " . hWnd
   if (WinActive("ahk_group Browser")) {
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    uiaBrowser := new UIA_Browser("A")
     Url := FindSearch("Wayback Machine", "URL:", uiaBrowser.GetCurrentURL(), true)
   } else if (WinActive("ahk_class TElWind")) {
     Url := FindSearch("Wayback Machine", "URL:", Vim.SM.GetLink(), true)
@@ -327,8 +333,10 @@ return
 
 CopyHTML:
   ClipSaved := ClipboardAll
-  if (!Clipboard := Copy(false, true))
-    Goto RestoreClipReturn
+  if (!Clipboard := Copy(false, true)) {
+    Clipboard := ClipSaved
+    return
+  }
   Vim.State.SetToolTip("Copying successful.")
 return
 
@@ -401,9 +409,9 @@ AlatiusLatinMacronizer:
     return
   ShellRun("https://alatius.com/macronizer/")
   WinWaitActive, ahk_group Browser
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+  uiaBrowser := new UIA_Browser("A")
   uiaBrowser.WaitPageLoad()
-  uiaBrowser.WaitElementExist("ControlType=Edit AND Framewidork=Chrome").SetValue(Latin)
+  uiaBrowser.WaitElementExist("ControlType=Edit AND Framework=Chrome").SetValue(Latin)
   uiaBrowser.WaitElementExist("ControlType=Button AND Name='Submit'").Click()
 return
 
@@ -433,16 +441,12 @@ ReformatScriptComponent:
       ControlSetText, TMemo1, % ControlGetText("TMemo1") . YTTime
       Send !o{Esc}  ; close script editor
     }
-  } else {
-    Vim.Browser.Title := Vim.Browser.TimeStamp . " | " . Vim.Browser.Title
   }
-  Clipboard := Vim.Browser.Url
   Gosub SMSetLinkFromClipboard
   Send {Esc}
   if (ContLearn)
     Vim.SM.Learn()
-  Clipboard := ClipSaved
-  Vim.Browser.Clear(), Vim.State.SetMode("Vim_Normal")
+  Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 return
 
 CopyWindowPosition:
@@ -485,7 +489,7 @@ SciHub:
   } else {
     ShellRun("https://sci-hub.hkvisa.net/")
     WinWaitActive, ahk_group Browser
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
     el := uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
     el.GetCurrentPatternAs("Value").SetValue(Text)
@@ -508,8 +512,10 @@ ReformatVocab:
   if (!Vim.SM.WaitTextFocus())
     return
   Send ^a
-  if (!data := Copy(false, true))
-    Goto RestoreClipReturn
+  if (!data := Copy(false, true)) {
+    Clipboard := ClipSaved
+    return
+  }
   data := StrLower(SubStr(data, 1, 1)) . SubStr(data, 2)  ; make the first letter lower case
   data := RegExReplace(data, "(\.<BR>""|(\. ?<BR>)?(\r\n<P><\/P>)?\r\n<P>‘|\. \r\n<P><\/P>)", "<P>")
   data := RegExReplace(data, "(""|\.?’)", "</P>")
@@ -529,14 +535,13 @@ ZLibrary:
     return
   ; RIP z-lib
   ; ShellRun("https://z-lib.org/")
-  ; ShellRun("https://lib-rc5t5df46yl4ghwlnyuzt52y.mountain.pm/s/?q=" . Text)
   ShellRun("https://singlelogin.re/s/?q=" . Text)
 
   ; Telegram
   ; ShellRun("https://web.telegram.org/z/#1788460589")
 
   ; WinWaitActive, ahk_group Browser
-  ; uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+  ; uiaBrowser := new UIA_Browser("A")
   ; uiaBrowser.WaitPageLoad()
 
   ; RIP z-lib
@@ -562,7 +567,9 @@ ImportFile:
   Send {text}binary  ; my template for pdf/epub file is binary
   Send {Enter 2}
   WinWaitActive, ahk_class TElWind
-  Vim.SM.InvokeFileBrowser()
+  Vim.SM.EditFirstQuestion()
+  Send {Ctrl Down}tq{Ctrl Up}
+  Vim.SM.WaitFileBrowser()
   Send {Right}
   MB := MsgBox(3,, "Do you want to also delete the file?")
   if (MB = "Cancel")
@@ -687,7 +694,7 @@ BingChat:
   if (ClipSaved)
     Clipboard := ClipSaved
   if (Link) {
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
     FileDelete % Link
   }
@@ -840,7 +847,7 @@ PerplexityAIButtonSearch:
   if (AddSearch || (Search ~= "^File path from SMVim script: ")) {
     ShellRun("https://www.perplexity.ai/")
     WinWaitActive, ahk_group Browser
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
 
     uiaBrowser.WaitElementExist("ControlType=Text AND Name='Focus'").Click()
@@ -1050,7 +1057,7 @@ AlignTextsRight:
   } else if (A_ThisLabel == "AlignTextsRight") {
     n := 17
   }
-  Vim.SM.EditBar(n), Vim.State.SetMode("Vim_Normal")
+  Vim.SM.EditBar(n), Vim.State.SetNormal()
 return
 
 BoldText:
@@ -1063,7 +1070,7 @@ UnderscoreText:
   } else if (A_ThisLabel == "UnderscoreText") {
     Send ^u
   }
-  Vim.State.SetMode("Vim_Normal")
+  Vim.State.SetNormal()
 return
 
 Tatoeba:
@@ -1074,8 +1081,10 @@ return
 MD2HTML:
   Vim.State.SetMode("Vim_Normal")
   ClipSaved := ClipboardAll
-  if (!MD := Copy(false))
-    Goto RestoreClipReturn
+  if (!MD := Copy(false)) {
+    Clipboard := ClipSaved
+    return
+  }
   TempMDPath := A_Temp . "\" . (t := GetCurrTimeForFileName()) . "_md.md"
   FileDelete % TempMDPath
   FileAppend, % MD, % TempMDPath
@@ -1103,7 +1112,7 @@ CleanHTML:
 return
 
 SaveFile:
-  uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+  uiaBrowser := new UIA_Browser("A")
   Url := uiaBrowser.GetCurrentURL(true)
   if (r := RegExMatch(Url, "\/[^\/\.]+\.[^\/\.]+$", v))
     UrlDownloadToFile, % Url, % FilePath := "d:" . v
@@ -1131,13 +1140,13 @@ PasteCleanedClipboard:
   ClipboardGet_HTML(HTML)
   HTML := Vim.SM.CleanHTML(GetClipHTMLBody(HTML),,, GetClipLink(HTML))
   Clip(HTML,,, (Vim.SM.IsEditingHTML() ? "sm" : true))
-  Vim.State.SetNormal()
+  Vim.State.SetNormal(), HTML := ""
 return
 
 ArchiveToday:
   WinWaitActive % "ahk_id " . hWnd
   if (WinActive("ahk_group Browser")) {
-    uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+    uiaBrowser := new UIA_Browser("A")
     Url := FindSearch("Archive Today", "URL:", uiaBrowser.GetCurrentURL(), true)
   } else if (WinActive("ahk_class TElWind")) {
     Url := FindSearch("Archive Today", "URL:", Vim.SM.GetLink(), true)
@@ -1234,10 +1243,11 @@ SMTagButtonTag:
   Gui, Destroy
 SMTagEntered:
   Vim.State.SetMode("Vim_Normal")
-  Vim.SM.LinkConcepts(aTags := StrSplit(Tags, ";"))
+  wSMElWind := (A_ThisLabel == "SMTagEntered") ? wSMElWind : "ahk_class TElWind"
+  Vim.SM.LinkConcepts(aTags := StrSplit(Tags, ";"), wSMElWind)
   if (EditRefComment) {
-    Vim.SM.EditRef()
-    WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+    Vim.SM.EditRef(wSMElWind)
+    WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", wSMElWind)
     Ref := ControlGetText("TMemo1")
     RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
     loop % aTags.MaxIndex() {
@@ -1254,6 +1264,10 @@ SMTagEntered:
 return
 
 PasteHTML:
-  Clipboard := GetClipHTMLBody()
+  ClipHTML := GetClipHTMLBody()
+  WinClip.Clear()
+  Clipboard := ClipHTML
+  ClipWait
   Send ^v
+  ClipHTML := ""
 return

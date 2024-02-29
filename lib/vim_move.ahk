@@ -110,7 +110,6 @@ class VimMove {
   }
 
   MoveFinalize() {
-    Send {Shift Up}
     this.Vim.State.FtsChar := ""
     if (this.Clipped) {
       Clipped := "Clipped"
@@ -121,6 +120,8 @@ class VimMove {
     }
     if (this.Vim.State.Surround)
       this.SurroundKeyEntered := true
+    Send {Shift Up}
+    KeyWait Shift
     if (!this.Vim.State.Surround || !this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")) {
       if (ydc_y := this.Vim.State.StrIsInCurrentVimMode("ydc_y")) {
         this.YdcClipSaved := Copy(false), this.Vim.State.SetMode("Vim_Normal")
@@ -282,8 +283,8 @@ class VimMove {
     }
   }
 
-  Move(key="", repeat:=false, initialize:=true, finalize:=true, ForceShiftRelease:=false, RestoreClip:=true) {
-    if (!repeat && initialize)
+  Move(key="", Repeat:=false, Init:=true, Final:=true, ForceShiftRelease:=false, RestoreClip:=true) {
+    if (!Repeat && Init)
       this.MoveInitialize(key, RestoreClip)
     if (ForceShiftRelease)
       this.shift := 0
@@ -1281,7 +1282,7 @@ class VimMove {
           }
         }
     } else if (key == "{") {
-      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat && this.Vim.SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
+      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && this.Vim.SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
         if (!this.Vim.SM.IsEditingText()) {
           Send ^t
@@ -1295,7 +1296,7 @@ class VimMove {
         this.ParagraphUp()
       }
     } else if (key == "}") {
-      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !repeat && this.Vim.SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
+      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && this.Vim.SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
         this.Vim.SM.ClickTop()
         this.Vim.SM.WaitTextFocus()
@@ -1316,12 +1317,12 @@ class VimMove {
         this.Vim.State.SetMode(PrevMode)
     }
 
-    if (!repeat && finalize)
+    if (!Repeat && Final)
       this.MoveFinalize()
   }
 
-  Repeat(key:="", initialize:=true, finalize:=true) {
-    if (initialize)
+  Repeat(key:="", Init:=true, Final:=true) {
+    if (Init)
       this.MoveInitialize(key)
     if (this.ReggedForDot)
       this.LastRepeat := true
@@ -1333,7 +1334,7 @@ class VimMove {
       this.Move(key, true)
     if (navigate)
       this.HandleClickBtn()
-    if (finalize)
+    if (Final)
       this.MoveFinalize()
   }
 
@@ -1360,9 +1361,10 @@ class VimMove {
   Inner(key:="") {
     global WinClip
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
+    KeyWait Shift
     if (key == "w") {
       Send ^{Right}^{Left}
-      this.Move("e",,, false), finalize := true
+      this.Move("e",,, false), Final := true
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1381,7 +1383,7 @@ class VimMove {
         Clipboard := ClipSaved
       if (n)
         Send % "+{Left " . n . "}"
-      finalize := true
+      Final := true
     } else if (key == "p") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1405,7 +1407,7 @@ class VimMove {
       } else {
         Send +{Left}+{Right}  ; refresh caret
       }
-      finalize := true
+      Final := true
     } else if (IfIn(key, this.InnerKeys)) {
       this.RegForDot(key)
       if (RestoreClip)
@@ -1458,19 +1460,20 @@ class VimMove {
       }
       if (RestoreClip)
         Clipboard := ClipSaved
-      finalize := true
+      Final := true
     }
     this.RegForDot(key), this.LastInOrOut := "Inner"
-    if (finalize)
+    if (Final)
       this.MoveFinalize()
   }
 
   Outer(key:="") {
     global WinClip
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
+    KeyWait Shift
     if (key == "w") {
       Send ^{Right}^{Left}^+{Right}
-      finalize := true
+      Final := true
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1489,7 +1492,7 @@ class VimMove {
           n := StrLen(RegExReplace(this.v, "\.\K(\[.*?\])+")) - 1
         Send % "+{Left " . n . "}"  ; so that `dap` would delete an entire paragraph, whereas `cap` would empty the paragraph
       }
-      finalize := true
+      Final := true
     } else if (key == "p") {
       this.Vim.State.LineCopy := 1
       this.ParagraphDown()
@@ -1497,7 +1500,7 @@ class VimMove {
       this.SelectParagraphDown()
       if (this.IsReplace())
         Send +{Left}  ; so that `dap` would delete an entire paragraph, whereas `cap` would empty the paragraph
-      finalize := true
+      Final := true
     } else if (IfIn(key, this.InnerKeys)) {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1542,10 +1545,10 @@ class VimMove {
       }
       if (RestoreClip)
         Clipboard := ClipSaved
-      finalize := true
+      Final := true
     }
     this.RegForDot(key), this.LastInOrOut := "Outer"
-    if (finalize)
+    if (Final)
       this.MoveFinalize()
   }
 

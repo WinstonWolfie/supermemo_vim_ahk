@@ -1,7 +1,7 @@
 #Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ; Clip() - Send and Retrieve Text Using the Clipboard
 ; Originally by berban - updated February 18, 2019 - modified by Winston
-; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62156
+; https://github.com/berban/Clip/blob/master/Clip.ahk
 Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1) {
   global WinClip, Vim
   if (RestoreClip)
@@ -21,19 +21,20 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     if (HTML && (HTML != "sm")) {
       SetClipboardHTML(Text)
     } else {
+      WinClip.Clear()
       Clipboard := Text
+      ClipWait
     }
     if (HTML = "sm") {
       Vim.SM.PasteHTML()
     } else {
       Send % KeysToSend ? KeysToSend : "^v"
-      while (DllCall("GetOpenClipboardWindow"))
-        Sleep 20
+      WinClip._waitClipReady()
     }
   }
   If (Text && Reselect)
     Send % "+{Left " . StrLen(Vim.ParseLineBreaks(Text)) . "}"
-  if (RestoreClip)  ; for scripts that restore clipboard at the end
+  if (RestoreClip)
     Clipboard := ClipSaved
   If (Text = "")
     Return Clipped

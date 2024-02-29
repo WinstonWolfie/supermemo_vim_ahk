@@ -57,8 +57,10 @@ SMParseHTML:
   if (CopyText)
     Copy(false)
   ClipSaved := ClipboardAll
-  if (!Copy(false))
-    Goto RestoreClipReturn
+  if (!Copy(false)) {
+    Clipboard := ClipSaved
+    return
+  }
   if (OriginalHTML) {
     Content := GetClipHTMLBody()
   } else {

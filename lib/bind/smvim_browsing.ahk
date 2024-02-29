@@ -42,7 +42,7 @@ m::  ; gm: go to link in comment
           catch {
             RunDefaultBrowser()
             WinWaitActive, ahk_group Browser
-            uiaBrowser := new UIA_Browser("ahk_exe " . WinGet("ProcessName", "A"))
+            uiaBrowser := new UIA_Browser("A")
             if (Vim.Browser.GetFullTitle() != "new tab")
               uiaBrowser.NewTab()
             uiaBrowser.Navigate(Link)
@@ -153,7 +153,7 @@ p::Vim.SM.AutoPlay()
   GroupAdd, SMF9, ahk_class mpv
   GroupAdd, SMF9, ahk_class TScriptEditor
   WinWaitActive, ahk_group SMF9,, 1.5
-  if (!ErrorLevel && (WinGetClass() == "mpv")) {
+  if (!ErrorLevel && (WinGetClass() == "mpv") && Marker) {
     RegExMatch(Marker, "^SMVim time stamp: (.*)", v)
     if (Vim.Browser.GetSecFromTime(v1) > 0) {
       Sleep 700

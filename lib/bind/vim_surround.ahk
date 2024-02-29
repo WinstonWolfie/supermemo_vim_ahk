@@ -42,7 +42,8 @@ t::
   if (!Vim.State.SurroundChangeEntered && Vim.State.StrIsInCurrentVimMode("Visual,ydc_y")) {
     if (!Selection := Copy(false)) {
       Vim.State.SetToolTip("Text not found.")
-      Goto RestoreClipReturn
+      Clipboard := ClipSaved
+      return
     }
     SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
     Send {Left}
@@ -52,8 +53,10 @@ t::
     if (!Vim.State.SurroundChangeEntered) {
       Vim.State.SetMode("Vim_Visual")
       Vim.Move.Inner(CurrKey)
-      if (!Selection := Copy(false))
-        Goto RestoreClipReturn
+      if (!Selection := Copy(false)) {
+        Clipboard := ClipSaved
+        return
+      }
       SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
       if (c) {
         Vim.State.SurroundChangeEntered := true

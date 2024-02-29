@@ -189,16 +189,22 @@ return
 
 SMCtrlN:
 ^n::
-  Vim.SM.CtrlN()
-  if (A_ThisLabel == "^n")
+  YT := (RegExMatch(Clipboard, "(?:youtube\.com).*?(?:v=)([a-zA-Z0-9_-]{11})", v) && IsUrl(Clipboard))
+  if (A_ThisLabel == "^n") {
     Vim.State.SetMode("Vim_Normal")
-  if (RegExMatch(Clipboard, "(?:youtube\.com).*?(?:v=)([a-zA-Z0-9_-]{11})", v) && IsUrl(Clipboard)) {
-    if (A_ThisLabel == "^n")
+    if (YT) {
       ClipSaved := ClipboardAll
-    Vim.Browser.Url := Clipboard
-    ; Register browser time stamp to YT comp time stamp
-    if (Vim.Browser.TimeStamp)
-      Clipboard := "{SuperMemoYouTube:" . v1 . "," . Vim.Browser.TimeStamp . ",0:00,0:00,3}"
+      Vim.Browser.Url := Clipboard
+    }
+  }
+  ; Register browser time stamp to YT comp time stamp
+  if (YT && Vim.Browser.TimeStamp) {
+    WinClip.Clear()
+    Clipboard := "{SuperMemoYouTube:" . v1 . "," . Vim.Browser.TimeStamp . ",0:00,0:00,3}"
+    ClipWait
+  }
+  Vim.SM.CtrlN()
+  if (YT) {
     Text := Vim.Browser.Title . Vim.SM.MakeReference()
     Vim.SM.WaitFileLoad()
     Vim.SM.EditFirstQuestion()
@@ -210,10 +216,12 @@ SMCtrlN:
     Vim.SM.WaitFileLoad()
     if (A_ThisLabel == "^n") {
       Vim.SM.SetElParam(Vim.Browser.Title,, "YouTube")
-      Vim.SM.Reload(), Vim.Browser.Clear(), Clipboard := ClipSaved
+      Vim.SM.Reload(), Vim.Browser.Clear()
       Vim.State.SetToolTip("Processing finished.")
     }
   }
+  if (YT && (A_ThisLabel == "^n"))
+    Clipboard := ClipSaved
 return
 
 ~^+m::SetDefaultKeyboard(0x0409)  ; English-US
@@ -305,8 +313,10 @@ return
   ClipSaved := ClipboardAll
   KeyWait Alt
   KeyWait Ctrl
-  if (!data := Copy(false, true))
-    Goto RestoreClipReturn
+  if (!data := Copy(false, true)) {
+    Clipboard := ClipSaved
+    return
+  }
   Vim.State.SetToolTip("LaTeX converting...")
   if (!IfContains(data, "<IMG")) {  ; text
     Send {BS}^{f7}  ; set read point
@@ -461,7 +471,7 @@ return
   list := "Break||Game|Code|Sports|Social|Family|Listen|Meal|Rest"
         . "|Plan|Invest|SM|Shower|IM|Piano|Medit|Job|Misc|Out"
         . "|Sing|Write|Draw|Movie|TV|GF|Music|Sun|Lang|SocMed"
-        . "|MP|Tidy|Read|Write|Poker|Video"
+        . "|MP|Tidy|Read|Write|Poker|Video|Watch"
   Gui, SMPlanInsert:Add, Combobox, vActivity gAutoComplete w110, % list
   Gui, SMPlanInsert:Add, Text,, &Time:
   Gui, SMPlanInsert:Add, Edit, vTime w110
@@ -667,6 +677,9 @@ BrowserSyncTime:
   hMPV := WinActive("ahk_class mpv"), wMPV := "ahk_id " . hMPV
   hBrowser := WinActive("ahk_group Browser"), wBrowser := "ahk_id " . hBrowser
   wSMElWind := "ahk_class TElWind", SMTemplCode := ""
+  KeyWait Ctrl
+  KeyWait Alt
+  KeyWait Shift
 
   if (hBrowser) {
     Vim.Browser.Clear()
@@ -678,17 +691,9 @@ BrowserSyncTime:
     if (!ResetTime)
       Vim.Browser.TimeStamp := Vim.Browser.GetTimeStamp(Vim.Browser.FullTitle,, false)
     Vim.Browser.GetTitleSourceDate(false, false,,, false, false)  ; need url and title here
-
-    WinGet, pahSMElWind, List, ahk_class TElWind
-    loop % pahSMElWind {
-      SMTitle := WinGetTitle(wTemp := "ahk_id " . pahSMElWind%A_Index%)
-      TempBrowserTitle := RegExReplace(Vim.Browser.Title, "\.\.\.?", ".")  ; SM uses "." instead of "..." in titles
-      if (((SMTitle ~= " \.$") && InStr(TempBrowserTitle, RegExReplace(SMTitle, " \.$")))
-       || (SMTitle == TempBrowserTitle)) {
-        wSMElWind := wTemp
-        Break
-      }
-    }
+    
+    if (w := Vim.SM.FindMatchTitleColl(Vim.Browser.Title))
+      wSMElWind := w
 
     SMTemplCode := Vim.SM.GetTemplCode(false, wSMElWind)
     CurrSMUrl := Vim.SM.GetLink(SMTemplCode)
@@ -749,29 +754,29 @@ BrowserSyncTime:
   if (EditHTML) {
     WinActivate, % wSMElWind
     Vim.SM.EditFirstQuestion()
-    OldText := Vim.SM.GetMarkerFromTextArray()
-    NewText := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Vim.Browser.TimeStamp
-    if (OldText != RegExReplace(NewText, "<.*?>")) {
+    auiaText := Vim.SM.GetTextArray()
+    Marker := Vim.SM.GetMarkerFromTextArray(auiaText)
+    NewTimeStamp := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Vim.Browser.TimeStamp
+    if (Marker != RegExReplace(NewTimeStamp, "<.*?>")) {
       Vim.SM.WaitTextFocus()
       Send ^{Home}
-      if (OldText ~= "^SMVim time stamp: ") {
+      if (Marker ~= "^SMVim time stamp: ") {
         Send ^{Right 4}
-        Send % "+{Right " . StrLen(RegExReplace(OldText, "^SMVim time stamp: ")) . "}"
+        Send % "+{Right " . StrLen(RegExReplace(Marker, "^SMVim time stamp: ")) . "}"
         Send % "{text}" . Vim.Browser.TimeStamp
-      } else if (OldText) {
-        Send {Enter}{Up}
-        Clip(NewText,, false, "sm")
+      } else {
+        if (!Vim.SM.IsHTMLEmpty(auiaText))
+          Send {Enter}{Up}
+        Clip(NewTimeStamp,, false, "sm")
       }
     }
-    Send {Esc}
+    Vim.SM.ExitText()
   }
 
 SMSyncTimeReturn:
-  if (IfContains(A_ThisLabel, "^+!")) {
-    Vim.SM.Learn(false, true, true, wSMElWind)
-  } else if (A_ThisLabel ~= "^(!\+(s|`)|SMSyncTimeReturn)$") {
+  if (A_ThisLabel ~= "^(!\+(s|`)|SMSyncTimeReturn)$") {
     WinActivate % wPrev
-  } else if (IfContains(A_ThisLabel, "^!")) {
+  } else if (IfContains(A_ThisLabel, "^!,^+!")) {
     WinActivate % wSMElWind
   }
 
@@ -784,13 +789,16 @@ SMSyncTimeReturn:
       Vim.State.SetToolTip("Time stamp in script component set as " . Vim.Browser.TimeStamp)
     }
   }
+
+  if (IfContains(A_ThisLabel, "^+!"))
+    Vim.SM.Learn(false, true, true, wSMElWind)
   Vim.Browser.Clear(), Clipboard := ClipSaved
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 !s::
-  if ((p := Vim.SM.GetMarkerFromTextArray()) && (p ~= "SMVim (read point|page mark|time stamp): ")) {
-    Vim.State.SetToolTip("Copied " . Clipboard := RegExReplace(p, "SMVim (read point|page mark|time stamp): "))
+  if ((p := Vim.SM.GetMarkerFromTextArray()) && (p ~= "^SMVim (read point|page mark|time stamp): ")) {
+    Vim.State.SetToolTip("Copied " . Clipboard := RegExReplace(p, "^SMVim (read point|page mark|time stamp): "))
   } else {
     KeyWait Alt
     Send !s

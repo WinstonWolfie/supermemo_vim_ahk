@@ -108,7 +108,7 @@ return
   } else if (Vim.SM.IsEditingPlainText()) {
     Send ^{Home}^+{Right}
   }
-  Text := Clip()
+  Text := Copy()
   Send {BS}{Esc}
   Vim.SM.WaitTextExit()
   Send ^+s
@@ -128,9 +128,12 @@ SMSetLinkFromClipboard:
     Vim.SM.SetTitle(Vim.Browser.Title)
   Vim.SM.EditRef()
   WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
-  Vim.Browser.Url := Clipboard
+  if (A_ThisLabel == "r")
+    Vim.Browser.Url := Clipboard
   SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
-  Ref := "#Link: " . Vim.Browser.Url . "`n" . ControlGetText("TMemo1")
+  Ref := ControlGetText("TMemo1")
+  if (Vim.Browser.Url)
+    Ref := "#Link: " . Vim.Browser.Url . "`n" . Ref
   if (Vim.Browser.Title)
     Ref := "#Title: " . Vim.Browser.Title . "`n" . Ref
   if (Vim.Browser.Source)
@@ -146,6 +149,7 @@ SMSetLinkFromClipboard:
   WinWaitClose
   if (!SMPoundSymbHandled && Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url) && (A_ThisLabel == "r"))
     Vim.SM.Reload(, true)
+  Vim.Browser.Clear()
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
