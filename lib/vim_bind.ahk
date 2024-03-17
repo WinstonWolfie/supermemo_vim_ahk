@@ -27,6 +27,7 @@
 #Include %A_LineFile%\..\bind\vim_command.ahk
 #Include %A_LineFile%\..\bind\vim_disable.ahk
 #Include %A_LineFile%\..\bind\CapsLock.ahk
+#Include %A_LineFile%\..\bind\unicode.ahk
 
 ; Reset the condition
 #if

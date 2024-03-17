@@ -1,4 +1,5 @@
 #Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
+; https://gist.github.com/kbauer/e8fee6514d124d5961f51fd7ba571bfd
 ;; -*- mode: text; coding: utf-8 -*-
 ;;
 ;;              DO NOT EDIT MANUALLY!
@@ -29,23 +30,23 @@
 ;; ========= CONDITION FUNCTIONS =====================================
 
 EmacsCase() { 
-  global vim
-  return (Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class Emacs"))
+  global Vim
+  return (Vim.State.IsCurrentVimMode("Insert_Unicode") && WinActive("ahk_class Emacs"))
 }
 
 GtkApplicationCase() {
-  global vim
-  return (Vim.State.IsCurrentVimMode("Insert_unicode") && WinActive("ahk_class gdkWindowToplevel"))
+  global Vim
+  return (Vim.State.IsCurrentVimMode("Insert_Unicode") && WinActive("ahk_class gdkWindowToplevel"))
 }
 
 ExcludedProgramCase() { 
-  global vim
-  return (Vim.State.IsCurrentVimMode("Insert_unicode") && 0)
+  global Vim
+  return (Vim.State.IsCurrentVimMode("Insert_Unicode") && 0)
 }
 
 OtherCase() {
-  global vim
-  return (Vim.State.IsCurrentVimMode("Insert_unicode")
+  global Vim
+  return (Vim.State.IsCurrentVimMode("Insert_Unicode")
        && !EmacsCase() 
        && !GtkApplicationCase()
        && !ExcludedProgramCase())
@@ -60,8 +61,8 @@ EmacsEnabled = 0  ; For emacs there is (set-input-method "TeX")
 Suspend
 
 #if
-!^+u::Vim.State.SetMode("Insert_unicode")
-#if (Vim.State.IsCurrentVimMode("Insert_unicode"))
+!^+u::Vim.State.SetMode("Insert_Unicode")
+#if (Vim.State.IsCurrentVimMode("Insert_Unicode"))
 !^+u::Vim.State.SetMode("Insert")
 
 ;; ========= TABLE OF SYMBOLS ========================================

@@ -18,15 +18,15 @@ CapsLock & /::
 CapsLock & /::
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind") && (AltState := GetKeyState("alt")))
 CapsLock & /::
-  if (!Vim.SM.DoesTextExist()) {
-    Vim.State.SetToolTip("Text not found.")
+  if (!SM.DoesTextExist()) {
+    SetToolTip("Text not found.")
     return
   }
   CapsState := IfContains(A_ThisLabel, "CapsLock")
   KeyWait Alt
   BlockInput, On
-  if (Vim.SM.IsBrowsing())
-    Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
+  if (SM.IsBrowsing())
+    SM.EditFirstQuestion(), SM.WaitTextFocus()
   if (Vim.State.StrIsInCurrentVimMode("Visual")) {
     Send {Right}
     Vim.State.SetNormal()
@@ -79,7 +79,7 @@ SMSearchAgain:
     } else {
       Match := "s)((" . UserInput . ").*?){" . n . "}\K" . UserInput
     }
-    pos := RegExMatch(Selection := Vim.ParseLineBreaks(Copy()), Match)
+    pos := RegExMatch(Selection := ParseLineBreaks(Copy()), Match)
     if (pos == 1) {
       if (WholeWord) {
         Match := "s)(\b(" . UserInput . ")\b.*?){" . n + 1 . "}\K\b" . UserInput . "\b"
@@ -95,21 +95,21 @@ SMSearchAgain:
         if (ShiftState) {
           Vim.State.SetMode("Vim_Visual")
         } else if (AltState) {
-          Vim.SM.Cloze()
+          SM.Cloze()
         }
       }
     } else {
       Send {Left}
       if (A_ThisLabel != "SMSearchAgain") {
         Send ^{Home}
-        Vim.State.SetToolTip("Search started from the beginning.")
+        SetToolTip("Search started from the beginning.")
         Goto SMSearchAgain
       }
-      Vim.State.SetToolTip("Not found."), Vim.State.SetNormal()
+      SetToolTip("Not found."), Vim.State.SetNormal()
       Return
     }
   } else if (IfContains(CurrFocus, "Internet Explorer_Server")) {
-    if (!Vim.SM.HandleF3(1))
+    if (!SM.HandleF3(1))
       return
     ; Left spaces need to be trimmed otherwise SM might eat the spaces in text
     ControlSetText, TEdit1, % LTrim(UserInput), ahk_class TMyFindDlg
@@ -125,10 +125,10 @@ SMSearchAgain:
     } else if (!AltState) {  ; all modifier keys are not pressed
       Send {Left}  ; put caret on left of searched text
     }
-    if (!Vim.SM.HandleF3(2))
+    if (!SM.HandleF3(2))
       return
     if (AltState && !CtrlState && !ShiftState && !CapsState) {
-      Vim.SM.Cloze()
+      SM.Cloze()
     } else if (AltState && ShiftState) {
       ClozeHinterCtrlState := CtrlState, InitText := UserInput
       Gosub SMClozeHinter

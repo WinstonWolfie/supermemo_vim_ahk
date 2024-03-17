@@ -2,10 +2,7 @@
 ; Utilities
 #Include %A_LineFile%\..\util\vim_ahk_setting.ahk
 #Include %A_LineFile%\..\util\vim_ime.ahk
-#Include %A_LineFile%\..\util\Clip.ahk
-#Include %A_LineFile%\..\util\functions.ahk
 #Include %A_LineFile%\..\util\CbAutoComplete.ahk
-#Include %A_LineFile%\..\util\unicode.ahk
 #Include %A_LineFile%\..\util\WinClipAPI.ahk
 #Include %A_LineFile%\..\util\WinClip.ahk
 #Include %A_LineFile%\..\util\Acc.ahk
@@ -25,8 +22,9 @@
 #Include %A_LineFile%\..\vim_setting.ahk
 #Include %A_LineFile%\..\vim_state.ahk
 #Include %A_LineFile%\..\vim_tooltip.ahk
-#Include %A_LineFile%\..\vim_sm.ahk
-#Include %A_LineFile%\..\vim_browser.ahk
+#Include %A_LineFile%\..\sm.ahk
+#Include %A_LineFile%\..\browser.ahk
+#Include %A_LineFile%\..\lib.ahk
 
 ; Key Bindings
 #Include %A_LineFile%\..\vim_bind.ahk
@@ -55,9 +53,6 @@ class VimAhk {
     this.Setting := new VimSetting(this)
     this.State := new VimState(this)
     this.VimToolTip := new VimToolTip(this)
-    this.SM := new VimSM(this)
-    this.HTML := new VimHTML(this)
-    this.Browser := new VimBrowser(this)
 
     ; Group Settings
     this.GroupDel := ","
@@ -238,18 +233,20 @@ class VimAhk {
   }
 
   TwoLetterNormalMapsEnabled() {
+    global SM
     Return (this.IsVimGroup()
          && (this.State.StrIsInCurrentVimMode("Insert,Visual")
-          || (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText()))
+          || (this.State.IsCurrentVimMode("Vim_Normal") && SM.IsEditingText()))
          && this.TwoLetterNormalIsSet)
   }
 
   TwoLetterEnterNormal() {
+    global SM
     if (this.State.StrIsInCurrentVimMode("Insert")) {
       Send {BS}
     } else if (this.State.StrIsInCurrentVimMode("Visual")) {
       Send {Right}{Up}
-    } else if (this.State.IsCurrentVimMode("Vim_Normal") && this.SM.IsEditingText()) {
+    } else if (this.State.IsCurrentVimMode("Vim_Normal") && SM.IsEditingText()) {
       Send {Up}{Esc}
     }
     this.State.SetNormal()
@@ -329,37 +326,21 @@ class VimAhk {
     Return True
   }
 
-  CheckChr(key) {
-    Return (Copy(,, "+{Right}^c{Left}") ~= key)
-  }
-
   IsExceptionWnd() {
-    return this.SM.IsVimNavWnd()
-  }
-
-  ParseLineBreaks(str) {
-    if (this.SM.IsEditingHTML()) {  ; not perfect
-      if (StrLen(str) != InStr(str, "`r`n") + 1) {  ; first matched `r`n not at the end
-        str := RegExReplace(str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
-        str := RegExReplace(str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
-        str := StrReplace(str, "`r`n`r`n", "`n")  ; parse all paragraph tags (<P>)
-      }
-      str := StrReplace(str, "`r")  ; parse all line breaks (<BR>)
-      str := RegExReplace(str, this.move.hr)  ; parse horizontal lines
-    } else {
-      str := StrReplace(str, "`r")
-    }
-    return str
+    global SM
+    return SM.IsNavWnd()
   }
 
   IsHTML() {
-    return (this.SM.IsEditingHTML() || WinActive("ahk_group HTML"))
+    global SM
+    return (SM.IsEditingHTML() || WinActive("ahk_group HTML"))
   }
 
   IsNavigating() {
-    return (this.SM.IsNavigatingPlan()
-         || this.SM.IsNavigatingTask()
-         || this.SM.IsNavigatingContentWind()
-         || this.SM.IsNavigatingBrowser())
+    global SM
+    return (SM.IsNavigatingPlan()
+         || SM.IsNavigatingTask()
+         || SM.IsNavigatingContentWind()
+         || SM.IsNavigatingBrowser())
   }
 }

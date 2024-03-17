@@ -1,33 +1,33 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ; Editing text only
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsEditingText())
 +h::  ; move to top of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  Vim.SM.ClickTop()
+  SM.ClickTop()
 Return
 
 +m::  ; move to middle of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  Vim.SM.ClickMid()
+  SM.ClickMid()
 Return
 
 +l::  ; move to bottom of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  Vim.SM.ClickBottom()
+  SM.ClickBottom()
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.SM.IsBrowsing() && Vim.State.g && VimLastSearch)
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && SM.IsBrowsing() && Vim.State.g && VimLastSearch)
 n::
-  if (!Vim.SM.DoesTextExist()) {
-    Vim.State.SetToolTip("Text not found.")
+  if (!SM.DoesTextExist()) {
+    SetToolTip("Text not found.")
     return
   }
-  Vim.SM.EditFirstQuestion(), Vim.SM.WaitTextFocus()
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && Vim.SM.IsEditingText() && Vim.State.g && VimLastSearch)
+  SM.EditFirstQuestion(), SM.WaitTextFocus()
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && SM.IsEditingText() && Vim.State.g && VimLastSearch)
 n::Vim.Move.Move("gn")
 
 ; Editing HTML
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.Leader)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsEditingHTML() && Vim.State.Leader)
 q::
   loop % n := Vim.State.GetN() {
     Send {Home}>{Space}  ; add comment; useful when replying emails
@@ -39,11 +39,10 @@ q::
 return
 
 u::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML() && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsEditingHTML() && Vim.State.g)
 +x::
-x::  ; gx: open hyperlink in current caret position (Open in *n*ew window)
-  Vim.State.SetMode()
-  ClipSaved := ClipboardAll
+x::  ; gx: open hyperlink in current caret position
+  Vim.State.SetMode(), ClipSaved := ClipboardAll
   if (!Copy(false,, "+{Right}^c{Left}")) {  ; end of line
     Copy(false,, "+{Right}^c{Right}")
   } else if (Clipboard ~= "\s") {
@@ -57,15 +56,15 @@ x::  ; gx: open hyperlink in current caret position (Open in *n*ew window)
       If (ClipboardGet_HTML(data)) {
         RegExMatch(data, LinkMatch, CurrLink)
         if (!CurrLink)
-          Vim.State.SetToolTip("No link found.")
+          SetToolTip("No link found.")
       }
     }
     if (CurrLink) {
       CurrLink := StrReplace(CurrLink, "&amp;", "&")
       if (A_ThisLabel == "u") {
-        Vim.State.SetToolTip("Copied " . Clipboard := CurrLink)
+        SetToolTip("Copied " . Clipboard := CurrLink)
       } else if (IfContains(A_ThisLabel, "x")) {
-        Vim.SM.RunLink(Currlink)
+        SM.RunLink(Currlink)
       }
     }
   }
@@ -77,24 +76,24 @@ s::  ; gs: go to source
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && Vim.State.g)
 f::  ; gf: open source file
 t::  ; gt: open in Notepad
-  Vim.State.SetMode(), ContLearn := Vim.SM.IsLearning()
+  Vim.State.SetMode(), ContLearn := SM.IsLearning()
   ClipSaved := "", CurrTitle := WinGetTitle("A")
   if (Notepad := IfIn(A_ThisLabel, "^+f6,t")) {
     Send ^{f7}  ; save read point
-    Vim.SM.OpenNotepad(), w := "ahk_exe Notepad.exe"
+    SM.OpenNotepad(), w := "ahk_exe Notepad.exe"
   } else {
     ClipSaved := ClipboardAll
-    SMFilePath := Vim.SM.GetFilePath(false)
+    SMFilePath := SM.GetFilePath(false)
     SplitPath, SMFilePath,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
       ShellRun("ps", SMFilePath)
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       Send ^{f7}  ; save read point
-      Vim.SM.SaveHTML()  ; path may be updated
+      SM.SaveHTML()  ; path may be updated
       WinWaitActive, ahk_class TElWind
-      SMFilePath := Vim.SM.GetFilePath(false)
-      Vim.SM.ExitText(true)
+      SMFilePath := SM.GetFilePath(false)
+      SM.ExitText(true)
       ShellRun("vim", SMFilePath)
       GroupAdd, Vim, ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe  ; Win 11
       GroupAdd, Vim, ahk_class ConsoleWindowClass ahk_exe cmd.exe  ; Win 10
@@ -105,135 +104,135 @@ t::  ; gt: open in Notepad
     Clipboard := ClipSaved
   WinWait % w
   WinWaitClose
-  Vim.SM.ActivateElWind()
+  SM.ActivateElWind()
   if (Notepad) {
     Send !{f7}  ; go to read point
   } else {
-    Vim.SM.GoHome()
+    SM.GoHome()
   }
   if (ContLearn == 1) {
-    Vim.SM.Learn()
+    SM.Learn()
   } else if (!Notepad) {
-    Vim.SM.WaitFileLoad()
+    SM.WaitFileLoad()
     t := WinGetTitle("A")
-    Vim.SM.GoBack()
+    SM.GoBack()
     if ((CurrTitle == t) && (CurrTitle ~= "^Concept: ")) {
-      Vim.SM.WaitFileLoad()
+      SM.WaitFileLoad()
       Send !{Right}
     }
   }
 return
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsEditingHTML())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsEditingHTML())
 >::Vim.State.SetMode("SMHTMLIncreaseIndent")
 <::Vim.State.SetMode("SMHTMLDecreaseIndent")
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLIncreaseIndent") && Vim.SM.IsEditingHTML())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLIncreaseIndent") && SM.IsEditingHTML())
 >::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingHTML())
 >::
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLDecreaseIndent") && Vim.SM.IsEditingHTML())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("SMHTMLDecreaseIndent") && SM.IsEditingHTML())
 <::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingHTML())
 <::
   if (A_ThisLabel == ">") {
-    Vim.SM.EditBar(21) 
+    SM.EditBar(21) 
   } else if (A_ThisLabel == "<") {
-    Vim.SM.EditBar(20)
+    SM.EditBar(20)
   }
   Vim.State.SetMode("Vim_Normal")
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TBrowser") && Vim.State.g)
 ; gU: click source button
-+u::Vim.SM.ClickBrowserSourceButton(), Vim.State.SetMode()
++u::SM.ClickBrowserSourceButton(), Vim.State.SetMode()
 
 #if (Vim.State.Vim.Enabled
   && ((Vim.State.Leader && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents") || WinActive("ahk_class TBrowser")))  ; main windows: require leader key
-   || Vim.SM.IsLearning()
-   || Vim.SM.IsGrading()
+   || SM.IsLearning()
+   || SM.IsGrading()
    || (WinActive("A") == SMImportGuiHwnd)
-   || Vim.SM.IsPrioInputBox()
+   || SM.IsPrioInputBox()
    || WinActive("ahk_class TPriorityDlg")))
 ; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
 ; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png
 !0::
 Numpad0::
-NumpadIns::Vim.SM.SetRandPrio(0.00,3.6076)
+NumpadIns::SM.SetRandPrio(0.00,3.6076)
 
 !1::
 Numpad1::
-NumpadEnd::Vim.SM.SetRandPrio(3.6077,8.4131)
+NumpadEnd::SM.SetRandPrio(3.6077,8.4131)
 
 !2::
 Numpad2::
-NumpadDown::Vim.SM.SetRandPrio(8.4132,18.4917)
+NumpadDown::SM.SetRandPrio(8.4132,18.4917)
 
 !3::
 Numpad3::
-NumpadPgdn::Vim.SM.SetRandPrio(18.4918,28.0885)
+NumpadPgdn::SM.SetRandPrio(18.4918,28.0885)
 
 !4::
 Numpad4::
-NumpadLeft::Vim.SM.SetRandPrio(28.0886,37.2103)
+NumpadLeft::SM.SetRandPrio(28.0886,37.2103)
 
 !5::
 Numpad5::
-NumpadClear::Vim.SM.SetRandPrio(37.2104,46.24)
+NumpadClear::SM.SetRandPrio(37.2104,46.24)
 
 !6::
 Numpad6::
-NumpadRight::Vim.SM.SetRandPrio(46.25,57.7575)
+NumpadRight::SM.SetRandPrio(46.25,57.7575)
 
 !7::
 Numpad7::
-NumpadHome::Vim.SM.SetRandPrio(57.7576,70.5578)
+NumpadHome::SM.SetRandPrio(57.7576,70.5578)
 
 !8::
 Numpad8::
-NumpadUp::Vim.SM.SetRandPrio(70.5579,90.2474)
+NumpadUp::SM.SetRandPrio(70.5579,90.2474)
 
 !9::
 Numpad9::
-NumpadPgup::Vim.SM.SetRandPrio(90.2474,99.99)
+NumpadPgup::SM.SetRandPrio(90.2474,99.99)
 
-#if (Vim.State.Vim.Enabled && ((Vim.State.Leader && WinActive("ahk_class TElWind")) || Vim.SM.IsLearning() || Vim.SM.IsGrading()))
+#if (Vim.State.Vim.Enabled && ((Vim.State.Leader && WinActive("ahk_class TElWind")) || SM.IsLearning() || SM.IsGrading()))
 ^!0::
 ^Numpad0::
-^NumpadIns::Vim.SM.RandCtrlJ(1, 3)
+^NumpadIns::SM.RandCtrlJ(1, 3)
 
 ^!1::
 ^Numpad1::
-^NumpadEnd::Vim.SM.RandCtrlJ(4, 8)
+^NumpadEnd::SM.RandCtrlJ(4, 8)
 
 ^!2::
 ^Numpad2::
-^NumpadDown::Vim.SM.RandCtrlJ(9, 18)
+^NumpadDown::SM.RandCtrlJ(9, 18)
 
 ^!3::
 ^Numpad3::
-^NumpadPgdn::Vim.SM.RandCtrlJ(19, 28)
+^NumpadPgdn::SM.RandCtrlJ(19, 28)
 
 ^!4::
 ^Numpad4::
-^NumpadLeft::Vim.SM.RandCtrlJ(29, 37)
+^NumpadLeft::SM.RandCtrlJ(29, 37)
 
 ^!5::
 ^Numpad5::
-^NumpadClear::Vim.SM.RandCtrlJ(38, 46)
+^NumpadClear::SM.RandCtrlJ(38, 46)
 
 ^!6::
 ^Numpad6::
-^NumpadRight::Vim.SM.RandCtrlJ(47, 57)
+^NumpadRight::SM.RandCtrlJ(47, 57)
 
 ^!7::
 ^Numpad7::
-^NumpadHome::Vim.SM.RandCtrlJ(58, 70)
+^NumpadHome::SM.RandCtrlJ(58, 70)
 
 ^!8::
 ^Numpad8::
-^NumpadUp::Vim.SM.RandCtrlJ(71, 90)
+^NumpadUp::SM.RandCtrlJ(71, 90)
 
 ^!9::
 ^Numpad9::
-^NumpadPgup::Vim.SM.RandCtrlJ(91, 99)
+^NumpadPgup::SM.RandCtrlJ(91, 99)

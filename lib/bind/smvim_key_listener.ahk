@@ -34,44 +34,44 @@ CapsLock::
       HintsEntered .= A_ThisLabel
     }
     if (BS || (!ArrayIndex := HasVal(aHintStrings, HintsEntered))) {
-      Vim.State.SetToolTip(StrUpper(HintsEntered), 0, 19)
+      SetToolTip(StrUpper(HintsEntered), 0, 19)
       return
     }
     v := aHints[ArrayIndex]
     if (HinterMode == "YankLink") {
-      Vim.State.SetToolTip("Copied " . Clipboard := v.Link)
+      SetToolTip("Copied " . Clipboard := v.Link)
     } else if (IfIn(HinterMode, "Visual,Normal")) {
       IE2 := ControlGet(,, "Internet Explorer_Server2", "A")
       IE1 := ControlGet(,, "Internet Explorer_Server1", "A")
       if (IE2 && IE1) {
         Send ^t{Esc}
-        Vim.SM.WaitTextExit()
+        SM.WaitTextExit()
         Sleep 20
       }
       if (v.Control == "Internet Explorer_Server1") {
         if (IE2) {
-          Vim.SM.EditFirstAnswer()
+          SM.EditFirstAnswer()
         } else {
-          Vim.SM.EditFirstQuestion()
+          SM.EditFirstQuestion()
         }
       } else if (v.Control == "Internet Explorer_Server2") {
-        Vim.SM.EditFirstQuestion()
+        SM.EditFirstQuestion()
       }
-      Vim.SM.WaitTextFocus()
+      SM.WaitTextFocus()
       Sleep 20  ; needed lest text changes position when you click
       ControlClickScreen(v.x, v.y)
       if (HinterMode == "Visual")
         Send {Right}{Left}^+{Right}
     } else {
-      if (e := !Vim.SM.RunLink(v.Link, OpenInIE))
-        Vim.State.SetToolTip("An error occured when running " . v.Link)
+      if (e := !SM.RunLink(v.Link, OpenInIE))
+        SetToolTip("An error occured when running " . v.Link)
       if (!e && IfContains(HinterMode, "Persistent,OpenLinkInNew")) {
         WinWaitNotActive, ahk_class TElWind
         WinActivate, ahk_class TElWind
       }
     }
   }
-  HintsEntered := "", Vim.VimToolTip.RemoveToolTip(19)
+  HintsEntered := "", RemoveToolTip(19)
   if (Esc || (HinterMode != "Persistent")) {
     loop % LastHintCount
       ToolTipG(,,, A_Index)

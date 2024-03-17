@@ -1,6 +1,6 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ; Making sure grading works (in case VimDisableUnused > 1)
-#if (Vim.IsVimGroup() && Vim.SM.IsGrading())
+#if (Vim.IsVimGroup() && SM.IsGrading())
 ; cannot use ~ here to send the key itself
 0::
 1::
@@ -11,7 +11,7 @@
   Send % A_ThisLabel
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g && true)  ; true is needed here for not duplicating hotkeys
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g && true)  ; true is needed here for not duplicating hotkeys
 a::
 b::
 c::

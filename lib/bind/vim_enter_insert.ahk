@@ -21,7 +21,7 @@ Return
 a::
   if (Vim.IsNavigating()) {
     Send {tab}
-  } else if (!Vim.CheckChr("`n")) {
+  } else if (!CheckChr("`n")) {
     Send {Right}
   }
   Vim.State.SetMode("Insert")
@@ -33,7 +33,7 @@ Return
 Return
 
 o::
-  if (Vim.SM.IsNavigatingPlan()) {
+  if (SM.IsNavigatingPlan()) {
     Send {Down}{Ins}
   } else {
     Send {End}{Enter}
@@ -42,7 +42,7 @@ o::
 Return
 
 +o::
-  if (Vim.SM.IsNavigatingPlan()) {
+  if (SM.IsNavigatingPlan()) {
     Send {Ins}
   } else {
     Send {Home}{Enter}{Left}

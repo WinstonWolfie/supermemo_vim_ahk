@@ -8,10 +8,9 @@
     - Dedicated to the public domain (CC0 1.0) <http://creativecommons.org/publicdomain/zero/1.0/>
 */
 ; https://github.com/Paris/AutoHotkey-Scripts/blob/master/Functions.ahk
-
 IfBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
   SCS := A_StringCaseSense
-  StringCaseSense % StrCaseSense ? "on" : "off"
+  StringCaseSense % StrCaseSense ? "On" : "Off"
   If var between %LowerBound% and %UpperBound%
     ret := true
   StringCaseSense % SCS
@@ -19,7 +18,7 @@ IfBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
 }
 IfNotBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
   SCS := A_StringCaseSense
-  StringCaseSense % StrCaseSense ? "on" : "off"
+  StringCaseSense % StrCaseSense ? "On" : "Off"
   If var not between %LowerBound% and %UpperBound%
     ret := true
   StringCaseSense % SCS
@@ -27,7 +26,7 @@ IfNotBetween(ByRef var, LowerBound, UpperBound, StrCaseSense:=false) {
 }
 IfIn(ByRef var, MatchList, StrCaseSense:=false) {
   SCS := A_StringCaseSense
-  StringCaseSense % StrCaseSense ? "on" : "off"
+  StringCaseSense % StrCaseSense ? "On" : "Off"
   If var in %MatchList%
     ret := true
   StringCaseSense % SCS
@@ -35,7 +34,7 @@ IfIn(ByRef var, MatchList, StrCaseSense:=false) {
 }
 IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
   SCS := A_StringCaseSense
-  StringCaseSense % StrCaseSense ? "on" : "off"
+  StringCaseSense % StrCaseSense ? "On" : "Off"
   If var not in %MatchList%
     ret := true
   StringCaseSense % SCS
@@ -43,7 +42,7 @@ IfNotIn(ByRef var, MatchList, StrCaseSense:=false) {
 }
 IfContains(ByRef var, MatchList, StrCaseSense:=false) {
   SCS := A_StringCaseSense
-  StringCaseSense % StrCaseSense ? "on" : "off"
+  StringCaseSense % StrCaseSense ? "On" : "Off"
   If var contains %MatchList%
     ret := true
   StringCaseSense % SCS
@@ -51,7 +50,7 @@ IfContains(ByRef var, MatchList, StrCaseSense:=false) {
 }
 IfNotContains(ByRef var, MatchList, StrCaseSense:=false) {
   SCS := A_StringCaseSense
-  StringCaseSense % StrCaseSense ? "on" : "off"
+  StringCaseSense % StrCaseSense ? "On" : "Off"
   If var not contains %MatchList%
     ret := true
   StringCaseSense % SCS
@@ -318,7 +317,7 @@ ControlTextWaitExist(Control, WinTitle:="", WinText:="", ExcludeTitle:="", Exclu
 ControlTextWait(Control, Text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
-    if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == text) {
+    if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == Text) {
       Return True
     } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
@@ -329,7 +328,7 @@ ControlTextWait(Control, Text, WinTitle:="", WinText:="", ExcludeTitle:="", Excl
 ControlTextWaitChange(Control, Text:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
-    if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
+    if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != Text) {
       Return ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
@@ -353,7 +352,7 @@ ControlWaitHwndChange(Control, hWnd:="", WinTitle:="", WinText:="", ExcludeTitle
 WinTextWaitChange(text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
-    if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText) != text) {
+    if (WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText) != Text) {
       Return WinGetText(WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
@@ -528,15 +527,14 @@ ControlClickScreen(x, y, WinTitle:="") {
 }
 
 WaitCaretMove(OriginalX:=0, OriginalY:=0, Timeout:=0) {
-  if (!OriginalX)
+  if !(OriginalX >= 0)
     MouseGetPos, OriginalX
-  if (!OriginalY)
+  if !(OriginalY >= 0)
     MouseGetPos,, OriginalY
   StartTime := A_TickCount
   loop {
-    x := A_CaretX, y := A_CaretY
-    if ((x != OriginalX) || (y != OriginalY)) {
-      return x . " " . y
+    if ((A_CaretX != OriginalX) || (A_CaretY != OriginalY)) {
+      return A_CaretX . " " . A_CaretY
     } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       return false
     }
@@ -1076,17 +1074,17 @@ CopyAll(Timeout:=2500) {
 }
 
 IsUrl(Text) {
-  for i, v in % GetAllLinks(Text) {
-    if ((i == 1) && (v == text))
+  for i, v in GetAllLinks(Text) {
+    if ((i == 1) && (v == Text))
       return true
   }
 }
 
 GetAllLinks(Text) {
-  Links := [], pos := 1
+  aLinks := [], pos := 1
   while (pos := RegExMatch(Text, "((https?|file):\/\/|www\.)[^ ]+", Match, pos + StrLen(Match)))
-    Links.Push(Match)
-  return Links
+    aLinks.Push(Match)
+  return aLinks
 }
 
 SetModeNormalReturn:
@@ -1126,7 +1124,7 @@ GetAcrobatPageBtn() {
 }
 
 IsRegExChar(char) {
-  return (IfIn(char, ".,+,*,?,^,$,(,),[,],{,},|,\"))
+  return IfIn(char, ".,+,*,?,^,$,(,),[,],{,},|,\")
 }
 
 GetTimeMSec() {
@@ -1292,4 +1290,108 @@ SetClipboardHTML(HtmlBody, HtmlHead := "", AltText := "")                ;  SetC
     DllCall("User32\CloseClipboard")
 
 Return !! (Res1 And Res2)
+}
+
+CheckChr(key) {
+  Return (Copy(,, "+{Right}^c{Left}") ~= key)
+}
+
+SetToolTip(Title, Period:=2000, WhichToolTip:=1) {
+  global oRemoveToolTip
+  if (oRemoveToolTip)
+    SetTimer, % oRemoveToolTip, Off
+  WinGetPos, , , , H, A
+  StrReplace(Title, "`n",, Lines)
+  ToolTip, % Title, 5, H - 30 - (Lines) * 20, % WhichToolTip
+  if (Period > 0)
+    SetRemoveToolTip(Period, WhichToolTip)
+}
+
+RemoveToolTip(WhichToolTip:=1) {
+  global oRemoveToolTip
+  if (oRemoveToolTip)
+    SetTimer, % oRemoveToolTip, Off
+  ToolTip,,,, % WhichToolTip
+}
+
+SetRemoveToolTip(time, WhichToolTip:=1) {
+  global oRemoveToolTip := Func("RemoveToolTip").Bind(WhichToolTip)
+  SetTimer, % oRemoveToolTip, % "-" time
+}
+
+SwitchToSameWindow(w:="A") {
+  if (w == "A")
+    w := "ahk_id " . WinActive("A")
+  ; Activate desktop
+  ; WinActivate, ahk_class WorkerW  ; doesn't work in Win 11
+  WinActivate, ahk_class Progman
+  WinActivate % w
+}
+
+; Clip() - Send and Retrieve Text Using the Clipboard
+; Originally by berban - updated February 18, 2019 - modified by Winston
+; https://github.com/berban/Clip/blob/master/Clip.ahk
+Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1) {
+  global WinClip
+  if (RestoreClip)
+    ClipSaved := ClipboardAll
+  If (Text = "") {
+    LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
+    Send % KeysToSend ? KeysToSend : "^c"
+    if (WaitTime == -1) {
+      ClipWait, % LongCopy ? 0.6 : 0.2, True
+    } else if (WaitTime == 0) {
+      ClipWait,, True
+    } else if (WaitTime) {
+      ClipWait, % WaitTime, True
+    }
+    Clipped := HTML ? GetClipHTMLBody() : Clipboard
+  } Else {
+    if (HTML && (HTML != "sm")) {
+      SetClipboardHTML(Text)
+    } else {
+      WinClip.Clear()
+      Clipboard := Text
+      ClipWait
+    }
+    if (HTML = "sm") {
+      SM.PasteHTML()
+    } else {
+      Send % KeysToSend ? KeysToSend : "^v"
+      WinClip._waitClipReady()
+    }
+  }
+  If (Text && Reselect)
+    Send % "+{Left " . StrLen(ParseLineBreaks(Text)) . "}"
+  if (RestoreClip)
+    Clipboard := ClipSaved
+  If (Text = "")
+    Return Clipped
+}
+
+Copy(RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1) {
+  return Clip(,, RestoreClip, HTML, KeysToSend, WaitTime)
+}
+
+ParseLineBreaks(str) {
+  global SM, Vim
+  if (SM.IsEditingHTML()) {  ; not perfect
+    if (StrLen(str) != InStr(str, "`r`n") + 1) {  ; first matched `r`n not at the end
+      str := RegExReplace(str, "D)(?<=[ ])\r\n$")  ; removing the very last line break if there's a space before it
+      str := RegExReplace(str, "(?<![ ])\r\n$")  ; remove line breaks at end of line if there isn't a space before it
+      str := StrReplace(str, "`r`n`r`n", "`n")  ; parse all paragraph tags (<P>)
+    }
+    str := StrReplace(str, "`r")  ; parse all line breaks (<BR>)
+    str := RegExReplace(str, Vim.Move.hr)  ; parse horizontal lines
+  } else {
+    str := StrReplace(str, "`r")
+  }
+  return str
+}
+
+GetSiteHTML(Url) {
+  TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
+  UrlDownloadToFile, % Url, % TempPath
+  if (!ErrorLevel)
+    return FileReadAndDelete(TempPath)
 }

@@ -1,18 +1,18 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingText())
 .::  ; selected text becomes [...]
   if (!Vim.State.Leader)
     Send ^c
-  if (Vim.SM.IsEditingHTML()) {
+  if (SM.IsEditingHTML()) {
     Send {text}<span class="Cloze">[...]</span>
     Send +{Left 32}^+1
-  } else if (Vim.SM.IsEditingPlainText()) {
+  } else if (SM.IsEditingPlainText()) {
     Send {text}[...]
   }
   Vim.State.SetMode("Vim_Normal")
 return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingHTML())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingHTML())
 ~^+i::Vim.State.SetMode("Vim_Normal")  ; ignore
 
 ^h::  ; parse *h*tml
@@ -24,7 +24,7 @@ SMParseHTMLGUI:
   GAltA := (A_ThisLabel == "SMParseHTMLGUI"), Vim.State.SetMode("Vim_Normal")
   SetDefaultKeyboard(0x0409)  ; English-US
   Gui, HTMLTag:Add, Text,, &HTML tag:
-  RegExMatch(Vim.SM.CssClass, "hint.*$", v)
+  RegExMatch(SM.CssClass, "hint.*$", v)
   list := "h1||h2|h3|h4|h5|h6|b|i|u|strong|code|pre|em|clozed|cloze|extract|sub"
         . "|sup|blockquote|ruby|small|" . v
   Gui, HTMLTag:Add, Combobox, vTag gAutoComplete, % list
@@ -68,7 +68,7 @@ SMParseHTML:
     Content := StrReplace(Content, ">", "&gt;")
   }
   StartingTag := "<", EndingTag := ">"
-  if (Class || Vim.SM.IsCssClass(Tag)) {
+  if (Class || SM.IsCssClass(Tag)) {
     StartingTag := "<SPAN class=" . Tag, EndingTag := "SPAN>", Tag := ""
   } else if (Tag = "ruby") {
     Clipboard := ClipSaved
@@ -95,36 +95,36 @@ return
 
 +h::  ; move to top of screen
   Send {Shift Down}
-  Vim.SM.ClickTop()
+  SM.ClickTop()
   Send {Shift Up}
 Return
 
 +m::  ; move to middle of screen
   Send {Shift Down}
-  Vim.SM.ClickMid()
+  SM.ClickMid()
   Send {Shift Up}
 Return
 
 +l::  ; move to bottom of screen
   Send {Shift Down}
-  Vim.SM.ClickBottom()
+  SM.ClickBottom()
   Send {Shift Up}
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingPlainText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingPlainText())
 m::Send % "{text}*" . Copy() . "*"
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWind())
-b::Vim.SM.OpenBrowser(), Vim.State.SetMode("Vim_Normal")
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && SM.IsNavigatingContentWind())
+b::SM.OpenBrowser(), Vim.State.SetMode("Vim_Normal")
 
 ExtractStay:
-#if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && SM.IsEditingText())
 ^!x::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingText())
 ^q::  ; extract (*q*uote)
   Send !x
-  Vim.SM.WaitExtractProcessing()
-  Vim.SM.GoBack(), Vim.State.SetMode("Vim_Normal")
+  SM.WaitExtractProcessing()
+  SM.GoBack(), Vim.State.SetMode("Vim_Normal")
 return
 
 +q::  ; extract with priority
@@ -132,26 +132,26 @@ return
   Vim.State.SetMode("Vim_Normal")
 return
 
-z::Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
+z::SM.Cloze(), Vim.State.SetMode("Vim_Normal")
 
 SMClozeStay:
-#if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && SM.IsEditingText())
 ^!z::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingText())
 ^z::
-  Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.WaitClozeProcessing() != -1)  ; warning on trying to cloze on items
-    Vim.SM.GoBack()
+  SM.Cloze(), Vim.State.SetMode("Vim_Normal")
+  if (SM.WaitClozeProcessing() != -1)  ; warning on trying to cloze on items
+    SM.GoBack()
 Return
 
 ~!t::
 ~!q::Vim.State.SetMode("Vim_Normal")
 
 SMClozeHinter:
-#if (Vim.IsVimGroup() && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && SM.IsEditingText())
 ^!+z::
 !+z::
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingText())
 ^+z::
 +z::  ; cloze hinter
   if (ClozeHinterCtrlState && (A_ThisLabel == "SMClozeHinter")) {  ; from cloze hinter label and ctrl is pressed
@@ -244,9 +244,9 @@ SMClozeHinterButtonCloze:
   WinActivate, ahk_class TElWind
 
 SMClozeNoBracket:
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && (CtrlState := GetKeyState("ctrl")) && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && (CtrlState := GetKeyState("ctrl")) && SM.IsEditingText())
 CapsLock & z::  ; delete [...]
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingText())
 CapsLock & z::  ; delete [...]
   ClozeNoBracket := IfIn(A_ThisLabel, "SMClozeNoBracket,CapsLock & z")
   TopicTitle := WinGetTitle("ahk_class TElWind")
@@ -259,12 +259,12 @@ CapsLock & z::  ; delete [...]
   KeyWait Capslock
   KeyWait Alt
   KeyWait Enter
-  Vim.SM.Cloze(), Vim.State.SetMode("Vim_Normal")
+  SM.Cloze(), Vim.State.SetMode("Vim_Normal")
   if (!ClozeNoBracket && !Hint && !CtrlState)  ; entered nothing
     return
 
-  Vim.State.SetToolTip("Cloze processing...")
-  if (Vim.SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
+  SetToolTip("Cloze processing...")
+  if (SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
   if (Done) {
     Send ^+{Enter}
@@ -274,12 +274,12 @@ CapsLock & z::  ; delete [...]
     Send {Enter}
     CtrlState := true
   }
-  Vim.SM.GoBack()
+  SM.GoBack()
   if (!ClozeNoBracket && !Hint && CtrlState)  ; entered nothing
     return
   WinWaitTitleChange(TopicTitle, "ahk_class TElWind", 500)
-  Vim.SM.WaitFileLoad()
-  if (!Vim.SM.SpamQ(, 10000))
+  SM.WaitFileLoad()
+  if (!SM.SpamQ(, 10000))
     return
 
   if (!ClozeNoBracket && Inside) {
@@ -293,7 +293,7 @@ CapsLock & z::  ; delete [...]
   }
 
   loop {  ; sometimes the question is not the first component
-    if (Vim.SM.IsEditingPlainText()) {
+    if (SM.IsEditingPlainText()) {
       Send ^a
       ClipSaved := ClipboardAll
       if (ClozeNoBracket) {
@@ -303,9 +303,9 @@ CapsLock & z::  ; delete [...]
       }
       Clipboard := ClipSaved
       Break
-    } else if (Vim.SM.IsEditingHTML()) {
-      if (HTML := FileRead(HTMLPath := Vim.SM.LoopForFilePath())) {
-        Vim.SM.EmptyHTMLComp()
+    } else if (SM.IsEditingHTML()) {
+      if (HTML := FileRead(HTMLPath := SM.LoopForFilePath())) {
+        SM.EmptyHTMLComp()
         WinWaitActive, ahk_class TElWind
         Send ^{Home}
         if (ClozeNoBracket) {

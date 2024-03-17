@@ -1,7 +1,7 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 ; Grading
 ; Inspired by MasterHowToLearn's SuperMemoVim
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsGrading())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsGrading())
 ; Conflict with focusing to answer
 ; a::
 s::
@@ -19,5 +19,5 @@ g::
   }
   ControlTextWait("TBitBtn3", "Next repetition", "A")
   ControlSend, TBitBtn3, {Enter}, A
-  Vim.SM.EnterInsertIfSpelling()
+  SM.VimEnterInsertIfSpelling()
 return

@@ -4,7 +4,6 @@ class VimToolTip {
     this.Vim := vim
 
     this.DisplayToolTipObj := ObjBindMethod(this, "DisplayToolTip")
-    this.RemoveToolTipObj := ObjBindMethod(this, "RemoveToolTip")
     OnMessage(0x200, ObjBindMethod(this, "OnMouseMove"))
   }
 
@@ -12,7 +11,7 @@ class VimToolTip {
     this.Vim.State.CurrControl := A_GuiControl
     if (this.Vim.State.CurrControl != this.Vim.State.PrevControl) {
       this.Vim.State.PrevControl := this.Vim.State.CurrControl
-      this.RemoveToolTip()
+      RemoveToolTip()
       if (this.Vim.Info.HasKey(this.Vim.State.CurrControl)) {
         display := this.DisplayToolTipObj
         SetTimer, % display, -1000
@@ -25,19 +24,6 @@ class VimToolTip {
     display := this.DisplayToolTipObj
     SetTimer, % display, Off
     ToolTip % this.Vim.Info[this.Vim.State.CurrControl]
-    this.SetRemoveToolTip(60000)
-  }
-
-  RemoveToolTip(WhichToolTip:=20) {
-    display := this.DisplayToolTipObj
-    SetTimer, % display, Off
-    remove := this.RemoveToolTipObj
-    SetTimer, % remove, Off
-    ToolTip,,,, % WhichToolTip
-  }
-
-  SetRemoveToolTip(time, WhichToolTip:=20) {
-    global oVimRemoveToolTip := ObjBindMethod(this, "RemoveToolTip", WhichToolTip)
-    SetTimer, % oVimRemoveToolTip, % "-" time
+    SetRemoveToolTip(60000)
   }
 }

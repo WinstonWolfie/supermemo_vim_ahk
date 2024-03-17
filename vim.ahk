@@ -7,5 +7,7 @@ If (!A_IsAdmin) {
 }
 VimScriptPath := A_LineFile
 Vim := new VimAhk()
+SM := new SM()
+Browser := new Browser()
 
 #Include %A_LineFile%\..\lib\vim_ahk.ahk

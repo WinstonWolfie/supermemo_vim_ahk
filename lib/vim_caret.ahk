@@ -34,14 +34,6 @@ class VimCaret {
     SPIF_SENDCHANGE := 0x02
     fWinIni := SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
     DllCall("SystemParametersInfo", UInt,SPI_SETCARETWIDTH, UInt,0, UInt,CARETWIDTH, UInt,fWinIni)
-    this.SwitchToSameWindow()
-  }
-
-  SwitchToSameWindow(w:="") {
-    w := w ? w : "ahk_id " . WinActive("A")
-    ; Activate desktop
-    ; WinActivate, ahk_class WorkerW  ; doesn't work in Win 11
-    WinActivate, ahk_class Progman
-    WinActivate % w
+    SwitchToSameWindow()
   }
 }

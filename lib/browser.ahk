@@ -1,7 +1,6 @@
 ﻿#Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
-class VimBrowser {
-  __New(Vim) {
-    this.Vim := Vim
+class Browser {
+  __New() {
     this.Months := "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
   }
 
@@ -12,13 +11,6 @@ class VimBrowser {
 
   GetGuiaBrowser() {
     global guiaBrowser := (guiaBrowser.BrowserId == WinActive("A")) ? guiaBrowser : new UIA_Browser("A")
-  }
-
-  GetInfo(RestoreClip:=true, GetFullPage:=true, ClickBtn:=true) {
-    this.Url := this.GetUrl()
-    if (ClickBtn)
-      this.ClickBtn()
-    this.GetTitleSourceDate(RestoreClip, GetFullPage)
   }
 
   ParseUrl(Url) {
@@ -48,7 +40,7 @@ class VimBrowser {
     return Url
   }
 
-  GetTitleSourceDate(RestoreClip:=true, GetFullPage:=true, FullPageText:="", GetUrl:=true, GetDate:=true, GetTimeStamp:=true) {
+  GetInfo(RestoreClip:=true, GetFullPage:=true, FullPageText:="", GetUrl:=true, GetDate:=true, GetTimeStamp:=true) {
     this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
     this.Title := this.FullTitle
     if (GetUrl)
@@ -152,8 +144,6 @@ class VimBrowser {
       this.Source := "X", this.Title := RegExReplace(this.Title, """ \/ X$")
       RegExMatch(this.Title, "^(.*) on X: """, v), this.Author := v1
       this.Title := RegExReplace(this.Title,  "^.* on X: """)
-    } else if (RegExMatch(this.Title, " \| by (.*?) \| ((.*?) \| )?Medium$", v)) {
-      this.Source := "Medium", this.Title := RegExReplace(this.Title, " \| by .*? \| Medium$"), this.Author := v1
     } else if (RegExMatch(this.Title, "^Git - (.*?) Documentation$", v)) {
       this.Source := "Git - Documentation", this.Title := v1
     } else if (RegExMatch(this.Title, "'(.*?)': Naver Korean-English Dictionary", v)) {
@@ -168,19 +158,17 @@ class VimBrowser {
       this.Source := v1 . " | Fandom", this.Title := RegExReplace(this.Title, " \| (.*) \| Fandom$")
       if (GetFullPage && GetDate) {
         this.Url := this.Url ? this.Url : this.GetUrl()
-        TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
-        UrlDownloadToFile, % this.Url . "?action=history", % TempPath
-        RegExMatch(FileReadAndDelete(TempPath), "<h4 class=""mw-index-pager-list-header-first mw-index-pager-list-header"">(.*?)<\/h4>", v)
+        TempHTML := GetSiteHTML(this.Url . "?action=history")
+        RegExMatch(TempHTML, "<h4 class=""mw-index-pager-list-header-first mw-index-pager-list-header"">(.*?)<\/h4>", v)
         this.Date := v1
       }
     } else if (this.Title ~= " - TV Tropes$") {
       this.Source := "TV Tropes", this.Title := RegExReplace(this.Title, " - TV Tropes$")
       if (GetFullPage && GetDate) {
         this.Url := this.Url ? this.Url : this.GetUrl()
-        TempPath := A_Temp . "\" . GetCurrTimeForFileName() . ".htm"
         RegExMatch(this.Url, "https:\/\/tvtropes\.org\/pmwiki\/pmwiki\.php\/(.*?)\/(.*?)($|\?)", v)
-        UrlDownloadToFile, % "https://tvtropes.org/pmwiki/article_history.php?article=" . v1 . "." . v2, % TempPath
-        RegExMatch(FileReadAndDelete(TempPath), "<a href=""\/pmwiki\/article_history\.php\?article=" . v1 . "\." . v2 . ".*?#edit.*?>(\w+ \d+\w+ \d+)", v)
+        TempHTML := GetSiteHTML("https://tvtropes.org/pmwiki/article_history.php?article=" . v1 . "." . v2)
+        RegExMatch(TempHTML, "<a href=""\/pmwiki\/article_history\.php\?article=" . v1 . "\." . v2 . ".*?#edit.*?>(\w+ \d+\w+ \d+)", v)
         this.Date := v1
       }
 
@@ -243,16 +231,19 @@ class VimBrowser {
       this.Source := "Trésor de la langue française informatisé"
     } else if (IfContains(this.Url, "books.openbookpublishers.com")) {
       this.Source := "Open Book Publishers"
+    } else if (IfContains(this.Url, "morningbrew.com")) {
+      this.Source := "Morning Brew"
 
     ; Video/audio
     } else if (IfContains(this.Url, "youtube.com/watch")) {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
+        if (GetDate)
+          ; RegExMatch(FullPageText, "views +?(\r\n)?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
+          RegExMatch(GetSiteHTML(this.Url), """publishDate"":{""simpleText"":""(.*?)""}", v), this.Date := v1
         if (GetTimeStamp)
           this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
         RegExMatch(FullPageText, ".*(?=\r\n.*subscribers)", Author), this.Author := Author
-        if (GetDate)
-          RegExMatch(FullPageText, "views +?(\r\n)?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
       }
     } else if (IfContains(this.Url, "youtube.com/playlist")) {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
@@ -487,6 +478,10 @@ class VimBrowser {
         if (GetTimeStamp)
           this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
       }
+    } else if (RegExMatch(this.Title, " \| by (.*?) \| ((.*?) \| )?Medium$", v)) {
+      this.Source := "Medium", this.Title := RegExReplace(this.Title, " \| by .*? \| Medium$"), this.Author := v1
+      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, this.Months . " \d{1,2}, \d{4}", v), this.Date := v
 
     } else {
       ReversedTitle := StrReverse(this.Title)
@@ -536,11 +531,8 @@ class VimBrowser {
   GetUrl(Parsed:=true) {
     global guiaBrowser
     this.GetGuiaBrowser()
-    if (Parsed) {
-      return this.ParseUrl(guiaBrowser.GetCurrentURL())
-    } else {
-      return guiaBrowser.GetCurrentURL()
-    }
+    Url := guiaBrowser.GetCurrentURL()
+    return Parsed ? this.ParseUrl(Url) : Url
   }
 
   GetTimeStamp(Title:="", FullPageText:="", RestoreClip:=true) {
@@ -564,7 +556,8 @@ class VimBrowser {
       }
     }
     TimeStamp := RegExReplace(TimeStamp, "^00:(?=\d{2}:\d{2})")
-    return RegExReplace(TimeStamp, "^0(?=\d)")
+    TimeStamp := RegExReplace(TimeStamp, "^0(?=\d)")
+    return TimeStamp
   }
 
   RunInIE(Url) {
@@ -609,7 +602,8 @@ class VimBrowser {
 
   Highlight(CollName:="", PlainText:="", Url:="") {
     this.ActivateBrowser()
-    CollName := CollName ? CollName : this.Vim.SM.GetCollName()
+    global SM
+    CollName := CollName ? CollName : SM.GetCollName()
     Sent := False
     if (RegexMatch(PlainText, "(?<!\s)(?<!\d)(\d+,?)+\.", v)) {
       Url := Url ? Url : this.GetUrl()
@@ -633,14 +627,14 @@ class VimBrowser {
   }
 
   ClickBtn() {
-    this.Url := this.Url ? this.Url : this.GetUrl()
-    if (IfContains(this.Url, "youtube.com/watch")) {
-      global guiaBrowser
-      this.GetGuiaBrowser()
-      if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
-        btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
-      btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
-    }
+    ; this.Url := this.Url ? this.Url : this.GetUrl()
+    ; if (IfContains(this.Url, "youtube.com/watch")) {
+    ;   global guiaBrowser
+    ;   this.GetGuiaBrowser()
+    ;   if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
+    ;     btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
+    ;   btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
+    ; }
   }
 
   ActivateBrowser(wBrowser:="ahk_group Browser") {
@@ -682,8 +676,3 @@ class VimBrowser {
     return Url
   }
 }
-
-ClickBrowserBtn:
-  Vim.Browser.ClickBtn()
-  ClickBrowserBtnFinished := true
-return

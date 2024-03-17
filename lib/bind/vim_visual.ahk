@@ -154,7 +154,7 @@ u::
   ClipSaved := ClipboardAll
 ConvertToLowercaseClipped:
 ConvertToUppercaseClipped:
-  html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
+  html := SM.IsEditingHTML() ? "sm" : Vim.IsHTML()
   KeyWait Shift
   if (IfIn(A_ThisLabel, "ConvertToLowercase,u,ConvertToLowercaseClipped")) {
     Clip(StrLower(Copy(false, html)),, false, html)
@@ -170,7 +170,7 @@ InvertCase:
 ~::
   ClipSaved := ClipboardAll
 InvertCaseClipped:
-  Selection := Copy(false, html := Vim.SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
+  Selection := Copy(false, html := SM.IsEditingHTML() ? "sm" : Vim.IsHTML())
   Lab_Invert_Char_Out:= ""
   Loop % Strlen(Selection) {
     Lab_Invert_Char:= Substr(Selection, A_Index, 1)
@@ -193,10 +193,10 @@ o::  ; move to other end of marked area; not perfect with line breaks
     Clipboard := ClipSaved
     return
   }
-  SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
+  SelectionLen := StrLen(ParseLineBreaks(Selection))
   Send +{Right}
   SelectionRight := Copy(false)
-  SelectionRightLen := StrLen(Vim.ParseLineBreaks(SelectionRight))
+  SelectionRightLen := StrLen(ParseLineBreaks(SelectionRight))
   Send +{Left}
   if ((SelectionLen < SelectionRightLen)
    || ((SelectionLen == SelectionRightLen)

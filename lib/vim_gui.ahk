@@ -33,7 +33,7 @@ class VimGui {
   }
 
   Hide() {
-    this.Vim.VimToolTip.RemoveToolTip()
+    RemoveToolTip()
     Gui, % this.Hwnd ":Hide"
   }
 

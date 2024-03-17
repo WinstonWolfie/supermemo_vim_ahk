@@ -34,7 +34,7 @@ class VimAbout Extends VimGui {
   }
 
   OpenHomepage() {
-    this.Vim.VimToolTip.RemoveToolTip()
+    RemoveToolTip()
     ShellRun(this.Homepage)
   }
 }

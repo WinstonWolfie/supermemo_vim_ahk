@@ -11,10 +11,16 @@ I apologise for still not finished writing a documentation (it's being written i
 Vim notations: 
 
 - Capitalised letters need to be pressed with `Shift`, eg, `T = Shift + T`. CapsLock is disabled because [CapsLock.ahk](https://github.com/Vonng/Capslock) is included.
+
 - `<C-{key}>` means `Ctrl + {key}`, eg, `<C-v>` = `Ctrl + V`.
+
 - `<A-{key}>` means `Alt + {key}`, eg, `<A-s>` = `Ctrl + S`.
+
 - Similarly, `<S-{key}>` means `Shift + {key}`, so `<C-S-A-a>` = `Ctrl + Shift + Alt + A`.
+
 - `<CR>` means the `Enter` key.
+
+- `<leader>` means the `'` key.
 
 At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R`) to reload it.
 
@@ -136,9 +142,9 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 
 ### Browsing (not focused to any text component)
 
-`gs`: go to current reference link (`gS` to open it in IE)
+`gs`: go to current reference link (`gS` to open in IE)
 
-`gm`: go to the link found in comment (`gM` to open it in IE)
+`gm`: go to the link found in comment (`gM` to open in IE)
 
 `gn`: open the last focused text/HTML file in notepad
 
@@ -449,3 +455,19 @@ Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
 `M`: click the middle of the text
 
 `L`: click the bottom of the text
+
+`{count}<leader>q`: Add `>` to `{count}` lines (useful for email replies)
+
+`gx`: open hyperlink in current caret position (`gX` to open in IE)
+
+`gs`: open current file in Vim (if focused on an image component, `gf` to open in Photoshop (requires `ps` in [PATH](https://en.wikipedia.org/wiki/PATH_(variable)) to open Photoshop))
+
+`gf`: open current file in Notepad
+
+`>>`: increase indent
+
+`<<`: decrease indent
+
+`gU`: click the source button
+
+`<leader><A-{number}>` / `{Numpad}`: [Naess's priority script](https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png)

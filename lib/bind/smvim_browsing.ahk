@@ -5,18 +5,18 @@
 ; putting those below would make gu stops working (u also triggers scroll up)
 
 ; Element window
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing())
 '::Vim.State.SetMode(,, -1,,, -1, 1)  ; leader key
-q::Vim.SM.EditFirstQuestion()
-a::Vim.SM.EditFirstAnswer()
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
+q::SM.EditFirstQuestion()
+a::SM.EditFirstAnswer()
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g)
 g::Vim.State.SetMode("", 1, -1)
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && Vim.State.g)
 g::Vim.Move.Move("g")  ; 3gg goes to the 3rd line of entire text
 
 +u::  ; gU: click source button
   KeyWait Shift
-  Vim.SM.ClickElWindSourceBtn()
+  SM.ClickElWindSourceBtn()
   Vim.State.SetMode()
 Return
 
@@ -27,8 +27,8 @@ m::  ; gm: go to link in comment
 +m::  ; gM: go to link in comment in IE
   Vim.State.SetMode(), Links := [], Success := false
   if (IfIn(A_ThisLabel, "m,+m")) {
-    Links := Vim.SM.GetLinksInComment()
-  } else if (Link := Vim.SM.GetLink()) {
+    Links := SM.GetLinksInComment()
+  } else if (Link := SM.GetLink()) {
     Links.Push(Link)
   }
   if (ObjCount(Links) > 0) {
@@ -36,14 +36,14 @@ m::  ; gm: go to link in comment
       if (Link) {
         if (IfContains(A_ThisLabel, "+")) {
           ; ShellRun("iexplore.exe " . Link)  ; RIP IE
-          Vim.Browser.RunInIE(Link)
+          Browser.RunInIE(Link)
         } else {
           try ShellRun(Link)
           catch {
             RunDefaultBrowser()
             WinWaitActive, ahk_group Browser
             uiaBrowser := new UIA_Browser("A")
-            if (Vim.Browser.GetFullTitle() != "new tab")
+            if (Browser.GetFullTitle() != "new tab")
               uiaBrowser.NewTab()
             uiaBrowser.Navigate(Link)
           }
@@ -53,16 +53,16 @@ m::  ; gm: go to link in comment
     }
   }
   if (!Success)
-    Vim.State.SetToolTip("Link not found.")
+    SetToolTip("Link not found.")
 Return
 
 ; Element/content window
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
-  && Vim.SM.IsBrowsing()
+  && SM.IsBrowsing()
   && Vim.State.g)
-0::Vim.SM.Gohome(), Vim.State.SetMode()  ; g0: go to root element
+0::SM.Gohome(), Vim.State.SetMode()  ; g0: go to root element
 
 $::  ; g$: go to last element
   Send !{End}
@@ -77,10 +77,10 @@ c::  ; gc: go to next *c*omponent
 Return
 
 +c::  ; gC: go to previous *c*omponent
-  Vim.SM.PrevComp(), Vim.State.SetMode()
+  SM.PrevComp(), Vim.State.SetMode()
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g)
 ; Scrolling
 h::Vim.Move.Repeat("h")
 l::Vim.Move.Repeat("l")
@@ -105,57 +105,57 @@ i::Vim.State.SetMode("Insert")
 
 ; Browser-like actions
 r::  ; reload
-  ContLearn := (ContGrade := Vim.SM.IsGrading()) ? 0 : Vim.SM.IsLearning()
-  Item := (ContLearn == 2) ? Vim.SM.IsItem() : false
+  ContLearn := (ContGrade := SM.IsGrading()) ? 0 : SM.IsLearning()
+  Item := (ContLearn == 2) ? SM.IsItem() : false
   CurrTitle := WinGetTitle("A")
-  Vim.SM.GoHome()
-  Vim.SM.WaitFileLoad()
+  SM.GoHome()
+  SM.WaitFileLoad()
   if (ContLearn) {
     if ((ContLearn == 2) && Item) {  ; item and just finished grading
-      Vim.SM.GoBack()
+      SM.GoBack()
     } else {
       RootTitle := WinWaitTitleRegEx("^Concept: ", "A", 1500)
-      Vim.SM.WaitStatBarRegEx("^(Priority|Int)")
-      Vim.SM.Learn(false)  ; false bc on pending queue ^l triggers the "learn new material?" window
-      Vim.SM.WaitFileLoad()
+      SM.WaitStatBarRegEx("^(Priority|Int)")
+      SM.Learn(false)  ; CtrlL:=false bc on pending queue it triggers the "learn new material?" window
+      SM.WaitFileLoad()
       ; In neural review, going to root element and press learn goes to the next neural review queue
       if (ContLearn == 2) {
         if (WinWaitTitleChange(RootTitle, "A", 1500) != CurrTitle) {
-          Vim.SM.GoBack()
-          Vim.SM.WaitFileLoad()
-          Vim.SM.GoBack()
+          SM.GoBack()
+          SM.WaitFileLoad()
+          SM.GoBack()
         }
       }
     }
   } else if (ContGrade) {
-    Vim.SM.Learn()
+    SM.Learn()
     ControlTextWait("TBitBtn3", "Show answer", "A")
     ControlSend, TBitBtn3, {Enter}, A
   } else {
     t := WinGetTitle("A")
-    Vim.SM.GoBack()
+    SM.GoBack()
     ; If current element is root element
     if ((CurrTitle == t) && (CurrTitle ~= "^Concept: ")) {
-      Vim.SM.WaitFileLoad()
+      SM.WaitFileLoad()
       Send !{Right}
     }
   }
 return
 
-p::Vim.SM.AutoPlay()
+p::SM.AutoPlay()
 
 +p::  ; play video/sound in default system player / edit script component
-  Marker := Vim.SM.GetMarkerFromTextArray()
+  Marker := SM.GetMarkerFromTextArray()
   KeyWait Shift
-  Vim.SM.EditFirstQuestion()
+  SM.EditFirstQuestion()
   Send ^t
-  Vim.SM.ViewFile()
+  SM.ViewFile()
   GroupAdd, SMF9, ahk_class mpv
   GroupAdd, SMF9, ahk_class TScriptEditor
   WinWaitActive, ahk_group SMF9,, 1.5
   if (!ErrorLevel && (WinGetClass() == "mpv") && Marker) {
     RegExMatch(Marker, "^SMVim time stamp: (.*)", v)
-    if (Vim.Browser.GetSecFromTime(v1) > 0) {
+    if (Browser.GetSecFromTime(v1) > 0) {
       Sleep 700
       ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Space}
       WinActivate
@@ -163,9 +163,9 @@ p::Vim.SM.AutoPlay()
   }
 return
 
-n::Vim.SM.AltN()
-+n::Vim.SM.AltA()
-x::Send {del}  ; delete element/component
+n::SM.AltN()
++n::SM.AltA()
+x::Send {Del}  ; delete element/component
 ^i::Send ^{f8}  ; download images
 
 !+f::  ; open in IE
@@ -174,7 +174,7 @@ x::Send {del}  ; delete element/component
 +f::
 f::
   y := false
-#if (Vim.IsVimGroup() && (y := Vim.State.IsCurrentVimMode("Vim_ydc_y")) && Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && (y := Vim.State.IsCurrentVimMode("Vim_ydc_y")) && SM.IsBrowsing())
 f::
 v::
 c::
@@ -196,14 +196,14 @@ c::
   } else if (A_ThisLabel == "+f") {
     HinterMode := "OpenLinkInNew"
   }
-  UIA := UIA_Interface(), LearningState := Vim.SM.IsLearning()
+  UIA := UIA_Interface(), LearningState := SM.IsLearning()
   Caret := IfIn(A_ThisLabel, "v,c")
   ; Some hyperlinks seem to be text type
   ; Type := Caret ? "Text" : "Hyperlink"
   Type := "Text"
   if (!aHints := CreateHintsArray(Control, hCtrl, Type, Caret)) {
     BlockInput, Off
-    Vim.State.SetToolTip("Text too long.")
+    SetToolTip("Text too long.")
     return
   }    
   if ((Control == "Internet Explorer_Server2") && (LearningState != 1)) {  ; so answer isn't revealed
@@ -216,7 +216,7 @@ c::
     ; aHintStrings is later used in key listener
     CreateHints(aHints, aHintStrings := hintStrings(n))
   } else {
-    Vim.State.SetToolTip("No link found.")
+    SetToolTip("No link found.")
   }
   BlockInput, Off
 return
@@ -230,7 +230,7 @@ CreateHints(HintsArray, HintStrings) {
 CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
   global Vim, UIA
   if (Caret)
-    Vim.SM.ClickMid(Control)
+    SM.ClickMid(Control)
   el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)
   if (ObjCount(auiaHints) > Limit)
     return
@@ -250,7 +250,7 @@ CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
 
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && (Vim.SM.IsBrowsing()
+  && (SM.IsBrowsing()
    || WinActive("ahk_class TContents")
    || WinActive("ahk_class TBrowser")))
 +x::Send ^+{Enter}  ; Done!
@@ -260,7 +260,7 @@ CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
-  && Vim.SM.IsBrowsing()
+  && SM.IsBrowsing()
   && Vim.State.g)
 +e::  ; K, gE: go up *e*lements
 e::  ; J, ge: go down *e*lements
@@ -278,23 +278,23 @@ u::  ; gu: go to parent
 ; Element navigation
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && (Vim.SM.IsBrowsing()
-   || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWind())))
+  && (SM.IsBrowsing()
+   || (WinActive("ahk_class TContents") && SM.IsNavigatingContentWind())))
 !h::
 +h::  ; go back in history
 !l::
 +l::  ; go forward in history
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing())
 !j::
 +j::  ; J, ge: go down one element
 !k::
 +k::  ; K, gE: go up one element
   n := Vim.State.GetN()
   if (n > 1)
-    Vim.SM.PrepStatBar(1)
+    SM.PrepStatBar(1)
   loop % n {
     if (A_ThisLabel ~= "h$") {
-      Vim.SM.GoBack()
+      SM.GoBack()
     } else if (A_ThisLabel ~= "l$") {
       Send !{Right}
     } else if (A_ThisLabel ~= "j$|^\+e$") {
@@ -305,10 +305,10 @@ u::  ; gu: go to parent
       Send ^{Up}
     }
     if (n > 1)
-      Vim.SM.WaitFileLoad(, false)
+      SM.WaitFileLoad(false)
   }
   if (n > 1)
-    Vim.SM.PrepStatBar(2)
+    SM.PrepStatBar(2)
   if (Vim.State.g)
     Vim.State.SetMode()
 return
@@ -316,14 +316,14 @@ return
 ; Open windows
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
-  && (Vim.SM.IsBrowsing()
-   || (WinActive("ahk_class TContents") && Vim.SM.IsNavigatingContentWind())))
+  && (SM.IsBrowsing()
+   || (WinActive("ahk_class TContents") && SM.IsNavigatingContentWind())))
 ; c::Send !c  ; open content window  ; taken in sm19
 b::
   if (WinExist("ahk_pid " . WinGet("PID", "A") . " ahk_class TBrowser")) {
     WinActivate
   } else {
-    Vim.SM.OpenBrowser()
+    SM.OpenBrowser()
   }
 return
 
@@ -336,46 +336,46 @@ return
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 ^o::
   KeyWait Ctrl
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing() && !Vim.State.g)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g)
 o::  ; favourites
   BlockInput, On
   SetDefaultKeyboard(0x0409)  ; English-US
-  l := Vim.SM.IsLearning()
+  l := SM.IsLearning()
   if (l == 1) {
     Send {Alt Down}
     PostMessage, 0x0104, 0x24, 1<<29,, ahk_class TElWind  ; home key
     PostMessage, 0x0105, 0x24, 1<<29,, ahk_class TElWind
     Send {Alt Up}
   } else if (l == 2) {
-    Vim.SM.Reload(, true)
+    SM.Reload()
   }
   if (l)
-    Vim.SM.WaitFileLoad()
-  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1, Vim.SM.PostMsg(3)
+    SM.WaitFileLoad()
+  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1, SM.PostMsg(3)
   BlockInput, Off
 return
 
-t::Vim.SM.ClickMid()  ; *t*ext
+t::SM.ClickMid()  ; *t*ext
 
 ; Copy
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing())
 y::Vim.State.SetMode("Vim_ydc_y", 0, -1, 0)
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && Vim.SM.IsBrowsing())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_ydc_y") && SM.IsBrowsing())
 y::  ; yy: copy current source url
-  if (!Link := Vim.SM.GetLink()) {
-    Vim.State.SetToolTip("Link not found.")
+  if (!Link := SM.GetLink()) {
+    SetToolTip("Link not found.")
   } else {
-    Vim.State.SetToolTip("Copied " . Clipboard := Link)
+    SetToolTip("Copied " . Clipboard := Link)
   }
   Vim.State.SetNormal()
 return
 
 e::  ; ye: duplicate current element
-  Vim.SM.Duplicate(), Vim.State.SetNormal()
+  SM.Duplicate(), Vim.State.SetNormal()
 Return
 
 ; Plan/tasklist window
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingPlan())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsNavigatingPlan())
 s::
   Acc_Get("Object", "4.1.4.1.4.1.4",, "A").accDoDefaultAction(2)
   ControlFocus, Edit1, A
@@ -383,7 +383,7 @@ s::
 return
 
 b::Send !b  ; begin
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.SM.IsNavigatingTask())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsNavigatingTask())
 s::
   Acc_Get("Object", "4.3.4.1.4",, "A").accDoDefaultAction(2)
   ControlFocus, Edit1, A
@@ -397,29 +397,29 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
 ^f7::
 m::
-  if (Vim.SM.IsEditingHTML())
-    Vim.SM.ClickMid()
+  if (SM.IsEditingHTML())
+    SM.ClickMid()
   Send ^{f7}  ; set read point
-  Vim.State.SetToolTip("Read point set")
+  SetToolTip("Read point set")
 Return
 
 !f7::
 `::
   Send !{f7}  ; go to read point
-  Vim.State.SetToolTip("Going to read point")
+  SetToolTip("Going to read point")
 Return
 
 !m::
 ^+f7::
   Send ^+{f7}  ; clear read point
-  Vim.State.SetToolTip("Read point cleared")
+  SetToolTip("Read point cleared")
 Return
 
 !+j::
 !+k::
   n := Vim.State.GetN()
   if (n > 1)
-    Vim.SM.PrepStatBar(1)
+    SM.PrepStatBar(1)
   loop % n {
     if (A_ThisLabel == "!+j") {
       Send !+{PgDn}  ; go to next sibling
@@ -427,10 +427,10 @@ Return
       Send !+{PgUp}  ; go to previous sibling
     }
     if (n > 1)
-      Vim.SM.WaitFileLoad(, false)
+      SM.WaitFileLoad(false)
   }
   if (n > 1)
-    Vim.SM.PrepStatBar(2)
+    SM.PrepStatBar(2)
 return
 
 #if (Vim.IsVimGroup()
@@ -439,11 +439,7 @@ return
   && !Vim.State.Surround && !Vim.State.fts
   && WinActive("ahk_class TElWind"))
 \::
-  if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-    Vim.SM.PostMsg(150)
-  } else {
-    Vim.SM.PostMsg(151)
-  }
+  SM.CtrlF3()
 ~^f3::Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 2, SMCtrlF3 := true
 
 #if (Vim.IsVimGroup() && SMCtrlF3 && WinActive("ahk_class TInputDlg"))

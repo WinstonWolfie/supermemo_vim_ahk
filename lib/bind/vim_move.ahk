@@ -50,9 +50,9 @@ g::Vim.State.SetMode("", 1, -1)
 g::Vim.Move.Move("g")
 _::Vim.Move.Move("$")
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("j", "P") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("j", "P") && SM.IsEditingText())
 k::Send {Up}{Esc}
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("k", "P") && Vim.SM.IsEditingText())
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && GetKeyState("k", "P") && SM.IsEditingText())
 j::Send {Down}{Esc}
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_"))

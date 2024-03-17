@@ -15,8 +15,9 @@ class VimMove {
   }
 
   IsSearchKey(key) {
+    global SM
     return (IfIn(key, "f,t,+f,+t,(,),s,+s,/,?,e,gn")
-         || ((key == "+g") && this.Vim.SM.IsEditingHTML()))
+         || ((key == "+g") && SM.IsEditingHTML()))
   }
 
   IsReplace() {
@@ -110,6 +111,7 @@ class VimMove {
   }
 
   MoveFinalize() {
+    global SM
     this.Vim.State.FtsChar := ""
     if (this.Clipped) {
       Clipped := "Clipped"
@@ -161,11 +163,11 @@ class VimMove {
       } else if (this.Vim.State.StrIsInCurrentVimMode("ClozeNoBracket")) {
         Gosub SMClozeNoBracket
       } else if (this.Vim.State.StrIsInCurrentVimMode("Cloze")) {
-        this.Vim.SM.Cloze()
+        SM.Cloze()
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltT")) {
         Sleep 20
-        this.Vim.SM.AltT(), this.Vim.State.SetMode("Vim_Normal")
+        SM.AltT(), this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltQ")) {
         Sleep 20
         Send !q
@@ -193,7 +195,8 @@ class VimMove {
   }
 
   Zero() {
-    if (this.Vim.SM.IsBrowsing()) {
+    global SM
+    if (SM.IsBrowsing()) {
       if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
         SendMessage, 0x114, 2, 0, Internet Explorer_Server2, A  ; scroll all the way to left
       } else {
@@ -239,7 +242,8 @@ class VimMove {
 
   ParagraphUp(n:=1) {
     if (this.Vim.IsHTML()) {
-      if (this.Vim.SM.IsEditingHTML()) {
+      global SM
+      if (SM.IsEditingHTML()) {
         Send % "^+{Up " . n . "}{Left}"
       } else {
         Send % "^{Up " . n . "}"
@@ -262,9 +266,10 @@ class VimMove {
   }
 
   SelectParagraphUp(n:=1, detection:=false) {
+    global SM
     if (this.Vim.IsHTML()) {
       Send % "^+{Up " . n . "}"
-    } else if (this.Vim.SM.IsEditingPlainText() && detection) {
+    } else if (SM.IsEditingPlainText() && detection) {
       Send ^+{Home}
     } else {
       n--
@@ -275,7 +280,7 @@ class VimMove {
   SelectParagraphDown(n:=1, detection:=false) {
     if (this.Vim.IsHTML()) {
       Send % "^+{Down " . n . "}"
-    } else if (this.Vim.SM.IsEditingPlainText() && detection) {
+    } else if (SM.IsEditingPlainText() && detection) {
       Send ^+{End}
     } else {
       n--
@@ -288,6 +293,7 @@ class VimMove {
       this.MoveInitialize(key, RestoreClip)
     if (ForceShiftRelease)
       this.shift := 0
+    global SM
 
     ; Left/Right
     ; if (!this.Vim.State.StrIsInCurrentVimMode("Line,Paragraph")) {
@@ -300,7 +306,7 @@ class VimMove {
       if (key == "h") {
         if (WinActive("ahk_group VimQdir")) {
           Send {BackSpace down}{BackSpace up}
-        } else if (this.Vim.SM.IsBrowsing()) {
+        } else if (SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
             SendMessage, 0x114, 0, 0, Internet Explorer_Server2, A  ; scroll left
           } else {
@@ -312,7 +318,7 @@ class VimMove {
       } else if (key == "l") {
         if (WinActive("ahk_group VimQdir")) {
           Send {Enter}
-        } else if (this.Vim.SM.IsBrowsing()) {
+        } else if (SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
             SendMessage, 0x114, 1, 0, Internet Explorer_Server2, A  ; scroll right
           } else {
@@ -325,7 +331,7 @@ class VimMove {
       } else if (key == "0") {
         this.Zero()
       } else if (key == "$") {
-        if (this.Vim.SM.IsBrowsing()) {
+        if (SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
             SendMessage, 0x114, 3, 0, Internet Explorer_Server2, A  ; scroll all the way to right
           } else {
@@ -379,18 +385,18 @@ class VimMove {
         if (this.Vim.State.g) {  ; ge
           if (this.shift == 1) {
             if (!this.NoSelection()) {  ; determine caret position
-              StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+              StrBefore := ParseLineBreaks(Copy(false))
               Send +{Left}
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
               Send +{Right}
             }
             if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
               this.SelectParagraphUp(, true)
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
               if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at start of line
                 Send +{Left}
                 this.SelectParagraphUp(, true)
-                StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+                StrAfter := ParseLineBreaks(Copy(false))
               }
               length := StrLen(StrAfter) - StrLen(StrBefore)
               DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
@@ -423,11 +429,11 @@ class VimMove {
             }
           } else {
             this.SelectParagraphUp(, true)
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
             if (!DetectionStr) {  ; start of line
               Send {Left}
               this.SelectParagraphUp(, true)
-              DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+              DetectionStr := ParseLineBreaks(Copy(false))
             }
             DetectionStr := StrReverse(DetectionStr)
             pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence - 1, true)
@@ -435,18 +441,18 @@ class VimMove {
           }
         } else if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Right}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Left}
           }
           if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {  ; searching forward
             this.SelectParagraphDown(, true)
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
               Send +{Right}
               this.SelectParagraphDown(, true)
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)
@@ -470,15 +476,15 @@ class VimMove {
           }
         } else {
           this.SelectParagraphDown(, true)
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
           if (!DetectionStr) {
             Send {Right}
             this.SelectParagraphDown(, true)
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           } else if (IsWhitespaceOnly(DetectionStr)) {
             Send {Right 2}
             this.SelectParagraphDown(, true)
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           }
           pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence)
           if (pos) {
@@ -503,17 +509,17 @@ class VimMove {
       } else if (key == "f") {  ; find forward
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Right}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Left}
           }
           if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {  ; searching forward
             Send +{End}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
               Send +{Right}+{End}
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)
@@ -537,13 +543,13 @@ class VimMove {
           }
         } else {
           Send +{End}
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
           if !DetectionStr {  ; end of line
             Send {Right}+{End}  ; to the next line
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           } else if (IsWhitespaceOnly(DetectionStr)) {
             Send {Right 2}+{End}  ; to the next line
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           }
           pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
           if (pos) {
@@ -562,17 +568,17 @@ class VimMove {
       } else if (key == "t") {
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Right}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Left}
           }
           if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {  ; searching forward
             Send +{End}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
               Send +{Right}+{End}
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)
@@ -605,13 +611,13 @@ class VimMove {
           }
         } else {
           Send +{End}
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
           if !DetectionStr {  ; end of line
             Send {Right}+{End}  ; to the next line
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           } else if (IsWhitespaceOnly(DetectionStr)) {
             Send {Right 2}+{End}  ; to the next line
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           }
           pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
           if (pos) {
@@ -630,17 +636,17 @@ class VimMove {
       } else if (key == "+f") {
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Left}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Right}
           }
           if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
             Send +{Home}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at start of line
               Send +{Left}+{Home}
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             length := StrLen(StrAfter) - StrLen(StrBefore)
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
@@ -667,10 +673,10 @@ class VimMove {
           }
         } else {
           Send +{Home}
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
           if !DetectionStr {  ; start of line
             Send {Left}+{Home}
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           }
           DetectionStr := StrReverse(DetectionStr)
           pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
@@ -679,17 +685,17 @@ class VimMove {
       } else if (key == "+t") {
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Left}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Right}
           }
           if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
             Send +{Home}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at start of line
               Send +{Left}+{Home}
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             length := StrLen(StrAfter) - StrLen(StrBefore)
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
@@ -733,10 +739,10 @@ class VimMove {
           }
         } else {
           Send +{Home}
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
           if (!DetectionStr) {  ; start of line
             Send {Left}+{Home}
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           }
           DetectionStr := StrReverse(DetectionStr)
           pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
@@ -756,18 +762,18 @@ class VimMove {
       } else if (key == ")") {  ; like "f" but search for ". "
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Right}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Left}
           }
           if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
             this.SelectParagraphDown(, true)
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore) + 1) {  ; at end of paragraph
               Send +{Right}
               this.SelectParagraphDown(, true)
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)
@@ -782,7 +788,7 @@ class VimMove {
               Send +{Left}
             }
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {  ; search in selected text
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
             right := pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
             if (pos) {
               right++
@@ -798,15 +804,15 @@ class VimMove {
           }
         } else {
           this.SelectParagraphDown(, true)
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
           if (!DetectionStr || IsWhitespaceOnly(DetectionStr)) {  ; end of paragraph
             Send {Right}
             this.SelectParagraphDown(, true)  ; to the next line
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
             if (!DetectionStr) {  ; still end of paragraph
               Send {Right}
               this.SelectParagraphDown(, true)  ; to the next line
-              DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+              DetectionStr := ParseLineBreaks(Copy(false))
             }
           }
           pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
@@ -822,9 +828,9 @@ class VimMove {
       } else if (key == "(") {  ; like "+t"
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Right}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Left}
           }
           if (StrLen(StrAfter) > StrLen(StrBefore)) {  ; search in selected text
@@ -844,11 +850,11 @@ class VimMove {
             Send % "+{Left " . left . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore) || !StrBefore) {
             this.SelectParagraphUp(, true)
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (!StrAfter) {  ; start of line
               Send {Left}
               this.SelectParagraphUp(, true)
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             length := StrLen(StrAfter) - StrLen(StrBefore)
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
@@ -879,7 +885,7 @@ class VimMove {
           if (DetectionStr ~= "\r\n$") {  ; start of paragraph
             Send {Right}{Left}
             this.SelectParagraphUp(, true)
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           } else {
             DetectionStr := this.vim.ParseLineBreaks(DetectionStr)
           }
@@ -908,18 +914,18 @@ class VimMove {
       } else if (key == "s") {
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Right}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Left}
           }
           if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {  ; searching forward
             this.SelectParagraphDown(, true)
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at end of line
               Send +{Right}
               this.SelectParagraphDown(, true)
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)
@@ -953,15 +959,15 @@ class VimMove {
           }
         } else {
           this.SelectParagraphDown(, true)
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
           if (!DetectionStr) {
             Send {Right}
             this.SelectParagraphDown(, true)
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           } else if (IsWhitespaceOnly(DetectionStr)) {
             Send {Right 2}
             this.SelectParagraphDown(, true)
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           }
           pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
           if (pos) {
@@ -981,18 +987,18 @@ class VimMove {
         this.FtsChar := StrReverse(this.FtsChar)
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
-            StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+            StrBefore := ParseLineBreaks(Copy(false))
             Send +{Left}
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             Send +{Right}
           }
           if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
             this.SelectParagraphUp(, true)
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
             if (StrLen(StrAfter) == StrLen(StrBefore)) {  ; caret at start of line
               Send +{Left}
               this.SelectParagraphUp(, true)
-              StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+              StrAfter := ParseLineBreaks(Copy(false))
             }
             length := StrLen(StrAfter) - StrLen(StrBefore)
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
@@ -1017,11 +1023,11 @@ class VimMove {
           }
         } else {
           this.SelectParagraphUp(, true)
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
           if (!DetectionStr) {  ; start of line
             Send {Left}
             this.SelectParagraphUp(, true)
-            DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+            DetectionStr := ParseLineBreaks(Copy(false))
           }
           DetectionStr := StrReverse(DetectionStr)
           pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
@@ -1052,18 +1058,18 @@ class VimMove {
         this.LastSearch := UserInput  ; register UserInput into LastSearch
         WinActivate % "ahk_id " . hWnd
         if (!this.NoSelection()) {  ; determine caret position
-          StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+          StrBefore := ParseLineBreaks(Copy(false))
           Send +{Right}
-          StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+          StrAfter := ParseLineBreaks(Copy(false))
           Send +{Left}
         }
         if (!StrBefore || (StrLen(StrAfter) > StrLen(StrBefore))) {
           this.SelectParagraphDown(, true)
-          StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+          StrAfter := ParseLineBreaks(Copy(false))
           if (StrLen(StrAfter) == StrLen(StrBefore) + 1) {  ; at end of paragraph
             Send +{Right}
             this.SelectParagraphDown(, true)
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
           }
           StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
           DetectionStr := SubStr(StrAfter, StartPos)
@@ -1105,9 +1111,9 @@ class VimMove {
         this.LastSearch := UserInput  ; register UserInput into LastSearch
         WinActivate % "ahk_id " . hWnd
         if (!this.NoSelection()) {  ; determine caret position
-          StrBefore := this.Vim.ParseLineBreaks(Copy(false))
+          StrBefore := ParseLineBreaks(Copy(false))
           Send +{Right}
-          StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+          StrAfter := ParseLineBreaks(Copy(false))
           Send +{Left}
         }
         if (StrLen(StrAfter) > StrLen(StrBefore)) {
@@ -1116,11 +1122,11 @@ class VimMove {
           Send % "+{Left " . pos . "}"
         } else if (StrLen(StrAfter) <= StrLen(StrBefore)) || !StrBefore {
           this.SelectParagraphUp(, true)
-          StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+          StrAfter := ParseLineBreaks(Copy(false))
           if (!StrAfter) {  ; start of line
             Send {Left}
             this.SelectParagraphUp(, true)
-            StrAfter := this.Vim.ParseLineBreaks(Copy(false))
+            StrAfter := ParseLineBreaks(Copy(false))
           }
           StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
           DetectionStr := SubStr(StrReverse(StrAfter), StartPos)
@@ -1130,7 +1136,7 @@ class VimMove {
         }
       } else if (key == "x") {
         if (this.Vim.IsNavigating()) {
-          Send {del}
+          Send {Del}
         } else if (this.shift != 1) {
           Send +{Right}
         }
@@ -1144,7 +1150,7 @@ class VimMove {
     }
     ; Up/Down 1 character
     if (key == "j") {
-      if (this.Vim.SM.IsBrowsing()) {
+      if (SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
         } else {
@@ -1160,7 +1166,7 @@ class VimMove {
         SendMessage, 0x0115, 1, 0, % ControlGetFocus("A"), A  ; scroll down
       }
     } else if (key == "k") {
-      if (this.Vim.SM.IsBrowsing()) {
+      if (SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
         } else {
@@ -1177,7 +1183,7 @@ class VimMove {
       }
     ; Page Up/Down
     } else if (key == "^u") {
-      if (this.Vim.SM.IsBrowsing()) {
+      if (SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
           SendMessage, 0x0115, 0, 0, Internet Explorer_Server2, A  ; scroll up
@@ -1189,7 +1195,7 @@ class VimMove {
         this.Up(10)
       }
     } else if (key == "^d") {
-      if (this.Vim.SM.IsBrowsing()) {
+      if (SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
           SendMessage, 0x0115, 1, 0, Internet Explorer_Server2, A  ; scroll down
@@ -1206,15 +1212,15 @@ class VimMove {
       Send {PgDn}
     } else if (key == "g") {
       if (this.Vim.State.n > 0) {
-        if (this.Vim.SM.IsBrowsing() && this.Vim.SM.DoesTextExist()) {
+        if (SM.IsBrowsing() && SM.DoesTextExist()) {
           Send ^t
-          this.Vim.SM.WaitTextFocus()
+          SM.WaitTextFocus()
         } else {
           this.HandleClickBtn()
         }
         Send % "^{Home}{Down " . this.Vim.State.n - 1 . "}"
         this.Vim.State.n := 0, this.HandleClickBtn()
-      } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
+      } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x115, 6, 0, Internet Explorer_Server2, A  ; scroll to top
         } else if (ControlGet(,, "Internet Explorer_Server1", "A")) {
@@ -1228,18 +1234,18 @@ class VimMove {
     } else if (key == "+g") {
         if (this.Vim.State.n > 0) {
           KeyWait Shift
-          if (this.Vim.SM.IsBrowsing() && this.Vim.SM.DoesTextExist()) {
-            this.Vim.SM.ClickTop()
-            this.Vim.SM.WaitTextFocus()
-          } else if (this.Vim.SM.IsEditingText()) {
-            this.Vim.SM.ClickTop()
+          if (SM.IsBrowsing() && SM.DoesTextExist()) {
+            SM.ClickTop()
+            SM.WaitTextFocus()
+          } else if (SM.IsEditingText()) {
+            SM.ClickTop()
           } else {
             this.HandleClickBtn()
             Send ^{Home}
           }
           Send % "{Down " . this.Vim.State.n - 1 . "}"
           this.Vim.State.n := 0, this.HandleClickBtn()
-        } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && this.Vim.SM.IsBrowsing()) {
+        } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "A")) {
             SendMessage, 0x115, 7, 0, Internet Explorer_Server2, A  ; scroll to bottom
           } else if (ControlGet(,, "Internet Explorer_Server1", "A")) {
@@ -1254,10 +1260,10 @@ class VimMove {
               Send +{Home}
           } else {
             Send ^{End}
-            if (this.Vim.SM.IsNavigatingPlan() || !this.Vim.IsNavigating())
+            if (SM.IsNavigatingPlan() || !this.Vim.IsNavigating())
               Send {Home}
           }
-          if (this.Vim.SM.IsEditingHTML()) {
+          if (SM.IsEditingHTML()) {
             Send ^+{Up}  ; if there are references this would select (or deselect in visual mode) them all
             if (this.shift == 1)
               Send +{Down}  ; go down one line, if there are references this would include the #SuperMemo Reference
@@ -1282,11 +1288,11 @@ class VimMove {
           }
         }
     } else if (key == "{") {
-      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && this.Vim.SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
+      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
-        if (!this.Vim.SM.IsEditingText()) {
+        if (!SM.IsEditingText()) {
           Send ^t
-          this.Vim.SM.WaitTextFocus()
+          SM.WaitTextFocus()
         }
         Send ^{Home}
         this.ParagraphDown(this.Vim.State.GetN() - 1)
@@ -1296,10 +1302,10 @@ class VimMove {
         this.ParagraphUp()
       }
     } else if (key == "}") {
-      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && this.Vim.SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
+      if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
-        this.Vim.SM.ClickTop()
-        this.Vim.SM.WaitTextFocus()
+        SM.ClickTop()
+        SM.WaitTextFocus()
         this.ParagraphDown(this.Vim.State.GetN() - 1)
       } else if (this.shift == 1) {
         this.SelectParagraphDown()
@@ -1359,7 +1365,7 @@ class VimMove {
   }
 
   Inner(key:="") {
-    global WinClip
+    global WinClip, SM
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
     KeyWait Shift
     if (key == "w") {
@@ -1377,7 +1383,7 @@ class VimMove {
       this.Move("(",,, false, true, false)
       this.Move(")",,, false,, false)
       if (!this.v)  ; end of paragraph
-        this.FindSentenceEnd(this.Vim.ParseLineBreaks(Copy(false)))
+        this.FindSentenceEnd(ParseLineBreaks(Copy(false)))
       n := StrLen(this.v)
       if (RestoreClip)
         Clipboard := ClipSaved
@@ -1391,13 +1397,13 @@ class VimMove {
       this.ParagraphUp()
       this.SelectParagraphDown()
       Selection := Copy(false)
-      if (this.Vim.SM.IsEditingHTML()) {
+      if (SM.IsEditingHTML()) {
         Send +{Left}
         if (IfContains(Selection, this.hr))
           Send +{Left}
         Selection := ""
       }
-      DetectionStr := this.Vim.ParseLineBreaks(Selection ? Selection : Copy(false))
+      DetectionStr := ParseLineBreaks(Selection ? Selection : Copy(false))
       DetectionStr := StrReverse(DetectionStr)
       RegExMatch(DetectionStr, "^(\s+)?((\]\d+\[)+)?(\.|。)", v), n := StrLen(v)
       if (RestoreClip)
@@ -1420,11 +1426,11 @@ class VimMove {
         Send {Right}
       }
       this.SelectParagraphUp(, true)
-      DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+      DetectionStr := ParseLineBreaks(Copy(false))
       if (!DetectionStr) {  ; start of paragraph
         Send {Left}
         this.SelectParagraphUp(, true)
-        DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+        DetectionStr := ParseLineBreaks(Copy(false))
       }
       DetectionStr := StrReverse(DetectionStr)
       key := this.RevSurrKey(key)
@@ -1439,15 +1445,15 @@ class VimMove {
         Send {Left}
       } else {
         this.SelectParagraphDown(, true)
-        DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+        DetectionStr := ParseLineBreaks(Copy(false))
         if (!DetectionStr) {  ; end of paragraph
           Send {Right}  ; to the next paragraph
           this.SelectParagraphDown(, true)
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
         } else if (IsWhitespaceOnly(DetectionStr)) {
           Send {Right 2}  ; to the next paragraph
           this.SelectParagraphDown(, true)
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
         }
         key := this.RevSurrKey(key, 2)
         if (AltKey := this.GetAltKey(key)) {
@@ -1512,11 +1518,11 @@ class VimMove {
         Send {Right}
       }
       this.SelectParagraphUp(, true)
-      DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+      DetectionStr := ParseLineBreaks(Copy(false))
       if (!DetectionStr) {  ; start of paragraph
         Send {Left}
         this.SelectParagraphUp(, true)
-        DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+        DetectionStr := ParseLineBreaks(Copy(false))
       }
       DetectionStr := StrReverse(DetectionStr)
       key := this.RevSurrKey(key)
@@ -1529,15 +1535,15 @@ class VimMove {
       Send % "{Right}{Left " . pos . "}"
       if (pos) {
         this.SelectParagraphDown(, true)
-        DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+        DetectionStr := ParseLineBreaks(Copy(false))
         if (!DetectionStr) {  ; end of paragraph
           Send {Right}  ; to the next paragraph
           this.SelectParagraphDown(, true)
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
         } else if (IsWhitespaceOnly(DetectionStr)) {
           Send {Right 2}  ; to the next paragraph
           this.SelectParagraphDown(, true)
-          DetectionStr := this.Vim.ParseLineBreaks(Copy(false))
+          DetectionStr := ParseLineBreaks(Copy(false))
         }
         key := this.RevSurrKey(key, 2)
         pos := InStr(DetectionStr, key,, 2)

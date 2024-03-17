@@ -17,7 +17,7 @@ class VimState {
     , "SMVim_ClozeHinterInner", "SMVim_Extract", "SMVim_ExtractInner"
     , "SMVim_ExtractStay", "SMVim_ExtractStayInner", "Vim_VisualBlock"
     , "Vim_VisualParagraph", "Vim_VisualParagraphFirst", "SMVim_ExtractPriority"
-    , "SMVim_ExtractPriorityInner", "Insert_unicode", "SMVim_AltT", "SMVim_AltQ"]
+    , "SMVim_ExtractPriorityInner", "Insert_Unicode", "SMVim_AltT", "SMVim_AltQ"]
 
     this.Mode := "Vim_Normal"  ; the default mode when vim_ahk opens
     this.g := 0
@@ -35,24 +35,13 @@ class VimState {
     if (Force == 0) and ((verbose <= 1) or ((Mode == "") and (g == 0) and (n == 0) and (LineCopy == -1))) {
       Return
     } else if (verbose == 2) {
-      this.SetToolTip(this.Mode)
+      SetToolTip(this.Mode)
     } else if (verbose == 3) {
-      this.SetToolTip(this.Mode "`r`ng=" this.g "`r`nn=" this.n "`r`nLineCopy=" this.LineCopy "`r`nfts=" this.fts "`r`nSurround=" this.Surround "`r`nLeader=" this.Leader)
+      SetToolTip(this.Mode "`r`ng=" this.g "`r`nn=" this.n "`r`nLineCopy=" this.LineCopy "`r`nfts=" this.fts "`r`nSurround=" this.Surround "`r`nLeader=" this.Leader)
     }
     if (verbose >= 4) {
       Msgbox, , Vim Ahk, % "Mode: " this.Mode "`nVim_g: " this.g "`nVim_n: " this.n "`nVimLineCopy: " this.LineCopy "`r`nfts:" this.fts
     }
-  }
-
-  SetToolTip(Title, Period:=2000, WhichToolTip:=20) {
-    global oVimRemoveToolTip
-    if (oVimRemoveToolTip)
-      SetTimer, % oVimRemoveToolTip, Off
-    WinGetPos, , , , H, A
-    StrReplace(Title, "`n",, Lines)
-    ToolTip, % Title, 5, H - 30 - (Lines) * 20, % WhichToolTip
-    if (Period > 0)
-      this.Vim.VimToolTip.SetRemoveToolTip(Period, WhichToolTip)
   }
 
   FullStatus() {
@@ -66,7 +55,8 @@ class VimState {
       this.Mode := Mode
       if ((PrevMode == "SMPlanDragging") && this.IsCurrentVimMode("Vim_Normal"))
         this.HandlePlanDraggingSetNormal()
-      if (this.IsCurrentVimMode("Insert") && this.Vim.SM.IsNavigatingPlan() && !GetKeyState("Alt", "P"))
+      global SM
+      if (this.IsCurrentVimMode("Insert") && SM.IsNavigatingPlan() && !GetKeyState("Alt", "P"))
         Send {f2}^a
       if (this.IsCurrentVimMode("Insert") && this.Vim.Conf["VimRestoreIME"]["val"] == 1)
         VIM_IME_SET(this.LastIME)
@@ -122,8 +112,9 @@ class VimState {
     global Vim, VimEscNormal, SMVimSendEscInsert, VimSendEscNormal, VimLongEscNormal
     Caps := (A_ThisHotkey = "CapsLock") ? true : false
     Esc := (A_ThisHotkey = "Esc") ? true : false
-    if (this.Vim.SM.IsEditingText() && Caps)
-      this.Vim.SM.ClickMid()
+    global SM
+    if (SM.IsEditingText() && Caps)
+      SM.ClickMid()
     if (!VimEscNormal) {
       Send {Esc}
       Return
@@ -236,7 +227,7 @@ class VimState {
 
   ; Update icon/mode indicator
   StatusCheck() {
-    if (this.Vim.IsVimGroup() || this.Vim.State.IsCurrentVimMode("Insert_unicode")) {
+    if (this.Vim.IsVimGroup() || this.Vim.State.IsCurrentVimMode("Insert_Unicode")) {
       this.Vim.Icon.SetIcon(this.Mode, this.Vim.Conf["VimIconCheckInterval"]["val"])
     } else {
       this.Vim.Icon.SetIcon("Disabled", this.Vim.Conf["VimIconCheckInterval"]["val"])
@@ -255,9 +246,9 @@ class VimState {
 
   ToggleEnabled() {
     if (this.Vim.Enabled) {
-      this.Vim.Enabled := False, this.SetToolTip("SMVim disabled.")
+      this.Vim.Enabled := False, SetToolTip("SMVim disabled.")
     } else {
-      this.Vim.Enabled := True, this.SetToolTip("SMVim enabled.")
+      this.Vim.Enabled := True, SetToolTip("SMVim enabled.")
     }
   }
 

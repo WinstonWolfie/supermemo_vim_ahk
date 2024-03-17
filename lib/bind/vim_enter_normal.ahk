@@ -27,10 +27,18 @@ Return
   Vim.State.BackToNormal--
 Return
 
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && GetKeyState("j", "P"))
+k::
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && GetKeyState("k", "P"))
+j::
+  Send {BS}
+  Vim.State.SetNormal()
+return
+
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert"))
 ~j::VimLastJPressed := A_TickCount
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && (A_PriorKey == "j") && (A_TickCount - VimLastJPressed < 1000))
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Insert") && (A_PriorKey = "j") && (A_TickCount - VimLastJPressed < 1000))
 :*:jk::
   Vim.State.SetNormal()
 return

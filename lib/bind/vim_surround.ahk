@@ -39,13 +39,14 @@ t::
   } else if (CurrKey == "t") {
     CurrKey := "<"
   }
+  KeyWait Shift
   if (!Vim.State.SurroundChangeEntered && Vim.State.StrIsInCurrentVimMode("Visual,ydc_y")) {
     if (!Selection := Copy(false)) {
-      Vim.State.SetToolTip("Text not found.")
+      SetToolTip("Text not found.")
       Clipboard := ClipSaved
       return
     }
-    SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
+    SelectionLen := StrLen(ParseLineBreaks(Selection))
     Send {Left}
     if (!VimSurround(CurrKey, SelectionLen,, true))
       return
@@ -57,7 +58,7 @@ t::
         Clipboard := ClipSaved
         return
       }
-      SelectionLen := StrLen(Vim.ParseLineBreaks(Selection))
+      SelectionLen := StrLen(ParseLineBreaks(Selection))
       if (c) {
         Vim.State.SurroundChangeEntered := true
         return
@@ -87,7 +88,7 @@ VimSurround(CurrKey, SelectionLen, d:=false, c:=false) {
   }
   Send % "{Right " . SelectionLen . "}"
   if (d)
-    Send {del}
+    Send {Del}
   if (tag && c) {
     Send % "{text}</" . tag . ">"
   } else if (c) {

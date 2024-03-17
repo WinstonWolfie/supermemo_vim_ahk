@@ -186,13 +186,13 @@ SendEvent {Blind}{LButton up}
 return
 
 NotCtrlDelWnd() {
-  return ((WinActive("ahk_group SM") && !Vim.SM.IsEditingHTML())
+  return ((WinActive("ahk_group SM") && !SM.IsEditingHTML())
        || WinActive("ahk_exe AutoHotkey.exe")
        || WinActive("ahk_class CabinetWClass ahk_exe explorer.exe"))
 }
 
 CapsLock & ,::Send {Del}
-CapsLock & .::Send % (NotCtrlDelWnd()) ? "^+{Right}{del}" : "^{del}"
+CapsLock & .::Send % (NotCtrlDelWnd()) ? "^+{Right}{Del}" : "^{Del}"
 CapsLock & m::Send {BS}
 CapsLock & n::Send % (NotCtrlDelWnd()) ? "^+{Left}{BS}" : "^{BS}"
 
@@ -232,9 +232,9 @@ return
 CapsLock & tab::Send !{tab}!f4::
 
 CapsLock & q::
-  if (WinActive("ahk_class TElWind") && (Vim.SM.IsLearning() == 1)) {
-    Vim.SM.GoHome()
-    Vim.SM.WaitFileLoad()
+  if (WinActive("ahk_class TElWind") && (SM.IsLearning() == 1)) {
+    SM.GoHome()
+    SM.WaitFileLoad()
   }
   if (A_ThisLabel == "!f4")
     Send !{f4}

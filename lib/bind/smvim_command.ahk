@@ -24,45 +24,45 @@ return
 NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
-  if (Vim.SM.IsEditingPlainText() || !Vim.SM.DoesHTMLExist()) {
-    Vim.State.SetToolTip("This script only works on HTML.")
+  if (SM.IsEditingPlainText() || !SM.DoesHTMLExist()) {
+    SetToolTip("This script only works on HTML.")
     return
   }
 	Send ^{f7}  ; save read point
-  if (!Vim.SM.IsEditingHTML()) {
+  if (!SM.IsEditingHTML()) {
     Send ^t
-    Vim.SM.WaitTextFocus()
-    if (!Vim.SM.IsEditingHTML()) {
-      Vim.State.SetToolTip("This script only works on HTML.")
+    SM.WaitTextFocus()
+    if (!SM.IsEditingHTML()) {
+      SetToolTip("This script only works on HTML.")
       return
     }
   }
-  if (!Vim.SM.SaveHTML(3000)) {
-    Vim.State.SetToolTip("Time out.")
+  if (!SM.SaveHTML(3000)) {
+    SetToolTip("Time out.")
     return
   }
   WinWaitActive, ahk_class TElWind  ; insurance
-  if (!HTML := FileRead(HTMLPath := Vim.SM.GetFilePath())) {
-    Vim.State.SetToolTip("File not found.")
+  if (!HTML := FileRead(HTMLPath := SM.GetFilePath())) {
+    SetToolTip("File not found.")
     return
   }
   if ((A_ThisLabel == "NukeHTML")
-   && (HTML ~= "i)<.*?\K class=(" . Vim.SM.CssClass . ")(?=.*?>)")) {
+   && (HTML ~= "i)<.*?\K class=(" . SM.CssClass . ")(?=.*?>)")) {
     if (IfIn(MsgBox(3,, "HTML has SM classes. Continue?"), "No,Cancel")) {
       HTML := ""
       return
     }
   }
   FileDelete % HTMLPath
-  FileAppend, % Vim.SM.CleanHTML(HTML, (A_ThisLabel == "NukeHTML"),, Vim.SM.GetLink()), % HTMLPath
-  Vim.SM.Reload()
-  Vim.SM.WaitFileLoad()
+  FileAppend, % SM.CleanHTML(HTML, (A_ThisLabel == "NukeHTML"),, SM.GetLink()), % HTMLPath
+  SM.Reload()
+  SM.WaitFileLoad()
   Send {Esc}
-  Vim.State.SetToolTip("HTML cleaned."), HTML := ""
+  SetToolTip("HTML cleaned."), HTML := ""
 Return
 
-+l::Vim.SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
-l::Vim.SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
++l::SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
+l::SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
 
 o::  ; c*o*mpress images
   Send ^{Enter}^a  ; open commander
@@ -71,141 +71,93 @@ o::  ; c*o*mpress images
   Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
 return
 
-s::  ; turn active language item to passive (*s*witch)
-  Vim.State.SetMode("Vim_Normal")
-  if (!Vim.SM.IsItem())
-    return
-  Vim.SM.ExitText()
-  if (Vim.SM.IsLearning() == 2)  ; if learning (on "next repitition")
-    Send {Esc}
-  Send ^+s
-  Sleep 320
-  Vim.SM.EditFirstQuestion()
-  Vim.SM.WaitTextFocus()
-  Send ^{Home}
-  Send {text}en:
-  Send {Space}^t
-  Sleep 320
-  if (Vim.SM.IsEditingHTML()) {
-    Send ^{Home}^{del 2}
-  } else if (Vim.SM.IsEditingPlainText()) {
-    Send ^{Home}^+{Right}{BS}
-  }
-  Send {Esc}
-return
-
-+s::
-  Vim.State.SetMode("Vim_Normal")
-  if (!Vim.SM.IsItem())
-    return
-  Vim.SM.ExitText()
-  if (ControlGetText("TBitBtn3", "A") != "Learn")  ; if learning (on "next repitition")
-    Send {Esc}
-  Vim.SM.EditFirstQuestion()
-  Vim.SM.WaitTextFocus(), WinClip.Clear()
-  if (Vim.SM.IsEditingHTML()) {
-    Send ^{Home}^+{Right 2}
-  } else if (Vim.SM.IsEditingPlainText()) {
-    Send ^{Home}^+{Right}
-  }
-  Text := Copy()
-  Send {BS}{Esc}
-  Vim.SM.WaitTextExit()
-  Send ^+s
-  Sleep 320
-  Vim.SM.EditFirstQuestion()
-  Vim.SM.WaitTextFocus()
-  Send % "{text}" . Text
-  Send {Left 2}{Esc}
-return
-
 r::  ; set *r*eference's link to what's in the clipboard
-  Vim.State.SetMode("Vim_Normal"), Vim.SM.ExitText()
+  Vim.State.SetMode("Vim_Normal"), SM.ExitText()
 
 SMSetLinkFromClipboard:
   ; Had to edit title first, in case of multiple references change
-  if ((Vim.SM.IsOnline(, -1) || !Vim.SM.IsItem()) && Vim.Browser.Title)
-    Vim.SM.SetTitle(Vim.Browser.Title)
-  Vim.SM.EditRef()
+  if ((SM.IsOnline(, -1) || !SM.IsItem()) && Browser.Title)
+    SM.SetTitle(Browser.Title)
+  SM.EditRef()
   WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
   if (A_ThisLabel == "r")
-    Vim.Browser.Url := Clipboard
-  SMPoundSymbHandled := Vim.SM.PoundSymbLinkToComment()
+    Browser.Url := Clipboard
+  SMPoundSymbHandled := SM.PoundSymbLinkToComment()
   Ref := ControlGetText("TMemo1")
-  if (Vim.Browser.Url)
-    Ref := "#Link: " . Vim.Browser.Url . "`n" . Ref
-  if (Vim.Browser.Title)
-    Ref := "#Title: " . Vim.Browser.Title . "`n" . Ref
-  if (Vim.Browser.Source)
-    Ref := "#Source: " . Vim.Browser.Source . "`n" . Ref
-  if (Vim.Browser.Author)
-    Ref := "#Author: " . Vim.Browser.Author . "`n" . Ref
-  if (Vim.Browser.Date)
-    Ref := "#Date: " . Vim.Browser.Date . "`n" . Ref
-  if (Vim.Browser.Comment)
-    Ref := "#Comment: " . Vim.Browser.Comment . "`n" . Ref
+  if (Browser.Url)
+    Ref := "#Link: " . Browser.Url . "`r`n" . Ref
+  if (Browser.Title)
+    Ref := "#Title: " . Browser.Title . "`r`n" . Ref
+  if (Browser.Source)
+    Ref := "#Source: " . Browser.Source . "`r`n" . Ref
+  if (Browser.Author)
+    Ref := "#Author: " . Browser.Author . "`r`n" . Ref
+  if (Browser.Date)
+    Ref := "#Date: " . Browser.Date . "`r`n" . Ref
+  if (Browser.Comment)
+    Ref := "#Comment: " . Browser.Comment . "`r`n" . Ref
   ControlSetText, TMemo1, % Ref
   ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}{Enter}{Ctrl Up}  ; submit
   WinWaitClose
-  if (!SMPoundSymbHandled && Vim.SM.HandleSM19PoundSymbUrl(Vim.Browser.Url) && (A_ThisLabel == "r"))
-    Vim.SM.Reload(, true)
-  Vim.Browser.Clear()
+  if (!SMPoundSymbHandled && SM.HandleSM19PoundSymbUrl(Browser.Url) && (A_ThisLabel == "r"))
+    SM.Reload()
+  Browser.Clear()
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 +i::  ; learn current element's outstanding child item
   Vim.State.SetMode("Vim_Normal")
-  Vim.SM.OpenBrowser()
-  Vim.SM.WaitBrowser()
+  SM.OpenBrowser()
+  SM.WaitBrowser()
   Send {AppsKey}ci
-  Vim.SM.WaitBrowser()
+  SM.WaitBrowser()
   Send {AppsKey}co
-  Vim.SM.WaitBrowser()
+  SM.WaitBrowser()
   Send ^s
-  Vim.SM.WaitFileLoad()
+  SM.WaitFileLoad()
   Send ^l
 return
 
 i::  ; learn outstanding *i*tems only
-  Vim.State.SetMode("Vim_Normal"), Vim.SM.GoHome()
+  Vim.State.SetMode("Vim_Normal"), SM.GoHome()
   WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "A")
   if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-    Vim.SM.PostMsg(200)
+    SM.PostMsg(200)
   } else {
-    Vim.SM.PostMsg(202)  ; View - Outstanding
+    SM.PostMsg(202)  ; View - Outstanding
   }
-  Vim.SM.WaitBrowser()
+  SM.WaitBrowser()
   Send {AppsKey}ci
-  Vim.SM.WaitBrowser()
+  SM.WaitBrowser()
   Send ^l
 return
 
 SMLearnChild:
 c::  ; learn child
   Vim.State.SetMode("Vim_Normal")
-  Vim.SM.OpenBrowser()
-  Vim.SM.WaitBrowser()
+  SM.OpenBrowser()
+  SM.WaitBrowser()
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TBrowser"))
 c::
 SMLearnChildActiveBrowser:
   Vim.State.SetMode("Vim_Normal")
   Send {AppsKey}co
-  Vim.SM.WaitBrowser()
+  SM.WaitBrowser()
   Send ^s
-  Vim.SM.WaitFileLoad()
+  SM.WaitFileLoad()
   Send ^l
   WinWaitActive, ahk_class TElWind
-  Vim.SM.PlayIfOnlineColl(, 500)
+  SM.PlayIfOnlineColl(, 500)
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 +c::  ; add new concept
   WinActivate, ahk_class TElWind
   if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-    Vim.SM.PostMsg(125)
+    SM.PostMsg(125)
   } else {
-    Vim.SM.PostMsg(126)
+    SM.PostMsg(126)
   }
   Vim.State.SetMode("Insert")
 return
