@@ -43,11 +43,8 @@ CapsLock::
     } else if (IfIn(HinterMode, "Visual,Normal")) {
       IE2 := ControlGet(,, "Internet Explorer_Server2", "A")
       IE1 := ControlGet(,, "Internet Explorer_Server1", "A")
-      if (IE2 && IE1) {
-        Send ^t{Esc}
-        SM.WaitTextExit()
-        Sleep 20
-      }
+      if (IE2 && IE1)
+        SM.ExitText()
       if (v.Control == "Internet Explorer_Server1") {
         if (IE2) {
           SM.EditFirstAnswer()
@@ -58,7 +55,6 @@ CapsLock::
         SM.EditFirstQuestion()
       }
       SM.WaitTextFocus()
-      Sleep 20  ; needed lest text changes position when you click
       ControlClickScreen(v.x, v.y)
       if (HinterMode == "Visual")
         Send {Right}{Left}^+{Right}

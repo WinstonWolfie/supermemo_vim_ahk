@@ -230,14 +230,18 @@ class SM {
   ExitText(ReturnToComp:=false, Timeout:=0) {
     this.ActivateElWind(), ret := 1
     if (this.IsEditingText()) {
-      if (this.HasTwoComp()) {
-        this.PrevComp()
-        if (ReturnToComp)
-          Send ^t
+      hCtrl := ControlGet(,,, "ahk_class TElWind")
+      if (this.HasTwoComp() || this.IsEditingPlainText()) {  ; plain text items may not be able to be detected as having 2 components
+        Send ^t
+        hCtrl := ControlWaitHwndChange(, hCtrl, "ahk_class TElWind")
+        if (ReturnToComp) {
+          this.PrevComp()
+          hCtrl := ControlWaitHwndChange(, hCtrl, "ahk_class TElWind")
+        }
         ret := 2
       }
       Send {Esc}
-      if (!this.WaitTextExit(Timeout))
+      if (!ControlWaitHwndChange(, hCtrl, "ahk_class TElWind",,,, Timeout))
         return 0
     }
     return ret
@@ -1033,7 +1037,7 @@ class SM {
           Clipboard := MarkerContent
           ClipWait
           Send ^f
-          Sleep 100
+          Sleep 200
           if (Calibre := WinActive("ahk_exe ebook-viewer.exe"))
             Sleep 200
           Send ^v

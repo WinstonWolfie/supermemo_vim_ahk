@@ -233,14 +233,31 @@ class Browser {
       this.Source := "Open Book Publishers"
     } else if (IfContains(this.Url, "morningbrew.com")) {
       this.Source := "Morning Brew"
+    } else if (IfContains(this.Url, "aastocks.com")) {
+      this.Source := "AASTOCKS"
 
     ; Video/audio
     } else if (IfContains(this.Url, "youtube.com/watch")) {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
-      if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
-        if (GetDate)
-          ; RegExMatch(FullPageText, "views +?(\r\n)?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
-          RegExMatch(GetSiteHTML(this.Url), """publishDate"":{""simpleText"":""(.*?)""}", v), this.Date := v1
+      if (GetFullPage) {
+        if (GetDate) {
+          global guiaBrowser
+          this.GetGuiaBrowser()
+          if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
+            btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
+          btn.Click()
+          RegExMatch(FullPageText := this.GetFullPage(RestoreClip), "views +?(\r\n)?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
+          if (btn) {
+            if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show less' AND AutomationId='collapse'"))
+              btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show less'")
+            btn.Click()
+          }
+
+          ; Get page source HTML, takes extremely long time
+          ; RegExMatch(GetSiteHTML(this.Url), """publishDate"":{""simpleText"":""(.*?)""}", v), this.Date := RegExReplace(v1, "(Streamed live|Premiered) on ")
+        }
+        if (!FullPageText)
+          FullPageText := this.GetFullPage(RestoreClip)
         if (GetTimeStamp)
           this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
         RegExMatch(FullPageText, ".*(?=\r\n.*subscribers)", Author), this.Author := Author
@@ -624,17 +641,6 @@ class Browser {
       Send !+h
     }
     Sleep 700  ; time for visual feedback
-  }
-
-  ClickBtn() {
-    ; this.Url := this.Url ? this.Url : this.GetUrl()
-    ; if (IfContains(this.Url, "youtube.com/watch")) {
-    ;   global guiaBrowser
-    ;   this.GetGuiaBrowser()
-    ;   if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
-    ;     btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
-    ;   btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
-    ; }
   }
 
   ActivateBrowser(wBrowser:="ahk_group Browser") {

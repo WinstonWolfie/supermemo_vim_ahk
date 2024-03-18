@@ -24,11 +24,11 @@ class VimMove {
     return (this.Vim.State.StrIsInCurrentVimMode("ydc_c,SMVim_") || this.Vim.State.Surround)
   }
   
-  RestoreCopy() {
+  IsRestoreClipMode() {
     return !this.Vim.State.StrIsInCurrentVimMode("Vim_ydc")
   }
 
-  RestoreClipLater() {
+  IsRestoreClipLaterMode() {
     return this.Vim.State.StrIsInCurrentVimMode("Vim_g")
   }
 
@@ -36,12 +36,12 @@ class VimMove {
     return (this.Vim.State.IsCurrentVimMode("Vim_Normal") || this.Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
   }
 
-  IsActionKey(key) {
+  IsNormalKey(key) {  ; keys that act rather like normal mode
     return IfIn(key, "x,+x")
   }
 
   RegForDot(key) {
-    if (this.ReggedForDot := ((!this.IsMotionOnly() || this.IsActionKey(key)) && !((A_ThisLabel == ".") && !this.Vim.State.fts))) {
+    if (this.ReggedForDot := ((!this.IsMotionOnly() || this.IsNormalKey(key)) && !((A_ThisLabel == ".") && !this.Vim.State.fts))) {
       this.LastInOrOut := this.LastRepeat := this.LastSurround := this.LastSurroundKey := this.LastLineCopy := ""
       this.LastKey := key, this.LastN := this.Vim.State.n, this.LastMode := this.Vim.State.Mode
       this.LastFtsChar := this.Vim.State.FtsChar ? this.Vim.State.FtsChar : ""
@@ -55,16 +55,17 @@ class VimMove {
     if (this.IsSearchKey(key)) {
       this.SearchOccurrence := this.Vim.State.n ? this.Vim.State.n : 1
       this.FtsChar := this.Vim.State.FtsChar
-      if (RestoreClip && this.RestoreCopy()) {
+      if (RestoreClip && this.IsRestoreClipMode()) {
         global ClipSaved
         ClipSaved := ClipboardAll
         this.Clipped := true
       }
+      KeyWait Shift
     }
     
     if (this.Vim.State.StrIsInCurrentVimMode("Visual,ydc,SMVim_,Vim_g")) {
       this.shift := 1
-      if (!this.IsSearchKey(key) && !this.IsActionKey(key))
+      if (!this.IsSearchKey(key) && !this.IsNormalKey(key))
         Send {Shift Down}
     }
 
@@ -106,7 +107,7 @@ class VimMove {
       this.Down()
     }
 
-    if (IfIn(key, "x,+x") && !this.Vim.IsNavigating())
+    if (this.IsNormalKey(key) && !this.Vim.IsNavigating())
       this.Vim.State.SetMode("Vim_ydc_d", 0, -1, 0,,, -1)  ; LineCopy must be 0
   }
 
@@ -115,7 +116,7 @@ class VimMove {
     this.Vim.State.FtsChar := ""
     if (this.Clipped) {
       Clipped := "Clipped"
-      if (!this.RestoreClipLater()) {
+      if (!this.IsRestoreClipLaterMode()) {
         global ClipSaved
         Clipboard := ClipSaved
       }
@@ -166,10 +167,8 @@ class VimMove {
         SM.Cloze()
         this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltT")) {
-        Sleep 20
         SM.AltT(), this.Vim.State.SetMode("Vim_Normal")
       } else if (this.Vim.State.StrIsInCurrentVimMode("AltQ")) {
-        Sleep 20
         Send !q
         WinWaitActive, ahk_class TChoicesDlg
         Send % this.KeyAfterSMAltQ . "{Enter}"
@@ -470,7 +469,6 @@ class VimMove {
                 if (NextOccurrence)
                   right := NextOccurrence
               }
-              KeyWait Shift
               Send % "+{Right " . right . "}"
             }
           }
@@ -537,7 +535,6 @@ class VimMove {
                 if (NextOccurrence)
                   right := NextOccurrence - 1
               }
-              KeyWait Shift
               Send % "+{Right " . right . "}"
             }
           }
@@ -605,7 +602,6 @@ class VimMove {
                   right := 0
                 }
               }
-              KeyWait Shift
               Send % "+{Right " . right . "}"
             }
           }
@@ -652,7 +648,6 @@ class VimMove {
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             right := StrLen(DetectionStr) - pos
-            KeyWait Shift
             Send % "+{Right " . right . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrReverse(StrBefore)
@@ -667,7 +662,6 @@ class VimMove {
               }
               if (StrLen(StrAfter) == StrLen(StrBefore))
                 left++
-              KeyWait Shift
               Send % "+{Left " . left . "}"
             }
           }
@@ -710,7 +704,6 @@ class VimMove {
                   right := StrLen(DetectionStr) - NextOccurrence + 1
               }
             }
-            KeyWait Shift
             Send % "+{Right " . right . "}"
           } else if StrLen(StrAfter) <= StrLen(StrBefore) {
             DetectionStr := StrReverse(StrBefore)
@@ -733,7 +726,6 @@ class VimMove {
               }
               if (StrLen(StrAfter) == StrLen(StrBefore))
                 left++
-              KeyWait Shift
               Send % "+{Left " . left . "}"
             }
           }
@@ -778,7 +770,6 @@ class VimMove {
             StartPos := StrLen(StrBefore) + 1  ; + 1 to make sure DetectionStr is what's selected after
             DetectionStr := SubStr(StrAfter, StartPos)
             pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence)
-            KeyWait Shift
             if (pos) {
               right := pos + 1 + StrLen(StrBefore)
               if (StrLen(DetectionStr) == pos + 2)  ; found at end of paragraph
@@ -799,7 +790,6 @@ class VimMove {
                   right := pos + 1
               }
             }
-            KeyWait Shift
             Send % "+{Right " . right . "}"
           }
         } else {
@@ -846,7 +836,6 @@ class VimMove {
                   left := NextOccurrence - 1
               }
             }
-            KeyWait Shift
             Send % "+{Left " . left . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore) || !StrBefore) {
             this.SelectParagraphUp(, true)
@@ -874,10 +863,8 @@ class VimMove {
             } else {
               ret := true
             }
-            if (!ret) {
-              KeyWait Shift
+            if (!ret)
               Send % "+{Right " . right . "}"
-            }
           }
         } else {
           this.SelectParagraphUp(, true)
@@ -953,7 +940,6 @@ class VimMove {
                   right := 0
                 }
               }
-              KeyWait Shift
               Send % "+{Right " . right . "}"
             }
           }
@@ -1004,7 +990,6 @@ class VimMove {
             DetectionStr := StrReverse(SubStr(StrAfter, 1, length))
             pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
             right := StrLen(DetectionStr) - pos - 1
-            KeyWait Shift
             Send % "+{Right " . right . "}"
           } else if (StrLen(StrAfter) <= StrLen(StrBefore)) {
             DetectionStr := StrReverse(StrBefore)
@@ -1017,7 +1002,6 @@ class VimMove {
                 if (NextOccurrence)
                   left := NextOccurrence + 2
               }
-              KeyWait Shift
               Send % "+{Left " . left . "}"
             }
           }
@@ -1233,7 +1217,6 @@ class VimMove {
       }
     } else if (key == "+g") {
         if (this.Vim.State.n > 0) {
-          KeyWait Shift
           if (SM.IsBrowsing() && SM.DoesTextExist()) {
             SM.ClickTop()
             SM.WaitTextFocus()
@@ -1267,7 +1250,6 @@ class VimMove {
             Send ^+{Up}  ; if there are references this would select (or deselect in visual mode) them all
             if (this.shift == 1)
               Send +{Down}  ; go down one line, if there are references this would include the #SuperMemo Reference
-            ; KeyWait Shift
             if (IfContains(Copy(false), "#SuperMemo Reference:")) {
               if (this.shift == 1) {
                 Send +{Up 4}  ; select until start of last line

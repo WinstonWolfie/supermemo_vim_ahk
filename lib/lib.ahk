@@ -303,7 +303,7 @@ WinTextWaitExist(WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", T
   }
 }
 
-ControlTextWaitExist(Control, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
+ControlTextWaitExist(Control:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) {
@@ -314,7 +314,7 @@ ControlTextWaitExist(Control, WinTitle:="", WinText:="", ExcludeTitle:="", Exclu
   }
 }
 
-ControlTextWait(Control, Text, WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
+ControlTextWait(Control:="", Text:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == Text) {
@@ -325,7 +325,7 @@ ControlTextWait(Control, Text, WinTitle:="", WinText:="", ExcludeTitle:="", Excl
   }
 }
 
-ControlTextWaitChange(Control, Text:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
+ControlTextWaitChange(Control:="", Text:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != Text) {
@@ -336,13 +336,12 @@ ControlTextWaitChange(Control, Text:="", WinTitle:="", WinText:="", ExcludeTitle
   }
 }
 
-ControlWaitHwndChange(Control, hWnd:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
+ControlWaitHwndChange(Control:="", hWnd:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
   hWnd := hWnd ? hWnd : ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
   StartTime := A_TickCount
   Loop {
-    NewHwnd := ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
-    if (NewHwnd && (NewHwnd != hWnd)) {
-      Return NewHwnd
+    if (ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText) != hWnd) {
+      Return ControlGet(,, Control, WinTitle, WinText, ExcludeTitle, ExcludeText)
     } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
     }
