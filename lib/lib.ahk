@@ -1331,7 +1331,7 @@ SwitchToSameWindow(w:="A") {
 ; Originally by berban - updated February 18, 2019 - modified by Winston
 ; https://github.com/berban/Clip/blob/master/Clip.ahk
 Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1) {
-  global WinClip
+  global WinClip, SM
   if (RestoreClip)
     ClipSaved := ClipboardAll
   If (Text = "") {
