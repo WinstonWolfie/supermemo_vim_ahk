@@ -289,6 +289,8 @@ return
 
 #if (Vim.IsVimGroup() && SM.IsEditingHTML())
 ^!k::
+  KeyWait Ctrl
+  KeyWait Alt
   if (Link := IsUrl(Trim(Clipboard))) {
     Link := Clipboard
   } else if (RegExMatch(Clipboard, "^#(\d+)", v)) {

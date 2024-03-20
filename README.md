@@ -471,3 +471,29 @@ Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
 `gU`: click the source button
 
 `<leader><A-{number}>` / `{Numpad}`: [Naess's priority script](https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png)
+
+### Visual mode
+
+`.`: selected text becomes \[...\]
+
+`<C-h>`: parse HTML (= `Ctrl + Shift + 1`)
+
+`<A-a>`: add HTML tag
+
+`m`: highlight (**m**ark)
+
+`q`: extract (**q**uote)
+
+`<C-q>`: extract and stay in the extracted element
+
+`z`: cloze
+
+`<C-z>`: cloze and stay in the clozed item
+
+`Z`: cloze hinter
+
+`H`: select until the top of the text on screen
+
+`M`: select until the middle of the text on screen
+
+`L`: select until the bottom of the text on screen

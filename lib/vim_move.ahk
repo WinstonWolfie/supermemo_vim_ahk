@@ -271,19 +271,18 @@ class VimMove {
     } else if (SM.IsEditingPlainText() && detection) {
       Send ^+{Home}
     } else {
-      n--
-      Send % "+{Up " . n . "}+{Home}"
+      Send % "+{Up " . n - 1 . "}+{Home}"
     }
   }
 
   SelectParagraphDown(n:=1, detection:=false) {
+    global SM
     if (this.Vim.IsHTML()) {
       Send % "^+{Down " . n . "}"
     } else if (SM.IsEditingPlainText() && detection) {
       Send ^+{End}
     } else {
-      n--
-      Send % "+{Down " . n . "}+{End}"
+      Send % "+{Down " . n - 1 . "}+{End}"
     }
   }
 

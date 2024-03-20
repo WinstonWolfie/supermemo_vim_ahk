@@ -615,6 +615,7 @@ return
       if (!ErrorLevel)
         WinWaitClose
 
+      ; Check duplicates
       StartTime := A_TickCount
       loop {
         if (WinActive("ahk_class TMsgDialog")) {  ; not found
@@ -655,6 +656,7 @@ return
       SMTitle := WinWaitTitleRegEx("^Duplicate: ", "ahk_class TElWind")
       if (!SM.IsHTMLEmpty() && (MsgBox(3,, "Remove text?") = "Yes"))
         SM.EmptyHTMLComp()
+
       if (ModifyScript) {
         SM.EditFirstQuestion()
         SM.WaitTextFocus()
@@ -679,8 +681,8 @@ return
         WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
         ControlSend, TMemo1, {Enter}
       }
-      if (!CtrlState)
-        WinActivate, % wCurr
+
+      WinActivate, % CtrlState ? "ahk_class TElWind" : wCurr
       SM.SetTitle(RegExReplace(SMTitle, "^Duplicate: ") . " (" . ch . ")")
       if (ShiftState)
         SM.SetPrio(Prio,, true)

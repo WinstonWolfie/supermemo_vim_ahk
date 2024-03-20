@@ -197,10 +197,7 @@ c::
     HinterMode := "OpenLinkInNew"
   }
   UIA := UIA_Interface(), LearningState := SM.IsLearning()
-  Caret := IfIn(A_ThisLabel, "v,c")
-  ; Some hyperlinks seem to be text type
-  ; Type := Caret ? "Text" : "Hyperlink"
-  Type := "Text"
+  Caret := IfIn(A_ThisLabel, "v,c"), Type := "Text"
   if (!aHints := CreateHintsArray(Control, hCtrl, Type, Caret)) {
     BlockInput, Off
     SetToolTip("Text too long.")
@@ -227,8 +224,8 @@ CreateHints(HintsArray, HintStrings) {
   global LastHintCount := i
 }
 
-CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=1000) {
-  global Vim, UIA
+CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=5000) {
+  global Vim, UIA, SM
   if (Caret)
     SM.ClickMid(Control)
   el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)

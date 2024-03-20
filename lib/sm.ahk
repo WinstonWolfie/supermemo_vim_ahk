@@ -1016,6 +1016,7 @@ class SM {
     }
     WinWaitNotActive, ahk_class TElWind,, 10
     hReader := WinActive("A"), wReader := "ahk_id " . hReader
+
     if (MarkerName = "read point") {
       if (WinActive("ahk_group Browser")) {
         uiaBrowser := new UIA_Browser(wReader)
@@ -1025,11 +1026,10 @@ class SM {
          . "`n`nTitle: " . SMTitle
          . "`nRead point: " . MarkerContent
       if (MsgBox(3,, t) = "Yes") {
-        WinWaitActive, % wReader
-        if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
-          ControlFocus, Edit2
-          ControlSetText, Edit2, % MarkerContent
-          Send {Enter}
+        if (WinGetClass(wReader) == "SUMATRA_PDF_FRAME") {
+          ControlFocus, Edit2, % wReader
+          ControlSetText, Edit2, % MarkerContent, % wReader
+          ControlSend, Edit2, {Enter}, % wReader
         } else {
           ClipSaved := ClipboardAll
           global WinClip
@@ -1048,13 +1048,13 @@ class SM {
           Clipboard := ClipSaved
         }
       }
+
     } else if (MarkerName = "page mark") {
       if (MsgBox(3,, "Do you want to go to page mark?") = "Yes") {
-        WinWaitActive, % wReader
-        if (WinActive("ahk_class SUMATRA_PDF_FRAME") || WinActive("ahk_exe WinDjView.exe")) {
-          ControlFocus, Edit1
-          ControlSetText, Edit1, % MarkerContent
-          Send {Enter}
+        if ((WinGetClass(wReader) == "SUMATRA_PDF_FRAME") || (WinGet("ProcessName", wReader) == "WinDjView.exe")) {
+          ControlFocus, Edit1, % wReader
+          ControlSetText, Edit1, % MarkerContent, % wReader
+          ControlSend, Edit1, {Enter}, % wReader
         }
       }
     } else {

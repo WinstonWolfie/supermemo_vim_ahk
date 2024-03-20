@@ -780,13 +780,12 @@ return
 MakeHTMLUnique:
   ClipSaved := ClipboardAll
   SM.MoveToLast(false)
-  AntiMerge := "<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>"
-  Clip(AntiMerge,, false, "sm")
+  Clip("<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>",, false, "sm")
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 return
 
 KillOutlook:
-  process, close, Outlook.exe
+  Process, Close, Outlook.exe
 return
 
 RestartOneDrive:
@@ -798,8 +797,8 @@ RestartOneDrive:
 return
 
 RestartICloudDrive:
-  process, close, iCloudDrive.exe
-  process, close, iCloudServices.exe
+  Process, Close, iCloudDrive.exe
+  Process, Close, iCloudServices.exe
   ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk")
   WinWait, iCloud ahk_class PreferencesWnd ahk_exe iCloud.exe
   WinClose

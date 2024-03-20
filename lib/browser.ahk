@@ -245,12 +245,18 @@ class Browser {
           this.GetGuiaBrowser()
           if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
             btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
-          btn.Click()
+          if (btn)
+            btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
           RegExMatch(FullPageText := this.GetFullPage(RestoreClip), "views +?(\r\n)?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
           if (btn) {
-            if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show less' AND AutomationId='collapse'"))
-              btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show less'")
-            btn.Click()
+            if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show less' AND AutomationId='collapse'")) {  ; clicked before
+              guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show less'").Click()  ; this doesn't scroll
+            } else {
+              btn.Click()
+              WinActivate, % "ahk_id " . guiaBrowser.BrowserId
+              Sleep 500
+              Send ^{Home}
+            }
           }
 
           ; Get page source HTML, takes extremely long time
