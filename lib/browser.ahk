@@ -254,7 +254,7 @@ class Browser {
             } else {
               btn.Click()
               WinActivate, % "ahk_id " . guiaBrowser.BrowserId
-              Sleep 500
+              Sleep 700
               Send ^{Home}
             }
           }

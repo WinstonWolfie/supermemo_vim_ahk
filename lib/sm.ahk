@@ -1031,21 +1031,14 @@ class SM {
           ControlSetText, Edit2, % MarkerContent, % wReader
           ControlSend, Edit2, {Enter}, % wReader
         } else {
-          ClipSaved := ClipboardAll
-          global WinClip
-          WinClip.Clear()
-          Clipboard := MarkerContent
-          ClipWait
           Send ^f
           Sleep 200
           if (Calibre := WinActive("ahk_exe ebook-viewer.exe"))
             Sleep 200
-          Send ^v
-          WinClip._waitClipReady()
+          Clip(MarkerContent)
           Send {Enter}
           if (Calibre)
             Send {Enter}
-          Clipboard := ClipSaved
         }
       }
 
@@ -1494,9 +1487,9 @@ class SM {
     MB := MsgBox(3,, t), ret := 0
     if ((MB = "No") && this.CheckDup(BrowserUrl,, wSMElWind, "Link not found in collection.")) {
       MB := MsgBox(3,, "Found. Continue?")
-      WinClose, ahk_class TBrowser
+      WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", wSMElWind)
       if (MB = "Yes") {
-        WinWaitActive, ahk_class TElWind
+        WinWaitActive, % wSMElWind
         ret := -1
         WinActivate, % wCurr
       }

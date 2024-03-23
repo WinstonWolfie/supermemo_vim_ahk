@@ -484,6 +484,8 @@ Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
 
 `q`: extract (**q**uote)
 
+`Q`: extract with priority
+
 `<C-q>`: extract and stay in the extracted element
 
 `z`: cloze
@@ -492,8 +494,12 @@ Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
 
 `Z`: cloze hinter
 
+`<CapsLock-z>`: cloze and delete \[...\]
+
 `H`: select until the top of the text on screen
 
 `M`: select until the middle of the text on screen
 
 `L`: select until the bottom of the text on screen
+
+### Shortcuts (any mode would do)

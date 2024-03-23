@@ -250,7 +250,7 @@ IWBNewTopic:
       MB := MsgBox(3,, "Continue import?")
     DupChecked := true
   }
-  WinClose, ahk_class TBrowser
+  WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
   WinActivate % wBrowser
   if (IfIn(MB, "No,Cancel"))
     Goto SMImportReturn
@@ -331,7 +331,7 @@ SMImportButtonImport:
     if (SM.CheckDup(Browser.Url, false))
       MB := MsgBox(3,, "Continue import?")
     DupChecked := true
-    WinClose, ahk_class TBrowser
+    WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
     WinActivate % wBrowser
     if (IfIn(MB, "No,Cancel"))
       Goto SMImportReturn
@@ -626,7 +626,7 @@ return
         } else if (WinGetTitle("ahk_class TBrowser") ~= "^[1-9]+ users of ") {
           if (IfIn(MsgBox(3,, "Continue?"), "No,Cancel")) {
             WinActivate, % wCurr
-            WinClose, ahk_class TBrowser
+            WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
             SM.ClearHighlight()
             if (!CtrlState) {
               SM.GoToEl(CurrEl,, true)
@@ -649,7 +649,7 @@ return
         }
       }
 
-      WinClose, ahk_class TBrowser
+      WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
       WinWaitActive, ahk_class TElWind
       SM.Duplicate()
       SM.WaitFileLoad()
@@ -1132,7 +1132,7 @@ return
   if (SM.CheckDup(Link, false))
     MB := MsgBox(3,, "Continue import?")
   WinActivate % "ahk_id " . hWnd
-  WinClose, ahk_class TBrowser
+  WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
   if (IfIn(MB, "No,Cancel"))
     Goto HBImportReturn
   Prio := IfContains(A_ThisLabel, "+") ? SM.AskPrio(false) : ""
