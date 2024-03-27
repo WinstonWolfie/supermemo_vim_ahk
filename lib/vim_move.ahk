@@ -873,7 +873,7 @@ class VimMove {
             this.SelectParagraphUp(, true)
             DetectionStr := ParseLineBreaks(Copy(false))
           } else {
-            DetectionStr := this.vim.ParseLineBreaks(DetectionStr)
+            DetectionStr := ParseLineBreaks(DetectionStr)
           }
           DetectionStr := StrReverse(DetectionStr)
           pos := this.FindSentenceEnd(DetectionStr, this.SearchOccurrence, true)

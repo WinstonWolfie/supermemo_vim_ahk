@@ -71,6 +71,7 @@ Plan:
   }
   WinActivate, ahk_class TPlanDlg
   SM.CloseMsgDialog()
+  Send {Right}{Left}
 return
 
 ; Browsers
@@ -100,11 +101,11 @@ return
   ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Esc}, A
   Browser.GetInfo(false)
   SetToolTip("Copied " . Browser.Url . "`n"
-        . "Title: " . Browser.Title
-        . (Browser.Source ? "`nSource: " . Browser.Source : "")
-        . (Browser.Author ? "`nAuthor: " . Browser.Author : "")
-        . (Browser.Date ? "`nDate: " . Browser.Date : "")
-        . (Browser.TimeStamp ? "`nTime stamp: " . Browser.TimeStamp : ""))
+           . "Title: " . Browser.Title
+           . (Browser.Source ? "`nSource: " . Browser.Source : "")
+           . (Browser.Author ? "`nAuthor: " . Browser.Author : "")
+           . (Browser.Date ? "`nDate: " . Browser.Date : "")
+           . (Browser.TimeStamp ? "`nTime stamp: " . Browser.TimeStamp : ""))
   Clipboard := Browser.Url
 return
 
@@ -164,11 +165,11 @@ return
     SetToolTip("No text selected."), WinClip.Restore(data)
   Browser.GetInfo()
   SetToolTip("Copied " . Clipboard . "`n"
-        . "Link: " . Browser.Url . "`n"
-        . "Title: " . Browser.Title
-        . (Browser.Source ? "`nSource: " . Browser.Source : "")
-        . (Browser.Author ? "`nAuthor: " . Browser.Author : "")
-        . (Browser.Date ? "`nDate: " . Browser.Date : ""))
+           . "Link: " . Browser.Url . "`n"
+           . "Title: " . Browser.Title
+           . (Browser.Source ? "`nSource: " . Browser.Source : "")
+           . (Browser.Author ? "`nAuthor: " . Browser.Author : "")
+           . (Browser.Date ? "`nDate: " . Browser.Date : ""))
 return
 
 ^!m::  ; copy ti*m*e stamp
