@@ -46,8 +46,8 @@ class Browser {
     if (GetUrl)
       this.Url := this.Url ? this.Url : this.GetUrl()
 
-    if (this.Title ~= " - YouTube$")
-      this.Title := RegExReplace(this.Title, "^\(\d+\) ")
+    ; if (this.Title ~= " - YouTube$")
+    ;   this.Title := RegExReplace(this.Title, "^\(\d+\) ")
 
     ; Sites that should be skipped
     SkippedList := "wind.com.cn,thepokerbank.com,tutorial.math.lamar.edu"
@@ -264,9 +264,10 @@ class Browser {
         }
         if (!FullPageText)
           FullPageText := this.GetFullPage(RestoreClip)
+        RegExMatch(FullPageText, "(.*)\r\n\r\n.*\r\n.* subscribers", v), this.Title := v1
         if (GetTimeStamp)
           this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
-        RegExMatch(FullPageText, ".*(?=\r\n.*subscribers)", Author), this.Author := Author
+        RegExMatch(FullPageText, ".*(?=\r\n.* subscribers)", Author), this.Author := Author
       }
     } else if (IfContains(this.Url, "youtube.com/playlist")) {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
@@ -297,9 +298,9 @@ class Browser {
       if (GetFullPage && GetTimeStamp)
         this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (IfContains(this.Url, "dopebox.to")) {
-      RegExMatch(this.Title, "^Watch Free (.*?) Full Movies Online$", v)
+      RegExMatch(this.Title, "^Watch Free (.*?) (Full Movies|TV Shows) Online$", v)
       this.Source := "DopeBox", this.Title := v1
-      if (RegExMatch(this.Title, " (\d+)$", v))
+      if (RegExMatch(this.Title, " (\d+)$", v) && (v2 == "Full Movies"))
         this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
       if (GetFullPage && GetTimeStamp)
         this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
@@ -311,8 +312,8 @@ class Browser {
       this.Source := "Kissasian", this.Title := v1
       if (GetFullPage && GetTimeStamp)
         this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
-    } else if (RegExMatch(this.Title, "^Watch (.*?) English Sub/Dub online Free on Aniwatch\.to$", v)) {
-      this.Source := "AniWatch", this.Title := v1
+    } else if (RegExMatch(this.Title, "^Watch (.*?) English Sub/Dub online Free on HiAnime\.to$", v)) {
+      this.Source := "HiAnime", this.Title := v1
       if (GetFullPage && GetTimeStamp)
         this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (this.Title ~= "-免费在线观看-爱壹帆$") {
@@ -616,7 +617,7 @@ class Browser {
     } else if (Title ~= "(_哔哩哔哩_bilibili|-bilibili-哔哩哔哩)$") {
       return 2
     ; Return 3 if time stamp can't be in url and ^a doesn't cover time stamp
-    } else if (Title ~= "^(Netflix|Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on Aniwatch\.to)$") {
+    } else if (Title ~= "^(Netflix|Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on HiAnime\.to)$") {
       return 3
     } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon)$") {
       return 3

@@ -590,6 +590,7 @@ class SM {
   }
 
   WaitFileLoad(PrepStatBar:=true, Add:="", Timeout:=0) {  ; used for reloading or waiting for an element to load
+    LFW := WinExist()  ; save last found window
     if (PrepStatBar)
       this.PrepStatBar(1)
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame ahk_pid " . WinGet("PID", "ahk_class TElWind")))  ; sometimes could happen in YT videos
@@ -611,6 +612,8 @@ class SM {
     }
     if (PrepStatBar)
       this.PrepStatBar(2)
+
+    WinExist("ahk_id " . LFW)
     return ret
   }
 
@@ -668,9 +671,11 @@ class SM {
     return (Text ~= this.CssClass)
   }
 
-  EnterAndUpdate(Control, Text:="", w:="") {
+  EnterAndUpdate(Control, Text:="", w:="", Wait:=true) {
     ControlSetText, % Control, % SubStr(Text, 2), % w
     ControlSend, % Control, % "{text}" . SubStr(Text, 1, 1), % w
+    if (Wait)
+      ControlTextWait(Control, Text, w)
   }
 
   SetDefaultConcept(Concept:="", Prio:="", CheckConceptExist:="") {
@@ -751,7 +756,7 @@ class SM {
       return
     }
     w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
-    while (!WinExist(w)) {
+    while (!WinExist(w)) {  ; last iteration would update the last found window to w
       this.ElementParameter()
       WinWait, % w,, 0.7
       if (!ErrorLevel)
@@ -766,7 +771,7 @@ class SM {
     if ((Prio >= 0) && (ControlGetText("TEdit1") != Prio))
       this.EnterAndUpdate("TEdit1", Prio)
     if (Group && !(ControlGetText("Edit2") = Group))
-      this.EnterAndUpdate("Edit2", Group)
+      this.EnterAndUpdate("Edit2", Group,, false)
     if (Submit) {
       ControlFocus, TMemo1  ; needed, otherwise the window won't close sometimes
       while (WinExist(w))
