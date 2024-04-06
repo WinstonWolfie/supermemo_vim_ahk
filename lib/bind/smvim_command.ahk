@@ -132,15 +132,25 @@ i::  ; learn outstanding *i*tems only
   Send ^l
 return
 
-SMLearnChild:
-c::  ; learn child
+SMNeuralReviewChildren:
+n::  ; neural review children
+  Vim.State.SetMode("Vim_Normal")
+  SM.OpenBrowser()
+  SM.WaitBrowser()
+  Send {AppsKey}g
+  WinWaitActive, ahk_class TElWind
+  SM.PlayIfOnlineColl()
+return
+
+SMLearnChildren:
+c::  ; learn children
   Vim.State.SetMode("Vim_Normal")
   SM.OpenBrowser()
   SM.WaitBrowser()
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TBrowser"))
 c::
-SMLearnChildActiveBrowser:
+SMLearnChildrenActiveBrowser:
   Vim.State.SetMode("Vim_Normal")
   Send {AppsKey}co
   SM.WaitBrowser()
@@ -148,7 +158,7 @@ SMLearnChildActiveBrowser:
   SM.WaitFileLoad()
   Send ^l
   WinWaitActive, ahk_class TElWind
-  SM.PlayIfOnlineColl(, 500)
+  SM.PlayIfOnlineColl()
 return
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))

@@ -369,7 +369,7 @@ class SM {
     }
   }
 
-  PlayIfOnlineColl(CollName:="", Timeout:=0) {
+  PlayIfOnlineColl(CollName:="", Timeout:=1500) {
     CollName := CollName ? CollName : this.GetCollName()
     if (CollName ~= "i)^(bgm|piano)$")
       return
@@ -679,6 +679,11 @@ class SM {
   }
 
   SetDefaultConcept(Concept:="", Prio:="", CheckConceptExist:="") {
+    if (Concept && !Prio && !CheckConceptExist) {
+      if (this.GetDefaultConcept() == Concept)
+        return true
+    }
+
     ; Click default concept button via UIA
     UIA := UIA_Interface()
     el := UIA.ElementFromHandle(WinExist("ahk_class TElWind"))
@@ -720,6 +725,7 @@ class SM {
       }
 
       WinExist(wReg)  ; update last found window
+      WinWaitClose
       return (PrevPrio >= 0) ? PrevPrio : true
     }
   }
@@ -1588,6 +1594,10 @@ class SM {
     Acc_Get("Object", "4.5.4.8.4",, WinTitle).accDoDefaultAction()
   }
 
+  RegAltG(WinTitle:="") {
+    Acc_Get("Object", "4.5.4.2.4",, WinTitle).accDoDefaultAction()
+  }
+
   PrevComp() {
     this.ActivateElWind()
     Send !{f12}fl
@@ -1680,14 +1690,14 @@ class SM {
   CanMarkOrExtract(HTMLExist, auiaText, Marker, ThisLabel, Label, ToolTip:="") {
     if (!HTMLExist
     || (!this.IsHTMLEmpty(auiaText) && !Marker)
-    || (Marker && IfNotIn(this.IsCompMarker(Marker), "read point,page mark"))) {
+    || (Marker && !IfIn(this.IsCompMarker(Marker), "read point,page mark"))) {
       if (ThisLabel != Label) {
         if (HTMLExist)
           ParentElNumber := this.GetParentElNumber(auiaText)
-        t := "Go to source and try again?"
+        MBText := "Go to source and try again?"
         if (HTMLExist)
-          t .= " (press no to execute in current topic)"
-        if (IfIn(MB := MsgBox(3,, t), "yes,no")) {
+          MBText .= " (press no to execute in current topic)"
+        if (IfIn(MB := MsgBox(3,, MBText), "yes,no")) {
           if (MB = "Yes") {
             if (HTMLExist) {
               this.GoToEl(ParentElNumber)
@@ -1701,11 +1711,7 @@ class SM {
           }
         }
       }
-      if (ToolTip) {
-        SetToolTip("Copied " . ToolTip)
-      } else {
-        SetToolTip("Copied " . Clipboard)
-      }
+      SetToolTip("Copied " . (ToolTip ? ToolTip : Clipboard))
       return 0
     }
     return 1

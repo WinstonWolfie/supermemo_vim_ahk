@@ -6,6 +6,8 @@ Setting file to emulate vim with AutoHotkey, works with SuperMemo
 
 I apologise for still not finished writing a documentation (it's being written incrementally!), the keybinds are fairly similar to Vim, except `q` for extract and `z` for cloze, so you can do stuff like `zt.` to cloze until a full stop, and `qip` to extract inner paragraph. [vim-sneak](https://github.com/justinmk/vim-sneak) is added as well, so you can do `d2zth` to delete until the 2nd "th".
 
+Financial incentives:) https://www.buymeacoffee.com/winstonwolf
+
 # Cheat sheet
 
 Vim notations: 
@@ -503,3 +505,15 @@ Hugely inspired by [Vimium](https://github.com/philc/vimium) keys.
 `L`: select until the bottom of the text on screen
 
 ### Shortcuts (any mode would do)
+
+`<C-A-.>`: find \[...\] and insert
+
+`<C-A-c>`: change default concept group
+
+(`RC`: right Ctrl; `RS`: right Shift; `RA`: right Alt)
+
+`<RC-RS-BS> / <RA-RS-BS>`: delete element and keep learning
+
+`<RC-RS-\> / <RA-RS-\>`: Done! and keep learning
+
+`<C-A-S-g>`: change current element's concept group

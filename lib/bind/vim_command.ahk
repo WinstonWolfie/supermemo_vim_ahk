@@ -54,6 +54,7 @@ Return
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
         . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
         . "|PasteCleanedClipboard|ArchiveToday|WolframAlpha|PasteHTML"
+        . "|AnnasArchive"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     List := "SetConceptHook|MemoriseChildren|" . List
@@ -544,32 +545,13 @@ ReformatVocab:
 return
 
 ZLibrary:
-  if (!Text := FindSearchIB("Z-Library", "Search:"))
-    return
-  ; RIP z-lib
-  ; ShellRun("https://z-lib.org/")
-  ShellRun("https://singlelogin.re/s/?q=" . Text)
+  if (Text := FindSearchIB("Z-Library", "Search:"))
+    ShellRun("https://singlelogin.re/s/?q=" . EncodeDecodeURI(Text))
+return
 
-  ; Telegram
-  ; ShellRun("https://web.telegram.org/z/#1788460589")
-
-  ; WinWaitActive, ahk_group Browser
-  ; uiaBrowser := new UIA_Browser("A")
-  ; uiaBrowser.WaitPageLoad()
-
-  ; RIP z-lib
-  ; Url := uiaBrowser.WaitElementExist("ControlType=Hyperlink AND Name='Books'").CurrentValue
-  ; uiaBrowser.SetURL(Url . "s/" . EncodeDecodeURI(search) . "?", true)
-
-  ; Telegram
-  ; uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Message' AND AutomationId='editable-message-text'") ; SetValue(Text) doesn't work
-  ; Send {tab}
-  ; Send % "{text}" . Text
-  ; if (uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='waiting for network|updating'",, "regex",, 2000)) {
-  ;   uiaBrowser.FindFirstBy("ControlType=Button AND Name='Send Message'").Click()
-  ; } else {
-  ;   SetToolTip("Timed out.")
-  ; }
+AnnasArchive:
+  if (Text := FindSearchIB("Anna’s Archive", "Search:"))
+    ShellRun("https://annas-archive.org/search?q=" . EncodeDecodeURI(Text))
 return
 
 ImportFile:
@@ -938,7 +920,7 @@ MassReplaceRegistry:
   }
   ; loop {
   ;   ControlSend, Edit1, % "{text}" . find, A
-  ;   Gosub SMRegAltG
+  ;   SM.RegAltG()
   ;   WinWaitActive, ahk_class TElWind
   ;   SM.EditRef()
   ;   WinWaitActive, ahk_class TInputDlg
@@ -982,7 +964,7 @@ MassProcessRegistry:
   }
   ; loop {
   ;   ControlSend, Edit1, % "{text}" . find, A
-  ;   Gosub SMRegAltG
+  ;   SM.RegAltG()
   ;   WinWaitActive, ahk_class TElWind
   ;   SM.EditRef()
   ;   WinWaitActive, ahk_class TInputDlg

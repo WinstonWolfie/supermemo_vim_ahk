@@ -242,7 +242,6 @@ IWBNewTopic:
 
   SM.CloseMsgDialog()
   CollName := SM.GetCollName()
-  CurrConcept := SM.GetDefaultConcept()
   OnlineEl := SM.IsOnline(CollName, -1)
 
   DupChecked := MB := false
@@ -267,7 +266,7 @@ IWBNewTopic:
     Gui, SMImport:Add, Edit, vPrio w280
     Gui, SMImport:Add, Text,, Concept &group:  ; like in default import dialog
     ConceptList := "||Online|Sources|ToDo"
-    if (IfIn(CurrConcept, "Online,Sources,ToDo"))
+    if (IfIn(CurrConcept := SM.GetDefaultConcept(), "Online,Sources,ToDo"))
       ConceptList := StrReplace(ConceptList, "|" . CurrConcept)
     list := StrLower(CurrConcept . ConceptList)
     Gui, SMImport:Add, ComboBox, vConcept gAutoComplete w280, % list
@@ -352,7 +351,7 @@ SMImportButtonImport:
     } else {
       SetToolTip("Attempting to download website...")
       if (!HTMLText := GetSiteHTML(Browser.Url)) {
-        SetToolTip("Download failed."), CopyAll := true
+        SetToolTip("Download failed."), CopyAll := true, DLHTML := false
       } else {
         ; Fixing links
         RegExMatch(Browser.Url, "^https?:\/\/.*?\/", UrlHead)
@@ -374,7 +373,7 @@ SMImportButtonImport:
   }
 
   SkipDate := (OnlineEl && !IsVideoOrAudioSite && (OnlineEl != 2))
-  Browser.GetInfo(false,, (CopyAll ? Clipboard : ""),, !SkipDate, !ResetTimeStamp)
+  Browser.GetInfo(false,, (CopyAll ? Clipboard : ""),, !SkipDate, !ResetTimeStamp, (DLHTML ? HTMLText : ""))
 
   if (ResetTimeStamp)
     Browser.TimeStamp := "0:00"
@@ -442,11 +441,8 @@ SMImportButtonImport:
   if (Concept) {
     if ((OnlineEl == 1) && !SM.IsOnline(-1, Concept))
       ChangeBackConcept := Concept, Concept := "Online"
-    if (SM.SetDefaultConcept(Concept,, ChangeBackConcept)) {
-      WinWaitClose
-    } else {
+    if (!SM.SetDefaultConcept(Concept,, ChangeBackConcept))
       Goto SMImportReturn
-    }
   }
 
   if (SMCtrlNYT) {
@@ -497,6 +493,7 @@ SMImportButtonImport:
     SM.SetDefaultConcept(ChangeBackConcept)
   if (Tags)
     SM.LinkConcepts(StrSplit(Tags, ";"),, wBrowser)
+  SM.CloseMsgDialog()
 
   if (CloseTab) {
     WinActivate % wBrowser  ; apparently needed for closing tab

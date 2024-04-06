@@ -39,7 +39,7 @@ Return
 return
 
 >!>+BS::  ; for laptop
->^>+BS::  ; for processing pending queue Advanced English 2018: delete element and keep learning
+>^>+BS::  ; for processing pending queue: delete element and keep learning
 >!>+\::  ; for laptop
 >^>+\::  ; Done! and keep learning
   Vim.State.SetNormal()
@@ -63,7 +63,7 @@ return
     SM.Learn(false, true, true)
 return
 
-^!+g::  ; change element's concept *g*roup
+^!+g::  ; change current element's concept *g*roup
   KeyWait Ctrl
   KeyWait Shift
   KeyWait Alt
@@ -818,32 +818,32 @@ return
 !t::Acc_Get("Object", "4.6.4.3.4.10.4").accDoDefaultAction()  ; default topic template
 
 ^l::
-  Gosub SMRegAltG
+  SM.RegAltG()
   WinWaitActive, ahk_class TElWind
-  Goto SMLearnChild
+  Goto SMLearnChildren
+return
+
+^n::
+  SM.RegAltG()
+  WinWaitActive, ahk_class TElWind
+  Goto SMNeuralReviewChildren
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)"))
 !i::SM.RegInsert()
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^.*? Registry \(\d+ members\)"))
-SMRegAltG:
-!g::
-  Acc_Get("Object", "4.5.4.2.4").accDoDefaultAction()
-  WinWaitActive, ahk_class TElWind,, 1.5
-  if (!ErrorLevel)
-    Vim.State.SetMode("Vim_Normal")
-return
+!g::SM.RegAltG(), Vim.State.SetNormal()
 
 ^l::
   Send !b
   WinWaitActive, ahk_class TBrowser
-  Goto SMLearnChildActiveBrowser
+  Goto SMLearnChildrenActiveBrowser
 return
 
 ~!n::
   WinWaitActive, ahk_class TElWind,, 1
-  SM.PlayIfOnlineColl(, 500)
+  SM.PlayIfOnlineColl()
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TWebDlg"))

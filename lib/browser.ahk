@@ -40,7 +40,7 @@ class Browser {
     return Url
   }
 
-  GetInfo(RestoreClip:=true, GetFullPage:=true, FullPageText:="", GetUrl:=true, GetDate:=true, GetTimeStamp:=true) {
+  GetInfo(RestoreClip:=true, GetFullPage:=true, FullPageText:="", GetUrl:=true, GetDate:=true, GetTimeStamp:=true, FullPageHTML:="") {
     this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
     this.Title := this.FullTitle
     if (GetUrl)
@@ -149,7 +149,7 @@ class Browser {
     } else if (RegExMatch(this.Title, "'(.*?)': Naver Korean-English Dictionary", v)) {
       this.Source := "Naver Korean-English Dictionary", this.Title := v1
     } else if (IfContains(this.Url, "reddit.com")) {
-      RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.Source := v, this.Title := RegExReplace(this.Title, " : " . StrReplace(v, "r/") . "$")
+      RegExMatch(this.Url, "reddit\.com\/\Kr\/[^\/]+", v), this.Source := v, this.Title := RegExReplace(this.Title, " : " . v . "$")
     } else if (IfContains(this.Url, "podcasts.google.com")) {
       RegExMatch(this.Title, "^(.*) - ", v), this.Author := v1, this.Title := RegExReplace(this.Title, "^(.*) - "), this.Source := "Google Podcasts"
 
@@ -247,7 +247,7 @@ class Browser {
             btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
           if (btn)
             btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
-          RegExMatch(FullPageText := this.GetFullPage(RestoreClip), "views +?(\r\n)?((Streamed live|Premiered) on )?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
+          RegExMatch(FullPageText := this.GetFullPage(RestoreClip), "views +?(\r\n)?((Streamed live|Premiered) (on )?)?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
           if (btn) {
             if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show less' AND AutomationId='collapse'")) {  ; clicked before
               guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show less'").Click()  ; this doesn't scroll
@@ -302,8 +302,12 @@ class Browser {
       this.Source := "DopeBox", this.Title := v1
       if (RegExMatch(this.Title, " (\d+)$", v) && (v2 == "Full Movies"))
         this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
-      if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+      if (GetFullPage) {
+        if (GetTimeStamp)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        if (GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+          RegExMatch(FullPageText, "Released: (\d{4})-\d{2}-\d{2}", v), this.Date := v1
+      }
     } else if (RegExMatch(this.Title, "^Watch (.*?) online free on 9anime$", v)) {
       this.Source := "9anime", this.Title := v1
       if (GetFullPage && GetTimeStamp)
@@ -340,6 +344,10 @@ class Browser {
         this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
     } else if (this.Title ~= " - Animelon$") {
       this.Source := "Animelon", this.Title := RegExReplace(this.Title, " - Animelon$")
+      if (GetFullPage && GetTimeStamp)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+    } else if (this.Title ~= " on Vimeo$") {
+      this.Source := "Vimeo", this.Title := RegExReplace(this.Title, " on Vimeo$")
       if (GetFullPage && GetTimeStamp)
         this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
 
@@ -464,8 +472,14 @@ class Browser {
         RegExMatch(FullPageText, this.Months . " \d{1,2}(st|nd|rd|th) \d{4}", v), this.Date := v
     } else if (IfContains(this.Url, "investopedia.com")) {
       this.Source := "Investopedia"
-      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Updated (.*)", v), this.Date := v1
+      if (GetFullPage) {
+        FullPageHTML := FullPageHTML ? FullPageHTML : GetSiteHTML(this.Url ? this.Url : this.GetUrl())
+        if (GetDate) {
+          ; RegExMatch(FullPageText, "Updated (.*)", v), this.Date := v1
+          RegExMatch(FullPageHTML, "<div class=""mntl-attribution__item-date"">Updated (.*?)<\/div>", v), this.Date := v1
+        }
+        RegExMatch(FullPageHTML, "<meta name=""sailthru.author"" content=""(.*?)"" \/>", v), this.Author := v1
+      }
     } else if (IfContains(this.Url, "mp.weixin.qq.com")) {
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
         if (RegExMatch(FullPageText, "Modified on (\d{4}-\d{2}-\d{2})", v)) {
@@ -476,8 +490,14 @@ class Browser {
       }
     } else if (this.Title ~= " \| Britannica$") {
       this.Source := "Britannica", this.Title := RegExReplace(this.Title, " \| Britannica$")
-      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "Last Updated: (.*) • ", v), this.Date := v1
+      if (GetFullPage) {
+        FullPageHTML := FullPageHTML ? FullPageHTML : GetSiteHTML(this.Url ? this.Url : this.GetUrl())
+        if (GetDate) {
+          ; RegExMatch(FullPageText, "Last Updated: (.*) • ", v), this.Date := v1
+          RegExMatch(FullPageHTML, "<time datetime="".*?"" >(.*?)<\/time>", v), this.Date := v1
+        }
+        RegExMatch(FullPageHTML, "<div class=""editor-title .*?"">(.*?)<\/div>", v), this.Author := v1
+      }
     } else if (RegExMatch(this.Title, " \| a podcast by (.*)$", v)) {
       this.Author := v1, this.Source := "PodBean", this.Title := RegExReplace(this.Title, " \| a podcast by (.*)$")
     } else if (IfContains(this.Url, "podbean.com")) {
@@ -619,7 +639,7 @@ class Browser {
     ; Return 3 if time stamp can't be in url and ^a doesn't cover time stamp
     } else if (Title ~= "^(Netflix|Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on HiAnime\.to)$") {
       return 3
-    } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon)$") {
+    } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon| on Vimeo)$") {
       return 3
     }
   }
@@ -630,17 +650,24 @@ class Browser {
     CollName := CollName ? CollName : SM.GetCollName()
     Sent := False
     if (RegexMatch(PlainText, "(?<!\s)(?<!\d)(\d+,?)+\.", v)) {
-      Url := Url ? Url : this.GetUrl()
-      if (IfContains(Url, "fr.wikipedia.org")) {
+      if (IfContains(Url := Url ? Url : this.GetUrl(), "fr.wikipedia.org")) {
         Sent := True
         Send % "+{Left " . StrLen(v) . "}"
       }
     }
+
     if (!Sent && RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
-      Url := Url ? Url : this.GetUrl()
-      if (IfContains(Url, "wikipedia.org"))
+      if (IfContains(Url ? Url : this.GetUrl(), "wikipedia.org")) {
+        Sent := true
+        Send % "+{Left " . StrLen(v) . "}"
+      }
+    }
+
+    if (!Sent && RegexMatch(PlainText, "\d+$", v)) {
+      if (IfContains(Url, "investopedia.com"))
         Send % "+{Left " . StrLen(v) . "}"
     }
+
     ; ControlSend doesn't work reliably because browser can't highlight in background
     if (CollName = "zen") {
       Send ^+h
