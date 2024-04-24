@@ -701,7 +701,10 @@ BrowserSyncTime:
     if (w := SM.FindMatchTitleColl(Browser.Title))
       wSMElWind := w
 
-    SMTemplCode := SM.GetTemplCode(false, wSMElWind)
+    while (!SMTemplCode) {
+      SMTemplCode := SM.GetTemplCode(false, wSMElWind, 1.5)
+      sleep 700
+    }
     CurrSMUrl := SM.GetLink(SMTemplCode)
     ret := SM.AskToSearchLink(Browser.Url, CurrSMUrl, wSMElWind)
     if (ret == 0) {

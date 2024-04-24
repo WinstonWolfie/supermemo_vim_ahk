@@ -305,6 +305,8 @@ SMImportButtonImport:
     KeyWait I
     Gui, Submit
     Gui, Destroy
+    if (Clipboard != ClipBeforeGui)
+      ClipSaved := ClipboardAll
   }
 
   if (OnlineEl != 1)
@@ -418,7 +420,7 @@ SMImportButtonImport:
   }
   ClipWait
 
-  InfoToolTip := "Importing:`n"
+  InfoToolTip := "Importing:`n`n"
                . "Url: " . Browser.Url . "`n"
                . "Title: " . Browser.Title
   if (Browser.Source)
@@ -460,6 +462,7 @@ SMImportButtonImport:
       WinWaitTitleChange(TempTitle, "A")
 
     } else if (OnlineEl) {
+      Critical
       pidSM := WinGet("PID", "ahk_class TElWind")
       Send ^t{f9}{Enter}
       WinWait, % wScript := "ahk_class TScriptEditor ahk_pid " . pidSM,, 3
@@ -471,9 +474,9 @@ SMImportButtonImport:
 
       ; ControlSetText to "rl" first than send one "u" is needed to update the editor,
       ; thus prompting it to ask to save on exiting
-      ControlSetText, TMemo1, % "rl " . ScriptUrl
-      ControlSend, TMemo1, {text}u
-      ControlSend, TMemo1, {Esc}
+      ControlSetText, TMemo1, % "rl " . ScriptUrl, % wScript
+      ControlSend, TMemo1, {text}u, % wScript
+      ControlSend, TMemo1, {Esc}, % wScript
       WinWait, % "ahk_class TMsgDialog ahk_pid " . pidSM
       ControlSend, ahk_parent, {Enter}
       WinWaitClose
@@ -994,7 +997,11 @@ MarkInHTMLCompAgain:
     SM.EmptyHTMLComp()
   WinWaitActive, ahk_class TElWind
   SM.WaitTextFocus()
+  if (OldText)
+    x := A_CaretX, y := A_CaretY
   Send ^{Home}
+  if (OldText)
+    WaitCaretMove(x, y, 700)
   Clip(NewText,, false, "sm")
   Send {Esc}
   if (IfContains(A_ThisLabel, "^+!"))

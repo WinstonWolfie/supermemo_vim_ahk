@@ -550,7 +550,7 @@ class SM {
     return true
   }
 
-  GetTemplCode(RestoreClip:=true, wSMElWind:="ahk_class TElWind") {
+  GetTemplCode(RestoreClip:=true, wSMElWind:="ahk_class TElWind", WaitTime:=-1) {
     if (RestoreClip)
       ClipSaved := ClipboardAll
     global WinClip
@@ -560,7 +560,13 @@ class SM {
     } else {
       this.PostMsg(693, true, wSMElWind)
     }
-    ClipWait, % LongCopy ? 0.6 : 0.2, True
+    if (WaitTime == -1) {
+      ClipWait, % LongCopy ? 0.6 : 0.2, True
+    } else if (WaitTime == 0) {
+      ClipWait,, True
+    } else if (WaitTime) {
+      ClipWait, % WaitTime, True
+    }
     TemplCode := Clipboard
     if (RestoreClip)
       Clipboard := ClipSaved
@@ -671,10 +677,10 @@ class SM {
     return (Text ~= this.CssClass)
   }
 
-  EnterAndUpdate(Control, Text:="", w:="", Wait:=true) {
+  EnterAndUpdate(Control, Text:="", w:="", CheckName:=true) {
     ControlSetText, % Control, % SubStr(Text, 2), % w
     ControlSend, % Control, % "{text}" . SubStr(Text, 1, 1), % w
-    if (Wait)
+    if (CheckName)
       ControlTextWait(Control, Text, w)
   }
 
@@ -750,7 +756,7 @@ class SM {
     }
   }
 
-  SetElParam(Title:="", Prio:="", Template:="", Group:="", Submit:=true) {
+  SetElParam(Title:="", Prio:="", Template:="", Group:="", CheckGroup:=false) {
     Critical
     if ((Title == "") && !(Prio >= 0) && !Template && !Group) {
       return
@@ -761,13 +767,16 @@ class SM {
       this.SetPrio(Prio,, true)
       return
     }
+
+    ; Launch element parameter window
     w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
     while (!WinExist(w)) {  ; last iteration would update the last found window to w
       this.ElementParameter()
-      WinWait, % w,, 0.7
+      WinWait, % w,, 1.5
       if (!ErrorLevel)
         Break
     }
+
     if (Template && !(ControlGetText("Edit1") = Template)) {
       this.EnterAndUpdate("Edit1", Template)
       this.WaitFileLoad()
@@ -777,12 +786,12 @@ class SM {
     if ((Prio >= 0) && (ControlGetText("TEdit1") != Prio))
       this.EnterAndUpdate("TEdit1", Prio)
     if (Group && !(ControlGetText("Edit2") = Group))
-      this.EnterAndUpdate("Edit2", Group,, false)
-    if (Submit) {
-      ControlFocus, TMemo1  ; needed, otherwise the window won't close sometimes
-      while (WinExist(w))
-        ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Enter}
-    }
+      this.EnterAndUpdate("Edit2", Group,, CheckGroup)
+
+    ; Submit
+    ControlFocus, TMemo1  ; needed, otherwise the window won't close sometimes
+    while (WinExist(w))
+      ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Enter}
   }
 
   IsNavWnd() {  ; navigation window
@@ -998,8 +1007,11 @@ class SM {
 
   AutoPlay() {
     this.ActivateElWind(), SetToolTip("Running...")
-    Marker := this.GetMarkerFromTextArray(auiaText := this.GetTextArray())
+    auiaText := this.GetTextArray()
+    Marker := this.GetMarkerFromTextArray(auiaText)
+    Comment := this.GetCommentFromTextArray(auiaText)
     SMTitle := WinGetTitle("ahk_class TElWind")
+
     if (SMTitle == "Netflix") {
       ShellRun(this.GetLinkFromTextArray(auiaText))
     } else if (Marker == "SMVim: Use online video progress") {
@@ -1011,7 +1023,10 @@ class SM {
       if (!ErrorLevel)
         Send {text}y 
     }
+
     ToolTip := "Running: `n`nTitle: " . SMTitle
+    if (Comment)
+      ToolTip .= "`nComment: " . Comment
     if (Marker ~= "^SMVim(?!:)") {
       ToolTip .= "`n" . StrUpper(SubStr(Marker, 7, 1)) . SubStr(Marker, 8)
       str := SubStr(Marker, 7)
@@ -1026,7 +1041,9 @@ class SM {
       }
     }
     WinWaitNotActive, ahk_class TElWind,, 10
-    hReader := WinActive("A"), wReader := "ahk_id " . hReader
+    while (!hReader := WinActive("A"))
+      Continue
+    wReader := "ahk_id " . hReader
 
     if (MarkerName = "read point") {
       if (WinActive("ahk_group Browser")) {
@@ -1054,11 +1071,13 @@ class SM {
       }
 
     } else if (MarkerName = "page mark") {
-      if (MsgBox(3,, "Do you want to go to page mark?") = "Yes") {
-        if ((WinGetClass(wReader) == "SUMATRA_PDF_FRAME") || (WinGet("ProcessName", wReader) == "WinDjView.exe")) {
-          ControlFocus, Edit1, % wReader
-          ControlSetText, Edit1, % MarkerContent, % wReader
-          ControlSend, Edit1, {Enter}, % wReader
+      if ((WinGetClass(wReader) == "SUMATRA_PDF_FRAME") || (WinGet("ProcessName", wReader) == "WinDjView.exe")) {
+        if (ControlGetText("Edit1", wReader) != MarkerContent) {  ; current page mark
+          if (MsgBox(3,, "Do you want to go to page mark?") = "Yes") {
+            ControlFocus, Edit1, % wReader
+            ControlSetText, Edit1, % MarkerContent, % wReader
+            ControlSend, Edit1, {Enter}, % wReader
+          }
         }
       }
     } else {
@@ -1373,6 +1392,14 @@ class SM {
     }
   }
 
+  GetCommentFromTextArray(auiaText:="") {
+    auiaText := auiaText ? auiaText : this.GetTextArray()
+    for i, v in auiaText {
+      if (RegExMatch(v.Name, "^#Comment: (.*)$", v))
+        return v1
+    }
+  }
+
   GetMarkerFromTextArray(auiaText:="") {
     auiaText := auiaText ? auiaText : this.GetTextArray()
     for i, v in auiaText {
@@ -1428,6 +1455,7 @@ class SM {
   LinkConcept(Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="") {
     ; this.ActivateElWind(wSMElWind)
     ; Send !{f10}cl
+    this.CloseMsgDialog()
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
       this.PostMsg(642, true, wSMElWind)
     } else {
@@ -1442,7 +1470,14 @@ class SM {
       if (!this.RegCheck(Concept, wSMElWind, wReg))
         return
       ControlSend, Edit1, {Enter}, % wReg
-      WinWaitClose, % wReg
+      loop {
+        if (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)) {
+          WinClose
+          Break
+        } else if (!WinExist(wRed)) {
+          Break
+        }
+      }
       return true
     }
   }
@@ -1661,7 +1696,7 @@ class SM {
   }
 
   IsPrioInputBox() {
-    return (WinActive("ahk_class #32770 ahk_exe AutoHotkey.exe") && (ControlGetText("Static1") == "Enter priority:"))
+    return (WinActive("ahk_class #32770") && IfContains(WinGet("ProcessName"), "AutoHotkey", true) && (ControlGetText("Static1") == "Enter priority:"))
   }
 
   IsCtrlNYT(Text) {

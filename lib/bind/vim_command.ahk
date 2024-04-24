@@ -843,7 +843,7 @@ PerplexityAIButtonSearch:
     uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
 
-    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Focus'").Click()
+    uiaBrowser.WaitElementExist("ControlType=Button AND Name='Focus'").Click()
     if (Focus == "internet") {
       uiaBrowser.WaitElementExist("ControlType=Text AND Name='All'").Click()
     } else if (Focus == "scholar") {
@@ -1245,7 +1245,7 @@ SMTagEntered:
     RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
     loop % aTags.MaxIndex() {
       Tag := StrReplace(aTags[A_Index], " ", "_")
-      if (!IfContains(Comment, "#" . Tag))
+      if (!IfContains(Comment, "#" . Tag, true))
         Comment .= " #" . Tag
     }
     Ref := "#Comment: " . Comment . "`n" . Ref

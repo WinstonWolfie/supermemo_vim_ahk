@@ -649,18 +649,20 @@ class Browser {
     global SM
     CollName := CollName ? CollName : SM.GetCollName()
     Sent := False
+
     if (RegexMatch(PlainText, "(?<!\s)(?<!\d)(\d+,?)+\.", v)) {
-      if (IfContains(Url := Url ? Url : this.GetUrl(), "fr.wikipedia.org")) {
-        Sent := True
+      if (Sent := IfContains(Url := Url ? Url : this.GetUrl(), "fr.wikipedia.org"))
         Send % "+{Left " . StrLen(v) . "}"
-      }
     }
 
-    if (!Sent && RegexMatch(PlainText, "(\[(\d+|note \d+)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
-      if (IfContains(Url ? Url : this.GetUrl(), "wikipedia.org")) {
-        Sent := true
+    if (RegexMatch(PlainText, "\.\K(\d+​)+\d+$", v)) {
+      if (Sent := IfContains(Url := Url ? Url : this.GetUrl(), "es.wikipedia.org"))
         Send % "+{Left " . StrLen(v) . "}"
-      }
+    }
+
+    if (!Sent && RegexMatch(PlainText, "(\[(\d+|note \d+|citation needed)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
+      if (Sent := IfContains(Url ? Url : this.GetUrl(), "wikipedia.org"))
+        Send % "+{Left " . StrLen(v) . "}"
     }
 
     if (!Sent && RegexMatch(PlainText, "\d+$", v)) {
