@@ -813,7 +813,7 @@ PerplexityAI:
     Send ^{f7}  ; save read point
     SM.SaveHTML()  ; path may be updated
     WinWaitActive, ahk_class TElWind
-    Search := "File path from SMVim script: " . SM.GetFilePath()
+    Search := "File path from SMVim script: " . SM.LoopForFilePath()
   }
   Gui, PerplexityAI:Add, Text,, &Search:
   Gui, PerplexityAI:Add, Edit, vSearch w200 r1 -WantReturn, % Search
@@ -843,19 +843,19 @@ PerplexityAIButtonSearch:
     uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
 
-    uiaBrowser.WaitElementExist("ControlType=Button AND Name='Focus'").Click()
-    if (Focus == "internet") {
-      uiaBrowser.WaitElementExist("ControlType=Text AND Name='All'").Click()
-    } else if (Focus == "scholar") {
-      uiaBrowser.WaitElementExist("ControlType=Text AND Name='Academic'").Click()
-    } else if (Focus == "writing") {
-      uiaBrowser.WaitElementExist("ControlType=Text AND Name='Writing'").Click()
-    } else if (Focus == "wolfram") {
-      uiaBrowser.WaitElementExist("ControlType=Text AND Name='Wolfram|Alpha'").Click()
-    } else if (Focus == "youtube") {
-      uiaBrowser.WaitElementExist("ControlType=Text AND Name='YouTube'").Click()
-    } else if (Focus == "reddit") {
-      uiaBrowser.WaitElementExist("ControlType=Text AND Name='Reddit'").Click()
+    if (Focus != "internet") {
+      uiaBrowser.WaitElementExist("ControlType=Button AND Name='Focus'").Click()
+      if (Focus == "scholar") {
+        uiaBrowser.WaitElementExist("ControlType=Text AND Name='Academic'").Click()
+      } else if (Focus == "writing") {
+        uiaBrowser.WaitElementExist("ControlType=Text AND Name='Writing'").Click()
+      } else if (Focus == "wolfram") {
+        uiaBrowser.WaitElementExist("ControlType=Text AND Name='Wolfram|Alpha'").Click()
+      } else if (Focus == "youtube") {
+        uiaBrowser.WaitElementExist("ControlType=Text AND Name='YouTube'").Click()
+      } else if (Focus == "reddit") {
+        uiaBrowser.WaitElementExist("ControlType=Text AND Name='Reddit'").Click()
+      }
     }
 
     TempFilePath := ""
@@ -1161,8 +1161,9 @@ Comment:
   Ref := ControlGetText("TMemo1")
   RegExMatch(Ref, "#Comment: (.*)|$", v), PrevComment := v1
   Comment := InputBox(, "Set comment:",,,,,,,, PrevComment)
+  e := ErrorLevel
   WinWaitActive, ahk_class TInputDlg
-  if (ErrorLevel) {
+  if (e) {
     WinClose
     return
   }

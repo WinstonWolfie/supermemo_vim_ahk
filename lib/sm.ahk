@@ -1,9 +1,10 @@
 #Requires AutoHotkey v1.1.1+  ; so that the editor would recognise this script as AHK V1
 class SM {
   __New() {
-    this.CssClass := "cloze|extract|clozed|hint|note|ignore|headers|RefText"
+    this.CssClass := "cloze|extract|clozed|hint|note|ignore|headers|reftext"
                    . "|reference|highlight|tablelabel|anti-merge|uppercase"
-                   . "|italic|bold|small-caps"
+                   . "|italic|bold|underline|italic-bold|italic-underline"
+                   . "|bold-underline|small-caps|ilya-frank-translation"
   }
 
   DoesTextExist(RestoreClip:=true) {
@@ -1040,7 +1041,7 @@ class SM {
         return False
       }
     }
-    WinWaitNotActive, ahk_class TElWind,, 10
+    WinWaitNotActive, ahk_class TElWind
     while (!hReader := WinActive("A"))
       Continue
     wReader := "ahk_id " . hReader
@@ -1579,9 +1580,12 @@ class SM {
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-style: italic)(?=[^>]+>)", " class=italic ")
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-weight: bold)(?=[^>]+>)", " class=bold ")
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+text-decoration: underline)(?=[^>]+>)", " class=underline ")
+    str := RegExReplace(str, "is)<[^>]+\K\sclass=bold class=italic(?=([^>]+)?>)", " class=italic-bold")
+    str := RegExReplace(str, "is)<[^>]+\K\sclass=underline class=italic(?=([^>]+)?>)", " class=italic-underline")
+    str := RegExReplace(str, "is)<[^>]+\K\sclass=underline class=bold(?=([^>]+)?>)", " class=bold-underline")
 
     ; For Dummies books
-    str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?class=zcheltitalic(?=([^>]+)?>)", " class=italic")
+    ; str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?class=zcheltitalic(?=([^>]+)?>)", " class=italic")
 
     ; Styles and fonts
     str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?style="".*?""(?=([^>]+)?>)")

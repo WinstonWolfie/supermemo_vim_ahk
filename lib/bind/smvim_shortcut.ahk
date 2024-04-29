@@ -862,8 +862,18 @@ n::Send {text}n
 +!a::Send /*  */{Left 3}
 ^+!a::Send /*{Enter 2}*/{Up}
 ^!+h::Send {text}==================================================
-
 ^+k::SM.RegMember()
+
+!+d::
+  SM.CtrlF3()
+  WinWaitActive, ahk_class TInputDlg
+  Send {Enter}
+  WinWaitActive, ahk_class TChoicesDlg
+  Send {Enter}
+  WinWaitActive, ahk_class TBrowser
+  SM.ClearHighlight()
+  WinActivate, ahk_class TBrowser
+return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TElParamDlg") && OldConcept)
 Enter::
