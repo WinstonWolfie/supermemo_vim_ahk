@@ -1117,9 +1117,9 @@ IsWhitespaceOnly(str) {
 GetAcrobatPageBtn() {
   UIA := UIA_Interface()
   el := UIA.ElementFromHandle(WinActive("ahk_class AcrobatSDIWindow"))
-  if (!uiaAcrobatPage := el.FindFirstBy("ControlType=Edit AND Name='Page Number'"))
-    uiaAcrobatPage := el.FindFirstByName("AVQuickToolsTopBarCluster").FindByPath("+2")
-  return uiaAcrobatPage
+  if (!uiaAcrobatPageBtn := el.FindFirstBy("ControlType=Edit AND Name='Page Number'"))
+    uiaAcrobatPageBtn := el.FindFirstByName("AVQuickToolsTopBarCluster").FindByPath("+2")
+  return uiaAcrobatPageBtn
 }
 
 IsRegExChar(char) {

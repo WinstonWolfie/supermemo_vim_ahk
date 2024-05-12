@@ -608,27 +608,41 @@ return
       }
       SM.OpenBrowser()
       WinWaitActive, ahk_class TBrowser
-      Send ^f
-      WinWaitActive, ahk_class TMyFindDlg
-      ControlSetText, TEdit1, % ch
-      Send {Enter}
-      WinWaitActive, ahk_class TProgressBox,, 1
-      if (!ErrorLevel)
-        WinWaitClose
 
-      ; Check duplicates
-      StartTime := A_TickCount
-      loop {
-        if (WinActive("ahk_class TMsgDialog")) {  ; not found
-          WinClose
-          Break
-        } else if (WinGetTitle("ahk_class TBrowser") ~= "^0 users of ") {
-          Break
-        } else if (WinGetTitle("ahk_class TBrowser") ~= "^[1-9]+ users of ") {
-          if (IfIn(MsgBox(3,, "Continue?"), "No,Cancel")) {
-            WinActivate, % wCurr
-            WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
-            SM.ClearHighlight()
+      if (WinWaitTitleRegEx("^Subset elements") != "Subset elements (1 elements)") {
+        Send ^f
+        WinWaitActive, ahk_class TMyFindDlg
+        ControlSetText, TEdit1, % ch
+        Send {Enter}
+        WinWaitActive, ahk_class TProgressBox,, 1
+        if (!ErrorLevel)
+          WinWaitClose
+
+        ; Check duplicates
+        StartTime := A_TickCount
+        loop {
+          if (WinActive("ahk_class TMsgDialog")) {  ; not found
+            WinClose
+            Break
+          } else if (WinGetTitle("ahk_class TBrowser") ~= "^0 users of ") {
+            Break
+          } else if (WinGetTitle("ahk_class TBrowser") ~= "^[1-9]+ users of ") {
+            if (IfIn(MsgBox(3,, "Continue?"), "No,Cancel")) {
+              WinActivate, % wCurr
+              WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
+              SM.ClearHighlight()
+              if (!CtrlState) {
+                SM.GoToEl(CurrEl,, true)
+              } else {
+                SM.ClickElWindSourceBtn()
+              }
+              return
+            }
+            SM.ClickElWindSourceBtn()
+            SM.WaitFileLoad()
+            Break
+          } else if (A_TickCount - StartTime > 1500) {
+            SM.ClearHighlight(), SetToolTip("Timed out.")
             if (!CtrlState) {
               SM.GoToEl(CurrEl,, true)
             } else {
@@ -636,17 +650,6 @@ return
             }
             return
           }
-          SM.ClickElWindSourceBtn()
-          SM.WaitFileLoad()
-          Break
-        } else if (A_TickCount - StartTime > 1500) {
-          SM.ClearHighlight(), SetToolTip("Timed out.")
-          if (!CtrlState) {
-            SM.GoToEl(CurrEl,, true)
-          } else {
-            SM.ClickElWindSourceBtn()
-          }
-          return
         }
       }
 

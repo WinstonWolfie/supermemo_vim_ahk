@@ -266,14 +266,16 @@ CapsLock & z::  ; delete [...]
   SetToolTip("Cloze processing...")
   if (SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
     return
+
   if (Done) {
     Send ^+{Enter}
-    WinWaitNotActive, ahk_class TElWind  ; "Do you want to remove all element contents from the collection?"
+    WinWaitActive, ahk_class TMsgDialog  ; "Do you want to remove all element contents from the collection?"
     Send {Enter}
-    WinWaitNotActive, ahk_class TElWind  ; wait for "Delete element?"
+    WinWaitActive, ahk_class TMsgDialog  ; wait for "Delete element?"
     Send {Enter}
-    CtrlState := true
+    CtrlState := true  ; stay in item
   }
+
   SM.GoBack()
   if (!ClozeNoBracket && !Hint && CtrlState)  ; entered nothing
     return

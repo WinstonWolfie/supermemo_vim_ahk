@@ -713,9 +713,7 @@ AlwaysOnTop:
 return
 
 OpenInAcrobat:
-  Send q^{t}{f9}
-  if (path := SM.GetFilePath())
-    ShellRun("acrobat.exe", path)
+  SM.AutoPlay(true)
 return
 
 Larousse:

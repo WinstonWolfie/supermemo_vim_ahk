@@ -1006,14 +1006,19 @@ class SM {
     this.PostMsg(778, true)
   }
 
-  AutoPlay() {
+  AutoPlay(Acrobat:=false) {
     this.ActivateElWind(), SetToolTip("Running...")
     auiaText := this.GetTextArray()
     Marker := this.GetMarkerFromTextArray(auiaText)
     Comment := this.GetCommentFromTextArray(auiaText)
     SMTitle := WinGetTitle("ahk_class TElWind")
 
-    if (SMTitle == "Netflix") {
+    if (Acrobat) {
+      this.EditFirstQuestion()
+      Send ^t{f9}
+      if (Path := this.GetFilePath())
+        ShellRun("acrobat.exe", Path)
+    } else if (SMTitle == "Netflix") {
       ShellRun(this.GetLinkFromTextArray(auiaText))
     } else if (Marker == "SMVim: Use online video progress") {
       global Browser
@@ -1073,11 +1078,22 @@ class SM {
 
     } else if (MarkerName = "page mark") {
       if ((WinGetClass(wReader) == "SUMATRA_PDF_FRAME") || (WinGet("ProcessName", wReader) == "WinDjView.exe")) {
-        if (ControlGetText("Edit1", wReader) != MarkerContent) {  ; current page mark
+        if (ControlGetText("Edit1", wReader) != MarkerContent) {  ; target page mark is not current page mark
           if (MsgBox(3,, "Do you want to go to page mark?") = "Yes") {
             ControlFocus, Edit1, % wReader
             ControlSetText, Edit1, % MarkerContent, % wReader
             ControlSend, Edit1, {Enter}, % wReader
+          }
+        }
+      } else if (Acrobat) {
+        btn := GetAcrobatPageBtn()
+        if (btn.Value != MarkerContent) {  ; target page mark is not current page mark
+          if (MsgBox(3,, "Do you want to go to page mark?") = "Yes") {
+            btn.ControlClick()
+            Sleep 100
+            Send ^a
+            Send % "{text}" . MarkerContent
+            Send {Enter}
           }
         }
       }

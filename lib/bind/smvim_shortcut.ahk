@@ -324,6 +324,7 @@ return
     return
   }
   SetToolTip("LaTeX converting...")
+
   if (!IfContains(data, "<IMG")) {  ; text
     Send {BS}^{f7}  ; set read point
     LatexFormula := Trim(ProcessLatexFormula(Clipboard), "$")
@@ -374,6 +375,7 @@ return
       Send ^+{f7}  ; clear read point
     }
     Vim.State.SetMode("Vim_Normal")
+
   } else {  ; image
     Send {BS}  ; otherwise might contain unwanted format
     RegExMatch(data, "alt=""(.*?)""", v)
