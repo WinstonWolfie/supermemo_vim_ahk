@@ -273,6 +273,8 @@ CapsLock & z::  ; delete [...]
     Send {Enter}
     WinWaitActive, ahk_class TMsgDialog  ; wait for "Delete element?"
     Send {Enter}
+    WinWaitClose
+    WinWaitActive, ahk_class TElWind
     CtrlState := true  ; stay in item
   }
 

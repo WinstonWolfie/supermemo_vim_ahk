@@ -4,7 +4,8 @@ class SM {
     this.CssClass := "cloze|extract|clozed|hint|note|ignore|headers|reftext"
                    . "|reference|highlight|tablelabel|anti-merge|uppercase"
                    . "|italic|bold|underline|italic-bold|italic-underline"
-                   . "|bold-underline|small-caps|ilya-frank-translation"
+                   . "|bold-underline|small-caps|smallcaps"
+                   . "|ilya-frank-translation"
   }
 
   DoesTextExist(RestoreClip:=true) {

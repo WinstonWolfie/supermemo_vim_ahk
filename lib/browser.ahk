@@ -20,7 +20,7 @@ class Browser {
     if (!IfContains(Url, PoundSymbList))
       Url := RegExReplace(Url, "#.*")
     ; Remove everything after "?"
-    QuestionMarkList := "baike.baidu.com,bloomberg.com,substack.com"
+    QuestionMarkList := "baike.baidu.com,bloomberg.com,substack.com,netflix.com/watch"
     if (IfContains(Url, QuestionMarkList)) {
       Url := RegExReplace(Url, "\?.*")
     } else if (IfContains(Url, "youtube.com/watch")) {
@@ -28,8 +28,8 @@ class Browser {
     } else if (IfContains(Url, "bilibili.com")) {
       Url := RegExReplace(Url, "(\?(?!p=\d+)|&).*")
       Url := RegExReplace(Url, "\/(?=\?p=\d+)")
-    } else if (IfContains(Url, "netflix.com/watch")) {
-      Url := RegExReplace(Url, "\?trackId=.*")
+    ; } else if (IfContains(Url, "netflix.com/watch")) {
+    ;   Url := RegExReplace(Url, "\?trackId=.*")
     } else if (IfContains(Url, "finance.yahoo.com")) {
       Url := RegExReplace(Url, "\?.*")
       if !(Url ~= "\/$")
@@ -495,8 +495,12 @@ class Browser {
         if (GetDate) {
           ; RegExMatch(FullPageText, "Last Updated: (.*) • ", v), this.Date := v1
           RegExMatch(FullPageHTML, "<time datetime="".*?"" >(.*?)<\/time>", v), this.Date := v1
+          if (!this.Date)
+            RegExMatch(GetSiteHTML(this.Url . "/additional-info"), "<td data-type=""date"" class=""text-nowrap"">\s+(.*?)<\/td>", v), this.Date := v1
         }
         RegExMatch(FullPageHTML, "<div class=""editor-title .*?"">(.*?)<\/div>", v), this.Author := v1
+        if (this.Author == "The Editors of Encyclopaedia Britannica")
+          this.Author := ""
       }
     } else if (RegExMatch(this.Title, " \| a podcast by (.*)$", v)) {
       this.Author := v1, this.Source := "PodBean", this.Title := RegExReplace(this.Title, " \| a podcast by (.*)$")
