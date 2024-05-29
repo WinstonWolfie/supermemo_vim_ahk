@@ -309,9 +309,13 @@ CapsLock & z::  ; delete [...]
       Break
     } else if (SM.IsEditingHTML()) {
       if (HTML := FileRead(HTMLPath := SM.LoopForFilePath())) {
+        Critical
         SM.EmptyHTMLComp()
         WinWaitActive, ahk_class TElWind
+        SM.WaitTextFocus()
+        x := A_CaretX, y := A_CaretY
         Send ^{Home}
+        WaitCaretMove(x, y)
         if (ClozeNoBracket) {
           HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>")
         } else {

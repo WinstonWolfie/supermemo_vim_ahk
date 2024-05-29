@@ -235,6 +235,8 @@ class Browser {
       this.Source := "Morning Brew"
     } else if (IfContains(this.Url, "aastocks.com")) {
       this.Source := "AASTOCKS"
+    } else if (IfContains(this.Url, "verywellhealth.com")) {
+      this.Source := "Verywell Health"
 
     ; Video/audio
     } else if (IfContains(this.Url, "youtube.com/watch")) {
@@ -350,6 +352,17 @@ class Browser {
       this.Source := "Vimeo", this.Title := RegExReplace(this.Title, " on Vimeo$")
       if (GetFullPage && GetTimeStamp)
         this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+    } else if (this.Title ~= " - video Dailymotion$") {
+      this.Source := "Dailymotion", this.Title := RegExReplace(this.Title, " - video Dailymotion$")
+      if (GetFullPage && GetTimeStamp)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+      if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
+        if (GetDate) {
+          FullPageHTML := FullPageHTML ? FullPageHTML : GetSiteHTML(this.Url ? this.Url : this.GetUrl())
+          RegExMatch(FullPageHTML, "<meta property=""video:release_date"" content=""(\d{4}-\d{2}-\d{2}).*?""  \/>", v), this.Date := v1
+        }
+        RegExMatch(FullPageText, "(.*)\r\n\r\nFollow", v), this.Author := v1
+      }
 
     ; Wikipedia or wiki format websites
     } else if (this.Title ~= " - supermemo\.guru$") {
@@ -643,7 +656,7 @@ class Browser {
     ; Return 3 if time stamp can't be in url and ^a doesn't cover time stamp
     } else if (Title ~= "^(Netflix|Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on HiAnime\.to)$") {
       return 3
-    } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon| on Vimeo)$") {
+    } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon| on Vimeo| - video Dailymotion)$") {
       return 3
     }
   }

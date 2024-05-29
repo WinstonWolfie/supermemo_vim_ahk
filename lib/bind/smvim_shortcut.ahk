@@ -367,7 +367,10 @@ return
       HTML .= "`n" . AntiMerge
     SM.EmptyHTMLComp()
     WinWaitActive, ahk_class TElWind
+    SM.WaitTextFocus()
+    x := A_CaretX, y := A_CaretY
     Send ^{Home}
+    WaitCaretMove(x, y)
     Clip(HTML,, false, "sm")
     if (ContLearn == 1) {  ; item and "Show answer"
       Send {Esc}

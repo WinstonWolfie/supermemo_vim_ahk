@@ -497,17 +497,15 @@ SciHub:
     return
   if (RegExMatch(Text, "https:\/\/doi\.org\/([^ ]+)", v)) {
     ShellRun("https://sci-hub.hkvisa.net/" . v1)
-  ; https://www.crossref.org/blog/dois-and-matching-regular-expressions/
-  } else if (RegExMatch(Text, "i)10.\d{4,9}/[-._;()/:A-Z0-9]+", v)) {
+  } else if (RegExMatch(Text, "i)10.\d{4,9}/[-._;()/:A-Z0-9]+", v)) {  ; https://www.crossref.org/blog/dois-and-matching-regular-expressions/
     ShellRun("https://sci-hub.hkvisa.net/" . v)
   } else {
     ShellRun("https://sci-hub.hkvisa.net/")
     WinWaitActive, ahk_group Browser
     uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
-    el := uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter URL, PMID / DOI or search string'")
-    el.GetCurrentPatternAs("Value").SetValue(Text)
-    uiaBrowser.WaitElementExist("ControlType=Text AND Name='open'").Click()
+    uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter your reference' AND AutomationId='request'").SetValue(Text)
+    uiaBrowser.WaitElementExist("ControlType=Button AND Name='open'").Click()
   }
 return
 

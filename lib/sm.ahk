@@ -5,7 +5,8 @@ class SM {
                    . "|reference|highlight|tablelabel|anti-merge|uppercase"
                    . "|italic|bold|underline|italic-bold|italic-underline"
                    . "|bold-underline|small-caps|smallcaps"
-                   . "|ilya-frank-translation"
+                   . "|ilya-frank-translation|overline|italic-overline"
+                   . "|bold-overline|underline-overline"
   }
 
   DoesTextExist(RestoreClip:=true) {
@@ -1597,9 +1598,14 @@ class SM {
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-style: italic)(?=[^>]+>)", " class=italic ")
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-weight: bold)(?=[^>]+>)", " class=bold ")
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+text-decoration: underline)(?=[^>]+>)", " class=underline ")
+    str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+text-decoration: overline)(?=[^>]+>)", " class=overline ")
+      
     str := RegExReplace(str, "is)<[^>]+\K\sclass=bold class=italic(?=([^>]+)?>)", " class=italic-bold")
     str := RegExReplace(str, "is)<[^>]+\K\sclass=underline class=italic(?=([^>]+)?>)", " class=italic-underline")
     str := RegExReplace(str, "is)<[^>]+\K\sclass=underline class=bold(?=([^>]+)?>)", " class=bold-underline")
+    str := RegExReplace(str, "is)<[^>]+\K\sclass=overline class=italic(?=([^>]+)?>)", " class=italic-overline")
+    str := RegExReplace(str, "is)<[^>]+\K\sclass=overline class=bold(?=([^>]+)?>)", " class=bold-overline")
+    str := RegExReplace(str, "is)<[^>]+\K\sclass=overline class=underline(?=([^>]+)?>)", " class=underline-overline")
 
     ; For Dummies books
     ; str := RegExReplace(str, "is)<[^>]+\K\s(zzz)?class=zcheltitalic(?=([^>]+)?>)", " class=italic")

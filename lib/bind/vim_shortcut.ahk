@@ -658,8 +658,10 @@ return
       SM.Duplicate()
       SM.WaitFileLoad()
       SMTitle := WinWaitTitleRegEx("^Duplicate: ", "ahk_class TElWind")
-      if (!SM.IsHTMLEmpty() && (MsgBox(3,, "Remove text?") = "Yes"))
+      if (!SM.IsHTMLEmpty() && (MsgBox(3,, "Remove text?") = "Yes")) {
         SM.EmptyHTMLComp()
+        WinWaitActive, ahk_class TElWind
+      }
 
       if (ModifyScript) {
         SM.EditFirstQuestion()
@@ -771,7 +773,12 @@ ExtractToSMAgain:
   if (Marker)
     SM.EmptyHTMLComp()
   WinWaitActive, ahk_class TElWind
+  SM.WaitTextFocus()
+  if (Marker)
+    x := A_CaretX, y := A_CaretY
   Send ^{Home}
+  if (Marker)
+    WaitCaretMove(x, y)
   if (!CleanHTML) {
     Send ^v
     WinClip._waitClipReady()
@@ -1004,7 +1011,7 @@ MarkInHTMLCompAgain:
     x := A_CaretX, y := A_CaretY
   Send ^{Home}
   if (OldText)
-    WaitCaretMove(x, y, 700)
+    WaitCaretMove(x, y)
   Clip(NewText,, false, "sm")
   Send {Esc}
   if (IfContains(A_ThisLabel, "^+!"))
