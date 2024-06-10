@@ -57,9 +57,12 @@ j::Send {Down}{Esc}
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_"))
 ; 1 character
+BS::
 h::Vim.Move.Repeat("h")
+Enter::
 j::Vim.Move.Repeat("j")
 k::Vim.Move.Repeat("k")
+Space::
 l::Vim.Move.Repeat("l")
 ; Home/End
 0::Vim.Move.Move("0")

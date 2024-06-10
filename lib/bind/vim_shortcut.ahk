@@ -257,7 +257,7 @@ IWBNewTopic:
 
   Prio := Concept := CloseTab := DLHTML := ResetTimeStamp := CheckDupForIWB := ""
   Tags := RefComment := ClipBeforeGui := UseOnlineProgress := ""
-  DLList := "economist.com,investopedia.com,webmd.com,britannica.com,medium.com,wired.com"
+  DLList := "economist.com,investopedia.com,webmd.com,britannica.com,medium.com,wired.com,greenhornfinancefootnote.blogspot.com"
   if (IfIn(A_ThisLabel, "^+!a,IWBPriorityAndConcept,^+!b")) {
     ClipBeforeGui := Clipboard
     SetDefaultKeyboard(0x0409)  ; English-US
@@ -411,7 +411,7 @@ SMImportButtonImport:
   } else if (SMCtrlNYT) {
     Clipboard := Browser.Url
   } else {
-    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,webmd.com,proofwiki.org"
+    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,webmd.com,proofwiki.org,greenhornfinancefootnote.blogspot.com"
     LineBreak := IfContains(Browser.Url, LineBreakList)
     HTMLText := SM.CleanHTML(HTMLText,, LineBreak, Browser.Url)
     if (!IWB && !Browser.Date)
@@ -443,8 +443,10 @@ SMImportButtonImport:
   if (Concept) {
     if ((OnlineEl == 1) && !SM.IsOnline(-1, Concept))
       ChangeBackConcept := Concept, Concept := "Online"
-    if (!SM.SetDefaultConcept(Concept,, ChangeBackConcept))
+    if (!ret := SM.SetDefaultConcept(Concept,, ChangeBackConcept))
       Goto SMImportReturn
+    if (ChangeBackConcept && ret)
+      ChangeBackConcept := ret
   }
 
   if (SMCtrlNYT) {
@@ -691,7 +693,7 @@ return
       WinActivate, % CtrlState ? "ahk_class TElWind" : wCurr
       SM.SetTitle(RegExReplace(SMTitle, "^Duplicate: ") . " (" . ch . ")")
       if (ShiftState)
-        SM.SetPrio(Prio,, true)
+        SM.SetPrio(Prio)
       if (!CtrlState)
         SM.GoToEl(CurrEl,, true)
       SM.ClearHighlight()

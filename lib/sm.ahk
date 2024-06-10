@@ -190,28 +190,16 @@ class SM {
     Vim.State.SetNormal()
   }
 
-  SetPrio(Prio, WinWait:=false, ForceBG:=false) {
-    if (WinActive("ahk_class TElWind") && !ForceBG) {
-      Send !p
-      if (!WinWait) {
-        Send % "{text}" . Prio
-        Send {Enter}
-      } else {
-        WinWaitActive, ahk_class TPriorityDlg
-        ControlSetText, TEdit5, % Prio
-        ControlSend, TEdit5, {Enter}
-      }
-    } else if (WinExist("ahk_class TElWind") || ForceBG) {
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        this.PostMsg(653, true)
-      } else {
-        this.PostMsg(655, true)
-      }
-      WinWait, % "ahk_class TPriorityDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
-      ControlSetText, TEdit5, % Prio
-      while (WinExist())
-        ControlSend, TEdit5, {Enter}
+  SetPrio(Prio) {
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(653, true)
+    } else {
+      this.PostMsg(655, true)
     }
+    WinWait, % "ahk_class TPriorityDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+    ControlSetText, TEdit5, % Prio
+    while (WinExist())
+      ControlSend, TEdit5, {Enter}
   }
 
   SetRandTaskVal(min, max) {
@@ -704,14 +692,16 @@ class SM {
       WinWait, % wReg := "ahk_class TRegistryForm ahk_pid " . WinGet("PID", "ahk_class TElWind")
 
       if (CheckConceptExist) {
-        this.EnterAndUpdate("Edit1", CheckConceptExist)
-        if (!this.RegCheck(CheckConceptExist,, wReg))
+        this.EnterAndUpdate("Edit1", CheckConceptExist, wReg)
+        ret := this.RegCheck(CheckConceptExist,, wReg)
+        if (ret == "")
           return false
+        UpdateCheckConcept := ret
       }
 
       if (Concept) {  ; set concept
-        this.EnterAndUpdate("Edit1", Concept)
-        if (!this.RegCheck(Concept,, wReg))
+        this.EnterAndUpdate("Edit1", Concept, wReg)
+        if (this.RegCheck(Concept,, wReg) == "")
           return false
       }
 
@@ -735,6 +725,8 @@ class SM {
 
       WinExist(wReg)  ; update last found window
       WinWaitClose
+      if (UpdateCheckConcept)
+        return UpdateCheckConcept
       return (PrevPrio >= 0) ? PrevPrio : true
     }
   }
@@ -767,7 +759,7 @@ class SM {
       this.SetTitle(Title)
       return
     } else if ((Title == "") && (Prio >= 0) && !Template && !Group) {
-      this.SetPrio(Prio,, true)
+      this.SetPrio(Prio)
       return
     }
 
@@ -1232,9 +1224,15 @@ class SM {
   }
 
   RandCtrlJ(min, max) {
-    Send ^j
-    Send % "{text}" . Random(min, max)
-    Send {Enter 2}
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(616, true)
+    } else {
+      this.PostMsg(618, true)
+    }
+    WinWait, % "ahk_class TGetIntervalDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+    ControlSend, TEdit2, % "{text}" . Random(min, max)
+    while (WinExist())
+      ControlSend, TEdit2, {Enter}
     global Vim
     Vim.State.SetNormal()
   }
@@ -1255,7 +1253,7 @@ class SM {
       if (Prio ~= "^\.")
         Prio := "0" . Prio
       if (SetPrio)
-        this.SetPrio(Prio,, true)
+        this.SetPrio(Prio)
       return Prio
     }
   }
@@ -1485,18 +1483,19 @@ class SM {
     if (Concept) {
       pidSM := WinGet("PID", wSMElWind)
       WinWait, % wReg := "ahk_class TRegistryForm ahk_pid " . pidSM
-      this.EnterAndUpdate("Edit1", Concept)
-      if (!this.RegCheck(Concept, wSMElWind, wReg))
+      this.EnterAndUpdate("Edit1", Concept, wReg)
+      if (this.RegCheck(Concept, wSMElWind, wReg) == "")
         return
       ControlSend, Edit1, {Enter}, % wReg
       loop {
         if (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)) {
           WinClose
           Break
-        } else if (!WinExist(wRed)) {
+        } else if (!WinExist(wReg)) {
           Break
         }
       }
+      WinWaitClose, % wReg  ; necessary, otherwise the action of wReg closing will activate TElWind
       return true
     }
   }
@@ -1512,11 +1511,17 @@ class SM {
       WinWaitActive, % wReg
       if (IfIn(MB, "No,Cancel")) {
         WinClose
-        return false
+        return
       }
+      this.RegAltR(wReg)
+      WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", wSMElWind)
+      ret := ControlGetText("TMemo1")
+      WinClose
+      WinExist(wReg)  ; update last found window
+      return ret
     }
     WinExist(wReg)  ; update last found window
-    return true
+    return Text
   }
 
   Cloze() {

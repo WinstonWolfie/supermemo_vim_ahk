@@ -248,7 +248,8 @@ SMClozeNoBracket:
 CapsLock & z::  ; delete [...]
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingText())
 CapsLock & z::  ; delete [...]
-  ClozeNoBracket := IfIn(A_ThisLabel, "SMClozeNoBracket,CapsLock & z")
+  if (ClozeNoBracket := IfIn(A_ThisLabel, "SMClozeNoBracket,CapsLock & z"))
+    Done := false
   TopicTitle := WinGetTitle("ahk_class TElWind")
   if ((A_ThisLabel == "SMClozeNoBracket") && ClozeNoBracketCtrlState)
     CtrlState := 1, ClozeNoBracketCtrlState := 0

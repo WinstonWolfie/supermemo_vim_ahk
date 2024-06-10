@@ -30,12 +30,9 @@ return
 ~!w::Vim.State.SetMode("Insert")
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind") && !Vim.State.g)
-!t::
-  SM.AltT()
-  Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 2
-return
+!t::SM.AltT(), Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 2
 
-#if (Vim.State.Vim.Enabled && Vim.State.IsCurrentVimMode("Vim_Normal") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TRegistryForm")) && SM.IsBrowsing())
+#if (Vim.State.Vim.Enabled && (SM.IsBrowsing() || WinActive("ahk_class TRegistryForm")))
 ~!r::
   WinWaitActive, ahk_class TInputDlg,, 0
   if (!ErrorLevel)

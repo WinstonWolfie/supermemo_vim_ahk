@@ -76,6 +76,8 @@ class Browser {
       this.Author := "Henry George Liddell, Robert Scott", this.Source := "An Intermediate Greek-English Lexicon", this.Title := RegExReplace(this.Title, "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ")
     } else if (RegExMatch(this.Title, "i)^The Project Gutenb(?:e|u)rg eBook of (.*?),? by (.*?)\.?$", v)) {
       this.Author := v2, this.Source := "Project Gutenberg", this.Title := v1
+    } else if (this.Title ~= "^綠角財經筆記: ") {
+      this.Source := "綠角財經筆記", this.Title := RegExReplace(this.Title, "^綠角財經筆記: ")
 
     ; Source at the end
     } else if (this.Title ~= "_百度知道$") {
@@ -128,6 +130,8 @@ class Browser {
       this.Source := "豆瓣", this.Title := RegExReplace(this.Title, " \(豆瓣\)$")
     } else if (IfContains(this.Url, "meta.wikimedia.org")) {
       this.Source := "Meta-Wiki", this.Title := RegExReplace(this.Title, " - Meta$")
+    } else if (this.Title ~= " \| definition of .*? by Medical dictionary$") {
+      this.Source := "The Free Dictionary"
 
     ; Source in the middle
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {
@@ -221,8 +225,6 @@ class Browser {
       this.Source := "Finty"
     } else if (IfContains(this.Url, "theconversation.com")) {
       this.Source := "The Conversation"
-    } else if (IfContains(this.Url, "thefreedictionary.com")) {
-      this.Source := "The Free Dictionary"
     } else if (IfContains(this.Url, "examine.com")) {
       this.Source := "Examine"
     } else if (IfContains(this.Url, "corporatefinanceinstitute.com")) {
@@ -667,7 +669,7 @@ class Browser {
     CollName := CollName ? CollName : SM.GetCollName()
     Sent := False
 
-    if (RegexMatch(PlainText, "(?<!\s)(?<!\d)(\d+,?)+\.", v)) {
+    if (RegexMatch(PlainText, "(?<!\s)(?<!\d)(\d+,?)+\.$", v)) {
       if (Sent := IfContains(Url := Url ? Url : this.GetUrl(), "fr.wikipedia.org"))
         Send % "+{Left " . StrLen(v) . "}"
     }

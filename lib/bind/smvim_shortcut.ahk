@@ -841,10 +841,10 @@ return
   Goto SMNeuralReviewChildren
 return
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)$"))
 !i::SM.RegInsert()
 
-#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^.*? Registry \(\d+ members\)"))
+#if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^.*? Registry \(\d+ members\)$"))
 !g::SM.RegAltG(), Vim.State.SetNormal()
 
 ^l::
@@ -853,8 +853,24 @@ return
   Goto SMLearnChildrenActiveBrowser
 return
 
-~!n::
-  WinWaitActive, ahk_class TElWind,, 1
+!n::
+  if (WinGetTitle() ~= "^Concept Registry \(\d+ members\)$") {
+    ; This whole thread is to fix a bug in SM's neural learning:
+    ; when you begin neural learning, SM defaults at current element,
+    ; so when you wanted to start to neural at a concept, you need to
+    ; go to that element first
+    SM.RegAltR()
+    WinWaitActive, ahk_class TInputDlg
+    CurrConcept := ControlGetText("TMemo1")
+    WinClose
+    WinWaitActive, ahk_class TRegistryForm
+    SM.RegAltG()
+    WinWaitActive, ahk_class TElWind
+    SM.SetDefaultConcept()
+    WinWaitActive, ahk_class TRegistryForm
+  }
+  Send !n
+  WinWaitActive, ahk_class TElWind,, 1.5
   SM.PlayIfOnlineColl()
 return
 

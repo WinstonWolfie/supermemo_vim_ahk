@@ -9,6 +9,7 @@
 '::Vim.State.SetMode(,, -1,,, -1, 1)  ; leader key
 q::SM.EditFirstQuestion()
 a::SM.EditFirstAnswer()
+~Space::return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g)
 g::Vim.State.SetMode("", 1, -1)
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && Vim.State.g)
@@ -183,6 +184,7 @@ c::
     if (!hCtrl := ControlGet(,, Control := "Internet Explorer_Server1"))
       return
   }
+  KeyWait Shift
   BlockInput, On
   HinterMode := "OpenLink", OpenInIE := IfContains(A_ThisLabel, "!+f")
   if (y && (A_ThisLabel == "f")) {
