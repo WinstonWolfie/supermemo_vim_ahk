@@ -868,6 +868,7 @@ return
     WinWaitActive, ahk_class TElWind
     SM.SetDefaultConcept()
     WinWaitActive, ahk_class TRegistryForm
+    SM.EnterAndUpdate("Edit1", CurrConcept)
   }
   Send !n
   WinWaitActive, ahk_class TElWind,, 1.5
