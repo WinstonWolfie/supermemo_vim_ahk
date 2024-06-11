@@ -59,7 +59,6 @@ j::Send {Down}{Esc}
 ; 1 character
 BS::
 h::Vim.Move.Repeat("h")
-Enter::
 j::Vim.Move.Repeat("j")
 k::Vim.Move.Repeat("k")
 Space::
@@ -92,6 +91,9 @@ x::Vim.Move.Repeat("x")
 )::Vim.Move.Move(A_ThisLabel)
 
 '::Vim.State.SetMode(,, -1,,, -1, 1)  ; leader key
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
+Enter::Vim.Move.Repeat("j")
 
 ; Search
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.State.fts)

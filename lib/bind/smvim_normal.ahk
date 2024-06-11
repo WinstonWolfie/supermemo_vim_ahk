@@ -134,6 +134,7 @@ return
 <::
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingHTML())
 <::
+  KeyWait Shift
   if (A_ThisLabel == ">") {
     SM.EditBar(21) 
   } else if (A_ThisLabel == "<") {
