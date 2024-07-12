@@ -46,11 +46,8 @@ class Browser {
     if (GetUrl)
       this.Url := this.Url ? this.Url : this.GetUrl()
 
-    ; if (this.Title ~= " - YouTube$")
-    ;   this.Title := RegExReplace(this.Title, "^\(\d+\) ")
-
     ; Sites that should be skipped
-    SkippedList := "wind.com.cn,thepokerbank.com,tutorial.math.lamar.edu"
+    SkippedList := "wind.com.cn,thepokerbank.com,tutorial.math.lamar.edu,sites.google.com/view/musicalharmonysite"
     if (IfContains(this.Url, SkippedList)) {
       return
 
@@ -268,7 +265,8 @@ class Browser {
         }
         if (!FullPageText)
           FullPageText := this.GetFullPage(RestoreClip)
-        RegExMatch(FullPageText, "(.*)\r\n\r\n.*\r\n.* subscribers", v), this.Title := v1
+        if (this.Title ~= "^\(\d+\) ")
+          RegExMatch(FullPageText, "(.*)\r\n\r\n.*\r\n.* subscribers", v), this.Title := v1
         if (GetTimeStamp)
           this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
         RegExMatch(FullPageText, ".*(?=\r\n.* subscribers)", Author), this.Author := Author
@@ -431,6 +429,10 @@ class Browser {
       this.Source := "维基文库", this.Title := RegExReplace(this.Title, " - 维基文库，自由的图书馆$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "此页面最后编辑于(.*?) \(", v), this.Date := v1
+    } else if (this.Title ~= " - 維基文庫，自由的圖書館$") {
+      this.Source := "維基文庫", this.Title := RegExReplace(this.Title, " - 維基文庫，自由的圖書館$")
+      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "此頁面最後編輯於(.*?) \(", v), this.Date := v1
     } else if (this.Title ~= " - 维基词典，自由的多语言词典$") {
       this.Source := "维基词典", this.Title := RegExReplace(this.Title, " - 维基词典，自由的多语言词典$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -679,7 +681,7 @@ class Browser {
         Send % "+{Left " . StrLen(v) . "}"
     }
 
-    if (!Sent && RegexMatch(PlainText, "(\[(\d+|note \d+|citation needed)\])+。?$|\[\d+\]: \d+。?$|(?<=\.)\d+$", v)) {
+    if (!Sent && RegexMatch(PlainText, "(\[(\d+|note \d+|citation needed)\])+(。|.)?$|\[\d+\]: \d+(。|.)?$|(?<=\.)\d+$", v)) {
       if (Sent := IfContains(Url ? Url : this.GetUrl(), "wikipedia.org"))
         Send % "+{Left " . StrLen(v) . "}"
     }

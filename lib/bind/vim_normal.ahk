@@ -61,7 +61,7 @@ Return
   Vim.State.SetMode("Vim_Normal")
 Return
 
-#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && Vim.Move.LastKey)
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && (Vim.Move.LastKey != ""))
 ; Period
 ; .::Send +^{Right}{BS}^v  ; original vim_ahk; no idea what that means
 .::  ; dot repeat

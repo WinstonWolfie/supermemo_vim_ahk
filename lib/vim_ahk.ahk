@@ -338,9 +338,6 @@ class VimAhk {
 
   IsNavigating() {
     global SM
-    return (SM.IsNavigatingPlan()
-         || SM.IsNavigatingTask()
-         || SM.IsNavigatingContentWind()
-         || SM.IsNavigatingBrowser())
+    return (SM.IsNavigating())
   }
 }

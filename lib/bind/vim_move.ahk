@@ -57,45 +57,47 @@ j::Send {Down}{Esc}
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_"))
 ; 1 character
-BS::
-h::Vim.Move.Repeat("h")
-j::Vim.Move.Repeat("j")
-k::Vim.Move.Repeat("k")
-Space::
-l::Vim.Move.Repeat("l")
+h::
+j::
+k::
+l::Vim.Move.Repeat(A_ThisLabel)
 ; Home/End
-0::Vim.Move.Move("0")
-$::Vim.Move.Move("$")
-^::Vim.Move.Move("^")
-+::Vim.Move.Repeat("+")
--::Vim.Move.Repeat("-")
+0::
+$::
+^::Vim.Move.Move(A_ThisLabel)
+; Page Up/Down
+^u::
+^d::
+^b::
+^f::Vim.Move.Repeat(A_ThisLabel)
+; G
++g::Vim.Move.Move("+g")
+; Other motions
+x::
++x::Vim.Move.Repeat(A_ThisLabel)
+; Leader
+'::Vim.State.SetMode(,, -1,,, -1, 1)
+
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.IsNavigating())
+; Up/down
+BS::Vim.Move.Repeat("h")
+Enter::Vim.Move.Repeat("j")
+Space::Vim.Move.Repeat("l")
+; Line up/down
++::
+-::Vim.Move.Repeat(A_ThisLabel)
 ; Words
 w::Vim.Move.Repeat("w")
 e::Vim.Move.Move("e")
 b::Vim.Move.Repeat("b")
-; Page Up/Down
-^u::Vim.Move.Repeat("^u")
-^d::Vim.Move.Repeat("^d")
-^b::Vim.Move.Repeat("^b")
-^f::Vim.Move.Repeat("^f")
-; G
-+g::Vim.Move.Move("+g")
 ; Paragraph up/down
-{::Vim.Move.Repeat("{")
-}::Vim.Move.Repeat("}")
-; Other motions
-x::Vim.Move.Repeat("x")
-+x::Vim.Move.Repeat("+x")
+{::
+}::Vim.Move.Repeat(A_ThisLabel)
 ; Sentence
 (::
 )::Vim.Move.Move(A_ThisLabel)
 
-'::Vim.State.SetMode(,, -1,,, -1, 1)  ; leader key
-
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_Visual"))
-Enter::Vim.Move.Repeat("j")
-
 ; Search
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.State.StrIsInCurrentVimMode("Vim_Normal") && !Vim.State.fts)
-/::Vim.Move.Move("/")
-?::Vim.Move.Move("?")
+/::
+?::Vim.Move.Move(A_ThisLabel)

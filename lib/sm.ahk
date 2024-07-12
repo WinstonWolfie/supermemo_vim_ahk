@@ -154,6 +154,16 @@ class SM {
           || (CurrFocus == "TBitBtn9")))
   }
 
+  IsNavigating() {
+    return (this.IsNavigatingPlan()
+         || this.IsNavigatingTask()
+         || this.IsNavigatingContentWind()
+         || this.IsNavigatingBrowser()
+         || WinActive("ahk_class TImgDown")
+         || WinActive("ahk_class TChoicesDlg")
+         || WinActive("ahk_class TChecksDlg"))
+  }
+
   IsNavigatingPlan() {
     return (WinActive("ahk_class TPlanDlg") && (ControlGetFocus() == "TStringGrid1"))
   }
@@ -1347,6 +1357,10 @@ class SM {
   }
 
   GetElNumber(TemplCode:="", RestoreClip:=true) {
+    if (WinExist("ahk_class TElDataWind ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
+      RegExMatch(WinGetTitle(), "^(Item|Topic|Concept|Task) #([\d,]+):", v)
+      return StrReplace(v2, ",")
+    }
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(RestoreClip)
     RegExMatch(TemplCode, "Begin Element #(\d+)", v)
     return v1
