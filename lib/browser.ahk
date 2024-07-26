@@ -389,6 +389,10 @@ class Browser {
       this.Source := "Wiktionary", this.Title := RegExReplace(this.Title, " - Wiktionary, the free dictionary$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "This page was last edited on (.*?),", v), this.Date := v1
+    } else if (this.Title ~= " - Wikizionario$") {
+      this.Source := "Wikizionario", this.Title := RegExReplace(this.Title, " - Wikizionario$")
+      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "Questa pagina è stata modificata per l'ultima volta il (.*?) alle", v), this.Date := v1
     } else if (IfContains(this.Url, "en.wikiversity.org")) {
       this.Source := "Wikiversity", this.Title := RegExReplace(this.Title, " - Wikiversity$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))

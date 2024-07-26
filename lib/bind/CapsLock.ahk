@@ -189,6 +189,7 @@ NotCtrlDelWnd() {
   global SM
   return ((WinActive("ahk_group SM") && !SM.IsEditingHTML())
        || WinActive("ahk_exe AutoHotkey.exe")
+       || WinActive("ahk_exe AutoHotkeyU64.exe")
        || WinActive("ahk_class CabinetWClass ahk_exe explorer.exe"))
 }
 
