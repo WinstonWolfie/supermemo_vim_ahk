@@ -73,9 +73,10 @@ return
         SM.WaitFileLoad()
       }
       SM.OpenBrowser()
-      WinWaitActive, ahk_class TBrowser
+      WinWait, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
+      BrowserTitle := WinWaitTitleRegEx("^Subset elements \(\d+ elements\)")
 
-      if (WinWaitTitleRegEx("^Subset elements") != "Subset elements (1 elements)") {
+      if (!IfContains(BrowserTitle, "(1 elements)")) {
         Send ^f
         WinWaitActive, ahk_class TMyFindDlg
         ControlSetText, TEdit1, % ch

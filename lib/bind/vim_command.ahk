@@ -805,11 +805,15 @@ CalculateTodaysPassRate:
 return
 
 PerplexityAI:
-  if ((!Search := Trim(Copy())) && SM.IsEditingHTML()) {
-    Send ^{f7}  ; save read point
-    SM.SaveHTML()  ; path may be updated
-    WinWaitActive, ahk_class TElWind
-    Search := "File path from SMVim script: " . SM.LoopForFilePath()
+  if (SM.IsEditingHTML()) {
+    if (!Search := Trim(Copy())) {
+      Send ^{f7}  ; save read point
+      SM.SaveHTML()  ; path may be updated
+      WinWaitActive, ahk_class TElWind
+      Search := "File path from SMVim script: " . SM.LoopForFilePath()
+    }
+  } else {
+    Search := FindSearch()
   }
   Gui, PerplexityAI:Add, Text,, &Search:
   Gui, PerplexityAI:Add, Edit, vSearch w200 r1 -WantReturn, % Search

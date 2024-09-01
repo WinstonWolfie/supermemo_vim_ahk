@@ -425,6 +425,10 @@ class Browser {
       this.Source := "維基百科", this.Title := RegExReplace(this.Title, " - 維基百科，自由的百科全書$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "本頁面最後修訂於(.*?) \(", v), this.Date := v1
+    } else if (this.Title ~= " - 維基詞典，自由的多語言詞典$") {
+      this.Source := "維基詞典", this.Title := RegExReplace(this.Title, " - 維基詞典，自由的多語言詞典$")
+      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "此頁面最後編輯於 (.*?) \(", v), this.Date := v1
     } else if (this.Title ~= " - 維基百科，自由嘅百科全書$") {
       this.Source := "維基百科", this.Title := RegExReplace(this.Title, " - 維基百科，自由嘅百科全書$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))

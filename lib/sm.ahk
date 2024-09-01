@@ -1102,7 +1102,7 @@ class SM {
         }
       }
     } else {
-      SetToolTip(ToolTip)
+      SetToolTip(ToolTip, 5000)
     }
   }
 
@@ -1564,10 +1564,13 @@ class SM {
     if (ret)
       return 1
     wCurr := "ahk_id " . WinActive("A")
+    global Browser
     t := "Link in SM reference is not the same as in the browser. Continue?"
        . "`n(press no to execute a search)"
        . "`nBrowser url: " . BrowserUrl
        . "`n       SM url: " . CurrSMUrl
+       . "`n`nBrowser title: " . Browser.GetFullTitle()
+       . "`n       SM title: " . WinGetTitle(wSMElWind)
     MB := MsgBox(3,, t), ret := 0
     if ((MB = "No") && this.CheckDup(BrowserUrl,, wSMElWind, "Link not found in collection.")) {
       MB := MsgBox(3,, "Found. Continue?")
