@@ -146,7 +146,7 @@ return
 p::SM.AutoPlay()
 
 +p::  ; play video/sound in default system player / edit script component
-  Marker := SM.GetMarkerFromTextArray()
+  Marker := SM.GetMarkerFromUIAArray()
   KeyWait Shift
   SM.EditFirstQuestion()
   Send ^t

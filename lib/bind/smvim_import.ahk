@@ -214,9 +214,9 @@ ExtractToSM:
 ExtractToSMAgain:
   auiaText := RefLink := Marker := ""
   if (HTMLExist := SM.WaitHTMLExist(1500)) {
-    auiaText := SM.GetTextArray()
-    RefLink := hBrowser ? SM.GetLinkFromTextArray(auiaText) : ""
-    Marker := SM.GetMarkerFromTextArray(auiaText)
+    auiaText := SM.GetUIAArray()
+    RefLink := hBrowser ? SM.GetLinkFromUIAArray(auiaText) : ""
+    Marker := SM.GetMarkerFromUIAArray(auiaText)
   }
 
   if (hBrowser) {

@@ -255,8 +255,11 @@ class Browser {
             } else {
               btn.Click()
               WinActivate, % "ahk_id " . guiaBrowser.BrowserId
-              Sleep 700
-              Send ^{Home}
+              global ImportCloseTab
+              if (!ImportCloseTab) {
+                Sleep 700
+                Send ^{Home}
+              }
             }
           }
 

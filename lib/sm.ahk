@@ -200,6 +200,26 @@ class SM {
     Vim.State.SetNormal()
   }
 
+  SetRandInterval(min, max) {
+    Interval := Random(min, max)
+    if (WinActive("ahk_class TElWind")) {
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        this.PostMsg(616, true)
+      } else {
+        this.PostMsg(618, true)
+      }
+      WinWait, % "ahk_class TGetIntervalDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+      ControlSend, TEdit2, % "{text}" . Interval
+      while (WinExist())
+        ControlSend, TEdit2, {Enter}
+      global Vim
+      Vim.State.SetNormal()
+    } else if (WinActive("ahk_class TPriorityDlg")) {
+      ControlSetText, TEdit1, % Interval
+      ControlFocus, TEdit5  ; priority
+    }
+  }
+
   SetPrio(Prio) {
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
       this.PostMsg(653, true)
@@ -416,10 +436,15 @@ class SM {
     return Link
   }
 
-  GetLinksInComment(TemplCode:="", RestoreClip:=true) {
+  GetCommentInTemplCode(TemplCode:="", RestoreClip:=true) {
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(RestoreClip)
     RegExMatch(TemplCode, "(?<=#Comment: ).*?(?=<\/FONT><\/SuperMemoReference>)", Comment)
-    return GetAllLinks(Comment)
+    return Comment
+  }
+
+  GetLinksInComment(TemplCode:="", RestoreClip:=true) {
+    TemplCode := TemplCode ? TemplCode : this.GetTemplCode(RestoreClip)
+    return GetAllLinks(this.GetCommentInTemplCode(TemplCode, RestoreClip))
   }
 
   GetFilePath(RestoreClip:=true) {
@@ -1012,9 +1037,8 @@ class SM {
 
   AutoPlay(Acrobat:=false) {
     this.ActivateElWind(), SetToolTip("Running...")
-    auiaText := this.GetTextArray()
-    Marker := this.GetMarkerFromTextArray(auiaText)
-    Comment := this.GetCommentFromTextArray(auiaText)
+    auiaText := this.GetUIAArray()
+    Marker := this.GetMarkerFromUIAArray(auiaText)
     SMTitle := WinGetTitle("ahk_class TElWind")
 
     if (Acrobat) {
@@ -1023,10 +1047,10 @@ class SM {
       if (Path := this.GetFilePath())
         ShellRun("acrobat.exe", Path)
     } else if (SMTitle == "Netflix") {
-      ShellRun(this.GetLinkFromTextArray(auiaText))
+      ShellRun(this.GetLinkFromUIAArray(auiaText))
     } else if (Marker == "SMVim: Use online video progress") {
       global Browser
-      Browser.SearchInYT(SMTitle, this.GetLinkFromTextArray(auiaText))
+      Browser.SearchInYT(SMTitle, this.GetLinkFromUIAArray(auiaText))
     } else {
       Send ^{f10}
       WinWaitActive, ahk_class TMsgDialog,, 0
@@ -1035,7 +1059,7 @@ class SM {
     }
 
     ToolTip := "Running: `n`nTitle: " . SMTitle
-    if (Comment)
+    if (Comment := this.GetCommentFromUIAArray(auiaText))
       ToolTip .= "`nComment: " . Comment
     if (Marker ~= "^SMVim(?!:)") {
       ToolTip .= "`n" . StrUpper(SubStr(Marker, 7, 1)) . SubStr(Marker, 8)
@@ -1233,20 +1257,6 @@ class SM {
          || (ControlGet(,, "TMemo2", "ahk_class TElWind") && ControlGet(,, "TMemo1", "ahk_class TElWind")))
   }
 
-  RandCtrlJ(min, max) {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(616, true)
-    } else {
-      this.PostMsg(618, true)
-    }
-    WinWait, % "ahk_class TGetIntervalDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
-    ControlSend, TEdit2, % "{text}" . Random(min, max)
-    while (WinExist())
-      ControlSend, TEdit2, {Enter}
-    global Vim
-    Vim.State.SetNormal()
-  }
-
   ActivateElWind(wSMElWind:="ahk_class TElWind") {
     if (!WinActive(wSMElWind))
       WinActivate, % wSMElWind
@@ -1255,7 +1265,7 @@ class SM {
 
   AskPrio(SetPrio:=true) {
     Prio := InputBox(, "Enter priority:")
-    if (ErrorLevel) {  ; user pressed calcel
+    if (ErrorLevel) {  ; user pressed cancel
       return -1
     } else if (Prio == "") {  ; user pressed enter without entering a priority
       return
@@ -1407,7 +1417,7 @@ class SM {
     }
   }
 
-  GetTextArray() {
+  GetUIAArray() {
     UIA := UIA_Interface()
     el := UIA.ElementFromHandle(ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind"))
     if (!Ref := el.FindFirstByName("#SuperMemo Reference:"))  ; item
@@ -1415,24 +1425,32 @@ class SM {
     return el.FindAllByType("text")
   }
 
-  GetLinkFromTextArray(auiaText:="") {
-    auiaText := auiaText ? auiaText : this.GetTextArray()
+  GetLinkFromUIAArray(auiaText:="") {
+    auiaText := auiaText ? auiaText : this.GetUIAArray()
     for i, v in auiaText {
       if (v.Name == "#Link: ")
         return v.FindByPath("+1").Name
     }
   }
 
-  GetCommentFromTextArray(auiaText:="") {
-    auiaText := auiaText ? auiaText : this.GetTextArray()
+  GetCommentFromUIAArray(auiaText:="") {
+    auiaText := auiaText ? auiaText : this.GetUIAArray()
+    Comment := ""
     for i, v in auiaText {
-      if (RegExMatch(v.Name, "^#Comment: (.*)$", v))
-        return v1
+      if (RegExMatch(v.Name, "^#Comment: (.*)$", t)) {
+        Comment .= t1, CommentReached := true
+        Continue
+      }
+      if (CommentReached && !(v.Name ~= "^#(Parent|Article): "))
+        Comment .= v.Name
+      if (v.Name ~= "^#(Parent|Article): ")
+        Break
     }
+    return Comment
   }
 
-  GetMarkerFromTextArray(auiaText:="") {
-    auiaText := auiaText ? auiaText : this.GetTextArray()
+  GetMarkerFromUIAArray(auiaText:="") {
+    auiaText := auiaText ? auiaText : this.GetUIAArray()
     for i, v in auiaText {
       if ((i == 1) && (v.Name == "#SuperMemo Reference:")) {  ; empty html
         return
@@ -1447,7 +1465,7 @@ class SM {
   }
 
   IsHTMLEmpty(auiaText:="") {
-    auiaText := auiaText ? auiaText : this.GetTextArray()
+    auiaText := auiaText ? auiaText : this.GetUIAArray()
     for i, v in auiaText {
       if ((i == 1) && (v.Name == "#SuperMemo Reference:")) {
         return true
@@ -1458,7 +1476,7 @@ class SM {
   }
 
   GetParentElNumber(auiaText:="") {
-    auiaText := auiaText ? auiaText : this.GetTextArray()
+    auiaText := auiaText ? auiaText : this.GetUIAArray()
     for i, v in auiaText {
       if (v.Name == "#Article: ")
         return v.FindByPath("+1").Name

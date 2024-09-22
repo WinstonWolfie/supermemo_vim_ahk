@@ -299,6 +299,7 @@ IWBNewTopic:
   }
 
 SMImportButtonImport:
+  ImportCloseTab := CloseTab  ; a global variable for functions to detect, set to empty at the end
   if (A_ThisLabel == "SMImportButtonImport") {
     ; Without KeyWait Enter SwitchToSameWindow() below could fail???
     KeyWait Enter
@@ -528,6 +529,7 @@ SMImportReturn:
   if (!Esc)
     SetToolTip("Import completed.")
   HTMLText := ""  ; empty memory
+  ImportCloseTab := ""  ; global variable
 return
 
 ^+e::
@@ -689,9 +691,9 @@ MarkInHTMLCompAgain:
   SM.EditFirstQuestion()
   auiaText := RefLink := OldText := ""
   if (HTMLExist := SM.WaitHTMLExist(1500)) {
-    auiaText := SM.GetTextArray()
-    RefLink := hBrowser ? SM.GetLinkFromTextArray(auiaText) : ""
-    OldText := SM.GetMarkerFromTextArray(auiaText)
+    auiaText := SM.GetUIAArray()
+    RefLink := hBrowser ? SM.GetLinkFromUIAArray(auiaText) : ""
+    OldText := SM.GetMarkerFromUIAArray(auiaText)
   }
   if (ReadPoint) {
     NewText := "<SPAN class=Highlight>SMVim read point</SPAN>: " . ReadPoint

@@ -197,43 +197,46 @@ NumpadUp::SM.SetRandPrio(70.5579,90.2474)
 Numpad9::
 NumpadPgup::SM.SetRandPrio(90.2474,99.99)
 
-#if (Vim.State.Vim.Enabled && ((Vim.State.Leader && WinActive("ahk_class TElWind")) || SM.IsLearning() || SM.IsGrading()))
+#if (Vim.State.Vim.Enabled && ((Vim.State.Leader && WinActive("ahk_class TElWind"))
+                             || SM.IsLearning()
+                             || WinActive("ahk_class TPriorityDlg")
+                             || SM.IsGrading()))
 ^!0::
 ^Numpad0::
-^NumpadIns::SM.RandCtrlJ(1, 3)
+^NumpadIns::SM.SetRandInterval(1, 3)
 
 ^!1::
 ^Numpad1::
-^NumpadEnd::SM.RandCtrlJ(4, 8)
+^NumpadEnd::SM.SetRandInterval(4, 8)
 
 ^!2::
 ^Numpad2::
-^NumpadDown::SM.RandCtrlJ(9, 18)
+^NumpadDown::SM.SetRandInterval(9, 18)
 
 ^!3::
 ^Numpad3::
-^NumpadPgdn::SM.RandCtrlJ(19, 28)
+^NumpadPgdn::SM.SetRandInterval(19, 28)
 
 ^!4::
 ^Numpad4::
-^NumpadLeft::SM.RandCtrlJ(29, 37)
+^NumpadLeft::SM.SetRandInterval(29, 37)
 
 ^!5::
 ^Numpad5::
-^NumpadClear::SM.RandCtrlJ(38, 46)
+^NumpadClear::SM.SetRandInterval(38, 46)
 
 ^!6::
 ^Numpad6::
-^NumpadRight::SM.RandCtrlJ(47, 57)
+^NumpadRight::SM.SetRandInterval(47, 57)
 
 ^!7::
 ^Numpad7::
-^NumpadHome::SM.RandCtrlJ(58, 70)
+^NumpadHome::SM.SetRandInterval(58, 70)
 
 ^!8::
 ^Numpad8::
-^NumpadUp::SM.RandCtrlJ(71, 90)
+^NumpadUp::SM.SetRandInterval(71, 90)
 
 ^!9::
 ^Numpad9::
-^NumpadPgup::SM.RandCtrlJ(91, 99)
+^NumpadPgup::SM.SetRandInterval(91, 99)

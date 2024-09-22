@@ -40,7 +40,7 @@
     SM.WaitHTMLFocus()
     HTML := FileRead(HTMLPath := SM.LoopForFilePath(false))
     HTML := StrReplace(HTML, LatexPlaceHolder)
-    
+
     /*
       Recommended css setting for anti-merge class:
       .anti-merge {
@@ -49,7 +49,7 @@
         top: -9999px;
       }
     */
-    
+
     AntiMerge := "<SPAN class=anti-merge>Last LaTeX to image conversion at " . CurrTimeDisplay . "</SPAN>"
     HTML := RegExReplace(HTML, "<SPAN class=anti-merge>Last LaTeX to image conversion at .*?(<\/SPAN>|$)", AntiMerge, v)
     if (!v)
@@ -59,7 +59,7 @@
     SM.WaitTextFocus()
     x := A_CaretX, y := A_CaretY
     Send ^{Home}
-    WaitCaretMove(x, y)
+    WaitCaretMove(x, y, 700)
     Clip(HTML,, false, "sm")
     if (ContLearn == 1) {  ; item and "Show answer"
       Send {Esc}

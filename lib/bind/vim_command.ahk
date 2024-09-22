@@ -1200,7 +1200,7 @@ return
 
 MarkAsOnlineProgress:
   SM.EditFirstQuestion()
-  for i, v in % SM.GetTextArray() {
+  for i, v in % SM.GetUIAArray() {
     FirstText := v.Name
     if (FirstText == "#SuperMemo Reference:")
       FirstText := ""

@@ -231,8 +231,9 @@ CapsLock & g::
     Vim.State.SetMode("Insert")
 return
 
-CapsLock & tab::Send !{tab}!f4::
+CapsLock & tab::Send !{tab}
 
+!f4::
 CapsLock & q::
   if (WinActive("ahk_class TElWind") && (SM.IsLearning() == 1)) {
     SM.GoHome()
@@ -240,8 +241,13 @@ CapsLock & q::
   }
   if (A_ThisLabel == "!f4")
     Send !{f4}
-  if (A_ThisLabel == "CapsLock & q")
-    WinClose, A
+  if (A_ThisLabel == "CapsLock & q") {
+    if (WinActive("ahk_exe javaw.exe") && (WinGetTitle("A") ~= "Minecraft")) {
+      Send !{f4}
+    } else {
+      WinClose, A
+    }
+  }
   if (WinActive("ahk_exe HiborClient.exe")) {
     WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0
     if (!ErrorLevel)

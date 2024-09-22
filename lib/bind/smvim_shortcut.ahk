@@ -662,8 +662,8 @@ BrowserSyncTime:
   if (EditHTML) {
     WinActivate, % wSMElWind
     SM.EditFirstQuestion()
-    auiaText := SM.GetTextArray()
-    Marker := SM.GetMarkerFromTextArray(auiaText)
+    auiaText := SM.GetUIAArray()
+    Marker := SM.GetMarkerFromUIAArray(auiaText)
     NewTimeStamp := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Browser.TimeStamp
     if (Marker != RegExReplace(NewTimeStamp, "<.*?>")) {
       SM.WaitTextFocus()
@@ -705,7 +705,7 @@ return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))
 !s::
-  if ((p := SM.GetMarkerFromTextArray()) && (p ~= "^SMVim (read point|page mark|time stamp): ")) {
+  if ((p := SM.GetMarkerFromUIAArray()) && (p ~= "^SMVim (read point|page mark|time stamp): ")) {
     SetToolTip("Copied " . Clipboard := RegExReplace(p, "^SMVim (read point|page mark|time stamp): "))
   } else {
     KeyWait Alt

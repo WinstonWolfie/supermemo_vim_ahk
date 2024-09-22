@@ -88,7 +88,10 @@ class VimState {
         VIM_IME_SET()
       }
     }
-    if (A_CaretX && !this.Vim.IsNavigating()) {
+
+    global SM
+    if (A_CaretX && !this.Vim.IsNavigating()
+     && SM.IsEditingText() && (A_ThisHotkey != "CapsLock") && (A_ThisHotkey != "Esc")) {  ; exiting text should not trigger this section
       if (this.StrIsInCurrentVimMode("Visual,ydc") && !this.StrIsInCurrentVimMode("VisualFirst")) {
         Send {Right}
         if (WinActive("ahk_group VimCursorSameAfterSelect"))
@@ -97,6 +100,7 @@ class VimState {
         Send {Left}
       }
     }
+
     this.SetMode("Vim_Normal")
   }
 
