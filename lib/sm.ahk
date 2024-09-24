@@ -1627,9 +1627,11 @@ class SM {
     if (LineBreak)
       str := RegExReplace(str, "i)<(BR|(\/)?DIV)", "<$2P")
 
-    if (IfContains(Url, "economist.com"))
+    if (IfContains(Url, "economist.com")) {
       str := StrReplace(str, "<small", "<small class=uppercase")
+      str := RegExReplace(str, "i)<(\/)?DIV", "<$1P")
       ; str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^>]+>)", " class=uppercase ")
+    }
 
     ; Ilya Frank
     ; str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+COLOR: green)(?=[^>]+>)", " class=ilya-frank-translation ")
