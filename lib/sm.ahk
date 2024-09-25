@@ -410,7 +410,6 @@ class SM {
     Timeout := Timeout ? Timeout / 1000 : Timeout
     this.OpenNotepad(Timeout)
     WinWaitActive, ahk_exe Notepad.exe,, % Timeout
-    WinActivate
     ControlSend,, {Ctrl Down}w{Ctrl Up}
     WinClose
     WinActivate, ahk_class TElWind

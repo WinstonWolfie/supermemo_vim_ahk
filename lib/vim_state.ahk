@@ -78,7 +78,7 @@ class VimState {
     this.CheckMode(this.Vim.Conf["VimVerbose"]["val"], Mode, g, n, LineCopy, fts)
   }
 
-  SetNormal() {
+  SetNormal(SendLeftOrRight:=true) {
     this.LastIME := VIM_IME_Get()
     if (this.LastIME) {
       if (VIM_IME_GetConverting()) {
@@ -89,9 +89,7 @@ class VimState {
       }
     }
 
-    global SM
-    if (A_CaretX && !this.Vim.IsNavigating()
-     || (SM.IsEditingText() && (A_ThisHotkey != "CapsLock") && (A_ThisHotkey != "Esc"))) {  ; exiting text should not trigger this section
+    if (SendLeftOrRight) {
       if (this.StrIsInCurrentVimMode("Visual,ydc") && !this.StrIsInCurrentVimMode("VisualFirst")) {
         Send {Right}
         if (WinActive("ahk_group VimCursorSameAfterSelect"))
@@ -123,6 +121,7 @@ class VimState {
       Send {Esc}
       Return
     }
+
     ; keyWait waits for Esc to be released. If it didn't detect a release
     ; within the time limit, ErrorLevel is set to 1.
     KeyWait, Esc, T0.5
@@ -130,11 +129,18 @@ class VimState {
     both := (VimLongEscNormal && LongPress)
     neither := !(VimLongEscNormal || LongPress)
     SetNormal := (both || neither)
+
+    if (A_CaretX && !this.Vim.IsNavigating())
+      SendLeftOrRight := true
+    if (SM.IsEditingText() && ((A_ThisHotkey = "CapsLock") || (A_ThisHotkey = "Esc")))  ; exiting text should not sending left nor right
+      SendLeftOrRight := false
+
     ; In SuperMemo you can use Esc to both escape and enter normal mode
     if ((!SetNormal || (VimSendEscNormal && this.IsCurrentVimMode("Vim_Normal"))) || (WinActive("ahk_group SM") && SMVimSendEscInsert))
       Send {Esc}
     if (SetNormal || (WinActive("ahk_group SM") && SMVimSendEscInsert))
-      this.SetNormal()
+      this.SetNormal(SendLeftOrRight)
+
     ; Have to ensure the key has been released, otherwise this will get
     ; triggered again.
     if (LongPress && Esc)
