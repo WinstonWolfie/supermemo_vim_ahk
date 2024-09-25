@@ -693,7 +693,7 @@ class Browser {
     }
 
     if (!Sent && RegexMatch(PlainText, "(\[(\d+|note \d+|citation needed)\])+(。|.)?$|\[\d+\]: \d+(。|.)?$|(?<=\.)\d+$", v)) {
-      if (Sent := IfContains(Url ? Url : this.GetUrl(), "wikipedia.org"))
+      if (Sent := IfContains(Url ? Url : this.GetUrl(), "wikipedia.org,wikiquote.org"))
         Send % "+{Left " . StrLen(v) . "}"
     }
 
