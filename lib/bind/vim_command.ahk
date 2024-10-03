@@ -44,7 +44,7 @@ Return
   hWnd := WinActive("A")
   Gui, VimCommander:Add, Text,, &Command:
 
-  List := "Plan||Wiktionary|WebSearch|YT|Settings|MoveMouseToCaret"
+  List := "|Plan|Wiktionary|WebSearch|YT|Settings|MoveMouseToCaret"
         . "|WaybackMachine|DefineGoogle|YouGlish|KillOutlook|DeepL"
         . "|WindowSpy|BingChat|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
@@ -79,7 +79,7 @@ Return
     List := "SetPlanPosition|" . List
   } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
     List := "MassReplaceRegistry|MassProcessRegistry|" . List
-  } else if (WinActive("Google Drive error List ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
+  } else if (WinActive("Google Drive error list ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
     List := "RetryAllSyncErrors|" . List
   }
 
@@ -679,7 +679,7 @@ BingChat:
     }
   }
   if (Text || !wEdge) {
-    ShellRun("msedge.exe", Link)
+    ShellRun("msedge", Link)
     WinWaitActive, ahk_exe msedge.exe
   }
   Send ^+.
@@ -887,10 +887,10 @@ return
 
 RetryAllSyncErrors:
   UIA := UIA_Interface(), el := UIA.ElementFromHandle(WinActive("A"))
-  while (dot := el.FindFirstBy("ControlType=MenuItem AND Name='More options menu icon'")) {
-    dot.Click()
-    el.FindFirstBy("ControlType=MenuItem AND Name='Retry' AND AutomationId='retry-id'").Click()
-    Sleep 100
+  while (dot := el.FindFirstBy("ControlType=MenuItem AND Name='More options'")) {
+    dot.ControlClick()
+    el.WaitElementExist("ControlType=MenuItem AND Name='Retry' AND AutomationId='retry-id'").ControlClick()
+    Sleep 300
     if (el.FindFirstBy("ControlType=Text AND Name='Looks fine'"))
       Break
   }
@@ -942,25 +942,31 @@ MassReplaceRegistry:
 return
 
 MassProcessRegistry:
-  find := "https://finance.yahoo.com/quote/"
-  replacement := ""
-  if (!find && !replacement)
-    return
+  ; find := "https://finance.yahoo.com/quote/"
+  ; replacement := ""
+  ; if (!find && !replacement)
+  ;   return
   ; ControlSend, Edit1, % "{text}" . find, A
   loop {
     Send !r
     WinWaitActive, ahk_class TInputDlg
-    Text := ControlGetText("TMemo1")
-    ; if (InStr(Text, find) != 1)
-    ;   return
-    if ((InStr(Text, find) != 1) || (Text ~= "\/$"))
+    PrevText := Text := ControlGetText("TMemo1")
+    if !(Text ~= "^https?:\/\/")
       return
-    ; ControlSetText, TMemo1, % StrReplace(Text, find, replacement)
-    ControlSetText, TMemo1, % Text . "/"
-    Send !{Enter}
+    DecodedText := EncodeDecodeURI(Text, false)
+    if (DecodedText == Text) {
+      WinClose
+      PrevText := ""
+    } else {
+      ControlSetText, TMemo1, % DecodedText
+      Send !{Enter}
+    }
     WinWaitActive, ahk_class TRegistryForm
-    ControlSetText, Edit1  ; clear
-    Send {Down}
+    if (PrevText) {
+      SM.EnterAndUpdate("Edit1", PrevText)
+    } else {
+      Send {Down}
+    }
   }
   ; loop {
   ;   ControlSend, Edit1, % "{text}" . find, A
@@ -1131,7 +1137,7 @@ return
 
 PasteCleanedClipboard:
   ClipboardGet_HTML(HTML)
-  HTML := SM.CleanHTML(GetClipHTMLBody(HTML),,, GetClipLink(HTML))
+  HTML := SM.CleanHTML(GetClipHTMLBody(HTML),,, GetClipUrl(HTML))
   Clip(HTML,,, (SM.IsEditingHTML() ? "sm" : true))
   Vim.State.SetNormal(), HTML := ""
 return

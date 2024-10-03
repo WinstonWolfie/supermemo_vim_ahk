@@ -431,7 +431,7 @@ class SM {
 
   GetLink(TemplCode:="", RestoreClip:=true) {
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(RestoreClip)
-    RegExMatch(TemplCode, "(?<=#Link: <a href="").*?(?="")", Link)
+    RegExMatch(TemplCode, "(?<=#Link: <a href="").*?(?="">)", Link)
     return Link
   }
 
@@ -845,6 +845,8 @@ class SM {
     ContLearn := this.IsLearning(wSMElWind)
     Text := LTrim(Text)  ; LTrim() is necessary bc SuperMemo LITERALLY MODIFIES the html
     Text := RegExReplace(Text, "^file:\/\/\/", "file://")  ; SuperMemo converts file:/// to file://
+    Text := RegExReplace(Text, "^https?:\/\/", "://")  ; SuperMemo import is inconsistent about https and http
+    Text := RegExReplace(Text, "^:\/\/www\.youtube\.com", "youtube.com")  ; SuperMemo eats the www in www.youtube.com
     if (IsUrl(Text))
       Text := this.HTMLUrl2SMRefUrl(Text)
     ret := this.CtrlF(Text, ClearHighlight, ToolTip, wSMElWind)

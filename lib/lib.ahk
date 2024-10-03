@@ -1208,12 +1208,6 @@ RemoveLatinMacrons(Latin) {
   return Latin
 }
 
-RetrieveUrlFromClip() {
-  ClipboardGet_HTML(data)
-  RegExMatch(data, "SourceURL:(.*)", v)
-  return v1
-}
-
 ClipboardGet_HTML( byref Data ) {
   If CBID := DllCall( "RegisterClipboardFormat", Str,"HTML Format", UInt )
   If DllCall( "IsClipboardFormatAvailable", UInt,CBID ) <> 0
@@ -1236,11 +1230,11 @@ GetClipHTMLBody(HTML:="") {
   return v1
 }
 
-GetClipLink(HTML:="") {
+GetClipUrl(HTML:="") {
   if (!HTML)
     ClipboardGet_HTML(HTML)
   RegExMatch(HTML, "SourceURL:(.*)", v)
-  return v1
+  return EncodeDecodeURI(v1, false)
 }
 
 ; https://www.autohotkey.com/boards/viewtopic.php?t=80706

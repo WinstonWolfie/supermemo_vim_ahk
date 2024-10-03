@@ -7,20 +7,21 @@
                             || WinActive("ahk_exe WINWORD.exe")             ; MS Word
                             || WinActive("ahk_exe WinDjView.exe")))         ; djvu viewer
 !+d::  ; check duplicates in SM
-  ToolTip := "selected text", Skip := false, Url := ""
+  ; In browser, if you select some text, this shortcut will search the selected text,
+  ; otherwise it will search the current url
+  ToolTip := "selected text", SkipCopy := false, Url := ""
   if (hBrowser) {
     uiaBrowser := new UIA_Browser("ahk_id " . hBrowser)
-    if (IfContains(Url := uiaBrowser.GetCurrentUrl(), "youtube.com/watch,netflix.com/watch"))
-      Text := Browser.ParseUrl(Url), Skip := true, ToolTip := "url"
+    Url := Browser.GetUrl()
+    if (IfContains(Url, "youtube.com/watch,netflix.com/watch"))  ; Language Reactor extention could copy the subtitles
+      Text := Url, SkipCopy := true, ToolTip := "url"
   }
-  if (!Skip && (!Text := Copy())) {
-    if (hBrowser) {
-      if (!Url) {
-        SetToolTip("Url not found.")
-        return
-      }
-      Text := Browser.ParseUrl(Url), ToolTip := "url"
+  if (!SkipCopy && (!Text := Copy()) && hBrowser) {
+    if (!Url) {
+      SetToolTip("Url not found.")
+      return
     }
+    Text := Url, ToolTip := "url"
   }
   if (!Text) {
     SetToolTip("Text not found.")
@@ -171,7 +172,7 @@ return
         PlainText := Clipboard
       ClipboardGet_HTML(HTML)
       if (hBrowser)
-        BrowserUrl := Browser.ParseUrl(GetClipLink(HTML))
+        BrowserUrl := Browser.ParseUrl(GetClipUrl(HTML))
       HTML := SM.CleanHTML(GetClipHTMLBody(HTML))
       if (hCalibre)
         HTML := StrReplace(HTML, "data-calibre-range-wrapper=""1""", "class=extract")

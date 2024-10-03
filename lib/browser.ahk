@@ -604,11 +604,12 @@ class Browser {
     return aTime[1] + aTime[2] * 60 + aTime[3] * 3600
   }
 
-  GetUrl(Parsed:=true) {
+  GetUrl(Parse:=true) {
     global guiaBrowser
     this.GetGuiaBrowser()
     Url := guiaBrowser.GetCurrentURL()
-    return Parsed ? this.ParseUrl(Url) : Url
+    Url := EncodeDecodeURI(Url, false)
+    return Parse ? this.ParseUrl(Url) : Url
   }
 
   GetTimeStamp(Title:="", FullPageText:="", RestoreClip:=true) {

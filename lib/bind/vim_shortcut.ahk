@@ -116,7 +116,7 @@ return
     Clipboard := ClipSaved
     return
   }
-  TempClip := Clipboard, ClipboardGet_HTML(HTML), Url := GetClipLink(HTML)
+  TempClip := Clipboard, ClipboardGet_HTML(HTML), Url := GetClipUrl(HTML)
   if (IfContains(Url, "larousse.fr")) {
     TempClip := SM.CleanHTML(GetClipHTMLBody(HTML), true)
     TempClip := RegExReplace(TempClip, "is)<\/?(mark|span)( .*?)?>")
@@ -226,7 +226,7 @@ IWBNewTopic:
 
   Browser.Clear()
   if (IWB) {
-    Browser.Url := Browser.ParseUrl(RetrieveUrlFromClip())
+    Browser.Url := Browser.ParseUrl(GetClipUrl())
   } else {
     Browser.Url := Browser.GetUrl()
   }
@@ -534,7 +534,7 @@ return
 
 ^+e::
   uiaBrowser := new UIA_Browser("A")
-  ShellRun("msedge.exe " . uiaBrowser.GetCurrentUrl())
+  ShellRun("msedge", uiaBrowser.GetCurrentUrl())
 return
 
 ; SumatraPDF
@@ -633,7 +633,7 @@ return
   PageNumber := ""
   ReadPoint := RegExReplace(Trim(Copy(false), " `t`r`n"), "s)\r\n.*")
 
-  if (hBrowser && (!BrowserUrl := Browser.ParseUrl(RetrieveUrlFromClip())))
+  if (hBrowser && (!BrowserUrl := Browser.ParseUrl(GetClipUrl())))
     BrowserUrl := Browser.GetUrl()
 
   if (hSumatra || (hDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
@@ -745,7 +745,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ; Open in default browser (in my case, Chrome); similar to default shortcut ^+e to open in ms edge
 ^+c::ShellRun(ControlGetText("Edit1", "A"))  ; browser url field
-^+e::ShellRun("msedge.exe", ControlGetText("Edit1", "A"))
+^+e::ShellRun("msedg", ControlGetText("Edit1", "A"))
 ^!l::SetToolTip("Copied " . Clipboard := ControlGetText("Edit1", "A"))
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))
 ^+c::
