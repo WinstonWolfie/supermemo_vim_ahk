@@ -1337,7 +1337,7 @@ class VimMove {
     Send {End}
     if (this.IsReplace())
       Send {Left}
-    if (!WinActive("ahk_group VimLBSelectGroup")) {
+    if (!WinActive("ahk_group VimLBSelectGroup") && !WinActive("ahk_group VimShiftDownLindEnd")) {
       this.Move("l")
     } else {
       this.Move("")

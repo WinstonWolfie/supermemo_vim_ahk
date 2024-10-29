@@ -144,8 +144,8 @@ return
           return
         }
         SectInUrl := RegExReplace(ch, "^sect: ")
-        SectInUrl := StrReplace(SectInUrl, " ", "_")
-        NewScript := ControlGetText("TMemo1") . "#" . EncodeDecodeURI(SectInUrl)
+        SectInUrl := StrReplace(SectInUrl, " ", "_")  ; SM script components can't have spaces in url parameter
+        NewScript := ControlGetText("TMemo1") . "#" . SectInUrl
         SM.EnterAndUpdate("TMemo1", NewScript)
         UIA := UIA_Interface()
         el := UIA.ElementFromHandle(WinExist())
@@ -171,11 +171,14 @@ return
       if (hBrowser)
         PlainText := Clipboard
       ClipboardGet_HTML(HTML)
-      if (hBrowser)
-        BrowserUrl := Browser.ParseUrl(GetClipUrl(HTML))
-      HTML := SM.CleanHTML(GetClipHTMLBody(HTML))
+      if (hBrowser) {
+        BrowserUrl := Browser.ParseUrl(Url := GetClipUrl(HTML))
+        HTML := RegExReplace(HTML, "i)<(\/)?mark", "<$1span")
+        HTML := RegExReplace(HTML, "i)<span .*?class="".*? default-cyan-.*?""", "<span class=extract")
+      }
+      HTML := SM.CleanHTML(GetClipHTMLBody(HTML),,, Url)
       if (hCalibre)
-        HTML := StrReplace(HTML, "data-calibre-range-wrapper=""1""", "class=extract")
+        HTML := RegExReplace(HTML, "data-calibre-range-wrapper=""\d+""", "class=extract")
       WinClip.Clear()
       Clipboard := HTML
       ClipWait

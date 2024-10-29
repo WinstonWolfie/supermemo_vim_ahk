@@ -1634,6 +1634,10 @@ class SM {
       ; str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-family: var\(--ds-type-system-.*?-smallcaps\))(?=[^>]+>)", " class=uppercase ")
     }
 
+    if (IfContains(Url, "baike.baidu.com")) {
+      str := RegExReplace(str, "i)<(\/)?DIV", "<$1P")
+    }
+
     ; Ilya Frank
     ; str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+COLOR: green)(?=[^>]+>)", " class=ilya-frank-translation ")
 
@@ -1732,9 +1736,9 @@ class SM {
   }
 
   RegMember() {
-    ; this.ActivateElWind()
-    ; Send !{f12}kr
-    this.PostMsg(923, true)
+    this.ActivateElWind()
+    Send !{f12}kr
+    ; this.PostMsg(923, true)
   }
 
   GoToEl(ElNumber, WinWait:=false, ForceBG:=false) {

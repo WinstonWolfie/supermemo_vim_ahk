@@ -573,6 +573,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class AcrobatSDIWindow"))
 !p::
   AcrobatPagePaste := false, CurrTimeAcrobatPage := A_TickCount
+  Vim.State.SetMode("Insert")
   GetAcrobatPageBtn().ControlClick()
   Sleep 100
   if (AcrobatPagePaste) {

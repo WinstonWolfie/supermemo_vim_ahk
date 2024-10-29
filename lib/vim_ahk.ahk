@@ -88,6 +88,10 @@ class VimAhk {
     GroupAdd, VimCursorSameAfterSelect, ahk_exe explorer.exe  ; Explorer
     GroupAdd, VimCursorSameAfterSelect, ahk_exe Explorer.exe  ; Explorer
 
+    ; When hitting shift + down, end of line is selected
+    GroupAdd, VimShiftDownLindEnd, ahk_exe notepad.exe  ; NotePad
+    GroupAdd, VimShiftDownLindEnd, ahk_exe Notepad.exe  ; NotePad
+
     ; Q-Dir
     GroupAdd, VimQdir, ahk_exe Q-Dir_x64.exe  ; q-dir
     GroupAdd, VimQdir, ahk_exe Q-Dir.exe  ; q-dir

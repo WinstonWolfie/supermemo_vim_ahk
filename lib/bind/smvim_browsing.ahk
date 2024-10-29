@@ -63,7 +63,7 @@ Return
   && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents"))
   && SM.IsBrowsing()
   && Vim.State.g)
-0::SM.Gohome(), Vim.State.SetMode()  ; g0: go to root element
+0::SM.GoHome(), Vim.State.SetMode()  ; g0: go to root element
 
 $::  ; g$: go to last element
   Send !{End}
@@ -91,8 +91,10 @@ j::Vim.Move.Repeat("j")
 k::Vim.Move.Repeat("k")
 d::Vim.Move.Repeat("^d")
 u::Vim.Move.Repeat("^u")
-0::Vim.Move.Move("0")
 $::Vim.Move.Move("$")
+
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g && (Vim.State.n == 0))
+0::Vim.Move.Move("0")
 
 ; "Browsing" mode
 ; Unlike Vim, 3gg and 3G work differently
