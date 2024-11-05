@@ -95,7 +95,7 @@ return
           } else if (WinGetTitle("ahk_class TBrowser") ~= "^0 users of ") {
             Break
           } else if (WinGetTitle("ahk_class TBrowser") ~= "^[1-9]+ users of ") {
-            if (IfIn(MsgBox(3,, "Continue?"), "No,Cancel")) {
+            if (IfIn(MsgBox(3,, "Potential duplicate found. Continue?"), "No,Cancel")) {
               WinActivate, % wCurr
               WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
               SM.ClearHighlight()

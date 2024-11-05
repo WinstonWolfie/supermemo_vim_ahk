@@ -1617,10 +1617,11 @@ class VimMove {
   }
 
   HandleClickBtn() {
+    ; This button is not clickable in sm using UIA/ACC for some reason
     if (WinActive("ahk_class TContents")) {
       ClickDPIAdjusted(295, 50)
     } else if (WinActive("ahk_class TBrowser")) {
-      ClickDPIAdjusted(638, 46)
+      ClickDPIAdjusted(660, 46)  ; btn pos changed in sm19.05
     }
   }
 
