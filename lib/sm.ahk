@@ -777,14 +777,6 @@ class SM {
     ControlClickWinCoordDPIAdjusted(294, 45, "ahk_class TBrowser")
   }
 
-  ElementParameter() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(706, true)
-    } else {
-      this.PostMsg(708, true)
-    }
-  }
-
   SetElParam(Title:="", Prio:="", Template:="", Group:="", CheckGroup:=false) {
     Critical
     if ((Title == "") && !(Prio >= 0) && !Template && !Group) {
@@ -800,10 +792,18 @@ class SM {
     ; Launch element parameter window
     w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
     while (!WinExist(w)) {  ; last iteration would update the last found window to w
-      this.ElementParameter()
-      WinWait, % w,, 1.5
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        this.PostMsg(706, true)  ; open element parameter
+      } else {
+        this.PostMsg(708, true)
+      }
+      WaitTime := 1
+      WaitTime += (A_Index - 1) * 0.5
+      WinWait, % w,, % WaitTime
       if (!ErrorLevel)
         Break
+      if (A_Index > 5)
+        return false
     }
 
     if (Template && !(ControlGetText("Edit1") = Template)) {
@@ -821,6 +821,7 @@ class SM {
     ControlFocus, TMemo1  ; needed, otherwise the window won't close sometimes
     while (WinExist(w))
       ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Enter}
+    return true
   }
 
   IsNavWnd() {  ; navigation window

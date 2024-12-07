@@ -268,7 +268,8 @@ IWBNewTopic:
     ConceptList := "||Online|Sources|ToDo"
     if (IfIn(CurrConcept := SM.GetDefaultConcept(), "Online,Sources,ToDo"))
       ConceptList := StrReplace(ConceptList, "|" . CurrConcept)
-    list := StrLower(CurrConcept . ConceptList)
+    ; list := StrLower(CurrConcept . ConceptList)  ; could produce undesired results; commented for now
+    list := CurrConcept . ConceptList
     Gui, SMImport:Add, ComboBox, vConcept gAutoComplete w280, % list
     Gui, SMImport:Add, Text,, &Tags (without # and use `; to separate):
     Gui, SMImport:Add, Edit, vTags w280
@@ -488,7 +489,10 @@ SMImportButtonImport:
   }
 
   ; All SM operations here are handled in the background
-  SM.SetElParam((IWB ? "" : Browser.Title), Prio, (SMCtrlNYT ? "YouTube" : ""), (ChangeBackConcept ? ChangeBackConcept : ""))
+  if (!SM.SetElParam((IWB ? "" : Browser.Title), Prio, (SMCtrlNYT ? "YouTube" : ""), (ChangeBackConcept ? ChangeBackConcept : ""))) {
+    SetToolTip("Failed to open the element parameter window.")
+    GoTo SMImportReturn
+  }
   if (DupChecked)
     SM.ClearHighlight()
   if (!SMPoundSymbHandled)
@@ -843,66 +847,6 @@ Return
   WinClip._waitClipReady()
   Send {Enter 2}
 return
-
-#if (Vim.State.Vim.Enabled && WinActive("ahk_exe HiborClient.exe"))
-!+d::  ; check duplicates
-  ClipSaved := ClipboardAll
-  if (CopyAll())
-    SM.CheckDup(MatchHiborLink(Clipboard))
-  Clipboard := ClipSaved
-return
-
-#if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_exe HiborClient.exe")) && WinExist("ahk_class TElWind"))
-^+!a::
-^!a::  ; import
-  ClipSaved := ClipboardAll
-  if (!CopyAll()) {
-    Clipboard := ClipSaved
-    return
-  }
-  Link := MatchHiborLink(Clipboard)
-  Title := MatchHiborTitle(Clipboard)
-  RegExMatch(Title, "^.*?(?=-)", Source)
-  Title := StrReplace(Title, Source . "-",,, 1)
-  RegExMatch(Title, "\d{6}$", Date)
-  Title := StrReplace(Title, "-" . Date,,, 1)
-  MB := ""
-  if (SM.CheckDup(Link, false))
-    MB := MsgBox(3,, "Continue import?")
-  WinActivate % "ahk_id " . hWnd
-  WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
-  if (IfIn(MB, "No,Cancel"))
-    Goto HBImportReturn
-  Prio := IfContains(A_ThisLabel, "+") ? SM.AskPrio(false) : ""
-  if (Prio == -1)
-    Goto HBImportReturn
-  WinClip.Clear()
-  Clipboard := "#SuperMemo Reference:"
-             . "`n#Title: " . Title
-             . "`n#Source: " . Source
-             . "`n#Date: " . Date
-             . "`n#Link: " . Link
-  ClipWait
-  WinActivate, ahk_class TElWind
-  SM.CtrlN()
-  SM.SetElParam(Title, Prio)
-
-HBImportReturn:
-  SM.ClearHighlight()
-  WinWaitNotActive, ahk_class TElWind,, 0.1
-  SwitchToSameWindow("ahk_class TElWind")
-  Clipboard := ClipSaved
-return
-
-MatchHiborTitle(Text) {
-  RegExMatch(Text, "s)意见反馈\r\n(研究报告：)?\K.*?(?=\r\n)", v)
-  return v
-}
-
-MatchHiborLink(Text) {
-  RegExMatch(Text, "s)推荐给朋友:\r\n\K.*?(?=  )", v)
-  return v
-}
 
 #if (Vim.State.Vim.Enabled && (hWnd := WinActive("ahk_exe Clash for Windows.exe")))
 !t::  ; test latency

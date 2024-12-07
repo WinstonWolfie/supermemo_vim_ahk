@@ -239,15 +239,15 @@ CapsLock & q::
     SM.GoHome()
     SM.WaitFileLoad()
   }
-  if (A_ThisLabel == "!f4")
+  ; if (A_ThisLabel == "!f4")
     Send !{f4}
-  if (A_ThisLabel == "CapsLock & q") {
-    if (WinActive("ahk_class LWJGL ahk_exe javaw.exe")) {
-      Send !{f4}
-    } else {
-      WinClose, A
-    }
-  }
+  ; if (A_ThisLabel == "CapsLock & q") {
+  ;   if (WinActive("ahk_class LWJGL ahk_exe javaw.exe")) {
+  ;     Send !{f4}
+  ;   } else {
+  ;     WinClose, A
+  ;   }
+  ; }
   if (WinActive("ahk_exe HiborClient.exe")) {
     WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0
     if (!ErrorLevel)

@@ -129,6 +129,8 @@ class Browser {
       this.Source := "Meta-Wiki", this.Title := RegExReplace(this.Title, " - Meta$")
     } else if (this.Title ~= " \| definition of .*? by Medical dictionary$") {
       this.Source := "The Free Dictionary"
+    } else if (this.Title ~= "とは【ピクシブ百科事典】$") {
+      this.Source := "ピクシブ百科事典", this.Title := RegExReplace(this.Title, "とは【ピクシブ百科事典】$")
 
     ; Source in the middle
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {

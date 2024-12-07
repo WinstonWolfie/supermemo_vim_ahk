@@ -96,7 +96,7 @@ $::Vim.Move.Move("$")
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g && (Vim.State.n == 0))
 0::Vim.Move.Move("0")
 
-; "Browsing" mode
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g)
 ; Unlike Vim, 3gg and 3G work differently
 ; 3gg goes to the 3rd line in the entire document
 ; 3G goes to the 3rd line on screen

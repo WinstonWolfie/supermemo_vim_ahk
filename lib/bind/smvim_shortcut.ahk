@@ -164,7 +164,10 @@ return
   } else if (A_ThisLabel == "^!i") {
     Template := "item"
   }
-  SM.SetElParam(,, Template)
+  if (!SM.SetElParam(,, Template)) {
+    SetToolTip("Failed to open the element parameter window.")
+    return
+  }
   WinWaitClose, ahk_class TElParamDlg
   if (ContLearn == 1)
     SM.learn()
@@ -180,7 +183,10 @@ return
     WinWaitActive, ahk_class TMsgDialog
     Send {Enter}
     WinWaitClose
-    SM.SetElParam(,, Template)
+    if (!SM.SetElParam(,, Template)) {
+      SetToolTip("Failed to open the element parameter window.")
+      return
+    }
     WinWaitClose, ahk_class TElParamDlg
     if (ContLearn == 1)
       SM.learn()
@@ -219,7 +225,10 @@ SMCtrlN:
     SM.WaitTextFocus()
     SM.WaitFileLoad()
     if (A_ThisLabel == "^n") {
-      SM.SetElParam(Browser.Title,, "YouTube")
+      if (!SM.SetElParam(Browser.Title,, "YouTube")) {
+        SetToolTip("Failed to open the element parameter window.")
+        return
+      }
       SM.Reload(), Browser.Clear()
       SetToolTip("Processing finished.")
     }
@@ -722,6 +731,7 @@ return
 ^l::
   SM.RegAltG()
   WinWaitActive, ahk_class TElWind
+  SM.WaitFileLoad()
   Goto SMLearnChildren
 return
 
