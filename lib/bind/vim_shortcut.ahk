@@ -413,7 +413,8 @@ SMImportButtonImport:
   } else if (SMCtrlNYT) {
     Clipboard := Browser.Url
   } else {
-    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,webmd.com,proofwiki.org,greenhornfinancefootnote.blogspot.com"
+    LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,"
+                   . "webmd.com,proofwiki.org,greenhornfinancefootnote.blogspot.com,cjfearnley.com"
     LineBreak := IfContains(Browser.Url, LineBreakList)
     HTMLText := SM.CleanHTML(HTMLText,, LineBreak, Browser.Url)
     if (!IWB && !Browser.Date)

@@ -780,13 +780,13 @@ class SM {
   SetElParam(Title:="", Prio:="", Template:="", Group:="", CheckGroup:=false) {
     Critical
     if ((Title == "") && !(Prio >= 0) && !Template && !Group) {
-      return
+      return true
     } else if ((Title != "") && !(Prio >= 0) && !Template && !Group) {
       this.SetTitle(Title)
-      return
+      return true
     } else if ((Title == "") && (Prio >= 0) && !Template && !Group) {
       this.SetPrio(Prio)
-      return
+      return true
     }
 
     ; Launch element parameter window
