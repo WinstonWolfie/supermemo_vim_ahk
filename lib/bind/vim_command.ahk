@@ -544,7 +544,7 @@ return
 
 ZLibrary:
   if (Text := FindSearchIB("Z-Library", "Search:"))
-    ShellRun("https://singlelogin.re/s/?q=" . EncodeDecodeURI(Text))
+    ShellRun("https://z-library.sk/s/?q=" . EncodeDecodeURI(Text))
 return
 
 AnnasArchive:
