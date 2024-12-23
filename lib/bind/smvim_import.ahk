@@ -266,7 +266,12 @@ ExtractToSMAgain:
     Send !x  ; extract
   }
   SM.WaitExtractProcessing()
-  SM.EmptyHTMLComp()
+  ; This opening registry part is needed to save html
+  SM.RegMember()
+  WinWaitActive, ahk_class TRegistryForm
+  WinClose
+  WinWaitActive, ahk_class TElWind
+  SM.EmptyHTMLComp()  ; this line unlinks the above html file with the current component
   WinWaitActive, ahk_class TElWind
   if (Marker) {
     SM.WaitTextFocus()

@@ -157,8 +157,12 @@ class Browser {
       RegExMatch(this.Title, "^(.*) - ", v), this.Author := v1, this.Title := RegExReplace(this.Title, "^(.*) - "), this.Source := "Google Podcasts"
 
     ; Download to get the date (Fandom/Wiki websites)
-    } else if (RegExMatch(this.Title, " \| (.*) \| Fandom$", v)) {
-      this.Source := v1 . " | Fandom", this.Title := RegExReplace(this.Title, " \| (.*) \| Fandom$")
+    } else if (IfContains(this.Url, "fandom.com")) {
+      if (RegExMatch(this.Title, " \| (.*? \| Fandom)$", v)) {
+        this.Source := v1, this.Title := RegExReplace(this.Title, " \| .*? \| Fandom$")
+      } else if (RegExMatch(this.Title, " - (.*? Wiki)$", v)) {
+        this.Source := v1, this.Title := RegExReplace(this.Title, " - .*? Wiki$")
+      }
       if (GetFullPage && GetDate) {
         this.Url := this.Url ? this.Url : this.GetUrl()
         TempHTML := GetSiteHTML(this.Url . "?action=history")
