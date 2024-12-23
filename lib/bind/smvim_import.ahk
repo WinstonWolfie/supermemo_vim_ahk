@@ -267,7 +267,7 @@ ExtractToSMAgain:
   }
   SM.WaitExtractProcessing()
   ; This opening registry part is needed to save html
-  SM.RegMember()
+  SM.RegMember(true)
   WinWaitActive, ahk_class TRegistryForm
   WinClose
   WinWaitActive, ahk_class TElWind

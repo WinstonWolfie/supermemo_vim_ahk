@@ -1736,10 +1736,13 @@ class SM {
     ; this.PostMsg(982, true)
   }
 
-  RegMember() {
-    this.ActivateElWind()
-    Send !{f12}kr
-    ; this.PostMsg(923, true)
+  RegMember(PostMsg:=false) {
+    if (PostMsg) {
+      this.PostMsg(923, true)
+    } else {
+      this.ActivateElWind()
+      Send !{f12}kr
+    }
   }
 
   GoToEl(ElNumber, WinWait:=false, ForceBG:=false) {
