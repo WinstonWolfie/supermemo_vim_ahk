@@ -201,42 +201,44 @@ NumpadPgup::SM.SetRandPrio(90.2474,99.99)
                              || SM.IsLearning()
                              || WinActive("ahk_class TPriorityDlg")
                              || SM.IsGrading()))
-^!0::
+^0::
 ^Numpad0::
 ^NumpadIns::SM.SetRandInterval(1, 3)
 
-^!1::
+^1::
 ^Numpad1::
 ^NumpadEnd::SM.SetRandInterval(4, 8)
 
-^!2::
+^2::
 ^Numpad2::
 ^NumpadDown::SM.SetRandInterval(9, 18)
 
-^!3::
+^3::
 ^Numpad3::
 ^NumpadPgdn::SM.SetRandInterval(19, 28)
 
-^!4::
+^4::
 ^Numpad4::
 ^NumpadLeft::SM.SetRandInterval(29, 37)
 
-^!5::
+^5::
 ^Numpad5::
 ^NumpadClear::SM.SetRandInterval(38, 46)
 
-^!6::
+^6::
 ^Numpad6::
 ^NumpadRight::SM.SetRandInterval(47, 57)
 
-^!7::
+^7::
 ^Numpad7::
 ^NumpadHome::SM.SetRandInterval(58, 70)
 
-^!8::
+^8::
 ^Numpad8::
 ^NumpadUp::SM.SetRandInterval(71, 90)
 
-^!9::
+^9::
 ^Numpad9::
 ^NumpadPgup::SM.SetRandInterval(91, 99)
+
+^.::SM.SetInterval(1)
