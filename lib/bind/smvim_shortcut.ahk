@@ -119,6 +119,7 @@ return
 return
 
 ^+!t::Goto Tag
+^.::SM.SetInterval(1)
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && SM.DoesHTMLExist())
 ^!f::  ; use IE's search; discovered by Harvey from the SuperMemo.wiki Discord server

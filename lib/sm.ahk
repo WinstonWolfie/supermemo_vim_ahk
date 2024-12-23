@@ -180,6 +180,18 @@ class SM {
     return (WinActive("ahk_class TBrowser") && (ControlGetFocus() == "TStringGrid1"))
   }
 
+  SetPrio(Prio) {
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(653, true)
+    } else {
+      this.PostMsg(655, true)
+    }
+    WinWait, % "ahk_class TPriorityDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+    ControlSetText, TEdit5, % Prio
+    while (WinExist())
+      ControlSend, TEdit5, {Enter}
+  }
+
   SetRandPrio(min, max) {
     Prio := Random(min, max)
     global SMImportGuiHwnd, Vim
@@ -200,8 +212,7 @@ class SM {
     Vim.State.SetNormal()
   }
 
-  SetRandInterval(min, max) {
-    Interval := Random(min, max)
+  SetInterval(Interval) {
     if (WinActive("ahk_class TElWind")) {
       if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
         this.PostMsg(616, true)
@@ -220,16 +231,8 @@ class SM {
     }
   }
 
-  SetPrio(Prio) {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(653, true)
-    } else {
-      this.PostMsg(655, true)
-    }
-    WinWait, % "ahk_class TPriorityDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
-    ControlSetText, TEdit5, % Prio
-    while (WinExist())
-      ControlSend, TEdit5, {Enter}
+  SetRandInterval(min, max) {
+    this.SetInterval(Random(min, max))
   }
 
   SetRandTaskVal(min, max) {
@@ -1048,16 +1051,29 @@ class SM {
       Send ^t{f9}
       if (Path := this.GetFilePath())
         ShellRun("acrobat.exe", Path)
-    } else if (SMTitle == "Netflix") {
-      ShellRun(this.GetLinkFromUIAArray(auiaText))
-    } else if (Marker == "SMVim: Use online video progress") {
-      global Browser
-      Browser.SearchInYT(SMTitle, this.GetLinkFromUIAArray(auiaText))
     } else {
-      Send ^{f10}
-      WinWaitActive, ahk_class TMsgDialog,, 0
-      if (!ErrorLevel)
-        Send {text}y 
+      RefLink := this.GetLinkFromUIAArray(auiaText)
+      if (SMTitle == "Netflix") {
+        ShellRun(RefLink)
+      } else if (Marker == "SMVim: Use online video progress") {
+        global Browser
+        Browser.SearchInYT(SMTitle, RefLink)
+      } else {
+        if (IfContains(RefLink, "youtube.com")) {
+          ; If it's a YT video, it's best to have the browser open first,
+          ; so the extentions (eg, adblockers) can be launched
+          RegExMatch(DefaultBrowser := DefaultBrowser(), ".*\\\K.*$", v)
+          if (!WinExist(wBrowser := "ahk_exe " . v)) {
+            ShellRun(DefaultBrowser)
+            WinWaitActive, % wBrowser
+          }
+          this.ActivateElWind()
+        }
+        Send ^{f10}
+        WinWaitActive, ahk_class TMsgDialog,, 0
+        if (!ErrorLevel)
+          Send {text}y 
+      }
     }
 
     ToolTip := "Running: `n`nTitle: " . SMTitle
