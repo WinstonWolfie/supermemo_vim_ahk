@@ -267,9 +267,16 @@ ExtractToSMAgain:
   }
   SM.WaitExtractProcessing()
   ; This opening registry part is needed to save html
-  SM.RegMember(true)
-  WinWaitActive, ahk_class TRegistryForm
-  WinClose
+  loop {
+    SM.RegMember(true)
+    WinWaitActive, ahk_class TRegistryForm,, 0.1
+    if (!ErrorLevel) {
+      WinClose
+      Break
+    }
+    if (A_Index > 10)  ; probably saved after 1 second or so
+      Break
+  }
   WinWaitActive, ahk_class TElWind
   SM.EmptyHTMLComp()  ; this line unlinks the above html file with the current component
   WinWaitActive, ahk_class TElWind

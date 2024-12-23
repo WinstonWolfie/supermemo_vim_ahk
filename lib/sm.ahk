@@ -1738,7 +1738,11 @@ class SM {
 
   RegMember(PostMsg:=false) {
     if (PostMsg) {
-      this.PostMsg(923, true)
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        this.PostMsg(924, true)
+      } else {
+        this.PostMsg(923, true)
+      }
     } else {
       this.ActivateElWind()
       Send !{f12}kr
