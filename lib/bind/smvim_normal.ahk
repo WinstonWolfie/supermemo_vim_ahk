@@ -43,7 +43,7 @@ u::
 +x::
 x::  ; gx: open hyperlink in current caret position
   Vim.State.SetMode(), ClipSaved := ClipboardAll
-  if (!Copy(false,, "+{Right}^c{Left}")) {  ; end of line
+  if (Copy(false,, "+{Right}^c{Left}") = "") {  ; end of line
     Copy(false,, "+{Right}^c{Right}")
   } else if (Clipboard ~= "\s") {
     Copy(false,, "+{Left}^c{Right}")

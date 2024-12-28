@@ -60,8 +60,9 @@ SMParseHTML:
   if (CopyText)
     Copy(false)
   ClipSaved := ClipboardAll
-  if (!Copy(false)) {
+  if (Copy(false) = "") {
     Clipboard := ClipSaved
+    SetToolTip("Text not found.")
     return
   }
   if (OriginalHTML) {

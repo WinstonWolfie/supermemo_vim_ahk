@@ -111,7 +111,7 @@ return
 
 ^!d::  ; parse word *d*efinitions
   ClipSaved := ClipboardAll
-  if (!Copy(false)) {
+  if (Copy(false) = "") {
     SetToolTip("Text not found.")
     Clipboard := ClipSaved
     return
@@ -161,7 +161,7 @@ return
 
 ^!c::  ; copy and register references
   Browser.Clear(), WinClip.Snap(data)
-  if (!Copy(false))
+  if (Copy(false) = "")
     SetToolTip("No text selected."), WinClip.Restore(data)
   Browser.GetInfo()
   SetToolTip("Copied " . Clipboard . "`n"

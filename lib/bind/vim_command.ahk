@@ -297,7 +297,7 @@ GoogleDefineButtonSearch:
 return
 
 ClozeAndDone:
-  if (!Copy())
+  if (Copy() = "")
     return
   SM.Cloze()
   if (SM.WaitClozeProcessing() == -1)  ; warning on trying to cloze on items
@@ -963,7 +963,7 @@ MassProcessRegistry:
     }
     WinWaitActive, ahk_class TRegistryForm
     if (PrevText) {
-      SM.EnterAndUpdate("Edit1", PrevText)
+      SM.SetText("Edit1", PrevText)
     } else {
       Send {Down}
     }

@@ -46,7 +46,7 @@ return
   KeyWait Ctrl
   KeyWait Shift
 
-  if (!Copy(false)) {
+  if (Copy(false) = "") {
     Clipboard := ClipSaved  ; might be used in InputBox below
     if ((ch := InputBox(, "Extract chapter/section:")) && !ErrorLevel) {
       ModifyScript := false
@@ -146,7 +146,7 @@ return
         SectInUrl := RegExReplace(ch, "^sect: ")
         SectInUrl := StrReplace(SectInUrl, " ", "_")  ; SM script components can't have spaces in url parameter
         NewScript := ControlGetText("TMemo1") . "#" . SectInUrl
-        SM.EnterAndUpdate("TMemo1", NewScript)
+        SM.SetText("TMemo1", NewScript)
         UIA := UIA_Interface()
         el := UIA.ElementFromHandle(WinExist())
         el.WaitElementExist("ControlType=Button AND Name='OK'").Click()

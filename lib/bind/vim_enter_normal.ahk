@@ -2,6 +2,8 @@
 #if (Vim.IsVimGroup() || (Vim.State.Vim.Enabled && Vim.State.BackToNormal))
 CapsLock::
 Esc::
+  if (SM.IsBrowsing() && (SM.IsLearning() == 2))
+    Send !p  ; in neural review just sending esc could end the neural review
   Vim.State.HandleEsc()
   if (Vim.State.BackToNormal == 1)
     Vim.State.SetMode("Vim_Normal")

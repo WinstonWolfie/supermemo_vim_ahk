@@ -120,6 +120,14 @@ return
 
 ^+!t::Goto Tag
 
+^!n::
+  SM.DetachTemplate()
+  Send !{f12}xsl  ; link style
+  WinWaitActive, ahk_class TRegistryForm
+  SM.SetText("Edit1", "No reference")
+  ControlSend, Edit1, {Enter}
+return
+
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind") && SM.DoesHTMLExist())
 ^!f::  ; use IE's search; discovered by Harvey from the SuperMemo.wiki Discord server
   if (!SM.IsEditingHTML()) {
@@ -134,7 +142,7 @@ return
     return
   Send !c
   if (VimLastSearch)
-    SM.EnterAndUpdate("Edit1", VimLastSearch)
+    SM.SetText("Edit1", VimLastSearch)
   Send !f
   pidSM := WinGet("PID", "ahk_class TElWind")
   SetTimer, RegisterVimLastSearchForSMCtrlAltF, -1
@@ -307,7 +315,7 @@ return
   } else if (Clipboard ~= "^SuperMemoElementNo=\(\d+\)$") {
     Link := Clipboard
   }
-  if (!Link || !Copy())  ; no selection or no link
+  if (!Link || (Copy() = ""))  ; no selection or no link
     return
   Send ^k
   UIA := UIA_Interface()
@@ -768,7 +776,7 @@ return
     WinWaitActive, ahk_class TElWind
     SM.SetDefaultConcept()
     WinWaitActive, ahk_class TRegistryForm
-    SM.EnterAndUpdate("Edit1", CurrConcept)
+    SM.SetText("Edit1", CurrConcept)
   }
   Send !n
   WinWaitActive, ahk_class TElWind,, 1.5

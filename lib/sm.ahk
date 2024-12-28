@@ -6,7 +6,7 @@ class SM {
                    . "|italic|bold|underline|italic-bold|italic-underline"
                    . "|bold-underline|small-caps|smallcaps"
                    . "|ilya-frank-translation|overline|italic-overline"
-                   . "|bold-overline|underline-overline"
+                   . "|bold-overline|underline-overline|sub-left"
   }
 
   DoesTextExist(RestoreClip:=true) {
@@ -702,10 +702,10 @@ class SM {
   }
 
   IsCssClass(Text) {
-    return (Text ~= this.CssClass)
+    return (IfContains("|" . this.CssClass . "|", "|" . Text . "|"))
   }
 
-  EnterAndUpdate(Control, Text:="", w:="", CheckName:=true) {
+  SetText(Control, Text:="", w:="", CheckName:=true) {
     ControlSetText, % Control, % SubStr(Text, 2), % w
     ControlSend, % Control, % "{text}" . SubStr(Text, 1, 1), % w
     if (CheckName)
@@ -729,7 +729,7 @@ class SM {
       WinWait, % wReg := "ahk_class TRegistryForm ahk_pid " . WinGet("PID", "ahk_class TElWind")
 
       if (CheckConceptExist) {
-        this.EnterAndUpdate("Edit1", CheckConceptExist, wReg)
+        this.SetText("Edit1", CheckConceptExist, wReg)
         ret := this.RegCheck(CheckConceptExist,, wReg)
         if (ret == "")
           return false
@@ -737,7 +737,7 @@ class SM {
       }
 
       if (Concept) {  ; set concept
-        this.EnterAndUpdate("Edit1", Concept, wReg)
+        this.SetText("Edit1", Concept, wReg)
         if (this.RegCheck(Concept,, wReg) == "")
           return false
       }
@@ -810,15 +810,15 @@ class SM {
     }
 
     if (Template && !(ControlGetText("Edit1") = Template)) {
-      this.EnterAndUpdate("Edit1", Template)
+      this.SetText("Edit1", Template)
       this.WaitFileLoad()
     }
     if ((Title != "") && (ControlGetText("TEdit2") != Title))
-      this.EnterAndUpdate("TEdit2", Title)
+      this.SetText("TEdit2", Title)
     if ((Prio >= 0) && (ControlGetText("TEdit1") != Prio))
-      this.EnterAndUpdate("TEdit1", Prio)
+      this.SetText("TEdit1", Prio)
     if (Group && !(ControlGetText("Edit2") = Group))
-      this.EnterAndUpdate("Edit2", Group,, CheckGroup)
+      this.SetText("Edit2", Group,, CheckGroup)
 
     ; Submit
     ControlFocus, TMemo1  ; needed, otherwise the window won't close sometimes
@@ -1362,7 +1362,7 @@ class SM {
       pidSM := WinGet("PID", "ahk_class TElWind")
       WinWait, % "ahk_class TRegistryForm ahk_pid " . pidSM
       wReg := "ahk_id " . WinExist()
-      this.EnterAndUpdate("Edit1", ShortUrl)
+      this.SetText("Edit1", ShortUrl)
       this.RegAltR()
       WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
       if (ControlGetText("TMemo1") == ShortUrl)
@@ -1533,7 +1533,7 @@ class SM {
     if (Concept) {
       pidSM := WinGet("PID", wSMElWind)
       WinWait, % wReg := "ahk_class TRegistryForm ahk_pid " . pidSM
-      this.EnterAndUpdate("Edit1", Concept, wReg)
+      this.SetText("Edit1", Concept, wReg)
       if (this.RegCheck(Concept, wSMElWind, wReg) == "")
         return
       ControlSend, Edit1, {Enter}, % wReg
@@ -1887,7 +1887,7 @@ class SM {
       return
     this.LinkReference()
     WinWait, % "ahk_class TRegistryForm ahk_pid " . WinGet("PID", "ahk_class TElWind")
-    this.EnterAndUpdate("Edit1", RefRegName)
+    this.SetText("Edit1", RefRegName)
     ControlSend, Edit1, {Enter}
   }
 }
