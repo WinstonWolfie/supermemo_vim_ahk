@@ -140,7 +140,7 @@ return
   WinWaitActive, ahk_class #32770,, 1.5
   if (ErrorLevel)
     return
-  Send !c
+  ; Send !c  ; match case
   if (VimLastSearch)
     SM.SetText("Edit1", VimLastSearch)
   Send !f

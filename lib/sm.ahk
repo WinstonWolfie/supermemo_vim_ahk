@@ -1041,6 +1041,7 @@ class SM {
   }
 
   AutoPlay(Acrobat:=false) {
+    this.CloseMsgDialog()
     this.ActivateElWind(), SetToolTip("Running...")
     auiaText := this.GetUIAArray()
     Marker := this.GetMarkerFromUIAArray(auiaText)
@@ -1052,27 +1053,30 @@ class SM {
       if (Path := this.GetFilePath())
         ShellRun("acrobat.exe", Path)
     } else {
+
       RefLink := this.GetLinkFromUIAArray(auiaText)
+      if (IfContains(RefLink, "youtube.com")) {
+        ; If it's a YT video, it's best to have the browser open first,
+        ; so the extentions (eg, adblockers) can be launched
+        RegExMatch(DefaultBrowser := DefaultBrowser(), ".*\\\K.*$", v)
+        if (!WinExist(wBrowser := "ahk_exe " . v)) {
+          ShellRun(DefaultBrowser)
+          WinWaitActive, % wBrowser
+        }
+      }
+
       if (SMTitle == "Netflix") {
         ShellRun(RefLink)
       } else if (Marker == "SMVim: Use online video progress") {
         global Browser
         Browser.SearchInYT(SMTitle, RefLink)
       } else {
-        if (IfContains(RefLink, "youtube.com")) {
-          ; If it's a YT video, it's best to have the browser open first,
-          ; so the extentions (eg, adblockers) can be launched
-          RegExMatch(DefaultBrowser := DefaultBrowser(), ".*\\\K.*$", v)
-          if (!WinExist(wBrowser := "ahk_exe " . v)) {
-            ShellRun(DefaultBrowser)
-            WinWaitActive, % wBrowser
-          }
-          this.ActivateElWind()
-        }
-        Send ^{f10}
-        WinWaitActive, ahk_class TMsgDialog,, 0
-        if (!ErrorLevel)
+        ControlSend,, {Ctrl Down}{F10}{Ctrl Up}, ahk_class TElWind
+        WinWait, % "ahk_class TMsgDialog ahk_pid " . pidSM,, 0
+        if (!ErrorLevel) {
+          WinActivate
           Send {text}y 
+        }
       }
     }
 

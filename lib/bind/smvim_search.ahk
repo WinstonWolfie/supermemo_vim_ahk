@@ -108,6 +108,7 @@ SMSearchAgain:
       SetToolTip("Not found."), Vim.State.SetNormal()
       Return
     }
+
   } else if (IfContains(CurrFocus, "Internet Explorer_Server")) {
     if (!SM.HandleF3(1))
       return
@@ -115,7 +116,8 @@ SMSearchAgain:
     ControlSetText, TEdit1, % LTrim(UserInput), ahk_class TMyFindDlg
     if (WholeWord)
       Control, Check,, TCheckBox2, ahk_class TMyFindDlg  ; match whole word
-    Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
+    if (UserInput ~= "[A-Z]")  ; like vim smartcase
+      Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
     Send {Enter}
     if (Vim.State.n)
       Send % "{f3 " . Vim.State.GetN() - 1 . "}"
