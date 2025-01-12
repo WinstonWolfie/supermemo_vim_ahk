@@ -231,7 +231,7 @@ CreateHints(HintsArray, HintStrings) {
 CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=5000) {
   global Vim, UIA, SM
   if (Caret)
-    SM.ClickMid(Control)
+    SM.Click("m", Control)
   el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)
   if (ObjCount(auiaHints) > Limit)
     return
@@ -356,7 +356,7 @@ o::  ; favourites
   BlockInput, Off
 return
 
-t::SM.ClickMid()  ; *t*ext
+t::SM.Click("m")  ; *t*ext
 
 ; Copy
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing())
@@ -399,7 +399,7 @@ return
 ^f7::
 m::
   if (SM.IsEditingHTML())
-    SM.ClickMid()
+    SM.Click("m")
   Send ^{f7}  ; set read point
   SetToolTip("Read point set")
 Return

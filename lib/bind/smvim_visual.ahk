@@ -99,19 +99,19 @@ return
 
 +h::  ; move to top of screen
   Send {Shift Down}
-  SM.ClickTop()
+  SM.Click("h")
   Send {Shift Up}
 Return
 
 +m::  ; move to middle of screen
   Send {Shift Down}
-  SM.ClickMid()
+  SM.Click("m")
   Send {Shift Up}
 Return
 
 +l::  ; move to bottom of screen
   Send {Shift Down}
-  SM.ClickBottom()
+  SM.Click("l")
   Send {Shift Up}
 Return
 

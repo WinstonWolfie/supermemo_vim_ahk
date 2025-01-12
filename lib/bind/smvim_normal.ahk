@@ -3,17 +3,17 @@
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsEditingText())
 +h::  ; move to top of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  SM.ClickTop()
+  SM.Click("h")
 Return
 
 +m::  ; move to middle of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  SM.ClickMid()
+  SM.Click("m")
 Return
 
 +l::  ; move to bottom of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  SM.ClickBottom()
+  SM.Click("l")
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && SM.IsBrowsing() && Vim.State.g && VimLastSearch)

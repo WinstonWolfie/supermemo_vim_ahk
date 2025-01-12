@@ -116,7 +116,7 @@ class VimState {
     Esc := (A_ThisHotkey = "Esc") ? true : false
     global SM
     if (SM.IsEditingText() && Caps)
-      SM.ClickMid()
+      SM.Click("m")
     if (!VimEscNormal) {
       Send {Esc}
       Return

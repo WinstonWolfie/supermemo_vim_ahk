@@ -1217,10 +1217,10 @@ class VimMove {
     } else if (key == "+g") {
         if (this.Vim.State.n > 0) {
           if (SM.IsBrowsing() && SM.DoesTextExist()) {
-            SM.ClickTop()
+            SM.Click("h")
             SM.WaitTextFocus()
           } else if (SM.IsEditingText()) {
-            SM.ClickTop()
+            SM.Click("h")
           } else {
             this.HandleClickBtn()
             Send ^{Home}
@@ -1285,7 +1285,7 @@ class VimMove {
     } else if (key == "}") {
       if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
-        SM.ClickTop()
+        SM.Click("h")
         SM.WaitTextFocus()
         this.ParagraphDown(this.Vim.State.GetN() - 1)
       } else if (this.shift == 1) {

@@ -2,20 +2,20 @@
 class SM {
   __New() {
     this.CssClass := "cloze|extract|clozed|hint|note|ignore|headers|reftext"
-      . "|reference|highlight|tablelabel|anti-merge|uppercase"
-      . "|italic|bold|underline|italic-bold|italic-underline"
-      . "|bold-underline|small-caps|smallcaps"
-      . "|ilya-frank-translation|overline|italic-overline"
-      . "|bold-overline|underline-overline|sub-left"
+                   . "|reference|highlight|tablelabel|anti-merge|uppercase"
+                   . "|italic|bold|underline|italic-bold|italic-underline"
+                   . "|bold-underline|small-caps|smallcaps"
+                   . "|ilya-frank-translation|overline|italic-overline"
+                   . "|bold-overline|underline-overline|sub-left"
   }
 
   DoesTextExist(RestoreClip:=true) {
-    if (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")
-      || ControlGet(,, "TMemo1", "ahk_class TElWind")
-      || ControlGet(,, "TRichEdit1", "ahk_class TElWind")) {
-      return true
-    } else {
-      return IfContains(this.GetTemplCode(RestoreClip), "Type=Text", true)
+    if (WinExist("ahk_class TElWind")) {
+      if (ControlGet(,, "Internet Explorer_Server1") || ControlGet(,, "TMemo1") || ControlGet(,, "TRichEdit1")) {
+        return true
+      } else {
+        return IfContains(this.GetTemplCode(RestoreClip), "Type=Text", true)
+      }
     }
   }
 
@@ -34,86 +34,35 @@ class SM {
     }
   }
 
-  ClickTop(Control:="") {
-    if (Control) {
-      ControlClick, % Control, ahk_class TElWind,,,, NA x1 y1
-    } else if (this.IsEditingText()) {
-      ControlClick, % ControlGetFocus("ahk_class TElWind"), ahk_class TElWind,,,, NA x1 y1
-    } else {
-      ; server2 because question field of items are server2
-      if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {  ; item
-        ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, NA x1 y1
+  Click(pos, Control:="") {
+    if (!IfIn(pos,"h,m,l"))
+      return false
+    if (Control || this.IsEditingText()) {
+      Control := Control ? Control : ControlGetFocus()
+    } else if (WinExist("ahk_class TElWind")) {
+      if (ControlGet(,, "Internet Explorer_Server2")) {  ; item
+        Control := "Internet Explorer_Server2"
       } else {  ; topic
-        ; Article field in topics is server1
-        if (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")) {  ; topic found
-          ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, NA x1 y1
+        if (ControlGet(,, "Internet Explorer_Server1")) {  ; topic
+          Control := "Internet Explorer_Server1"
         } else {  ; no html field found
           if (!this.DoesTextExist())
             return false
           this.EditFirstQuestion(), this.WaitTextFocus()
           Control := ControlGetFocus("ahk_class TElWind")
-          ControlGetPos,,,, Height, % Control, ahk_class TElWind
-          ControlClick, % Control, ahk_class TElWind,,,, NA x1 y1
         }
       }
     }
-    return true
-  }
 
-  ClickMid(Control:="") {
-    if (Control) {
-      ControlGetPos,,,, Height, % Control, ahk_class TElWind
-      ControlClick, % Control, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
-    } else if (this.IsEditingText()) {
-      CurrFocus := ControlGetFocus("ahk_class TElWind")
-      ControlGetPos,,,, Height, % CurrFocus, ahk_class TElWind
-      ControlClick, % CurrFocus, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
-    } else {
-      ControlGetPos,,,, Height, Internet Explorer_Server2, ahk_class TElWind  ; server2 because question field of items are server2
-      if (Height) {  ; item
-        ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
-      } else {  ; topic
-        ControlGetPos,,,, Height, Internet Explorer_Server1, ahk_class TElWind  ; article field in topics is server1
-        if (Height) {  ; topic found
-          ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
-        } else {  ; no html field found
-          if (!this.DoesTextExist())
-            return false
-          this.EditFirstQuestion(), this.WaitTextFocus()
-          Control := ControlGetFocus("ahk_class TElWind")
-          ControlGetPos,,,, Height, % Control, ahk_class TElWind
-          ControlClick, % Control, ahk_class TElWind,,,, % "NA x1 y" . Height / 2
-        }
-      }
-    }
-    return true
-  }
-
-  ClickBottom(Control:="") {
-    if (Control) {
-      ControlGetPos,,,, Height, % Control, ahk_class TElWind
-      ControlClick, % Control, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
-    } else if (this.IsEditingText()) {
-      CurrFocus := ControlGetFocus("ahk_class TElWind")
-      ControlGetPos,,,, Height, % CurrFocus, ahk_class TElWind
-      ControlClick, % CurrFocus, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
-    } else {
-      ControlGetPos,,,, Height, Internet Explorer_Server2, ahk_class TElWind  ; server2 because question field of items are server2
-      if (Height) {  ; item
-        ControlClick, Internet Explorer_Server2, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
-      } else {  ; topic
-        ControlGetPos,,,, Height, Internet Explorer_Server1, ahk_class TElWind  ; article field in topics is server1
-        if (Height) {  ; topic found
-          ControlClick, Internet Explorer_Server1, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
-        } else {  ; no html field found
-          if (!this.DoesTextExist())
-            return false
-          this.EditFirstQuestion(), this.WaitTextFocus()
-          Control := ControlGetFocus("ahk_class TElWind")
-          ControlGetPos,,,, Height, % Control, ahk_class TElWind
-          ControlClick, % Control, ahk_class TElWind,,,, % "NA x1 y" . Height - 2
-        }
-      }
+    WinExist("ahk_class TElWind")  ; update last found window
+    if (IfIn(pos,"m,l"))
+      ControlGetPos,,,, Height, % Control
+    if (pos = "h") {
+      ControlClick, % Control,,,,, NA x1 y1
+    } else if (pos = "m") {
+      ControlClick, % Control,,,,, % "NA x1 y" . Height / 2
+    } else if (pos = "l") {
+      ControlClick, % Control,,,,, % "NA x1 y" . Height - 2
     }
     return true
   }
@@ -143,25 +92,13 @@ class SM {
   }
 
   IsGrading() {
-    CurrFocus := ControlGetFocus("A")
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
-    return (WinActive("ahk_class TElWind")
-      && ((CurrFocus == "TBitBtn4")
-      || (CurrFocus == "TBitBtn5")
-      || (CurrFocus == "TBitBtn6")
-      || (CurrFocus == "TBitBtn7")
-      || (CurrFocus == "TBitBtn8")
-      || (CurrFocus == "TBitBtn9")))
+    if (WinActive("ahk_class TElWind"))
+      return (ControlGetFocus() ~= "^TBitBtn[4-9]$")
   }
 
   IsNavigating() {
-    return (this.IsNavigatingPlan()
-      || this.IsNavigatingTask()
-      || this.IsNavigatingContentWind()
-      || this.IsNavigatingBrowser()
-      || WinActive("ahk_class TImgDown")
-      || WinActive("ahk_class TChoicesDlg")
-      || WinActive("ahk_class TChecksDlg"))
+    return (this.IsNavigatingPlan() || this.IsNavigatingTask() || this.IsNavigatingContentWind() || this.IsNavigatingBrowser() || WinActive("ahk_class TImgDown") || WinActive("ahk_class TChoicesDlg") || WinActive("ahk_class TChecksDlg"))
   }
 
   IsNavigatingPlan() {
@@ -271,8 +208,7 @@ class SM {
     loop {
       if (WinActive("ahk_class TElWind") && this.IsBrowsing()) {
         return true
-        ; Choices because reference could update
-      } else if (this.IsNavWnd() || (Timeout && (A_TickCount - StartTime > Timeout))) {
+      } else if (this.IsNavWnd() || (Timeout && (A_TickCount - StartTime > Timeout))) {  ; choices because reference could update
         return false
       }
     }
@@ -536,7 +472,7 @@ class SM {
 
     if (!WndFound) {
       MB := MsgBox(3,, "SuperMemo is processing something. Do you want to launch a new window?"
-        . "`n(Press no to wait; also please switch to main SM window if not automatically switched)")
+                     . "`n(Press no to wait; also please switch to main SM window if not automatically switched)")
       if (MB = "Yes") {
         ShellRun("C:\SuperMemo\sm19.exe")
         WinWaitActive, ahk_class TElWind
@@ -817,21 +753,20 @@ class SM {
   IsNavWnd() {  ; navigation window
     if (WinActive("ahk_class TChoicesDlg")) {
       return ((ControlGetText("TGroupButton1") == "Cancel (i.e. restore the old version of references)")
-        && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
-        && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
-        && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
-        || ((ControlGetText("TGroupButton5") == "Go to the root element of the concept")
-        && (ControlGetText("TGroupButton4") == "Transfer the current element to the concept")
-        && (ControlGetText("TGroupButton3") == "View the last child of the root")
-        && (ControlGetText("TGroupButton2") == "Review the elements in the concept")
-        && (ControlGetText("TGroupButton1") == "Cancel"))
+           && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
+           && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
+           && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
+          || ((ControlGetText("TGroupButton5") == "Go to the root element of the concept")
+           && (ControlGetText("TGroupButton4") == "Transfer the current element to the concept")
+           && (ControlGetText("TGroupButton3") == "View the last child of the root")
+           && (ControlGetText("TGroupButton2") == "Review the elements in the concept")
+           && (ControlGetText("TGroupButton1") == "Cancel"))
     }
   }
 
   CheckDup(Text, ClearHighlight:=true, wSMElWind:="ahk_class TElWind", ToolTip:="No duplicates found.") {  ; try to find duplicates
     pidSM := WinGet("PID", wSMElWind)
-    while (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)
-      || WinExist("ahk_class TBrowser ahk_pid " . pidSM))
+    while (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM) || WinExist("ahk_class TBrowser ahk_pid " . pidSM))
       WinClose
     ContLearn := this.IsLearning(wSMElWind)
     Text := LTrim(Text)  ; LTrim() is necessary bc SuperMemo LITERALLY MODIFIES the html
@@ -1090,8 +1025,8 @@ class SM {
         uiaBrowser.WaitPageLoad(,, 0)
       }
       t := "Do you want to search read point?"
-        . "`n`nTitle: " . SMTitle
-        . "`nRead point: " . MarkerContent
+         . "`n`nTitle: " . SMTitle
+         . "`nRead point: " . MarkerContent
       if (MsgBox(3,, t) = "Yes") {
         if (WinGetClass(wReader) == "SUMATRA_PDF_FRAME") {
           ControlFocus, Edit2, % wReader
@@ -1571,11 +1506,11 @@ class SM {
     wCurr := "ahk_id " . WinActive("A")
     global Browser
     t := "Link in SM reference is not the same as in the browser. Continue?"
-      . "`n(press no to execute a search)"
-      . "`nBrowser url: " . BrowserUrl
-      . "`n       SM url: " . CurrSMUrl
-      . "`n`nBrowser title: " . Browser.GetFullTitle()
-      . "`n       SM title: " . WinGetTitle(wSMElWind)
+       . "`n(press no to execute a search)"
+       . "`nBrowser url: " . BrowserUrl
+       . "`n       SM url: " . CurrSMUrl
+       . "`n`nBrowser title: " . Browser.GetFullTitle()
+       . "`n       SM title: " . WinGetTitle(wSMElWind)
     MB := MsgBox(3,, t), ret := 0
     if ((MB = "No") && this.CheckDup(BrowserUrl,, wSMElWind, "Link not found in collection.")) {
       MB := MsgBox(3,, "Found. Continue?")
@@ -1762,16 +1697,13 @@ class SM {
     loop % pahSMElWind {
       SMTitle := WinGetTitle(wTemp := "ahk_id " . pahSMElWind%A_Index%)
       TempTitle := RegExReplace(TargetTitle, "\.\.\.?", ".")  ; SM uses "." instead of "..." in titles
-      if (((SMTitle ~= " \.$") && (InStr(TempTitle, RegExReplace(SMTitle, " \.$")) == 1))
-        || (SMTitle == TempTitle))
+      if (((SMTitle ~= " \.$") && (InStr(TempTitle, RegExReplace(SMTitle, " \.$")) == 1)) || (SMTitle == TempTitle))
         return wTemp
     }
   }
 
   CanMarkOrExtract(HTMLExist, auiaText, Marker, ThisLabel, Label, ToolTip:="") {
-    if (!HTMLExist
-      || (!this.IsHTMLEmpty(auiaText) && !Marker)
-      || (Marker && !IfIn(this.IsCompMarker(Marker), "read point,page mark"))) {
+    if (!HTMLExist || (!this.IsHTMLEmpty(auiaText) && !Marker) || (Marker && !IfIn(this.IsCompMarker(Marker), "read point,page mark"))) {
       if (ThisLabel != Label) {
         if (HTMLExist)
           ParentElNumber := this.GetParentElNumber(auiaText)
