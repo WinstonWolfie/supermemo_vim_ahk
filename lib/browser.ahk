@@ -71,6 +71,8 @@ class Browser {
       this.Source := "Art... When I Feel Like It ", this.Title := RegExReplace(this.Title, "^Art... When I Feel Like It - ")
     } else if (this.Title ~= "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ") {
       this.Author := "Henry George Liddell, Robert Scott", this.Source := "An Intermediate Greek-English Lexicon", this.Title := RegExReplace(this.Title, "^Henry George Liddell, Robert Scott, An Intermediate Greek-English Lexicon, ")
+    } else if (this.Title ~= "^Henry George Liddell, Robert Scott, A Greek-English Lexicon, ") {
+      this.Author := "Henry George Liddell, Robert Scott", this.Source := "A Greek-English Lexicon", this.Title := RegExReplace(this.Title, "^Henry George Liddell, Robert Scott, A Greek-English Lexicon, ")
     } else if (RegExMatch(this.Title, "i)^The Project Gutenb(?:e|u)rg eBook of (.*?),? by (.*?)\.?$", v)) {
       this.Author := v2, this.Source := "Project Gutenberg", this.Title := v1
     } else if (this.Title ~= "^綠角財經筆記: ") {
@@ -248,6 +250,7 @@ class Browser {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (GetFullPage) {
         if (GetDate) {
+          ; Click "...more" and copy the release date
           global guiaBrowser
           this.GetGuiaBrowser()
           if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
@@ -274,7 +277,7 @@ class Browser {
         }
         if (!FullPageText)
           FullPageText := this.GetFullPage(RestoreClip)
-        if (this.Title ~= "^\(\d+\) ")
+        if (this.Title ~= "^\(\d+\) ")  ; YT notification count appears in the browser title
           RegExMatch(FullPageText, "(.*)\r\n\r\n.*\r\n.* subscribers", v), this.Title := v1
         if (GetTimeStamp)
           this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
@@ -613,20 +616,20 @@ class Browser {
   GetUrl(Parse:=true) {
     global guiaBrowser
     this.GetGuiaBrowser()
-    Url := guiaBrowser.GetCurrentURL()
-    Url := EncodeDecodeURI(Url, false)
+    Url := EncodeDecodeURI(guiaBrowser.GetCurrentURL(), false)
     return Parse ? this.ParseUrl(Url) : Url
   }
 
   GetTimeStamp(Title:="", FullPageText:="", RestoreClip:=true) {
     Title := Title ? Title : this.GetFullTitle()
-    if (Title ~= " - YouTube$") {
-      if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip)) {
-        RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
-        ; v1 == v2 means at end of video
-        TimeStamp := (v1 == v2) ? "0:00" : v1
-      }
-    } else if (Title ~= "- .*? \(podcast\) \| Listen Notes$") {
+    ; YouTube won't let you copy time stamp anymore
+    ; if (Title ~= " - YouTube$") {
+    ;   if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip)) {
+    ;     RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
+    ;     ; v1 == v2 means at end of video
+    ;     TimeStamp := (v1 == v2) ? "0:00" : v1
+    ;   }
+    if (Title ~= "- .*? \(podcast\) \| Listen Notes$") {
       if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip))
         RegExMatch(FullPageText, "\d\.\dx\r\n\K.*", TimeStamp)
     } else {

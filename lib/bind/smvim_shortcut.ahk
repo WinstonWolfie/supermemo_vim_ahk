@@ -796,7 +796,7 @@ n::Send {text}n
 +!a::Send /*  */{Left 3}
 ^+!a::Send /*{Enter 2}*/{Up}
 ^!+h::Send {text}==================================================
-^+k::SM.RegMember()
+^+k::SM.RegMember(true)
 
 !+d::
   SM.CtrlF3()

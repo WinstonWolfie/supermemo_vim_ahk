@@ -2,17 +2,17 @@
 class SM {
   __New() {
     this.CssClass := "cloze|extract|clozed|hint|note|ignore|headers|reftext"
-                   . "|reference|highlight|tablelabel|anti-merge|uppercase"
-                   . "|italic|bold|underline|italic-bold|italic-underline"
-                   . "|bold-underline|small-caps|smallcaps"
-                   . "|ilya-frank-translation|overline|italic-overline"
-                   . "|bold-overline|underline-overline|sub-left"
+      . "|reference|highlight|tablelabel|anti-merge|uppercase"
+      . "|italic|bold|underline|italic-bold|italic-underline"
+      . "|bold-underline|small-caps|smallcaps"
+      . "|ilya-frank-translation|overline|italic-overline"
+      . "|bold-overline|underline-overline|sub-left"
   }
 
   DoesTextExist(RestoreClip:=true) {
     if (ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind")
-     || ControlGet(,, "TMemo1", "ahk_class TElWind")
-     || ControlGet(,, "TRichEdit1", "ahk_class TElWind")) {
+      || ControlGet(,, "TMemo1", "ahk_class TElWind")
+      || ControlGet(,, "TRichEdit1", "ahk_class TElWind")) {
       return true
     } else {
       return IfContains(this.GetTemplCode(RestoreClip), "Type=Text", true)
@@ -146,22 +146,22 @@ class SM {
     CurrFocus := ControlGetFocus("A")
     ; If SM is focusing on either 5 of the grading buttons or the cancel button
     return (WinActive("ahk_class TElWind")
-         && ((CurrFocus == "TBitBtn4")
-          || (CurrFocus == "TBitBtn5")
-          || (CurrFocus == "TBitBtn6")
-          || (CurrFocus == "TBitBtn7")
-          || (CurrFocus == "TBitBtn8")
-          || (CurrFocus == "TBitBtn9")))
+      && ((CurrFocus == "TBitBtn4")
+      || (CurrFocus == "TBitBtn5")
+      || (CurrFocus == "TBitBtn6")
+      || (CurrFocus == "TBitBtn7")
+      || (CurrFocus == "TBitBtn8")
+      || (CurrFocus == "TBitBtn9")))
   }
 
   IsNavigating() {
     return (this.IsNavigatingPlan()
-         || this.IsNavigatingTask()
-         || this.IsNavigatingContentWind()
-         || this.IsNavigatingBrowser()
-         || WinActive("ahk_class TImgDown")
-         || WinActive("ahk_class TChoicesDlg")
-         || WinActive("ahk_class TChecksDlg"))
+      || this.IsNavigatingTask()
+      || this.IsNavigatingContentWind()
+      || this.IsNavigatingBrowser()
+      || WinActive("ahk_class TImgDown")
+      || WinActive("ahk_class TChoicesDlg")
+      || WinActive("ahk_class TChecksDlg"))
   }
 
   IsNavigatingPlan() {
@@ -181,11 +181,7 @@ class SM {
   }
 
   SetPrio(Prio) {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(653, true)
-    } else {
-      this.PostMsg(655, true)
-    }
+    this.PostMsg(655, true)
     WinWait, % "ahk_class TPriorityDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
     ControlSetText, TEdit5, % Prio
     while (WinExist())
@@ -214,19 +210,18 @@ class SM {
 
   SetInterval(Interval) {
     if (WinActive("ahk_class TElWind")) {
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        this.PostMsg(616, true)
-      } else {
-        this.PostMsg(618, true)
-      }
-      WinWait, % "ahk_class TGetIntervalDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
-      ControlSend, TEdit2, % "{text}" . Interval
-      while (WinExist())
-        ControlSend, TEdit2, {Enter}
+      Send ^j
+      Send % "{Text}" . Interval
+      Send {Enter 2}
+      ; WinWait, % "ahk_class TGetIntervalDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+      ; ControlSend, TEdit2, % "{text}" . Interval
+      ; while (WinExist())
+      ;   ControlSend, TEdit2, {Enter}
       global Vim
       Vim.State.SetNormal()
     } else if (WinActive("ahk_class TPriorityDlg")) {
-      ControlSetText, TEdit1, % Interval
+      ; ControlSetText, TEdit1, % Interval
+      this.SetText("TEdit1", Interval)
       ControlFocus, TEdit5  ; priority
     }
   }
@@ -276,7 +271,7 @@ class SM {
     loop {
       if (WinActive("ahk_class TElWind") && this.IsBrowsing()) {
         return true
-      ; Choices because reference could update
+        ; Choices because reference could update
       } else if (this.IsNavWnd() || (Timeout && (A_TickCount - StartTime > Timeout))) {
         return false
       }
@@ -454,7 +449,7 @@ class SM {
       ClipSaved := ClipboardAll
     global WinClip
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    this.PostMsg(988, true)  ; sm19.05 changes it from 987 to 988
+    this.PostMsg(992, true)
     ClipWait, % LongCopy ? 0.6 : 0.2, True
     TemplCode := Clipboard
     if (RestoreClip)  ; for scripts that restore clipboard at the end
@@ -541,7 +536,7 @@ class SM {
 
     if (!WndFound) {
       MB := MsgBox(3,, "SuperMemo is processing something. Do you want to launch a new window?"
-                     . "`n(Press no to wait; also please switch to main SM window if not automatically switched)")
+        . "`n(Press no to wait; also please switch to main SM window if not automatically switched)")
       if (MB = "Yes") {
         ShellRun("C:\SuperMemo\sm19.exe")
         WinWaitActive, ahk_class TElWind
@@ -583,11 +578,7 @@ class SM {
       ClipSaved := ClipboardAll
     global WinClip
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(691, true, wSMElWind)
-    } else {
-      this.PostMsg(693, true, wSMElWind)
-    }
+    this.PostMsg(693, true, wSMElWind)  ; Alt + F10 -> Template -> Copy template
     if (WaitTime == -1) {
       ClipWait, % LongCopy ? 0.6 : 0.2, True
     } else if (WaitTime == 0) {
@@ -795,11 +786,7 @@ class SM {
     ; Launch element parameter window
     w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
     while (!WinExist(w)) {  ; last iteration would update the last found window to w
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        this.PostMsg(706, true)  ; open element parameter
-      } else {
-        this.PostMsg(708, true)
-      }
+      this.PostMsg(708, true)
       WaitTime := 1
       WaitTime += (A_Index - 1) * 0.5
       WinWait, % w,, % WaitTime
@@ -830,21 +817,21 @@ class SM {
   IsNavWnd() {  ; navigation window
     if (WinActive("ahk_class TChoicesDlg")) {
       return ((ControlGetText("TGroupButton1") == "Cancel (i.e. restore the old version of references)")
-           && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
-           && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
-           && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
-          || ((ControlGetText("TGroupButton5") == "Go to the root element of the concept")
-           && (ControlGetText("TGroupButton4") == "Transfer the current element to the concept")
-           && (ControlGetText("TGroupButton3") == "View the last child of the root")
-           && (ControlGetText("TGroupButton2") == "Review the elements in the concept")
-           && (ControlGetText("TGroupButton1") == "Cancel"))
+        && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
+        && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
+        && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
+        || ((ControlGetText("TGroupButton5") == "Go to the root element of the concept")
+        && (ControlGetText("TGroupButton4") == "Transfer the current element to the concept")
+        && (ControlGetText("TGroupButton3") == "View the last child of the root")
+        && (ControlGetText("TGroupButton2") == "Review the elements in the concept")
+        && (ControlGetText("TGroupButton1") == "Cancel"))
     }
   }
 
   CheckDup(Text, ClearHighlight:=true, wSMElWind:="ahk_class TElWind", ToolTip:="No duplicates found.") {  ; try to find duplicates
     pidSM := WinGet("PID", wSMElWind)
     while (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)
-        || WinExist("ahk_class TBrowser ahk_pid " . pidSM))
+      || WinExist("ahk_class TBrowser ahk_pid " . pidSM))
       WinClose
     ContLearn := this.IsLearning(wSMElWind)
     Text := LTrim(Text)  ; LTrim() is necessary bc SuperMemo LITERALLY MODIFIES the html
@@ -1024,20 +1011,16 @@ class SM {
 
   GoToTopIfLearning(LearningState:=0) {
     if ((!LearningState && this.IsLearning())
-     || (LearningState && (this.IsLearning() == LearningState)))
+      || (LearningState && (this.IsLearning() == LearningState)))
       this.GoHome()
   }
 
   GoHome(ForceBG:=false) {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(770, true)
-    } else {
-      this.PostMsg(772, true)
-    }
+    this.PostMsg(772, true)
   }
 
   GoBack(ForceBG:=false) {
-    this.PostMsg(778, true)
+    this.PostMsg(780, true)
   }
 
   AutoPlay(Acrobat:=false) {
@@ -1072,10 +1055,10 @@ class SM {
         Browser.SearchInYT(SMTitle, RefLink)
       } else {
         ControlSend,, {Ctrl Down}{F10}{Ctrl Up}, ahk_class TElWind
-        WinWait, % "ahk_class TMsgDialog ahk_pid " . pidSM,, 0
+        WinWait, % "ahk_class TMsgDialog ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0
         if (!ErrorLevel) {
           WinActivate
-          Send {text}y 
+          Send {text}y
         }
       }
     }
@@ -1107,8 +1090,8 @@ class SM {
         uiaBrowser.WaitPageLoad(,, 0)
       }
       t := "Do you want to search read point?"
-         . "`n`nTitle: " . SMTitle
-         . "`nRead point: " . MarkerContent
+        . "`n`nTitle: " . SMTitle
+        . "`nRead point: " . MarkerContent
       if (MsgBox(3,, t) = "Yes") {
         if (WinGetClass(wReader) == "SUMATRA_PDF_FRAME") {
           ControlFocus, Edit2, % wReader
@@ -1211,11 +1194,7 @@ class SM {
   EditRef(wSMElWind:="ahk_class TElWind") {
     ; this.ActivateElWind(wSMElWind)
     ; Send !{f10}fe
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(658, true, wSMElWind)
-    } else {
-      this.PostMsg(660, true, wSMElWind)
-    }
+    this.PostMsg(660, true, wSMElWind)
   }
 
   AltA() {
@@ -1276,7 +1255,7 @@ class SM {
 
   HasTwoComp() {
     return ((ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind") && ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind"))
-         || (ControlGet(,, "TMemo2", "ahk_class TElWind") && ControlGet(,, "TMemo1", "ahk_class TElWind")))
+      || (ControlGet(,, "TMemo2", "ahk_class TElWind") && ControlGet(,, "TMemo1", "ahk_class TElWind")))
   }
 
   ActivateElWind(wSMElWind:="ahk_class TElWind") {
@@ -1309,7 +1288,7 @@ class SM {
   OpenNotepad(Timeout:=0) {
     this.ExitText(true, Timeout)
     Send ^+{f6}
-}
+  }
 
   Plan() {
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
@@ -1350,8 +1329,8 @@ class SM {
 
   PasteHTML() {
     ; this.ActivateElWind()
-    ; Send {AppsKey}xp
-    this.PostMsg(843, true)
+    ; Send {AppsKey}cs
+    this.PostMsg(921, true)
     global WinClip
     WinClip._waitClipReady()
     WinWait, % "ahk_class TProgressBox ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.3
@@ -1413,7 +1392,7 @@ class SM {
     ; this.ActivateElWind()
     loop {
       ; Send !{f12}kd  ; delete registry link
-      this.PostMsg(936, true)  ; from sm19.05 onward it's 936, before it's 935
+      this.PostMsg(940, true)
       WinWait, % "ahk_class TMsgDialog ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.7
       if (!ErrorLevel) {
         ControlSend, ahk_parent, {Enter}
@@ -1429,11 +1408,7 @@ class SM {
     ; SetDefaultKeyboard(0x0409)  ; English-US
     ; Send ^{Space}  ; open browser
     if (WinActive("ahk_class TElWind")) {
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        this.PostMsg(719, true)
-      } else {
-        this.PostMsg(721, true)
-      }
+      this.PostMsg(721, true)
     } else if (WinActive("ahk_class TContents")) {
       ControlSend, ahk_parent, {Ctrl Down}{Space}{Ctrl Up}
     }
@@ -1514,24 +1489,14 @@ class SM {
   }
 
   ListLinks() {
-    ; this.ActivateElWind()
-    ; Send !{f10}cs
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(650, true)
-    } else {
-      this.PostMsg(652, true)
-    }
+    this.ActivateElWind()
+    Send !{f10}cs
   }
 
   LinkConcept(Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="") {
     ; this.ActivateElWind(wSMElWind)
     ; Send !{f10}cl
-    this.CloseMsgDialog()
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(642, true, wSMElWind)
-    } else {
-      this.PostMsg(644, true, wSMElWind)
-    }
+    this.CloseMsgDialog(), this.PostMsg(644, true, wSMElWind)
     if (wForeground)
       WinActivate, % wForeground  ; sometimes it robs the focused window
     if (Concept) {
@@ -1580,7 +1545,7 @@ class SM {
 
   Cloze() {
     this.ActivateElWind()
-    this.PostMsg(795, true)
+    Send !z
     ; Wait for prompt for changing reference
     WinWaitActive, ahk_class TChoicesDlg,, 0.7
     if (!ErrorLevel) {
@@ -1606,11 +1571,11 @@ class SM {
     wCurr := "ahk_id " . WinActive("A")
     global Browser
     t := "Link in SM reference is not the same as in the browser. Continue?"
-       . "`n(press no to execute a search)"
-       . "`nBrowser url: " . BrowserUrl
-       . "`n       SM url: " . CurrSMUrl
-       . "`n`nBrowser title: " . Browser.GetFullTitle()
-       . "`n       SM title: " . WinGetTitle(wSMElWind)
+      . "`n(press no to execute a search)"
+      . "`nBrowser url: " . BrowserUrl
+      . "`n       SM url: " . CurrSMUrl
+      . "`n`nBrowser title: " . Browser.GetFullTitle()
+      . "`n       SM title: " . WinGetTitle(wSMElWind)
     MB := MsgBox(3,, t), ret := 0
     if ((MB = "No") && this.CheckDup(BrowserUrl,, wSMElWind, "Link not found in collection.")) {
       MB := MsgBox(3,, "Found. Continue?")
@@ -1667,7 +1632,7 @@ class SM {
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+font-weight: bold)(?=[^>]+>)", " class=bold ")
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+text-decoration: underline)(?=[^>]+>)", " class=underline ")
     str := RegExReplace(str, "is)<\w+\K\s(?=[^>]+text-decoration: overline)(?=[^>]+>)", " class=overline ")
-      
+
     str := RegExReplace(str, "is)<[^>]+\K\sclass=bold class=italic(?=([^>]+)?>)", " class=italic-bold")
     str := RegExReplace(str, "is)<[^>]+\K\sclass=underline class=italic(?=([^>]+)?>)", " class=italic-underline")
     str := RegExReplace(str, "is)<[^>]+\K\sclass=underline class=bold(?=([^>]+)?>)", " class=bold-underline")
@@ -1731,35 +1696,27 @@ class SM {
   PrevComp() {
     this.ActivateElWind()
     Send !{f12}fl
-    ; this.PostMsg(992, true)
   }
 
   DetachTemplate() {
     this.ActivateElWind()
     Send !{f10}td
-    ; this.PostMsg(682, true)
   }
 
   LinkContents() {
-    ; this.ActivateElWind()
-    ; Send !{f10}ci
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(647, true)
-    } else {
-      this.PostMsg(649, true)
-    }
+    this.ActivateElWind()
+    Send !{f10}ci
   }
 
   ViewFile() {  ; = f9 but doesn't always work, so invoking from !{f12} is the most reliable
     this.ActivateElWind()
     Send !{f12}fv
-    ; this.PostMsg(982, true)
   }
 
   RegMember(PostMsg:=false) {
     if (PostMsg) {
       if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        this.PostMsg(924, true)
+        this.PostMsg(928, true)
       } else {
         this.PostMsg(923, true)
       }
@@ -1770,13 +1727,8 @@ class SM {
   }
 
   GoToEl(ElNumber, WinWait:=false, ForceBG:=false) {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      msg := 767
-    } else {
-      msg := 769
-    }
     if (WinActive("ahk_class TElWind") && !ForceBG) {
-      this.PostMsg(msg, true)
+      this.PostMsg(769, true)
       if (!WinWait) {
         Send % "{text}" . ElNumber
         Send {Enter}
@@ -1786,15 +1738,11 @@ class SM {
         ControlSend, TMemo1, {Enter}
       }
     } else if (WinExist("ahk_class TElWind") || ForceBG) {
-      this.PostMsg(msg, true)
+      this.PostMsg(769, true)
       WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
       ControlSetText, TMemo1, % ElNumber
       ControlSend, TMemo1, {Enter}
     }
-  }
-
-  CtrlT() {
-    this.PostMsg(993, true)
   }
 
   IsPrioInputBox() {
@@ -1806,11 +1754,7 @@ class SM {
   }
 
   Duplicate() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(709, true)
-    } else {
-      this.PostMsg(711, true)
-    }
+    Send !d
   }
 
   FindMatchTitleColl(TargetTitle) {
@@ -1819,15 +1763,15 @@ class SM {
       SMTitle := WinGetTitle(wTemp := "ahk_id " . pahSMElWind%A_Index%)
       TempTitle := RegExReplace(TargetTitle, "\.\.\.?", ".")  ; SM uses "." instead of "..." in titles
       if (((SMTitle ~= " \.$") && (InStr(TempTitle, RegExReplace(SMTitle, " \.$")) == 1))
-       || (SMTitle == TempTitle))
+        || (SMTitle == TempTitle))
         return wTemp
     }
   }
 
   CanMarkOrExtract(HTMLExist, auiaText, Marker, ThisLabel, Label, ToolTip:="") {
     if (!HTMLExist
-    || (!this.IsHTMLEmpty(auiaText) && !Marker)
-    || (Marker && !IfIn(this.IsCompMarker(Marker), "read point,page mark"))) {
+      || (!this.IsHTMLEmpty(auiaText) && !Marker)
+      || (Marker && !IfIn(this.IsCompMarker(Marker), "read point,page mark"))) {
       if (ThisLabel != Label) {
         if (HTMLExist)
           ParentElNumber := this.GetParentElNumber(auiaText)
@@ -1878,18 +1822,10 @@ class SM {
     }
   }
 
-  LinkReference() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(657, true)
-    } else {
-      this.PostMsg(659, true)
-    }
-  }
-
   SetRefReg(RefRegName) {
     if (!RefRegName)
       return
-    this.LinkReference()
+    this.PostMsg(659, true)  ; link reference
     WinWait, % "ahk_class TRegistryForm ahk_pid " . WinGet("PID", "ahk_class TElWind")
     this.SetText("Edit1", RefRegName)
     ControlSend, Edit1, {Enter}
