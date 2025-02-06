@@ -54,7 +54,7 @@ HTMLTagButtonAdd:
 
 SMParseHTML:
   if (A_ThisLabel == "SMParseHTML")
-    Tag := Vim.Move.SMLastGAltATag
+    Tag := Vim.Move.SMLastGAltATag, CopyText := false
   WinActivate, ahk_class TElWind
   KeyWait Alt
   if (CopyText)

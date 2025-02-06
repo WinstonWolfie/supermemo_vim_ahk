@@ -36,10 +36,10 @@ m::  ; gm: go to link in comment
     for i, Link in Links {
       if (Link) {
         if (IfContains(A_ThisLabel, "+")) {
-          ; ShellRun("iexplore.exe " . Link)  ; RIP IE
+          ; Run, % "iexplore.exe " . Link  ; RIP IE
           Browser.RunInIE(Link)
         } else {
-          try ShellRun(Link)
+          try Run, % Link
           catch {
             RunDefaultBrowser()
             WinWaitActive, ahk_group Browser

@@ -29,7 +29,7 @@ LAlt & RAlt::  ; for laptop
     Vim.State.SetMode("Insert")
 return
 
-#f::ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Everything 1.5a.lnk")
+#f::Run, % "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Everything 1.5a.lnk"
 ^#h::Send ^#{Left}
 ^#l::Send ^#{Right}
 +#h::Send +#{Left}
@@ -42,7 +42,7 @@ Plan:
   KeyWait Alt
   KeyWait Shift
   if (!WinExist("ahk_group SM")) {
-    ShellRun("C:\SuperMemo\systems\all.kno")
+    Run, % "C:\SuperMemo\systems\all.kno"
     WinWait, ahk_class TElWind,, 3
     if (ErrorLevel)
       return
@@ -88,7 +88,7 @@ return
 ^!i::  ; open in *I*E
   uiaBrowser := new UIA_Browser("A")
   Browser.RunInIE(Browser.ParseUrl(uiaBrowser.GetCurrentURL()))
-  ; ShellRun("iexplore.exe " . Browser.ParseUrl(GetActiveBrowserURL()))  ; RIP old method
+  ; Run, % "iexplore.exe " . Browser.ParseUrl(GetActiveBrowserURL())  ; RIP old method
 Return
 
 ^!t::  ; copy *t*itle
@@ -539,7 +539,7 @@ return
 
 ^+e::
   uiaBrowser := new UIA_Browser("A")
-  ShellRun("msedge", uiaBrowser.GetCurrentUrl())
+  Run, % "msedge " . uiaBrowser.GetCurrentUrl()
 return
 
 ; SumatraPDF
@@ -750,13 +750,13 @@ return
 ; IE
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ; Open in default browser (in my case, Chrome); similar to default shortcut ^+e to open in ms edge
-^+c::ShellRun(ControlGetText("Edit1", "A"))  ; browser url field
-^+e::ShellRun("msedg", ControlGetText("Edit1", "A"))
+^+c::Run, % ControlGetText("Edit1", "A")  ; browser url field
+^+e::Run, % "msedge " . ControlGetText("Edit1", "A")
 ^!l::SetToolTip("Copied " . Clipboard := ControlGetText("Edit1", "A"))
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))
 ^+c::
   uiaBrowser := new UIA_Browser("A")
-  ShellRun(uiaBrowser.GetCurrentUrl())
+  Run, % uiaBrowser.GetCurrentUrl()
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe

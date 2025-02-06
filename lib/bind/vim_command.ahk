@@ -103,14 +103,14 @@ VimCommanderButtonExecute:
   } else {
     aCommand := StrSplit(Command, " ")
     if (aCommand[1] = "yt") {
-      ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(RegExReplace(Command, "i)^yt ")))
+      Run, % "https://www.youtube.com/results?search_query=" . EncodeDecodeURI(RegExReplace(Command, "i)^yt "))
     } else if (aCommand[1] = "def") {
       Command := EncodeDecodeURI(RegExReplace(Command, "i)^def "))
-      ShellRun("https://www.google.com/search?hl=en-uk&q=define " . Command . "&forcedict=" . Command . "&dictcorpus=en-uk&expnd=1&gl=gb")
+      Run, % "https://www.google.com/search?hl=en-uk&q=define " . Command . "&forcedict=" . Command . "&dictcorpus=en-uk&expnd=1&gl=gb"
     } else if (aCommand[1] = "wkt") {
-      ShellRun("https://www.google.com/search?q=wiktionary " . EncodeDecodeURI(RegExReplace(Command, "i)^wkt ")))
+      Run, % "https://www.google.com/search?q=wiktionary " . EncodeDecodeURI(RegExReplace(Command, "i)^wkt "))
     } else if (aCommand[1] = "pplx") {
-      ShellRun("https://www.perplexity.ai/search?q=" . EncodeDecodeURI(RegExReplace(Command, "i)^pplx ")) . "&focus=internet&copilot=true")
+      Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(RegExReplace(Command, "i)^pplx ")) . "&focus=internet&copilot=true"
     } else if (aCommand[1] = "tag") {
       Tags := RegExReplace(Command, "i)^tag "), EditRefComment := true
       wSMElWind := ""
@@ -125,9 +125,9 @@ VimCommanderButtonExecute:
     } else if (IsUrl(Command)) {
       if !(Command ~= "^http")
         Command := "http://" . Command
-      ShellRun(Command)
+      Run, % Command
     } else {
-      ShellRun("https://www.google.com/search?q=" . EncodeDecodeURI(Command))
+      Run, % "https://www.google.com/search?q=" . EncodeDecodeURI(Command)
     }
   }
 return
@@ -157,7 +157,7 @@ FindSearch() {
 }
 
 WindowSpy:
-  ShellRun("C:\Program Files\AutoHotkey\WindowSpy.ahk")
+  Run, % "C:\Program Files\AutoHotkey\WindowSpy.ahk"
 return
 
 WebSearch:
@@ -189,16 +189,16 @@ WebSearchButtonSearch:
     }
     if (MB = "Yes") {
       for i, v in aLinks
-        ShellRun(v)
+        Run, % v
       return
     }
   }
   if (IsUrl(Search)) {
     if !(Search ~= "^http")
       Search := "http://" . Search
-    ShellRun(Search)
+    Run, % Search
   } else {
-    ShellRun("https://www.google.com/search?hl=" . LangCode . "&q=" . EncodeDecodeURI(Search))
+    Run, % "https://www.google.com/search?hl=" . LangCode . "&q=" . EncodeDecodeURI(Search)
   }
 return
 
@@ -221,12 +221,12 @@ WaybackMachine:
     return
   }
   if (Url)
-    ShellRun("https://web.archive.org/web/*/" . Url)
+    Run, % "https://web.archive.org/web/*/" . Url
 return
 
 DeepL:
   if (Text := FindSearchIB("DeepL Translate", "Text:",,, 256))
-    ShellRun("https://www.deepl.com/en/translator#?/en/" . EncodeDecodeURI(Text))
+    Run, % "https://www.deepl.com/en/translator#?/en/" . EncodeDecodeURI(Text)
 Return
 
 YouGlish:
@@ -250,7 +250,7 @@ YouGlishButtonSearch:
   Gui, Destroy
   if (Language == "American Sign Language")
     Language := "signlanguage"
-  ShellRun("https://youglish.com/pronounce/" . EncodeDecodeURI(Search) . "/" . StrLower(Language))
+  Run, % "https://youglish.com/pronounce/" . EncodeDecodeURI(Search) . "/" . StrLower(Language)
 Return
 
 KillIE:
@@ -292,7 +292,7 @@ GoogleDefineButtonSearch:
     ShellRun("https://www.google.com/search?hl=" . LangCode . "&q=" . Define . " "
            . Search . "&forcedict=" . Search . "&dictcorpus=" . LangCode . "&expnd=1" . Add)
   } else {
-    ShellRun("https://www.google.com/search?q=define " . Search)
+    Run, % "https://www.google.com/search?q=define " . Search
   }
 return
 
@@ -332,12 +332,12 @@ WiktionaryButtonSearch:
   Gui, Submit
   Gui, Destroy
   if (Google) {
-    ShellRun("https://www.google.com/search?hl=en&q=Wiktionary " . EncodeDecodeURI(Word))
+    Run, % "https://www.google.com/search?hl=en&q=Wiktionary " . EncodeDecodeURI(Word)
   } else {
     Language := StrReplace(Language, " ", "_")
     if (Language == "Latin")
       Word := RemoveLatinMacrons(Word)
-    ShellRun("https://en.wiktionary.org/wiki/" . Word . "#" . Language)
+    Run, % "https://en.wiktionary.org/wiki/" . Word . "#" . Language
   }
 return
 
@@ -356,7 +356,7 @@ return
 
 Forvo:
   if (Word := FindSearchIB("Forvo", "Word:"))
-    ShellRun("https://forvo.com/search/" . Word . "/")
+    Run, % "https://forvo.com/search/" . Word . "/"
 return
 
 SetConceptHook:
@@ -375,16 +375,16 @@ SetConceptHook:
 Return
 
 AccViewer:
-  ShellRun(A_ScriptDir . "\lib\util\AccViewer Source.ahk")
+  Run, % A_ScriptDir . "\lib\util\AccViewer Source.ahk"
 return
 
 UIAViewer:
-  ShellRun(A_ScriptDir . "\lib\util\UIAViewer.ahk")
+  Run, % A_ScriptDir . "\lib\util\UIAViewer.ahk"
 return
 
 TranslateGoogle:
   if (Text := FindSearchIB("Google Translate", "Text:",,, 256))
-    ShellRun("https://translate.google.com/?sl=auto&tl=en&text=" . EncodeDecodeURI(Text) . "&op=translate")
+    Run, % "https://translate.google.com/?sl=auto&tl=en&text=" . EncodeDecodeURI(Text) . "&op=translate"
 return
 
 ClearClipboard:
@@ -405,23 +405,23 @@ return
 
 Forcellini:
   if (Word := FindSearchIB("Forcellini", "Word:"))
-    ShellRun("http://lexica.linguax.com/forc2.php?searchedLG=" . RemoveLatinMacrons(Word))
+    Run, % "http://lexica.linguax.com/forc2.php?searchedLG=" . RemoveLatinMacrons(Word)
 return
 
 RAE:
   if (Word := FindSearchIB("RAE", "Word:"))
-    ShellRun("https://dle.rae.es/" . Word . "?m=form")
+    Run, % "https://dle.rae.es/" . Word . "?m=form"
 return
 
 OALD:
   if (Word := FindSearchIB("Oxford Advanced Learner's Dictionary", "Word:"))
-    ShellRun("https://www.oxfordlearnersdictionaries.com/definition/english/" . Word)
+    Run, % "https://www.oxfordlearnersdictionaries.com/definition/english/" . Word
 return
 
 AlatiusLatinMacronizer:
   if (!Latin := FindSearchIB("Alatius: a Latin macronizer", "Latin:"))
     return
-  ShellRun("https://alatius.com/macronizer/")
+  Run, % "https://alatius.com/macronizer/"
   WinWaitActive, ahk_group Browser
   uiaBrowser := new UIA_Browser("A")
   uiaBrowser.WaitPageLoad()
@@ -496,11 +496,11 @@ SciHub:
   if (!Text := FindSearchIB("Sci-Hub", "Search:"))
     return
   if (RegExMatch(Text, "https:\/\/doi\.org\/([^ ]+)", v)) {
-    ShellRun("https://sci-hub.hkvisa.net/" . v1)
+    Run, % "https://sci-hub.hkvisa.net/" . v1
   } else if (RegExMatch(Text, "i)10.\d{4,9}/[-._;()/:A-Z0-9]+", v)) {  ; https://www.crossref.org/blog/dois-and-matching-regular-expressions/
-    ShellRun("https://sci-hub.hkvisa.net/" . v)
+    Run, % "https://sci-hub.hkvisa.net/" . v
   } else {
-    ShellRun("https://sci-hub.hkvisa.net/")
+    Run, % "https://sci-hub.hkvisa.net/"
     WinWaitActive, ahk_group Browser
     uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
@@ -511,7 +511,7 @@ return
 
 YT:
   if (Text := FindSearchIB("YouTube", "Search:"))
-    ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(Text))
+    Run, % "https://www.youtube.com/results?search_query=" . EncodeDecodeURI(Text)
 return
 
 ; Personal: reformat my old vocabulary items
@@ -544,12 +544,12 @@ return
 
 ZLibrary:
   if (Text := FindSearchIB("Z-Library", "Search:"))
-    ShellRun("https://z-library.sk/s/?q=" . EncodeDecodeURI(Text))
+    Run, % "https://z-library.sk/s/?q=" . EncodeDecodeURI(Text)
 return
 
 AnnasArchive:
   if (Text := FindSearchIB("Anna’s Archive", "Search:"))
-    ShellRun("https://annas-archive.org/search?q=" . EncodeDecodeURI(Text))
+    Run, % "https://annas-archive.org/search?q=" . EncodeDecodeURI(Text)
 return
 
 ImportFile:
@@ -595,13 +595,13 @@ return
 
 Bilibili:
   if (search := FindSearchIB("Bilibili", "Search:"))
-    ShellRun("https://search.bilibili.com/all?keyword=" . search)
+    Run, % "https://search.bilibili.com/all?keyword=" . search
 return
 
 Libgen:
   if (search := FindSearchIB("Library Genesis", "Search:")) {
-    ShellRun("http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def")
-    ShellRun("https://libgen.li/index.php?req=" . search . "&columns%5B%5D=t&columns%5B%5D=a&columns%5B%5D=s&columns%5B%5D=y&columns%5B%5D=p&columns%5B%5D=i&objects%5B%5D=f&objects%5B%5D=e&objects%5B%5D=s&objects%5B%5D=a&objects%5B%5D=p&objects%5B%5D=w&topics%5B%5D=l&topics%5B%5D=c&topics%5B%5D=f&topics%5B%5D=a&topics%5B%5D=m&topics%5B%5D=r&topics%5B%5D=s&res=25&filesuns=all")
+    Run, % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
+    Run, % "https://libgen.li/index.php?req=" . search . "&columns%5B%5D=t&columns%5B%5D=a&columns%5B%5D=s&columns%5B%5D=y&columns%5B%5D=p&columns%5B%5D=i&objects%5B%5D=f&objects%5B%5D=e&objects%5B%5D=s&objects%5B%5D=a&objects%5B%5D=p&objects%5B%5D=w&topics%5B%5D=l&topics%5B%5D=c&topics%5B%5D=f&topics%5B%5D=a&topics%5B%5D=m&topics%5B%5D=r&topics%5B%5D=s&res=25&filesuns=all"
   }
 return
 
@@ -624,7 +624,7 @@ return
 ImageGoogleButtonSearch:
   Gui, Submit
   Gui, Destroy
-  ShellRun("https://www.google.com/search?hl=" . LangCode . "&tbm=isch&q=" . search)
+  Run, % "https://www.google.com/search?hl=" . LangCode . "&tbm=isch&q=" . search
 return
 
 SearchLinkInYT:
@@ -640,7 +640,7 @@ SearchLinkInYT:
 return
 
 WatchLaterYT:
-  ShellRun("https://www.youtube.com/playlist?list=WL")
+  Run, % "https://www.youtube.com/playlist?list=WL"
 return
 
 EditReference:
@@ -648,7 +648,7 @@ EditReference:
 Return
 
 GetInfoFromContextMenu:
-  ShellRun(A_ScriptDir . "\lib\util\Get Info from Context Menu.ahk")
+  Run, % A_ScriptDir . "\lib\util\Get Info from Context Menu.ahk"
 return
 
 GenerateTimeString:
@@ -679,7 +679,7 @@ BingChat:
     }
   }
   if (Text || !wEdge) {
-    ShellRun("msedge", Link)
+    Run, % "msedge " . Link
     WinWaitActive, ahk_exe msedge.exe
   }
   Send ^+.
@@ -716,38 +716,38 @@ return
 
 Larousse:
   if (word := FindSearchIB("Larousse", "Word:"))
-    ShellRun("https://www.larousse.fr/dictionnaires/francais/" . word)
+    Run, % "https://www.larousse.fr/dictionnaires/francais/" . word
 return
 
 GraecoLatinum:
   if (word := FindSearchIB("Graeco-Latinum", "Word:")) {
-    ShellRun("http://lexica.linguax.com/nlm.php?searchedGL=" . word)
-    ShellRun("http://lexica.linguax.com/schrevel.php?searchedGL=" . word)
+    Run, % "http://lexica.linguax.com/nlm.php?searchedGL=" . word
+    Run, % "http://lexica.linguax.com/schrevel.php?searchedGL=" . word
   }
 return
 
 LatinoGraecum:
   if (word := FindSearchIB("Latino-Graecum", "Word:")) {
-    ShellRun("http://lexica.linguax.com/nlm.php?searchedLG=" . word)
-    ShellRun("http://lexica.linguax.com/schrevel.php?searchedLG=" . word)
+    Run, % "http://lexica.linguax.com/nlm.php?searchedLG=" . word
+    Run, % "http://lexica.linguax.com/schrevel.php?searchedLG=" . word
   }
 return
 
 Linguee:
   if (word := FindSearchIB("Linguee", "Word:"))
-    ShellRun("https://www.linguee.com/search?query=" . word)
+    Run, % "https://www.linguee.com/search?query=" . word
 return
 
 MerriamWebster:
   if (word := FindSearchIB("Merriam-Webster", "Word:")) {
-    ShellRun("https://www.merriam-webster.com/dictionary/" . word)
-    ShellRun("https://www.britannica.com/dictionary/" . word)
+    Run, % "https://www.merriam-webster.com/dictionary/" . word
+    Run, % "https://www.britannica.com/dictionary/" . word
   }
 return
 
 WordSense:
   if (word := FindSearchIB("WordSense", "Word:"))
-    ShellRun("https://www.wordsense.eu/" . word . "/")
+    Run, % "https://www.wordsense.eu/" . word . "/"
 return
 
 SetPlanPosition:
@@ -768,7 +768,7 @@ return
 
 RestartOneDrive:
   Process, Close, OneDrive.exe
-  ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk")
+  Run, % "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
   WinWait, ahk_class CabinetWClass ahk_exe explorer.exe,, 10
   if (!ErrorLevel)
     WinClose
@@ -777,7 +777,7 @@ return
 RestartICloudDrive:
   Process, Close, iCloudDrive.exe
   Process, Close, iCloudServices.exe
-  ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk")
+  Run, % "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk"
   WinWait, iCloud ahk_class PreferencesWnd ahk_exe iCloud.exe
   WinClose
 return
@@ -838,7 +838,7 @@ PerplexityAIButtonSearch:
   Gui, Submit
   Gui, Destroy
   if (AddSearch || (Search ~= "^File path from SMVim script: ")) {
-    ShellRun("https://www.perplexity.ai/")
+    Run, % "https://www.perplexity.ai/"
     WinWaitActive, ahk_group Browser
     uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
@@ -880,7 +880,7 @@ PerplexityAIButtonSearch:
     if (TempFilePath)
       FileDelete % TempFilePath
   } else {
-    ShellRun("https://www.perplexity.ai/search?q=" . EncodeDecodeURI(Search) . "&focus=" . Focus
+    Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(Search . "&focus=" . Focus
            . "&copilot=" . (Copilot ? "true" : "false"))
   }
 return
@@ -1009,13 +1009,13 @@ AllLapsesToday:
   while (pos := RegExMatch(RepHistory, "s)\nItem #[\d,]+: ([^\n]+)\n[^\n]+"
                                      . DateRegEx . "[^\n]+Grade=[0-2]", v, pos + StrLen(v1)))
     FileAppend, % v1 . "`n", % TempOutputPath
-  ShellRun(TempOutputPath)
+  Run, % TempOutputPath
   BlockInput, Off
 return
 
 Lexico:
   if (word := FindSearchIB("Lexico", "Word:"))
-    ShellRun("https://web.archive.org/web/*/www.lexico.com/definition/" . word)
+    Run, % "https://web.archive.org/web/*/www.lexico.com/definition/" . word
 return
 
 ExternaliseRegistry:
@@ -1074,7 +1074,7 @@ return
 
 Tatoeba:
   if (word := FindSearchIB("Tatoeba", "Word:"))
-    ShellRun("https://tatoeba.org/en/sentences/search?query=" . word)
+    Run, % "https://tatoeba.org/en/sentences/search?query=" . word
 return
 
 MD2HTML:
@@ -1089,7 +1089,7 @@ MD2HTML:
   FileAppend, % MD, % TempMDPath
   TempHTMLPath := A_Temp . "\" . t . "_html.html"
   FileAppend,, % TempHTMLPath
-  ShellRun("pandoc", TempMDPath . " -s -o " . TempHTMLPath)
+  Run, % "pandoc " . TempMDPath . " -s -o " . TempHTMLPath
   loop {
     if (t := FileRead(TempHTMLPath))
       Break
@@ -1153,12 +1153,12 @@ ArchiveToday:
     return
   }
   if (Url)
-    ShellRun("https://archive.today/?run=1&url=" . Url)
+    Run, % "https://archive.today/?run=1&url=" . Url
 return
 
 WolframAlpha:
   if (Text := FindSearchIB("WolframAlpha", "Text:"))
-    ShellRun("https://www.wolframalpha.com/input?input=" . EncodeDecodeURI(Text))
+    Run, % "https://www.wolframalpha.com/input?input=" . EncodeDecodeURI(Text)
 Return
 
 Comment:

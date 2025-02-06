@@ -450,7 +450,7 @@ SMPlanInsertButtonAppend:
   if (CancelAlarm)
     SM.Command("")
   if (!NoBackup && IfIn(Activity, "Break,Sports,Out,Shower"))
-    try ShellRun("b")  ; my personal backup script
+    try Run, % "b"  ; my personal backup script
   BlockInput, Off
   Vim.State.SetNormal()
   WinActivate, ahk_class TPlanDlg

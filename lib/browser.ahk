@@ -702,7 +702,7 @@ class Browser {
         Send % "+{Left " . StrLen(v) . "}"
     }
 
-    if (!Sent && RegexMatch(PlainText, "。\[\d+\]$|(\[(\d+|note \d+|citation needed)\])+(。|.)?$|\[\d+\]: \d+(。|.)?$|(?<=\.)\d+$", v)) {
+    if (!Sent && RegexMatch(PlainText, "。(\[\d+\])+$|(\[(\d+|note \d+|citation needed)\])+(。|.)?$|\[\d+\]: \d+(。|.)?$|(?<=\.)\d+$", v)) {
       if (Sent := IfContains(Url ? Url : this.GetUrl(), "wikipedia.org,wikiquote.org"))
         Send % "+{Left " . StrLen(v) . "}"
     }
@@ -727,7 +727,7 @@ class Browser {
   }
 
   SearchInYT(Title, Link) {
-    ShellRun("https://www.youtube.com/results?search_query=" . EncodeDecodeURI(Title))
+    Run, % "https://www.youtube.com/results?search_query=" . EncodeDecodeURI(Title)
     WinWaitActive, ahk_group Browser
     Sleep 400
     global guiaBrowser

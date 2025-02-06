@@ -42,15 +42,13 @@ class SM {
     } else if (WinExist("ahk_class TElWind")) {
       if (ControlGet(,, "Internet Explorer_Server2")) {  ; item
         Control := "Internet Explorer_Server2"
-      } else {  ; topic
-        if (ControlGet(,, "Internet Explorer_Server1")) {  ; topic
-          Control := "Internet Explorer_Server1"
-        } else {  ; no html field found
-          if (!this.DoesTextExist())
-            return false
-          this.EditFirstQuestion(), this.WaitTextFocus()
-          Control := ControlGetFocus("ahk_class TElWind")
-        }
+      } else if (ControlGet(,, "Internet Explorer_Server1")) {  ; topic
+        Control := "Internet Explorer_Server1"
+      } else {  ; no html field found
+        if (!this.DoesTextExist())
+          return false
+        this.EditFirstQuestion(), this.WaitTextFocus()
+        Control := ControlGetFocus("ahk_class TElWind")
       }
     }
 
@@ -366,7 +364,7 @@ class SM {
   GetLink(TemplCode:="", RestoreClip:=true) {
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(RestoreClip)
     RegExMatch(TemplCode, "(?<=#Link: <a href="").*?(?="">)", Link)
-    return Link
+    return html_decode(Link)
   }
 
   GetCommentInTemplCode(TemplCode:="", RestoreClip:=true) {
@@ -474,7 +472,7 @@ class SM {
       MB := MsgBox(3,, "SuperMemo is processing something. Do you want to launch a new window?"
                      . "`n(Press no to wait; also please switch to main SM window if not automatically switched)")
       if (MB = "Yes") {
-        ShellRun("C:\SuperMemo\sm19.exe")
+        Run, % "C:\SuperMemo\sm19.exe"
         WinWaitActive, ahk_class TElWind
       } else if (MB = "No") {
         GroupAdd, SMProcessing, ahk_class TProgressBox
@@ -704,7 +702,11 @@ class SM {
   }
 
   ClickBrowserSourceButton() {
-    ControlClickWinCoordDPIAdjusted(294, 45, "ahk_class TBrowser")
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      ControlClickWinCoordDPIAdjusted(320, 45, "ahk_class TBrowser") 
+    } else {
+      ControlClickWinCoordDPIAdjusted(294, 45, "ahk_class TBrowser") 
+    }
   }
 
   SetElParam(Title:="", Prio:="", Template:="", Group:="", CheckGroup:=false) {
@@ -969,7 +971,7 @@ class SM {
       this.EditFirstQuestion()
       Send ^t{f9}
       if (Path := this.GetFilePath())
-        ShellRun("acrobat.exe", Path)
+        Run, % "acrobat.exe " . Path
     } else {
 
       RefLink := this.GetLinkFromUIAArray(auiaText)
@@ -978,13 +980,13 @@ class SM {
         ; so the extentions (eg, adblockers) can be launched
         RegExMatch(DefaultBrowser := DefaultBrowser(), ".*\\\K.*$", v)
         if (!WinExist(wBrowser := "ahk_exe " . v)) {
-          ShellRun(DefaultBrowser)
+          Run, % DefaultBrowser
           WinWaitActive, % wBrowser
         }
       }
 
       if (SMTitle == "Netflix") {
-        ShellRun(RefLink)
+        Run, % RefLink
       } else if (Marker == "SMVim: Use online video progress") {
         global Browser
         Browser.SearchInYT(SMTitle, RefLink)
@@ -1089,7 +1091,7 @@ class SM {
       } else {
         if ((Url ~= "file:\/\/") && (Url ~= "#.*"))
           TempUrl := Url, Url := RegExReplace(Url, "#.*")
-        try ShellRun(Url)
+        try Run, % Url
         catch
           return false
         if (TempUrl) {

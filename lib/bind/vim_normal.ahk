@@ -69,6 +69,7 @@ Return
   Vim.State.Mode := Vim.Move.LastMode, Vim.State.Surround := Vim.Move.LastSurround
   if (Vim.Move.LastFtsChar)
     Vim.State.FtsChar := Vim.Move.LastFtsChar
+  BlockInput, On
   if (Vim.Move.LastLineCopy) {
     Vim.Move.YDCMove()
   } else if (Vim.Move.LastInOrOut == "Inner") {
@@ -81,7 +82,8 @@ Return
     Vim.Move.Move(Vim.Move.LastKey)
   }
   if (Vim.Move.LastSurround)
-    Goto VimSurround
+    Gosub VimSurround
+  BlockInput, Off
 return
 
 #if (Vim.IsVimGroup() && (Vim.State.IsCurrentVimMode("Vim_Normal") || Vim.State.StrIsInCurrentVimMode("Visual")))

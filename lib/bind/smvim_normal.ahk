@@ -86,7 +86,7 @@ t::  ; gt: open in Notepad
     SMFilePath := SM.GetFilePath(false)
     SplitPath, SMFilePath,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
-      ShellRun("ps", SMFilePath)
+      Run, % "ps " . SMFilePath
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       Send ^{f7}  ; save read point
@@ -94,7 +94,7 @@ t::  ; gt: open in Notepad
       WinWaitActive, ahk_class TElWind
       SMFilePath := SM.GetFilePath(false)
       SM.ExitText(true)
-      ShellRun("vim", SMFilePath)
+      Run, % "vim " . SMFilePath
       GroupAdd, Vim, ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe  ; Win 11
       GroupAdd, Vim, ahk_class ConsoleWindowClass ahk_exe cmd.exe  ; Win 10
       w := "ahk_group Vim"
