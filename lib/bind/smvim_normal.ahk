@@ -86,15 +86,18 @@ t::  ; gt: open in Notepad
     SMFilePath := SM.GetFilePath(false)
     SplitPath, SMFilePath,,, ext
     if (IfIn(ext, "bmp,gif,jpg,jpeg,wmf,png,tif,tiff,ico")) {  ; image extensions that SM supports
-      Run, % "ps " . SMFilePath
+      Run, % ComSpec . " /c ps " . SMFilePath
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       Send ^{f7}  ; save read point
-      SM.SaveHTML()  ; path may be updated
-      WinWaitActive, ahk_class TElWind
+      SM.OpenNotepad()  ; path may be updated
+      WinWait, ahk_exe Notepad.exe
       SMFilePath := SM.GetFilePath(false)
-      SM.ExitText(true)
-      Run, % "vim " . SMFilePath
+      Run, % ComSpec . " /c vim " . SMFilePath
+      if (WinExist("ahk_exe Notepad.exe")) {
+        ControlSend,, {Ctrl Down}w{Ctrl Up}
+        WinClose
+      }
       GroupAdd, Vim, ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe  ; Win 11
       GroupAdd, Vim, ahk_class ConsoleWindowClass ahk_exe cmd.exe  ; Win 10
       w := "ahk_group Vim"
@@ -103,6 +106,8 @@ t::  ; gt: open in Notepad
   if (ClipSaved)
     Clipboard := ClipSaved
   WinWait % w
+  WinActivate
+  ; Wait for player editing here
   WinWaitClose
   SM.ActivateElWind()
   if (Notepad) {

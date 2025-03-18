@@ -8,13 +8,15 @@
   ClipSaved := ClipboardAll
   KeyWait Alt
   KeyWait Ctrl
-  if (!data := Copy(false, true)) {
+  Text := Copy(false, true)
+  if ((Text = "") || (Text ~= "^\s+$")) {
+    SetToolTip("Text not found.")
     Clipboard := ClipSaved
     return
   }
-  SetToolTip("LaTeX converting...")
 
-  if (!IfContains(data, "<IMG")) {  ; text
+  if (!IfContains(Text, "<IMG")) {  ; text
+    SetToolTip("LaTeX to image converting...")
     Send {BS}^{f7}  ; set read point
     LatexFormula := Trim(ProcessLatexFormula(Clipboard), "$")
 
@@ -31,7 +33,7 @@
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     FileCreateDir % LatexFolderPath
     LatexPlaceHolder := GetDetailedTime()
-    Clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>" . LatexPlaceHolder,, false, true)
+    Clip("<img alt=""" . EncodeDecodeURI(LatexFormula) . """ src=""" . InsideHTMLPath . """>" . LatexPlaceHolder,, false, true)
     if (ContLearn == 1) {  ; item and "Show answer"
       Send {Esc}
       SM.WaitTextExit()
@@ -73,17 +75,24 @@
     Vim.State.SetMode("Vim_Normal")
 
   } else {  ; image
+    SetToolTip("Image to LaTeX converting...")
     Send {BS}  ; otherwise might contain unwanted format
-    RegExMatch(data, "alt=""(.*?)""", v)
+    RegExMatch(Text, "alt=""(.*?)""", v)
     if (!v)
-      RegExMatch(data, "alt=(.*?) ", v)
+      RegExMatch(Text, "alt=(.*?) ", v)
+    if (!v1) {
+      RegExMatch(Text, "title=""(.*?)""", v)
+      if (!v)
+        RegExMatch(Text, "title=(.*?) ", v)
+    }
     LatexFormula := EncodeDecodeURI(EncodeDecodeURI(v1, false), false)
     LatexFormula := ProcessLatexFormula(LatexFormula)
-    RegExMatch(data, "src=""(.*?)""", v)
+    RegExMatch(Text, "src=""(.*?)""", v)
     if (!v)
-      RegExMatch(data, "src=(.*?) ", v)
+      RegExMatch(Text, "src=(.*?) ", v)
     LatexPath := StrReplace(v1, "file:///")
     LatexFormula := StrReplace(LatexFormula, "&amp;", "&")
+    LatexFormula := StrReplace(LatexFormula, "&#10;", " ")
     Clip(LatexFormula, true, false)
     FileDelete % LatexPath
     Vim.State.SetMode("Vim_Visual")

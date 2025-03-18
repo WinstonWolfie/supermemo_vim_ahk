@@ -46,20 +46,18 @@ return
   KeyWait Ctrl
   KeyWait Shift
 
-  if (Copy(false) = "") {
+  if (Copy(false) = "") {  ; no text selected, extract empty element with title indicating the section
     Clipboard := ClipSaved  ; might be used in InputBox below
     if ((ch := InputBox(, "Extract chapter/section:")) && !ErrorLevel) {
-      ModifyScript := false
       if (hBrowser) {
         BrowserUrl := Browser.GetUrl()
         ret := SM.AskToSearchLink(BrowserUrl, SM.GetLink())
         if (ret == 0)
           return
-        if (IfContains(BrowserUrl, "wikipedia.org")
-         && (ch ~= "^sect: ")
-         && (MsgBox(3,, "Modify script component?") = "Yes"))
-          ModifyScript := true
       }
+      ; Add # to indicate section at the end of url
+      ModifyScript := (hBrowser && IfContains(BrowserUrl, "wikipedia.org") && (ch ~= "^sect: "))
+
       if (!CtrlState)
         CurrEl := SM.GetElNumber()
       if (ShiftState) {
@@ -67,6 +65,7 @@ return
         if (Prio == -1)
           return
       }
+
       WinActivate, ahk_class TElWind
       if (ParentElNumber := SM.GetParentElNumber()) {
         SM.GoToEl(ParentElNumber)
@@ -173,8 +172,7 @@ return
       ClipboardGet_HTML(HTML)
       if (hBrowser) {
         BrowserUrl := Browser.ParseUrl(Url := GetClipUrl(HTML))
-        HTML := RegExReplace(HTML, "i)<(\/)?mark", "<$1span")
-        HTML := RegExReplace(HTML, "i)<span .*?class="".*? default-cyan-.*?""", "<span class=extract")
+        HTML := Browser.MarkToExtractClass(HTML)
       }
       HTML := SM.CleanHTML(GetClipHTMLBody(HTML),,, Url)
       if (hCalibre)
@@ -226,7 +224,7 @@ ExtractToSMAgain:
   if (hBrowser) {
     ret := SM.AskToSearchLink(BrowserUrl, RefLink)
     if (ret == 0) {
-      SetToolTip("Copied " . Clipboard)
+      SetToolTip("Copied text.")
       return
     } else if (ret == -1) {
       Goto ExtractToSMAgain

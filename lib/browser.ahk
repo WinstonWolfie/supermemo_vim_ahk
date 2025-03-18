@@ -28,12 +28,12 @@ class Browser {
     } else if (IfContains(Url, "bilibili.com")) {
       Url := RegExReplace(Url, "(\?(?!p=\d+)|&).*")
       Url := RegExReplace(Url, "\/(?=\?p=\d+)")
-    ; } else if (IfContains(Url, "netflix.com/watch")) {
-    ;   Url := RegExReplace(Url, "\?trackId=.*")
+      if !(Url ~= "\/$")
+        Url .= "/"
     } else if (IfContains(Url, "finance.yahoo.com")) {
       Url := RegExReplace(Url, "\?.*")
       if !(Url ~= "\/$")
-        Url := Url . "/"
+        Url .= "/"
     } else if (IfContains(Url, "dle.rae.es")) {
       Url := StrReplace(Url, "?m=form")
     }
@@ -758,5 +758,11 @@ class Browser {
       Url := ""
     }
     return Url
+  }
+
+  MarkToExtractClass(HTML) {
+    HTML := RegExReplace(HTML, "i)<(\/)?mark", "<$1span")
+    HTML := RegExReplace(HTML, "i)<span .*?class="".*? default-cyan-.*?""", "<span class=extract")
+    return HTML
   }
 }

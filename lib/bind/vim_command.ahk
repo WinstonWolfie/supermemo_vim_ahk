@@ -54,14 +54,14 @@ Return
         . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
         . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
         . "|PasteCleanedClipboard|ArchiveToday|WolframAlpha|PasteHTML"
-        . "|AnnasArchive"
+        . "|AnnasArchive|Untag|"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     List := "SetConceptHook|MemoriseChildren|" . List
     if (WinActive("ahk_class TElWind")) {
       List := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement"
             . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
-            . "|ExternaliseRegistry|Comment|Tag|" . List
+            . "|ExternaliseRegistry|Comment|Tag|Untag|" . List
       if (SM.IsOnline(, -1))
         List := "ReformatScriptComponent|SearchLinkInYT|MarkAsOnlineProgress|" . List
       if (SM.IsEditingText())
@@ -72,9 +72,9 @@ Return
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
     List := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference"
-          . "|MassProcessBrowser|" . List
+          . "|MassProcessBrowser|Tag|Untag|" . List
   } else if (WinActive("ahk_group Browser")) {  ; web browsers
-    List := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|" . List
+    List := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|Tag|" . List
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
     List := "SetPlanPosition|" . List
   } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
@@ -111,17 +111,40 @@ VimCommanderButtonExecute:
       Run, % "https://www.google.com/search?q=wiktionary " . EncodeDecodeURI(RegExReplace(Command, "i)^wkt "))
     } else if (aCommand[1] = "pplx") {
       Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(RegExReplace(Command, "i)^pplx ")) . "&focus=internet&copilot=true"
-    } else if (aCommand[1] = "tag") {
-      Tags := RegExReplace(Command, "i)^tag "), EditRefComment := true
+    } else if (aCommand[1] = "tag") || (aCommand[1] = "untag") {
+      WinActivate % "ahk_id " . hWnd
+      Tags := RegExReplace(Command, "i)^(tag|untag) ")
+      EditRefComment := true
       wSMElWind := ""
+
       if (WinActive("ahk_group Browser")) {
         Browser.GetInfo(, false,, false, false, false)
         wSMElWind := SM.FindMatchTitleColl(Browser.Title)
         Browser.Clear()
       }
+
+      LoopCount := 1
+      if (SMBrowser := WinActive("ahk_class TBrowser")) {
+        BrowserTitle := WinGetTitle()
+        Send ^{Home}
+        SM.WaitFileLoad()
+        RegExMatch(BrowserTitle, "^(\d+) users of ", v)
+        if (!v)
+          RegExMatch(BrowserTitle, "^Subset elements \((\d+) elements\)", v)
+        if (v1 = 1) {
+          SMBrowser := ""  ; don't loop
+        } else {
+          LoopCount := v1 - 1
+        }
+      }
+
       if (!wSMElWind)
         wSMElWind := "ahk_class TElWind"
-      Goto SMTagEntered
+      if (aCommand[1] = "tag") {
+        Goto SMTagEntered
+      } else if (aCommand[1] = "untag") {
+        Goto SMUntag
+      }
     } else if (IsUrl(Command)) {
       if !(Command ~= "^http")
         Command := "http://" . Command
@@ -659,27 +682,26 @@ BingChat:
   ClipSaved := Link := ""
   wEdge := WinActive("ahk_exe msedge.exe")
   ext := ".htm"  ; by default the text will be copied with its format retained
-  if (WinActive("ahk_class TElWind")) {
-    if (SM.IsBrowsing()) {
-      Link :=SM.GetLink()
-    } else if (SM.IsEditingText()) {
-      Link :=SM.GetFilePath()
-    }
+  if (SMFile := WinActive("ahk_class TElWind")) {
+    if (SM.IsBrowsing())
+      Link := SM.GetLink()
+    if (!Link || SM.IsEditingText())
+      Link := SM.GetFilePath()
   } else if (!wEdge && (hWnd := WinActive("ahk_group Browser"))) {
     uiaBrowser := new UIA_Browser("ahk_id " . hWnd)
-    Link :=uiaBrowser.GetCurrentURL()
+    Link := uiaBrowser.GetCurrentURL()
   } else {
     ClipSaved := ClipboardAll
     if (!Text := Copy(false, true))  ; HTML not found
       Text := Clipboard, ext := ".txt"
     if (Text) {
-      Link :=A_Temp . "\" . GetCurrTimeForFileName() . ext
+      Link := A_Temp . "\" . GetCurrTimeForFileName() . ext
       FileDelete % Link
       FileAppend, % Text, % Link
     }
   }
   if (Text || !wEdge) {
-    Run, % "msedge " . Link
+    Run, % "msedge.exe " . Link
     WinWaitActive, ahk_exe msedge.exe
   }
   Send ^+.
@@ -688,7 +710,8 @@ BingChat:
   if (Link) {
     uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
-    FileDelete % Link
+    if (!SMFile)
+      FileDelete % Link
   }
 return 
 
@@ -1089,7 +1112,7 @@ MD2HTML:
   FileAppend, % MD, % TempMDPath
   TempHTMLPath := A_Temp . "\" . t . "_html.html"
   FileAppend,, % TempHTMLPath
-  Run, % "pandoc " . TempMDPath . " -s -o " . TempHTMLPath
+  Run, % ComSpec . " /c pandoc " . TempMDPath . " -s -o " . TempHTMLPath
   loop {
     if (t := FileRead(TempHTMLPath))
       Break
@@ -1244,24 +1267,62 @@ SMTagButtonTag:
 SMTagEntered:
   Vim.State.SetMode("Vim_Normal")
   wSMElWind := (A_ThisLabel == "SMTagEntered") ? wSMElWind : "ahk_class TElWind"
-  SM.LinkConcepts(aTags := StrSplit(Tags, ";"), wSMElWind)
-  if (EditRefComment) {
-    SM.EditRef(wSMElWind)
-    WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", wSMElWind)
-    Ref := ControlGetText("TMemo1")
-    RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
-    loop % aTags.MaxIndex() {
-      Tag := StrReplace(aTags[A_Index], " ", "_")
-      if (!IfContains(Comment, "#" . Tag, true))
-        Comment .= " #" . Tag
+
+  Loop % LoopCount {
+    SM.LinkConcepts(aTags := StrSplit(Tags, ";"), wSMElWind)
+    if (EditRefComment) {
+      SM.EditRef(wSMElWind)
+      WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", wSMElWind)
+      Ref := ControlGetText("TMemo1")
+      RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
+      loop % aTags.MaxIndex() {
+        Tag := StrReplace(aTags[A_Index], " ", "_")
+        if (!IfContains(Comment, "#" . Tag, true))
+          Comment .= " #" . Tag
+      }
+      Ref := "#Comment: " . Comment . "`n" . Ref
+      ControlSetText, TMemo1, % Ref
+      ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
+      WinWaitClose
     }
-    Ref := "#Comment: " . Comment . "`n" . Ref
-    ControlSetText, TMemo1, % Ref
-    ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
-    WinWaitClose
+    if (!SMBrowser) {
+      Break
+    } else {
+      Send {Down}
+    }
   }
   SetToolTip("Tagging finished.")
 return
+
+SMUntag:
+  Vim.State.SetMode("Vim_Normal")
+
+  Loop % LoopCount {
+    SM.UnLinkConcepts(aTags := StrSplit(Tags, ";"), "ahk_class TElWind")
+    if (EditRefComment) {
+      SM.EditRef("ahk_class TElWind")
+      WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+      Ref := ControlGetText("TMemo1")
+      RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
+      loop % aTags.MaxIndex() {
+        Tag := StrReplace(aTags[A_Index], " ", "_")
+        if (IfContains(Comment, "#" . Tag, true))
+          Comment := RegExReplace(Comment, "#" . Tag . " ?")
+      }
+      Ref := "#Comment: " . Comment . "`n" . Ref
+      ControlSetText, TMemo1, % Ref
+      ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
+      WinWaitClose
+    }
+    if (!SMBrowser) {
+      Break
+    } else {
+      Send {Down}
+    }
+  }
+  SetToolTip("Tagging finished.")
+return
+
 
 PasteHTML:
   ClipHTML := GetClipHTMLBody()

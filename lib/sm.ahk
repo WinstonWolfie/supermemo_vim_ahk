@@ -985,9 +985,7 @@ class SM {
         }
       }
 
-      if (SMTitle == "Netflix") {
-        Run, % RefLink
-      } else if (Marker == "SMVim: Use online video progress") {
+      if (Marker == "SMVim: Use online video progress") {
         global Browser
         Browser.SearchInYT(SMTitle, RefLink)
       } else {
@@ -1431,9 +1429,16 @@ class SM {
   }
 
   LinkConcept(Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="") {
-    ; this.ActivateElWind(wSMElWind)
-    ; Send !{f10}cl
     this.CloseMsgDialog(), this.PostMsg(644, true, wSMElWind)
+    return this.RegWindEnterConcept(Concept, wSMElWind, wForeground)
+  }
+
+  UnLinkConcept(Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="") {
+    this.CloseMsgDialog(), this.PostMsg(645, true, wSMElWind)
+    return this.RegWindEnterConcept(Concept, wSMElWind, wForeground)
+  }
+
+  RegWindEnterConcept(Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="") {
     if (wForeground)
       WinActivate, % wForeground  ; sometimes it robs the focused window
     if (Concept) {
@@ -1523,7 +1528,7 @@ class SM {
         WinActivate, % wCurr
       }
     } else if (MB = "Yes") {
-      ret := -1
+      ret := 1
     }
     return ret
   }
@@ -1559,6 +1564,16 @@ class SM {
 
     if (IfContains(Url, "baike.baidu.com")) {
       str := RegExReplace(str, "i)<(\/)?DIV", "<$1P")
+    }
+
+    if (IfContains(Url, "wikipedia.org,wikibooks.org")) {
+      str := RegExReplace(str, "i)<MI>([A-Za-z0-9]+)<\/MI>", "<EM>$1</EM>")
+      str := RegExReplace(str, "i)<EM>(sin|cos|tan|sec|csc|cot|exp)<\/EM>", "$1")
+      str := RegExReplace(str, "i)<MSUB>.*?\K<MN>(.*?)<\/MN>(?=.*?<\/MSUB>)", "<SUB>$1</SUB>")
+      str := RegExReplace(str, "i)<MSUP>.*?\K<MN>(.*?)<\/MN>(?=.*?<\/MSUP>)", "<SUP>$1</SUP>")
+      str := RegExReplace(str, "i)<MO>([^()]+)<\/MO>", "<MO> $1 </MO>")
+      str := RegExReplace(str, "i)<MO> (,|\.) <\/MO>", "<MO>$1 </MO>")
+      str := RegExReplace(str, "is)<\/?MO([^>]+)?>")
     }
 
     ; Ilya Frank
@@ -1599,6 +1614,9 @@ class SM {
     str := RegExReplace(str, "is)<[^>]+\K\s(bgcolor|onerror|onload|onclick|onmouseover|onmouseout|onfocus)=[^ >]+(?=([^>]+)?>)")
     str := RegExReplace(str, "is)<[^>]+\K\s(onmouseover|onmouseout)=[^;]+;(?=([^>]+)?>)")
 
+    ; Unwanted tags
+    str := RegExReplace(str, "is)<\/?(math)([^>]+)?>")  ; mostly from Wikipedia
+
     ; Remove empty paragraphs
     str := RegExReplace(str, "is)<p([^>]+)?>(&nbsp;|\s| )+<\/p>")
     str := RegExReplace(str, "is)<div([^>]+)?>(&nbsp;|\s| )+<\/div>")
@@ -1616,6 +1634,11 @@ class SM {
   LinkConcepts(aTags, wSMElWind:="ahk_class TElWind", wForeground:="") {
     loop % aTags.MaxIndex()
       this.LinkConcept(aTags[A_Index], wSMElWind, wForeground)
+  }
+
+  UnLinkConcepts(aTags, wSMElWind:="ahk_class TElWind", wForeground:="") {
+    loop % aTags.MaxIndex()
+      this.UnLinkConcept(aTags[A_Index], wSMElWind, wForeground)
   }
 
   RegAltR(WinTitle:="") {
@@ -1704,7 +1727,7 @@ class SM {
     }
   }
 
-  CanMarkOrExtract(HTMLExist, auiaText, Marker, ThisLabel, Label, ToolTip:="") {
+  CanMarkOrExtract(HTMLExist, auiaText, Marker, ThisLabel, Label) {
     if (!HTMLExist || (!this.IsHTMLEmpty(auiaText) && !Marker) || (Marker && !IfIn(this.IsCompMarker(Marker), "read point,page mark"))) {
       if (ThisLabel != Label) {
         if (HTMLExist)
@@ -1726,7 +1749,7 @@ class SM {
           }
         }
       }
-      SetToolTip("Copied " . (ToolTip ? ToolTip : Clipboard))
+      SetToolTip("Copied text.")
       return 0
     }
     return 1

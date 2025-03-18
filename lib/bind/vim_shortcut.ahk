@@ -225,7 +225,7 @@ IWBNewTopic:
   }
 
   Browser.Clear()
-  if (IWB) {
+  if (IWB) {  ; at this point IWB already has content in clip
     Browser.Url := Browser.ParseUrl(GetClipUrl())
   } else {
     Browser.Url := Browser.GetUrl()
@@ -327,8 +327,11 @@ SMImportButtonImport:
   }
 
   SwitchToSameWindow(wBrowser)
-  if (!IWB)  ; IWB copies text before
+  if (!IWB) {  ; IWB copies text before
     HTMLText := (DLHTML || OnlineEl) ? "" : Copy(false, true)  ; do not copy if download html or online element is checked
+  } else if (IWB) {
+    HTMLText := Browser.MarkToExtractClass(HTMLText)
+  }
 
   if (CheckDupForIWB) {
     MB := ""
@@ -494,16 +497,23 @@ SMImportButtonImport:
     SetToolTip("Failed to open the element parameter window.")
     GoTo SMImportReturn
   }
+
   if (DupChecked)
     SM.ClearHighlight()
+  if (OnlineEl)
+    WinActivate, % wBrowser
+
   if (!SMPoundSymbHandled)
     SM.HandleSM19PoundSymbUrl(Browser.Url)
-  SM.Reload()
-  SM.WaitFileLoad()
+  ; SM.Reload()
+  ; SM.WaitFileLoad()
+
   if (ChangeBackConcept)
     SM.SetDefaultConcept(ChangeBackConcept)
+
   if (Tags)
     SM.LinkConcepts(StrSplit(Tags, ";"),, wBrowser)
+
   SM.CloseMsgDialog()
 
   if (CloseTab) {
@@ -521,11 +531,13 @@ SMImportReturn:
     if (DupChecked)
       SM.ClearHighlight()
   }
+
   if (OnlineEl || Esc) {
-    Browser.ActivateBrowser(wBrowser)
+    WinActivate, % wBrowser
   } else {
     SM.ActivateElWind()
   }
+
   Browser.Clear(), Vim.State.SetMode("Vim_Normal")
   ; If closed GUI but did not copy anything, restore clipboard
   ; If closed GUI but copied something while the GUI is open, do not restore clipboard
@@ -539,7 +551,7 @@ return
 
 ^+e::
   uiaBrowser := new UIA_Browser("A")
-  Run, % "msedge " . uiaBrowser.GetCurrentUrl()
+  Run, % "msedge.exe " . uiaBrowser.GetCurrentUrl()
 return
 
 ; SumatraPDF
@@ -710,14 +722,14 @@ MarkInHTMLCompAgain:
   if (hBrowser) {
     ret := SM.AskToSearchLink(BrowserUrl, RefLink)
     if (ret == 0) {
-      SetToolTip("Copied " . Clipboard := NewText)
+      SetToolTip("Copied text.")
       return
     } else if (ret == -1) {
       Goto MarkInHTMLCompAgain
     }
   }
 
-  ret := SM.CanMarkOrExtract(HTMLExist, auiaText, OldText, A_ThisLabel, "MarkInHTMLComp", NewText)
+  ret := SM.CanMarkOrExtract(HTMLExist, auiaText, OldText, A_ThisLabel, "MarkInHTMLComp")
   if (ret == -1) {
     Goto MarkInHTMLComp
   } else if (ret == 0) {
@@ -751,7 +763,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe iexplore.exe"))
 ; Open in default browser (in my case, Chrome); similar to default shortcut ^+e to open in ms edge
 ^+c::Run, % ControlGetText("Edit1", "A")  ; browser url field
-^+e::Run, % "msedge " . ControlGetText("Edit1", "A")
+^+e::Run, % "msedge.exe " . ControlGetText("Edit1", "A")
 ^!l::SetToolTip("Copied " . Clipboard := ControlGetText("Edit1", "A"))
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))
 ^+c::

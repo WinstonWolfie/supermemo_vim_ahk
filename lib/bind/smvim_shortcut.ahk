@@ -352,6 +352,7 @@ return
 
 !t::Send !mlt  ; Totals
 !d::Send !mld  ; Delays
++x::Send ^+{Enter}  ; Done!
 
 ^b::
 ^!b::
@@ -390,10 +391,9 @@ return
     return
   }
   Gui, SMPlanInsert:Add, Text,, A&ctivity:
-  list := "Break||Game|Code|Sports|Social|Family|Listen|Meal|Rest"
-        . "|Plan|Invest|SM|Shower|IM|Piano|Mindful|Job|Misc|Out"
-        . "|Sing|Write|Draw|Movie|TV|GF|Music|Sun|Lang|SocMed"
-        . "|MP|Tidy|Read|Write|Poker|Video|Watch"
+  list := "Break||Gaming|Coding|Sports|Social|Family|Listen|Meal|Rest"
+        . "|Planning|Invest|SM|Shower|Piano|Meditation|Job|Misc|Out"
+        . "|Sing|Writing|Draw|Movie|TV|Music|Lang|Read|Poker"
   Gui, SMPlanInsert:Add, Combobox, vActivity gAutoComplete w110, % list
   Gui, SMPlanInsert:Add, Text,, &Time:
   Gui, SMPlanInsert:Add, Edit, vTime w110
@@ -761,24 +761,25 @@ return
   Goto SMLearnChildrenActiveBrowser
 return
 
-!n::
-  if (WinGetTitle() ~= "^Concept Registry \(\d+ members\)$") {
-    ; This whole thread is to fix a bug in SM's neural learning:
-    ; when you begin neural learning, SM defaults at current element,
-    ; so when you wanted to start to neural at a concept, you need to
-    ; go to that element first
-    SM.RegAltR()
-    WinWaitActive, ahk_class TInputDlg
-    CurrConcept := ControlGetText("TMemo1")
-    WinClose
-    WinWaitActive, ahk_class TRegistryForm
-    SM.RegAltG()
-    WinWaitActive, ahk_class TElWind
-    SM.SetDefaultConcept()
-    WinWaitActive, ahk_class TRegistryForm
-    SM.SetText("Edit1", CurrConcept)
-  }
-  Send !n
+~!n::
+  ; The bug seems to be fixed in sm19.08
+  ; if (WinGetTitle() ~= "^Concept Registry \(\d+ members\)$") {
+  ;   ; This whole thread is to fix a bug in SM's neural learning:
+  ;   ; when you begin neural learning, SM defaults at current element,
+  ;   ; so when you wanted to start to neural at a concept, you need to
+  ;   ; go to that element first
+  ;   SM.RegAltR()
+  ;   WinWaitActive, ahk_class TInputDlg
+  ;   CurrConcept := ControlGetText("TMemo1")
+  ;   WinClose
+  ;   WinWaitActive, ahk_class TRegistryForm
+  ;   SM.RegAltG()
+  ;   WinWaitActive, ahk_class TElWind
+  ;   SM.SetDefaultConcept()
+  ;   WinWaitActive, ahk_class TRegistryForm
+  ;   SM.SetText("Edit1", CurrConcept)
+  ; }
+  ; Send !n
   WinWaitActive, ahk_class TElWind,, 1.5
   SM.PlayIfOnlineColl()
 return
