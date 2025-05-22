@@ -7,6 +7,7 @@ class SM {
                    . "|bold-underline|small-caps|smallcaps"
                    . "|ilya-frank-translation|overline|italic-overline"
                    . "|bold-overline|underline-overline|sub-left"
+                   . "|sub-lefter"
   }
 
   DoesTextExist(RestoreClip:=true) {
@@ -250,7 +251,7 @@ class SM {
     loop {
       if (!A_CaretX) {
         Break
-      } else if (A_CaretX && this.WaitFileLoad(false, "|Please wait", -1)) {  ; prevent looping forever
+      } else if (A_CaretX && this.WaitFileLoad(false, "Please wait", -1)) {  ; prevent looping forever
         Break
       } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         this.PrepStatBar(2)
@@ -263,7 +264,7 @@ class SM {
     }
     loop {
       if (A_CaretX) {
-        this.WaitFileLoad(false, "|Please wait", Timeout)
+        this.WaitFileLoad(false, "Please wait", Timeout)
         Sleep 200
         this.PrepStatBar(2)
         return 1
@@ -279,7 +280,7 @@ class SM {
     loop {
       if (!A_CaretX) {
         Break
-      } else if (A_CaretX && this.WaitFileLoad(false, "|Loading file", Timeout)) {  ; prevent looping forever
+      } else if (A_CaretX && this.WaitFileLoad(false, "Loading file", Timeout)) {  ; prevent looping forever
         Break
       } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
         this.PrepStatBar(2)
@@ -288,7 +289,7 @@ class SM {
     }
     loop {
       if (A_CaretX) {
-        this.WaitFileLoad(false, "|Loading file", Timeout)
+        this.WaitFileLoad(false, "Loading file", Timeout)
         Sleep 200
         this.PrepStatBar(2)
         return true
@@ -383,7 +384,7 @@ class SM {
       ClipSaved := ClipboardAll
     global WinClip
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    this.PostMsg(992, true)
+    this.PostMsg(993, true)
     ClipWait, % LongCopy ? 0.6 : 0.2, True
     TemplCode := Clipboard
     if (RestoreClip)  ; for scripts that restore clipboard at the end
@@ -554,13 +555,15 @@ class SM {
       this.PrepStatBar(1)
     while (WinExist("ahk_class Internet Explorer_TridentDlgFrame ahk_pid " . WinGet("PID", "ahk_class TElWind")))  ; sometimes could happen in YT videos
       WinClose
-    Match := "^(Priority|Int|Downloading|\(\d+ item\(s\)" . Add . ")"
+    if (Add != "")
+      Add := "|" . Add
+    Match := "Priority=|Downloading|\(\d+ item\(s\)" . Add
     if (Timeout == -1) {
-      ret := (RegExReplace(WinGetText("ahk_class TStatBar"), "^(\s+)?") ~= Match)
+      ret := (WinGetText("ahk_class TStatBar") ~= Match)
     } else {
       StartTime := A_TickCount
       loop {
-        if (RegExReplace(WinGetText("ahk_class TStatBar"), "^(\s+)?") ~= Match) {
+        if (WinGetText("ahk_class TStatBar") ~= Match) {
           ret := true
           Break
         } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
@@ -723,16 +726,8 @@ class SM {
 
     ; Launch element parameter window
     w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
-    while (!WinExist(w)) {  ; last iteration would update the last found window to w
-      this.PostMsg(708, true)
-      WaitTime := 1
-      WaitTime += (A_Index - 1) * 0.5
-      WinWait, % w,, % WaitTime
-      if (!ErrorLevel)
-        Break
-      if (A_Index > 5)
-        return false
-    }
+    this.PostMsg(708, true)
+    WinWait, % w
 
     if (Template && !(ControlGetText("Edit1") = Template)) {
       this.SetText("Edit1", Template)
@@ -1066,7 +1061,7 @@ class SM {
         }
       }
     } else {
-      SetToolTip(ToolTip, 5000)
+      SetToolTip(ToolTip, 10000)
     }
   }
 
@@ -1175,6 +1170,7 @@ class SM {
     }
   }
 
+  ; Pressing Q makes you focus on first text; this makes it as fast as possible
   SpamQ(SpamInterval:=100, Timeout:=0) {
     loop {
       this.EditFirstQuestion()
@@ -1262,10 +1258,13 @@ class SM {
     SwitchToSameWindow()
   }
 
-  PasteHTML() {
-    ; this.ActivateElWind()
-    ; Send {AppsKey}cs
-    this.PostMsg(921, true)
+  PasteHTML(PostMsg:=true) {
+    if (PostMsg) {
+      this.PostMsg(922, true)
+    } else {
+      this.ActivateElWind()
+      Send {AppsKey}cs
+    }
     global WinClip
     WinClip._waitClipReady()
     WinWait, % "ahk_class TProgressBox ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.3
@@ -1327,7 +1326,7 @@ class SM {
     ; this.ActivateElWind()
     loop {
       ; Send !{f12}kd  ; delete registry link
-      this.PostMsg(940, true)
+      this.PostMsg(941, true)
       WinWait, % "ahk_class TMsgDialog ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.7
       if (!ErrorLevel) {
         ControlSend, ahk_parent, {Enter}
@@ -1567,10 +1566,10 @@ class SM {
     }
 
     if (IfContains(Url, "wikipedia.org,wikibooks.org")) {
-      str := RegExReplace(str, "i)<MI>([A-Za-z0-9]+)<\/MI>", "<EM>$1</EM>")
-      str := RegExReplace(str, "i)<EM>(sin|cos|tan|sec|csc|cot|exp)<\/EM>", "$1")
-      str := RegExReplace(str, "i)<MSUB>.*?\K<MN>(.*?)<\/MN>(?=.*?<\/MSUB>)", "<SUB>$1</SUB>")
-      str := RegExReplace(str, "i)<MSUP>.*?\K<MN>(.*?)<\/MN>(?=.*?<\/MSUP>)", "<SUP>$1</SUP>")
+      str := RegExReplace(str, "i)<MI>(\w+)<\/MI>", "<EM>$1</EM>")
+      str := RegExReplace(str, "i)<EM>(sin|cos|tan|sec|csc|cot|exp|log|ln|mod)<\/EM>", "$1")
+      str := RegExReplace(str, "i)<MSUB>.*?\K<MROW [^>]+><MN>(.*?)<\/MN><\/MROW>(?=.*?<\/MSUB>)", "<SUB>$1</SUB>")
+      str := RegExReplace(str, "i)<MSUP>.*?\K<MROW [^>]+><MN>(.*?)<\/MN><\/MROW>(?=.*?<\/MSUP>)", "<SUP>$1</SUP>")
       str := RegExReplace(str, "i)<MO>([^()]+)<\/MO>", "<MO> $1 </MO>")
       str := RegExReplace(str, "i)<MO> (,|\.) <\/MO>", "<MO>$1 </MO>")
       str := RegExReplace(str, "is)<\/?MO([^>]+)?>")
@@ -1676,7 +1675,7 @@ class SM {
   RegMember(PostMsg:=false) {
     if (PostMsg) {
       if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        this.PostMsg(928, true)
+        this.PostMsg(929, true)
       } else {
         this.PostMsg(923, true)
       }

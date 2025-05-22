@@ -417,7 +417,8 @@ SMImportButtonImport:
     Clipboard := Browser.Url
   } else {
     LineBreakList := "baike.baidu.com,m.shuaifox.com,khanacademy.org,mp.weixin.qq.com,"
-                   . "webmd.com,proofwiki.org,greenhornfinancefootnote.blogspot.com,cjfearnley.com"
+                   . "webmd.com,proofwiki.org,greenhornfinancefootnote.blogspot.com,cjfearnley.com,"
+                   . "oeis.org"
     LineBreak := IfContains(Browser.Url, LineBreakList)
     HTMLText := SM.CleanHTML(HTMLText,, LineBreak, Browser.Url)
     if (!IWB && !Browser.Date)
@@ -493,10 +494,7 @@ SMImportButtonImport:
   }
 
   ; All SM operations here are handled in the background
-  if (!SM.SetElParam((IWB ? "" : Browser.Title), Prio, (SMCtrlNYT ? "YouTube" : ""), (ChangeBackConcept ? ChangeBackConcept : ""))) {
-    SetToolTip("Failed to open the element parameter window.")
-    GoTo SMImportReturn
-  }
+  SM.SetElParam((IWB ? "" : Browser.Title), Prio, (SMCtrlNYT ? "YouTube" : ""), (ChangeBackConcept ? ChangeBackConcept : ""))
 
   if (DupChecked)
     SM.ClearHighlight()

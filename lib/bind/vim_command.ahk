@@ -51,9 +51,9 @@ Return
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|LatinoGraecum|Linguee"
-        . "|MerriamWebster|WordSense|RestartOneDrive|RestartICloudDrive|KillIE"
+        . "|MerriamWebster|WolframAlpha|RestartOneDrive|RestartICloudDrive|KillIE"
         . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
-        . "|PasteCleanedClipboard|ArchiveToday|WolframAlpha|PasteHTML"
+        . "|PasteCleanedClipboard|ArchiveToday|WordSense|PasteHTML"
         . "|AnnasArchive|Untag|"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
@@ -840,10 +840,6 @@ PerplexityAI:
   }
   Gui, PerplexityAI:Add, Text,, &Search:
   Gui, PerplexityAI:Add, Edit, vSearch w200 r1 -WantReturn, % Search
-  Gui, PerplexityAI:Add, Text,, &Focus:
-  list := "internet||scholar|writing|wolfram|youtube|reddit"
-  Gui, PerplexityAI:Add, Combobox, vFocus gAutoComplete w200, % list
-  Gui, PerplexityAI:Add, CheckBox, vCopilot Checked, &Copilot
   Gui, PerplexityAI:Add, Text,, &Attach the above text and ask:
   list := "summarize|what is the conclusion?|check this file for mistakes"
   Gui, PerplexityAI:Add, Combobox, vAddSearch gAutoComplete w200, % list
@@ -865,22 +861,6 @@ PerplexityAIButtonSearch:
     WinWaitActive, ahk_group Browser
     uiaBrowser := new UIA_Browser("A")
     uiaBrowser.WaitPageLoad()
-
-    if (Focus != "internet") {
-      uiaBrowser.WaitElementExist("ControlType=Button AND Name='Focus'").Click()
-      if (Focus == "scholar") {
-        uiaBrowser.WaitElementExist("ControlType=Text AND Name='Academic'").Click()
-      } else if (Focus == "writing") {
-        uiaBrowser.WaitElementExist("ControlType=Text AND Name='Writing'").Click()
-      } else if (Focus == "wolfram") {
-        uiaBrowser.WaitElementExist("ControlType=Text AND Name='Wolfram|Alpha'").Click()
-      } else if (Focus == "youtube") {
-        uiaBrowser.WaitElementExist("ControlType=Text AND Name='YouTube'").Click()
-      } else if (Focus == "reddit") {
-        uiaBrowser.WaitElementExist("ControlType=Text AND Name='Reddit'").Click()
-      }
-    }
-
     TempFilePath := ""
     if (Search ~= "^File path from SMVim script: ") {
       FilePath := RegExReplace(Search, "^File path from SMVim script: ")
@@ -889,22 +869,17 @@ PerplexityAIButtonSearch:
       FileDelete % TempFilePath
       FileAppend, % Search, % FilePath := TempFilePath
     }
-    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Attach'").Click()
+    uiaBrowser.WaitElementExist("ControlType=Image AND ClassName='tabler-icon tabler-icon-paperclip '").ControlClick()
     WinWaitActive, ahk_class #32770
     ControlSetText, Edit1, % FilePath
     Send {Enter}
     WinWaitNotActive
-    uiaBrowser.WaitElementExist("ControlType=Text AND Name='Uploading...'")
-    if (AddSearch) {
+    if (AddSearch)
       uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Ask anything...'").SetValue(AddSearch)
-      uiaBrowser.WaitElementNotExist("ControlType=Text AND Name='Uploading...'")
-      Send {Enter}
-    }
     if (TempFilePath)
       FileDelete % TempFilePath
   } else {
-    Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(Search . "&focus=" . Focus
-           . "&copilot=" . (Copilot ? "true" : "false"))
+    Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(Search)
   }
 return
 
@@ -1264,6 +1239,7 @@ return
 SMTagButtonTag:
   Gui, Submit
   Gui, Destroy
+  LoopCount := 1
 SMTagEntered:
   Vim.State.SetMode("Vim_Normal")
   wSMElWind := (A_ThisLabel == "SMTagEntered") ? wSMElWind : "ahk_class TElWind"
@@ -1309,7 +1285,11 @@ SMUntag:
         if (IfContains(Comment, "#" . Tag, true))
           Comment := RegExReplace(Comment, "#" . Tag . " ?")
       }
-      Ref := "#Comment: " . Comment . "`n" . Ref
+      if (Comment) {
+        Ref := "#Comment: " . Comment . "`n" . Ref
+      } else {
+        Ref := RegExReplace(Ref, "#Comment: .*")
+      }
       ControlSetText, TMemo1, % Ref
       ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
       WinWaitClose

@@ -1249,7 +1249,7 @@ class VimMove {
             Send ^+{Up}  ; if there are references this would select (or deselect in visual mode) them all
             if (this.shift == 1)
               Send +{Down}  ; go down one line, if there are references this would include the #SuperMemo Reference
-            if (IfContains(Copy(false), "#SuperMemo Reference:")) {
+            if (IfContains(Copy(false,,,, true), "#SuperMemo Reference:")) {
               if (this.shift == 1) {
                 Send +{Up 4}  ; select until start of last line
               } else {

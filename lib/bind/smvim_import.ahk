@@ -66,6 +66,7 @@ return
           return
       }
 
+      SM.CloseMsgDialog()
       WinActivate, ahk_class TElWind
       if (ParentElNumber := SM.GetParentElNumber()) {
         SM.GoToEl(ParentElNumber)
@@ -197,13 +198,13 @@ return
     } else if (hCalibre) {
       ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % "ahk_id " . hCalibre  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
-      Send a
+      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}a
     } else if (WinActive("ahk_exe WINWORD.exe")) {
       Send ^!h
     } else if (WinActive("ahk_exe WinDjView.exe")) {
       Send ^h
       WinWaitActive, ahk_class #32770  ; create annotations
-      Send {Enter}
+      ControlSend,, {Enter}
     } else if (WinActive("ahk_class AcrobatSDIWindow")) {
       Send {AppsKey}h
       Sleep 100
@@ -238,22 +239,24 @@ ExtractToSMAgain:
     return
   }
 
-  SM.EditFirstQuestion()
-  if (Marker)
+  SM.SpamQ()
+  if (Marker) {
     SM.EmptyHTMLComp()
-  WinWaitActive, ahk_class TElWind
-  SM.WaitTextFocus()
-  if (Marker)
+    WinWaitActive, ahk_class TElWind
+    SM.WaitTextFocus()
     x := A_CaretX, y := A_CaretY
+  }
   Send ^{Home}
   if (Marker)
     WaitCaretMove(x, y)
+  x := A_CaretX, y := A_CaretY
   if (!CleanHTML) {
     Send ^v
     WinClip._waitClipReady()
   } else {
-    SM.PasteHTML()
+    SM.PasteHTML(false)
   }
+  WaitCaretMove(x, y, 700)  ; insure PasteHTML is finished
   Send ^+{Home}  ; select everything
   if (Prio) {
     Send !+x
@@ -272,11 +275,11 @@ ExtractToSMAgain:
       WinClose
       Break
     }
-    if (A_Index > 10)  ; probably saved after 1 second or so
+    if (A_Index > 7)  ; probably saved after .7 second or so
       Break
   }
   WinWaitActive, ahk_class TElWind
-  SM.EmptyHTMLComp()  ; this line unlinks the above html file with the current component
+  SM.EmptyHTMLComp()  ; unlink the above html file with the current component
   WinWaitActive, ahk_class TElWind
   if (Marker) {
     SM.WaitTextFocus()

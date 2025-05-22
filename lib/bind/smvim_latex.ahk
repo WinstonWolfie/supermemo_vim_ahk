@@ -21,11 +21,13 @@
     LatexFormula := Trim(ProcessLatexFormula(Clipboard), "$")
 
     ; After almost a year since I wrote this script, I finially figured out this f**ker website encodes the formula twice. Well, I suppose I don't use math that often in SM
-    ; LatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
-    ; LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cbg_white%2520%255Chuge%2520" . LatexFormula . "&dl=1"
+    LatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
+    LatexLink := "https://latex.vimsky.com/test.image.latex.php?fmt=png&val=%255Cdpi%257B150%257D%2520%255Cbg_white%2520%255Chuge%2520" . LatexFormula . "&dl=1"
 
     ; This website seems to be better? (2024-05-20)
-    LatexLink := "https://latex.codecogs.com/png.image?\dpi{300}" . LatexFormula
+    ; LatexLink := "https://latex.codecogs.com/png.image?\dpi{300}" . LatexFormula
+    ; LatexFormula := EncodeDecodeURI(LatexFormula)
+
     LatexFolderPath := SM.GetCollPath(Text := WinGetText("ahk_class TElWind"))
                      . SM.GetCollName(Text) . "\elements\LaTeX"
     LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
@@ -33,7 +35,7 @@
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     FileCreateDir % LatexFolderPath
     LatexPlaceHolder := GetDetailedTime()
-    Clip("<img alt=""" . EncodeDecodeURI(LatexFormula) . """ src=""" . InsideHTMLPath . """>" . LatexPlaceHolder,, false, true)
+    Clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>" . LatexPlaceHolder,, false, true)
     if (ContLearn == 1) {  ; item and "Show answer"
       Send {Esc}
       SM.WaitTextExit()
@@ -93,6 +95,7 @@
     LatexPath := StrReplace(v1, "file:///")
     LatexFormula := StrReplace(LatexFormula, "&amp;", "&")
     LatexFormula := StrReplace(LatexFormula, "&#10;", " ")
+    LatexFormula := Trim(LatexFormula, "$")  ; for websites like The Art of Problem Solving
     Clip(LatexFormula, true, false)
     FileDelete % LatexPath
     Vim.State.SetMode("Vim_Visual")

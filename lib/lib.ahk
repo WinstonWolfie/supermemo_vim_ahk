@@ -1324,13 +1324,17 @@ SwitchToSameWindow(w:="A") {
 ; Clip() - Send and Retrieve Text Using the Clipboard
 ; Originally by berban - updated February 18, 2019 - modified by Winston
 ; https://github.com/berban/Clip/blob/master/Clip.ahk
-Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1) {
+Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1, PostMsg:=false) {
   global WinClip, SM
   if (RestoreClip)
     ClipSaved := ClipboardAll
   If (Text = "") {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    Send % KeysToSend ? KeysToSend : "^c"
+    if (PostMsg && SM.IsEditingHTML()) {
+      SM.PostMsg(919, true)
+    } else {
+      Send % KeysToSend ? KeysToSend : "^c"
+    }
     if (WaitTime == -1) {
       ClipWait, % LongCopy ? 0.6 : 0.2, True
     } else if (WaitTime == 0) {
@@ -1338,6 +1342,8 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     } else if (WaitTime) {
       ClipWait, % WaitTime, True
     }
+    if (PostMsg)
+      Sleep 100  ; needed to let the software detect if clipboard access is successful
     Clipped := HTML ? GetClipHTMLBody() : Clipboard
   } Else {
     if (HTML && (HTML != "sm")) {
@@ -1362,8 +1368,8 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     Return Clipped
 }
 
-Copy(RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1) {
-  return Clip(,, RestoreClip, HTML, KeysToSend, WaitTime)
+Copy(RestoreClip:=true, HTML:=false, KeysToSend:="", WaitTime:=-1, PostMsg:=false) {
+  return Clip(,, RestoreClip, HTML, KeysToSend, WaitTime, PostMsg)
 }
 
 ParseLineBreaks(str) {

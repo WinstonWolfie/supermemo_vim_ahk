@@ -485,6 +485,10 @@ class Browser {
       this.Source := "ウィキペディア", this.Title := RegExReplace(this.Title, " - Wikipedia$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "最終更新 (.*?) \(", v), this.Date := v1
+    } else if (IfContains(this.Url, "ja.wiktionary.org")) {
+      this.Source := "ウィクショナリー日本語版", this.Title := RegExReplace(this.Title, " - ウィクショナリー日本語版$")
+      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "このページの最終更新日時は (.*?) \(", v), this.Date := v1
     } else if (IfContains(this.Url, "fr.wikisource.org")) {
       this.Source := "Wikisource", this.Title := RegExReplace(this.Title, " - Wikisource$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -702,7 +706,7 @@ class Browser {
         Send % "+{Left " . StrLen(v) . "}"
     }
 
-    if (!Sent && RegexMatch(PlainText, "。(\[\d+\])+$|(\[(\d+|note \d+|citation needed)\])+(。|.)?$|\[\d+\]: \d+(。|.)?$|(?<=\.)\d+$", v)) {
+    if (!Sent && RegexMatch(PlainText, "。(\[\d+\])+$|(\[(\d+|note \d+|\w|citation needed)\])+(。|.)?$|\[\d+\]: \d+(。|.)?$|(?<=\.)\d+$", v)) {
       if (Sent := IfContains(Url ? Url : this.GetUrl(), "wikipedia.org,wikiquote.org"))
         Send % "+{Left " . StrLen(v) . "}"
     }
