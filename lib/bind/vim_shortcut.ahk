@@ -514,10 +514,8 @@ SMImportButtonImport:
 
   SM.CloseMsgDialog()
 
-  if (CloseTab) {
-    WinActivate % wBrowser  ; apparently needed for closing tab
-    ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}w{Ctrl Up}, % wBrowser
-  }
+  if (CloseTab)
+    guiaBrowser.CloseTab()
 
 SMImportGuiEscape:
 SMImportGuiClose:

@@ -37,11 +37,7 @@ NukeHTML:
       return
     }
   }
-  if (!SM.SaveHTML(3000)) {
-    SetToolTip("Time out.")
-    return
-  }
-  WinWaitActive, ahk_class TElWind  ; insurance
+  SM.SaveHTML(30)
   if (!HTML := FileRead(HTMLPath := SM.GetFilePath())) {
     SetToolTip("File not found.")
     return
@@ -55,9 +51,7 @@ NukeHTML:
   }
   FileDelete % HTMLPath
   FileAppend, % SM.CleanHTML(HTML, (A_ThisLabel == "NukeHTML"),, SM.GetLink()), % HTMLPath
-  SM.Reload()
-  SM.WaitFileLoad()
-  Send {Esc}
+  SM.RefreshHTML()
   SetToolTip("HTML cleaned."), HTML := ""
 Return
 

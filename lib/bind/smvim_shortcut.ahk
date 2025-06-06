@@ -637,10 +637,8 @@ BrowserSyncTime:
       Goto SMSyncTimeReturn
   }
 
-  if (hBrowser && CloseWnd) {
-    WinActivate % wBrowser
-    ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}w{Ctrl Up}, % wBrowser
-  }
+  if (hBrowser && CloseWnd)
+    guiaBrowser.CloseTab()
 
   if (hMPV && CloseWnd && !ResetTime) {
     ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % wMPV

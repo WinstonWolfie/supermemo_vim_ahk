@@ -339,14 +339,29 @@ class SM {
     }
   }
 
-  SaveHTML(Timeout:="") {
-    Timeout := Timeout ? Timeout / 1000 : Timeout
-    this.OpenNotepad(Timeout)
+  SaveHTML(MaxLoop:=15) {
+    loop {
+      this.RegMember(true)
+      WinWaitActive, ahk_class TRegistryForm,, 0.1
+      if (!ErrorLevel) {
+        WinClose
+        WinWaitActive, ahk_class TElWind
+        return true
+      }
+      if (A_Index > MaxLoop)
+        return false
+    }
+  }
+
+  RefreshHTML(Timeout:="") {
+    this.OpenNotepad()
     WinWaitActive, ahk_exe Notepad.exe,, % Timeout
-    ControlSend,, {Ctrl Down}w{Ctrl Up}
-    WinClose
-    WinActivate, ahk_class TElWind
-    WinWaitActive, ahk_class TElWind
+    if (!ErrorLevel) {
+      ControlSend,, {Ctrl Down}w{Ctrl Up}
+      WinClose
+      WinActivate, ahk_class TElWind
+      WinWaitActive, ahk_class TElWind,, % Timeout
+    }
     return !ErrorLevel
   }
 
@@ -1216,9 +1231,13 @@ class SM {
       WinClose
   }
 
-  OpenNotepad(Timeout:=0) {
-    this.ExitText(true, Timeout)
-    Send ^+{f6}
+  OpenNotepad(PostMsg:=true) {
+    this.ActivateElWind()
+    if (PostMsg) {
+      this.PostMsg(995, true)
+    } else {
+      Send !{F12}fw
+    }
   }
 
   Plan() {
@@ -1323,10 +1342,12 @@ class SM {
   }
 
   EmptyHTMLComp() {
-    ; this.ActivateElWind()
     loop {
-      ; Send !{f12}kd  ; delete registry link
-      this.PostMsg(941, true)
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        this.PostMsg(941, true)
+      } else {
+        this.PostMsg(935, true)
+      }
       WinWait, % "ahk_class TMsgDialog ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.7
       if (!ErrorLevel) {
         ControlSend, ahk_parent, {Enter}

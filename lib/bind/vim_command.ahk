@@ -831,7 +831,7 @@ PerplexityAI:
   if (SM.IsEditingHTML()) {
     if (!Search := Trim(Copy())) {
       Send ^{f7}  ; save read point
-      SM.SaveHTML()  ; path may be updated
+      SM.RefreshHTML()  ; path may be updated
       WinWaitActive, ahk_class TElWind
       Search := "File path from SMVim script: " . SM.LoopForFilePath()
     }

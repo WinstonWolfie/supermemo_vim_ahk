@@ -396,7 +396,6 @@ return
 }::Vim.Move.Move("}")
 
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
-^f7::
 m::
   if (SM.IsEditingHTML())
     SM.Click("m")
@@ -404,14 +403,12 @@ m::
   SetToolTip("Read point set")
 Return
 
-!f7::
 `::
   Send !{f7}  ; go to read point
   SetToolTip("Going to read point")
 Return
 
 !m::
-^+f7::
   Send ^+{f7}  ; clear read point
   SetToolTip("Read point cleared")
 Return

@@ -183,8 +183,8 @@ return
       ClipWait
     }
     if (!WinExist("ahk_group SM")) {
-      a := CleanHTML ? "(in HTML)" : ""
-      SetToolTip("SuperMemo is not open; the text you selected " . a . " is on your clipboard.")
+      t := CleanHTML ? "(in HTML)" : ""
+      SetToolTip("SuperMemo is not open; the text you selected " . t . " is on your clipboard.")
       return
     }
     if (ShiftState) {
@@ -196,9 +196,9 @@ return
     if (hBrowser) {
       Browser.Highlight(, PlainText, BrowserUrl)
     } else if (hCalibre) {
-      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % "ahk_id " . hCalibre  ; need to enable this shortcut in settings
+      Send {text}q  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
-      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}a
+      Send {text}a
     } else if (WinActive("ahk_exe WINWORD.exe")) {
       Send ^!h
     } else if (WinActive("ahk_exe WinDjView.exe")) {
@@ -267,18 +267,7 @@ ExtractToSMAgain:
     Send !x  ; extract
   }
   SM.WaitExtractProcessing()
-  ; This opening registry part is needed to save html
-  loop {
-    SM.RegMember(true)
-    WinWaitActive, ahk_class TRegistryForm,, 0.1
-    if (!ErrorLevel) {
-      WinClose
-      Break
-    }
-    if (A_Index > 7)  ; probably saved after .7 second or so
-      Break
-  }
-  WinWaitActive, ahk_class TElWind
+  SM.SaveHTML()
   SM.EmptyHTMLComp()  ; unlink the above html file with the current component
   WinWaitActive, ahk_class TElWind
   if (Marker) {

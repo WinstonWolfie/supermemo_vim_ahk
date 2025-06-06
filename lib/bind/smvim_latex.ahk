@@ -40,7 +40,7 @@
       Send {Esc}
       SM.WaitTextExit()
     }
-    SM.SaveHTML()
+    SM.RefreshHTML()
     SM.WaitHTMLFocus()
     HTML := FileRead(HTMLPath := SM.LoopForFilePath(false))
     HTML := StrReplace(HTML, LatexPlaceHolder)
@@ -69,7 +69,7 @@
       Send {Esc}
       SM.WaitTextExit()
     }
-    SM.SaveHTML()
+    SM.RefreshHTML()
     if (Item) {
       WinWaitActive, ahk_class TElWind
       Send ^+{f7}  ; clear read point

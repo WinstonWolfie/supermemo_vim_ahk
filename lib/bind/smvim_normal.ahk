@@ -78,9 +78,9 @@ f::  ; gf: open source file
 t::  ; gt: open in Notepad
   Vim.State.SetMode(), ContLearn := SM.IsLearning()
   ClipSaved := "", CurrTitle := WinGetTitle("A")
-  if (Notepad := IfIn(A_ThisLabel, "^+f6,t")) {
+  if (Notepad := IfIn(A_ThisLabel, "t")) {
     Send ^{f7}  ; save read point
-    SM.OpenNotepad(), w := "ahk_exe Notepad.exe"
+    SM.OpenNotepad(false), w := "ahk_exe Notepad.exe"
   } else {
     ClipSaved := ClipboardAll
     SMFilePath := SM.GetFilePath(false)
@@ -90,14 +90,9 @@ t::  ; gt: open in Notepad
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       Send ^{f7}  ; save read point
-      SM.OpenNotepad()  ; path may be updated
-      WinWait, ahk_exe Notepad.exe
+      SM.SaveHTML()
       SMFilePath := SM.GetFilePath(false)
-      Run, % ComSpec . " /c vim " . SMFilePath
-      if (WinExist("ahk_exe Notepad.exe")) {
-        ControlSend,, {Ctrl Down}w{Ctrl Up}
-        WinClose
-      }
+      Run, % ComSpec . " /c vim " . SMFilePath  ; vim installation is expected
       GroupAdd, Vim, ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe  ; Win 11
       GroupAdd, Vim, ahk_class ConsoleWindowClass ahk_exe cmd.exe  ; Win 10
       w := "ahk_group Vim"
@@ -113,18 +108,7 @@ t::  ; gt: open in Notepad
   if (Notepad) {
     Send !{f7}  ; go to read point
   } else {
-    SM.GoHome()
-  }
-  if (ContLearn == 1) {
-    SM.Learn()
-  } else if (!Notepad) {
-    SM.WaitFileLoad()
-    t := WinGetTitle("A")
-    SM.GoBack()
-    if ((CurrTitle == t) && (CurrTitle ~= "^Concept: ")) {
-      SM.WaitFileLoad()
-      Send !{Right}
-    }
+    SM.RefreshHTML()
   }
 return
 
