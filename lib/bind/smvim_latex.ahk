@@ -40,6 +40,7 @@
       Send {Esc}
       SM.WaitTextExit()
     }
+    SM.SaveHTML()  ; needed so that RefreshHTML() can find the HTML path
     SM.RefreshHTML()
     SM.WaitHTMLFocus()
     HTML := FileRead(HTMLPath := SM.LoopForFilePath(false))
