@@ -354,15 +354,13 @@ class SM {
   }
 
   RefreshHTML(Timeout:="") {
-    this.OpenNotepad()
-    WinWaitActive, ahk_exe Notepad.exe,, % Timeout
-    if (!ErrorLevel) {
-      ControlSend,, {Ctrl Down}w{Ctrl Up}
-      WinClose
-      WinActivate, ahk_class TElWind
-      WinWaitActive, ahk_class TElWind,, % Timeout
-    }
-    return !ErrorLevel
+    if (!this.OpenNotepad(Timeout))
+      return false
+    ControlSend,, {Ctrl Down}w{Ctrl Up}
+    WinClose
+    WinActivate, ahk_class TElWind
+    WinWaitActive, ahk_class TElWind,, % Timeout
+    return true
   }
 
   GetCollName(Text:="") {
@@ -1239,17 +1237,29 @@ class SM {
       WinClose
   }
 
-  OpenNotepad(PostMsg:=true) {
+  OpenNotepad(PostMsg:=true, Timeout:="") {
     this.ActivateElWind()
     if (PostMsg) {
       if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-        this.PostMsg(995)
+        this.PostMsg(995, true)
       } else {
-        this.PostMsg(989)
+        this.PostMsg(989, true)
       }
     } else {
       Send !{F12}fw
     }
+    GroupAdd, OpenNP, ahk_class TMsgDialog
+    GroupAdd, OpenNP, ahk_exe Notepad.exe
+    WinWaitActive, ahk_group OpenNP,, % Timeout
+    if (ErrorLevel)
+      return false
+    if (WinGetClass() == "TMsgDialog") {
+      WinClose
+      WinWaitActive, ahk_class TElWind
+      Send ^t
+      this.OpenNotepad(PostMsg)
+    }
+    return true
   }
 
   Plan() {
@@ -1573,7 +1583,7 @@ class SM {
     return ret
   }
 
-  CleanHTML(str, nuke:=false, LineBreak:=false, Url:="") {
+  CleanHTML(str, Nuke:=false, LineBreak:=false, Url:="") {
     ; zzz in case you used f6 in SuperMemo to remove format before,
     ; which disables the tag by adding zzz (eg, <FONT> -> <ZZZFONT>)
 

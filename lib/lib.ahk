@@ -207,7 +207,7 @@ SysGet(Subcommand, Param3:="") {
   SysGet, v, % Subcommand, % Param3
   Return, v
 }
-WinGet(Cmd:="ID", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
+WinGet(Cmd:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="") {
   WinGet, v, % Cmd, % WinTitle, % WinText, % ExcludeTitle, % ExcludeText
   Return, v
 }

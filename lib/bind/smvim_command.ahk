@@ -24,11 +24,15 @@ return
 NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
+  Nuke := (A_ThisLabel == "NukeHTML")
+
   if (SM.IsEditingPlainText() || !SM.DoesHTMLExist()) {
     SetToolTip("This script only works on HTML.")
     return
   }
+
 	Send ^{f7}  ; save read point
+
   if (!SM.IsEditingHTML()) {
     Send ^t
     SM.WaitTextFocus()
@@ -37,23 +41,30 @@ NukeHTML:
       return
     }
   }
-  SM.SaveHTML(30)
-  WinWaitActive, ahk_class TElWind
-  if (!HTML := FileRead(HTMLPath := SM.GetFilePath())) {
-    SetToolTip("File not found.")
+
+  SM.OpenNotepad(), ClipSaved := ClipboardAll
+
+  if (!HTMLPath := SM.GetFilePath(false)) {
+    SetToolTip("File not found."), Clipboard := ClipSaved
     return
   }
-  if ((A_ThisLabel == "NukeHTML")
-   && (HTML ~= "i)<.*?\K class=(" . SM.CssClass . ")(?=.*?>)")) {
+
+  if (!HTML := FileRead(HTMLPath)) {
+    SetToolTip("File is empty"), Clipboard := ClipSaved
+    return
+  }
+
+  if (Nuke && (HTML ~= "i)<.*?\K class=(" . SM.CssClass . ")(?=.*?>)")) {
     if (IfIn(MsgBox(3,, "HTML has SM classes. Continue?"), "No,Cancel")) {
-      HTML := ""
+      HTML := "", Clipboard := ClipSaved
       return
     }
   }
+
   FileDelete % HTMLPath
-  FileAppend, % SM.CleanHTML(HTML, (A_ThisLabel == "NukeHTML"),, SM.GetLink()), % HTMLPath
-  SM.RefreshHTML()
-  SetToolTip("HTML cleaned."), HTML := ""
+  FileAppend, % SM.CleanHTML(HTML, Nuke,, SM.GetLink(, false)), % HTMLPath
+
+  SM.RefreshHTML(), SetToolTip("HTML cleaned."), HTML := ""
 Return
 
 +l::SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
