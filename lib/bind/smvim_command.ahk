@@ -42,8 +42,12 @@ NukeHTML:
     }
   }
 
-  SM.OpenNotepad(), ClipSaved := ClipboardAll
+  if (!SM.SaveHTML(30)) {
+    SetToolTip("Saving HTML Timed out.")
+    return
+  }
 
+  ClipSaved := ClipboardAll
   if (!HTMLPath := SM.GetFilePath(false)) {
     SetToolTip("File not found."), Clipboard := ClipSaved
     return
