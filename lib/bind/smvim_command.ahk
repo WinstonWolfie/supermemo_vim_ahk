@@ -38,6 +38,7 @@ NukeHTML:
     }
   }
   SM.SaveHTML(30)
+  WinWaitActive, ahk_class TElWind
   if (!HTML := FileRead(HTMLPath := SM.GetFilePath())) {
     SetToolTip("File not found.")
     return
@@ -91,7 +92,7 @@ SMSetLinkFromClipboard:
   if (Browser.Comment)
     Ref := "#Comment: " . Browser.Comment . "`r`n" . Ref
   ControlSetText, TMemo1, % Ref
-  ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Ctrl Down}{Enter}{Ctrl Up}  ; submit
+  ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
   WinWaitClose
   if (!SMPoundSymbHandled && SM.HandleSM19PoundSymbUrl(Browser.Url) && (A_ThisLabel == "r"))
     SM.Reload()
@@ -101,6 +102,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 +i::  ; learn current element's outstanding child item
   Vim.State.SetMode("Vim_Normal")
+  KeyWait Shift
   SM.OpenBrowser()
   SM.WaitBrowser()
   Send {AppsKey}ci

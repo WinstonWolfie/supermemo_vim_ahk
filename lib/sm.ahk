@@ -399,7 +399,11 @@ class SM {
       ClipSaved := ClipboardAll
     global WinClip
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    this.PostMsg(993, true)
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(993, true)
+    } else {
+      this.PostMsg(987, true)
+    }
     ClipWait, % LongCopy ? 0.6 : 0.2, True
     TemplCode := Clipboard
     if (RestoreClip)  ; for scripts that restore clipboard at the end
@@ -758,7 +762,7 @@ class SM {
     ; Submit
     ControlFocus, TMemo1  ; needed, otherwise the window won't close sometimes
     while (WinExist(w))
-      ControlSend, TMemo1, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Enter}
+      ControlSend, TMemo1, {Enter}
     return true
   }
 
@@ -967,7 +971,11 @@ class SM {
   }
 
   GoBack(ForceBG:=false) {
-    this.PostMsg(780, true)
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      this.PostMsg(780, true)
+    } else {
+      this.PostMsg(778, true)
+    }
   }
 
   AutoPlay(Acrobat:=false) {
@@ -1234,7 +1242,11 @@ class SM {
   OpenNotepad(PostMsg:=true) {
     this.ActivateElWind()
     if (PostMsg) {
-      this.PostMsg(995, true)
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        this.PostMsg(995)
+      } else {
+        this.PostMsg(989)
+      }
     } else {
       Send !{F12}fw
     }
@@ -1279,10 +1291,18 @@ class SM {
 
   PasteHTML(PostMsg:=true) {
     if (PostMsg) {
-      this.PostMsg(922, true)
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        this.PostMsg(922, true)
+      } else {
+        this.PostMsg(843, true)
+      }
     } else {
       this.ActivateElWind()
-      Send {AppsKey}cs
+      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+        Send {AppsKey}cs
+      } else {
+        Send {AppsKey}xp
+      }
     }
     global WinClip
     WinClip._waitClipReady()
@@ -1521,7 +1541,7 @@ class SM {
   }
 
   ; Return 1 to continue, 0 to stop, -1 to start again
-  AskToSearchLink(BrowserUrl, CurrSMUrl, wSMElWind:="ahk_class TElWind") {
+  AskToSearchLink(BrowserUrl, CurrSMUrl, BrowserTitle:="", wSMElWind:="ahk_class TElWind") {
     BrowserUrl := this.HTMLUrl2SMRefUrl(BrowserUrl)
     if (IfContains(BrowserUrl, "britannica.com")) {
       ret := IfContains(BrowserUrl, CurrSMUrl)
@@ -1536,7 +1556,7 @@ class SM {
        . "`n(press no to execute a search)"
        . "`nBrowser url: " . BrowserUrl
        . "`n       SM url: " . CurrSMUrl
-       . "`n`nBrowser title: " . Browser.GetFullTitle()
+       . "`n`nBrowser title: " . (BrowserTitle ? BrowserTitle : Browser.GetFullTitle())
        . "`n       SM title: " . WinGetTitle(wSMElWind)
     MB := MsgBox(3,, t), ret := 0
     if ((MB = "No") && this.CheckDup(BrowserUrl,, wSMElWind, "Link not found in collection.")) {

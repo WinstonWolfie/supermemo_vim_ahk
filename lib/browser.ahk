@@ -41,6 +41,7 @@ class Browser {
   }
 
   GetInfo(RestoreClip:=true, GetFullPage:=true, FullPageText:="", GetUrl:=true, GetDate:=true, GetTimeStamp:=true, FullPageHTML:="") {
+    this.Clear()
     this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
     this.Title := this.FullTitle
     if (GetUrl)
@@ -253,24 +254,26 @@ class Browser {
           ; Click "...more" and copy the release date
           global guiaBrowser
           this.GetGuiaBrowser()
-          if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more' AND AutomationId='expand'"))
-            btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more'")
+          if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more ' AND AutomationId='expand'"))
+            btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more '")
           if (btn)
-            btn.FindByPath("P2").Click()  ; click the description box, so the webpage doesn't scroll down
+            btn.FindByPath("P1").Click()  ; click the description box, so the webpage doesn't scroll down
           RegExMatch(FullPageText := this.GetFullPage(RestoreClip), "views +?(\r\n)?((Streamed live|Premiered) (on )?)?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
-          if (btn) {
-            if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show less' AND AutomationId='collapse'")) {  ; clicked before
-              guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show less'").Click()  ; this doesn't scroll
-            } else {
-              btn.Click()
-              WinActivate, % "ahk_id " . guiaBrowser.BrowserId
-              global ImportCloseTab
-              if (!ImportCloseTab) {
-                Sleep 700
-                Send ^{Home}
-              }
-            }
-          }
+ 
+          ; Click "show less"
+          ; if (btn) {
+          ;   if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show less ' AND AutomationId='collapse'")) {  ; clicked before
+          ;     guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show less '").Click()  ; this doesn't scroll
+          ;   } else {
+          ;     btn.Click()
+          ;     WinActivate, % "ahk_id " . guiaBrowser.BrowserId
+          ;     global ImportCloseTab
+          ;     if (!ImportCloseTab) {
+          ;       Sleep 700
+          ;       Send ^{Home}
+          ;     }
+          ;   }
+          ; }
 
           ; Get page source HTML, takes extremely long time
           ; RegExMatch(GetSiteHTML(this.Url), """publishDate"":{""simpleText"":""(.*?)""}", v), this.Date := RegExReplace(v1, "(Streamed live|Premiered) on ")
@@ -640,11 +643,13 @@ class Browser {
       global guiaBrowser
       this.GetGuiaBrowser()
       if (Title ~= "_[^_]+ - 喜马拉雅$") {
-        TimeStamp := guiaBrowser.FindFirstByName("^\d{2}:\d{2}:\d{2}$",, "regex").CurrentName
+        try TimeStamp := guiaBrowser.FindFirstByName("^\d{2}:\d{2}:\d{2}$",, "regex").Name
       } else {
-        TimeStamp := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").CurrentName
+        try TimeStamp := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").Name
       }
     }
+    if (!TimeStamp)
+      return false
     TimeStamp := RegExReplace(TimeStamp, "^00:(?=\d{2}:\d{2})")
     TimeStamp := RegExReplace(TimeStamp, "^0(?=\d)")
     return TimeStamp

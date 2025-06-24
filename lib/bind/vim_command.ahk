@@ -448,7 +448,8 @@ AlatiusLatinMacronizer:
   WinWaitActive, ahk_group Browser
   uiaBrowser := new UIA_Browser("A")
   uiaBrowser.WaitPageLoad()
-  uiaBrowser.WaitElementExist("ControlType=Edit AND Framework=Chrome").SetValue(Latin)
+  Send {Tab 2}
+  Clip(Latin)
   uiaBrowser.WaitElementExist("ControlType=Button AND Name='Submit'").Click()
 return
 

@@ -97,8 +97,6 @@ Return
 return
 
 ^!l::  ; copy and parse *l*ink
-  Browser.Clear()
-  ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Esc}, A
   Browser.GetInfo(false)
   SetToolTip("Copied " . Browser.Url . "`n"
            . "Title: " . Browser.Title
@@ -160,7 +158,7 @@ return
 return
 
 ^!c::  ; copy and register references
-  Browser.Clear(), WinClip.Snap(data)
+  WinClip.Snap(data)
   if (Copy(false) = "")
     SetToolTip("No text selected."), WinClip.Restore(data)
   Browser.GetInfo()
@@ -648,9 +646,10 @@ return
   ReadPoint := RegExReplace(Trim(Copy(false), " `t`r`n"), "s)\r\n.*")
 
   if (hBrowser && (!BrowserUrl := Browser.ParseUrl(GetClipUrl())))
-    BrowserUrl := Browser.GetUrl()
+    BrowserUrl := Browser.GetUrl(), BrowserTitle := Browser.GetFullTitle()
 
   if (hSumatra || (hDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
+
     if (!ReadPoint) {
       if (hAcrobat := WinActive("ahk_class AcrobatSDIWindow")) {
         PageNumber := GetAcrobatPageBtn().Value
@@ -663,6 +662,7 @@ return
         return
       }
     }
+
     if (CloseWnd) {
       if (hSumatra) {
         Send {text}q
@@ -681,6 +681,7 @@ return
     }
 
   } else {
+
     if (!ReadPoint) {
       if (hBrowser)
         Goto BrowserSyncTime
@@ -688,6 +689,7 @@ return
       Clipboard := ClipSaved
       return
     }
+
     if (CloseWnd) {
       if (hBrowser) {
         Send ^w
@@ -695,6 +697,7 @@ return
         WinClose, A
       }
     }
+
   }
 
   SM.CloseMsgDialog()
@@ -716,7 +719,7 @@ MarkInHTMLCompAgain:
   }
 
   if (hBrowser) {
-    ret := SM.AskToSearchLink(BrowserUrl, RefLink)
+    ret := SM.AskToSearchLink(BrowserUrl, RefLink, BrowserTitle)
     if (ret == 0) {
       SetToolTip("Copied text.")
       return

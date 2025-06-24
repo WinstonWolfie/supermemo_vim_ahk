@@ -595,15 +595,9 @@ BrowserSyncTime:
   KeyWait Shift
 
   if (hBrowser) {
-    Browser.Clear()
-    Browser.FullTitle := Browser.GetFullTitle(wBrowser)
-
-    if (Browser.FullTitle != "Netflix")
-      ControlSend, ahk_parent, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Esc}, % wBrowser
-
+    Browser.GetInfo(false, false,,, false, false)  ; need url and title here
     if (!ResetTime)
       Browser.TimeStamp := Browser.GetTimeStamp(Browser.FullTitle,, false)
-    Browser.GetInfo(false, false,,, false, false)  ; need url and title here
     
     if (w := SM.FindMatchTitleColl(Browser.Title))
       wSMElWind := w
@@ -612,8 +606,10 @@ BrowserSyncTime:
       SMTemplCode := SM.GetTemplCode(false, wSMElWind, 1.5)
       sleep 700
     }
+
     CurrSMUrl := SM.GetLink(SMTemplCode)
-    ret := SM.AskToSearchLink(Browser.Url, CurrSMUrl, wSMElWind)
+    ret := SM.AskToSearchLink(Browser.Url, CurrSMUrl,, wSMElWind)
+
     if (ret == 0) {
       Goto SMSyncTimeReturn
     } else if (ret == -1) {
@@ -638,12 +634,12 @@ BrowserSyncTime:
   }
 
   if (hBrowser && CloseWnd)
-    guiaBrowser.CloseTab()
+    ControlSend,, {Ctrl Down}w{Ctrl Up}, % "ahk_id " . hBrowser
 
   if (hMPV && CloseWnd && !ResetTime) {
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Shift Down}q{Shift Up}, % wMPV
+    ControlSend,, {Shift Down}q{Shift Up}, % wMPV
   } else if (hMPV && CloseWnd && ResetTime) {
-    ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}q, % wMPV
+    ControlSend,, q, % wMPV
   }
 
   SM.CloseMsgDialog()

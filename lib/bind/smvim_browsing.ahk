@@ -160,7 +160,7 @@ p::SM.AutoPlay()
     RegExMatch(Marker, "^SMVim time stamp: (.*)", v)
     if (Browser.GetSecFromTime(v1) > 0) {
       Sleep 700
-      ControlSend,, {LCtrl up}{LAlt up}{LShift up}{RCtrl up}{RAlt up}{RShift up}{Space}
+      ControlSend,, {Space}
       WinActivate
     }
   }
