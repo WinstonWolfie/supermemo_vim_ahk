@@ -25,6 +25,7 @@ NukeHTML:
 +f::  ; clean format directly in html source
   Vim.State.SetMode("Vim_Normal")
   Nuke := (A_ThisLabel == "NukeHTML")
+  KeyWait Shift
 
   if (SM.IsEditingPlainText() || !SM.DoesHTMLExist()) {
     SetToolTip("This script only works on HTML.")
@@ -42,12 +43,7 @@ NukeHTML:
     }
   }
 
-  if (!SM.SaveHTML(30)) {
-    SetToolTip("Saving HTML Timed out.")
-    return
-  }
-
-  ClipSaved := ClipboardAll
+  SM.RefreshHTML(), ClipSaved := ClipboardAll
   if (!HTMLPath := SM.GetFilePath(false)) {
     SetToolTip("File not found."), Clipboard := ClipSaved
     return

@@ -268,7 +268,7 @@ ExtractToSMAgain:
   }
   SM.WaitExtractProcessing()
   SM.SaveHTML()
-  SM.EmptyHTMLComp()  ; unlink the above html file with the current component
+  SM.EmptyHTMLComp()
   WinWaitActive, ahk_class TElWind
   if (Marker) {
     SM.WaitTextFocus()

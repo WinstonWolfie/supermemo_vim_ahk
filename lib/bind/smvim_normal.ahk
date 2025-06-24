@@ -90,7 +90,7 @@ t::  ; gt: open in Notepad
       w := "ahk_class Photoshop ahk_exe Photoshop.exe"
     } else {
       Send ^{f7}  ; save read point
-      SM.SaveHTML()
+      SM.RefreshHTML()
       SMFilePath := SM.GetFilePath(false)
       Run, % ComSpec . " /c vim " . SMFilePath  ; vim installation is expected
       GroupAdd, Vim, ahk_class CASCADIA_HOSTING_WINDOW_CLASS ahk_exe WindowsTerminal.exe  ; Win 11
