@@ -41,9 +41,7 @@ class Browser {
   }
 
   GetInfo(RestoreClip:=true, GetFullPage:=true, FullPageText:="", GetUrl:=true, GetDate:=true, GetTimeStamp:=true, FullPageHTML:="") {
-    this.Clear()
-    this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
-    this.Title := this.FullTitle
+    this.Title := this.FullTitle := this.FullTitle ? this.FullTitle : this.GetFullTitle()
     if (GetUrl)
       this.Url := this.Url ? this.Url : this.GetUrl()
 

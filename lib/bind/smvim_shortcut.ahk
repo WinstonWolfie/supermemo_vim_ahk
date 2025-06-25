@@ -595,6 +595,7 @@ BrowserSyncTime:
   KeyWait Shift
 
   if (hBrowser) {
+    Browser.Clear()
     Browser.GetInfo(false, false,,, false, false)  ; need url and title here
     if (!ResetTime)
       Browser.TimeStamp := Browser.GetTimeStamp(Browser.FullTitle,, false)
@@ -608,7 +609,7 @@ BrowserSyncTime:
     }
 
     CurrSMUrl := SM.GetLink(SMTemplCode)
-    ret := SM.AskToSearchLink(Browser.Url, CurrSMUrl,, wSMElWind)
+    ret := SM.AskToSearchLink(Browser.Url, CurrSMUrl, Browser.FullTitle, wSMElWind)
 
     if (ret == 0) {
       Goto SMSyncTimeReturn
@@ -737,6 +738,9 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)$"))
 !i::SM.RegInsert()
 
+#if (Vim.State.Vim.Enabled && (WinGet("ProcessName", "ahk_class TElWind") != "sm19.exe") && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^.*? Registry \(\d+ members\)$"))
+!r::SM.RegAltR(), Vim.State.SetNormal()
+
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^.*? Registry \(\d+ members\)$"))
 !g::SM.RegAltG(), Vim.State.SetNormal()
 
@@ -747,24 +751,23 @@ return
 return
 
 ~!n::
-  ; The bug seems to be fixed in sm19.08
-  ; if (WinGetTitle() ~= "^Concept Registry \(\d+ members\)$") {
-  ;   ; This whole thread is to fix a bug in SM's neural learning:
-  ;   ; when you begin neural learning, SM defaults at current element,
-  ;   ; so when you wanted to start to neural at a concept, you need to
-  ;   ; go to that element first
-  ;   SM.RegAltR()
-  ;   WinWaitActive, ahk_class TInputDlg
-  ;   CurrConcept := ControlGetText("TMemo1")
-  ;   WinClose
-  ;   WinWaitActive, ahk_class TRegistryForm
-  ;   SM.RegAltG()
-  ;   WinWaitActive, ahk_class TElWind
-  ;   SM.SetDefaultConcept()
-  ;   WinWaitActive, ahk_class TRegistryForm
-  ;   SM.SetText("Edit1", CurrConcept)
-  ; }
-  ; Send !n
+  if (WinGetTitle() ~= "^Concept Registry \(\d+ members\)$") {
+    ; This whole thread is to fix a bug in SM's neural learning:
+    ; when you begin neural learning, SM defaults at current element,
+    ; so when you wanted to start to neural at a concept, you need to
+    ; go to that element first
+    SM.RegAltR()
+    WinWaitActive, ahk_class TInputDlg
+    CurrConcept := ControlGetText("TMemo1")
+    WinClose
+    WinWaitActive, ahk_class TRegistryForm
+    SM.RegAltG()
+    WinWaitActive, ahk_class TElWind
+    SM.SetDefaultConcept()
+    WinWaitActive, ahk_class TRegistryForm
+    SM.SetText("Edit1", CurrConcept)
+  }
+  Send !n
   WinWaitActive, ahk_class TElWind,, 1.5
   SM.PlayIfOnlineColl()
 return

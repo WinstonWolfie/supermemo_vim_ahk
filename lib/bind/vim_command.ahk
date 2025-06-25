@@ -118,6 +118,7 @@ VimCommanderButtonExecute:
       wSMElWind := ""
 
       if (WinActive("ahk_group Browser")) {
+        Browser.Clear()
         Browser.GetInfo(, false,, false, false, false)
         wSMElWind := SM.FindMatchTitleColl(Browser.Title)
         Browser.Clear()

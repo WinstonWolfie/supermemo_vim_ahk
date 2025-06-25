@@ -116,6 +116,11 @@ return
   KeyWait Shift
   SM.OpenBrowser()
   SM.WaitBrowser()
+
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && WinActive("ahk_class TBrowser"))
++i::
+  Vim.State.SetMode("Vim_Normal")
+  KeyWait Shift
   Send {AppsKey}ci
   SM.WaitBrowser()
   Send {AppsKey}co
@@ -125,6 +130,7 @@ return
   Send ^l
 return
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 i::  ; learn outstanding *i*tems only
   Vim.State.SetMode("Vim_Normal"), SM.GoHome()
   WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "A")

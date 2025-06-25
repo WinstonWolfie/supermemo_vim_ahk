@@ -92,11 +92,14 @@ return
 Return
 
 ^!t::  ; copy *t*itle
+  Browser.Clear()
   Browser.GetInfo(false, false,,, false, false)
-  SetToolTip("Copied " . Clipboard := Browser.Title), Browser.Clear()
+  SetToolTip("Copied " . Clipboard := Browser.Title)
+  Browser.Clear()
 return
 
 ^!l::  ; copy and parse *l*ink
+  Browser.Clear()
   Browser.GetInfo(false)
   SetToolTip("Copied " . Browser.Url . "`n"
            . "Title: " . Browser.Title
@@ -158,7 +161,7 @@ return
 return
 
 ^!c::  ; copy and register references
-  WinClip.Snap(data)
+  Browser.Clear(), WinClip.Snap(data)
   if (Copy(false) = "")
     SetToolTip("No text selected."), WinClip.Restore(data)
   Browser.GetInfo()
@@ -645,8 +648,11 @@ return
   PageNumber := ""
   ReadPoint := RegExReplace(Trim(Copy(false), " `t`r`n"), "s)\r\n.*")
 
-  if (hBrowser && (!BrowserUrl := Browser.ParseUrl(GetClipUrl())))
-    BrowserUrl := Browser.GetUrl(), BrowserTitle := Browser.GetFullTitle()
+  if (hBrowser) {
+    BrowserTitle := Browser.GetFullTitle()
+    if (!BrowserUrl := Browser.ParseUrl(GetClipUrl()))
+      BrowserUrl := Browser.GetUrl()
+  }
 
   if (hSumatra || (hDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
 
