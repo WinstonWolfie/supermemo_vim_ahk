@@ -750,7 +750,7 @@ return
   Goto SMLearnChildrenActiveBrowser
 return
 
-~!n::
+!n::
   if (WinGetTitle() ~= "^Concept Registry \(\d+ members\)$") {
     ; This whole thread is to fix a bug in SM's neural learning:
     ; when you begin neural learning, SM defaults at current element,
