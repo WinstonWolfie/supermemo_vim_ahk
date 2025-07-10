@@ -90,8 +90,12 @@ SMSetLinkFromClipboard:
     Browser.Url := Clipboard
   SMPoundSymbHandled := SM.PoundSymbLinkToComment()
   Ref := ControlGetText("TMemo1")
-  if (Browser.Url)
-    Ref := "#Link: " . Browser.Url . "`r`n" . Ref
+  if (Browser.Url) {
+    ; Shorten YT url for sm19
+    RefUrl := Browser.Url
+    RefUrl := StrReplace(RefUrl, "https://www.youtube.com/watch?v=", "https://youtube.com/watch?v=")
+    Ref := "#Link: " . RefUrl . "`r`n" . Ref
+  }
   if (Browser.Title)
     Ref := "#Title: " . Browser.Title . "`r`n" . Ref
   if (Browser.Source)

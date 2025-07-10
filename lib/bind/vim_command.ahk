@@ -45,7 +45,7 @@ Return
   Gui, VimCommander:Add, Text,, &Command:
 
   List := "|Plan|Wiktionary|WebSearch|YT|Settings|MoveMouseToCaret"
-        . "|WaybackMachine|DefineGoogle|YouGlish|KillOutlook|DeepL"
+        . "|WaybackMachine|DefineGoogle|YouGlish|DeepL"
         . "|WindowSpy|BingChat|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
@@ -785,10 +785,6 @@ MakeHTMLUnique:
   SM.MoveToLast(false)
   Clip("<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>",, false, "sm")
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
-return
-
-KillOutlook:
-  Process, Close, Outlook.exe
 return
 
 RestartOneDrive:

@@ -122,7 +122,6 @@ return
       }
 
       WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
-      WinWaitActive, ahk_class TElWind
       SM.Duplicate()
       SM.WaitFileLoad()
       SMTitle := WinWaitTitleRegEx("^Duplicate: ", "ahk_class TElWind")

@@ -428,8 +428,12 @@ SMImportButtonImport:
   }
   ClipWait
 
+  ; Shorten YT url for sm19
+  RefUrl := Browser.Url
+  RefUrl := StrReplace(RefUrl, "https://www.youtube.com/watch?v=", "https://youtube.com/watch?v=")
+
   InfoToolTip := "Importing:`n`n"
-               . "Url: " . Browser.Url . "`n"
+               . "Url: " . RefUrl . "`n"
                . "Title: " . Browser.Title
   if (Browser.Source)
     InfoToolTip .= "`nSource: " . Browser.Source

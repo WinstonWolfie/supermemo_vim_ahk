@@ -1331,7 +1331,11 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
   If (Text = "") {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     if (PostMsg && SM.IsEditingHTML()) {
+    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
       SM.PostMsg(919, true)
+    } else {
+      SM.PostMsg(915, true)
+    }
     } else {
       Send % KeysToSend ? KeysToSend : "^c"
     }

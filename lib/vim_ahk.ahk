@@ -65,7 +65,7 @@ class VimAhk {
     GroupAdd, VimLBSelectGroup, ahk_exe POWERPNT.exe  ; PowerPoint
     GroupAdd, VimLBSelectGroup, ahk_exe WINWORD.exe  ; Word
     GroupAdd, VimLBSelectGroup, ahk_exe wordpad.exe  ; WordPad
-    GroupAdd, VimLBSelectGroup, ahk_exe OUTLOOK.exe
+    GroupAdd, VimLBSelectGroup, ahk_exe olk.exe  ; Outlook
 
     ; Following applications do not copy the line break
     GroupAdd, VimNoLBCopyGroup, ahk_exe Evernote.exe  ; Evernote
@@ -98,7 +98,7 @@ class VimAhk {
 
     GroupAdd, HTML, ahk_exe iexplore.exe  ; Internet Explorer
     GroupAdd, HTML, ahk_exe WINWORD.exe  ; MS Word
-    GroupAdd, HTML, ahk_exe OUTLOOK.exe
+    GroupAdd, HTML, ahk_exe olk.exe  ; Outlook
 
     GroupAdd, SM, ahk_exe sm19.exe
     GroupAdd, SM, ahk_exe sm18.exe
@@ -113,7 +113,7 @@ class VimAhk {
     GroupAdd, VimExcluded, ahk_class #32770  ; windows + r
 
     GroupAdd, VimForceScroll, ahk_exe WINWORD.exe
-    GroupAdd, VimForceScroll, ahk_exe OUTLOOK.exe
+    GroupAdd, VimForceScroll, ahk_exe olk.exe  ; Outlook 
     GroupAdd, VimForceScroll, ahk_class AcrobatSDIWindow
 
     ; Configuration values for Read/Write ini
@@ -290,7 +290,7 @@ class VimAhk {
                   , "作成"                   ; Thunderbird, 日本語
                   ; , "ahk_exe Code.exe"       ; Visual Studio Code  ; why not use VSCodeVim???
                   , "ahk_exe WINWORD.exe"    ; Word
-                  , "ahk_exe OUTLOOK.EXE"    ; Outlook
+                  , "ahk_exe olk.EXE"    ; Outlook
                   , "ahk_exe wordpad.exe"    ; WordPad
                   , "ahk_exe Q-Dir_x64.exe"  ; Q-dir
                   , "ahk_exe Q-Dir.exe"      ; Q-dir

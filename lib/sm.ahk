@@ -1353,7 +1353,8 @@ class SM {
   GetElNumber(TemplCode:="", RestoreClip:=true) {
     if (WinExist("ahk_class TElDataWind ahk_pid " . WinGet("PID", "ahk_class TElWind"))) {
       RegExMatch(WinGetTitle(), "^(Item|Topic|Concept|Task) #([\d,]+):", v)
-      return StrReplace(v2, ",")
+      if (ret := StrReplace(v2, ","))
+        return ret
     }
     TemplCode := TemplCode ? TemplCode : this.GetTemplCode(RestoreClip)
     RegExMatch(TemplCode, "Begin Element #(\d+)", v)
@@ -1764,6 +1765,7 @@ class SM {
   }
 
   Duplicate() {
+    this.ActivateElWind()
     Send !d
   }
 
