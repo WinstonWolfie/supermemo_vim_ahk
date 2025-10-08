@@ -1241,12 +1241,13 @@ SMTagButtonTag:
 SMTagEntered:
   Vim.State.SetMode("Vim_Normal")
   wSMElWind := (A_ThisLabel == "SMTagEntered") ? wSMElWind : "ahk_class TElWind"
+  pidSM := WinGet("PID", wSMElWind)
 
   Loop % LoopCount {
     SM.LinkConcepts(aTags := StrSplit(Tags, ";"), wSMElWind)
     if (EditRefComment) {
       SM.EditRef(wSMElWind)
-      WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", wSMElWind)
+      WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
       Ref := ControlGetText("TMemo1")
       RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
       loop % aTags.MaxIndex() {
@@ -1258,6 +1259,11 @@ SMTagEntered:
       ControlSetText, TMemo1, % Ref
       ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
       WinWaitClose
+      WinWait, % "ahk_class TChoicesDlg ahk_pid " . pidSM,, 0.7
+      if (!ErrorLevel) {
+        WinActivate
+        WinWaitClose
+      }
     }
     if (!SMBrowser) {
       Break
@@ -1269,13 +1275,13 @@ SMTagEntered:
 return
 
 SMUntag:
-  Vim.State.SetMode("Vim_Normal")
+  Vim.State.SetMode("Vim_Normal"), pidSM := WinGet("PID", "ahk_class TElWind")
 
   Loop % LoopCount {
     SM.UnLinkConcepts(aTags := StrSplit(Tags, ";"), "ahk_class TElWind")
     if (EditRefComment) {
       SM.EditRef("ahk_class TElWind")
-      WinWait, % "ahk_class TInputDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
+      WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
       Ref := ControlGetText("TMemo1")
       RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
       loop % aTags.MaxIndex() {
@@ -1291,6 +1297,11 @@ SMUntag:
       ControlSetText, TMemo1, % Ref
       ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
       WinWaitClose
+      WinWait, % "ahk_class TChoicesDlg ahk_pid " . pidSM,, 0.7
+      if (!ErrorLevel) {
+        WinActivate
+        WinWaitClose
+      }
     }
     if (!SMBrowser) {
       Break

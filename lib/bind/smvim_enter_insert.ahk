@@ -16,6 +16,9 @@
   Vim.State.SetMode("Insert")
 return
 
+#if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_group SM") && !SM.IsEditingHTML())
+~^+p::Vim.State.SetMode("Insert"), Vim.State.BackToNormal := 1
+
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && WinActive("ahk_class TElWind"))
 ~^+y::  ; search YT
 ~^g::  ; element number

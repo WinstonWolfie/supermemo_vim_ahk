@@ -254,9 +254,10 @@ class Browser {
           this.GetGuiaBrowser()
           if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more ' AND AutomationId='expand'"))
             btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more '")
-          if (btn)
-            btn.FindByPath("P1").Click()  ; click the description box, so the webpage doesn't scroll down
-          RegExMatch(FullPageText := this.GetFullPage(RestoreClip), "views +?(\r\n)?((Streamed live|Premiered) (on )?)?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
+          btn.FindByPath("P1").Click()  ; click the description box, so the webpage doesn't scroll down
+          Sleep 1200  ; to make sure it's shown
+          FullPageText := this.GetFullPage(RestoreClip)
+          RegExMatch(FullPageText, "views +?(\r\n)?((Streamed live|Premiered) (on )?)?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
  
           ; Click "show less"
           ; if (btn) {
@@ -406,6 +407,10 @@ class Browser {
       this.Source := "Wikizionario", this.Title := RegExReplace(this.Title, " - Wikizionario$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
         RegExMatch(FullPageText, "Questa pagina è stata modificata per l'ultima volta il (.*?) alle", v), this.Date := v1
+    } else if (this.Title ~= " — Wiktionnaire, le dictionnaire libre$") {
+      this.Source := "Wiktionnaire, le dictionnaire libre", this.Title := RegExReplace(this.Title, " — Wiktionnaire, le dictionnaire libre$")
+      if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
+        RegExMatch(FullPageText, "La dernière modification de cette page a été faite le (.*?) à", v), this.Date := v1
     } else if (IfContains(this.Url, "en.wikiversity.org")) {
       this.Source := "Wikiversity", this.Title := RegExReplace(this.Title, " - Wikiversity$")
       if (GetFullPage && GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
@@ -704,7 +709,7 @@ class Browser {
         Send % "+{Left " . StrLen(v) . "}"
     }
 
-    if (!Sent && RegexMatch(PlainText, "\.\K(\d+​)+\d+$", v)) {
+    if (!Sent && RegexMatch(PlainText, "\.\K(\[\d+\]​)+\[\d+\]​?$", v)) {
       if (Sent := IfContains(Url := Url ? Url : this.GetUrl(), "es.wikipedia.org"))
         Send % "+{Left " . StrLen(v) . "}"
     }
@@ -740,7 +745,8 @@ class Browser {
     global guiaBrowser
     this.GetGuiaBrowser()
     guiaBrowser.WaitPageLoad()
-    guiaBrowser.WaitElementExist("ControlType=Text AND Name='Filters'")  ; wait till page is fully loaded
+    if (!guiaBrowser.WaitElementExist("ControlType=Button AND Name='Search filters'",,,, 10000).Name)  ; wait till page is fully loaded
+      return false
     auiaLinks := guiaBrowser.FindAllByType("Hyperlink")
     Link := RegExReplace(Link, "https:\/\/(www\.)?")
     for i, v in auiaLinks {

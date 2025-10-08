@@ -105,7 +105,6 @@ Return
 ~^f::  ; find; vim page down
 ~^v::  ; paste image; vim visual block
 ~^r::  ; replace; vim redo
-~^+p::  ; element parameter; SMVim paste without format
 ~^p::  ; open Plan; SMVim go right and paste without format
 Return
 

@@ -107,7 +107,11 @@ SMSetLinkFromClipboard:
   if (Browser.Comment)
     Ref := "#Comment: " . Browser.Comment . "`r`n" . Ref
   ControlSetText, TMemo1, % Ref
-  ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
+  if (WinActive()) {
+    Send ^{Enter}
+  } else {
+    ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}
+  }
   WinWaitClose
   if (!SMPoundSymbHandled && SM.HandleSM19PoundSymbUrl(Browser.Url) && (A_ThisLabel == "r"))
     SM.Reload()

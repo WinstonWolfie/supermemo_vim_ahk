@@ -356,7 +356,7 @@ class SM {
   RefreshHTML(Timeout:="") {
     if (!this.OpenNotepad(Timeout))
       return false
-    ControlSend,, {Ctrl Down}w{Ctrl Up}
+    Send ^w
     WinClose
     WinActivate, ahk_class TElWind
     WinWaitActive, ahk_class TElWind,, % Timeout
@@ -1403,7 +1403,7 @@ class SM {
   GetUIAArray() {
     UIA := UIA_Interface()
     el := UIA.ElementFromHandle(ControlGet(,, "Internet Explorer_Server1", "ahk_class TElWind"))
-    if (!Ref := el.FindFirstByName("#SuperMemo Reference:"))  ; item
+    if (!el.FindFirstByName("#SuperMemo Reference:").Name)  ; item
       el := UIA.ElementFromHandle(ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind"))
     return el.FindAllByType("text")
   }
@@ -1617,7 +1617,7 @@ class SM {
       str := RegExReplace(str, "i)<(\/)?DIV", "<$1P")
     }
 
-    if (IfContains(Url, "wikipedia.org,wikibooks.org")) {
+    if (IfContains(Url, "wikipedia.org,wikibooks.org,wikiversity.org")) {
       str := RegExReplace(str, "i)<MI>(\w+)<\/MI>", "<EM>$1</EM>")
       str := RegExReplace(str, "i)<EM>(sin|cos|tan|sec|csc|cot|exp|log|ln|mod)<\/EM>", "$1")
       str := RegExReplace(str, "i)<MSUB>.*?\K<MROW [^>]+><MN>(.*?)<\/MN><\/MROW>(?=.*?<\/MSUB>)", "<SUB>$1</SUB>")
