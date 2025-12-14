@@ -21,15 +21,24 @@ You need a SuperMemo element that links to your file (PDF, EPUB, etc.). The easi
 
 1. In SuperMemo, press `<C-;>` to open Vim Commander
 2. Type `ImportFile` and press Enter
-3. Follow the prompts to attach your file
+3. In SuperMemo's file browser, select the file you want to import
+4. When prompted "Do you want to also delete the file?", choose:
+   - **No**: keep the original file where it is
+   - **Yes**: delete the original after SuperMemo imports it
+   - **Cancel**: abort the automation (you can still import manually in SuperMemo)
 
 This creates an element with an HTML component (for markers) and a binary component (the file).
+
+**Important**: Treat the source element's **first HTML component** as *reserved for SMVim markers*.
+Leave it empty (or containing only an `SMVim ...` marker at the very top).
+Don't type the PDF title or notes into that HTML component, or `<A-x>` / `<A-S-s>` will prompt "Go to source and try again?" and may overwrite that content.
+Put titles in the **element title** instead, and keep notes in a different component if needed.
 
 If you don't have a `binary` template, manually create an element with an HTML component and attach the file via a binary or script component.
 
 ### Step 2: Open the file
 
-With your source element focused in SuperMemo in browsing mode (no text cursor active—press Escape to exit editing mode):
+With your source element focused in SuperMemo in browsing mode (no text cursor active - press Escape to exit editing mode):
 
 - Press `p` to open the file in your reader
 
@@ -88,8 +97,8 @@ Marker storage/detection is shared across workflows; see `docs/markers.md` for d
 
 These workflows require a SuperMemo element with:
 
-1. **An HTML component** — markers are written as the first line of HTML
-2. **A way to open the file** — either:
+1. **An HTML component** - markers are written into the **first HTML component**, and the marker must be the **first content** in that component (keep it otherwise empty)
+2. **A way to open the file** - either:
    - A binary component containing the file, or
    - A script component with a `file://...` path
 
@@ -97,13 +106,16 @@ These workflows require a SuperMemo element with:
 
 1. Press `<C-;>` to open Vim Commander
 2. Type `ImportFile` and press Enter
-3. Follow the prompts to select and attach your file
+3. In SuperMemo's file browser (`TFileBrowser`), select the file you want to import
+4. Answer the script prompt "Do you want to also delete the file?"
 
 This sets the element template to `binary` and walks you through file attachment (see `lib/bind/vim_command.ahk:580`).
 
 **Requirement**: You need a SuperMemo template named `binary`. Create one if it doesn't exist. **Important**: The template name must be exactly `binary` (case-sensitive) as the automation hardcodes this name.
 
-**Manual setup**: If you already have an element for your file, ensure it has an HTML component. The marker must be the first content in that component—if the HTML contains other content, you may see a "Go to source and try again?" prompt.
+**Manual setup**: If you already have an element for your file, ensure it has an HTML component.
+The automation expects the **first HTML component** to be empty (or to contain only an `SMVim ...` marker at the very top).
+If you put anything else there (e.g., the PDF title as the first line), you'll likely see a "Go to source and try again?" prompt during extraction/marker syncing.
 
 ### Reader-specific setup
 
@@ -389,6 +401,12 @@ This produces a `.txt` file beside the original `.epub`.
 - **No element window**: Reader-side hotkeys require SuperMemo to be open with an element window (`ahk_class TElWind`). Open any element first.
 - **Wrong focus**: Some hotkeys only work when specific controls are (or aren't) focused. For Sumatra, try clicking in the document area first.
 
+### ImportFile imports the wrong file
+
+`ImportFile` is automated: after you answer "Do you want to also delete the file?", it sends Enter to SuperMemo's file browser to accept the *currently selected* file. If the file browser opens with an old selection, it may import that file unless you select the correct one first.
+
+If you press **Cancel** on the delete prompt, the script stops and leaves you in SuperMemo's file browser so you can pick the file and import manually.
+
 ### AutoPlay doesn't see the marker
 
 - **Marker not first**: The marker is only detected if it's the first content in the HTML component. If you've edited the HTML, re-sync with `<A-S-s>`.
@@ -431,9 +449,11 @@ This produces a `.txt` file beside the original `.epub`.
 
 ### "Go to source and try again?" prompt
 
-This appears when the current element's HTML isn't empty or doesn't contain just a marker. Options:
+This appears when the current element's **first HTML component** isn't empty or doesn't contain just a marker (a common cause is typing the PDF title/notes into the source element's HTML). Extraction and marker sync temporarily paste into (and/or rewrite) this component, so the script warns before it proceeds.
+
+Options:
 - **Yes**: Navigate to the parent/source element and retry
 - **No**: Execute in the current element anyway (marker may conflict with existing content)
 - **Cancel**: Abort the operation
 
-For cleanest workflow, keep source elements with empty HTML (or only the marker).
+For cleanest workflow, keep source elements with empty HTML (or only the marker). Put titles in the element title, and keep notes in a different component if you want to preserve them.
