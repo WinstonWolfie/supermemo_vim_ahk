@@ -25,6 +25,7 @@ Most users bounce between the two:
 
 ## Start here (foundations)
 
+- `beginner_vim_guide.md` — beginner-oriented Vim-in-SuperMemo guide: modes, browsing vs editing, `g`/`'`, and the incremental reading/video loop.
 - `supermemo_core.md` — the core model: SuperMemo window types, browsing vs editing vs grading, how Vim mode interacts with SM state, leader/`g` prefixes, Esc behavior.
 - `markers.md` — the marker system (`SMVim read point/page mark/time stamp/...`) that powers resume/AutoPlay across tools.
 
