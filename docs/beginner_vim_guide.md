@@ -45,7 +45,7 @@ If anything ever feels “stuck”, `Esc` is the universal reset.
 While **browsing** (no caret):
 
 - `j` / `k` scroll down / up
-- `d` / `u` page down / up
+- `d` / `u` scroll down / up (bigger step than j/k)
 - `gg` go to top (Vim-style)
 - `G` go to bottom (Vim-style)
 - `g0` go to root element
@@ -136,7 +136,7 @@ Press `Esc` until the caret disappears.
 | Key | What it does (in this repo) |
 |---|---|
 | `j` / `k` | Scroll down / up |
-| `d` / `u` | Page down / up |
+| `d` / `u` | Scroll down / up (bigger step than j/k) |
 | `gg` / `G` | Top / bottom |
 | `r` | Reload (smart refresh) |
 | `p` | AutoPlay (marker-aware resume) |
@@ -144,6 +144,11 @@ Press `Esc` until the caret disappears.
 | `x` | Delete element/component |
 | `b` | Open (or focus) SuperMemo subset browser |
 | `yy` | Copy the element’s `#Link` |
+| `m` | Set read point (inside SuperMemo) |
+| `` ` `` | Jump to read point |
+| `<A-m>` | Clear read point |
+| `t` | Click first text component |
+| `\` | SuperMemo search (Ctrl+F3) |
 
 For a deeper navigation walkthrough, see `docs/supermemo_navigation.md`.
 
@@ -171,6 +176,31 @@ That behavior is intentional: it prevents Vim-style navigation keys from breakin
 If you finish typing and want your navigation keys back:
 
 - press `Esc`
+
+---
+
+## Search in SuperMemo (quick)
+
+You can trigger a search UI directly from the element window:
+
+- `/` opens the search dialog
+- `?` opens search and goes to Visual after the match
+- `<A-/>` variants can cloze the first match (see `README.md` if you want those)
+
+If you’re browsing (no caret), the search flow automatically jumps into the first question component before searching.
+
+---
+
+## Grading mode (when the grading buttons are focused)
+
+When SuperMemo’s grading buttons are focused, the following keys grade and advance:
+
+- `s` = grade 2
+- `d` = grade 3
+- `f` = grade 4
+- `g` = grade 5
+
+If these keys do nothing, make sure the grading buttons (not the text component) are focused.
 
 ---
 
@@ -247,7 +277,7 @@ If you hit `g` by accident, press `Esc` to cancel/reset.
 
 ### Leader `'`: “unlock extra shortcuts” state
 
-Press `'` (single quote). For a short time you’re in a “leader state” and some extra bindings become available without stealing common keys from SuperMemo.
+Press `'` (single quote) **while browsing** (no caret). For a short time you’re in a “leader state” and some extra bindings become available without stealing common keys from SuperMemo. If you press `'` while editing, it will just type a quote.
 
 Beginner-relevant leader uses:
 
@@ -418,6 +448,7 @@ From the SuperMemo source element:
 
 - `p` = AutoPlay (marker-aware)
 - `P` = view file / play in default player / edit script component (context dependent)
+- `<A-s>` = copy marker content if a marker exists (read point / page mark / time stamp)
 
 ---
 
