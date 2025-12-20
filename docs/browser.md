@@ -78,7 +78,7 @@ Supported foreground browsers (in `ahk_group Browser`):
 
 ### Offline copy vs online element
 
-The import workflow can create two “styles” of elements:
+The import workflow can create two "styles" of elements:
 
 1) **Offline copy (HTML captured into the element)**
 - The element stores page HTML/text (selection, copy-all, or downloaded HTML depending on options).
@@ -90,6 +90,21 @@ The import workflow can create two “styles” of elements:
 - The element stores a script component containing the URL, plus the reference block.
 - Best for long incremental reading where you want to reopen the live page.
 - This is the most reliable way to make `p` (AutoPlay) reopen the page for resume.
+
+### What counts as an "online context"?
+
+Some UI options and behaviors depend on whether the script thinks you're importing into an "online context". In user terms, you're in an online context if **either**:
+
+- Your **current concept group** is `Online` or `Sources` (these are treated as "online" concepts), or
+- Your **current collection** is one of the "online collections" hardcoded in the script (currently: `passive`, `singing`, `piano`, `calligraphy`, `drawing`, `bgm`, `music`).
+
+User-visible effects:
+
+- The import GUI may hide **Import as online element** (because it's already implied by your context).
+- If you're doing IWB, choosing an online context is rejected (IWB is for offline-style excerpt elements).
+- Online-element imports require a working **Script component** (see troubleshooting below).
+
+Dev note: the core check is `SM.IsOnline(...)` in `lib/sm.ahk:455` (online concepts: `Online,Sources`; online collections list is hardcoded there too). The import GUI/context logic lives in `lib/bind/smvim_import.ahk`.
 
 ### URL normalization
 
@@ -362,9 +377,15 @@ This is for when you already have an element, but you want to populate/update `#
 - You likely didn’t select text, or you’re on a video/online context where the same keys sync time stamps.
 - For normal web-page read points: select a short snippet first.
 
-### AutoPlay (`p`) doesn’t open the page
+### AutoPlay (`p`) doesn't open the page
 - Import as an **online element** so the element has a script URL that `Ctrl+F10` can open.
 - Or use `gs` as a manual fallback.
 
-### AutoPlay (`p`) doesn’t see the read point
-- The marker must be the first line in the element’s first HTML component. If you edited HTML and moved it down, re-save/sync the marker so it’s back on top.
+### AutoPlay (`p`) doesn't see the read point
+- The marker must be the first line in the element's first HTML component. If you edited HTML and moved it down, re-save/sync the marker so it's back on top.
+
+### "Script component not found." during import
+- This happens when importing as an **online element** but your SuperMemo template doesn't provide a Script component that the automation can edit.
+- Fix: adjust your template for your online source elements (often the `Online` / `Sources` concepts' default templates) so it includes a Script component, or import as an offline copy instead.
+
+Dev note: the online import branch tries to open the Script component editor and write `rl <url>`; if the script editor window doesn't appear, it aborts with this message (`lib/bind/smvim_import.ahk`).

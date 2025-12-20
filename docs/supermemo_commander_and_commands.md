@@ -70,15 +70,22 @@ Notes:
 - Many of these commands depend on SuperMemo UI state (editing vs browsing) and will switch components or open dialogs.
 - Some commands are intentionally “power-user” and will show confirmation dialogs (or rely on SuperMemo’s own confirmations).
 
-### “Online element” commands (YouTube / script component workflows)
+### "Online element" commands (YouTube / script component workflows)
 
-When the current element is detected as online, Vim Commander also includes:
+When your **current collection** is detected as online, Vim Commander also includes:
 
 | Command | What it does |
 |---|---|
 | `ReformatScriptComponent` | Rewrites script component content in a consistent style (collection-specific). |
-| `SearchLinkInYT` | Searches for the element’s `#Link` on YouTube. |
+| `SearchLinkInYT` | Searches for the element's `#Link` on YouTube. |
 | `MarkAsOnlineProgress` | Inserts `SMVim: Use online video progress` marker at top of HTML (see `docs/video.md`). |
+
+Notes (user perspective):
+
+- These commands are meant for elements where your source is effectively a URL-backed/script-backed item (common for YouTube and "online element" imports).
+- If you imported a page as an online element but you don't see these commands, it's likely because the current Commander "online" detection is **collection-based** in the current code, not purely "does this element have a Script component?". In that case, the underlying workflows can still work; you just won't see these helper commands in the palette.
+
+Dev note: the Commander list is built in `lib/bind/vim_command.ahk`, and the current online check used there is `SM.IsOnline(, -1)` (see `lib/sm.ahk:455` for what that returns).
 
 ### SuperMemo Browser / Plan / Registry commands (high-level)
 
