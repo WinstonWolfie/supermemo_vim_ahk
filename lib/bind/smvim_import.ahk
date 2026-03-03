@@ -666,7 +666,6 @@ SMImportButtonImport:
     SM.LinkConcepts(StrSplit(Tags, ";"),, wBrowser)
 
   SM.CloseMsgDialog()
-      return
 
   if (CloseTab) {
     WinActivate, % wBrowser
