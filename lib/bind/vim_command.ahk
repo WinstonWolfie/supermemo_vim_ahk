@@ -792,7 +792,7 @@ RestartOneDrive:
   Process, Close, OneDrive.exe
   Try Run, % "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
   Catch {
-    Try Run, % "C:\Users\Winston\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
+    Try Run, % A_AppData . "\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
       Catch
         Return
   }
