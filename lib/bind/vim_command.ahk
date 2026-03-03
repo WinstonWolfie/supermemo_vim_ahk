@@ -1293,7 +1293,7 @@ SMTagEntered:
       Send {Down}
     }
   }
-  SetToolTip("Tagging finished.")
+  SetToolTip("Tagging finished."), aTags := Tags := TagsText := ""
 return
 
 SMUntag:
