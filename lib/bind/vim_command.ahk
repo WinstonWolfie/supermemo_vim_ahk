@@ -99,6 +99,7 @@ VimCommanderButtonExecute:
   Gui, Destroy
   if (IfContains("|" . List . "|", "|" . Command . "|")) {
     WinActivate % "ahk_id " . hWnd
+    WinWaitActive % "ahk_id " . hWnd  ; insurance
     Goto % RegExReplace(Command, "\W")
   } else {
     aCommand := StrSplit(Command, " ")
@@ -789,8 +790,13 @@ return
 
 RestartOneDrive:
   Process, Close, OneDrive.exe
-  Run, % "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
-  WinWait, ahk_class CabinetWClass ahk_exe explorer.exe,, 10
+  Try Run, % "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
+  Catch {
+    Try Run, % "C:\Users\Winston\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
+      Catch
+        Return
+  }
+  WinWaitActive, ahk_class CabinetWClass ahk_exe explorer.exe,, 10
   if (!ErrorLevel)
     WinClose
 return
@@ -1015,6 +1021,7 @@ Lexico:
 return
 
 ExternaliseRegistry:
+  Send {Volume_Mute}
   ; Images, Sounds, Binary, Video
   for i, v in [156, 157, 171, 170] {  ; sm19
     if (WinGet("ProcessName", "ahk_class TElWind") == "sm18.exe")
@@ -1039,6 +1046,7 @@ ExternaliseRegistry:
     WinWaitActive, ahk_class TRegistryForm
     WinClose
   }
+  Send {Volume_Mute}
   Vim.State.SetMode("Vim_Normal")
 return
 
@@ -1223,6 +1231,7 @@ Tag:
   Gui, SMTag:Add, Text,, &Add tags (without # and use `; to separate):
   Gui, SMTag:Add, Edit, vTags w350 r1 -WantReturn
   Gui, SMTag:Add, Checkbox, vEditRefComment, Also add to reference &comment
+  Gui, SMTag:Add, Checkbox, vAttachText, Also attach to te&xt
   Gui, SMTag:Add, Button, Default, &Tag
   Gui, SMTag:Show,, Tag
   SetDefaultKeyboard(0x0409)  ; English-US
@@ -1245,6 +1254,7 @@ SMTagEntered:
 
   Loop % LoopCount {
     SM.LinkConcepts(aTags := StrSplit(Tags, ";"), wSMElWind)
+
     if (EditRefComment) {
       SM.EditRef(wSMElWind)
       WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
@@ -1266,6 +1276,17 @@ SMTagEntered:
         WinWaitClose
       }
     }
+
+    if ((A_ThisLabel == "SMTagButtonTag") && AttachText) {
+      SM.EditFirstQuestion()
+      SM.WaitTextFocus()
+      Vim.Move.Move("+g")
+      Send {End}{Enter}
+      loop % aTags.MaxIndex()
+        TagsText .= " #" . StrReplace(aTags[A_Index], " ", "_")
+      SendInput % "{Text}" . Trim(TagsText)
+    }
+
     if (!SMBrowser) {
       Break
     } else {

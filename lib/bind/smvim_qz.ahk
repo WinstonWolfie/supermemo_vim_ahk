@@ -193,9 +193,11 @@ CapsLock & z::  ; delete [...]
         SM.EmptyHTMLComp()
         WinWaitActive, ahk_class TElWind
         SM.WaitTextFocus()
-        x := A_CaretX, y := A_CaretY
+        x := y := 0
+        While (!x || !y)
+          x := A_CaretX, y := A_CaretY
         Send ^{Home}
-        WaitCaretMove(x, y)
+        WaitCaretMove(x, y, 1000)  ; if no reference, caret will not move, therefore 1s timeout
         if (ClozeNoBracket) {
           HTML := RegExReplace(HTML, "\s?<SPAN class=cloze>\[\.\.\.\]<\/SPAN>")
         } else {

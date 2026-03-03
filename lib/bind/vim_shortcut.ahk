@@ -175,9 +175,8 @@ return
 
 ^!m::  ; copy ti*m*e stamp
   ClipSaved := ClipboardAll
-  if (!Clipboard := Browser.GetTimeStamp(,, false)) {
-    SetToolTip("Not found.")
-    Clipboard := ClipSaved
+  if (!Clipboard := Browser.GetTimeStamp(, Browser.GetUrl(),, false)) {
+    SetToolTip("Not found."), Clipboard := ClipSaved
     return
   }
   SetToolTip("Copied " . Clipboard), Browser.Clear()

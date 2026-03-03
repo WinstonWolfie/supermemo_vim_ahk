@@ -119,7 +119,11 @@ class SM {
   SetPrio(Prio) {
     this.PostMsg(655, true)
     WinWait, % "ahk_class TPriorityDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
-    ControlSetText, TEdit5, % Prio
+    if (Prio ~= "^p\d+") {
+      ControlSetText, TEdit6, % RegExReplace(Prio, "^p")  ; position
+    } else {
+      ControlSetText, TEdit5, % Prio
+    }
     while (WinExist())
       ControlSend, TEdit5, {Enter}
   }
@@ -128,8 +132,9 @@ class SM {
     Prio := Random(min, max)
     global SMImportGuiHwnd, Vim
     if (WinActive("A") == SMImportGuiHwnd) {
-      ControlFocus, Edit1
-      ControlSetText, Edit1, % Prio
+      c := (ControlGet(,, "Edit5")) ? "Edit2" : "Edit1"
+      ControlFocus, % c
+      ControlSetText, % c, % Prio
       Send {tab}^a
     } else if (this.IsPrioInputBox()) {
       ControlSetText, Edit1, % Prio
@@ -357,7 +362,8 @@ class SM {
     if (!this.OpenNotepad(Timeout))
       return false
     Send ^w
-    WinClose
+    WinWaitNotActive,,, 1.5  ; seems to be more stable
+    ; WinClose
     WinActivate, ahk_class TElWind
     WinWaitActive, ahk_class TElWind,, % Timeout
     return true
@@ -448,8 +454,8 @@ class SM {
     BlockInput, Off
   }
 
-  GetDefaultConcept() {
-    return ControlGetText("TEdit1", "ahk_class TElWind")
+  GetDefaultConcept(wSMElWind:="ahk_class TElWind") {
+    return ControlGetText("TEdit1", wSMElWind)
   }
 
   IsOnline(CollName:="", CurrConcept:="") {
@@ -657,25 +663,25 @@ class SM {
       ControlTextWait(Control, Text, w)
   }
 
-  SetDefaultConcept(Concept:="", Prio:="", CheckConceptExist:="") {
+  SetDefaultConcept(Concept:="", Prio:="", CheckConceptExist:="", wSMElWind:="ahk_class TElWind") {
     if (Concept && !Prio && !CheckConceptExist) {
-      if (this.GetDefaultConcept() == Concept)
+      if (this.GetDefaultConcept(wSMElWind) == Concept)
         return true
     }
 
     ; Click default concept button via UIA
     UIA := UIA_Interface()
-    el := UIA.ElementFromHandle(WinExist("ahk_class TElWind"))
+    el := UIA.ElementFromHandle(WinExist(wSMElWind))
     ; Just using ControlClick() cannot operate in background
     pos := el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").GetCurrentPos("screen")
-    ControlClickScreen(pos.x, pos.y, "ahk_class TElWind")
+    ControlClickScreen(pos.x, pos.y, wSMElWind)
 
     if (Concept || (Prio >= 0)) {
-      WinWait, % wReg := "ahk_class TRegistryForm ahk_pid " . WinGet("PID", "ahk_class TElWind")
+      WinWait, % wReg := "ahk_class TRegistryForm ahk_pid " . WinGet("PID", wSMElWind)
 
       if (CheckConceptExist) {
         this.SetText("Edit1", CheckConceptExist, wReg)
-        ret := this.RegCheck(CheckConceptExist,, wReg)
+        ret := this.RegCheck(CheckConceptExist, wSMElWind, wReg)
         if (ret == "")
           return false
         UpdateCheckConcept := ret
@@ -683,7 +689,7 @@ class SM {
 
       if (Concept) {  ; set concept
         this.SetText("Edit1", Concept, wReg)
-        if (this.RegCheck(Concept,, wReg) == "")
+        if (this.RegCheck(Concept, wSMElWind, wReg) == "")
           return false
       }
 
@@ -731,6 +737,8 @@ class SM {
 
   SetElParam(Title:="", Prio:="", Template:="", Group:="", CheckGroup:=false) {
     Critical
+    if (Prio ~= "^p\d+")
+      this.SetPrio(Prio), Prio := ""
     if ((Title == "") && !(Prio >= 0) && !Template && !Group) {
       return true
     } else if ((Title != "") && !(Prio >= 0) && !Template && !Group) {
@@ -1015,6 +1023,8 @@ class SM {
     }
 
     ToolTip := "Running: `n`nTitle: " . SMTitle
+    if (Date := this.GetDateFromUIAArray(auiaText))
+      ToolTip .= "`nDate: " . Date
     if (Comment := this.GetCommentFromUIAArray(auiaText))
       ToolTip .= "`nComment: " . Comment
     if (Marker ~= "^SMVim(?!:)") {
@@ -1164,11 +1174,11 @@ class SM {
     }
   }
 
-  AltN() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
-      this.PostMsg(96)
+  AltN(wSMElWind:="ahk_class TElWind") {
+    if (WinGet("ProcessName", wSMElWind) == "sm19.exe") {
+      this.PostMsg(96,, wSMElWind)
     } else {
-      this.PostMsg(98)
+      this.PostMsg(98,, wSMElWind)
     }
   }
 
@@ -1416,6 +1426,14 @@ class SM {
     }
   }
 
+  GetDateFromUIAArray(auiaText:="") {
+    auiaText := auiaText ? auiaText : this.GetUIAArray()
+    for i, v in auiaText {
+      if (v.Name ~= "^#Date: ")
+        return StrReplace(v.Name, "#Date: ")
+    }
+  }
+
   GetCommentFromUIAArray(auiaText:="") {
     auiaText := auiaText ? auiaText : this.GetUIAArray()
     Comment := ""
@@ -1653,7 +1671,7 @@ class SM {
     str := RegExReplace(str, "is)<\/?(zzz)?(font|form)([^>]+)?>")
 
     ; SuperMemo uses IE7; svg was introduced in IE9
-    str := RegExReplace(str, "is)<\/?(svg|path)([^>]+)?>")
+    str := RegExReplace(str, "is)<\/?(svg|path|noscript)([^>]+)?>")
     str := StrReplace(str, "https://wikimedia.org/api/rest_v1/media/math/render/svg/", "https://wikimedia.org/api/rest_v1/media/math/render/png/")
 
     ; Scripts

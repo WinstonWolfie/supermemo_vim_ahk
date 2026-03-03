@@ -248,6 +248,7 @@ class Browser {
     } else if (IfContains(this.Url, "youtube.com/watch")) {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (GetFullPage) {
+        Send {Esc}
         if (GetDate) {
           ; Click "...more" and copy the release date
           global guiaBrowser
@@ -282,18 +283,18 @@ class Browser {
         if (this.Title ~= "^\(\d+\) ")  ; YT notification count appears in the browser title
           RegExMatch(FullPageText, "(.*)\r\n\r\n.*\r\n.* subscribers", v), this.Title := v1
         if (GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle, this.Url, FullPageText, RestoreClip)
         RegExMatch(FullPageText, ".*(?=\r\n.* subscribers)", Author), this.Author := Author
       }
     } else if (IfContains(this.Url, "youtube.com/playlist")) {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
-        RegExMatch(FullPageText, "(.*)\r\n\d+ videos", v), this.Author := v1
+        RegExMatch(FullPageText, "\r\nby (.*)", v), this.Author := v1
     } else if (this.Title ~= "_哔哩哔哩_bilibili$") {
       this.Source := "哔哩哔哩", this.Title := RegExReplace(this.Title, "_哔哩哔哩_bilibili$")
       if (IfContains(this.Url, "bilibili.com/video")) {
         if (GetFullPage && GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
         if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
           if (GetDate)
             RegExMatch(FullPageText, "(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2}", v), this.Date := v1
@@ -305,14 +306,14 @@ class Browser {
       if (this.Title ~= "-纪录片-全集-高清独家在线观看$")
         this.Source .= "：纪录片", this.Title := RegExReplace(this.Title, "-纪录片-全集-高清独家在线观看$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (this.Url ~= "moviesjoy\.(.*?)\/watch") {
       RegExMatch(this.Title, "^Watch (.*?) HD online$", v)
       this.Source := "MoviesJoy", this.Title := v1
       if (RegExMatch(this.Title, " (\d+)$", v))
         this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (IfContains(this.Url, "dopebox.to")) {
       RegExMatch(this.Title, "^Watch Free (.*?) (Full Movies|TV Shows) Online$", v)
       this.Source := "DopeBox", this.Title := v1
@@ -320,35 +321,39 @@ class Browser {
         this.Date := v1, this.Title := RegExReplace(this.Title, " (\d+)$")
       if (GetFullPage) {
         if (GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
         if (GetDate && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip))))
           RegExMatch(FullPageText, "Released: (\d{4})-\d{2}-\d{2}", v), this.Date := v1
       }
     } else if (RegExMatch(this.Title, "^Watch (.*?) online free on 9anime$", v)) {
       this.Source := "9anime", this.Title := v1
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (RegExMatch(this.Title, "^Watch full (.*?) english sub \| Kissasian$", v)) {
       this.Source := "Kissasian", this.Title := v1
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (RegExMatch(this.Title, "^Watch (.*?) English Sub/Dub online Free on HiAnime\.to$", v)) {
       this.Source := "HiAnime", this.Title := v1
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (this.Title ~= "-免费在线观看-爱壹帆$") {
       this.Source := "爱壹帆", this.Title := RegExReplace(this.Title, "-免费在线观看-爱壹帆$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
+    } else if (this.Title ~= "-免费在线观看-爱壹帆国际版$") {
+      this.Source := "爱壹帆国际版", this.Title := RegExReplace(this.Title, "-免费在线观看-爱壹帆国际版$")
+      if (GetFullPage && GetTimeStamp)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (this.Title ~= "_高清在线观看 – NO视频$") {
       this.Source := "NO视频", this.Title := RegExReplace(this.Title, "_高清在线观看 – NO视频$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (this.Title ~= "_[^_]+ - 喜马拉雅$") {
       this.Source := "喜马拉雅", this.Title := RegExReplace(this.Title, "_[^_]+ - 喜马拉雅$")
       if (IfContains(this.Url, "ximalaya.com/sound")) {
         if (GetFullPage && GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
         if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
           if (GetDate)
             RegExMatch(FullPageText, "\d{4}-\d{2}-\d{2}", Date), this.Date := Date
@@ -357,19 +362,19 @@ class Browser {
       }
     } else if (this.Title == "Netflix") {
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (this.Title ~= " - Animelon$") {
       this.Source := "Animelon", this.Title := RegExReplace(this.Title, " - Animelon$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (this.Title ~= " on Vimeo$") {
       this.Source := "Vimeo", this.Title := RegExReplace(this.Title, " on Vimeo$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
     } else if (this.Title ~= " - video Dailymotion$") {
       this.Source := "Dailymotion", this.Title := RegExReplace(this.Title, " - video Dailymotion$")
       if (GetFullPage && GetTimeStamp)
-        this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+        this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
       if (GetFullPage && (FullPageText || (FullPageText := this.GetFullPage(RestoreClip)))) {
         if (GetDate) {
           FullPageHTML := FullPageHTML ? FullPageHTML : GetSiteHTML(this.Url ? this.Url : this.GetUrl())
@@ -563,7 +568,7 @@ class Browser {
         if (GetDate)
           RegExMatch(FullPageText, this.Months . " \d{2}, \d{4}", v), this.Date := v
         if (GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, RestoreClip)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,,, RestoreClip)
       }
     } else if (this.Title ~= " - GeeksforGeeks$") {
       this.Source := "GeeksforGeeks", this.Title := RegExReplace(this.Title, " - GeeksforGeeks$")
@@ -575,7 +580,7 @@ class Browser {
         if (GetDate)
           RegExMatch(FullPageText, this.Months . "\. \d{1,2}, \d{4}", v), this.Date := v
         if (GetTimeStamp)
-          this.TimeStamp := this.GetTimeStamp(this.FullTitle, FullPageText, RestoreClip)
+          this.TimeStamp := this.GetTimeStamp(this.FullTitle,, FullPageText, RestoreClip)
       }
     } else if (RegExMatch(this.Title, " \| by (.*?) \| ((.*?) \| )?Medium$", v)) {
       this.Source := "Medium", this.Title := RegExReplace(this.Title, " \| by .*? \| Medium$"), this.Author := v1
@@ -634,46 +639,42 @@ class Browser {
     return Parse ? this.ParseUrl(Url) : Url
   }
 
-  GetTimeStamp(Title:="", FullPageText:="", RestoreClip:=true) {
+  GetTimeStamp(Title:="", Url:="", FullPageText:="", RestoreClip:=true) {
     Title := Title ? Title : this.GetFullTitle()
-    ; YouTube won't let you copy time stamp anymore
-    ; if (Title ~= " - YouTube$") {
-    ;   if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip)) {
-    ;     RegExMatch(FullPageText, "\r\n([0-9:]+) \/ ([0-9:]+)", v)
-    ;     ; v1 == v2 means at end of video
-    ;     TimeStamp := (v1 == v2) ? "0:00" : v1
-    ;   }
     if (Title ~= "- .*? \(podcast\) \| Listen Notes$") {
       if (FullPageText := FullPageText ? FullPageText : this.GetFullPage(RestoreClip))
         RegExMatch(FullPageText, "\d\.\dx\r\n\K.*", TimeStamp)
     } else {
       global guiaBrowser
       this.GetGuiaBrowser()
-      if (Title ~= "_[^_]+ - 喜马拉雅$") {
-        try TimeStamp := guiaBrowser.FindFirstByName("^\d{2}:\d{2}:\d{2}$",, "regex").Name
-      } else if (Title ~= " - YouTube$") {
-        try TimeStamp := guiaBrowser.FindFirstByName("(\d+ Hours )?(\d+ Minutes )?\d+ Seconds of (\d+ Hours )?(\d+ Minutes )?\d+ Seconds",, "regex").Name
-        pattern := "O)(?:(\d+) Hours )?(?:(\d+) Minutes )?(\d+) Seconds of (?:(\d+) Hours )?(?:(\d+) Minutes )?(\d+) Seconds"
-        RegExMatch(TimeStamp, pattern, m)
-        ; First period
-        h1 := m[1] ? m[1] : 0
-        m1 := m[2] ? m[2] : 0
-        s1 := m[3] ? m[3] : 0
-        ; Second period
-        h2 := m[4] ? m[4] : 0
-        m2 := m[5] ? m[5] : 0
-        s2 := m[6] ? m[6] : 0
+      if ((IfContains(Url, "youtube.com/watch?v=")) || (Title ~= " - YouTube$")) {  ; a bug makes it may not get title
+        try TimeStamp := guiaBrowser.FindFirstByName("(\d+ Hours )?\d+ Minutes \d+ Seconds of (\d+ Hours )?\d+ Minutes \d+ Seconds",, "regex").Name
+        if (TimeStamp) {
+          pattern := "O)(?:(\d+) Hours )?(\d+) Minutes (\d+) Seconds of (?:(\d+) Hours )?(\d+) Minutes (\d+) Seconds"
+          RegExMatch(TimeStamp, pattern, m)
+          ; First period
+          h1 := m[1] ? m[1] : 0
+          m1 := m[2] ? m[2] : 0
+          s1 := m[3] ? m[3] : 0
+          ; Second period
+          h2 := m[4] ? m[4] : 0
+          m2 := m[5] ? m[5] : 0
+          s2 := m[6] ? m[6] : 0
 
-        t1 := Format("{:01}:{:02}:{:02}", h1, m1, s1)
-        t2 := Format("{:01}:{:02}:{:02}", h2, m2, s2)
-        TimeStamp := (t1 == t2) ? "0:00" : t1
+          t1 := Format("{:01}:{:02}:{:02}", h1, m1, s1)
+          t2 := Format("{:01}:{:02}:{:02}", h2, m2, s2)
+          ; v1 == v2 means at end of video
+          TimeStamp := (t1 == t2) ? "0:00" : t1
+        }
+      } else if (Title ~= "_[^_]+ - 喜马拉雅$") {
+        try TimeStamp := guiaBrowser.FindFirstByName("^\d{2}:\d{2}:\d{2}$",, "regex").Name
       } else {
         try TimeStamp := guiaBrowser.FindFirstByName("^(\d{1,2}:)?\d{1,2}:\d{1,2}$",, "regex").Name
       }
     }
     if (!TimeStamp)
       return false
-    TimeStamp := RegExReplace(TimeStamp, "^00:(?=\d{2}:\d{2})")
+    TimeStamp := RegExReplace(TimeStamp, "^0{1,2}:(?=\d{2}:\d{2})")
     TimeStamp := RegExReplace(TimeStamp, "^0(?=\d)")
     return TimeStamp
   }
@@ -713,7 +714,7 @@ class Browser {
     ; Return 3 if time stamp can't be in url and ^a doesn't cover time stamp
     } else if (Title ~= "^(Netflix|Watch full .*? english sub \| Kissasian|Watch .*? HD online|Watch Free .*? Full Movies Online|Watch .*? online free on 9anime|Watch .*? Sub/Dub online Free on HiAnime\.to)$") {
       return 3
-    } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon| on Vimeo| - video Dailymotion)$") {
+    } else if (Title ~= "(-免费在线观看-爱壹帆|_[^_]+ - 喜马拉雅|_高清在线观看 – NO视频| - Animelon| on Vimeo| - video Dailymotion|-免费在线观看-爱壹帆国际版)$") {
       return 3
     }
   }

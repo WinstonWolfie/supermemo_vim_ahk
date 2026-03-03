@@ -291,6 +291,7 @@ return
 #if (Vim.State.Vim.Enabled)
 ; Incremental web browsing
 ^+!b::
+^!b::
 IWBPriorityAndConcept:
 IWBNewTopic:
 ; Import current webpage to SuperMemo
@@ -307,7 +308,7 @@ IWBNewTopic:
   }
 
   ClipSaved := ClipboardAll
-  if (IWB := IfContains(A_ThisLabel, "IWB,^+!b")) {
+  if (IWB := IfContains(A_ThisLabel, "IWB,^+!b,^!b")) {
     if (!HTMLText := Copy(false, true)) {
       SetToolTip("Text not found.")
       Clipboard := ClipSaved
@@ -332,8 +333,18 @@ IWBNewTopic:
   IsVideoOrAudioSite := Browser.IsVideoOrAudioSite(Browser.FullTitle)
 
   SM.CloseMsgDialog()
-  CollName := SM.GetCollName()
-  OnlineEl := SM.IsOnline(CollName, -1)
+
+  WinGet, pahSMElWind, List, ahk_class TElWind
+  dSMWin := {}  ; a dictionary for currently opened SM windows
+  loop % pahSMElWind {
+    text := WinGetText(wSMElWind := "ahk_id " . pahSMElWind%A_Index%)
+    RegExMatch(text, "m)^(.+?) \(SuperMemo", CurrCollName)
+    dSMWin[CurrCollName1] := wSMElWind
+    CollCount := A_Index
+  }
+
+  UserColl := CurrCollName := SM.GetCollName()
+  OnlineEl := SM.IsOnline(CurrCollName, -1)
 
   DupChecked := MB := false
   if (!IWB) {
@@ -349,12 +360,26 @@ IWBNewTopic:
   Prio := Concept := CloseTab := DLHTML := ResetTimeStamp := CheckDupForIWB := ""
   Tags := RefComment := ClipBeforeGui := UseOnlineProgress := ""
   DLList := "economist.com,investopedia.com,webmd.com,britannica.com,medium.com,wired.com,greenhornfinancefootnote.blogspot.com"
+
   if (IfIn(A_ThisLabel, "^+!a,IWBPriorityAndConcept,^+!b")) {
     ClipBeforeGui := Clipboard
     SetDefaultKeyboard(0x0409)  ; English-US
-    Gui, SMImport:Add, Text,, % "Current collection: " . CollName
+
+    if (CollCount == 1) {
+      Gui, SMImport:Add, Text,, % "Collection: " . CurrCollName  ; shows current collection name only
+    } else {
+      CollList := CurrCollName . "|"
+      for key, value in dSMWin {
+        if (key != CurrCollName)
+          CollList .= "|" . key
+      }
+      Gui, SMImport:Add, Text,, Co&llection:
+      Gui, SMImport:Add, ComboBox, vUserColl gAutoComplete w280, % CollList
+    }
+
     Gui, SMImport:Add, Text,, &Priority:
     Gui, SMImport:Add, Edit, vPrio w280
+
     Gui, SMImport:Add, Text,, Concept &group:  ; like in default import dialog
     ConceptList := "||Online|Sources|ToDo"
     if (IfIn(CurrConcept := SM.GetDefaultConcept(), "Online,Sources,ToDo"))
@@ -362,28 +387,37 @@ IWBNewTopic:
     ; list := StrLower(CurrConcept . ConceptList)  ; could produce undesired results; commented for now
     list := CurrConcept . ConceptList
     Gui, SMImport:Add, ComboBox, vConcept gAutoComplete w280, % list
+
     Gui, SMImport:Add, Text,, &Tags (without # and use `; to separate):
     Gui, SMImport:Add, Edit, vTags w280
+
     Gui, SMImport:Add, Text,, Reference c&omment:
     Gui, SMImport:Add, Edit, vRefComment w280
+
     Gui, SMImport:Add, Checkbox, vCloseTab, &Close tab  ; like in default import dialog
+
     if (!IWB && !OnlineEl)
       Gui, SMImport:Add, Checkbox, vOnlineEl, Import as o&nline element
+
     if (!IWB && !IsVideoOrAudioSite && !OnlineEl) {
       check := IfContains(Browser.Url, DLList) ? "checked" : ""
       Gui, SMImport:Add, Checkbox, % "vDLHTML " . check, Import fullpage &HTML
     }
+
     if (IWB)
       Gui, SMImport:Add, Checkbox, vCheckDupForIWB, Check &duplication
+
     if (IsVideoOrAudioSite || OnlineEl) {
       Gui, SMImport:Add, Checkbox, vResetTimeStamp, &Reset time stamp
       if (IfContains(Browser.Url, "youtube.com/watch")) {
-        check := (CollName = "bgm") ? "checked" : ""
+        check := (CurrCollName = "bgm") ? "checked" : ""
         Gui, SMImport:Add, Checkbox, % "vUseOnlineProgress " . check, &Mark as use online progress
       }
     }
+
     Gui, SMImport:Add, Button, default, &Import
     Gui, SMImport:Show,, SuperMemo Import
+    GuiControl, SMImport:Focus, Prio
     Gui, SMImport:+HwndSMImportGuiHwnd
     return
   } else {
@@ -402,8 +436,32 @@ SMImportButtonImport:
       ClipSaved := ClipboardAll
   }
 
+  wSMElWind := "ahk_class TElWind ahk_pid " . WinGet("PID", "ahk_class TElWind")
+  if (UserColl != CurrCollName) {
+    wSMElWind := ""
+    for key, value in dSMWin {
+      if (key == UserColl) {
+        wSMElWind := value
+        Break
+      }
+    }
+    if (!wSMElWind) {
+      SetToolTip("Collection not found.")
+      Goto SMImportReturn
+    }
+    MB := ""
+    if (SM.CheckDup(Browser.Url, false, wSMElWind))
+      MB := MsgBox(3,, "Continue import?")
+    WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", wSMElWind)
+    WinActivate % wBrowser
+    if (IfIn(MB, "No,Cancel"))
+      Goto SMImportReturn
+    CurrCollName := UserColl
+  }
+  WinExist(wSMElWind)  ; update last found window
+
   if (OnlineEl != 1)
-    OnlineEl := SM.IsOnline(CollName, Concept)
+    OnlineEl := SM.IsOnline(CurrCollName, Concept)
   if (OnlineEl)  ; just in case user checks both of them
     DLHTML := false
   if (OnlineEl && IWB) {
@@ -426,17 +484,17 @@ SMImportButtonImport:
 
   if (CheckDupForIWB) {
     MB := ""
-    if (SM.CheckDup(Browser.Url, false))
+    if (SM.CheckDup(Browser.Url, false, wSMElWind))
       MB := MsgBox(3,, "Continue import?")
     DupChecked := true
-    WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
+    WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", wSMElWind)
     WinActivate % wBrowser
     if (IfIn(MB, "No,Cancel"))
       Goto SMImportReturn
   }
 
   if (IWB)
-    Browser.Highlight(CollName, Clipboard, Browser.Url)
+    Browser.Highlight(CurrCollName, Clipboard, Browser.Url)
 
   if (LocalFile := (Browser.Url ~= "^file:\/\/\/"))
     DLHTML := true
@@ -545,7 +603,7 @@ SMImportButtonImport:
   if (Concept) {
     if ((OnlineEl == 1) && !SM.IsOnline(-1, Concept))
       ChangeBackConcept := Concept, Concept := "Online"
-    if (!ret := SM.SetDefaultConcept(Concept,, ChangeBackConcept))
+    if (!ret := SM.SetDefaultConcept(Concept,, ChangeBackConcept, wSMElWind))
       Goto SMImportReturn
     if (ChangeBackConcept && ret)
       ChangeBackConcept := ret
@@ -554,11 +612,11 @@ SMImportButtonImport:
   if (SMCtrlNYT) {
     Gosub SMCtrlN
   } else {
-    PrevSMTitle := WinGetTitle("ahk_class TElWind")
-    SM.AltN()
-    WinActivate, ahk_class TElWind
+    PrevSMTitle := WinGetTitle(wSMElWind)
+    SM.AltN(wSMElWind)
+    WinActivate, wSMElWind
     SM.WaitTextFocus()
-    TempTitle := WinWaitTitleChange(PrevSMTitle, "ahk_class TElWind")
+    TempTitle := WinWaitTitleChange(PrevSMTitle, wSMElWind)
     SM.PasteHTML()
 
     if (!OnlineEl) {
@@ -567,7 +625,7 @@ SMImportButtonImport:
 
     } else if (OnlineEl) {
       Critical
-      pidSM := WinGet("PID", "ahk_class TElWind")
+      pidSM := WinGet("PID", wSMElWind)
       Send ^t{f9}{Enter}
       WinWait, % wScript := "ahk_class TScriptEditor ahk_pid " . pidSM,, 3
       WinActivate, % wBrowser
@@ -608,9 +666,13 @@ SMImportButtonImport:
     SM.LinkConcepts(StrSplit(Tags, ";"),, wBrowser)
 
   SM.CloseMsgDialog()
+      return
 
-  if (CloseTab)
-    guiaBrowser.CloseTab()
+  if (CloseTab) {
+    WinActivate, % wBrowser
+    WinWaitActive, % wBrowser
+    Send ^w
+  }
 
 SMImportGuiEscape:
 SMImportGuiClose:

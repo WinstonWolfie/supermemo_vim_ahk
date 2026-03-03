@@ -598,7 +598,7 @@ BrowserSyncTime:
     Browser.Clear()
     Browser.GetInfo(false, false,,, false, false)  ; need url and title here
     if (!ResetTime)
-      Browser.TimeStamp := Browser.GetTimeStamp(Browser.FullTitle,, false)
+      Browser.TimeStamp := Browser.GetTimeStamp(Browser.FullTitle, Browser.Url,, false)
     
     if (w := SM.FindMatchTitleColl(Browser.Title))
       wSMElWind := w

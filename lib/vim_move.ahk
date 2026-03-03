@@ -1217,8 +1217,8 @@ class VimMove {
     } else if (key == "+g") {
         if (this.Vim.State.n > 0) {
           if (SM.IsBrowsing() && SM.DoesTextExist()) {
-            SM.Click("h")
-            SM.WaitTextFocus()
+            KeyWait Shift
+            SM.Click("h"), SM.WaitTextFocus()
           } else if (SM.IsEditingText()) {
             SM.Click("h")
           } else {
@@ -1241,7 +1241,9 @@ class VimMove {
             if (!this.Vim.State.StrIsInCurrentVimMode("VisualLine"))
               Send +{Home}
           } else {
+            x := A_CaretX, y := A_CaretY
             Send ^{End}
+            WaitCaretMove(x, y, 700)
             if (SM.IsNavigatingPlan() || !this.Vim.IsNavigating())
               Send {Home}
           }
