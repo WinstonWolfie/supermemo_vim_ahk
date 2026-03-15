@@ -67,7 +67,7 @@ class SM {
   }
 
   IsEditingHTML() {
-    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server"))
+    return (WinActive("ahk_class TElWind") && IfContains(ControlGetFocus(), "Internet Explorer_Server,Shell DocObject View"))
   }
 
   IsEditingPlainText() {
@@ -674,7 +674,7 @@ class SM {
     el := UIA.ElementFromHandle(WinExist(wSMElWind))
     ; Just using ControlClick() cannot operate in background
     pos := el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").GetCurrentPos("screen")
-    ControlClickScreen(pos.x, pos.y, wSMElWind)
+    ControlClickScreen(pos.x+pos.w//2, pos.y+pos.h//2, wSMElWind)
 
     if (Concept || (Prio >= 0)) {
       WinWait, % wReg := "ahk_class TRegistryForm ahk_pid " . WinGet("PID", wSMElWind)

@@ -666,14 +666,14 @@ BrowserSyncTime:
     WinActivate, % wSMElWind
     SM.EditFirstQuestion()
     auiaText := SM.GetUIAArray()
-    Marker := SM.GetMarkerFromUIAArray(auiaText)
+    Marker := Trim(SM.GetMarkerFromUIAArray(auiaText))
     NewTimeStamp := "<SPAN class=Highlight>SMVim time stamp</SPAN>: " . Browser.TimeStamp
     if (Marker != RegExReplace(NewTimeStamp, "<.*?>")) {
       SM.WaitTextFocus()
       Send ^{Home}
-      if (Marker ~= "^SMVim time stamp: ") {
+      if (Marker ~= "^SMVim time stamp:") {
         Send ^{Right 4}
-        Send % "+{Right " . StrLen(RegExReplace(Marker, "^SMVim time stamp: ")) . "}"
+        Send % "+{Right " . StrLen(Marker) - 18 . "}"
         Send % "{text}" . Browser.TimeStamp
       } else {
         if (!SM.IsHTMLEmpty(auiaText))

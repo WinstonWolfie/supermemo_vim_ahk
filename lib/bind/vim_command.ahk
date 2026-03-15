@@ -1278,8 +1278,10 @@ SMTagEntered:
     }
 
     if ((A_ThisLabel == "SMTagButtonTag") && AttachText) {
-      SM.EditFirstQuestion()
-      SM.WaitTextFocus()
+      if (!SM.IsEditingText()) {
+        SM.EditFirstQuestion()
+        SM.WaitTextFocus()
+      }
       Vim.Move.Move("+g")
       Send {End}{Enter}
       loop % aTags.MaxIndex()
