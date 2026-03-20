@@ -614,7 +614,7 @@ SMImportButtonImport:
   } else {
     PrevSMTitle := WinGetTitle(wSMElWind)
     SM.AltN(wSMElWind)
-    WinActivate, wSMElWind
+    WinActivate, % wSMElWind
     SM.WaitTextFocus()
     TempTitle := WinWaitTitleChange(PrevSMTitle, wSMElWind)
     SM.PasteHTML()
