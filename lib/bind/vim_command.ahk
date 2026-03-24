@@ -136,7 +136,7 @@ VimCommanderButtonExecute:
         if (v1 = 1) {
           SMBrowser := ""  ; don't loop
         } else {
-          LoopCount := v1 - 1
+          LoopCount := v1
         }
       }
 
@@ -1024,7 +1024,7 @@ ExternaliseRegistry:
   Send {Volume_Mute}
   ; Images, Sounds, Binary, Video
   for i, v in [156, 157, 171, 170] {  ; sm19
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm18.exe")
+    if (SM.IsSM18())
       v++
     SM.PostMsg(v)
     WinWaitActive, ahk_class TRegistryForm

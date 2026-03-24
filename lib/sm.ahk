@@ -403,9 +403,9 @@ class SM {
       ClipSaved := ClipboardAll
     global WinClip
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(993, true)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(987, true)
     }
     ClipWait, % LongCopy ? 0.6 : 0.2, True
@@ -628,9 +628,9 @@ class SM {
     Btn2Text := ControlGetText("TBitBtn2")
     Btn3Text := ControlGetText("TBitBtn3")
     if (CtrlL) {
-      if (WinGet("ProcessName") == "sm19.exe") {
+      if (this.IsSM19()) {
         this.PostMsg(178)
-      } else {
+      } else if (this.IsSM18()) {
         this.PostMsg(180)
       }
     } else if (Btn2Text == "Learn") {
@@ -728,9 +728,9 @@ class SM {
   }
 
   ClickBrowserSourceButton() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       ControlClickWinCoordDPIAdjusted(320, 45, "ahk_class TBrowser") 
-    } else {
+    } else if (this.IsSM18()) {
       ControlClickWinCoordDPIAdjusted(294, 45, "ahk_class TBrowser") 
     }
   }
@@ -850,9 +850,9 @@ class SM {
     if (!WinExist("ahk_class TElWind"))
       return
     this.CloseMsgDialog(wSMElWind)
-    if (WinGet("ProcessName", wSMElWind) == "sm19.exe") {
+    if (this.IsSM19(wSMElWind)) {
       ret := this.PostMsg(143,, wSMElWind)
-    } else {
+    } else if (this.IsSM18(wSMElWind)) {
       ret := this.PostMsg(144,, wSMElWind)
     }
     if (!ret)
@@ -883,9 +883,9 @@ class SM {
   }
 
   Command(Text, wSMElWind:="ahk_class TElWind") {
-    if (WinGet("ProcessName", wSMElWind) == "sm19.exe") {
+    if (this.IsSM19(wSMElWind)) {
       ret := this.PostMsg(238,, wSMElWind)
-    } else {
+    } else if (this.IsSM18(wSMElWind)) {
       ret := this.PostMsg(240,, wSMElWind)
     }
     if (!ret)
@@ -921,9 +921,9 @@ class SM {
   }
 
   HandleF3(step) {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       msg := 145
-    } else {
+    } else if (this.IsSM18()) {
       msg := 146
     }
     if (step == 1) {
@@ -977,9 +977,9 @@ class SM {
   }
 
   GoBack(ForceBG:=false) {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(780, true)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(778, true)
     }
   }
@@ -1097,9 +1097,9 @@ class SM {
   }
 
   AltT() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       ret := this.PostMsg(115)
-    } else {
+    } else if (this.IsSM18()) {
       ret := this.PostMsg(116)
     }
     return ret
@@ -1129,25 +1129,25 @@ class SM {
   }
 
   EditFirstQuestion() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(117)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(118)
     }
   }
 
   EditFirstAnswer() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(118)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(119)
     }
   }
 
   EditAll() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(119)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(120)
     }
   }
@@ -1159,25 +1159,25 @@ class SM {
   }
 
   AltA() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(93)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(95)
     }
   }
 
   CtrlN() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(94)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(96)
     }
   }
 
   AltN(wSMElWind:="ahk_class TElWind") {
-    if (WinGet("ProcessName", wSMElWind) == "sm19.exe") {
+    if (this.IsSM19(wSMElWind)) {
       this.PostMsg(96,, wSMElWind)
-    } else {
+    } else if (this.IsSM18(wSMElWind)) {
       this.PostMsg(98,, wSMElWind)
     }
   }
@@ -1250,9 +1250,9 @@ class SM {
   OpenNotepad(PostMsg:=true, Timeout:="") {
     this.ActivateElWind()
     if (PostMsg) {
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      if (this.IsSM19()) {
         this.PostMsg(995, true)
-      } else {
+      } else if (this.IsSM18()) {
         this.PostMsg(989, true)
       }
     } else {
@@ -1273,9 +1273,9 @@ class SM {
   }
 
   Plan() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       ret := this.PostMsg(241)
-    } else {
+    } else if (this.IsSM18()) {
       ret := this.PostMsg(243)
     }
     return ret
@@ -1311,16 +1311,16 @@ class SM {
 
   PasteHTML(PostMsg:=true) {
     if (PostMsg) {
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      if (this.IsSM19()) {
         this.PostMsg(922, true)
-      } else {
+      } else if (this.IsSM18()) {
         this.PostMsg(843, true)
       }
     } else {
       this.ActivateElWind()
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      if (this.IsSM19()) {
         Send {AppsKey}cs
-      } else {
+      } else if (this.IsSM18()) {
         Send {AppsKey}xp
       }
     }
@@ -1332,7 +1332,7 @@ class SM {
   }
 
   HandleSM19PoundSymbUrl(Url) {
-    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(Url, "#")) {
+    if ((this.IsSM19()) && IfContains(Url, "#")) {
       this.PostMsg(154)  ; text registry
       ShortUrl := RegExReplace(Url, "#.*")
       pidSM := WinGet("PID", "ahk_class TElWind")
@@ -1373,7 +1373,7 @@ class SM {
 
   PoundSymbLinkToComment() {
     global Browser
-    if ((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") && IfContains(Browser.Url, "#")) {
+    if ((this.IsSM19()) && IfContains(Browser.Url, "#")) {
       PoundSymbCommentList := "workflowy.com"
       if (IfContains(Browser.Url, PoundSymbCommentList)) {
         Browser.Comment := Browser.Url
@@ -1384,9 +1384,9 @@ class SM {
 
   EmptyHTMLComp() {
     loop {
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      if (this.IsSM19()) {
         this.PostMsg(941, true)
-      } else {
+      } else if (this.IsSM18()) {
         this.PostMsg(935, true)
       }
       WinWait, % "ahk_class TMsgDialog ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0.7
@@ -1744,9 +1744,9 @@ class SM {
 
   RegMember(PostMsg:=false) {
     if (PostMsg) {
-      if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+      if (this.IsSM19()) {
         this.PostMsg(929, true)
-      } else {
+      } else if (this.IsSM18()) {
         this.PostMsg(923, true)
       }
     } else {
@@ -1826,25 +1826,25 @@ class SM {
   }
 
   CtrlF3() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(150)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(151)
     }
   }
 
   ContentsWindow() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(310)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(312)
     }
   }
 
   ReferenceRegistry() {
-    if (WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") {
+    if (this.IsSM19()) {
       this.PostMsg(161)
-    } else {
+    } else if (this.IsSM18()) {
       this.PostMsg(162)
     }
   }
@@ -1856,5 +1856,17 @@ class SM {
     WinWait, % "ahk_class TRegistryForm ahk_pid " . WinGet("PID", "ahk_class TElWind")
     this.SetText("Edit1", RefRegName)
     ControlSend, Edit1, {Enter}
+  }
+
+  IsSM18(wSMElWind:="ahk_class TElWind") {
+    return (WinGet("ProcessName", wSMElWind) == "sm18.exe")
+  }
+
+  IsSM19(wSMElWind:="ahk_class TElWind") {
+    return (WinGet("ProcessName", wSMElWind) == "sm19.exe")
+  }
+
+  IsSM20(wSMElWind:="ahk_class TElWind") {
+    return (WinGet("ProcessName", wSMElWind) == "sm20.exe")
   }
 }

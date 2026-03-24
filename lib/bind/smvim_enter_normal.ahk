@@ -19,8 +19,12 @@ Return
 return
 
 #if (Vim.IsVimGroup() && WinActive("ahk_class TElWind"))  ; SuperMemo element window
-^f2::
-  SM.PostMsg((WinGet("ProcessName", "ahk_class TElWind") == "sm19.exe") ? 179 : 181)  ; go neural
+^f2::  ; go neural
+  if (SM.IsSM19()) {
+    SM.PostMsg(179)
+  } else if (SM.IsSM18()) {
+    SM.PostMsg(181)
+  }
   Vim.State.SetMode("Vim_Normal"), SM.PlayIfOnlineColl()
 return
 
