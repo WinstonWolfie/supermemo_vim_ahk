@@ -24,19 +24,25 @@ Fastest workflow (no import needed):
 2. In SuperMemo element window, press `Esc` (browsing mode).
 3. Press `:` then `r` (`:r`).
 
-Result: the reference is prepended with `#Link:` (and often other metadata if available).
+Result: the reference is prepended with `#Link:`.
+More precisely:
+
+- `#Link:` comes from the clipboard.
+- Additional metadata (`#Title/#Source/#Author/#Date/#Comment`) only appears if `Browser.*` was captured earlier, for example via `<C-A-l>` or an import flow.
 
 ### 2) Add tags that also link concepts
 
 1. In SuperMemo element window, open Vim Commander: `<C-;>`.
 2. Run `Tag`.
-3. Enter tags without `#`, separated by `;` (example: `neuro; hippocampus; paper`).
-4. Optionally check “Also add to reference comment”.
+3. Enter tags without `#`, separated by `;` (example: `neuro;hippocampus;paper`).
+4. Optionally check `Also add to reference comment` and/or `Also attach to text`.
 
 Result:
 
 - Each tag is linked as a concept (concept registry link).
 - Optionally the tags are appended into `#Comment:` as `#tag` tokens.
+- Optionally the tags are also inserted into the current element text as hashtags.
+- Use `;` without surrounding spaces unless you intentionally want those spaces to become part of the tag text.
 
 ### 3) Remove tags (untag)
 
@@ -112,6 +118,8 @@ Practical guidance:
 
 - If you only want to set the link: copy the desired URL immediately before running `:r`.
 - If you previously ran a browser import/capture workflow, `:r` may also fill title/source/author/date/comment based on what was captured.
+- If cached browser title is available, `:r` may also update the element title.
+- Repeated runs prepend new `#Link/#Title/#Comment/...` lines rather than deduping older ones, so manual cleanup may still be needed.
 
 ---
 
@@ -139,7 +147,8 @@ Inputs:
 Effects:
 
 1. Links each tag as a concept (concept registry action).
-2. If you check “Also add to reference comment”, it appends `#tag` tokens to `#Comment:`.
+2. If you check `Also add to reference comment`, it appends `#tag` tokens to `#Comment:`.
+3. If you check `Also attach to text`, it inserts those hashtags into the current element text/body.
 
 ### Untagging (unlink concepts + remove hashtags)
 
@@ -165,6 +174,7 @@ If you want to set or replace the entire `#Comment:` line:
 Tip:
 
 - If you use tags heavily, it’s usually better to use `Tag`/`untag` rather than manually editing `#Comment:` (so concept links stay consistent).
+- `Comment`, `Tag`, and `:r` all prepend lines in the reference editor; if you already have older `#Comment:` or `#Link:` lines, they are not automatically deduped.
 
 ---
 
@@ -192,7 +202,10 @@ Try:
   - The element likely has no `#Link:`. Add one with `:r` or re-import from the source.
 
 - **Tagging didn’t add hashtags into `#Comment:`**
-  - In the `Tag` GUI, ensure “Also add to reference comment” is checked.
+  - In the `Tag` GUI, ensure `Also add to reference comment` is checked.
+
+- **Tagging didn’t append hashtags into the element text**
+  - In the `Tag` GUI, ensure `Also attach to text` is checked.
 
 - **I removed a `#tag` manually but it still seems “linked”**
   - Hashtags in `#Comment:` and concept links are separate. Use `untag ...` so the concept link is removed too.

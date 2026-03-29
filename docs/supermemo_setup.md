@@ -1,6 +1,6 @@
 # SuperMemo Setup Prereqs (for supermemo_vim_ahk)
 
-This guide explains the SuperMemo-side setup that the scripts assume. Its intentionally practical: what must exist, why its required, and what breaks if it doesnt.
+This guide explains the SuperMemo-side setup that the scripts assume. It's intentionally practical: what must exist, why it's required, and what breaks if it doesn't.
 
 If you already use custom template names or concept groups, you can either:
 - Create aliases (templates/concepts with the expected names), or
@@ -8,10 +8,10 @@ If you already use custom template names or concept groups, you can either:
 
 ---
 
-## 1) Required templates (names are case-sensitive)
+## 1) Required templates (hardcoded names)
 
 ### A. `binary` (required for `ImportFile`)
-Why: The `ImportFile` command sets the elements template to `binary` before attaching a file.
+Why: The `ImportFile` command sends the template name `binary` before attaching a file.
 Used by: PDF/EPUB/DjVu/video source elements, incremental reading, AutoPlay.
 Must include:
 - HTML component (first HTML component is reserved for SMVim markers)
@@ -21,8 +21,8 @@ If missing: `ImportFile` fails or uses the wrong template, and AutoPlay wont ope
 
 ---
 
-### B. `YouTube` (optional, but used by a specific path)
-Why: When importing a YouTube URL through the Ctrl+N flow, the script sets template `YouTube`.
+### B. `YouTube` (optional, but used by an older Ctrl+N path)
+Why: When importing a YouTube URL through that Ctrl+N flow, the script sets template `YouTube`.
 If you dont use this flow: you can ignore this.
 If you do: create `YouTube` or rename it in the script.
 
@@ -36,17 +36,18 @@ If you use these shortcuts: create templates with those names or change them in 
 
 ## 2) Concept groups expected by name
 
-Some workflows rely on concept names (hardcoded). Create these concept groups, or rename in code:
+Some workflows rely on concept names (hardcoded). The workflow-critical ones are:
 
 - `Online`
 - `Sources`
-- `ToDo`
 
 Why it matters:
-- The import GUI uses these for online/offline context.
+- `SM.IsOnline(...)` treats `Online` and `Sources` as the concept-level online contexts.
 - If you import into `Online`/`Sources`, the script treats it as an online element and expects a Script component.
 
-If missing: online-element options wont show correctly or will behave inconsistently.
+`ToDo` is also preloaded in the import GUI's concept dropdown, but it is **not** part of `SM.IsOnline(...)` detection.
+
+If `Online`/`Sources` are missing: online-element options wont show correctly or will behave inconsistently.
 
 ---
 
@@ -68,10 +69,11 @@ If missing Script on online concepts: youll see "Script component not found." du
 Many features (read points, page marks, time stamps, "Use online progress") store markers in the first HTML component of a source element.
 
 Rules:
-- The first HTML component must be empty or contain only the marker at the very top.
-- Dont put titles or notes in that first HTML component.
+- The top of the first HTML component must stay reserved for the marker.
+- For reader/local-file source elements, the simplest setup is an otherwise empty first HTML component.
+- For browser/online imports, a reference block or imported content can live below the marker, but dont put your own notes above it.
 
-Why: The automation checks that the first HTML is clean and that the marker is the first content. If it isnt, youll see "Go to source and try again?" or have markers overwritten.
+Why: the automation checks that the marker is still the first detected content. If it isnt, youll see "Go to source and try again?" or have markers ignored/overwritten.
 
 ---
 
@@ -103,7 +105,8 @@ If your online collections have different names, adjust the list in the code.
    - `classic` and `item` (optional shortcuts)
 
 2) Concept groups:
-   - `Online`, `Sources`, `ToDo`
+   - `Online`, `Sources` (workflow-critical)
+   - `ToDo` (optional; only preloaded in the import GUI)
 
 3) Default templates:
    - `Online` / `Sources` -> template with Script component
@@ -121,4 +124,3 @@ If you want to change names instead of creating them:
 - `ImportFile` uses `binary`: `lib/bind/vim_command.ahk`
 - Plain-text shortcut uses `classic`: `lib/bind/smvim_shortcut.ahk`
 - Item shortcut uses `item`: `lib/bind/smvim_shortcut.ahk`
-

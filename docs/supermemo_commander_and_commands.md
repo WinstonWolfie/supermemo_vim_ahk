@@ -36,7 +36,7 @@ The command list is **context-dependent**. When you are focused on SuperMemo win
 
 ## Vim Commander (GUI command palette)
 
-**Trigger**: `<C-;>` (implemented in `lib/bind/vim_command.ahk:40`)
+**Trigger**: `<C-;>` (implemented in `lib/bind/vim_command.ahk`)
 
 ### How the command list is built
 
@@ -55,13 +55,13 @@ When focused on the element window (`TElWind`), you’ll typically see commands 
 
 | Command | What it does |
 |---|---|
-| `ImportFile` | Creates/updates an element for a local file using the `binary` template (source element for PDFs/EPUB/videos). |
+| `ImportFile` | Repurposes the current element into a file-backed source element using the `binary` template and SuperMemo's file-attach flow. |
 | `OpenInAcrobat` | Opens the attached file/path in Acrobat (useful for PDF workflows). |
 | `NukeHTML` | Aggressively rewrite/clean the underlying HTML source file (the “nuke” variant removes many `class=...` attributes; see `docs/supermemo_html_maintenance.md`). |
 | `ReformatVocab` | Runs a vocabulary reformat routine (collection-specific). |
 | `EditReference` | Opens the element reference editor. |
 | `LinkToPreviousElement` | Creates a link to the previous element (workflow helper). |
-| `Comment` / `Tag` / `Untag` | Reference/comment/tag helpers. |
+| `Comment` / `Tag` / typed `untag ...` | Reference/comment/tag helpers. |
 | `ExternaliseRegistry` | Externalizes several registries in bulk (images/sounds/binary/video). |
 | `CalculateTodaysPassRate` / `AllLapsesToday` | Exports repetition history and computes daily stats. |
 
@@ -77,7 +77,7 @@ When your **current collection** is detected as online, Vim Commander also inclu
 | Command | What it does |
 |---|---|
 | `ReformatScriptComponent` | Rewrites script component content in a consistent style (collection-specific). |
-| `SearchLinkInYT` | Searches for the element's `#Link` on YouTube. |
+| `SearchLinkInYT` | Searches YouTube for the element's `#Link`; if no reference link exists, it falls back to the first HTML hyperlink it can read. |
 | `MarkAsOnlineProgress` | Inserts `SMVim: Use online video progress` marker at top of HTML (see `docs/video.md`). |
 
 Notes (user perspective):
@@ -85,7 +85,7 @@ Notes (user perspective):
 - These commands are meant for elements where your source is effectively a URL-backed/script-backed item (common for YouTube and "online element" imports).
 - If you imported a page as an online element but you don't see these commands, it's likely because the current Commander "online" detection is **collection-based** in the current code, not purely "does this element have a Script component?". In that case, the underlying workflows can still work; you just won't see these helper commands in the palette.
 
-Dev note: the Commander list is built in `lib/bind/vim_command.ahk`, and the current online check used there is `SM.IsOnline(, -1)` (see `lib/sm.ahk:455` for what that returns).
+Dev note: the Commander list is built in `lib/bind/vim_command.ahk`, and the current online check used there is `SM.IsOnline(, -1)` (see `lib/sm.ahk` for what that returns).
 
 ### SuperMemo Browser / Plan / Registry commands (high-level)
 
@@ -99,7 +99,7 @@ Depending on the focused window, you’ll see additional commands like:
 
 ## `:` command mode (SuperMemo element windows)
 
-**Trigger**: `:` while in Vim normal mode (implemented in `lib/bind/vim_command.ahk:2` + SM-specific bindings in `lib/bind/smvim_command.ahk:1`).
+**Trigger**: `:` while in Vim normal mode (implemented in `lib/bind/vim_command.ahk` with SM-specific bindings in `lib/bind/smvim_command.ahk`).
 
 These are “single-letter” commands; you press `:` then the command key.
 
@@ -107,7 +107,7 @@ These are “single-letter” commands; you press `:` then the command key.
 
 | Command | Action |
 |---|---|
-| `:r` | Set reference metadata/link from clipboard and captured browser info (writes `#Link`, `#Title`, etc). |
+| `:r` | Prepend reference metadata/link from clipboard and captured browser info (`#Link`, `#Title`, etc.); repeated runs do not dedupe older fields. |
 | `:l` | List links (SuperMemo UI command). |
 | `:L` | Link concept (SuperMemo UI command). |
 
@@ -148,7 +148,8 @@ For the “rewrite HTML on disk” workflow and safety notes, see `docs/supermem
 2. In SuperMemo element window, press `Esc` (ensure browsing/normal mode).
 3. Press `:` then `r` (`:r`).
 
-Result: the element reference gets `#Link:` (and often `#Title:` and other metadata if available).
+Result: `:r` prepends a new `#Link:` line from the clipboard, and may also prepend `#Title/#Source/#Author/#Date/#Comment` from cached `Browser.*` metadata.
+If cached browser title is available, it may also update the element title; repeated runs prepend new fields rather than rewriting old ones.
 
 ### Recipe: One-stop “do a thing” menu (when you forget a command)
 

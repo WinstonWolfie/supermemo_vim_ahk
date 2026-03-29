@@ -24,7 +24,7 @@ The script extracts the formula from the image `alt=` (or `title=`), copies the 
 ## Notes
 
 - Works only in SuperMemo when an HTML component is focused (`SM.IsEditingHTML()`); it will not trigger in browsing mode.
-- Requires internet access at runtime (it downloads from `https://latex.vimsky.com/...`).
+- Requires internet access at runtime (it downloads from `https://latex.codecogs.com/...`).
 - The LaTeX formula is stored in the image tag (as `alt="..."`) so it can be recovered later.
 - The script normalizes common LaTeX wrappers copied from sites like Wikipedia/LibreTexts (e.g. strips `\(...\)`, `\[...\]`, `{\displaystyle ...}`).
 - It also writes/updates a hidden “anti-merge” marker in the HTML. If you want it invisible, add this to your SuperMemo stylesheet:
@@ -43,7 +43,7 @@ The script extracts the formula from the image `alt=` (or `title=`), copies the 
 
 ### No image appears / conversion hangs
 
-- Network access may be blocked, or `latex.vimsky.com` may be unreachable.
+- Network access may be blocked, or `latex.codecogs.com` may be unreachable.
 - The downloaded file is saved under your collection’s `elements\\LaTeX\\`; check that folder for the PNG.
 
 ### Image -> LaTeX returns empty

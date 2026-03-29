@@ -15,7 +15,7 @@ This section is a self-contained guide to get you productive with incremental re
 - This script running and enabled (check tray icon)
 - A SuperMemo template named `binary` (required for ImportFile command)
 
-### Step 1: Create a source element
+### Step 1: Prepare the current element as a source element
 
 You need a SuperMemo element that links to your file (PDF, EPUB, etc.). The easiest way:
 
@@ -23,11 +23,15 @@ You need a SuperMemo element that links to your file (PDF, EPUB, etc.). The easi
 2. Type `ImportFile` and press Enter
 3. In SuperMemo's file browser, select the file you want to import
 4. When prompted "Do you want to also delete the file?", choose:
-   - **No**: keep the original file where it is
+   - **No**: keep the original file where it is (the script may then offer to rename it with an `IMPORTED_...` prefix)
    - **Yes**: delete the original after SuperMemo imports it
    - **Cancel**: abort the automation (you can still import manually in SuperMemo)
+5. Immediately after import, use SuperMemo's normal reference workflow to create a standard reference block for the element
+   - The goal is simply to make the element show `#SuperMemo Reference:` in browsing mode
+   - For local files, the exact fields are flexible; even a minimal reference is fine
+   - Why this extra step matters: `ImportFile` attaches the file, but it does not create the SuperMemo reference block for you. In the local-file reader workflow, the first external-reader extract (`<A-x>`) or marker sync (`<A-S-s>`) expects that normal reference-backed state to already exist.
 
-This creates an element with an HTML component (for markers) and a binary component (the file).
+This repurposes the current element as a source element with an HTML component (for markers) and a binary component (the file).
 
 **Important**: Treat the source element's **first HTML component** as *reserved for SMVim markers*.
 Leave it empty (or containing only an `SMVim ...` marker at the very top).
@@ -108,13 +112,19 @@ These workflows require a SuperMemo element with:
 2. Type `ImportFile` and press Enter
 3. In SuperMemo's file browser (`TFileBrowser`), select the file you want to import
 4. Answer the script prompt "Do you want to also delete the file?"
+5. In SuperMemo, use the built-in reference workflow to create a normal reference block so the element shows `#SuperMemo Reference:`
 
-This sets the element template to `binary` and walks you through file attachment (see `lib/bind/vim_command.ahk:580`).
+This sets the current element's template to `binary` and walks you through file attachment.
+It does **not** create the SuperMemo reference block automatically.
 
-**Requirement**: You need a SuperMemo template named `binary`. Create one if it doesn't exist. **Important**: The template name must be exactly `binary` (case-sensitive) as the automation hardcodes this name.
+Why the reference is necessary: for local files, the first reader-side extract or marker sync expects the source element to already be in SuperMemo's normal reference-backed state.
 
-**Manual setup**: If you already have an element for your file, ensure it has an HTML component.
-The automation expects the **first HTML component** to be empty (or to contain only an `SMVim ...` marker at the very top).
+
+**Requirement**: `ImportFile` sends the literal template name `binary`. If your setup uses a different template name, either create `binary` or change the script.
+
+**Manual setup**: If you already have an element for your file, ensure it has an HTML component and a normal SuperMemo reference block.
+For local-file workflows, the first reader-side extract/sync works best once the element already shows `#SuperMemo Reference:` in browsing mode.
+After that, the first HTML component should stay empty except for the `SMVim ...` marker at the top.
 If you put anything else there (e.g., the PDF title as the first line), you'll likely see a "Go to source and try again?" prompt during extraction/marker syncing.
 
 ### Reader-specific setup
@@ -378,7 +388,7 @@ This produces a `.txt` file beside the original `.epub`.
 | Hotkey | Action |
 |--------|--------|
 | `p` | AutoPlay — open file and jump to marker |
-| `<C-;>` → `ImportFile` | Create source element for file |
+| `<C-;>` → `ImportFile` | Prepare the current element for the file |
 | `<C-;>` → `OpenInAcrobat` | Open current element's file in Acrobat |
 
 ### SumatraPDF-specific
@@ -453,7 +463,7 @@ This appears when the current element's **first HTML component** isn't empty or 
 
 Options:
 - **Yes**: Navigate to the parent/source element and retry
-- **No**: Execute in the current element anyway (marker may conflict with existing content)
+- **No**: Stay on the current element. If the HTML is not a clean source surface, the script can fall back to copying the text/marker instead of forcing it into that element.
 - **Cancel**: Abort the operation
 
-For cleanest workflow, keep source elements with empty HTML (or only the marker). Put titles in the element title, and keep notes in a different component if you want to preserve them.
+For cleanest workflow, keep reader/local-file source elements with an otherwise empty first HTML component (or only the marker). Put titles in the element title, and keep notes in a different component if you want to preserve them.

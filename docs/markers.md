@@ -7,8 +7,8 @@ This page defines what those markers are, where they are stored, and the rules t
 ## Where markers are stored
 
 - Markers are written into the element's **first HTML component**.
-- The marker must be the **first content line** in that HTML component (top of the HTML).
-- If you edit the HTML and move the marker below other content, the script may not detect it reliably.
+- The marker must be the **first detected text item** at the top of that HTML component.
+- Detection is stricter than a casual "first line wins" rule: the code only inspects the first UIA text item, and if that first detected item is not an SMVim marker, marker detection stops.
 
 ## Marker types
 
@@ -23,16 +23,16 @@ This page defines what those markers are, where they are stored, and the rules t
 
 ## Precedence / conflicts
 
-- Detection is effectively "first line wins".
-- If you have multiple SMVim markers, only the marker that appears first in the HTML is treated as active.
-- Recommended: keep **at most one** SMVim marker at the top of the first HTML component.
+- Only the first detected SMVim marker is treated as active.
+- If some other text comes before the marker, the marker is ignored.
+- Recommended: keep **at most one** SMVim marker at the very top of the first HTML component.
 
 ## How to (re)write a marker
 
-Markers are typically written/updated by the context-sensitive sync hotkeys (e.g. `<A-S-s>`, `<C-A-s>`, `<C-S-A-s>`) when a supported app is focused (browser/PDF reader/mpv/Calibre).
+Markers are typically written/updated by the context-sensitive sync hotkeys (for example `<A-S-s>`, `<C-A-s>`, `<C-S-A-s>`) when a supported app is focused (browser/PDF reader/mpv/Calibre).
 
 If the script prompts "Go to source and try again?":
 
-- Use a "source element" whose first HTML component is empty (or contains only the SMVim marker).
-- Or use import/IWB to create a fresh element, then keep that as the source element for subsequent extracts/markers.
-
+- Keep the top of the first HTML component clean enough for marker updates.
+- For reader/local-file source elements, the simplest setup is an otherwise empty first HTML component with only the marker at the top.
+- For browser/online elements, a reference block or imported content can exist **below** the marker, but nothing should appear above it.

@@ -31,8 +31,10 @@ A minimal workflow that “just works” for incremental reading in the browser.
 
 In your browser, open the page you want to read and capture.
 
-- Press `<C-A-a>` to import quickly (defaults)
+- Press `<C-A-a>` to import quickly (defaults; uses the current collection)
 - Or press `<C-S-A-a>` to import with options (recommended when you care about where it goes / tags / online vs offline)
+
+If multiple SuperMemo collections are open and you use the GUI import, it also lets you pick which open collection to import into.
 
 This creates a new element with a SuperMemo reference block (`#Link`, `#Title`, …).
 
@@ -40,14 +42,14 @@ This creates a new element with a SuperMemo reference block (`#Link`, `#Title`, 
 
 ### Step 2: While reading, capture knowledge in one of two ways
 
-- **IWB (excerpt → new element):** select a small excerpt and press `<C-S-A-b>`
+- **IWB (excerpt → new element):** select a small excerpt and press `<C-A-b>` for a fast/default import, or `<C-S-A-b>` for the IWB GUI
   - Best when you want lots of small items.
 - **Extract (excerpt → current element):** select text and press `<A-x>`
   - Best when you’re building extracts inside a single source element.
 
 ### Step 3: Save your place (read point marker)
 
-On a normal (non-video) webpage:
+On a normal (non-video) webpage in a **non-online SuperMemo context**:
 
 1. Select a short, unique snippet close to where you stopped reading
 2. Press `<A-S-s>` (Alt+Shift+S)
@@ -156,6 +158,10 @@ Common fields (always shown in GUI import):
 
 Options shown only in some contexts:
 
+- **Collection**
+  - Shown when you have multiple SuperMemo collections open.
+  - Lets you import into another already-open collection.
+
 - **Import as online element**
   - Shown for non-IWB imports when you’re not already importing into an “online” context.
   - Recommended if you want reliable resume via `p`.
@@ -196,13 +202,15 @@ Context: browser focused; selection required; SuperMemo open.
 
 ### Hotkey
 
-- `<C-S-A-b>`: IWB (opens a small import GUI)
+- `<C-A-b>`: IWB fast import using defaults in the current collection
+- `<C-S-A-b>`: IWB with GUI
 
 ### Steps
 
 1. Select a small excerpt on the page (keep it short).
-2. Press `<C-S-A-b>`.
+2. Press `<C-A-b>` for a fast/default IWB import, or `<C-S-A-b>` if you want the GUI.
 3. Optionally fill:
+   - collection (only when multiple SuperMemo collections are open)
    - priority
    - concept group
    - tags (`;`-separated, without `#`)
@@ -276,7 +284,7 @@ SMVim read point: <your snippet>
 
 Internally it’s wrapped in a highlight span, but you normally don’t need to care.
 
-See `docs/markers.md` for marker precedence rules (first line wins; keep one marker at the top).
+See `docs/markers.md` for marker precedence rules (keep one marker as the first detected content at the top).
 
 ### If you didn’t select text
 
@@ -319,11 +327,11 @@ This is for when you already have an element, but you want to populate/update `#
 - Captures browser metadata into the script’s `Browser.*` fields (title/source/author/date when available)
 
 2) In SuperMemo, enter command mode (`:`), then press `r`
-- Writes a reference block into the element’s reference fields using:
+- Prepends reference fields using:
   - URL from clipboard
   - cached `Browser.Title/Source/Author/Date/Comment` (if available)
 
-**Tip:** Run `:r` immediately after `<C-A-l>` for best results (metadata is cached and cleared after reference update).
+**Tip:** Run `:r` immediately after `<C-A-l>` for best results (metadata is cached and cleared after reference update). If cached browser title is available, `:r` may also update the element title, and repeated runs prepend new fields rather than deduping older ones.
 
 ---
 
@@ -335,6 +343,7 @@ This is for when you already have an element, but you want to populate/update `#
 |--------|--------|
 | `<C-A-a>` | Import current page (fast) |
 | `<C-S-A-a>` | Import current page (GUI) |
+| `<C-A-b>` | IWB: selection → new element (fast/default) |
 | `<C-S-A-b>` | IWB: selection → new element (GUI) |
 | `<A-x>` | Extract selection into current element |
 | `<A-S-s>` | Save read point marker (non-video pages; selection required) |
@@ -369,9 +378,13 @@ This is for when you already have an element, but you want to populate/update `#
 ### Import prompts “Continue import?”
 - Import does a duplicate check by URL. Choose Yes to proceed, No/Cancel to stop.
 
+### Imported into the wrong collection
+- When multiple SuperMemo collections are open, use the GUI import (`<C-S-A-a>` or `<C-S-A-b>`) so you can choose the target collection explicitly.
+- Fast import (`<C-A-a>` / `<C-A-b>`) uses the current collection.
+
 ### “Go to source and try again?” prompt
-- The script expects to write markers/extracts into a “clean” source element (empty HTML or only a marker).
-- Keep a dedicated source element for the page, and put extracts in child elements.
+- The script expects the marker/update surface at the top of the first HTML component to stay clean.
+- Keep a dedicated source element for the page, keep the marker first, and put extracts or notes below it (or in child elements).
 
 ### I pressed `<A-S-s>` and got asked for a time stamp
 - You likely didn’t select text, or you’re on a video/online context where the same keys sync time stamps.
@@ -382,7 +395,7 @@ This is for when you already have an element, but you want to populate/update `#
 - Or use `gs` as a manual fallback.
 
 ### AutoPlay (`p`) doesn't see the read point
-- The marker must be the first line in the element's first HTML component. If you edited HTML and moved it down, re-save/sync the marker so it's back on top.
+- The marker must remain the first detected content in the element's first HTML component. If you edited HTML and moved it down, re-save/sync the marker so it's back on top.
 
 ### "Script component not found." during import
 - This happens when importing as an **online element** but your SuperMemo template doesn't provide a Script component that the automation can edit.

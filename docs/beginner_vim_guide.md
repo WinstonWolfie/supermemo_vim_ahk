@@ -65,7 +65,9 @@ To actually edit content, you must enter **SuperMemo editing**:
 
 - `q` = edit the **first question** component
 - `a` = edit the **first answer** component
-- then `i` = enter Insert mode (type normally)
+- once the caret exists, `i` = enter Insert mode (type normally)
+
+In browsing mode, `i` by itself changes the script mode but does not create the caret.
 
 To exit editing and go back to browsing:
 
@@ -92,6 +94,7 @@ To resume later:
 - Press `p` (**AutoPlay**)
 
 You’ll be prompted to jump/search based on the marker type.
+For browser/PDF-style markers that usually means a search/jump prompt; for local video files the current implementation stores the time stamp but does not automatically seek `mpv` to it when reopening.
 
 ---
 
@@ -305,7 +308,7 @@ What appears depends on what window is focused (element window, browser, plan, r
 
 Beginner-friendly Commander commands:
 
-- `ImportFile` (create a source element for PDFs/EPUBs/videos)
+- `ImportFile` (prepare the current element as a source element for PDFs/EPUBs/videos)
 - `OpenInAcrobat` (force Acrobat and enable Acrobat page-jump logic)
 - `Tag` / `Comment` (reference/tag workflows)
 - `NukeHTML` (aggressive HTML cleanup — use later, carefully)
@@ -344,10 +347,11 @@ Most of this repo’s “magic” is one repeating loop:
 
 ### The marker rule that matters
 
-Markers are stored in the element’s **first HTML component** and must be the **first line**.
+Markers are stored in the element’s **first HTML component** and the marker must stay the **first detected content** there.
 
-Keep the source element’s first HTML component **empty** (or containing only the marker).
-If you put your own notes/title there, the automation may prompt:
+For reader/local-file source elements, the simplest setup is an otherwise empty first HTML component.
+For browser/online elements, keep the marker first and put any reference block or notes below it.
+If you put your own notes/title above the marker, the automation may prompt:
 
 - “Go to source and try again?”
 
@@ -392,7 +396,7 @@ In SuperMemo, on the source element:
 
 Full detail: `docs/readers.md` (Calibre quick start: `docs/epub.md`).
 
-### Create the source element (recommended)
+### Prepare the source element (recommended)
 
 In SuperMemo:
 
@@ -425,7 +429,7 @@ In your reader:
 
 Full detail: `docs/video.md`.
 
-### Create a source element
+### Create or prepare a source element
 
 - **YouTube**: import from browser (`<C-A-a>` / `<C-S-A-a>`)
 - **Local files**: `<C-;>` → `ImportFile`
@@ -446,7 +450,7 @@ To clear the time stamp (set to `0:00`), use the Backtick versions:
 
 From the SuperMemo source element:
 
-- `p` = AutoPlay (marker-aware)
+- `p` = AutoPlay (marker-aware where supported; local video timestamps are stored but not auto-seeked)
 - `P` = view file / play in default player / edit script component (context dependent)
 - `<A-s>` = copy marker content if a marker exists (read point / page mark / time stamp)
 
@@ -481,7 +485,7 @@ More: `docs/supermemo_references_tags_concepts.md`.
 ### AutoPlay (`p`) doesn’t resume where I left off
 Common causes:
 
-- You synced a marker, but it isn’t the **first line** in the **first HTML component**.
+- You synced a marker, but it is no longer the **first detected content** in the **first HTML component**.
 - You’re on an extract child element, not the source element.
 - The element has no script/binary component to open the external content.
 

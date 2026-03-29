@@ -30,7 +30,7 @@ Most users bounce between the two:
 - `supermemo_setup.md` — required SuperMemo setup (templates, concept groups, defaults) and why certain features depend on them.
 - `markers.md` — the marker system (`SMVim read point/page mark/time stamp/...`) that powers resume/AutoPlay across tools.
 
-If you only read two docs first, read those.
+If you only read two docs first, start with `supermemo_core.md` and `markers.md`.
 
 ---
 
@@ -43,7 +43,7 @@ If you only read two docs first, read those.
 
 Key ideas:
 
-- Create a **source element** for the file (often via Vim Commander `ImportFile`).
+- Prepare a **source element** for the file (often via Vim Commander `ImportFile`).
 - Use `<A-x>` in the reader to extract selection into SuperMemo.
 - Use `<A-S-s>` in the reader to write a marker; later press `p` in SuperMemo to resume.
 

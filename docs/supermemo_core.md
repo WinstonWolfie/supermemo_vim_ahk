@@ -61,7 +61,7 @@ These are the most important SuperMemo window classes used by the bindings:
 | Tasklist | `TTaskManager` | Task navigation / edit-focus helpers. |
 | Registry | `TRegistryForm` | Concept/reference/other registries; used heavily by “link concept” + tagging. |
 
-The state helpers are in `lib/sm.ahk:69` (editing/browsing/grading) and `lib/sm.ahk:99` (navigating windows).
+The state helpers live in `lib/sm.ahk`.
 
 ---
 
@@ -115,15 +115,17 @@ The script often switches to `Insert` automatically when:
 
 - a SuperMemo dialog opens that expects typing (find boxes, input dialogs, plan edit controls, etc.)
 
-See `lib/bind/smvim_enter_insert.ahk:1`.
+See `lib/bind/smvim_enter_insert.ahk`.
 
 ### How you usually move between states
 
 Common patterns in the element window:
 
-- **Browse → edit**: `q` (edit question) / `a` (edit answer) / `i` (enter Insert)
+- **Browse → edit**: `q` (edit question) / `a` (edit answer)
+- **While already editing**: `i` switches the script to `Insert` mode
 - **Edit → browse**: `Esc` (exit editing and return to Vim normal mode)
 
+In browsing mode, `i` alone changes the script mode but does not create a SuperMemo caret.
 When in doubt, press `Esc` once or twice.
 
 ---
@@ -135,7 +137,7 @@ When browsing in `TElWind`, there are two “prefix” mechanics:
 - **Leader**: press `'` (single quote) to enter a leader state for certain bindings.
 - **`g` prefix**: press `g` to enter a temporary `g`-state (then `gs`, `g0`, `gc`, etc.).
 
-These are tracked in `Vim.State` (`lib/vim_state.ahk:1`) and used heavily in `lib/bind/smvim_browsing.ahk:1`.
+These are tracked in `Vim.State` (`lib/vim_state.ahk`) and used heavily in `lib/bind/smvim_browsing.ahk`.
 
 Tip:
 
@@ -150,7 +152,7 @@ This repo supports a SuperMemo-specific behavior where `Esc` can:
 - send a real `Esc` to SuperMemo (to exit dialogs / exit editing)
 - also return the script to `Vim_Normal`
 
-This is controlled by the `SMVimSendEscInsert` setting (see `README.md`) and implemented in `lib/vim_state.ahk:113`.
+This is controlled by the `SMVimSendEscInsert` setting (see `README.md`) and implemented in `lib/vim_state.ahk`.
 
 Practical guidance:
 
@@ -184,4 +186,4 @@ If you get stuck in a Plan/Tasklist/edit box state:
   - You’re likely still “editing” (caret active). Exit with `Esc` until browsing state.
 
 - **A key meant for editing does nothing**
-  - You might be browsing (no caret). Enter editing via `q`/`a`/`i`.
+  - You might be browsing (no caret). Enter editing via `q` or `a`; once the caret exists, `i` switches the script to Insert mode.

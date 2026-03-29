@@ -16,9 +16,10 @@ Hotkey notation: `<C-A-s>` means Ctrl+Alt+S (C=Ctrl, A=Alt, S=Shift). See `READM
   - YouTube in a supported browser (UI Automation), or
   - A local video file opened in `mpv` (recommended)
 
-### Step 1: Create a source element
+### Step 1: Create or prepare a source element
 
 Create one SuperMemo element that represents the video. The element should have an HTML component (for markers).
+For YouTube imports the workflow creates a new element; for local files `ImportFile` repurposes the current element.
 
 - **YouTube**: see [YouTube](#youtube).
 - **Local file**: see [Local Files](#local-files).
@@ -43,7 +44,7 @@ To clear a time stamp (set to `0:00`), use the Backtick variants:
 
 Navigate to the source element in SuperMemo and use:
 
-- `p`: AutoPlay (open and resume based on the element's active marker)
+- `p`: AutoPlay (open and resume where supported; for local files it currently opens the file but does **not** seek to the stored time stamp)
 - `P`: play in default system player / edit script component (useful for file/script-backed elements)
 
 That's it! The sections below provide full details on each workflow.
@@ -125,9 +126,9 @@ These hotkeys work while your browser (or `mpv`) is focused, as long as SuperMem
 Depending on the element and the active video source, sync updates one of:
 
 - A top-of-HTML marker: `SMVim time stamp: 1:23`
-- For some YouTube/online templates, the Script component URL (e.g. add/update `&t=123s`)
+- For supported Script-component URLs (currently YouTube/Bilibili), the URL itself with a time parameter
 
-If the script can't reliably read the time stamp, it prompts you to type it.
+If the URL can't be rewritten for that site, the workflow falls back to the HTML marker path. If the script can't reliably read the time stamp, it prompts you to type it.
 
 ## YouTube
 
@@ -135,8 +136,8 @@ If the script can't reliably read the time stamp, it prompts you to type it.
 
 Context: browser focused; SuperMemo open with an element window.
 
-- `<C-S-A-a>`: open the import GUI (priority, concept, tags, comment, etc.)
-- `<C-A-a>`: fast import using defaults
+- `<C-S-A-a>`: open the import GUI (priority, concept, tags, comment, collection picker when multiple collections are open, etc.)
+- `<C-A-a>`: fast import using defaults in the current collection
 
 If you use the GUI, YouTube-relevant options include:
 
@@ -153,9 +154,9 @@ After import, you should get a SuperMemo element whose reference includes at lea
 
 Pick one resume mode per element:
 
-- **Mode 1: time stamps (marker or Script URL `&t=`)**
+- **Mode 1: time stamps (marker or supported script-URL rewrite)**
   - Deterministic: your resume is based on the time you last synced.
-  - Works best when imported as an online element (Script component with `url ...`).
+  - Works best when imported as an online element with a Script component.
 
 - **Mode 2: YouTube's own watch progress**
   - Add the marker `SMVim: Use online video progress` (and keep it as the first marker).
@@ -185,27 +186,27 @@ Context: SuperMemo element window focused; open Vim Commander (`<C-;>`).
 
 ## Local Files
 
-### Create a source element for a local video
+### Prepare the current element as a source element for a local video
 
 Context: SuperMemo focused; open Vim Commander (`<C-;>`).
 
 1. Run `ImportFile`.
 2. Follow the prompts.
 
-This expects you have a SuperMemo template named `binary` (see `lib/bind/vim_command.ahk:580`).
+This repurposes the current element and expects you have a SuperMemo template named `binary`.
 
 ### Open the local video from SuperMemo
 
 Context: SuperMemo element window focused (browsing mode, not editing text).
 
 - `P`: open the file ("View file") using your default system player
-- `p`: SuperMemo AutoPlay (`SM.AutoPlay()` / `<C-F10>`)
+- `p`: SuperMemo AutoPlay (`SM.AutoPlay()` / `<C-F10>`) to open the file
 
 Windows file associations determine which player opens the file (recommended: `mpv`).
 
 ### Note on resuming local files
 
-The stored time stamp is primarily for "save your place" and display/copy. There is currently no reliable automatic "seek mpv to this time" step when reopening the file.
+The stored time stamp is primarily for "save your place" and display/copy. There is currently no reliable automatic "seek mpv to this time" step when reopening the file, so `p`/`P` reopen the file but do not jump to the saved position.
 
 ## Quick Reference
 
@@ -224,7 +225,7 @@ The stored time stamp is primarily for "save your place" and display/copy. There
 
 | Hotkey | Action |
 |--------|--------|
-| `p` | AutoPlay - open/resume video |
+| `p` | AutoPlay - open video / resume when the underlying workflow supports it |
 | `P` | View file / edit Script component |
 | `<A-s>` | Copy marker content (time stamp, etc.) if present |
 
@@ -232,7 +233,7 @@ The stored time stamp is primarily for "save your place" and display/copy. There
 
 | Command | Action |
 |--------|--------|
-| `ImportFile` | Create a source element for a local file |
+| `ImportFile` | Prepare the current element for a local file |
 | `MarkAsOnlineProgress` | Insert `SMVim: Use online video progress` marker |
 | `yt <query>` | Open YouTube search |
 | `WatchLaterYT` | Open Watch Later playlist |
@@ -253,8 +254,8 @@ The stored time stamp is primarily for "save your place" and display/copy. There
 
 ### AutoPlay doesn't see the marker
 
-- The marker is only detected if it's the first content in the first HTML component. If you've edited the HTML, re-sync so the marker is rewritten at the top.
-- Avoid keeping multiple SMVim markers at the top of the same element (first line wins).
+- The marker is only detected if it remains the first detected content in the first HTML component. If you've edited the HTML, re-sync so the marker is rewritten at the top.
+- Avoid keeping multiple SMVim markers at the top of the same element; only the first detected marker is active.
 
 ### YouTube time stamp not detected
 
@@ -267,5 +268,5 @@ The stored time stamp is primarily for "save your place" and display/copy. There
 
 ### "use online video progress" doesn't work
 
-- Ensure `SMVim: Use online video progress` is the first content in the first HTML component (first line wins).
+- Ensure `SMVim: Use online video progress` is the first detected content in the first HTML component.
 - Remove or move any `SMVim time stamp: ...` marker above it, or the script will treat the time stamp as active.

@@ -156,7 +156,7 @@ Use when:
   - You’re in a plain-text component or there is no HTML component. Switch components (`gc` / `gC` while in SuperMemo browsing mode) and retry.
 
 - **Cleaning “breaks” cloze/extract formatting**
-  - Some formatting depends on classed spans. If you need those preserved, prefer `:f` over `:F`, or run `:F` only after you’re done extracting/clozing.
+  - Some formatting depends on classed spans. If you need those preserved, prefer `:F` over `NukeHTML`; `:f` is the gentler UI cleanup, but it is not the same file-level rewrite as `:F`.
 
 - **Markers stop working after cleaning**
-  - Markers must be the first content in the first HTML component. Re-sync the marker (from the relevant external app) so it gets rewritten at the top.
+  - Markers must remain the first detected content in the first HTML component. Re-sync the marker (from the relevant external app) so it gets rewritten at the top.

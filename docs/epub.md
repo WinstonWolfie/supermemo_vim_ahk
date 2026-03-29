@@ -30,11 +30,14 @@ All these hotkeys work the same across PDF readers, EPUB readers, etc. See [`doc
 
 ## Workflow summary
 
-1. **Create source element**: In SuperMemo, use `<C-;>` → `ImportFile` to attach your `.epub`
-2. **Open and read**: Press `p` from SuperMemo to open in Calibre
-3. **Extract**: Select text, press `<A-x>`
-4. **Save position**: Before closing, select distinctive text and press `<A-S-s>`
-5. **Resume**: Return to the element in SuperMemo, press `p`, confirm to search read point
+1. **Prepare source element**: In SuperMemo, use `<C-;>` → `ImportFile` to attach your `.epub` to the current element
+2. **Create a standard SuperMemo reference**: right after import, use SuperMemo's normal reference workflow so the element shows `#SuperMemo Reference:`
+3. **Open and read**: Press `p` from SuperMemo to open in Calibre
+4. **Extract**: Select text, press `<A-x>`
+5. **Save position**: Before closing, select distinctive text and press `<A-S-s>`
+6. **Resume**: Return to the element in SuperMemo, press `p`, confirm to search read point
+
+Why step 2 is necessary: `ImportFile` attaches the EPUB, but it does not create the SuperMemo reference block. In the reader workflow, the first extract/read-point sync expects that normal reference-backed state to already exist. 
 
 ## EPUB to TXT conversion
 

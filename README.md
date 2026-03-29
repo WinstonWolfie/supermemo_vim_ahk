@@ -388,7 +388,7 @@ Note: IE-specific actions use `iexplore.exe`; if IE is removed/disabled on your 
 
 `p`: AutoPlay (= `Ctrl + F10`), with SMVim marker support (see below)
 
-`P`: open/play the current component's file (uses SuperMemo "view file"; may open in `mpv` or the script editor). If a `SMVim time stamp: ...` marker exists and `mpv` is opened, it attempts to start playback.
+`P`: open/play the current component's file (uses SuperMemo "view file"; may open in `mpv` or the script editor). If a `SMVim time stamp: ...` marker exists and `mpv` is opened, the script sends `Space` once, but it does **not** seek to the stored time stamp.
 
 `n`: add topic (= `Alt + N`)
 
@@ -567,14 +567,15 @@ Note: in plain-text components, visual `m` wraps the selection in `*...*` (inste
 Some SuperMemo-only Commander commands include:
 
 - In `TElWind` / `TContents`: `SetConceptHook`, `MemoriseChildren`
-- In `TElWind` (element window): `NukeHTML`, `ReformatVocab`, `ImportFile`, `EditReference`, `LinkToPreviousElement`, `OpenInAcrobat`, `CalculateTodaysPassRate`, `AllLapsesToday`, `ExternaliseRegistry`, `Comment`, `Tag`, `Untag`
+- In `TElWind` (element window): `NukeHTML`, `ReformatVocab`, `ImportFile`, `EditReference`, `LinkToPreviousElement`, `OpenInAcrobat`, `CalculateTodaysPassRate`, `AllLapsesToday`, `ExternaliseRegistry`, `Comment`, `Tag`
 - In `TElWind` when the element is online: `ReformatScriptComponent`, `SearchLinkInYT`, `MarkAsOnlineProgress`
 - In `TElWind` when editing: `ClozeAndDone!` (when editing any text), plus HTML-only helpers like `MakeHTMLUnique`, `CenterTexts`, `AlignTextsRight`, `AlignTextsLeft`, `ItalicText`, `UnderscoreText`, `BoldText`
-- In `TBrowser` (SuperMemo browser): `MemoriseCurrentBrowser`, `SetBrowserPosition`, `MassReplaceReference`, `MassProcessBrowser`, `Tag`, `Untag`
+- In `TBrowser` (SuperMemo browser): `MemoriseCurrentBrowser`, `SetBrowserPosition`, `MassReplaceReference`, `MassProcessBrowser`, `Tag`
 - In `TPlanDlg` (plan): `SetPlanPosition`
 - In `TRegistryForm` (registry): `MassReplaceRegistry`, `MassProcessRegistry`
 
 The Commander list is built dynamically based on the active window/context (`lib/bind/vim_command.ahk`).
+The typed Commander command `untag tag1;tag2` still works even though `Untag` is no longer advertised as a fixed list item.
 
 Additional SuperMemo-only shortcuts not listed above:
 
@@ -592,13 +593,13 @@ These work from a browser/PDF reader/Word/etc while SuperMemo is open:
 
 Currently includes explicit support for common browsers (Chrome/Firefox/etc), SumatraPDF, Acrobat, Calibre ebook viewer, MS Word, and WinDjView.
 
-`<A-S-d>`: check duplicates in SuperMemo (uses selected text if any, otherwise uses the current URL)
+`<A-S-d>`: check duplicates in SuperMemo (uses selected text if any; in browsers it can otherwise fall back to the current URL)
 
 `<A-x>` / `<A-S-x>` / `<C-A-x>` / `<C-S-A-x>`: extract selection into SuperMemo (variants change flow, e.g. priority prompt / whether you return to the previous app)
 
-`<C-A-a>` / `<C-S-A-a>`: import current webpage/video into SuperMemo (shows an import GUI for priority/concept/tags/comment/etc)
+`<C-A-a>` / `<C-S-A-a>`: import current webpage/video into SuperMemo (GUI includes priority/concept/tags/comment, and can also choose the target collection when multiple collections are open)
 
-`<C-S-A-b>`: incremental web browsing (IWB) import from selected text (opens the same import GUI as above, but seeded from clipboard/selection)
+`<C-A-b>` / `<C-S-A-b>`: incremental web browsing (IWB) import from selected text (`<C-A-b>` = fast/default, `<C-S-A-b>` = GUI)
 
 If you trigger an extract with no selection, it can prompt for a chapter/section title and create an element accordingly.
 
