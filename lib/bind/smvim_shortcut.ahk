@@ -85,7 +85,6 @@ return
       return
     }
     if (MsgBox(3,, "Make children this concept too?") = "Yes") {
-      WinWaitActive, ahk_class TElWind
       WinActivate, % wBrowser
       WinWaitActive, % wBrowser
       Send {AppsKey}pg
@@ -163,6 +162,7 @@ return
 
 ^!p::  ; convert to a *p*lain-text template
 ^!i::  ; convert to the "item" template
+^!o::  ; convert to cl*o*ze template
   ContLearn := SM.IsLearning()
   KeyWait Ctrl
   KeyWait Alt
@@ -171,6 +171,8 @@ return
     Template := "classic"  ; my plain-text template name is classic
   } else if (A_ThisLabel == "^!i") {
     Template := "item"
+  } else if (A_ThisLabel == "^!o") {
+    Template := "Z"
   }
   SM.SetElParam(,, Template)
   WinWaitClose, ahk_class TElParamDlg
@@ -733,6 +735,12 @@ return
   SM.RegAltG()
   WinWaitActive, ahk_class TElWind
   Goto SMNeuralReviewChildren
+return
+
+^!n::
+  Send !b
+  SM.WaitBrowser()
+  Goto SMBrowserNeuralReview
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)$"))

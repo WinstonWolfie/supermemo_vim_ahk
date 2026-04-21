@@ -3,17 +3,17 @@
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsEditingText())
 +h::  ; move to top of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  SM.Click("h")
+  SM.ClickText("h")
 Return
 
 +m::  ; move to middle of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  SM.Click("m")
+  SM.ClickText("m")
 Return
 
 +l::  ; move to bottom of screen
   KeyWait Shift  ; to avoid clicking becomes selecting
-  SM.Click("l")
+  SM.ClickText("l")
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && SM.IsBrowsing() && Vim.State.g && VimLastSearch)
@@ -125,9 +125,9 @@ return
 <::
   KeyWait Shift
   if (A_ThisLabel == ">") {
-    SM.EditBar(21) 
+    SM.ClickEditBar(21) 
   } else if (A_ThisLabel == "<") {
-    SM.EditBar(20)
+    SM.ClickEditBar(20)
   }
   Vim.State.SetMode("Vim_Normal")
 return
@@ -142,7 +142,9 @@ return
    || SM.IsGrading()
    || (WinActive("A") == SMImportGuiHwnd)
    || SM.IsPrioInputBox()
-   || WinActive("ahk_class TPriorityDlg")))
+   || WinActive("ahk_class TPriorityDlg")
+   || WinActive("Input number ahk_class TInputDlg")
+   || WinActive("ahk_class TBrImp")))
 ; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
 ; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png

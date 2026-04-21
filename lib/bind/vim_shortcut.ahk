@@ -293,6 +293,7 @@ return
   KeyWait Ctrl
   KeyWait Alt
   KeyWait Shift
+
   if ((hSumatra := WinActive("ahk_class SUMATRA_PDF_FRAME")) && IfContains(ControlGetFocus(), "Edit"))
     Send {Esc}
   if (hSumatra && (A_ThisLabel == "!+s"))
@@ -309,13 +310,13 @@ return
   }
 
   if (hSumatra || (hDJVU := WinActive("ahk_exe WinDjView.exe")) || WinActive("ahk_class AcrobatSDIWindow")) {
-
     if (!ReadPoint) {
       if (hAcrobat := WinActive("ahk_class AcrobatSDIWindow")) {
         PageNumber := GetAcrobatPageBtn().Value
       } else {
         PageNumber := ControlGetText("Edit1", "A")
       }
+
       if (!PageNumber) {
         SetToolTip("No text selected and page number not found.")
         Clipboard := ClipSaved
@@ -329,10 +330,12 @@ return
         WinWait, Unsaved annotations,, 0
         if (!ErrorLevel)
           ControlClick, Button1,,,,, NA
+
       } else if (hDJVU) {
         Send ^w
         WinWaitTitle("WinDjView", "A", 1500)
         WinClose, % "ahk_id " . hDJVU
+
       } else if (hAcrobat) {
         Send {Ctrl Down}sw{Ctrl Up}
         WinWaitTitle("Adobe Acrobat Pro DC (32-bit)", "A", 1500)
@@ -341,7 +344,6 @@ return
     }
 
   } else {
-
     if (!ReadPoint) {
       if (hBrowser)
         Goto BrowserSyncTime
@@ -372,6 +374,7 @@ MarkInHTMLCompAgain:
     RefLink := hBrowser ? SM.GetLinkFromUIAArray(auiaText) : ""
     OldText := SM.GetMarkerFromUIAArray(auiaText)
   }
+
   if (ReadPoint) {
     NewText := "<SPAN class=Highlight>SMVim read point</SPAN>: " . ReadPoint
   } else if (PageNumber) {
@@ -403,14 +406,14 @@ MarkInHTMLCompAgain:
   }
 
   if (OldText)
-    SM.EmptyHTMLComp()
+    SM.EmptyHTML()
   WinWaitActive, ahk_class TElWind
   SM.WaitTextFocus()
   if (OldText)
     x := A_CaretX, y := A_CaretY
   Send ^{Home}
   if (OldText)
-    WaitCaretMove(x, y)
+    WaitCaretMove(x, y, 1000)
   Clip(NewText,, false, "sm")
   Send {Esc}
   if (IfContains(A_ThisLabel, "^+!"))
@@ -427,7 +430,7 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_exe msedge.exe"))
 ^+c::
   uiaBrowser := new UIA_Browser("A")
-  Run, % uiaBrowser.GetCurrentUrl()
+  Run, % "chrome " . uiaBrowser.GetCurrentUrl()
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class wxWindowNR") && WinExist("ahk_class TElWind"))  ; audacity.exe

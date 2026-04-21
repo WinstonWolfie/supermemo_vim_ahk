@@ -74,11 +74,13 @@ SMSearchAgain:
         Vim.State.n--
       n := Vim.State.n ? Vim.State.n : 0, Vim.State.n := 0
     }
+
     if (WholeWord) {
       Match := "s)(\b(" . UserInput . ")\b.*?){" . n . "}\K\b" . UserInput . "\b"
     } else {
       Match := "s)((" . UserInput . ").*?){" . n . "}\K" . UserInput
     }
+
     pos := RegExMatch(Selection := ParseLineBreaks(Copy()), Match)
     if (pos == 1) {
       if (WholeWord) {
@@ -88,6 +90,7 @@ SMSearchAgain:
       }
       pos := RegExMatch(Selection, Match)
     }
+
     if (pos) {
       Send % "{Left}{Right " . pos - 1 . "}"
       if (ShiftState || AltState) {
@@ -98,6 +101,7 @@ SMSearchAgain:
           SM.Cloze()
         }
       }
+
     } else {
       Send {Left}
       if (A_ThisLabel != "SMSearchAgain") {
@@ -119,16 +123,19 @@ SMSearchAgain:
     if (UserInput ~= "[A-Z]")  ; like vim smartcase
       Control, Check,, TCheckBox1, ahk_class TMyFindDlg  ; match case
     Send {Enter}
+
     if (Vim.State.n)
       Send % "{f3 " . Vim.State.GetN() - 1 . "}"
     WinWaitNotActive, ahk_class TMyFindDlg
-    if (ShiftState && !AltState) {
+
+    if (!SM.HandleF3(2)) {
+      return
+    } else if (ShiftState && !AltState) {
       Vim.State.SetMode("Vim_Visual")
     } else if (!AltState) {  ; all modifier keys are not pressed
       Send {Left}  ; put caret on left of searched text
     }
-    if (!SM.HandleF3(2))
-      return
+
     if (AltState && !CtrlState && !ShiftState && !CapsState) {
       SM.Cloze()
     } else if (AltState && ShiftState) {

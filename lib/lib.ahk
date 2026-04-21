@@ -254,6 +254,9 @@ MsgBox(Options:="", Title:="", Text:="", Timeout:="") {
     return "Timeout"
   }
 }
+Send(Keys) {
+  Send, % Keys
+}
 
 ; https://www.autohotkey.com/boards/viewtopic.php?t=5484
 ; This function wraps a loop that continuously uses ControlGetFocus to test if a particular 
@@ -318,6 +321,17 @@ ControlTextWait(Control:="", Text:="", WinTitle:="", WinText:="", ExcludeTitle:=
   StartTime := A_TickCount
   Loop {
     if (ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText) == Text) {
+      Return True
+    } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
+      Return False
+    }
+  }
+}
+
+ControlTextWaitTrimmed(Control:="", Text:="", WinTitle:="", WinText:="", ExcludeTitle:="", ExcludeText:="", Timeout:=0) {
+  StartTime := A_TickCount
+  Loop {
+    if (Trim(ControlGetText(Control, WinTitle, WinText, ExcludeTitle, ExcludeText)) == Text) {
       Return True
     } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
       Return False
@@ -1063,11 +1077,11 @@ EncodeHTML(String, Flags := 1)
     return out
 }
 
-CopyAll(Timeout:=2500) {
+CopyAll(Timeout:=1500) {
   Timeout := Timeout ? Timeout / 1000 : Timeout
   global WinClip
   WinClip.Clear()
-  Send {Esc}{Ctrl Down}a{Ins}{Ctrl Up}{Esc}
+  Send {Esc}{Ctrl Down}ac{Ctrl Up}{Esc}
   ClipWait % Timeout
   return !ErrorLevel
 }
@@ -1081,7 +1095,7 @@ IsUrl(Text) {
 
 GetAllLinks(Text) {
   aLinks := [], pos := 1
-  while (pos := RegExMatch(Text, "((https?|file):\/\/|www\.)[^ ]+", Match, pos + StrLen(Match)))
+  while (pos := RegExMatch(Text, "((https?|file|obsidian):\/\/|www\.)[^ ]+", Match, pos + StrLen(Match)))
     aLinks.Push(Match)
   return aLinks
 }
@@ -1331,7 +1345,9 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
   If (Text = "") {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     if (PostMsg && SM.IsEditingHTML()) {
-      if (SM.IsSM19()) {
+      if (SM.IsSM20()) {
+        SM.PostMsg(941, true)
+      } else if (SM.IsSM19()) {
         SM.PostMsg(919, true)
       } else if (SM.IsSM18()) {
         SM.PostMsg(915, true)

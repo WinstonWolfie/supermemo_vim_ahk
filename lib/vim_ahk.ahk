@@ -100,11 +100,9 @@ class VimAhk {
     GroupAdd, HTML, ahk_exe WINWORD.exe  ; MS Word
     GroupAdd, HTML, ahk_exe olk.exe  ; Outlook
 
+    GroupAdd, SM, ahk_exe sm20.exe
     GroupAdd, SM, ahk_exe sm19.exe
     GroupAdd, SM, ahk_exe sm18.exe
-    GroupAdd, SM, ahk_exe sm17.exe
-    GroupAdd, SM, ahk_exe sm16.exe
-    GroupAdd, SM, ahk_exe sm15.exe
 
     GroupAdd, Browser, ahk_exe chrome.exe
     GroupAdd, Browser, ahk_exe firefox.exe

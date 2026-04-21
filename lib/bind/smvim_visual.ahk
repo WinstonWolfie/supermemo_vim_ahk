@@ -99,24 +99,24 @@ return
 
 +h::  ; move to top of screen
   Send {Shift Down}
-  SM.Click("h")
+  SM.ClickText("h")
   Send {Shift Up}
 Return
 
 +m::  ; move to middle of screen
   Send {Shift Down}
-  SM.Click("m")
+  SM.ClickText("m")
   Send {Shift Up}
 Return
 
 +l::  ; move to bottom of screen
   Send {Shift Down}
-  SM.Click("l")
+  SM.ClickText("l")
   Send {Shift Up}
 Return
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && SM.IsEditingPlainText())
 m::Send % "{text}*" . Copy() . "*"
 
-#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && SM.IsNavigatingContentWind())
+#if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Visual") && WinActive("ahk_class TContents") && SM.IsNavigatingContents())
 b::SM.OpenBrowser(), Vim.State.SetMode("Vim_Normal")

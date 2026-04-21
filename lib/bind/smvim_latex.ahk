@@ -26,16 +26,18 @@
 
     ; This website seems to be better? (2024-05-20)
     LatexLink := "https://latex.codecogs.com/png.image?\dpi{300}" . LatexFormula
-    LatexFormula := EncodeDecodeURI(LatexFormula)
+    LatexFormula := EncodeDecodeURI(EncodeDecodeURI(LatexFormula))
 
     LatexFolderPath := SM.GetCollPath(Text := WinGetText("ahk_class TElWind"))
                      . SM.GetCollName(Text) . "\elements\LaTeX"
     LatexPath := LatexFolderPath . "\" . CurrTimeFileName . ".png"
     SetTimer, DownloadLatex, -1
+
     InsideHTMLPath := "file:///[PrimaryStorage]LaTeX\" . CurrTimeFileName . ".png"
     FileCreateDir % LatexFolderPath
     LatexPlaceHolder := GetDetailedTime()
-    Clip("<img alt=""" . LatexFormula . """ src=""" . InsideHTMLPath . """>" . LatexPlaceHolder,, false, true)
+    Clip("<img alt=" . LatexFormula . " src=" . InsideHTMLPath . ">" . LatexPlaceHolder,, false, true)
+
     if (ContLearn == 1) {  ; item and "Show answer"
       Send {Esc}
       SM.WaitTextExit()
@@ -59,9 +61,10 @@
     HTML := RegExReplace(HTML, "<SPAN class=anti-merge>Last LaTeX to image conversion at .*?(<\/SPAN>|$)", AntiMerge, v)
     if (!v)
       HTML .= "`n" . AntiMerge
-    SM.EmptyHTMLComp()
+    SM.EmptyHTML()
     WinWaitActive, ahk_class TElWind
     SM.WaitTextFocus()
+
     x := A_CaretX, y := A_CaretY
     Send ^{Home}
     WaitCaretMove(x, y, 700)
@@ -70,6 +73,7 @@
       Send {Esc}
       SM.WaitTextExit()
     }
+
     SM.RefreshHTML()
     if (Item) {
       WinWaitActive, ahk_class TElWind
@@ -88,6 +92,7 @@
       if (!v)
         RegExMatch(Text, "title=(.*?) ", v)
     }
+
     LatexFormula := EncodeDecodeURI(EncodeDecodeURI(v1, false), false)
     LatexFormula := ProcessLatexFormula(LatexFormula)
     RegExMatch(Text, "src=""(.*?)""", v)
@@ -98,6 +103,7 @@
     LatexFormula := StrReplace(LatexFormula, "&#10;", " ")
     LatexFormula := Trim(LatexFormula, "$")  ; for websites like The Art of Problem Solving
     Clip(LatexFormula, true, false)
+
     FileDelete % LatexPath
     Vim.State.SetMode("Vim_Visual")
   }
@@ -121,5 +127,5 @@ ProcessLatexFormula(LatexFormula) {
 
 DownloadLatex:
   UrlDownloadToFile, % LatexLink, % LatexPath
+  Run, % ComSpec . " /c magick """ . LatexPath . """ -background white -alpha remove -negate """ . LatexPath . """"
 return
-

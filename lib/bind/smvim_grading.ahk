@@ -17,7 +17,7 @@ g::
   } else if (A_ThisLabel == "g") {
     Send 5
   }
-  ControlTextWait("TBitBtn3", "Next repetition", "A")
+  ControlTextWaitTrimmed("TBitBtn3", "Next repetition", "A")
   ControlSend, TBitBtn3, {Enter}, A
   SM.VimEnterInsertIfSpelling()
 return

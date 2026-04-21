@@ -67,7 +67,7 @@ NukeHTML:
   SM.RefreshHTML(), SetToolTip("HTML cleaned."), HTML := ""
 Return
 
-+l::SM.LinkConcept(), Vim.State.SetMode("Vim_Normal")
++l::Send("!{f10}cl"), Vim.State.SetMode("Vim_Normal")
 l::SM.ListLinks(), Vim.State.SetMode("Vim_Normal")
 
 o::  ; c*o*mpress images
@@ -142,7 +142,9 @@ return
 i::  ; learn outstanding *i*tems only from menu: View - Outstanding
   Vim.State.SetMode("Vim_Normal"), SM.GoHome()
   WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "A")
-  if (SM.IsSM19()) {
+  if (SM.IsSM20()) {
+    SM.PostMsg(204)
+  } else if (SM.IsSM19()) {
     SM.PostMsg(200)
   } else if (SM.IsSM18()) {
     SM.PostMsg(202)
@@ -154,13 +156,14 @@ i::  ; learn outstanding *i*tems only from menu: View - Outstanding
 return
 
 SMNeuralReviewChildren:
-n::  ; neural review children
-  Vim.State.SetMode("Vim_Normal")
+n::
   SM.OpenBrowser()
   SM.WaitBrowser()
+SMBrowserNeuralReview:
   Send {AppsKey}g
   WinWaitActive, ahk_class TElWind
   SM.PlayIfOnlineColl()
+  Vim.State.SetMode("Insert")
 return
 
 SMLearnChildren:
@@ -185,7 +188,9 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Command") && (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")))
 +c::  ; add new concept
   WinActivate, ahk_class TElWind
-  if (SM.IsSM19()) {
+  if (SM.IsSM20()) {
+    SM.PostMsg(127)
+  } else if (SM.IsSM19()) {
     SM.PostMsg(125)
   } else if (SM.IsSM18()) {
     SM.PostMsg(126)

@@ -44,17 +44,17 @@ Return
   hWnd := WinActive("A")
   Gui, VimCommander:Add, Text,, &Command:
 
-  List := "|Plan|Wiktionary|WebSearch|YT|Settings|MoveMouseToCaret"
+  List := "Plan|Wiktionary|Bing|Google|YT|Settings|MoveMouseToCaret"
         . "|WaybackMachine|DefineGoogle|YouGlish|DeepL"
-        . "|WindowSpy|BingChat|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
+        . "|WindowSpy|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
         . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
-        . "|CopyWindowPosition|ZLibrary|GetInfoFromContextMenu|GenerateTimeString"
+        . "|CopyWindowPosition|ZLibrary|ContextMenuInfo|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|LatinoGraecum|Linguee"
-        . "|MerriamWebster|WolframAlpha|RestartOneDrive|RestartICloudDrive|KillIE"
+        . "|MerriamWebster|WA|WM|RestartOneDrive|KillIE"
         . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
         . "|PasteCleanedClipboard|ArchiveToday|WordSense|PasteHTML"
-        . "|AnnasArchive|Untag|"
+        . "|AnnasArchive|WP"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     List := "SetConceptHook|MemoriseChildren|" . List
@@ -67,14 +67,13 @@ Return
       if (SM.IsEditingText())
         List := "ClozeAndDone!|" . List
       if (SM.IsEditingHTML())
-        List := "MakeHTMLUnique|CenterTexts|AlignTextsRight|AlignTextsLeft|ItalicText"
-              . "|UnderscoreText|BoldText|" . List
+        List := "MakeHTMLUnique|ItalicText|UnderscoreText|BoldText|" . List
     }
   } else if (WinActive("ahk_class TBrowser")) {  ; SuperMemo browser
     List := "MemoriseCurrentBrowser|SetBrowserPosition|MassReplaceReference"
           . "|MassProcessBrowser|Tag|Untag|" . List
   } else if (WinActive("ahk_group Browser")) {  ; web browsers
-    List := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|Tag|" . List
+    List := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|Tag||Untag|" . List
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
     List := "SetPlanPosition|" . List
   } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
@@ -111,14 +110,18 @@ VimCommanderButtonExecute:
     } else if (aCommand[1] = "wkt") {
       Run, % "https://www.google.com/search?q=wiktionary " . EncodeDecodeURI(RegExReplace(Command, "i)^wkt "))
     } else if (aCommand[1] = "pplx") {
-      Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(RegExReplace(Command, "i)^pplx ")) . "&focus=internet&copilot=true"
+      Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(RegExReplace(Command, "i)^pplx "))
+    } else if (aCommand[1] = "wm") {
+      Run, % "https://mathworld.wolfram.com/search/?query=" . EncodeDecodeURI(RegExReplace(Command, "i)^wm "))
+    } else if (aCommand[1] = "wp") {
+      Run, % "https://en.wikipedia.org/w/index.php?search=" . EncodeDecodeURI(RegExReplace(Command, "i)^wp "))
+
     } else if (aCommand[1] = "tag") || (aCommand[1] = "untag") {
       WinActivate % "ahk_id " . hWnd
       Tags := RegExReplace(Command, "i)^(tag|untag) ")
-      EditRefComment := true
-      wSMElWind := ""
+      EditRefComment := true, wSMElWind := ""
 
-      if (WinActive("ahk_group Browser")) {
+      if (hActiveBrowser := WinActive("ahk_group Browser")) {
         Browser.Clear()
         Browser.GetInfo(, false,, false, false, false)
         wSMElWind := SM.FindMatchTitleColl(Browser.Title)
@@ -126,18 +129,15 @@ VimCommanderButtonExecute:
       }
 
       LoopCount := 1
-      if (SMBrowser := WinActive("ahk_class TBrowser")) {
+      if (WinActive("ahk_class TBrowser")) {
         BrowserTitle := WinGetTitle()
         Send ^{Home}
         SM.WaitFileLoad()
-        RegExMatch(BrowserTitle, "^(\d+) users of ", v)
+        RegExMatch(BrowserTitle, "(\d+) users of ", v)
         if (!v)
-          RegExMatch(BrowserTitle, "^Subset elements \((\d+) elements\)", v)
-        if (v1 = 1) {
-          SMBrowser := ""  ; don't loop
-        } else {
+          RegExMatch(BrowserTitle, "Subset elements \((\d+) elements\)", v)
+        if (v1 > 1)
           LoopCount := v1
-        }
       }
 
       if (!wSMElWind)
@@ -185,24 +185,24 @@ WindowSpy:
   Run, % "C:\Program Files\AutoHotkey\WindowSpy.ahk"
 return
 
-WebSearch:
+Google:
   Search := FindSearch()
-  Gui, WebSearch:Add, Text,, &Search:
-  Gui, WebSearch:Add, Edit, vSearch w136 r1 -WantReturn, % Search
-  Gui, WebSearch:Add, Text,, &Language Code:
+  Gui, Google:Add, Text,, &Search:
+  Gui, Google:Add, Edit, vSearch w136 r1 -WantReturn, % Search
+  Gui, Google:Add, Text,, &Language Code:
   List := "en-uk||en-us|es|fr|it|ja|de|ru|el|he|ar|pl|pt|ko|sv|nl|tr|zh-hk|zh"
-  Gui, WebSearch:Add, Combobox, vLangCode gAutoComplete w136, % List
-  Gui, WebSearch:Add, Button, Default, &Search
-  Gui, WebSearch:Show,, Google Define
+  Gui, Google:Add, Combobox, vLangCode gAutoComplete w136, % List
+  Gui, Google:Add, Button, Default, &Search
+  Gui, Google:Show,, Google
   SetDefaultKeyboard(0x0409)  ; English-US
 Return
 
-WebSearchGuiEscape:
-WebSearchGuiClose:
+GoogleGuiEscape:
+GoogleGuiClose:
   Gui, Destroy
 return
 
-WebSearchButtonSearch:
+GoogleButtonSearch:
   Gui, Submit
   Gui, Destroy
   LinkCount := ObjCount(aLinks := GetAllLinks(Search))
@@ -226,6 +226,11 @@ WebSearchButtonSearch:
     Run, % "https://www.google.com/search?hl=" . LangCode . "&q=" . EncodeDecodeURI(Search)
   }
 return
+
+Bing:
+  if (Text := FindSearchIB("Bing", "Text:",,, 256))
+    Run, % "https://www.bing.com/search?q=" . EncodeDecodeURI(Text)
+Return
 
 MoveMouseToCaret:
   MouseMove, A_CaretX, A_CaretY
@@ -314,8 +319,8 @@ GoogleDefineButtonSearch:
     } else if (LangCode = "en-us") {
       Add := "&gl=us"
     }
-    ShellRun("https://www.google.com/search?hl=" . LangCode . "&q=" . Define . " "
-           . Search . "&forcedict=" . Search . "&dictcorpus=" . LangCode . "&expnd=1" . Add)
+    Run("https://www.google.com/search?hl=" . LangCode . "&q=" . Define . " "
+       . Search . "&forcedict=" . Search . "&dictcorpus=" . LangCode . "&expnd=1" . Add)
   } else {
     Run, % "https://www.google.com/search?q=define " . Search
   }
@@ -455,10 +460,6 @@ AlatiusLatinMacronizer:
   uiaBrowser.WaitElementExist("ControlType=Button AND Name='Submit'").Click()
 return
 
-SetBrowserPosition:
-  WinMove, ahk_class TBrowser,, 0, 0, 846, 680
-return
-
 ; Personal: reformat my old incremental video topics
 ReformatScriptComponent:
   ClipSaved := ClipboardAll
@@ -522,16 +523,11 @@ SciHub:
   if (!Text := FindSearchIB("Sci-Hub", "Search:"))
     return
   if (RegExMatch(Text, "https:\/\/doi\.org\/([^ ]+)", v)) {
-    Run, % "https://sci-hub.hkvisa.net/" . v1
+    Run, % "https://sci-hub.ru/" . v1
   } else if (RegExMatch(Text, "i)10.\d{4,9}/[-._;()/:A-Z0-9]+", v)) {  ; https://www.crossref.org/blog/dois-and-matching-regular-expressions/
-    Run, % "https://sci-hub.hkvisa.net/" . v
+    Run, % "https://sci-hub.ru/" . v
   } else {
-    Run, % "https://sci-hub.hkvisa.net/"
-    WinWaitActive, ahk_group Browser
-    uiaBrowser := new UIA_Browser("A")
-    uiaBrowser.WaitPageLoad()
-    uiaBrowser.WaitElementExist("ControlType=Edit AND Name='enter your reference' AND AutomationId='request'").SetValue(Text)
-    uiaBrowser.WaitElementExist("ControlType=Button AND Name='open'").Click()
+    Run, % "https://sci-hub.ru/match/" . Text
   }
 return
 
@@ -570,12 +566,12 @@ return
 
 ZLibrary:
   if (Text := FindSearchIB("Z-Library", "Search:"))
-    Run, % "https://z-library.sk/s/?q=" . EncodeDecodeURI(Text)
+    Run, % "https://z-lib.sk/s/" . EncodeDecodeURI(Text)
 return
 
 AnnasArchive:
   if (Text := FindSearchIB("Anna’s Archive", "Search:"))
-    Run, % "https://annas-archive.org/search?q=" . EncodeDecodeURI(Text)
+    Run, % "https://annas-archive.gl/search?q=" . EncodeDecodeURI(Text)
 return
 
 ImportFile:
@@ -625,10 +621,8 @@ Bilibili:
 return
 
 Libgen:
-  if (search := FindSearchIB("Library Genesis", "Search:")) {
-    Run, % "http://libgen.is/search.php?req=" . search . "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=def"
+  if (search := FindSearchIB("Library Genesis", "Search:"))
     Run, % "https://libgen.li/index.php?req=" . search . "&columns%5B%5D=t&columns%5B%5D=a&columns%5B%5D=s&columns%5B%5D=y&columns%5B%5D=p&columns%5B%5D=i&objects%5B%5D=f&objects%5B%5D=e&objects%5B%5D=s&objects%5B%5D=a&objects%5B%5D=p&objects%5B%5D=w&topics%5B%5D=l&topics%5B%5D=c&topics%5B%5D=f&topics%5B%5D=a&topics%5B%5D=m&topics%5B%5D=r&topics%5B%5D=s&res=25&filesuns=all"
-  }
 return
 
 ImageGoogle:
@@ -673,50 +667,13 @@ EditReference:
   SM.EditRef()
 Return
 
-GetInfoFromContextMenu:
+ContextMenuInfo:
   Run, % A_ScriptDir . "\lib\util\Get Info from Context Menu.ahk"
 return
 
 GenerateTimeString:
   Send % "{text}" . FormatTime(, "yyyyMMddHHmmss" . A_MSec)
 return
-
-BingChat:
-  ClipSaved := Link := ""
-  wEdge := WinActive("ahk_exe msedge.exe")
-  ext := ".htm"  ; by default the text will be copied with its format retained
-  if (SMFile := WinActive("ahk_class TElWind")) {
-    if (SM.IsBrowsing())
-      Link := SM.GetLink()
-    if (!Link || SM.IsEditingText())
-      Link := SM.GetFilePath()
-  } else if (!wEdge && (hWnd := WinActive("ahk_group Browser"))) {
-    uiaBrowser := new UIA_Browser("ahk_id " . hWnd)
-    Link := uiaBrowser.GetCurrentURL()
-  } else {
-    ClipSaved := ClipboardAll
-    if (!Text := Copy(false, true))  ; HTML not found
-      Text := Clipboard, ext := ".txt"
-    if (Text) {
-      Link := A_Temp . "\" . GetCurrTimeForFileName() . ext
-      FileDelete % Link
-      FileAppend, % Text, % Link
-    }
-  }
-  if (Text || !wEdge) {
-    Run, % "msedge.exe " . Link
-    WinWaitActive, ahk_exe msedge.exe
-  }
-  Send ^+.
-  if (ClipSaved)
-    Clipboard := ClipSaved
-  if (Link) {
-    uiaBrowser := new UIA_Browser("A")
-    uiaBrowser.WaitPageLoad()
-    if (!SMFile)
-      FileDelete % Link
-  }
-return 
 
 LinkToPreviousElement:
   Send !c
@@ -801,14 +758,6 @@ RestartOneDrive:
     WinClose
 return
 
-RestartICloudDrive:
-  Process, Close, iCloudDrive.exe
-  Process, Close, iCloudServices.exe
-  Run, % "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\iCloud\iCloud.lnk"
-  WinWait, iCloud ahk_class PreferencesWnd ahk_exe iCloud.exe
-  WinClose
-return
-
 CalculateTodaysPassRate:
   SetToolTip("Executing..."), pidSM := WinGet("PID", "ahk_class TElWind")
   BlockInput, On
@@ -832,59 +781,8 @@ CalculateTodaysPassRate:
 return
 
 PerplexityAI:
-  if (SM.IsEditingHTML()) {
-    if (!Search := Trim(Copy())) {
-      Send ^{f7}  ; save read point
-      SM.RefreshHTML()  ; path may be updated
-      WinWaitActive, ahk_class TElWind
-      Search := "File path from SMVim script: " . SM.LoopForFilePath()
-    }
-  } else {
-    Search := FindSearch()
-  }
-  Gui, PerplexityAI:Add, Text,, &Search:
-  Gui, PerplexityAI:Add, Edit, vSearch w200 r1 -WantReturn, % Search
-  Gui, PerplexityAI:Add, Text,, &Attach the above text and ask:
-  list := "summarize|what is the conclusion?|check this file for mistakes"
-  Gui, PerplexityAI:Add, Combobox, vAddSearch gAutoComplete w200, % list
-  Gui, PerplexityAI:Add, Button, default, &Search
-  Gui, PerplexityAI:Show,, Perplexity AI
-  SetDefaultKeyboard(0x0409)  ; English-US
-Return
-
-PerplexityAIGuiEscape:
-PerplexityAIGuiClose:
-  Gui, Destroy
-return
-
-PerplexityAIButtonSearch:
-  Gui, Submit
-  Gui, Destroy
-  if (AddSearch || (Search ~= "^File path from SMVim script: ")) {
-    Run, % "https://www.perplexity.ai/"
-    WinWaitActive, ahk_group Browser
-    uiaBrowser := new UIA_Browser("A")
-    uiaBrowser.WaitPageLoad()
-    TempFilePath := ""
-    if (Search ~= "^File path from SMVim script: ") {
-      FilePath := RegExReplace(Search, "^File path from SMVim script: ")
-    } else {
-      TempFilePath := A_Temp . "\" . GetCurrTimeForFileName() . ".txt"
-      FileDelete % TempFilePath
-      FileAppend, % Search, % FilePath := TempFilePath
-    }
-    uiaBrowser.WaitElementExist("ControlType=Image AND ClassName='tabler-icon tabler-icon-paperclip '").ControlClick()
-    WinWaitActive, ahk_class #32770
-    ControlSetText, Edit1, % FilePath
-    Send {Enter}
-    WinWaitNotActive
-    if (AddSearch)
-      uiaBrowser.WaitElementExist("ControlType=Edit AND Name='Ask anything...'").SetValue(AddSearch)
-    if (TempFilePath)
-      FileDelete % TempFilePath
-  } else {
-    Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(Search)
-  }
+  if (Text := FindSearchIB("Perplexity AI", "Text:",,, 256))
+    Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(Text)
 return
 
 RetryAllSyncErrors:
@@ -1023,9 +921,14 @@ return
 ExternaliseRegistry:
   Send {Volume_Mute}
   ; Images, Sounds, Binary, Video
-  for i, v in [156, 157, 171, 170] {  ; sm19
-    if (SM.IsSM18())
-      v++
+  if (SM.IsSM20()) {
+    l := [158, 159, 173, 172]
+  } else if (SM.IsSM19()) {
+    l := [156, 157, 171, 170]
+  } else if (SM.IsSM18()) {
+    l := [157, 158, 172, 171]
+  }
+  for i, v in l {
     SM.PostMsg(v)
     WinWaitActive, ahk_class TRegistryForm
     if (IfContains(WinGetTitle(), "(0 members)")) {
@@ -1048,19 +951,6 @@ ExternaliseRegistry:
   }
   Send {Volume_Mute}
   Vim.State.SetMode("Vim_Normal")
-return
-
-AlignTextsLeft:
-CenterTexts:
-AlignTextsRight:
-  if (A_ThisLabel == "AlignTextsLeft") {
-    n := 15
-  } else if (A_ThisLabel == "CenterTexts") {
-    n := 16
-  } else if (A_ThisLabel == "AlignTextsRight") {
-    n := 17
-  }
-  SM.EditBar(n), Vim.State.SetNormal()
 return
 
 BoldText:
@@ -1160,9 +1050,14 @@ ArchiveToday:
     Run, % "https://archive.today/?run=1&url=" . Url
 return
 
-WolframAlpha:
+WA:
   if (Text := FindSearchIB("WolframAlpha", "Text:"))
     Run, % "https://www.wolframalpha.com/input?input=" . EncodeDecodeURI(Text)
+Return
+
+WM:
+  if (Text := FindSearchIB("Wolfram MathWorld", "Text:"))
+    Run, % "https://mathworld.wolfram.com/search/?query=" . EncodeDecodeURI(Text)
 Return
 
 Comment:
@@ -1248,27 +1143,62 @@ SMTagButtonTag:
   Gui, Destroy
   LoopCount := 1
 SMTagEntered:
+SMUntag:
   Vim.State.SetMode("Vim_Normal")
-  wSMElWind := (A_ThisLabel == "SMTagEntered") ? wSMElWind : "ahk_class TElWind"
+  if (A_ThisLabel == "SMTagButtonTag")
+    wSMElWind := "ahk_class TElWind"
   pidSM := WinGet("PID", wSMElWind)
+  IsSM20 := EditRefComment ? SM.IsSM20(wSMElWind) : ""
 
   Loop % LoopCount {
-    SM.LinkConcepts(aTags := StrSplit(Tags, ";"), wSMElWind)
+    Link := ""
+    if ((A_ThisLabel == "SMTagButtonTag") || (A_ThisLabel == "SMTagEntered")) {
+      Link := True
+    } else if (A_ThisLabel == "SMUntag") {
+      Link := False
+    }
+    SM.LinkUnlinkConcept(Link, aTags := StrSplit(Tags, ";"), wSMElWind)
 
     if (EditRefComment) {
+      if (IsSM20 && (aTags.MaxIndex() > 1)) {
+        SM.WaitSM20Processing(pidSM)
+        if ((A_ThisLabel == "SMTagEntered") || (A_ThisLabel == "SMUntag") && hActiveBrowser)
+          WinActivate, % "ahk_id " . hActiveBrowser
+      }
       SM.EditRef(wSMElWind)
       WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
+      
+      if (IsSM20 && ((A_ThisLabel == "SMTagEntered") || (A_ThisLabel == "SMUntag")) && hActiveBrowser)
+          WinActivate, % "ahk_id " . hActiveBrowser
+
       Ref := ControlGetText("TMemo1")
       RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
-      loop % aTags.MaxIndex() {
-        Tag := StrReplace(aTags[A_Index], " ", "_")
-        if (!IfContains(Comment, "#" . Tag, true))
-          Comment .= " #" . Tag
+
+      if ((A_ThisLabel == "SMTagButtonTag") || (A_ThisLabel == "SMTagEntered")) {
+        loop % aTags.MaxIndex() {
+          Tag := StrReplace(aTags[A_Index], " ", "_")
+          if (!IfContains(Comment, "#" . Tag, true))
+            Comment .= " #" . Tag
+        }
+        Ref := "#Comment: " . Comment . "`n" . Ref
+
+      } else if (A_ThisLabel == "SMUntag") {
+        loop % aTags.MaxIndex() {
+          Tag := StrReplace(aTags[A_Index], " ", "_")
+          if (IfContains(Comment, "#" . Tag, true))
+            Comment := RegExReplace(Comment, "#" . Tag . " ?")
+        }
+
+        if (Comment) {
+          Ref := "#Comment: " . Comment . "`n" . Ref
+        } else {
+          Ref := RegExReplace(Ref, "#Comment: .*")
+        }
       }
-      Ref := "#Comment: " . Comment . "`n" . Ref
+
       ControlSetText, TMemo1, % Ref
       While (WinExist())
-        ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
+        ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}
       WinWaitClose
       WinWait, % "ahk_class TChoicesDlg ahk_pid " . pidSM,, 0.7
       if (!ErrorLevel) {
@@ -1289,54 +1219,13 @@ SMTagEntered:
       SendInput % "{Text}" . Trim(TagsText)
     }
 
-    if (!SMBrowser) {
-      Break
-    } else {
+    if (LoopCount > 1) {
       Send {Down}
+      SM.WaitFileLoad()
     }
   }
   SetToolTip("Tagging finished."), aTags := Tags := TagsText := ""
 return
-
-SMUntag:
-  Vim.State.SetMode("Vim_Normal"), pidSM := WinGet("PID", "ahk_class TElWind")
-
-  Loop % LoopCount {
-    SM.UnLinkConcepts(aTags := StrSplit(Tags, ";"), "ahk_class TElWind")
-    if (EditRefComment) {
-      SM.EditRef("ahk_class TElWind")
-      WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
-      Ref := ControlGetText("TMemo1")
-      RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
-      loop % aTags.MaxIndex() {
-        Tag := StrReplace(aTags[A_Index], " ", "_")
-        if (IfContains(Comment, "#" . Tag, true))
-          Comment := RegExReplace(Comment, "#" . Tag . " ?")
-      }
-      if (Comment) {
-        Ref := "#Comment: " . Comment . "`n" . Ref
-      } else {
-        Ref := RegExReplace(Ref, "#Comment: .*")
-      }
-      ControlSetText, TMemo1, % Ref
-      While (WinExist())
-        ControlSend, TMemo1, {Ctrl Down}{Enter}{Ctrl Up}  ; submit
-      WinWaitClose
-      WinWait, % "ahk_class TChoicesDlg ahk_pid " . pidSM,, 0.7
-      if (!ErrorLevel) {
-        WinActivate
-        WinWaitClose
-      }
-    }
-    if (!SMBrowser) {
-      Break
-    } else {
-      Send {Down}
-    }
-  }
-  SetToolTip("Tagging finished.")
-return
-
 
 PasteHTML:
   ClipHTML := GetClipHTMLBody()
@@ -1345,4 +1234,9 @@ PasteHTML:
   ClipWait
   Send ^v
   ClipHTML := ""
+return
+
+WP:
+  if (Text := FindSearchIB("Wikipedia", "Search:"))
+    Run, % "https://en.wikipedia.org/w/index.php?search=" . EncodeDecodeURI(Text)
 return

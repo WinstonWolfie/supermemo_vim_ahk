@@ -38,7 +38,7 @@ return
 !x::
   CtrlState := IfContains(A_ThisLabel, "^")
   ShiftState := IfContains(A_ThisLabel, "+")
-  hWnd := WinActive("A"), Prio := "", wCurr := "ahk_id " . hWnd
+  hWnd := WinActive("A"), Prio := "", wCurrent := "ahk_id " . hWnd
   ClipSaved := ClipboardAll
   hBrowser := WinActive("ahk_group Browser")
   hCalibre := WinActive("ahk_exe ebook-viewer.exe")
@@ -96,7 +96,7 @@ return
             Break
           } else if (WinGetTitle("ahk_class TBrowser") ~= "^[1-9]+ users of ") {
             m := MsgBox(3,, "Potential duplicate found. Continue?")
-            WinActivate, % wCurr
+            WinActivate, % wCurrent
             WinClose, % "ahk_class TBrowser ahk_pid " . WinGet("PID", "ahk_class TElWind")
             if (IfIn(m, "No,Cancel")) {
               SM.ClearHighlight()
@@ -127,7 +127,7 @@ return
       SM.WaitFileLoad()
       SMTitle := WinWaitTitleRegEx("^Duplicate: ", "ahk_class TElWind")
       if (!SM.IsHTMLEmpty() && (MsgBox(3,, "Remove text?") = "Yes")) {
-        SM.EmptyHTMLComp()
+        SM.EmptyHTML()
         WinWaitActive, ahk_class TElWind
       }
 
@@ -138,7 +138,7 @@ return
         pidSM := WinGet("PID")
         WinWait, % "ahk_class TScriptEditor ahk_pid " . pidSM,, 3
         if (!CtrlState)
-          WinActivate, % wCurr
+          WinActivate, % wCurrent
         if (ErrorLevel) {
           SetToolTip("Script component not found.")
           return
@@ -156,7 +156,7 @@ return
         ControlSend, TMemo1, {Enter}
       }
 
-      WinActivate, % CtrlState ? "ahk_class TElWind" : wCurr
+      WinActivate, % CtrlState ? "ahk_class TElWind" : wCurrent
       SM.SetTitle(RegExReplace(SMTitle, "^Duplicate: ") . " (" . ch . ")")
       if (ShiftState)
         SM.SetPrio(Prio)
@@ -192,7 +192,7 @@ return
       if (Prio == -1)
         return
     }
-    WinActivate, % wCurr
+    WinActivate, % wCurrent
     if (hBrowser) {
       Browser.Highlight(, PlainText, BrowserUrl)
     } else if (hCalibre) {
@@ -241,7 +241,7 @@ ExtractToSMAgain:
 
   SM.SpamQ()
   if (Marker) {
-    SM.EmptyHTMLComp()
+    SM.EmptyHTML()
     WinWaitActive, ahk_class TElWind
     SM.WaitTextFocus()
     x := A_CaretX, y := A_CaretY
@@ -249,6 +249,7 @@ ExtractToSMAgain:
   Send ^{Home}
   if (Marker)
     WaitCaretMove(x, y)
+
   x := A_CaretX, y := A_CaretY
   if (!CleanHTML) {
     Send ^v
@@ -257,7 +258,11 @@ ExtractToSMAgain:
     SM.PasteHTML(false)
   }
   WaitCaretMove(x, y, 700)  ; insure PasteHTML is finished
+
+  x := A_CaretX, y := A_CaretY
   Send ^+{Home}  ; select everything
+  WaitCaretMove(x, y, 400)
+
   if (Prio) {
     Send !+x
     WinWaitActive, ahk_class TPriorityDlg
@@ -266,10 +271,12 @@ ExtractToSMAgain:
   } else {
     Send !x  ; extract
   }
+
   SM.WaitExtractProcessing()
   SM.SaveHTML()
-  SM.EmptyHTMLComp()
+  SM.EmptyHTML()
   WinWaitActive, ahk_class TElWind
+
   if (Marker) {
     SM.WaitTextFocus()
     x := A_CaretX, y := A_CaretY
@@ -278,12 +285,13 @@ ExtractToSMAgain:
     Marker := RegExReplace(Marker, "^(SMVim (.*?)):", "<SPAN class=Highlight>$1</SPAN>:")
     Clip(Marker,, false, "sm")
   }
+
   Send ^+{f7}  ; clear read point
   SM.WaitTextExit()
   if (CtrlState) {
     SM.GoBack()
   } else {
-    WinActivate % wCurr
+    WinActivate % wCurrent
   }
   Clipboard := ClipSaved
 return
@@ -603,8 +611,15 @@ SMImportButtonImport:
   if (Concept) {
     if ((OnlineEl == 1) && !SM.IsOnline(-1, Concept))
       ChangeBackConcept := Concept, Concept := "Online"
+
+    IsSM20 := SM.IsSM20(wSMElWind), pidSM := WinGet("PID", wSMElWind)
+
     if (!ret := SM.SetDefaultConcept(Concept,, ChangeBackConcept, wSMElWind))
       Goto SMImportReturn
+
+    if (IsSM20)
+      SM.WaitSM20Processing(pidSM)
+
     if (ChangeBackConcept && ret)
       ChangeBackConcept := ret
   }
@@ -627,7 +642,7 @@ SMImportButtonImport:
       Critical
       pidSM := WinGet("PID", wSMElWind)
       Send ^t{f9}{Enter}
-      WinWait, % wScript := "ahk_class TScriptEditor ahk_pid " . pidSM,, 3
+      WinWait, % wScript := "ahk_class TScriptEditor ahk_pid " . pidSM,, 1
       WinActivate, % wBrowser
       if (ErrorLevel) {
         SetToolTip("Script component not found.")
@@ -663,7 +678,7 @@ SMImportButtonImport:
     SM.SetDefaultConcept(ChangeBackConcept)
 
   if (Tags)
-    SM.LinkConcepts(StrSplit(Tags, ";"),, wBrowser)
+    SM.LinkUnlinkConcept(True, StrSplit(Tags, ";"),, wBrowser)
 
   SM.CloseMsgDialog()
 

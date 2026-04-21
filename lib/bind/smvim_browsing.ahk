@@ -132,7 +132,7 @@ r::  ; reload
     }
   } else if (ContGrade) {
     SM.Learn()
-    ControlTextWait("TBitBtn3", "Show answer", "A")
+    ControlTextWaitTrimmed("TBitBtn3", "Show answer", "A")
     ControlSend, TBitBtn3, {Enter}, A
   } else {
     t := WinGetTitle("A")
@@ -231,7 +231,7 @@ CreateHints(HintsArray, HintStrings) {
 CreateHintsArray(Control, hCtrl, Type, Caret, Limit:=5000) {
   global Vim, UIA, SM
   if (Caret)
-    SM.Click("m", Control)
+    SM.ClickText("m", Control)
   el := UIA.ElementFromHandle(hCtrl), auiaHints := el.FindAllByType(Type)
   if (ObjCount(auiaHints) > Limit)
     return
@@ -280,7 +280,7 @@ u::  ; gu: go to parent
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (SM.IsBrowsing()
-   || (WinActive("ahk_class TContents") && SM.IsNavigatingContentWind())))
+   || (WinActive("ahk_class TContents") && SM.IsNavigatingContents())))
 !h::
 +h::  ; go back in history
 !l::
@@ -318,7 +318,7 @@ return
 #if (Vim.IsVimGroup()
   && Vim.State.IsCurrentVimMode("Vim_Normal")
   && (SM.IsBrowsing()
-   || (WinActive("ahk_class TContents") && SM.IsNavigatingContentWind())))
+   || (WinActive("ahk_class TContents") && SM.IsNavigatingContents())))
 ; c::Send !c  ; open content window  ; taken in sm19
 b::
   if (WinExist("ahk_pid " . WinGet("PID", "A") . " ahk_class TBrowser")) {
@@ -356,7 +356,7 @@ o::  ; favourites
   BlockInput, Off
 return
 
-t::SM.Click("m")  ; *t*ext
+t::SM.ClickText("m")  ; *t*ext
 
 ; Copy
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing())
@@ -398,7 +398,7 @@ return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && !Vim.State.fts && WinActive("ahk_class TElWind"))
 m::
   if (SM.IsEditingHTML())
-    SM.Click("m")
+    SM.ClickText("m")
   Send ^{f7}  ; set read point
   SetToolTip("Read point set")
 Return

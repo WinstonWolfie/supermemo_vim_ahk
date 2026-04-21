@@ -22,7 +22,7 @@ return
 ^f2::  ; go neural
   if (SM.IsSM19()) {
     SM.PostMsg(179)
-  } else if (SM.IsSM18()) {
+  } else if (SM.IsSM18() || SM.IsSM20()) {
     SM.PostMsg(181)
   }
   Vim.State.SetMode("Vim_Normal"), SM.PlayIfOnlineColl()

@@ -249,31 +249,36 @@ class Browser {
       this.Source := "YouTube", this.Title := RegExReplace(this.Title, " - YouTube$")
       if (GetFullPage) {
         Send {Esc}
+
         if (GetDate) {
-          ; Click "...more" and copy the release date
           global guiaBrowser
           this.GetGuiaBrowser()
-          if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more ' AND AutomationId='expand'"))
-            btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more '")
-          btn.FindByPath("P1").Click()  ; click the description box, so the webpage doesn't scroll down
-          Sleep 1200  ; to make sure it's shown
-          FullPageText := this.GetFullPage(RestoreClip)
-          RegExMatch(FullPageText, "views +?(\r\n)?((Streamed live|Premiered) (on )?)?\K(\d+ \w+ \d+|\w+ \d+, \d+)", Date), this.Date := Date
- 
-          ; Click "show less"
-          ; if (btn) {
-          ;   if (!btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='Show less ' AND AutomationId='collapse'")) {  ; clicked before
-          ;     guiaBrowser.FindFirstBy("ControlType=Text AND Name='Show less '").Click()  ; this doesn't scroll
-          ;   } else {
-          ;     btn.Click()
-          ;     WinActivate, % "ahk_id " . guiaBrowser.BrowserId
-          ;     global ImportCloseTab
-          ;     if (!ImportCloseTab) {
-          ;       Sleep 700
-          ;       Send ^{Home}
-          ;     }
-          ;   }
-          ; }
+          try o := guiaBrowser.FindFirstByName("\d+ (second|minute|hour|day|week|month|year)s? ago",,"RegEx")
+
+          if (IsObject(o)) {
+            try o.FindByPath("P5").Click()
+
+          } else {
+            try btn := guiaBrowser.FindFirstBy("ControlType=Button AND Name='...more ' AND AutomationId='expand'")
+            if (!IsObject(btn))
+              try btn := guiaBrowser.FindFirstBy("ControlType=Text AND Name='...more '")
+            if (IsObject(btn))
+              try btn.Click()
+          }
+
+          DatePattern := "\d{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec) \d{4}"
+          this.Date := ""
+
+          if (IsObject(btn)) {
+            btn.FindByPath("P1").Click()  ; click the description box, so the webpage doesn't scroll down
+            ; Faster, but sometimes unstable, therefore "try"; find for 1.5 seconds
+            try this.Date := guiaBrowser.WaitElementExistByName(DatePattern,, "RegEx",, 1500).Name
+          }
+
+          if (!this.Date) {
+            FullPageText := this.GetFullPage(RestoreClip)
+            RegExMatch(FullPageText, "views +?(\r\n)?((Streamed live|Premiered) (on )?)?\K(" . DatePattern . ")", Date), this.Date := Date
+          }
 
           ; Get page source HTML, takes extremely long time
           ; RegExMatch(GetSiteHTML(this.Url), """publishDate"":{""simpleText"":""(.*?)""}", v), this.Date := RegExReplace(v1, "(Streamed live|Premiered) on ")

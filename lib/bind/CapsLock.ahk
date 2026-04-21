@@ -179,6 +179,9 @@ CapsLock & NumpadLeft::  MouseMove, -10, 0, 0, R
 CapsLock & Right::
 CapsLock & NumpadRight:: MouseMove, 10, 0, 0, R
 
+CapsLock & [::Send {WheelUp}
+CapsLock & ]::Send {WheelDown}
+
 CapsLock & Enter::
 SendEvent {Blind}{LButton down}
 KeyWait Enter
@@ -239,7 +242,13 @@ CapsLock & q::
     SM.GoHome()
     SM.WaitFileLoad()
   }
-  Send !{f4}
+
+  if (WinActive("ahk_exe Discord.exe")) {
+    WinClose
+  } else {
+    Send !{F4}
+  }
+
   if (WinActive("ahk_exe HiborClient.exe")) {
     WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0
     if (!ErrorLevel)

@@ -190,7 +190,7 @@ CapsLock & z::  ; delete [...]
     } else if (SM.IsEditingHTML()) {
       if (HTML := FileRead(HTMLPath := SM.LoopForFilePath())) {
         Critical
-        SM.EmptyHTMLComp()
+        SM.EmptyHTML()
         WinWaitActive, ahk_class TElWind
         SM.WaitTextFocus()
         x := y := 0

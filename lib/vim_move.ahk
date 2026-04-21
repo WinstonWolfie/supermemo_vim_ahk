@@ -1199,10 +1199,10 @@ class VimMove {
           Send ^t
           SM.WaitTextFocus()
         } else {
-          this.HandleClickBtn()
+          this.ClickSMSyncBtn()
         }
         Send % "^{Home}{Down " . this.Vim.State.n - 1 . "}"
-        this.Vim.State.n := 0, this.HandleClickBtn()
+        this.Vim.State.n := 0, this.ClickSMSyncBtn()
       } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
           SendMessage, 0x115, 6, 0, Internet Explorer_Server2, A  ; scroll to top
@@ -1218,15 +1218,15 @@ class VimMove {
         if (this.Vim.State.n > 0) {
           if (SM.IsBrowsing() && SM.DoesTextExist()) {
             KeyWait Shift
-            SM.Click("h"), SM.WaitTextFocus()
+            SM.ClickText("h"), SM.WaitTextFocus()
           } else if (SM.IsEditingText()) {
-            SM.Click("h")
+            SM.ClickText("h")
           } else {
-            this.HandleClickBtn()
+            this.ClickSMSyncBtn()
             Send ^{Home}
           }
           Send % "{Down " . this.Vim.State.n - 1 . "}"
-          this.Vim.State.n := 0, this.HandleClickBtn()
+          this.Vim.State.n := 0, this.ClickSMSyncBtn()
         } else if (this.Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "A")) {
             SendMessage, 0x115, 7, 0, Internet Explorer_Server2, A  ; scroll to bottom
@@ -1287,7 +1287,7 @@ class VimMove {
     } else if (key == "}") {
       if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
-        SM.Click("h")
+        SM.ClickText("h")
         SM.WaitTextFocus()
         this.ParagraphDown(this.Vim.State.GetN() - 1)
       } else if (this.shift == 1) {
@@ -1318,11 +1318,11 @@ class VimMove {
     if (this.Vim.State.n == 0)
       this.Vim.State.n := 1
     if (IfIn(key, "j,k") && (this.Vim.State.n > 1))
-      this.HandleClickBtn(), navigate := true
+      this.ClickSMSyncBtn(), navigate := true
     loop % this.Vim.State.n
       this.Move(key, true)
     if (navigate)
-      this.HandleClickBtn()
+      this.ClickSMSyncBtn()
     if (Final)
       this.MoveFinalize()
   }
@@ -1618,12 +1618,16 @@ class VimMove {
     return pos
   }
 
-  HandleClickBtn() {
-    ; This button is not clickable in sm using UIA/ACC for some reason
+  ClickSMSyncBtn() {
+    Global SM
     if (WinActive("ahk_class TContents")) {
-      ClickDPIAdjusted(295, 50)
+      SM.ClickContentsToolBar(13)
     } else if (WinActive("ahk_class TBrowser")) {
-      ClickDPIAdjusted(660, 46)  ; btn pos changed in sm19.05
+      if (SM.IsSM20() || SM.IsSM19()) {
+        SM.ClickBrowserToolBar(27)
+      } else if (SM.IsSM18()) {
+        SM.ClickBrowserToolBar(26)
+      }
     }
   }
 
