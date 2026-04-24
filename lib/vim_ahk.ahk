@@ -277,15 +277,12 @@ class VimAhk {
                   ; , "ahk_exe Explorer.exe"   ; Explorer, Explorer became also upper case, but lower case works for this
                   , "ahk_exe notepad.exe"    ; NotePad
                   , "ahk_exe Notepad.exe"    ; NotePad, Changed as upper case since ~2022/1 ??
-                  , "OneNote"                ; OneNote at Windows 10
                   , "ahk_exe onenote.exe"    ; OneNote Desktop
                   ; , "ahk_exe ApplicationFrameHost.exe"   ; Some Windows applications use this, including OneNote at Windows 10  ; incl. settings app in win11
                   , "ahk_exe POWERPNT.exe"   ; PowerPoint
                   , "ahk_exe TeraPad.exe"    ; TeraPad
                   , "ahk_exe texstudio.exe"  ; TexStudio
                   , "ahk_exe texworks.exe"   ; TexWork
-                  , "Write:"                 ; Thunderbird, English
-                  , "作成"                   ; Thunderbird, 日本語
                   ; , "ahk_exe Code.exe"       ; Visual Studio Code  ; why not use VSCodeVim???
                   , "ahk_exe WINWORD.exe"    ; Word
                   , "ahk_exe olk.EXE"    ; Outlook

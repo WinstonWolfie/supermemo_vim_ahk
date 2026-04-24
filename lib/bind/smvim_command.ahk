@@ -161,9 +161,10 @@ n::
   SM.WaitBrowser()
 SMBrowserNeuralReview:
   Send {AppsKey}g
+  Vim.State.SetMode("Insert")
   WinWaitActive, ahk_class TElWind
   SM.PlayIfOnlineColl()
-  Vim.State.SetMode("Insert")
+  Vim.State.SetMode("Vim_Normal")
 return
 
 SMLearnChildren:
