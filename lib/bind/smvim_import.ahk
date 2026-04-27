@@ -296,7 +296,7 @@ ExtractToSMAgain:
   Clipboard := ClipSaved
 return
 
-#if (Vim.State.Vim.Enabled)
+#if (Vim.State.Vim.Enabled && WinExist("ahk_class TElWind"))
 ; Incremental web browsing
 ^+!b::
 ^!b::
@@ -306,10 +306,6 @@ IWBNewTopic:
 ; Incremental video: Import current YT video to SM
 ^+!a::
 ^!a::
-  if (!WinExist("ahk_class TElWind")) {
-    SetToolTip("Please open SuperMemo and try again.")
-    return
-  }
   if (WinExist("ahk_id " . SMImportGuiHwnd)) {
     WinActivate
     return

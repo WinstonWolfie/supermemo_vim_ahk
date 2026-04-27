@@ -132,6 +132,8 @@ class Browser {
       this.Source := "The Free Dictionary"
     } else if (this.Title ~= "とは【ピクシブ百科事典】$") {
       this.Source := "ピクシブ百科事典", this.Title := RegExReplace(this.Title, "とは【ピクシブ百科事典】$")
+    } else if (this.Title ~= "^Rive \| Watch \| ") {
+      this.Source := "Rive", this.Title := RegExReplace(this.Title, "^Rive \| Watch \| ")
 
     ; Source in the middle
     } else if (RegExMatch(this.Title, " \| (.*) \| Cambridge Core$", v)) {

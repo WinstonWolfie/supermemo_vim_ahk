@@ -51,7 +51,7 @@ Return
         . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
         . "|CopyWindowPosition|ZLibrary|ContextMenuInfo|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|LatinoGraecum|Linguee"
-        . "|MerriamWebster|WA|WM|RestartOneDrive|KillIE"
+        . "|MerriamWebster|WA|WM|KillIE"
         . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
         . "|PasteCleanedClipboard|ArchiveToday|WordSense|PasteHTML"
         . "|AnnasArchive|WP"
@@ -311,9 +311,9 @@ GoogleDefineButtonSearch:
   if (LangCode) {
     Define := "define", Add := ""
     if (LangCode = "fr") {
-      Define := "définis"
+      Define := "définir"
     } else if (LangCode = "it") {
-      Define := "definisci"
+      Define := "definire"
     } else if (LangCode = "en-uk") {
       Add := "&gl=gb"
     } else if (LangCode = "en-us") {
@@ -743,19 +743,6 @@ MakeHTMLUnique:
   SM.MoveToLast(false)
   Clip("<SPAN class=anti-merge>HTML made unique at " . GetDetailedTime() . "</SPAN>",, false, "sm")
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
-return
-
-RestartOneDrive:
-  Process, Close, OneDrive.exe
-  Try Run, % "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
-  Catch {
-    Try Run, % A_AppData . "\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
-      Catch
-        Return
-  }
-  WinWaitActive, ahk_class CabinetWClass ahk_exe explorer.exe,, 10
-  if (!ErrorLevel)
-    WinClose
 return
 
 CalculateTodaysPassRate:
