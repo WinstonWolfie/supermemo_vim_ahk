@@ -738,7 +738,7 @@ return
 return
 
 ^!n::
-  Send !b
+  SM.RegAltB()
   SM.WaitBrowser()
   Goto SMBrowserNeuralReview
 return
@@ -752,8 +752,10 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^.*? Registry \(\d+ members\)$"))
 !g::SM.RegAltG(), Vim.State.SetNormal()
 
+^+l::
+  Send {Down}{AppsKey}ls
 ^l::
-  Send !b
+  SM.RegAltB()
   WinWaitActive, ahk_class TBrowser
   Goto SMLearnChildrenActiveBrowser
 return

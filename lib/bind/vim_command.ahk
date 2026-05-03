@@ -609,6 +609,8 @@ ImportFile:
       FileMove, % FilePath, % StrReplace(FilePath, FileName, "IMPORTED_" . FileName)
   }
   SM.AskPrio()
+  if (MsgBox(3,, "Externalise registry?") = "Yes")
+    Gosub ExternaliseRegistry
 return
 
 Settings:

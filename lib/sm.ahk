@@ -1905,6 +1905,10 @@ class SM {
     Acc_Get("Object", "4.5.4.6.4",, WinTitle).accDoDefaultAction()
   }
 
+  RegAltB(WinTitle:="") {
+    Acc_Get("Object", "4.5.4.4.4",, WinTitle).accDoDefaultAction()
+  }
+
   RegInsert(WinTitle:="") {
     Acc_Get("Object", "4.5.4.8.4",, WinTitle).accDoDefaultAction()
   }
