@@ -334,7 +334,7 @@ Also see: [VSCode Vim cheat sheet](https://www.barbarianmeetscoding.com/boost-yo
 
 Note: in SuperMemo, `Esc` can be configured to also enter normal mode (see the `SMVimSendEscInsert` setting in the Settings UI).
 
-Default supported SuperMemo executables: SM15-SM19.
+Default supported SuperMemo executables: SM18-SM20.
 
 ### Browsing (not focused on any text component)
 
