@@ -118,7 +118,7 @@ class SM {
 
   SetPrio(Prio) {
     if (this.IsSM20()) {
-      this.PostMsg(670, true)
+      this.PostMsg(674, true)
     } else if (this.IsSM18() || this.IsSM19()) {
       this.PostMsg(655, true)
     }
@@ -431,7 +431,7 @@ class SM {
     global WinClip
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     if (this.IsSM20()) {
-      this.PostMsg(1016, true)
+      this.PostMsg(1020, true)
     } else if (this.IsSM19()) {
       this.PostMsg(993, true)
     } else if (this.IsSM18()) {
@@ -568,7 +568,7 @@ class SM {
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     ; Alt + F10 -> Template -> Copy template
     if (this.IsSM20(wSMElWind)) {
-      this.PostMsg(708, true, wSMElWind)
+      this.PostMsg(712, true, wSMElWind)
     } else if (this.IsSM18(wSMElWind) || this.IsSM19(wSMElWind)) {
       this.PostMsg(693, true, wSMElWind)
     }
@@ -812,7 +812,7 @@ class SM {
     ; Launch element parameter window
     w := "ahk_class TElParamDlg ahk_pid " . WinGet("PID", "ahk_class TElWind")
     if (this.IsSM20()) {
-      this.PostMsg(723, true)
+      this.PostMsg(727, true)
     } else if (this.IsSM18() || this.IsSM19()) {
       this.PostMsg(708, true)
     }
@@ -935,8 +935,9 @@ class SM {
     ControlSend, TEdit1, {Enter}
 
     if (IsSM20) {
-      WinWait, % "ahk_class TProgressBox ahk_pid " . pidSM
-      WinWaitClose
+      WinWait, % "ahk_class TProgressBox ahk_pid " . pidSM,, 1
+      if (!ErrorLevel)
+        WinWaitClose
       Loop {
         if (LFW := WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)) {
           Break
@@ -1117,7 +1118,7 @@ class SM {
 
   GoHome(ForceBG:=false) {
     if (this.IsSM20()) {
-      this.PostMsg(787, true)
+      this.PostMsg(791, true)
     } else if (this.IsSM18() || this.IsSM19()) {
       this.PostMsg(772, true)
     }
@@ -1125,7 +1126,7 @@ class SM {
 
   GoBack(ForceBG:=false) {
     if (this.IsSM20()) {
-      this.PostMsg(795, true)
+      this.PostMsg(799, true)
     } else if (this.IsSM19()) {
       this.PostMsg(780, true)
     } else if (this.IsSM18()) {
@@ -1162,7 +1163,7 @@ class SM {
         global Browser
         Browser.SearchInYT(SMTitle, RefLink)
       } else {
-        this.PostMsg(773, true)
+        this.PostMsg(777, true)
         WinWait, % "ahk_class TMsgDialog ahk_pid " . WinGet("PID", "ahk_class TElWind"),, 0
         if (!ErrorLevel) {
           WinActivate
@@ -1313,7 +1314,7 @@ class SM {
     ; this.ActivateElWind(wSMElWind)
     ; Send !{f10}fe
     if (this.IsSM20(wSMElWind)) {
-      this.PostMsg(675, true, wSMElWind)
+      this.PostMsg(679, true, wSMElWind)
     } else if (this.IsSM18(wSMElWind) || this.IsSM19(wSMElWind)) {
       this.PostMsg(660, true, wSMElWind)
     }
@@ -1412,7 +1413,7 @@ class SM {
     this.ActivateElWind()
     if (PostMsg) {
       if (this.IsSM20()) {
-        this.PostMsg(1018, true)
+        this.PostMsg(1022, true)
       } else if (this.IsSM19()) {
         this.PostMsg(995, true)
       } else if (this.IsSM18()) {
@@ -1481,7 +1482,7 @@ class SM {
   PasteHTML(PostMsg:=true) {
     if (PostMsg) {
       if (this.IsSM20()) {
-        this.PostMsg(944, true)
+        this.PostMsg(948, true)
       } else if (this.IsSM19()) {
         this.PostMsg(922, true)
       } else if (this.IsSM18()) {
@@ -1566,7 +1567,7 @@ class SM {
 
     loop {
       if (this.IsSM20(wSMElWind)) {
-        this.PostMsg(963, true, wSMElWind)
+        this.PostMsg(967, true, wSMElWind)
       } else if (this.IsSM19(wSMElWind)) {
         this.PostMsg(941, true, wSMElWind)
       } else if (this.IsSM18(wSMElWind)) {
@@ -1589,7 +1590,7 @@ class SM {
     ; Send ^{Space}  ; open browser
     if (WinActive("ahk_class TElWind")) {
       if (this.IsSM20()) {
-        this.PostMsg(736, true)
+        this.PostMsg(740, true)
       } else if (this.IsSM18() || this.IsSM19()) {
         this.PostMsg(721, true)
       }
@@ -1880,7 +1881,7 @@ class SM {
 
   LinkUnlinkConcept(Link:=True, Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="", Timeout:=0.5) {
     if (this.IsSM20(wSMElWind)) {
-      msg := 659
+      msg := 663
     } else if (this.IsSM18(wSMElWind) || this.IsSM19(wSMElWind)) {
       msg := 644
     }
@@ -1940,7 +1941,7 @@ class SM {
   RegMember(PostMsg:=false, wSMElWind:="ahk_class TElWind") {
     if (PostMsg) {
       if (this.IsSM20(wSMElWind)) {
-        this.PostMsg(951, true, wSMElWind)
+        this.PostMsg(955, true, wSMElWind)
       } else if (this.IsSM19(wSMElWind)) {
         this.PostMsg(929, true, wSMElWind)
       } else if (this.IsSM18(wSMElWind)) {
@@ -1954,7 +1955,7 @@ class SM {
 
   GoToEl(ElNumber, WinWait:=false, ForceBG:=false) {
     if (this.IsSM20()) {
-      msg := 784
+      msg := 788
     } else if (this.IsSM18() || this.IsSM19()) {
       msg := 769
     }
@@ -2039,7 +2040,7 @@ class SM {
 
   Contents() {
     if (this.IsSM20()) {
-      this.PostMsg(317)
+      this.PostMsg(321)
     } else if (this.IsSM19()) {
       this.PostMsg(310)
     } else if (this.IsSM18()) {
@@ -2049,7 +2050,7 @@ class SM {
 
   ReferenceRegistry() {
     if (this.IsSM20()) {
-      this.PostMsg(163)
+      this.PostMsg(167)
     } else if (this.IsSM19()) {
       this.PostMsg(161)
     } else if (this.IsSM18()) {
@@ -2062,7 +2063,7 @@ class SM {
       return
     ; Reference - Link
     if (this.IsSM20()) {
-      this.PostMsg(674, true)
+      this.PostMsg(678, true)
     } else if (this.IsSM18() || this.IsSM19()) {
       this.PostMsg(659, true)
     }

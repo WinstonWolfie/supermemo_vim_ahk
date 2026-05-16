@@ -760,6 +760,13 @@ return
   Goto SMLearnChildrenActiveBrowser
 return
 
+^+n::
+  Send {Down}{AppsKey}ls
+  SM.RegAltB()
+  WinWaitActive, ahk_class TBrowser
+  Goto SMBrowserNeuralReview
+return
+
 !n::
   if (WinGetTitle() ~= "^Concept Registry \(\d+ members\)$") {
     ; This whole thread is to fix a bug in SM's neural learning:

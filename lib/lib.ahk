@@ -1346,7 +1346,7 @@ Clip(Text:="", Reselect:=false, RestoreClip:=true, HTML:=false, KeysToSend:="", 
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     if (PostMsg && SM.IsEditingHTML()) {
       if (SM.IsSM20()) {
-        SM.PostMsg(941, true)
+        SM.PostMsg(945, true)
       } else if (SM.IsSM19()) {
         SM.PostMsg(919, true)
       } else if (SM.IsSM18()) {
