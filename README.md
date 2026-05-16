@@ -520,7 +520,7 @@ These are additional SuperMemo-only `:` commands (in the element window/contents
 
 `<C-.>`: set interval to `1`
 
-`<C-{number}>` / `<C-Numpad{number}>`: set a random interval range (Naess-style bins)
+`<C-{number}>` / `<C-Numpad{number}>`: set a random interval range
 
 ### Visual mode
 
@@ -586,6 +586,20 @@ Additional SuperMemo-only shortcuts not listed above:
 - `<C-S-A-/>`: cloze search hinter and stay in the clozed item
 - `<C-A-S-l>`: insert numbered list (HTML toolbar)
 - `<C-S-f12>`: confirm "bomb format" prompt (sends `Enter`)
+
+#### Registry window shortcuts
+
+##### Concept registry
+
+- `<C-l>`: go to element (Alt + G) and learn its children
+- `<C-n>`: same but neural review
+- `<C-A-n>`: learn all elements linked to the current concept
+
+# Other registries
+
+- `<C-l>`: learn all elements linked to the current registry entry
+- `<C-S-l>`: learn all elements linked to all members of the registry
+- `<C-S-n>`: same but neural review
 
 #### Import / extraction (outside SuperMemo)
 
