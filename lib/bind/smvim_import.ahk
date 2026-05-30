@@ -264,7 +264,11 @@ ExtractToSMAgain:
   WaitCaretMove(x, y, 400)
 
   if (Prio) {
-    Send !+x
+    if (SM.IsSM18() || SM.IsSM19()) {
+      Send !+x
+    } else {
+      Send {AppsKey}rc
+    }
     WinWaitActive, ahk_class TPriorityDlg
     ControlSetText, TEdit5, % Prio
     Send {Enter}

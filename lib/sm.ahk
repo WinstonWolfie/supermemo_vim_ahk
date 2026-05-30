@@ -847,6 +847,9 @@ class SM {
            && (ControlGetText("TGroupButton3") == "View the last child of the root")
            && (ControlGetText("TGroupButton2") == "Review the elements in the concept")
            && (ControlGetText("TGroupButton1") == "Cancel"))
+          || ((ControlGetText("TGroupButton3") == "Add to the presently used neural review queue")
+           && (ControlGetText("TGroupButton2") == "Start a new neural review")
+           && (ControlGetText("TGroupButton1") == "Cancel"))
     }
   }
 
@@ -1915,7 +1918,17 @@ class SM {
   }
 
   RegAltG(WinTitle:="") {
-    Acc_Get("Object", "4.5.4.2.4",, WinTitle).accDoDefaultAction()
+    if (WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Concept Registry \(\d+ members\)")) {
+      ; Alt + G in concept registry by default goes to the first element of the
+      ; linked elements, this thread makes it goes to the actual concept
+      UIA := UIA_Interface()
+      el := UIA.ElementFromHandle()
+      pos := el.FindFirstBy("ControlType=Button AND Name='Root element'").GetCurrentPos("Screen")
+      ControlClickScreen(pos.x + 25, pos.y - 55)
+      WinClose, A
+    } else {
+      Acc_Get("Object", "4.5.4.2.4",, WinTitle).accDoDefaultAction()
+    }
   }
 
   PrevComp() {

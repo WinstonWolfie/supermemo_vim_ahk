@@ -746,13 +746,13 @@ return
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)$"))
 !i::SM.RegInsert()
 
-#if (Vim.State.Vim.Enabled && (WinGet("ProcessName", "ahk_class TElWind") != "sm19.exe") && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^.*? Registry \(\d+ members\)$"))
-!r::SM.RegAltR(), Vim.State.SetNormal()
-
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^.*? Registry \(\d+ members\)$"))
+!r::SM.RegAltR(), Vim.State.SetNormal()
 !g::SM.RegAltG(), Vim.State.SetNormal()
 
 ^+l::
+  KeyWait, Ctrl
+  KeyWait, Shift
   Send {Down}{AppsKey}ls
 ^l::
   SM.RegAltB()
