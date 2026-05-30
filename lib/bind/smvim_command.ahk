@@ -161,8 +161,15 @@ n::
   SM.WaitBrowser()
 SMBrowserNeuralReview:
   Send {AppsKey}g
-  Vim.State.SetMode("Insert")
-  WinWaitActive, ahk_class TElWind
+  GroupAdd, SMBrowserNeuralReview, ahk_class TChoicesDlg
+  GroupAdd, SMBrowserNeuralReview, ahk_class TElWind
+  WinWaitActive, ahk_group SMBrowserNeuralReview,, % Timeout
+  if (WinGetClass() == "TChoicesDlg") {
+    Vim.State.SetMode("Vim_Normal")
+    WinWaitClose
+    Vim.State.SetMode("Insert")
+    WinWaitActive, ahk_class TElWind
+  }
   SM.PlayIfOnlineColl()
   Vim.State.SetMode("Vim_Normal")
 return
