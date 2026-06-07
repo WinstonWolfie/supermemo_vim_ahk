@@ -1408,8 +1408,11 @@ class SM {
 
   CloseMsgDialog(wSMElWind:="ahk_class TElWind") {
     pidSM := WinGet("PID", wSMElWind)
-    while (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM))
+    while (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)) {
       WinClose
+      if (this.IsSM20(wSMElWind))
+        this.WaitSM20Processing(wSMElWind)
+    }
   }
 
   OpenNotepad(PostMsg:=true, Timeout:="") {

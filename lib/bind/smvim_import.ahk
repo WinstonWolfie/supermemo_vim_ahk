@@ -278,6 +278,7 @@ ExtractToSMAgain:
 
   SM.WaitExtractProcessing()
   SM.SaveHTML()
+  WinWaitActive, ahk_class TElWind  ; insurance
   SM.EmptyHTML()
   WinWaitActive, ahk_class TElWind
 
@@ -684,8 +685,9 @@ SMImportButtonImport:
 
   if (CloseTab) {
     WinActivate, % wBrowser
-    WinWaitActive, % wBrowser
-    Send ^w
+    WinWaitActive, % wBrowser,, 1
+    if (!ErrorLevel)
+      Send ^w
   }
 
 SMImportGuiEscape:
