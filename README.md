@@ -567,7 +567,7 @@ Note: in plain-text components, visual `m` wraps the selection in `*...*` (inste
 Some SuperMemo-only Commander commands include:
 
 - In `TElWind` / `TContents`: `SetConceptHook`, `MemoriseChildren`
-- In `TElWind` (element window): `NukeHTML`, `ReformatVocab`, `ImportFile`, `EditReference`, `LinkToPreviousElement`, `OpenInAcrobat`, `CalculateTodaysPassRate`, `AllLapsesToday`, `ExternaliseRegistry`, `Comment`, `Tag`
+- In `TElWind` (element window): `NukeHTML`, `ReformatVocab`, `ImportFile`, `EditReference`, `LinkPreviousElement`, `OpenInAcrobat`, `CalculateTodaysPassRate`, `AllLapsesToday`, `ExternaliseRegistry`, `Comment`, `Tag`
 - In `TElWind` when the element is online: `ReformatScriptComponent`, `SearchLinkInYT`, `MarkAsOnlineProgress`
 - In `TElWind` when editing: `ClozeAndDone!` (when editing any text), plus HTML-only helpers like `MakeHTMLUnique`, `CenterTexts`, `AlignTextsRight`, `AlignTextsLeft`, `ItalicText`, `UnderscoreText`, `BoldText`
 - In `TBrowser` (SuperMemo browser): `MemoriseCurrentBrowser`, `SetBrowserPosition`, `MassReplaceReference`, `MassProcessBrowser`, `Tag`

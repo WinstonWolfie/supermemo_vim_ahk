@@ -60,7 +60,7 @@ When focused on the element window (`TElWind`), you’ll typically see commands 
 | `NukeHTML` | Aggressively rewrite/clean the underlying HTML source file (the “nuke” variant removes many `class=...` attributes; see `docs/supermemo_html_maintenance.md`). |
 | `ReformatVocab` | Runs a vocabulary reformat routine (collection-specific). |
 | `EditReference` | Opens the element reference editor. |
-| `LinkToPreviousElement` | Creates a link to the previous element (workflow helper). |
+| `LinkPreviousElement` | Creates a link to the previous element (workflow helper). |
 | `Comment` / `Tag` / typed `untag ...` | Reference/comment/tag helpers. |
 | `ExternaliseRegistry` | Externalizes several registries in bulk (images/sounds/binary/video). |
 | `CalculateTodaysPassRate` / `AllLapsesToday` | Exports repetition history and computes daily stats. |

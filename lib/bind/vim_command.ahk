@@ -59,7 +59,7 @@ Return
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     List := "SetConceptHook|MemoriseChildren|" . List
     if (WinActive("ahk_class TElWind")) {
-      List := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkToPreviousElement"
+      List := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkPreviousElement"
             . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
             . "|ExternaliseRegistry|Comment|Tag|Untag|" . List
       if (SM.IsOnline(, -1))
@@ -677,16 +677,18 @@ GenerateTimeString:
   Send % "{text}" . FormatTime(, "yyyyMMddHHmmss" . A_MSec)
 return
 
-LinkToPreviousElement:
+LinkPreviousElement:
   Send !c
   WinWaitActive, ahk_class TContents
   WinActivate, ahk_class TElWind
   SM.GoBack()
   SM.WaitFileLoad()
-  SM.LinkContents()
+  Send !{f10}ci  ; link contents
   WinWaitActive, ahk_class TContents
   Send {Enter}+{Enter}
   SM.WaitFileLoad()
+  if (!SM.IsSM18() && !SM.IsSM19())
+    Send {Esc}
   WinWaitActive, ahk_class TElWind
   SM.ListLinks()
 return

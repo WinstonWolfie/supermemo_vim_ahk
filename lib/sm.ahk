@@ -1944,11 +1944,6 @@ class SM {
     Send !{f10}td
   }
 
-  LinkContents() {
-    this.ActivateElWind()
-    Send !{f10}ci
-  }
-
   ViewFile() {  ; = f9 but doesn't always work, so invoking from !{f12} is the most reliable
     this.ActivateElWind()
     Send !{f12}fv
