@@ -431,7 +431,7 @@ class SM {
     global WinClip
     LongCopy := A_TickCount, WinClip.Clear(), LongCopy -= A_TickCount  ; LongCopy gauges the amount of time it takes to empty the clipboard which can predict how long the subsequent ClipWait will need
     if (this.IsSM20()) {
-      this.PostMsg(1020, true)
+      this.PostMsg(1021, true)
     } else if (this.IsSM19()) {
       this.PostMsg(993, true)
     } else if (this.IsSM18()) {
@@ -1419,7 +1419,7 @@ class SM {
     this.ActivateElWind()
     if (PostMsg) {
       if (this.IsSM20()) {
-        this.PostMsg(1022, true)
+        this.PostMsg(1023, true)
       } else if (this.IsSM19()) {
         this.PostMsg(995, true)
       } else if (this.IsSM18()) {
@@ -1488,7 +1488,7 @@ class SM {
   PasteHTML(PostMsg:=true) {
     if (PostMsg) {
       if (this.IsSM20()) {
-        this.PostMsg(948, true)
+        this.PostMsg(949, true)
       } else if (this.IsSM19()) {
         this.PostMsg(922, true)
       } else if (this.IsSM18()) {
@@ -1952,7 +1952,7 @@ class SM {
   RegMember(PostMsg:=false, wSMElWind:="ahk_class TElWind") {
     if (PostMsg) {
       if (this.IsSM20(wSMElWind)) {
-        this.PostMsg(955, true, wSMElWind)
+        this.PostMsg(956, true, wSMElWind)
       } else if (this.IsSM19(wSMElWind)) {
         this.PostMsg(929, true, wSMElWind)
       } else if (this.IsSM18(wSMElWind)) {
