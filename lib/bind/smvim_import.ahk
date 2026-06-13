@@ -613,13 +613,8 @@ SMImportButtonImport:
     if ((OnlineEl == 1) && !SM.IsOnline(-1, Concept))
       ChangeBackConcept := Concept, Concept := "Online"
 
-    IsSM20 := SM.IsSM20(wSMElWind), pidSM := WinGet("PID", wSMElWind)
-
-    if (!ret := SM.SetDefaultConcept(Concept,, ChangeBackConcept, wSMElWind))
+    if (!ret := SM.SetDefaultConcept(Concept,, ChangeBackConcept, wSMElWind, wBrowser))
       Goto SMImportReturn
-
-    if (IsSM20)
-      SM.WaitSM20Processing(pidSM)
 
     if (ChangeBackConcept && ret)
       ChangeBackConcept := ret
@@ -676,16 +671,16 @@ SMImportButtonImport:
   ; SM.WaitFileLoad()
 
   if (ChangeBackConcept)
-    SM.SetDefaultConcept(ChangeBackConcept)
+    SM.SetDefaultConcept(ChangeBackConcept,,,, wBrowser)
+
+  WinActivate, % wBrowser  ; in case the function above robs the focus
 
   if (Tags)
     SM.LinkUnlinkConcept(True, StrSplit(Tags, ";"),, wBrowser)
 
-  SM.CloseMsgDialog()
-
   if (CloseTab) {
     WinActivate, % wBrowser
-    WinWaitActive, % wBrowser,, 1
+    WinWaitActive, % wBrowser,, 0
     if (!ErrorLevel)
       Send ^w
   }

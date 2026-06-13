@@ -143,7 +143,7 @@ VimCommanderButtonExecute:
       if (!wSMElWind)
         wSMElWind := "ahk_class TElWind"
       if (aCommand[1] = "tag") {
-        Goto SMTagEntered
+        Goto SMTag
       } else if (aCommand[1] = "untag") {
         Goto SMUntag
       }
@@ -1133,7 +1133,7 @@ SMTagButtonTag:
   Gui, Submit
   Gui, Destroy
   LoopCount := 1
-SMTagEntered:
+SMTag:
 SMUntag:
   Vim.State.SetMode("Vim_Normal")
   if (A_ThisLabel == "SMTagButtonTag")
@@ -1143,29 +1143,25 @@ SMUntag:
 
   Loop % LoopCount {
     Link := ""
-    if ((A_ThisLabel == "SMTagButtonTag") || (A_ThisLabel == "SMTagEntered")) {
+    if ((A_ThisLabel == "SMTagButtonTag") || (A_ThisLabel == "SMTag")) {
       Link := True
     } else if (A_ThisLabel == "SMUntag") {
       Link := False
     }
-    SM.LinkUnlinkConcept(Link, aTags := StrSplit(Tags, ";"), wSMElWind)
+    if (f := ((A_ThisLabel == "SMTag") || (A_ThisLabel == "SMUntag")) && hActiveBrowser)
+      wForeground := "ahk_id " . hActiveBrowser
+    SM.LinkUnlinkConcept(Link, aTags := StrSplit(Tags, ";"), wSMElWind, f ? wForeground : "")
 
     if (EditRefComment) {
-      if (IsSM20 && (aTags.MaxIndex() > 1)) {
-        SM.WaitSM20Processing(pidSM)
-        if ((A_ThisLabel == "SMTagEntered") || (A_ThisLabel == "SMUntag") && hActiveBrowser)
-          WinActivate, % "ahk_id " . hActiveBrowser
-      }
+      if (f)
+        WinActivate, % "ahk_id " . hActiveBrowser
       SM.EditRef(wSMElWind)
       WinWait, % "ahk_class TInputDlg ahk_pid " . pidSM
-      
-      if (IsSM20 && ((A_ThisLabel == "SMTagEntered") || (A_ThisLabel == "SMUntag")) && hActiveBrowser)
-          WinActivate, % "ahk_id " . hActiveBrowser
 
       Ref := ControlGetText("TMemo1")
       RegExMatch(Ref, "#Comment: (.*)|$", v), Comment := v1
 
-      if ((A_ThisLabel == "SMTagButtonTag") || (A_ThisLabel == "SMTagEntered")) {
+      if ((A_ThisLabel == "SMTagButtonTag") || (A_ThisLabel == "SMTag")) {
         loop % aTags.MaxIndex() {
           Tag := StrReplace(aTags[A_Index], " ", "_")
           if (!IfContains(Comment, "#" . Tag, true))

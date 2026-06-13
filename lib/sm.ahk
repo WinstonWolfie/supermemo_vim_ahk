@@ -370,14 +370,9 @@ class SM {
       this.RegMember(true, wSMElWind)
       WinWaitActive, ahk_class TRegistryForm,, 0.2
       if (!ErrorLevel) {
-        if (this.IsSM20(wSMElWind)) {
-          Send {Esc}
-          this.WaitSM20Processing(pidSM, wSMElWind)
-          this.ActivateElWind(wSMElWind)
-        } else {
-          WinClose
-          WinWaitActive, % wSMElWind
-        }
+        Send {Esc}
+        this.ActivateElWind(wSMElWind)
+        WinWaitActive, % wSMElWind
         return true
       }
       if (MaxLoop && (A_Index > MaxLoop))
@@ -703,7 +698,7 @@ class SM {
       ControlTextWait(Control, Text, w)
   }
 
-  SetDefaultConcept(Concept:="", Prio:="", CheckConceptExist:="", wSMElWind:="ahk_class TElWind") {
+  SetDefaultConcept(Concept:="", Prio:="", CheckConceptExist:="", wSMElWind:="ahk_class TElWind", wForeground:="") {
     if (Concept && !Prio && !CheckConceptExist) {
       if (this.GetDefaultConcept(wSMElWind) == Concept)
         return true
@@ -714,6 +709,10 @@ class SM {
     el := UIA.ElementFromHandle(WinExist(wSMElWind))
     ; Just using ControlClick() cannot operate in background
     pos := el.FindFirstBy("ControlType=Button AND Name='DefaultConceptBtn'").GetCurrentPos("screen")
+
+    if (wForeground)
+      WinActivate, % wForeground
+
     WinGetPos, x,, w,, % wSMElWind
     WinWidth := x + w, BtnWidthCenter := pos.x+pos.w//2
     if (BtnWidthCenter > WinWidth)
@@ -920,12 +919,12 @@ class SM {
       return
     this.CloseMsgDialog(wSMElWind)
 
-    if (IsSM20 := this.IsSM20(wSMElWind)) {
+    if (this.IsSM20(wSMElWind)) {
       ret := this.PostMsg(145,, wSMElWind)
     } else if (this.IsSM19(wSMElWind)) {
-      ret := this.PostMsg(143,, wSMElWind)
+      ret := this.PostMsg(143,, wSMElWind), IsLowerThanSM20 := true
     } else if (this.IsSM18(wSMElWind)) {
-      ret := this.PostMsg(144,, wSMElWind)
+      ret := this.PostMsg(144,, wSMElWind), IsLowerThanSM20 := true
     }
     if (!ret)
       return false
@@ -937,7 +936,12 @@ class SM {
     ControlFocus, TEdit1
     ControlSend, TEdit1, {Enter}
 
-    if (IsSM20) {
+    if (IsLowerThanSM20) {
+      GroupAdd, SMCtrlF, % "ahk_class TMsgDialog ahk_pid " . pidSM
+      GroupAdd, SMCtrlF, % "ahk_class TBrowser ahk_pid " . pidSM
+      WinWait, ahk_group SMCtrlF
+
+    } else {
       WinWait, % "ahk_class TProgressBox ahk_pid " . pidSM,, 1
       if (!ErrorLevel)
         WinWaitClose
@@ -950,15 +954,6 @@ class SM {
       }
       WinActivate, % wCurrent  ; seems to clear the last found window
 
-    } else if (this.IsSM18(wSMElWind) || this.IsSM19(wSMElWind)) {
-      GroupAdd, SMCtrlF, % "ahk_class TMsgDialog ahk_pid " . pidSM
-      GroupAdd, SMCtrlF, % "ahk_class TBrowser ahk_pid " . pidSM
-      WinWait, ahk_group SMCtrlF
-    }
-
-    if (IsSM20) {
-      this.WaitSM20Processing(pidSM)
-      WinExist("ahk_id " . LFW)
     }
 
     if (ret := (WinGetClass() == "TBrowser")) {
@@ -1408,11 +1403,8 @@ class SM {
 
   CloseMsgDialog(wSMElWind:="ahk_class TElWind") {
     pidSM := WinGet("PID", wSMElWind)
-    while (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)) {
+    while (WinExist("ahk_class TMsgDialog ahk_pid " . pidSM))
       WinClose
-      if (this.IsSM20(wSMElWind))
-        this.WaitSM20Processing(wSMElWind)
-    }
   }
 
   OpenNotepad(PostMsg:=true, Timeout:="") {
@@ -1573,7 +1565,7 @@ class SM {
 
     loop {
       if (this.IsSM20(wSMElWind)) {
-        this.PostMsg(967, true, wSMElWind)
+        this.PostMsg(968, true, wSMElWind)
       } else if (this.IsSM19(wSMElWind)) {
         this.PostMsg(941, true, wSMElWind)
       } else if (this.IsSM18(wSMElWind)) {
@@ -1885,7 +1877,7 @@ class SM {
     return str
   }
 
-  LinkUnlinkConcept(Link:=True, Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="", Timeout:=0.5) {
+  LinkUnlinkConcept(Link:=True, Concept:="", wSMElWind:="ahk_class TElWind", wForeground:="") {
     if (this.IsSM20(wSMElWind)) {
       msg := 663
     } else if (this.IsSM18(wSMElWind) || this.IsSM19(wSMElWind)) {
@@ -1899,12 +1891,9 @@ class SM {
     if (!IsObject(Concept) && Concept != "")
       Concept := [Concept]
 
-    IsSM20 := this.IsSM20(wSMElWind), pidSM := WinGet("PID", wSMElWind)
     loop % Concept.MaxIndex() {
       this.PostMsg(msg, true, wSMElWind)
       this.RegWndEnterConcept(Concept[A_Index], wSMElWind, wForeground)
-      if (IsSM20)
-        this.WaitSM20Processing(pidSM, wSMElWind, Timeout)
     }
   }
 
@@ -2093,15 +2082,5 @@ class SM {
 
   IsSM20(wSMElWind:="ahk_class TElWind") {
     return (WinGet("ProcessName", wSMElWind) == "sm20.exe")
-  }
-
-  WaitSM20Processing(pidSM:="", wSMElWind:="ahk_class TElWind", Timeout:=0.5) {
-    LFW := WinExist()  ; save last found window
-    if (!pidSM)
-      pidSM := WinGet("PID", wSMElWind)
-    WinWait, % "ahk_class TBack ahk_pid " . pidSM,, % Timeout
-    if (!ErrorLevel)
-      WinClose
-    WinExist("ahk_id " . LFW)
   }
 }
