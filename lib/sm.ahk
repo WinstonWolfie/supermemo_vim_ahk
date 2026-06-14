@@ -922,9 +922,9 @@ class SM {
     if (this.IsSM20(wSMElWind)) {
       ret := this.PostMsg(145,, wSMElWind)
     } else if (this.IsSM19(wSMElWind)) {
-      ret := this.PostMsg(143,, wSMElWind), IsLowerThanSM20 := true
+      ret := this.PostMsg(143,, wSMElWind)
     } else if (this.IsSM18(wSMElWind)) {
-      ret := this.PostMsg(144,, wSMElWind), IsLowerThanSM20 := true
+      ret := this.PostMsg(144,, wSMElWind)
     }
     if (!ret)
       return false
@@ -935,26 +935,13 @@ class SM {
     ControlSetText, TEdit1, % Text
     ControlFocus, TEdit1
     ControlSend, TEdit1, {Enter}
+    WinWaitClose
+    WinActivate, % wCurrent
 
-    if (IsLowerThanSM20) {
-      GroupAdd, SMCtrlF, % "ahk_class TMsgDialog ahk_pid " . pidSM
-      GroupAdd, SMCtrlF, % "ahk_class TBrowser ahk_pid " . pidSM
-      WinWait, ahk_group SMCtrlF
-
-    } else {
-      WinWait, % "ahk_class TProgressBox ahk_pid " . pidSM,, 1
-      if (!ErrorLevel)
-        WinWaitClose
-      Loop {
-        if (LFW := WinExist("ahk_class TMsgDialog ahk_pid " . pidSM)) {
-          Break
-        } else if (LFW := WinExist("ahk_class TBrowser ahk_pid " . pidSM)) {
-          Break
-        }
-      }
-      WinActivate, % wCurrent  ; seems to clear the last found window
-
-    }
+    GroupAdd, SMCtrlF, % "ahk_class TMsgDialog ahk_pid " . pidSM
+    GroupAdd, SMCtrlF, % "ahk_class TBrowser ahk_pid " . pidSM
+    WinWait, ahk_group SMCtrlF
+    WinWait, ahk_group SMCtrlF  ; due to random SM window flashing, WinGetClass() may not work; wait twice works for now
 
     if (ret := (WinGetClass() == "TBrowser")) {
       if (ClearHighlight)
