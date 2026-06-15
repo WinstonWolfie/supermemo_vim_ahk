@@ -362,15 +362,17 @@ class SM {
   }
 
   SaveHTML(Timeout:=0) {
+    LoopInterval := 0.2
     if (Timeout)
-      MaxLoop := Timeout // 0.2
+      MaxLoop := Timeout // LoopInterval
     pidSM := WinGet("PID", "ahk_class TElWind")
     wSMElWind := "ahk_class TElWind ahk_pid " . pidSM
     loop {
       this.RegMember(true, wSMElWind)
-      WinWaitActive, ahk_class TRegistryForm,, 0.2
+      WinWait, % "ahk_class TRegistryForm ahk_pid " . pidSM,, % LoopInterval
       if (!ErrorLevel) {
-        Send {Esc}
+        WinClose
+        WinWaitClose
         this.ActivateElWind(wSMElWind)
         WinWaitActive, % wSMElWind
         return true
