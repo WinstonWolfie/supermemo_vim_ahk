@@ -275,6 +275,8 @@ class Browser {
             btn.FindByPath("P1").Click()  ; click the description box, so the webpage doesn't scroll down
             ; Faster, but sometimes unstable, therefore "try"; find for 1.5 seconds
             try this.Date := guiaBrowser.WaitElementExistByName(DatePattern,, "RegEx",, 1500).Name
+            if (this.Date)
+              this.Date := RegExReplace(this.Date, "(Streamed live|Premiered) on ")
           }
 
           if (!this.Date) {

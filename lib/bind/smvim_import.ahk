@@ -263,8 +263,9 @@ ExtractToSMAgain:
   Send ^+{Home}  ; select everything
   WaitCaretMove(x, y, 400)
 
+  IsSM18Or19 := (SM.IsSM18() || SM.IsSM19())
   if (Prio) {
-    if (SM.IsSM18() || SM.IsSM19()) {
+    if (IsSM18Or19) {
       Send !+x
     } else {
       Send {AppsKey}rc
@@ -277,8 +278,12 @@ ExtractToSMAgain:
   }
 
   SM.WaitExtractProcessing()
-  SM.SaveHTML()
-  WinWaitActive, ahk_class TElWind  ; insurance
+  ; SM20 (currently tested in Gamma I) adds [e] (link to extract) at the end of
+  ; extracted text, therefore no need to save HTML because it's guaranteed saved
+  if (IsSM18Or19) {
+    SM.SaveHTML()
+    WinWaitActive, ahk_class TElWind  ; insurance
+  }
   SM.EmptyHTML()
   WinWaitActive, ahk_class TElWind
 
