@@ -52,16 +52,16 @@ Return
         . "|CopyWindowPosition|ZLibrary|ContextMenuInfo|GenerateTimeString"
         . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|LatinoGraecum|Linguee"
         . "|MerriamWebster|WA|WM|KillIE"
-        . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2TXT"
+        . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2HTML|EPUB2TXT"
         . "|PasteCleanedClipboard|ArchiveToday|WordSense|PasteHTML"
         . "|AnnasArchive|WP"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     List := "SetConceptHook|MemoriseChildren|" . List
     if (WinActive("ahk_class TElWind")) {
-      List := "NukeHTML|ReformatVocab|ImportFile|EditReference|LinkPreviousElement"
-            . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday"
-            . "|ExternaliseRegistry|Comment|Tag|Untag|" . List
+      List := "NukeHTML|Comment|ImportFile|EditReference|Tag|Untag"
+            . "|LinkPreviousElement|ExternaliseRegistry|ReformatVocab"
+            . "|OpenInAcrobat|CalculateTodaysPassRate|AllLapsesToday|" . List
       if (SM.IsOnline(, -1))
         List := "ReformatScriptComponent|SearchLinkInYT|MarkAsOnlineProgress|" . List
       if (SM.IsEditingText())
@@ -752,7 +752,7 @@ return
 CalculateTodaysPassRate:
   SetToolTip("Executing..."), pidSM := WinGet("PID", "ahk_class TElWind")
   BlockInput, On
-  SM.PostMsg(31)  ; export rep history
+  Send !fer  ; export rep history
   WinWaitActive, ahk_class TFileBrowser
   TempPath := A_Temp . "\Repetition History_" . SM.GetCollName() . "_"
             . GetCurrTimeForFileName() ".txt"
@@ -885,7 +885,7 @@ return
 AllLapsesToday:
   SetToolTip("Executing..."), pidSM := WinGet("PID", "ahk_class TElWind")
   BlockInput, On
-  SM.PostMsg(31)  ; export rep history
+  Send !fer  ; export rep history
   WinWaitActive, ahk_class TFileBrowser
   TempPath := A_Temp . "\Repetition History_" . SM.GetCollName() . "_"
             . t := GetCurrTimeForFileName() . ".txt"
@@ -1008,6 +1008,16 @@ SaveFile:
   if (ext = "ogg")
     RunWait, % "cmd /c ffmpeg -i """ . FilePath . """ -acodec libmp3lame """ . dir . "\" . NameNoExt . ".mp3"" && del """ . FilePath . """",, Hide
   SetToolTip("Success.")
+return
+
+EPUB2HTML:
+  if (EpubPath := FindSearchIB("EPUB2HTML", "Path:")) {
+    HtmlPath := StrReplace(EpubPath, ".epub", ".html")
+    RunWait, % "pandoc -f epub -t html -o """ . HtmlPath . """ """ . EpubPath . """",, Hide
+    SetToolTip("Completed.")
+  } else {
+    SetToolTip("Not found.")
+  }
 return
 
 EPUB2TXT:

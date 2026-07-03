@@ -198,7 +198,7 @@ return
     } else if (hCalibre) {
       Send {text}q  ; need to enable this shortcut in settings
     } else if (WinActive("ahk_class SUMATRA_PDF_FRAME")) {
-      Send {text}a
+      Send {raw}a
     } else if (WinActive("ahk_exe WINWORD.exe")) {
       Send ^!h
     } else if (WinActive("ahk_exe WinDjView.exe")) {

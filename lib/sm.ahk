@@ -157,6 +157,10 @@ class SM {
       ControlSetText, TEdit2, % min
       ControlSetText, TEdit1, % max
 
+    } else if (WinActive("ahk_class TWebDlg")) {
+      ControlSetText, TEdit2, % min
+      ControlSetText, TEdit3, % max
+
     } else if (WinExist("ahk_class TElWind")) {  ; should always be last condition
       this.SetPrio(Prio)
     }
@@ -843,8 +847,9 @@ class SM {
            && (ControlGetText("TGroupButton2") == "Combine old and new references for this element")
            && (ControlGetText("TGroupButton3") == "Change references in all elements produced from the original article")
            && (ControlGetText("TGroupButton4") == "Change only the references of the currently displayed element"))
-          || ((ControlGetText("TGroupButton5") == "Go to the root element of the concept")
-           && (ControlGetText("TGroupButton4") == "Transfer the current element to the concept")
+          || ((ControlGetText("TGroupButton6") == "Go to the root element of the concept")
+           && (ControlGetText("TGroupButton5") == "Transfer the current element to the concept")
+           && (ControlGetText("TGroupButton4") == "Make this the default concept")
            && (ControlGetText("TGroupButton3") == "View the last child of the root")
            && (ControlGetText("TGroupButton2") == "Review the elements in the concept")
            && (ControlGetText("TGroupButton1") == "Cancel"))
@@ -1563,7 +1568,7 @@ class SM {
 
       WinWaitActive, % "ahk_class TMsgDialog ahk_pid " . pidSM,, 0.2
       if (!ErrorLevel) {
-        Send y
+        Send {raw}y
         WinWaitClose
         Break
       }

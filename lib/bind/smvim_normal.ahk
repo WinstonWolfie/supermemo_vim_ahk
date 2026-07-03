@@ -144,7 +144,8 @@ return
    || SM.IsPrioInputBox()
    || WinActive("ahk_class TPriorityDlg")
    || WinActive("Input number ahk_class TInputDlg")
-   || WinActive("ahk_class TBrImp")))
+   || WinActive("ahk_class TBrImp")
+   || WinActive("ahk_class TWebDlg")))
 ; Priority script, originally made by Naess and modified by Guillem
 ; Details: https://www.youtube.com/watch?v=OwV5HPKMrbg
 ; Picture explaination: https://raw.githubusercontent.com/rajlego/supermemo-ahk/main/naess%20priorities%2010-25-2020.png

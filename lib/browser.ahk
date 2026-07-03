@@ -46,7 +46,8 @@ class Browser {
       this.Url := this.Url ? this.Url : this.GetUrl()
 
     ; Sites that should be skipped
-    SkippedList := "wind.com.cn,thepokerbank.com,tutorial.math.lamar.edu,sites.google.com/view/musicalharmonysite"
+    SkippedList := "wind.com.cn,thepokerbank.com,tutorial.math.lamar.edu,"
+                 . "sites.google.com/view/musicalharmonysite,anime.nexus"
     if (IfContains(this.Url, SkippedList)) {
       return
 

@@ -757,6 +757,8 @@ return
 ^l::
   SM.RegAltB()
   WinWaitActive, ahk_class TBrowser
+  WinWaitNotActive, ahk_class TBrowser,, 0
+  WinActivate, ahk_class TBrowser
   Goto SMLearnChildrenActiveBrowser
 return
 
