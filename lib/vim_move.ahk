@@ -313,6 +313,7 @@ class VimMove {
         } else {
           Send {Left}
         }
+
       } else if (key == "l") {
         if (WinActive("ahk_group VimQdir")) {
           Send {Enter}
@@ -325,9 +326,11 @@ class VimMove {
         } else {
           Send {Right}
         }
+
       ; Home/End
       } else if (key == "0") {
         this.Zero()
+
       } else if (key == "$") {
         if (SM.IsBrowsing()) {
           if (ControlGet(,, "Internet Explorer_Server2", "ahk_class TElWind")) {
@@ -340,6 +343,7 @@ class VimMove {
         } else {
           Send {End}
         }
+
       } else if (key == "^") {
         if (this.shift == 1) {
           if (WinActive("ahk_group VimCaretMove")) {
@@ -360,18 +364,21 @@ class VimMove {
               Send {Home}
           }
         }
+
       } else if (key == "+") {
         if (this.shift == 1) {
           Send +{Down}+{End}+{Home}
         } else {
           Send {Down}{End}{Home}
         }
+
       } else if (key == "-") {
         if (this.shift == 1) {
           Send +{Up}+{End}+{Home}
         } else {
           Send {Up}{End}{Home}
         }
+
       ; Words
       } else if (key == "w") {
         if (this.shift == 1) {
@@ -379,6 +386,7 @@ class VimMove {
         } else {
           Send ^{Right}
         }
+
       } else if (key == "e") {
         if (this.Vim.State.g) {  ; ge
           if (this.shift == 1) {
@@ -437,6 +445,7 @@ class VimMove {
             pos := this.FindWordBoundary(DetectionStr, this.SearchOccurrence - 1, true)
             Send % "{Right}{Left " . pos . "}"
           }
+
         } else if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
             StrBefore := ParseLineBreaks(Copy(false))
@@ -471,6 +480,7 @@ class VimMove {
               Send % "+{Right " . right . "}"
             }
           }
+
         } else {
           this.SelectParagraphDown(, true)
           DetectionStr := ParseLineBreaks(Copy(false))
@@ -497,12 +507,14 @@ class VimMove {
           }
           Send % "{Left}{Right " . right . "}"
         }
+
       } else if (key == "b") {
         if (this.shift == 1) {
           Send +^{Left}
         } else {
           Send ^{Left}
         }
+
       } else if (key == "f") {  ; find forward
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
@@ -537,6 +549,7 @@ class VimMove {
               Send % "+{Right " . right . "}"
             }
           }
+
         } else {
           Send +{End}
           DetectionStr := ParseLineBreaks(Copy(false))
@@ -561,6 +574,7 @@ class VimMove {
           }
           Send % "{Left}{Right " . right . "}"
         }
+
       } else if (key == "t") {
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
@@ -604,6 +618,7 @@ class VimMove {
               Send % "+{Right " . right . "}"
             }
           }
+
         } else {
           Send +{End}
           DetectionStr := ParseLineBreaks(Copy(false))
@@ -628,6 +643,7 @@ class VimMove {
           }
           Send % "{Left}{Right " . right . "}"
         }
+
       } else if (key == "+f") {
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
@@ -664,6 +680,7 @@ class VimMove {
               Send % "+{Left " . left . "}"
             }
           }
+
         } else {
           Send +{Home}
           DetectionStr := ParseLineBreaks(Copy(false))
@@ -675,6 +692,7 @@ class VimMove {
           pos := this.FindPos(DetectionStr, this.FtsChar, this.SearchOccurrence)
           Send % "{Right}{Left " . pos . "}"
         }
+
       } else if (key == "+t") {
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
@@ -728,6 +746,7 @@ class VimMove {
               Send % "+{Left " . left . "}"
             }
           }
+
         } else {
           Send +{Home}
           DetectionStr := ParseLineBreaks(Copy(false))
@@ -750,6 +769,7 @@ class VimMove {
           }
           Send % "{Right}{Left " . left . "}"
         }
+
       } else if (key == ")") {  ; like "f" but search for ". "
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
@@ -791,6 +811,7 @@ class VimMove {
             }
             Send % "+{Right " . right . "}"
           }
+
         } else {
           this.SelectParagraphDown(, true)
           DetectionStr := ParseLineBreaks(Copy(false))
@@ -814,6 +835,7 @@ class VimMove {
             Send {Right}
           }
         }
+
       } else if (key == "(") {  ; like "+t"
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
@@ -865,6 +887,7 @@ class VimMove {
             if (!ret)
               Send % "+{Right " . right . "}"
           }
+
         } else {
           this.SelectParagraphUp(, true)
           DetectionStr := Copy(false)
@@ -897,6 +920,7 @@ class VimMove {
             Send % "{Right}{Left " . left . "}"
           }
         }
+
       } else if (key == "s") {
         if (this.shift == 1) {
           if (!this.NoSelection()) {  ; determine caret position
@@ -942,6 +966,7 @@ class VimMove {
               Send % "+{Right " . right . "}"
             }
           }
+
         } else {
           this.SelectParagraphDown(, true)
           DetectionStr := ParseLineBreaks(Copy(false))
@@ -968,6 +993,7 @@ class VimMove {
           }
           Send % "{Left}{Right " . right . "}"
         }
+
       } else if (key == "+s") {
         this.FtsChar := StrReverse(this.FtsChar)
         if (this.shift == 1) {
@@ -1004,6 +1030,7 @@ class VimMove {
               Send % "+{Left " . left . "}"
             }
           }
+
         } else {
           this.SelectParagraphUp(, true)
           DetectionStr := ParseLineBreaks(Copy(false))
@@ -1017,6 +1044,7 @@ class VimMove {
           pos := pos ? pos + 1 : 0
           Send % "{Right}{Left " . pos . "}"
         }
+
       } else if (key == "/") {
         hWnd := WinActive("A")
         InputBoxPrompt := " text until:`n(case sensitive)"
@@ -1070,6 +1098,7 @@ class VimMove {
           pos -= pos ? 1 : 0
           Send % "+{Right " . pos . "}"
         }
+
       } else if (key == "?") {
         hWnd := WinActive("A")
         InputBoxPrompt := " text until:`n(case sensitive)"
@@ -1117,12 +1146,14 @@ class VimMove {
           right := StrLen(DetectionStr) - pos - StrLen(UserInput) + 1
           Send % "+{Right " . right . "}"
         }
+
       } else if (key == "x") {
         if (this.Vim.IsNavigating()) {
           Send {Del}
         } else if (this.shift != 1) {
           Send +{Right}
         }
+
       } else if (key == "+x") {
         if (this.Vim.IsNavigating()) {
           Send {BS}
@@ -1131,6 +1162,7 @@ class VimMove {
         }
       }
     }
+
     ; Up/Down 1 character
     if (key == "j") {
       if (SM.IsBrowsing()) {
@@ -1142,12 +1174,14 @@ class VimMove {
       } else {
         this.Down()
       }
+
     } else if (key == "^e") {
       if (WinActive("ahk_group VimForceScroll")) {
         Send {Ctrl Up}{WheelDown}
       } else {
         SendMessage, 0x0115, 1, 0, % ControlGetFocus("A"), A  ; scroll down
       }
+
     } else if (key == "k") {
       if (SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
@@ -1158,12 +1192,14 @@ class VimMove {
       } else {
         this.Up()
       }
+
     } else if (key == "^y") {
       if (WinActive("ahk_group VimForceScroll")) {
         Send {Ctrl Up}{WheelUp}
       } else {
         SendMessage, 0x0115, 0, 0, % ControlGetFocus("A"), A  ; scroll up
       }
+
     ; Page Up/Down
     } else if (key == "^u") {
       if (SM.IsBrowsing()) {
@@ -1177,6 +1213,7 @@ class VimMove {
       } else {
         this.Up(10)
       }
+
     } else if (key == "^d") {
       if (SM.IsBrowsing()) {
         if (ControlGet(,, "Internet Explorer_Server2", "A")) {
@@ -1189,10 +1226,13 @@ class VimMove {
       } else {
         this.Down(10)
       }
+
     } else if (key == "^b") {
       Send {PgUp}
+
     } else if (key == "^f") {
       Send {PgDn}
+
     } else if (key == "g") {
       if (this.Vim.State.n > 0) {
         if (SM.IsBrowsing() && SM.DoesTextExist()) {
@@ -1214,6 +1254,7 @@ class VimMove {
       } else {
         Send ^{Home}
       }
+
     } else if (key == "+g") {
         if (this.Vim.State.n > 0) {
           if (SM.IsBrowsing() && SM.DoesTextExist()) {
@@ -1270,6 +1311,7 @@ class VimMove {
             }
           }
         }
+
     } else if (key == "{") {
       if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
@@ -1284,6 +1326,7 @@ class VimMove {
       } else {
         this.ParagraphUp()
       }
+
     } else if (key == "}") {
       if ((this.Vim.State.n > 0) && WinActive("ahk_class TElWind") && !Repeat && SM.DoesTextExist()) {  ; this can only be invoked by Vim.Move.Move and not Vim.Move.Repeat
         KeyWait Shift
@@ -1295,6 +1338,7 @@ class VimMove {
       } else {
         this.ParagraphDown()
       }
+
     } else if (key == "gn") {
       global VimLastSearch
       global CapsState := CtrlState := AltState := ""
@@ -1351,9 +1395,11 @@ class VimMove {
     global WinClip, SM
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
     KeyWait Shift
+
     if (key == "w") {
       Send ^{Right}^{Left}
       this.Move("e",,, false), Final := true
+
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1373,6 +1419,7 @@ class VimMove {
       if (n)
         Send % "+{Left " . n . "}"
       Final := true
+
     } else if (key == "p") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1460,9 +1507,11 @@ class VimMove {
     global WinClip
     RestoreClip := Vim.State.StrIsInCurrentVimMode("Vim_ydc") ? false : true
     KeyWait Shift
+
     if (key == "w") {
       Send ^{Right}^{Left}^+{Right}
       Final := true
+
     } else if (key == "s") {
       if (RestoreClip)
         ClipSaved := ClipboardAll
@@ -1482,6 +1531,7 @@ class VimMove {
         Send % "+{Left " . n . "}"  ; so that `dap` would delete an entire paragraph, whereas `cap` would empty the paragraph
       }
       Final := true
+
     } else if (key == "p") {
       this.Vim.State.LineCopy := 1
       this.ParagraphDown()

@@ -248,10 +248,4 @@ CapsLock & q::
   } else {
     Send !{F4}
   }
-
-  if (WinActive("ahk_exe HiborClient.exe")) {
-    WinWaitActive, ahk_class MsgBoxWindow ahk_exe HiborClient.exe,, 0
-    if (!ErrorLevel)
-      Send {Enter}
-  }
 return

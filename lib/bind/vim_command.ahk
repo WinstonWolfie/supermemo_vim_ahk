@@ -44,17 +44,16 @@ Return
   hWnd := WinActive("A")
   Gui, VimCommander:Add, Text,, &Command:
 
-  List := "Plan|Wiktionary|Bing|Google|YT|Settings|MoveMouseToCaret"
-        . "|WaybackMachine|DefineGoogle|YouGlish|DeepL"
-        . "|WindowSpy|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer"
-        . "|TranslateGoogle|ClearClipboard|Forcellini|RAE|OALD"
-        . "|AlatiusLatinMacronizer|UIAViewer|Libgen|ImageGoogle|WatchLaterYT"
-        . "|CopyWindowPosition|ZLibrary|ContextMenuInfo|GenerateTimeString"
-        . "|Bilibili|AlwaysOnTop|Larousse|GraecoLatinum|LatinoGraecum|Linguee"
-        . "|MerriamWebster|WA|WM|KillIE"
-        . "|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML|EPUB2HTML|EPUB2TXT"
-        . "|PasteCleanedClipboard|ArchiveToday|WordSense|PasteHTML"
-        . "|AnnasArchive|WP"
+  List := "Plan|Wiktionary|Google|Bing|YT|Settings|MoveMouseToCaret"
+        . "|WaybackMachine|DefineGoogle|YouGlish|DeepL|WindowSpy"
+        . "|CopyTitle|CopyHTML|Forvo|SciHub|AccViewer|TranslateGoogle"
+        . "|ClearClipboard|OALD|Forcellini|RAE|AlatiusLatinMacronizer"
+        . "|UIAViewer|Libgen|ImageGoogle|WatchLaterYT|ZLibrary"
+        . "|ContextMenuInfo|GenerateTimeString|Bilibili|Larousse"
+        . "|GraecoLatinum|LatinoGraecum|Linguee|MerriamWebster"
+        . "|WA|WM|PerplexityAI|Lexico|Tatoeba|MD2HTML|CleanHTML"
+        . "|EPUB2HTML|EPUB2TXT|PasteCleanedClipboard|ArchiveToday"
+        . "|WordSense|PasteHTML|AnnasArchive|WP"
 
   if (WinActive("ahk_class TElWind") || WinActive("ahk_class TContents")) {
     List := "SetConceptHook|MemoriseChildren|" . List
@@ -76,10 +75,6 @@ Return
     List := "IWBPriorityAndConcept|IWBNewTopic|SaveFile|Tag||Untag|" . List
   } else if (WinActive("ahk_class TPlanDlg")) {  ; SuperMemo Plan window
     List := "SetPlanPosition|" . List
-  } else if (WinActive("ahk_class TRegistryForm")) {  ; SuperMemo Registry window
-    List := "MassReplaceRegistry|MassProcessRegistry|" . List
-  } else if (WinActive("Google Drive error list ahk_exe GoogleDriveFS.exe")) {  ; Google Drive errors
-    List := "RetryAllSyncErrors|" . List
   }
 
   Gui, VimCommander:Add, Combobox, vCommand gAutoComplete w144, % list
@@ -283,11 +278,6 @@ YouGlishButtonSearch:
   Run, % "https://youglish.com/pronounce/" . EncodeDecodeURI(Search) . "/" . StrLower(Language)
 Return
 
-KillIE:
-  while (WinExist("ahk_exe iexplore.exe"))
-    process, close, iexplore.exe
-return
-
 DefineGoogle:
   Gui, GoogleDefine:Add, Text,, &Search:
   Gui, GoogleDefine:Add, Edit, vSearch w136 r1 -WantReturn, % FindSearch()
@@ -490,35 +480,6 @@ ReformatScriptComponent:
   Clipboard := ClipSaved, Vim.State.SetMode("Vim_Normal")
 return
 
-CopyWindowPosition:
-  WinGetPos, x, y, w, h, A
-  SetToolTip("Copied " . Clipboard := "Window's position: x = " . x . " y = " . y . " w = " . w . " h = " . h)
-return
-
-MassReplaceReference:
-  find := ""
-  replacement := ""
-  if (!find && !replacement)
-    return
-  loop {
-    WinActivate, ahk_class TElWind
-    SM.WaitFileLoad()
-    SM.EditRef()
-    WinWaitActive, ahk_class TInputDlg
-    if (IfContains(ref := ControlGetText("TMemo1"), find)) {
-      ControlSetText, TMemo1, % StrReplace(ref, find, replacement)
-    } else {
-      return
-    }
-    Send !{Enter}
-    WinWaitActive, ahk_class TChoicesDlg,, 0
-    if (!ErrorLevel)
-      Send {Down}{Enter}
-    WinActivate, ahk_class TBrowser
-    Send {Down}
-  }
-return
-
 SciHub:
   if (!Text := FindSearchIB("Sci-Hub", "Search:"))
     return
@@ -693,10 +654,6 @@ LinkPreviousElement:
   SM.ListLinks()
 return
 
-AlwaysOnTop:
-  WinSet, AlwaysOnTop, Toggle, A
-return
-
 OpenInAcrobat:
   SM.AutoPlay(true)
 return
@@ -774,112 +731,6 @@ return
 PerplexityAI:
   if (Text := FindSearchIB("Perplexity AI", "Text:",,, 256))
     Run, % "https://www.perplexity.ai/search?q=" . EncodeDecodeURI(Text)
-return
-
-RetryAllSyncErrors:
-  UIA := UIA_Interface(), el := UIA.ElementFromHandle(WinActive("A"))
-  while (dot := el.FindFirstBy("ControlType=MenuItem AND Name='More options'")) {
-    dot.ControlClick()
-    el.WaitElementExist("ControlType=MenuItem AND Name='Retry' AND AutomationId='retry-id'").ControlClick()
-    Sleep 300
-    if (el.FindFirstBy("ControlType=Text AND Name='Looks fine'"))
-      Break
-  }
-  SetToolTip("Finished.")
-return
-
-MassReplaceRegistry:
-  find := "https://finance.yahoo.com/quote/"
-  replacement := ""
-  if (!find && !replacement)
-    return
-  ; ControlSend, Edit1, % "{text}" . find, A
-  loop {
-    Send !r
-    WinWaitActive, ahk_class TInputDlg
-    Text := ControlGetText("TMemo1")
-    ; if (InStr(Text, find) != 1)
-    ;   return
-    if ((InStr(Text, find) != 1) || (Text ~= "\/$"))
-      return
-    ; ControlSetText, TMemo1, % StrReplace(Text, find, replacement)
-    ControlSetText, TMemo1, % Text . "/"
-    Send !{Enter}
-    WinWaitActive, ahk_class TRegistryForm
-    ControlSetText, Edit1  ; clear
-    Send {Down}
-  }
-  ; loop {
-  ;   ControlSend, Edit1, % "{text}" . find, A
-  ;   SM.RegAltG()
-  ;   WinWaitActive, ahk_class TElWind
-  ;   SM.EditRef()
-  ;   WinWaitActive, ahk_class TInputDlg
-  ;   Text := ControlGetText("TMemo1")
-  ;   if (!IfContains(Text, find))
-  ;     return
-  ;   Text := RegExReplace(Text, "#Source: " . find . "(.*)", "#Author: $1")
-  ;   Text .= "`r`n#Source: YouTube"
-  ;   ControlSetText, TMemo1, % Text
-  ;   Send !{Enter}
-  ;   WinWaitActive, ahk_class TElWind
-  ;   ; WinWaitActive, ahk_class TChoicesDlg,, 0.3
-  ;   ; if (!ErrorLevel)
-  ;   ;   Send {Down}{Enter}
-  ;   SM.PostMsg(154)
-  ;   WinWaitActive, ahk_class TRegistryForm
-  ;   ControlSetText, Edit1  ; clear
-  ; }
-return
-
-MassProcessRegistry:
-  ; find := "https://finance.yahoo.com/quote/"
-  ; replacement := ""
-  ; if (!find && !replacement)
-  ;   return
-  ; ControlSend, Edit1, % "{text}" . find, A
-  loop {
-    Send !r
-    WinWaitActive, ahk_class TInputDlg
-    PrevText := Text := ControlGetText("TMemo1")
-    if !(Text ~= "^https?:\/\/")
-      return
-    DecodedText := EncodeDecodeURI(Text, false)
-    if (DecodedText == Text) {
-      WinClose
-      PrevText := ""
-    } else {
-      ControlSetText, TMemo1, % DecodedText
-      Send !{Enter}
-    }
-    WinWaitActive, ahk_class TRegistryForm
-    if (PrevText) {
-      SM.SetText("Edit1", PrevText)
-    } else {
-      Send {Down}
-    }
-  }
-  ; loop {
-  ;   ControlSend, Edit1, % "{text}" . find, A
-  ;   SM.RegAltG()
-  ;   WinWaitActive, ahk_class TElWind
-  ;   SM.EditRef()
-  ;   WinWaitActive, ahk_class TInputDlg
-  ;   Text := ControlGetText("TMemo1")
-  ;   if (!IfContains(Text, find))
-  ;     return
-  ;   Text := RegExReplace(Text, "#Source: " . find . "(.*)", "#Author: $1")
-  ;   Text .= "`r`n#Source: YouTube"
-  ;   ControlSetText, TMemo1, % Text
-  ;   Send !{Enter}
-  ;   WinWaitActive, ahk_class TElWind
-  ;   ; WinWaitActive, ahk_class TChoicesDlg,, 0.3
-  ;   ; if (!ErrorLevel)
-  ;   ;   Send {Down}{Enter}
-  ;   SM.PostMsg(154)
-  ;   WinWaitActive, ahk_class TRegistryForm
-  ;   ControlSetText, Edit1  ; clear
-  ; }
 return
 
 AllLapsesToday:
