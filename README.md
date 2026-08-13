@@ -477,14 +477,15 @@ These are additional SuperMemo-only `:` commands (in the element window/contents
 |`:b`|Remove all text **b**efore cursor (SuperMemo)|
 |`:a`|Remove all text **a**fter cursor (SuperMemo)|
 |`:f`|Clean **f**ormat (uses `F6`)|
-|`:F`|Clean HTML directly in source (may rewrite the underlying HTML file)|
+|`:F`|Clean HTML directly in source|
 |`:l`|List links|
 |`:L`|Link concept|
-|`:o`|C**o**mpress images (SuperMemo commander)|
+|`:o`|C**o**mpress images|
 |`:r`|Set **r**eference metadata/link from clipboard/browser info|
 |`:i`|Learn outstanding **i**tems only|
 |`:I`|Learn current element's outstanding child **i**tem|
 |`:n`|Neural review children|
+|`:N`|Neural review outstanding children|
 |`:c`|Learn children|
 |`:C`|Add new concept|
 
@@ -589,7 +590,9 @@ Additional SuperMemo-only shortcuts not listed above:
 
 - `<C-l>`: go to element (Alt + G) and learn its children
 - `<C-n>`: same but neural review
-- `<C-A-n>`: learn all elements linked to the current concept
+- `<C-S-n>`: same but neural review outstanding children
+- `<C-A-n>`: neural review all elements linked to the current concept
+- `<C-A-S-n>`: same but outstanding elements
 
 # Other registries
 

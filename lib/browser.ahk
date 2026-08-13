@@ -47,7 +47,8 @@ class Browser {
 
     ; Sites that should be skipped
     SkippedList := "wind.com.cn,thepokerbank.com,tutorial.math.lamar.edu,"
-                 . "sites.google.com/view/musicalharmonysite,anime.nexus"
+                 . "sites.google.com/view/musicalharmonysite,anime.nexus,"
+                 . "aether.bar"
     if (IfContains(this.Url, SkippedList)) {
       return
 
@@ -730,38 +731,40 @@ class Browser {
   }
 
   Highlight(CollName:="", PlainText:="", Url:="") {
-    this.ActivateBrowser()
-    global SM
-    CollName := CollName ? CollName : SM.GetCollName()
-    Sent := False
+    ; DISABLED FOR NOW DUE TO SM20 HAS SIMILAR FUNCTIONS
 
-    if (RegexMatch(PlainText, "(?<!\s)(?<!\d)(\d+,?)+\.$", v)) {
-      if (Sent := IfContains(Url := Url ? Url : this.GetUrl(), "fr.wikipedia.org"))
-        Send % "+{Left " . StrLen(v) . "}"
-    }
+    ; this.ActivateBrowser()
+    ; global SM
+    ; CollName := CollName ? CollName : SM.GetCollName()
+    ; Sent := False
 
-    if (!Sent && RegexMatch(PlainText, "\.\K(\[\d+\]​)+\[\d+\]​?$", v)) {
-      if (Sent := IfContains(Url := Url ? Url : this.GetUrl(), "es.wikipedia.org"))
-        Send % "+{Left " . StrLen(v) . "}"
-    }
+    ; if (RegexMatch(PlainText, "(?<!\s)(?<!\d)(\d+,?)+\.$", v)) {
+    ;   if (Sent := IfContains(Url := Url ? Url : this.GetUrl(), "fr.wikipedia.org"))
+    ;     Send % "+{Left " . StrLen(v) . "}"
+    ; }
 
-    if (!Sent && RegexMatch(PlainText, "。(\[\d+\])+$|(\[(\d+|note \d+|\w|citation needed)\])+(。|.)?$|\[\d+\]: \d+(。|.)?$|(?<=\.)\d+$", v)) {
-      if (Sent := IfContains(Url ? Url : this.GetUrl(), "wikipedia.org,wikiquote.org"))
-        Send % "+{Left " . StrLen(v) . "}"
-    }
+    ; if (!Sent && RegexMatch(PlainText, "\.\K(\[\d+\]​)+\[\d+\]​?$", v)) {
+    ;   if (Sent := IfContains(Url := Url ? Url : this.GetUrl(), "es.wikipedia.org"))
+    ;     Send % "+{Left " . StrLen(v) . "}"
+    ; }
 
-    if (!Sent && RegexMatch(PlainText, "\d+$", v)) {
-      if (IfContains(Url, "investopedia.com"))
-        Send % "+{Left " . StrLen(v) . "}"
-    }
+    ; if (!Sent && RegexMatch(PlainText, "。(\[\d+\])+$|(\[(\d+|note \d+|\w|citation needed)\])+(。|.)?$|\[\d+\]: \d+(。|.)?$|(?<=\.)\d+$", v)) {
+    ;   if (Sent := IfContains(Url ? Url : this.GetUrl(), "wikipedia.org,wikiquote.org"))
+    ;     Send % "+{Left " . StrLen(v) . "}"
+    ; }
+
+    ; if (!Sent && RegexMatch(PlainText, "\d+$", v)) {
+    ;   if (IfContains(Url, "investopedia.com"))
+    ;     Send % "+{Left " . StrLen(v) . "}"
+    ; }
 
     ; ControlSend doesn't work reliably because browser can't highlight in background
-    if (CollName = "zen") {
-      Send ^+h
-    } else {
-      Send !+h
-    }
-    Sleep 700  ; time for visual feedback
+    ; if (CollName = "zen") {
+    ;   Send ^+h
+    ; } else {
+    ;   Send !+h
+    ; }
+    ; Sleep 700  ; time for visual feedback
   }
 
   ActivateBrowser(wBrowser:="ahk_group Browser") {

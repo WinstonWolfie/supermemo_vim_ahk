@@ -195,7 +195,7 @@ return
     KeyWait l
     return
   }
-  Send ^v
+  Send ^v{Enter}
 return
 
 ^+e::

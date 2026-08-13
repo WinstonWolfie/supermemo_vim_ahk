@@ -156,14 +156,22 @@ i::  ; learn outstanding *i*tems only from menu: View - Outstanding
 return
 
 SMNeuralReviewChildren:
+SMNeuralReviewOutstandingChildren:
 n::
++n::
   SM.OpenBrowser()
-  SM.WaitBrowser()
 SMBrowserNeuralReview:
+SMBrowserOutstandingNeuralReview:
+  SM.WaitBrowser(, false)
+  if (IfContains(A_ThisLabel, "Outstanding,+")) {
+    Send {AppsKey}co
+    SM.WaitBrowser()
+  }
+
   Send {AppsKey}g
   GroupAdd, SMBrowserNeuralReview, ahk_class TChoicesDlg
   GroupAdd, SMBrowserNeuralReview, ahk_class TElWind
-  WinWaitActive, ahk_group SMBrowserNeuralReview,, % Timeout
+  WinWaitActive, ahk_group SMBrowserNeuralReview
   if (WinGetClass() == "TChoicesDlg") {
     Vim.State.SetMode("Vim_Normal")
     WinWaitClose

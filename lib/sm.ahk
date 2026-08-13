@@ -136,10 +136,9 @@ class SM {
     Prio := Random(min, max)
     global SMImportGuiHwnd, Vim
     if (WinActive("A") == SMImportGuiHwnd) {
-      c := (ControlGet(,, "Edit5")) ? "Edit2" : "Edit1"
+      c := (ControlGet(,, "Edit5")) ? "Edit4" : "Edit3"
       ControlFocus, % c
       ControlSetText, % c, % Prio
-      Send {tab}^a
 
     } else if (this.IsPrioInputBox()) {
       ControlSetText, Edit1, % Prio
@@ -586,6 +585,10 @@ class SM {
     return TemplCode
   }
 
+  StatBarGetText() {
+    return ControlGetText("TPanel2", "ahk_class TStatBar")
+  }
+
   PrepStatBar(step) {
     static
     if (this.IsSM20()) {
@@ -594,7 +597,7 @@ class SM {
       msg := 313
     }
     if (step == 1) {
-      if (!WinGetText("ahk_class TStatBar"))
+      if (!this.StatBarGetText())
         this.PostMsg(msg), RestoreStatBar := true
       if (WinActive("ahk_group SM")) {
         RestoreMouse := true, CMM := A_CoordModeMouse
@@ -623,11 +626,11 @@ class SM {
       Add := "|" . Add
     Match := "Priority=|Downloading|\(\d+ item\(s\)" . Add
     if (Timeout == -1) {
-      ret := (WinGetText("ahk_class TStatBar") ~= Match)
+      ret := (this.StatBarGetText() ~= Match)
     } else {
       StartTime := A_TickCount
       loop {
-        if (WinGetText("ahk_class TStatBar") ~= Match) {
+        if (this.StatBarGetText() ~= Match) {
           ret := true
           Break
         } else if (Timeout && (A_TickCount - StartTime > Timeout)) {
@@ -650,7 +653,7 @@ class SM {
       WinClose
     StartTime := A_TickCount
     loop {
-      t := RegExReplace(WinGetText("ahk_class TStatBar"), "^(\s+)?")
+      t := RegExReplace(this.StatBarGetText(), "^(\s+)?")
       if (t ~= Text) {
         ret := true
         Break
@@ -1336,12 +1339,13 @@ class SM {
     }
   }
 
-  WaitBrowser(Timeout:=1) {
+  WaitBrowser(Timeout:=1, CheckStatBar:=true) {
     WinWaitActive, ahk_class TProgressBox,, % Timeout
     if (!ErrorLevel)
       WinWaitClose
     WinWaitActive, ahk_class TBrowser
-    this.WaitFileLoad()
+    if (CheckStatBar)
+      this.WaitFileLoad(, "Please wait")
   }
 
   WaitFileBrowser() {

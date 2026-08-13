@@ -732,15 +732,24 @@ return
 return
 
 ^n::
+^+n::
   SM.RegAltG()
   WinWaitActive, ahk_class TElWind
-  Goto SMNeuralReviewChildren
+  if (A_ThisLabel == "^n") {
+    Goto SMNeuralReviewChildren
+  } else if (A_ThisLabel == "^+n") {
+    Goto SMNeuralReviewOutstandingChildren
+  }
 return
 
 ^!n::
+^!+n::
   SM.RegAltB()
-  SM.WaitBrowser()
-  Goto SMBrowserNeuralReview
+  if (A_ThisLabel == "^!n") {
+    Goto SMBrowserNeuralReview
+  } else if (A_ThisLabel == "^!+n") {
+    Goto SMBrowserOutstandingNeuralReview
+  }
 return
 
 #if (Vim.State.Vim.Enabled && WinActive("ahk_class TRegistryForm") && (WinGetTitle() ~= "^Reference Registry \(\d+ members\)$"))

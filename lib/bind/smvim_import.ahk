@@ -391,9 +391,6 @@ IWBNewTopic:
       Gui, SMImport:Add, ComboBox, vUserColl gAutoComplete w280, % CollList
     }
 
-    Gui, SMImport:Add, Text,, &Priority:
-    Gui, SMImport:Add, Edit, vPrio w280
-
     Gui, SMImport:Add, Text,, Concept &group:  ; like in default import dialog
     ConceptList := "||Online|Sources|ToDo"
     if (IfIn(CurrConcept := SM.GetDefaultConcept(), "Online,Sources,ToDo"))
@@ -404,6 +401,9 @@ IWBNewTopic:
 
     Gui, SMImport:Add, Text,, &Tags (without # and use `; to separate):
     Gui, SMImport:Add, Edit, vTags w280
+
+    Gui, SMImport:Add, Text,, &Priority:
+    Gui, SMImport:Add, Edit, vPrio w280
 
     Gui, SMImport:Add, Text,, Reference c&omment:
     Gui, SMImport:Add, Edit, vRefComment w280
@@ -431,7 +431,7 @@ IWBNewTopic:
 
     Gui, SMImport:Add, Button, default, &Import
     Gui, SMImport:Show,, SuperMemo Import
-    GuiControl, SMImport:Focus, Prio
+    GuiControl, SMImport:Focus, Concept
     Gui, SMImport:+HwndSMImportGuiHwnd
     return
   } else {
