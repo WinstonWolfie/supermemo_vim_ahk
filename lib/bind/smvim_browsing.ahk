@@ -6,10 +6,9 @@
 
 ; Element window
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing())
-'::Vim.State.SetMode(,, -1,,, -1, 1)  ; leader key
+Space::Vim.State.SetMode(,, -1,,, -1, 1)  ; leader key
 q::SM.EditFirstQuestion()
 a::SM.EditFirstAnswer()
-~Space::return
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && !Vim.State.g)
 g::Vim.State.SetMode("", 1, -1)
 #if (Vim.IsVimGroup() && Vim.State.IsCurrentVimMode("Vim_Normal") && SM.IsBrowsing() && Vim.State.g)

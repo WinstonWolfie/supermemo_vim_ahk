@@ -5,7 +5,6 @@ It teaches *only* the Vim basics that matter **inside SuperMemo** and **in this 
 
 - Vim modes as they behave here (Normal / Insert / Visual / `:` Command)
 - The **critical SuperMemo distinction**: *browsing vs editing* (caret vs no caret)
-- The two prefix systems you’ll use constantly: **`g`** and **leader `'`**
 - The SuperMemo-specific actions you’ll actually do every day:
   - open links
   - extract (`q`) and cloze (`z`)
@@ -23,7 +22,7 @@ If you want the full keybinding cheat sheet, see `README.md`.
 - `<A-x>` = Alt + x  
 - `<S-x>` = Shift + x  
 - `<C-S-A-a>` = Ctrl + Shift + Alt + a  
-- `<leader>` in this repo = the **single quote** key: `'`
+- `<leader>` in this repo = Space key
 
 ---
 
@@ -257,9 +256,7 @@ If you’re new: don’t force it. Visual selection covers 90% of real-world use
 
 ---
 
-## Prefix keys: `g` and leader `'`
-
-These are the two “multi-key” systems you’ll use constantly.
+## Prefix keys: `g` and leader `<Space>`
 
 ### `g` prefix: navigation + “go/open” actions
 
@@ -276,19 +273,15 @@ In **browsing mode**, press `g` then one of these keys:
 
 In **editing HTML**, `gx` opens the hyperlink under the caret (handy for HTML-heavy sources).
 
-If you hit `g` by accident, press `Esc` to cancel/reset.
+### Leader `<Space>`: “unlock extra shortcuts” state
 
-### Leader `'`: “unlock extra shortcuts” state
-
-Press `'` (single quote) **while browsing** (no caret). For a short time you’re in a “leader state” and some extra bindings become available without stealing common keys from SuperMemo. If you press `'` while editing, it will just type a quote.
+Press `<Space>` in normal mode. For a short time you’re in a “leader state” and some extra bindings become available without stealing common keys from SuperMemo.
 
 Beginner-relevant leader uses:
 
-- In **HTML editing**: `'u` copies the hyperlink under the caret
-- In **HTML editing**: `'q` adds `>` quote prefixes (useful for email-style quoting)
+- In **HTML editing**: `<Space>u` copies the hyperlink under the caret
+- In **HTML editing**: `<Space>q` adds `>` quote prefixes (useful for email-style quoting)
 - Leader also gates the “priority/interval” hotkeys when you’re not already learning/grading.
-
-If leader feels “sticky”, press `Esc` to reset.
 
 ---
 

@@ -150,9 +150,9 @@ Import performs a URL duplicate check and may prompt you to continue if a potent
 The GUI is context-sensitive. You won’t always see all options.
 
 Common fields (always shown in GUI import):
-- **Priority**
 - **Concept group**
 - **Tags** (enter without `#`, separated by `;`; written into `#Comment:` and also used to link concepts)
+- **Priority**
 - **Reference comment**
 - **Close tab**
 
@@ -211,9 +211,9 @@ Context: browser focused; selection required; SuperMemo open.
 2. Press `<C-A-b>` for a fast/default IWB import, or `<C-S-A-b>` if you want the GUI.
 3. Optionally fill:
    - collection (only when multiple SuperMemo collections are open)
-   - priority
    - concept group
    - tags (`;`-separated, without `#`)
+   - priority
    - comment
    - optional “Check duplication” (URL-based)
 4. The script creates a new element for that excerpt and appends `#Link/#Title/...`.

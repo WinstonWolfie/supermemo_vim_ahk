@@ -134,14 +134,10 @@ When in doubt, press `Esc` once or twice.
 
 When browsing in `TElWind`, there are two “prefix” mechanics:
 
-- **Leader**: press `'` (single quote) to enter a leader state for certain bindings.
+- **Leader**: press `<Space>` to enter a leader state for certain bindings.
 - **`g` prefix**: press `g` to enter a temporary `g`-state (then `gs`, `g0`, `gc`, etc.).
 
 These are tracked in `Vim.State` (`lib/vim_state.ahk`) and used heavily in `lib/bind/smvim_browsing.ahk`.
-
-Tip:
-
-- If you pressed a prefix by accident, `Esc` resets back to normal.
 
 ---
 

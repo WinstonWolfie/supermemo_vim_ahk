@@ -76,13 +76,12 @@ $::
 x::
 +x::Vim.Move.Repeat(A_ThisLabel)
 ; Leader
-'::Vim.State.SetMode(,, -1,,, -1, 1)
+Space::Vim.State.SetMode(,, -1,,, -1, 1)
 
 #if (Vim.IsVimGroup() && Vim.State.StrIsInCurrentVimMode("Vim_") && !Vim.IsNavigating())
 ; Up/down
 BS::Vim.Move.Repeat("h")
 Enter::Vim.Move.Repeat("j")
-Space::Vim.Move.Repeat("l")
 ; Line up/down
 +::
 -::Vim.Move.Repeat(A_ThisLabel)

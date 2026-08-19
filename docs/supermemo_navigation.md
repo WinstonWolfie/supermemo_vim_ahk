@@ -46,7 +46,7 @@ In the element window while browsing:
 
 While browsing, this repo uses two “prefix states”:
 
-- **Leader**: press `'` (single quote) to enter a leader state for some commands (`lib/bind/smvim_browsing.ahk:5`).
+- **Leader**: press `<Space>` to enter a leader state for some commands.
 - **`g` prefix**: press `g` to enter a temporary `g`-state (similar to Vim’s `g…` commands).
 
 Practical tip:

@@ -18,7 +18,7 @@ Vim notations:
 
 - `<CR>` means the `Enter` key.
 
-- `<leader>` means the `'` key.
+- `<leader>` means the `Space` key.
 
 At any point the script goes wrong, you can press `<C-A-r>` (ie, `Ctrl + Alt + R`) to reload it.
 
