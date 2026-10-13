@@ -2,8 +2,6 @@
 
 Setting file to emulate vim with AutoHotkey, works with SuperMemo
 
-Support me at https://ko-fi.com/winstonwolfie or https://www.buymeacoffee.com/winstonwolfie
-
 # Cheat sheet
 
 Vim notations: 
